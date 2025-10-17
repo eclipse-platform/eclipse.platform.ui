@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class DialogTest {
 
@@ -32,7 +32,7 @@ public class DialogTest {
 	 */
 	private Dialog dialog;
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dialog != null) {
 			// close the dialog
@@ -69,9 +69,9 @@ public class DialogTest {
 		int cancelX = cancelBtn.getBounds().x;
 
 		if (okBtn.getDisplay().getDismissalAlignment() == SWT.LEFT) {
-			assertTrue("The 'OK' button should be to the left of the 'Cancel' button", okX < cancelX);
+			assertTrue(okX < cancelX, "The 'OK' button should be to the left of the 'Cancel' button");
 		} else {
-			assertTrue("The 'OK' button should be to the right of the 'Cancel' button", cancelX < okX);
+			assertTrue(cancelX < okX, "The 'OK' button should be to the right of the 'Cancel' button");
 		}
 
 		forceLayoutDialog.close();

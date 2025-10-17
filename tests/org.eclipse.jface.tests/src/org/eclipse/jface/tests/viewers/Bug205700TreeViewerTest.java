@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class Bug205700TreeViewerTest {
 
@@ -44,7 +44,7 @@ public class Bug205700TreeViewerTest {
 
 	private final TreeNode child10 = new TreeNode("Child10");
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 
@@ -58,7 +58,7 @@ public class Bug205700TreeViewerTest {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.close();
 	}

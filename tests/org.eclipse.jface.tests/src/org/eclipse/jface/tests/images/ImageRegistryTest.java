@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.0
@@ -36,7 +36,7 @@ public class ImageRegistryTest {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 
 		Image result = reg.get((String) null);
-		assertNull("Registry should handle null", result);
+		assertNull(result, "Registry should handle null");
 	}
 
 	@SuppressWarnings("removal")
@@ -56,7 +56,7 @@ public class ImageRegistryTest {
 
 		for (String imageName : imageNames) {
 			Image image1 = reg.get(imageName);
-			assertNotNull("Returned null image", image1);
+			assertNotNull(image1, "Returned null image");
 		}
 
 	}
@@ -77,7 +77,7 @@ public class ImageRegistryTest {
 				iconDialog.getQuestionImage(), iconDialog.getWarningImage() };
 
 		for (Image image : images) {
-			assertNotNull("Returned null image", image);
+			assertNotNull(image, "Returned null image");
 		}
 
 	}

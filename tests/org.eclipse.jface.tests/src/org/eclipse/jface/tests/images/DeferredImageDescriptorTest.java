@@ -15,16 +15,16 @@
 
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test loading ImageDescriptors from a URL calculated on demand.
@@ -57,15 +57,15 @@ public class DeferredImageDescriptorTest {
 				() -> DeferredImageDescriptorTest.class.getResource("anything.gif"));
 
 		URL url = Adapters.adapt(descriptor, URL.class);
-		assertNotNull("DeferredImageDescriptor does not adapt to URL", url);
+		assertNotNull(url, "DeferredImageDescriptor does not adapt to URL");
 
 		ImageDescriptor descriptorFromUrl = ImageDescriptor.createFromURL(url);
 
 		ImageData imageDataOrig = descriptor.getImageData(100);
-		assertNotNull("Original URL does not return 100% image data", imageDataOrig);
+		assertNotNull(imageDataOrig, "Original URL does not return 100% image data");
 
 		ImageData imageDataURL = descriptorFromUrl.getImageData(100);
-		assertNotNull("Adapted URL does not return 100% image data", imageDataURL);
+		assertNotNull(imageDataURL, "Adapted URL does not return 100% image data");
 		assertEquals(imageDataOrig.width, imageDataURL.width);
 		assertEquals(imageDataOrig.height, imageDataURL.height);
 	}

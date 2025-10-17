@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.eclipse.jface.viewers.deferred.LazySortedCollection;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.1
@@ -63,7 +63,7 @@ public class LazySortedCollectionTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		comparator = new TestComparator();
 		collection = new LazySortedCollection(comparator);
@@ -76,7 +76,7 @@ public class LazySortedCollectionTest {
 		addAll(elements);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		System.out.println("Comparisons required by lazy collection: " + comparator.comparisons);
 		System.out.println("Comparisons required by reference implementation: " + comparisonComparator.comparisons);
@@ -148,8 +148,8 @@ public class LazySortedCollectionTest {
 
 	private void assertContentsValid() {
 		queryRange(0, comparisonCollection.size(), false);
-		Assert.assertEquals(comparisonCollection.size(), collection.size());
-		Assert.assertEquals(comparisonCollection.isEmpty(), collection.isEmpty());
+		Assertions.assertEquals(comparisonCollection.size(), collection.size());
+		Assertions.assertEquals(comparisonCollection.isEmpty(), collection.isEmpty());
 	}
 
 	private static void assertIsPermutation(Object[] array1, Object[] array2) {
@@ -176,7 +176,7 @@ public class LazySortedCollectionTest {
 
 		int returnValue = collection.getRange(result, start, sorted);
 
-		Assert.assertEquals(returnValue, length);
+		Assertions.assertEquals(returnValue, length);
 
 		Object[] expectedResult = computeExpectedElementsInRange(start, length);
 
@@ -197,12 +197,12 @@ public class LazySortedCollectionTest {
 
 	@Test
 	public void testComparisonCount() {
-		assertEquals("additions should not require any comparisons", 0, comparator.comparisons);
+		assertEquals(0, comparator.comparisons, "additions should not require any comparisons");
 
 		queryRange(0, elements.length, false);
 
-		assertEquals("requesting the complete set of unsorted elements should not require any comparisons", 0,
-				comparator.comparisons);
+		assertEquals(0,
+				comparator.comparisons, "requesting the complete set of unsorted elements should not require any comparisons");
 	}
 
 	/**
@@ -222,8 +222,8 @@ public class LazySortedCollectionTest {
 		queryRange(elements.length - 10, 10, true);
 		queryRange(0, 10, false);
 
-		Assert.assertEquals("Once the lazy collection is fully sorted, it should not require further comparisons",
-				comparisons, comparator.comparisons);
+		Assertions.assertEquals(comparisons, comparator.comparisons,
+				"Once the lazy collection is fully sorted, it should not require further comparisons");
 	}
 
 	/**

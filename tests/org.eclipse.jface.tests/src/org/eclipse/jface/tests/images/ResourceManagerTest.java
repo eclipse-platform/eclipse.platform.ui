@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Objects;
 
@@ -37,10 +37,10 @@ import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.1
@@ -96,7 +96,7 @@ public class ResourceManagerTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		TestDescriptor.refCount = 0;
 		Display display = Display.getCurrent();
@@ -145,18 +145,18 @@ public class ResourceManagerTest {
 		numDupes = 12;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		globalResourceManager.dispose();
-		Assert.assertEquals("Detected leaks", 0, TestDescriptor.refCount);
+		Assertions.assertEquals(0, TestDescriptor.refCount, "Detected leaks");
 		testImage.dispose();
 		testImage2.dispose();
 	}
 
 	protected void validateResource(Object resource) throws Exception {
-		Assert.assertNotNull("Allocated resource was null", resource);
+		Assertions.assertNotNull(resource, "Allocated resource was null");
 		if (resource instanceof Image image) {
-			assertFalse("Image is disposed", image.isDisposed());
+			assertFalse(image.isDisposed(), "Image is disposed");
 			return;
 		}
 	}
@@ -183,8 +183,8 @@ public class ResourceManagerTest {
 		// Allocating resources without the manager will not reuse duplicates, so we
 		// should get exactly one resource per descriptor.
 
-		Assert.assertEquals("Expecting one resource to be allocated per descriptor", descriptors.length,
-				TestDescriptor.refCount);
+		Assertions.assertEquals(descriptors.length,
+				TestDescriptor.refCount, "Expecting one resource to be allocated per descriptor");
 
 		// Deallocate resources directly using the descriptors
 		for (int i = 0; i < descriptors.length; i++) {
@@ -209,15 +209,14 @@ public class ResourceManagerTest {
 			resources[i] = resource;
 		}
 
-		Assert.assertEquals(
-				"Descriptors created from Images should not reallocate Images when the original can be reused",
-				testImage, resources[9]);
+		Assertions.assertEquals(testImage, resources[9],
+				"Descriptors created from Images should not reallocate Images when the original can be reused");
 
 		// Allocating resources without the manager will reuse duplicates, so the number
 		// of resources should equal the number of unique descriptors.
 
-		Assert.assertEquals("Duplicate descriptors should be reused", descriptors.length - numDupes,
-				TestDescriptor.refCount);
+		Assertions.assertEquals(descriptors.length - numDupes,
+				TestDescriptor.refCount, "Duplicate descriptors should be reused");
 
 		// Deallocate resources directly using the descriptors
 		for (DeviceResourceDescriptor<?> next : descriptors) {
@@ -265,13 +264,13 @@ public class ResourceManagerTest {
 		// back down to the count we had after we allocated lm1 resources)
 		allocateResources(lm2, lm2Resources);
 		deallocateResources(lm2, lm2Resources);
-		Assert.assertEquals(lm1Count, TestDescriptor.refCount);
+		Assertions.assertEquals(TestDescriptor.refCount, lm1Count);
 
 		// Dispose lm2 (shouldn't do anything since we already deallocated all of its
 		// resources)
 		// Ensure that this doesn't change any refcounts
 		lm2.dispose();
-		Assert.assertEquals(lm1Count, TestDescriptor.refCount);
+		Assertions.assertEquals(TestDescriptor.refCount, lm1Count);
 
 		// Dispose lm1 without first deallocating its resources. This should correctly
 		// detect
@@ -280,7 +279,7 @@ public class ResourceManagerTest {
 		// allocating
 		// the global resources.
 		lm1.dispose();
-		Assert.assertEquals(initialCount, TestDescriptor.refCount);
+		Assertions.assertEquals(TestDescriptor.refCount, initialCount);
 
 	}
 
@@ -293,7 +292,7 @@ public class ResourceManagerTest {
 		// Allocate a bunch of global resources
 		allocateResources(globalResourceManager, gResources);
 
-		Assert.assertEquals(2, TestDescriptor.refCount);
+		Assertions.assertEquals(TestDescriptor.refCount, 2);
 	}
 
 	/*
@@ -303,7 +302,7 @@ public class ResourceManagerTest {
 	public void testResourceManagerFind() throws Exception {
 		DeviceResourceDescriptor<?> descriptor = descriptors[0];
 		Object resource = globalResourceManager.find(descriptor);
-		assertNull("Resource should be null since it is not allocated", resource);
+		assertNull(resource, "Resource should be null since it is not allocated");
 		resource = globalResourceManager.create(descriptor);
 
 		// Ensure that the resource was allocated correctly
@@ -311,8 +310,8 @@ public class ResourceManagerTest {
 
 		// Now the resource should be found
 		Object foundResource = globalResourceManager.find(descriptor);
-		assertNotNull("Found resource should not be null", foundResource);
-		assertTrue("Found resource should be an image", foundResource instanceof Image);
+		assertNotNull(foundResource, "Found resource should not be null");
+		assertTrue(foundResource instanceof Image, "Found resource should be an image");
 
 		// Destroy the resource we created
 		globalResourceManager.destroy(descriptor);

@@ -14,8 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Most of the setup has been taken from

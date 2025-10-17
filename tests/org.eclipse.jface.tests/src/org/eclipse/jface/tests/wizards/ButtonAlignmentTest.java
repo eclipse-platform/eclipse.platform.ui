@@ -15,29 +15,29 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ButtonAlignmentTest {
 
 	private TheTestWizard wizard;
 	private TheTestWizardDialog dialog;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		// ensure we've initialized a display for this thread
 		Display.getDefault();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dialog != null && dialog.getShell() != null
 				&& !dialog.getShell().isDisposed()) {
@@ -56,8 +56,8 @@ public class ButtonAlignmentTest {
 		Composite parent = dialog.getFinishedButton().getParent();
 		Control[] children = parent.getChildren();
 		assertEquals(
-				"There should be three children, a composite for back/next buttons, the finish button, and the cancel button", //$NON-NLS-1$
-				3, children.length);
+				3, children.length,
+				"There should be three children, a composite for back/next buttons, the finish button, and the cancel button"); //$NON-NLS-1$
 
 		// first children should be the Composite holding the 'Back' and 'Next'
 		// buttons
@@ -66,10 +66,10 @@ public class ButtonAlignmentTest {
 
 		// retrieve its children and verify its contents
 		Control[] backNextChildren = backNextParent.getChildren();
-		assertEquals("Back button should be the first button", dialog //$NON-NLS-1$
-				.getBackButton(), backNextChildren[0]);
-		assertEquals("Next button should be the second button", dialog //$NON-NLS-1$
-				.getNextButton(), backNextChildren[1]);
+		assertEquals(dialog //$NON-NLS-1$
+				.getBackButton(), backNextChildren[0], "Back button should be the first button");
+		assertEquals(dialog //$NON-NLS-1$
+				.getNextButton(), backNextChildren[1], "Next button should be the second button");
 
 		// verify button alignment based on the platform's dismissal alignment
 		int finishIndex = parent.getDisplay().getDismissalAlignment() == SWT.LEFT ? 1
@@ -78,9 +78,9 @@ public class ButtonAlignmentTest {
 				: 1;
 
 		assertEquals(
-				"Finish button's alignment is off", dialog.getFinishedButton(), children[finishIndex]); //$NON-NLS-1$
+				dialog.getFinishedButton(), children[finishIndex], "Finish button's alignment is off"); //$NON-NLS-1$
 		assertEquals(
-				"Cancel button's alignment is off", dialog.getCancelButton(), children[cancelIndex]); //$NON-NLS-1$
+				dialog.getCancelButton(), children[cancelIndex], "Cancel button's alignment is off"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -100,8 +100,8 @@ public class ButtonAlignmentTest {
 		Composite parent = dialog.getFinishedButton().getParent();
 		Control[] children = parent.getChildren();
 		assertEquals(
-				"There should be two children, the finish button, and the cancel button", //$NON-NLS-1$
-				2, children.length);
+				2, children.length,
+				"There should be two children, the finish button, and the cancel button"); //$NON-NLS-1$
 
 		// verify button alignment based on the platform's dismissal alignment
 		int finishIndex = parent.getDisplay().getDismissalAlignment() == SWT.LEFT ? 0
@@ -110,9 +110,9 @@ public class ButtonAlignmentTest {
 				: 0;
 
 		assertEquals(
-				"Finish button's alignment is off", dialog.getFinishedButton(), children[finishIndex]); //$NON-NLS-1$
+				dialog.getFinishedButton(), children[finishIndex], "Finish button's alignment is off"); //$NON-NLS-1$
 		assertEquals(
-				"Cancel button's alignment is off", dialog.getCancelButton(), children[cancelIndex]); //$NON-NLS-1$
+				dialog.getCancelButton(), children[cancelIndex], "Cancel button's alignment is off"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -133,8 +133,8 @@ public class ButtonAlignmentTest {
 		Composite parent = dialog.getFinishedButton().getParent();
 		Control[] children = parent.getChildren();
 		assertEquals(
-				"There should be three children, a composite for back/next buttons, the finish button, and the cancel button", //$NON-NLS-1$
-				3, children.length);
+				3, children.length,
+				"There should be three children, a composite for back/next buttons, the finish button, and the cancel button"); //$NON-NLS-1$
 
 		// first children should be the Composite holding the 'Back' and 'Next'
 		// buttons
@@ -143,10 +143,10 @@ public class ButtonAlignmentTest {
 
 		// retrieve its children and verify its contents
 		Control[] backNextChildren = backNextParent.getChildren();
-		assertEquals("Back button should be the first button", dialog //$NON-NLS-1$
-				.getBackButton(), backNextChildren[0]);
-		assertEquals("Next button should be the second button", dialog //$NON-NLS-1$
-				.getNextButton(), backNextChildren[1]);
+		assertEquals(dialog //$NON-NLS-1$
+				.getBackButton(), backNextChildren[0], "Back button should be the first button");
+		assertEquals(dialog //$NON-NLS-1$
+				.getNextButton(), backNextChildren[1], "Next button should be the second button");
 
 		// verify button alignment based on the platform's dismissal alignment
 		int finishIndex = parent.getDisplay().getDismissalAlignment() == SWT.LEFT ? 1
@@ -155,9 +155,9 @@ public class ButtonAlignmentTest {
 				: 1;
 
 		assertEquals(
-				"Finish button's alignment is off", dialog.getFinishedButton(), children[finishIndex]); //$NON-NLS-1$
+				dialog.getFinishedButton(), children[finishIndex], "Finish button's alignment is off"); //$NON-NLS-1$
 		assertEquals(
-				"Cancel button's alignment is off", dialog.getCancelButton(), children[cancelIndex]); //$NON-NLS-1$
+				dialog.getCancelButton(), children[cancelIndex], "Cancel button's alignment is off"); //$NON-NLS-1$
 	}
 
 }

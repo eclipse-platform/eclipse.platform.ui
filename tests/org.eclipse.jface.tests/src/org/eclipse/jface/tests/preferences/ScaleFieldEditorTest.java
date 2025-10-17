@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.preferences;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.ScaleFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ScaleFieldEditorTest {
 
@@ -31,13 +31,13 @@ public class ScaleFieldEditorTest {
 	private Shell shell;
 	private ScaleFieldEditor editor;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		shell = new Shell(SWT.NONE);
 		editor = new ScaleFieldEditor(PREFKEY, "Test Scale", shell);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();

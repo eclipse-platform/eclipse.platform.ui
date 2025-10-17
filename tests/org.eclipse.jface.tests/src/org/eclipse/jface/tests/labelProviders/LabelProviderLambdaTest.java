@@ -1,6 +1,6 @@
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.tests.viewers.StructuredViewerTest.TestLabelProvider;
@@ -13,7 +13,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LabelProviderLambdaTest {
 
@@ -47,7 +47,7 @@ public class LabelProviderLambdaTest {
 		shell.open();
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
-		assertEquals("rendered label", Integer.valueOf(0).toString(), firstElementText);
+		assertEquals(Integer.valueOf(0).toString(), firstElementText, "rendered label");
 	}
 
 	@Test
@@ -60,8 +60,8 @@ public class LabelProviderLambdaTest {
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
 		LabelProvider provider = (LabelProvider) viewer.getLabelProvider();
-		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
-		assertEquals("same image", fgImage, provider.getImage(table.getItem(0)));
+		assertEquals(Integer.valueOf(0).toString(), firstElementText, "same label text");
+		assertEquals(fgImage, provider.getImage(table.getItem(0)), "same image");
 
 	}
 
@@ -75,8 +75,8 @@ public class LabelProviderLambdaTest {
 		Table table = (Table) viewer.getControl();
 		LabelProvider provider = (LabelProvider) viewer.getLabelProvider();
 		String firstElementText = table.getItem(0).getText();
-		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
-		assertEquals("same image", fgImage, provider.getImage(table.getItem(0)));
+		assertEquals(Integer.valueOf(0).toString(), firstElementText, "same label text");
+		assertEquals(fgImage, provider.getImage(table.getItem(0)), "same image");
 	}
 
 }
