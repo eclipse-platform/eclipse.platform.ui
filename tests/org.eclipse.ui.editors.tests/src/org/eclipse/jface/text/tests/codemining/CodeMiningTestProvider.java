@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.codemining.AbstractCodeMining;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
@@ -50,7 +49,7 @@ public class CodeMiningTestProvider extends AbstractCodeMiningProvider {
 				});
 			}
 			if (provideContentMiningAtOffset >= 0) {
-				minings.add(new AbstractCodeMining(new Position(provideContentMiningAtOffset, 1), this, null) {
+				minings.add(new LineContentCodeMining(new Position(provideContentMiningAtOffset, 1), this, null) {
 					@Override
 					public String getLabel() {
 						return "Content mining";
