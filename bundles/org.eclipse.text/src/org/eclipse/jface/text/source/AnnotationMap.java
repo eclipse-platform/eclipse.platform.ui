@@ -64,7 +64,7 @@ class AnnotationMap implements IAnnotationMap {
 	 * If the lock object is not explicitly set by this method, the annotation map uses its internal
 	 * lock object for synchronization.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <em>You should not override an existing lock object unless you own that lock object yourself.
 	 * Use the existing lock object instead.</em>
@@ -85,7 +85,7 @@ class AnnotationMap implements IAnnotationMap {
 
 	/**
 	 * Lock object used to synchronize concurrent access to the internal map data.
-	 * 
+	 *
 	 * @return <b>never</b> returns null
 	 */
 	@Override
