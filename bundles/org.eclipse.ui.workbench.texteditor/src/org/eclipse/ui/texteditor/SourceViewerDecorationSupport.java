@@ -506,7 +506,7 @@ public class SourceViewerDecorationSupport {
 	 *            the symbolic font name
 	 * @deprecated As of 4.8, this is no longer used
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public void setSymbolicFontName(String symbolicFontName) {
 	}
 

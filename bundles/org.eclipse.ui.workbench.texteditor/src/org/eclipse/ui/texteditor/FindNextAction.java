@@ -122,7 +122,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public FindNextAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;

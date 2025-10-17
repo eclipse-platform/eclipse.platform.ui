@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * @deprecated no longer supported
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-12")
 public final class PropagatingFontFieldEditor extends WorkbenchChainedTextFontFieldEditor {
 
 	/**
@@ -32,7 +32,7 @@ public final class PropagatingFontFieldEditor extends WorkbenchChainedTextFontFi
 	 * @param parent the parent control
 	 * @deprecated no longer supported
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public PropagatingFontFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}

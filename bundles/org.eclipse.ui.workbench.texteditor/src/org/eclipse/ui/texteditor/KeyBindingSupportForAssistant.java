@@ -95,7 +95,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @param contentAssistFacade the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public KeyBindingSupportForAssistant(ContentAssistantFacade contentAssistFacade) {
 	}
 
@@ -119,7 +119,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @param contentAssistant the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public KeyBindingSupportForAssistant(ContentAssistant contentAssistant) {
 	}
 

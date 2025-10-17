@@ -36,7 +36,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_PRINT}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String PRINT= IWorkbenchCommandConstants.FILE_PRINT;
 
 	/**
@@ -45,7 +45,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, no longer used
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String SAVE= IWorkbenchCommandConstants.FILE_SAVE;
 
 	/**
@@ -54,7 +54,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.4, replaced by {@link #REVERT}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String REVERT_TO_SAVED= "org.eclipse.ui.edit.revertToSaved"; //$NON-NLS-1$
 
 	/**
@@ -64,7 +64,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @since 3.4
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_REVERT}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String REVERT= IWorkbenchCommandConstants.FILE_REVERT;
 
 	/**
@@ -74,7 +74,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_PROPERTIES}
 	 * @since 3.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String PROPERTIES= IWorkbenchCommandConstants.FILE_PROPERTIES;
 
 
@@ -86,7 +86,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CUT}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String CUT= IWorkbenchCommandConstants.EDIT_CUT;
 
 	/**
@@ -95,7 +95,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_COPY}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String COPY= IWorkbenchCommandConstants.EDIT_COPY;
 
 	/**
@@ -104,7 +104,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_PASTE}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String PASTE= IWorkbenchCommandConstants.EDIT_PASTE;
 
 	/**
@@ -113,7 +113,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_UNDO}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String UNDO= IWorkbenchCommandConstants.EDIT_UNDO;
 
 	/**
@@ -122,7 +122,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_REDO}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String REDO= IWorkbenchCommandConstants.EDIT_REDO;
 
 	/**
@@ -131,7 +131,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_DELETE}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String DELETE= IWorkbenchCommandConstants.EDIT_DELETE;
 
 	/**
@@ -140,7 +140,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_SELECT_ALL}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String SELECT_ALL= IWorkbenchCommandConstants.EDIT_SELECT_ALL;
 
 	/**
@@ -149,7 +149,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_FIND_AND_REPLACE}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String FIND_REPLACE= IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE;
 
 	/**
@@ -158,7 +158,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_BOOKMARK}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String ADD_BOOKMARK= IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK;
 
 	/**
@@ -167,7 +167,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_TASK}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String ADD_TASK= IWorkbenchCommandConstants.EDIT_ADD_TASK;
 
 	/**
@@ -177,7 +177,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @since 3.0
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_MOVE}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String MOVE= IWorkbenchCommandConstants.FILE_MOVE;
 
 	/**
@@ -187,7 +187,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @since 3.0
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_RENAME}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String RENAME= IWorkbenchCommandConstants.FILE_RENAME;
 
 

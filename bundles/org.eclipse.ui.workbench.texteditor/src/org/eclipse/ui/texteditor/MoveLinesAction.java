@@ -110,7 +110,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @deprecated As of 3.5, replaced by
 	 *             {@link #MoveLinesAction(ResourceBundle, String, ITextEditor, ITextViewer, boolean, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
 		this(bundle, prefix, editor, editor != null ? editor.getSourceViewer() : null, upwards, copy);
 	}

@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
  * @noextend This class is not intended to be subclassed by clients.
  * @deprecated As of 3.5, replaced by {@link org.eclipse.ui.actions.ActionFactory#SAVE}
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-12")
 public class SaveAction extends TextEditorAction {
 
 	/**
