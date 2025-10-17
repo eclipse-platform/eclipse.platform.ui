@@ -126,6 +126,7 @@ final class TemplatesMessages extends NLS {
 	public static String TemplatesPage_remove_title_single;
 	public static String TemplatesPage_remove_title_multi;
 	public static String TemplatesView_no_templates;
+	public static String TemplatePreferencePage_filterText;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TemplatesMessages.class);

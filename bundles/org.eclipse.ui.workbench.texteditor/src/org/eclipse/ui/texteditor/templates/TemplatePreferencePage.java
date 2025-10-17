@@ -88,6 +88,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -96,6 +97,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.Document;
@@ -152,6 +154,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 *
 	 * @since 3.3
 	 */
+	private final Map<String, Boolean> checkedStates = new HashMap<>();
+
 	protected static class EditTemplateDialog extends StatusDialog {
 
 		private final Template fOriginalTemplate;
@@ -796,37 +800,44 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	public void init(IWorkbench workbench) {
 	}
 
+	private String getKey(TemplatePersistenceData data) {
+		return data.getTemplate().getName() + "|" + data.getTemplate().getContextTypeId(); //$NON-NLS-1$
+	}
+
 	@Override
 	protected Control createContents(Composite ancestor) {
-		Composite parent= new Composite(ancestor, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		parent.setLayout(layout);
+		Composite parent = new Composite(ancestor, SWT.NONE);
+		parent.setLayout(new GridLayout(1, false));
 
-		Composite innerParent= new Composite(parent, SWT.NONE);
-		GridLayout innerLayout= new GridLayout();
-		innerLayout.numColumns= 2;
-		innerLayout.marginHeight= 0;
-		innerLayout.marginWidth= 0;
-		innerParent.setLayout(innerLayout);
-		GridData gd= new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan= 2;
-		innerParent.setLayoutData(gd);
+		Composite tcomposite = new Composite(parent, SWT.NONE);
+		tcomposite.setLayout(new GridLayout(2, false));
+		tcomposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Composite tableComposite= new Composite(innerParent, SWT.NONE);
-		GridData data= new GridData(GridData.FILL_BOTH);
-		data.widthHint= 360;
-		data.heightHint= convertHeightInCharsToPixels(10);
-		tableComposite.setLayoutData(data);
+		Composite fcomposite = new Composite(tcomposite, SWT.NONE);
+		fcomposite.setLayout(new GridLayout(1, false));
+		fcomposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		ColumnLayout columnLayout= new ColumnLayout();
+		Text filterText = new Text(fcomposite, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
+		filterText.setMessage(TemplatesMessages.TemplatePreferencePage_filterText);
+		GridData filterData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		filterData.widthHint = 360;
+		filterText.setLayoutData(filterData);
+
+		Composite tableComposite = new Composite(fcomposite, SWT.NONE);
+		GridData tableData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		tableData.widthHint = 360;
+		tableData.heightHint = convertHeightInCharsToPixels(10);
+		tableComposite.setLayoutData(tableData);
+
+		ColumnLayout columnLayout = new ColumnLayout();
 		tableComposite.setLayout(columnLayout);
-		Table table= new Table(tableComposite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		Table table = new Table(tableComposite,
+				SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		GC gc= new GC(getShell());
 		gc.setFont(JFaceResources.getDialogFont());
@@ -877,18 +888,52 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.addCheckStateListener(event -> {
 			TemplatePersistenceData d = (TemplatePersistenceData) event.getElement();
 			d.setEnabled(event.getChecked());
+			checkedStates.put(getKey(d), event.getChecked());
 		});
 
 		BidiUtils.applyTextDirection(fTableViewer.getControl(), BidiUtils.BTD_DEFAULT);
 
-		Composite buttons= new Composite(innerParent, SWT.NONE);
-		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		buttons.setLayout(layout);
+		TemplateFilter filter = new TemplateFilter();
+		fTableViewer.addFilter(filter);
 
-		fAddButton= new Button(buttons, SWT.PUSH);
+		filterText.addModifyListener(e -> {
+			filter.setSearchText(filterText.getText());
+			for (Object element : fTableViewer.getCheckedElements()) {
+				if (element instanceof TemplatePersistenceData data) {
+					String key = getKey(data);
+					checkedStates.put(key, true);
+				}
+			}
+			for (Object element : ((IStructuredContentProvider) fTableViewer.getContentProvider())
+					.getElements(fTableViewer.getInput())) {
+				if (element instanceof TemplatePersistenceData data) {
+					String key = getKey(data);
+					if (!fTableViewer.getChecked(data)) {
+						checkedStates.putIfAbsent(key, false);
+					}
+				}
+			}
+			fTableViewer.refresh();
+
+			for (Object element : ((IStructuredContentProvider) fTableViewer.getContentProvider())
+					.getElements(fTableViewer.getInput())) {
+				if (element instanceof TemplatePersistenceData data) {
+					Boolean checked = checkedStates.get(getKey(data));
+					if (checked != null && checked) {
+						fTableViewer.setChecked(data, true);
+					}
+				}
+			}
+		});
+
+		Composite buttons = new Composite(tcomposite, SWT.NONE);
+		buttons.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
+		GridLayout buttonLayout = new GridLayout();
+		buttonLayout.marginHeight = 0;
+		buttonLayout.marginWidth = 0;
+		buttons.setLayout(buttonLayout);
+
+		fAddButton = new Button(buttons, SWT.PUSH);
 		fAddButton.setText(TemplatesMessages.TemplatePreferencePage_new);
 		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.addListener(SWT.Selection, e -> add());
@@ -932,9 +977,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (isShowFormatterSetting()) {
 			fFormatButton= new Button(parent, SWT.CHECK);
 			fFormatButton.setText(TemplatesMessages.TemplatePreferencePage_use_code_formatter);
-			GridData gd1= new GridData();
-			gd1.horizontalSpan= 2;
-			fFormatButton.setLayoutData(gd1);
+			fFormatButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			fFormatButton.setSelection(getPreferenceStore().getBoolean(getFormatterPreferenceKey()));
 		}
 
@@ -944,9 +987,24 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		updateButtons();
 		Dialog.applyDialogFont(parent);
-		innerParent.layout();
 
 		return parent;
+	}
+
+		class TemplateFilter extends ViewerFilter {
+		private String searchString = ""; //$NON-NLS-1$
+		public void setSearchText(String s) {
+			searchString = (s == null) ? "" : s.toLowerCase(); //$NON-NLS-1$
+		}
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (searchString.isEmpty())
+				return true;
+			Template template = ((TemplatePersistenceData) element).getTemplate();
+			return template.getName().toLowerCase().contains(searchString)
+					|| template.getContextTypeId().toLowerCase().contains(searchString)
+					|| template.getDescription().toLowerCase().contains(searchString);
+		}
 	}
 
 	/*
