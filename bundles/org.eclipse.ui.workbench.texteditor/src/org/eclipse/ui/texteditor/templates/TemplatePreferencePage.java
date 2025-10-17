@@ -1174,7 +1174,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @return an <code>EditTemplateDialog</code> which will be opened.
 	 * @deprecated not called any longer as of 3.1 - use {@link #editTemplate(Template, boolean, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	protected Dialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable) {
 		return new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);
 	}

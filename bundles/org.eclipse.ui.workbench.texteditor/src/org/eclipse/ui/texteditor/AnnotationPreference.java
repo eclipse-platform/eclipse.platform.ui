@@ -486,7 +486,7 @@ public class AnnotationPreference {
 	 * @return the marker type, or <code>null</code> if none is set
 	 * @deprecated since 3.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public String getMarkerType() {
 		return fMarkerType;
 	}
@@ -497,7 +497,7 @@ public class AnnotationPreference {
 	 * @return the marker severity
 	 * @deprecated since 3.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public int getSeverity() {
 		return fSeverity;
 	}

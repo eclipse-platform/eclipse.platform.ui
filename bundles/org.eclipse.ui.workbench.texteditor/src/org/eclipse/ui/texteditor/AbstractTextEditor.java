@@ -2043,7 +2043,7 @@ public abstract class AbstractTextEditor extends EditorPart
 	 *
 	 * @deprecated As of 2.1, replaced by {@link JFaceResources#TEXT_FONT}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String PREFERENCE_FONT = JFaceResources.TEXT_FONT;
 	/**
 	 * Key used to look up foreground color preference. Value:
