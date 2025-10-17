@@ -123,7 +123,7 @@ public class ReferenceProviderDescriptor {
 	 * @return the default attribute value for this extension.
 	 * @deprecated as of 3.2, the default flag should not be used any longer
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public boolean getDefault() {
 		if (fDefault == null) {
 			String def= fConfiguration.getAttribute(DEFAULT_ATTRIBUTE);

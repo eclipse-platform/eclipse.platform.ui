@@ -349,7 +349,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart) instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public FindReplaceAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;

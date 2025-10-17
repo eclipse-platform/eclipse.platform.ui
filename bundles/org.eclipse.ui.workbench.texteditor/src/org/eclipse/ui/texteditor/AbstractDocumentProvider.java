@@ -177,7 +177,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 * @deprecated As of 3.6, replaced by {@link Status#OK_STATUS}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.AbstractDocumentProvider_ok, null);
 
 	/**

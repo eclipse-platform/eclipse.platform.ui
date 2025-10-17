@@ -222,7 +222,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
 	 * @deprecated in 3.0 Use <code>org.eclipse.ui.texteditor.ITextEditorHelpContextIds.BOOKMARK_ACTION</code> instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String BOOKMARK_ACTION= PREFIX + IWorkbenchActionConstants.BOOKMARK + ACTION_POSTFIX;
 
 	/**
@@ -230,14 +230,14 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.addTask_action_context"</code>
 	 * @deprecated in 3.0 Use <code>org.eclipse.ui.texteditor.ITextEditorHelpContextIds.ADD_TASK_ACTION</code> instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String ADD_TASK_ACTION= PREFIX + IWorkbenchActionConstants.ADD_TASK + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action. Value: <code>"org.eclipse.ui.save_action_context"</code>
 	 * @deprecated As of 3.5, no longer used
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String SAVE_ACTION= PREFIX + ITextEditorActionConstants.SAVE + ACTION_POSTFIX;
 
 	/**
@@ -264,7 +264,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.0
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String CONVERT_LINE_DELIMITERS_TO_WINDOWS= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS + ACTION_POSTFIX;
 
 	/**
@@ -273,7 +273,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.0
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String CONVERT_LINE_DELIMITERS_TO_UNIX= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX + ACTION_POSTFIX;
 
 	/**
@@ -282,7 +282,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.0
 	 * @deprecated since 3.1 No longer supported as editor actions.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String CONVERT_LINE_DELIMITERS_TO_MAC= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC + ACTION_POSTFIX;
 
 	/**

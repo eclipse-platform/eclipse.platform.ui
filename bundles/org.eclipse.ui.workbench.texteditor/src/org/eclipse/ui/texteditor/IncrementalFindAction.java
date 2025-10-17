@@ -83,7 +83,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 * @since 2.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;
