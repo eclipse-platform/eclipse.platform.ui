@@ -361,7 +361,7 @@ public class Diffs {
 	 *         <code>false</code> otherwise.
 	 * @deprecated Use {@link Objects#equals(Object, Object)} instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final boolean equals(final Object left, final Object right) {
 		return Objects.equals(left, right);
 	}

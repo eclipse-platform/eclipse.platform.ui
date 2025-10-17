@@ -157,7 +157,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 * @deprecated
 	 * @generated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static XpathtestPackage getPackage() {
 		return XpathtestPackage.eINSTANCE;
 	}
