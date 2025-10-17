@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StructuredSelectionTest {
 
@@ -226,26 +226,26 @@ public class StructuredSelectionTest {
 
 		public static void testExpectedEqualsObjects(Object o1, Object o2) {
 			// reflexive
-			assertTrue(REFLEXIVITY_MSG, o1.equals(o1));
-			assertTrue(REFLEXIVITY_MSG, o2.equals(o2));
+			assertTrue(o1.equals(o1), REFLEXIVITY_MSG);
+			assertTrue(o2.equals(o2), REFLEXIVITY_MSG);
 			// symmetric
-			assertTrue(SYMMETRICITY_MSG, o1.equals(o2));
-			assertTrue(SYMMETRICITY_MSG, o2.equals(o1));
+			assertTrue(o1.equals(o2), SYMMETRICITY_MSG);
+			assertTrue(o2.equals(o1), SYMMETRICITY_MSG);
 			// consistent
 			for (int i = 0; i < CONSISTENCY_THRESHOLD; i++) {
-				assertTrue(EQUALS_CONSITENCY_MSG, o1.equals(o2));
-				assertTrue(EQUALS_CONSITENCY_MSG, o2.equals(o1));
+				assertTrue(o1.equals(o2), EQUALS_CONSITENCY_MSG);
+				assertTrue(o2.equals(o1), EQUALS_CONSITENCY_MSG);
 			}
 
 			// For any non-null reference value x, x.equals(null) should return false.
-			assertFalse(NOT_EQUALS_NULL_MSG, o1.equals(null));
-			assertFalse(NOT_EQUALS_NULL_MSG, o2.equals(null));
+			assertFalse(o1.equals(null), NOT_EQUALS_NULL_MSG);
+			assertFalse(o2.equals(null), NOT_EQUALS_NULL_MSG);
 
 			// a.equals(b) => a.hashCode() == b.hashCode()
-			assertEquals(EQUALS_IMPLIES_SAME_HASHCODE_MSG, o1.hashCode(), o2.hashCode());
+			assertEquals(o1.hashCode(), o2.hashCode(), EQUALS_IMPLIES_SAME_HASHCODE_MSG);
 			for (int i = 0; i < CONSISTENCY_THRESHOLD; i++) {
-				assertEquals(HASHCODE_CONSISTENCY_MSG, o1.hashCode(), o1.hashCode());
-				assertEquals(HASHCODE_CONSISTENCY_MSG, o2.hashCode(), o2.hashCode());
+				assertEquals(o1.hashCode(), o1.hashCode(), HASHCODE_CONSISTENCY_MSG);
+				assertEquals(o2.hashCode(), o2.hashCode(), HASHCODE_CONSISTENCY_MSG);
 			}
 		}
 

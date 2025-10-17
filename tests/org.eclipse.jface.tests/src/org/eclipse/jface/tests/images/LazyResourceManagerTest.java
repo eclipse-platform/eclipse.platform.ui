@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.eclipse.jface.resource.LazyResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class LazyResourceManagerTest {

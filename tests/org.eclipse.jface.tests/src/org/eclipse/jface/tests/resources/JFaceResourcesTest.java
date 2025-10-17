@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.resources;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -21,7 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JFaceResourcesTest {
 
@@ -32,7 +32,7 @@ public class JFaceResourcesTest {
 		Composite composite = new Composite(shell, SWT.NONE);
 		LocalResourceManager localResourceManager = JFaceResources.managerFor(composite);
 
-		assertNotNull("LocalResourceManager cannot be created via static accessor", localResourceManager);
+		assertNotNull(localResourceManager, "LocalResourceManager cannot be created via static accessor");
 	}
 
 }

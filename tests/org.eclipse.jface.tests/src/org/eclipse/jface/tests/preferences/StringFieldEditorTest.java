@@ -16,23 +16,23 @@
 
 package org.eclipse.jface.tests.preferences;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class StringFieldEditorTest {
 
 	private Shell shell;
 	private StringFieldEditor stringFieldEditor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 

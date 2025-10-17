@@ -15,8 +15,8 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
@@ -26,15 +26,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WizardProgressMonitorTest {
 
 	private ProgressMonitoringWizardDialog dialog;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		// initialize a display
 		Display.getDefault();
@@ -42,7 +42,7 @@ public class WizardProgressMonitorTest {
 		dialog.setBlockOnOpen(false);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();

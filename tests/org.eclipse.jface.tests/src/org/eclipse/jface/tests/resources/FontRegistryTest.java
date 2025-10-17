@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.resources;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.time.Duration;
@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FontRegistryTest {
 
@@ -92,7 +92,7 @@ public class FontRegistryTest {
 	private static void waitForDisplayInstantiation(AtomicReference<Display> displayReference) {
 		Instant maximumEndTime = Instant.now().plus(Duration.ofSeconds(10));
 		while (displayReference.get() == null) {
-			assertFalse("display was not instantiated in time", Instant.now().isAfter(maximumEndTime));
+			assertFalse(Instant.now().isAfter(maximumEndTime), "display was not instantiated in time");
 			Thread.yield();
 		}
 	}

@@ -14,14 +14,14 @@
 package org.eclipse.jface.tests.dialogs;
 
 import org.eclipse.jface.dialogs.InputDialog;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class InputDialogTest {
 
 	private InputDialog dialog;
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();

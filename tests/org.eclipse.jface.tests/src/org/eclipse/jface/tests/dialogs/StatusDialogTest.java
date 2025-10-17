@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,9 +22,9 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class StatusDialogTest {
 
@@ -41,12 +41,12 @@ public class StatusDialogTest {
 		assertEquals("&&", statusLabel.getText());
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}
