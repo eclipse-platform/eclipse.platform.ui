@@ -79,17 +79,17 @@ public interface IAnnotationMap extends Map<Annotation, Position>, ISynchronizab
 	 */
 	@Override
 	Collection<Position> values();
-	
+
 	/**
 	 * Implementers of this interface should <b>never</b> return null. Clients should use the lock
 	 * object in order to synchronize concurrent access to the implementer.
-	 * 
+	 *
 	 * @return the lock object to be used, if no explicit lock object is set, internal one should
 	 *         be used, therefore never <code>null</code>
 	 */
 	@Override
 	Object getLockObject();
-	
+
 	/**
 	 * Sets the lock object for this object. Subsequent calls to specified methods of this object
 	 * are synchronized on this lock object. Which methods are synchronized is specified by the
