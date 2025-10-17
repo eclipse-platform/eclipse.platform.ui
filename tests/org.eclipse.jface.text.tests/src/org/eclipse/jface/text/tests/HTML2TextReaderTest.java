@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -68,7 +68,7 @@ public class HTML2TextReaderTest {
 			ranges.add(styleRangeIterator.next());
 		}
 
-		assertEquals("Incorrect number of style ranges", styleRangeCount, ranges.size());
+		assertEquals(styleRangeCount, ranges.size(), "Incorrect number of style ranges");
 
 		Collections.sort(ranges, (r1, r2) -> r1.start - r2.start);
 
