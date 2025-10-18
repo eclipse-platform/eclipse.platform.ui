@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -39,7 +39,7 @@ public class IncrementalAsyncContentAssistTests {
 
 	private ContentAssistant ca;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		tearDown();
 
@@ -57,7 +57,7 @@ public class IncrementalAsyncContentAssistTests {
 		ca.setSorter(comparator::compare);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (shell != null) {
 			ca.uninstall();

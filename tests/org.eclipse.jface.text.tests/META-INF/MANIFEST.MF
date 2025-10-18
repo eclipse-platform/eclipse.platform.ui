@@ -30,4 +30,6 @@ Import-Package: org.mockito,
  org.mockito.invocation,
  org.mockito.stubbing,
  org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.params;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.params.provider;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
