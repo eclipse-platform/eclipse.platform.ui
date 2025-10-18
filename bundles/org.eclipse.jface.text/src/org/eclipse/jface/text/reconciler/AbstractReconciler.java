@@ -68,7 +68,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 		private boolean fStarted;
 
-		private String fName;
+		private final String fName;
 
 		private boolean fIsAlive;
 
@@ -103,8 +103,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		public void cancel() {
 			fCanceled= true;
 			IProgressMonitor pm= fProgressMonitor;
-			if (pm != null)
+			if (pm != null) {
 				pm.setCanceled(true);
+			}
 			synchronized (fDirtyRegionQueue) {
 				fDirtyRegionQueue.notifyAll();
 			}
@@ -172,8 +173,9 @@ abstract public class AbstractReconciler implements IReconciler {
 
 					delay();
 
-					if (fCanceled)
+					if (fCanceled) {
 						break;
+					}
 
 					if (!isDirty()) {
 						waitFinish= false; //signalWaitForFinish() was called but nothing todo
@@ -265,8 +267,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		public void documentChanged(DocumentEvent e) {
 
 			if (fWorker.isActive() || !fWorker.isDirty() && fWorker.isAlive()) {
-				if (!fIsAllowedToModifyDocument && isRunningInReconcilerThread())
+				if (!fIsAllowedToModifyDocument && isRunningInReconcilerThread()) {
 					throw new UnsupportedOperationException("The reconciler thread is not allowed to modify the document"); //$NON-NLS-1$
+				}
 				aboutToBeReconciledInternal();
 			}
 
@@ -274,11 +277,13 @@ abstract public class AbstractReconciler implements IReconciler {
 			 * The second OR condition handles the case when the document
 			 * gets changed while still inside initialProcess().
 			 */
-			if (fWorker.isActive() || fWorker.isDirty() && fWorker.isAlive())
+			if (fWorker.isActive() || fWorker.isDirty() && fWorker.isAlive()) {
 				fProgressMonitor.setCanceled(true);
+			}
 
-			if (fIsIncrementalReconciler)
+			if (fIsIncrementalReconciler) {
 				createDirtyRegion(e);
+			}
 
 			fWorker.reset();
 
@@ -289,8 +294,9 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			if (oldInput == fDocument) {
 
-				if (fDocument != null)
+				if (fDocument != null) {
 					fDocument.removeDocumentListener(this);
+				}
 
 				if (fIsIncrementalReconciler) {
 					synchronized (fDirtyRegionQueue) {
@@ -312,16 +318,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 
 			fDocument= newInput;
-			if (fDocument == null)
+			if (fDocument == null) {
 				return;
+			}
 
 
 			reconcilerDocumentChanged(fDocument);
 
 			fDocument.addDocumentListener(this);
 
-			if (!fWorker.isDirty())
+			if (!fWorker.isDirty()) {
 				aboutToBeReconciledInternal();
+			}
 
 			startReconciling();
 		}
@@ -479,8 +487,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		fViewer= textViewer;
 
 		synchronized (this) {
-			if (fWorker != null)
+			if (fWorker != null) {
 				return;
+			}
 			fWorker= new BackgroundWorker(getClass().getName());
 		}
 
@@ -622,11 +631,13 @@ abstract public class AbstractReconciler implements IReconciler {
 
 		if (fDocument != null) {
 
-			if (!fWorker.isDirty()&& fWorker.isAlive())
+			if (!fWorker.isDirty()&& fWorker.isAlive()) {
 				aboutToBeReconciledInternal();
+			}
 
-			if (fWorker.isActive())
+			if (fWorker.isActive()) {
 				fProgressMonitor.setCanceled(true);
+			}
 
 			if (fIsIncrementalReconciler) {
 				DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), fDocument.get());
@@ -642,8 +653,9 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * Clients may extend this method.
 	 */
 	protected synchronized void startReconciling() {
-		if (fWorker == null)
+		if (fWorker == null) {
 			return;
+		}
 
 		fWorker.startReconciling();
 	}
@@ -662,8 +674,9 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * @since 3.4
 	 */
 	protected synchronized boolean isRunningInReconcilerThread() {
-		if (fWorker == null)
+		if (fWorker == null) {
 			return false;
+		}
 		return Thread.currentThread() == fWorker.fThread;
 	}
 }

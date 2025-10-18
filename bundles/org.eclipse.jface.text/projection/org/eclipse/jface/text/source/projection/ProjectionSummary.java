@@ -82,11 +82,11 @@ class ProjectionSummary {
 	}
 
 
-	private ProjectionViewer fProjectionViewer;
-	private IAnnotationAccess fAnnotationAccess;
+	private final ProjectionViewer fProjectionViewer;
+	private final IAnnotationAccess fAnnotationAccess;
 	private List<String> fConfiguredAnnotationTypes;
 
-	private Object fLock= new Object();
+	private final Object fLock= new Object();
 	private IProgressMonitor fProgressMonitor;
 	private volatile Summarizer fSummarizer;
 

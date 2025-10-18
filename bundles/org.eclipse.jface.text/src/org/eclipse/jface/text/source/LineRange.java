@@ -20,8 +20,8 @@ package org.eclipse.jface.text.source;
  */
 public final class LineRange implements ILineRange {
 
-	private int fStartLine;
-	private int fNumberOfLines;
+	private final int fStartLine;
+	private final int fNumberOfLines;
 
 	/**
 	 * Creates a new line range with the given specification.

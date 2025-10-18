@@ -122,8 +122,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			public String getText(Object element) {
 				IHyperlink link= (IHyperlink)element;
 				String text= link.getHyperlinkText();
-				if (text != null)
+				if (text != null) {
 					return text;
+				}
 				return HyperlinkMessages.getString("LinkListInformationControl.unknownLink"); //$NON-NLS-1$
 			}
 		}
@@ -207,11 +208,13 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			Point preferedSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 			Point constraints= getSizeConstraints();
-			if (constraints == null)
+			if (constraints == null) {
 				return preferedSize;
+			}
 
-			if (fTable.getVerticalBar() == null || fTable.getHorizontalBar() == null)
+			if (fTable.getVerticalBar() == null || fTable.getHorizontalBar() == null) {
 				return Geometry.min(constraints, preferedSize);
+			}
 
 			int scrollBarWidth= fTable.getVerticalBar().getSize().x;
 			int scrollBarHeight= fTable.getHorizontalBar().getSize().y;
@@ -335,17 +338,20 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			fTable.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					if (fTable.getSelectionCount() < 1)
+					if (fTable.getSelectionCount() < 1) {
 						return;
+					}
 
-					if (e.button != 1)
+					if (e.button != 1) {
 						return;
+					}
 
 					if (fTable.equals(e.getSource())) {
 						Object o= fTable.getItem(new Point(e.x, e.y));
 						TableItem selection= fTable.getSelection()[0];
-						if (selection.equals(o))
+						if (selection.equals(o)) {
 							openSelectedLink();
+						}
 					}
 				}
 			});
@@ -366,8 +372,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		 * Opens the currently selected link.
 		 */
 		private void openSelectedLink() {
-			if (fTable.getSelectionCount() < 1)
+			if (fTable.getSelectionCount() < 1) {
 				return;
+			}
 
 			TableItem selection= fTable.getSelection()[0];
 			IHyperlink link= (IHyperlink)selection.getData();
@@ -458,8 +465,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			public void handleEvent(Event event) {
 				switch (event.type) {
 					case SWT.FocusOut:
-						if (!fControl.isFocusControl())
+						if (!fControl.isFocusControl()) {
 							disposeInformationControl();
+						}
 						break;
 					case SWT.MouseMove:
 						handleMouseMove(event);
@@ -473,25 +481,30 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			 * @param event the event
 			 */
 			private void handleMouseMove(Event event) {
-				if (!(event.widget instanceof Control))
+				if (!(event.widget instanceof Control)) {
 					return;
+				}
 
-				if (fControl.isFocusControl())
+				if (fControl.isFocusControl()) {
 					return;
+				}
 
 				Control eventControl= (Control) event.widget;
 
 				//transform coordinates to subject control:
 				Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
 
-				if (fSubjectArea.contains(mouseLoc))
+				if (fSubjectArea.contains(mouseLoc)) {
 					return;
+				}
 
-				if (inKeepUpZone(mouseLoc.x, mouseLoc.y, ((IInformationControlExtension3) fControl).getBounds()))
+				if (inKeepUpZone(mouseLoc.x, mouseLoc.y, ((IInformationControlExtension3) fControl).getBounds())) {
 					return;
+				}
 
-				if (!isTakingFocusWhenVisible())
+				if (!isTakingFocusWhenVisible()) {
 					hideInformationControl();
+				}
 			}
 
 			/**
@@ -512,13 +525,15 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 				// ++-----------+-------+
 				// | totalBounds        |
 				// +--------------------+
-				if (fSubjectArea.contains(x, y))
+				if (fSubjectArea.contains(x, y)) {
 					return true;
+				}
 
 				Rectangle iControlBounds= fSubjectControl.getDisplay().map(null, fSubjectControl, controlBounds);
 				Rectangle totalBounds= Geometry.copy(iControlBounds);
-				if (totalBounds.contains(x, y))
+				if (totalBounds.contains(x, y)) {
 					return true;
+				}
 
 				int keepUpY= fSubjectArea.y + fSubjectArea.height;
 				Rectangle alsoKeepUp= new Rectangle(fSubjectArea.x, keepUpY, fSubjectArea.width, totalBounds.y - keepUpY);
@@ -532,8 +547,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (!isTakingFocusWhenVisible())
+				if (!isTakingFocusWhenVisible()) {
 					hideInformationControl();
+				}
 			}
 
 			@Override
@@ -609,8 +625,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			Point result= super.computeInformationControlLocation(subjectArea, controlSize);
 
 			Point cursorLocation= fTextViewer.getTextWidget().getDisplay().getCursorLocation();
-			if (isTakingFocusWhenVisible() || cursorLocation.x <= result.x + controlSize.x)
+			if (isTakingFocusWhenVisible() || cursorLocation.x <= result.x + controlSize.x) {
 				return result;
+			}
 
 			result.x= cursorLocation.x + 20 - controlSize.x;
 			return result;
@@ -675,8 +692,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 		@Override
 		public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
-			if (priority < WIDGET_TOKEN_PRIORITY)
+			if (priority < WIDGET_TOKEN_PRIORITY) {
 				return false;
+			}
 
 			hideInformationControl();
 			return true;
@@ -784,8 +802,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		fSubjectRegion= null;
 		fHyperlinks= activeHyperlinks;
 
-		if (activeHyperlinks.length == 1)
+		if (activeHyperlinks.length == 1) {
 			return;
+		}
 
 		int start= activeHyperlinks[0].getHyperlinkRegion().getOffset();
 		int end= start + activeHyperlinks[0].getHyperlinkRegion().getLength();
@@ -811,8 +830,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 	 */
 	private void setCaret() {
 		Point selectedRange= fTextViewer.getSelectedRange();
-		if (fCursorOffset != -1 && !(fSubjectRegion.getOffset() <= selectedRange.x && selectedRange.x + selectedRange.y <= fSubjectRegion.getOffset() + fSubjectRegion.getLength()))
+		if (fCursorOffset != -1 && !(fSubjectRegion.getOffset() <= selectedRange.x && selectedRange.x + selectedRange.y <= fSubjectRegion.getOffset() + fSubjectRegion.getLength())) {
 			fTextViewer.setSelectedRange(fCursorOffset, 0);
+		}
 	}
 
 }

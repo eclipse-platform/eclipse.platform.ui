@@ -35,7 +35,7 @@ public class DirtyRegion implements ITypedRegion {
 	/** The region's length. */
 	private int fLength;
 	/** Indicates the type of the applied change. */
-	private String fType;
+	private final String fType;
 	/** The text which has been inserted. */
 	private String fText;
 
@@ -63,10 +63,12 @@ public class DirtyRegion implements ITypedRegion {
 	 * @since 3.1
 	 */
 	private String normalizeTypeValue(String type) {
-		if (INSERT.equals(type))
+		if (INSERT.equals(type)) {
 			return INSERT;
-		if (REMOVE.equals(type))
+		}
+		if (REMOVE.equals(type)) {
 			return REMOVE;
+		}
 		return null;
 	}
 
