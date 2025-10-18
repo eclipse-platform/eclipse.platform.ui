@@ -15,10 +15,8 @@ import java.util.Collections;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -48,21 +46,13 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
  * This test verify that the bounds of the text as returned by StyledText.getTextBounds()
  * actually match what's printed on the widget.
  */
-@RunWith(Parameterized.class)
 public class LineContentBoundsDrawingTest {
-	@Parameters(name="{0}")
 	public static String[] contents() {
 		return new String[] {
 				"annotation inside text",
 				" annotation just after initial space",
 				"\tannoation just after initial tab"
 		};
-	}
-
-	private final String text;
-
-	public LineContentBoundsDrawingTest(String text) {
-		this.text = text;
 	}
 
 	public static final class AccessAllAnnoations implements IAnnotationAccess {
@@ -113,14 +103,15 @@ public class LineContentBoundsDrawingTest {
 		fParent = null;
 	}
 
-	@Test
-	public void testTextBoundsMatchPaintedArea() {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("contents")
+	public void testTextBoundsMatchPaintedArea(String text) {
 		fParent.setLayout(new FillLayout());
 
 		// Create source viewer and initialize the content
 		ISourceViewer sourceViewer = new SourceViewer(fParent,null,
 				SWT.V_SCROLL | SWT.BORDER);
-		sourceViewer.setDocument(new Document(this.text), new AnnotationModel());
+		sourceViewer.setDocument(new Document(text), new AnnotationModel());
 
 		// Initialize inlined annotations support
 		InlinedAnnotationSupport support = new InlinedAnnotationSupport();
