@@ -60,11 +60,7 @@ public class GlobalNextPrevSearchEntryHandler extends AbstractHandler implements
 			hs.executeCommand(showSearchView, (Event)event.getTrigger());
 			hs.executeCommand(searchCommand, (Event)event.getTrigger());
 			hs.executeCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR, (Event)event.getTrigger());
-		} catch (NotDefinedException e) {
-			throw new ExecutionException(e.getMessage(), e);
-		} catch (NotEnabledException e) {
-			throw new ExecutionException(e.getMessage(), e);
-		} catch (NotHandledException e) {
+		} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
 			throw new ExecutionException(e.getMessage(), e);
 		}
 
