@@ -16,12 +16,12 @@ package org.eclipse.jface.tests.dialogs;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ProgressMonitorDialogTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		// ensure we've initialized a display for this thread
 		Display.getDefault();

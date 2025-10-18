@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
@@ -30,9 +30,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ComboViewerComparerTest {
 
@@ -85,7 +85,7 @@ public class ComboViewerComparerTest {
 		assertEquals(aElement.getName(), selectedElement.getName());
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
@@ -108,7 +108,7 @@ public class ComboViewerComparerTest {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		Policy.setLog(oldLogger);
 		SafeRunnable.setRunner(oldRunner);

@@ -14,11 +14,11 @@
 
 package org.eclipse.jface.tests.layout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Rectangle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3

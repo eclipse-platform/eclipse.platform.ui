@@ -1,6 +1,6 @@
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.tests.viewers.StructuredViewerTest.TestLabelProvider;
@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ColumnLabelProviderLambdaTest {
 
@@ -24,7 +24,7 @@ public class ColumnLabelProviderLambdaTest {
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
 		String firstElementText = provider.getText(model[0]);
-		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
+		assertEquals(Integer.valueOf(0).toString(), firstElementText, "same label text");
 	}
 
 	@Test
@@ -37,7 +37,7 @@ public class ColumnLabelProviderLambdaTest {
 		shell.open();
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
-		assertEquals("same image", fgImage, provider.getImage(model[0]));
+		assertEquals(fgImage, provider.getImage(model[0]), "same image");
 	}
 
 	@Test
@@ -52,8 +52,8 @@ public class ColumnLabelProviderLambdaTest {
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
 		String firstElementText = provider.getText(model[0]);
-		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
-		assertEquals("same image", fgImage, provider.getImage(model[0]));
+		assertEquals(Integer.valueOf(0).toString(), firstElementText, "same label text");
+		assertEquals(fgImage, provider.getImage(model[0]), "same image");
 	}
 
 }

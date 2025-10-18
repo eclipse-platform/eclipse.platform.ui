@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ListViewerRefreshTest {
 	/**
@@ -49,7 +49,7 @@ public class ListViewerRefreshTest {
 
 	private ArrayList<String> input = null;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 		shell.setSize(400, 200);
@@ -68,7 +68,7 @@ public class ListViewerRefreshTest {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 		shell = null;

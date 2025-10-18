@@ -13,16 +13,16 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.layout;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TreeColumnLayoutTest {
 
@@ -44,7 +44,7 @@ public class TreeColumnLayoutTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		display = Display.getCurrent();
 		if (display == null) {
@@ -53,7 +53,7 @@ public class TreeColumnLayoutTest {
 		parent = new Shell(display, SWT.NONE);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		parent.dispose();
 	}

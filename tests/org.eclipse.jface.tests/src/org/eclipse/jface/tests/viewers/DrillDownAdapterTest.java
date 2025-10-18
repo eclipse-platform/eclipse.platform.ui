@@ -1,6 +1,6 @@
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,21 +11,21 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DrillDownAdapterTest {
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		shell = new Shell();
 
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.close();
 	}

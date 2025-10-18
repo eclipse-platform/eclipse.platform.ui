@@ -16,9 +16,9 @@
 
 package org.eclipse.jface.tests.preferences;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BooleanFieldEditorTest {
 
@@ -44,7 +44,7 @@ public class BooleanFieldEditorTest {
 	private boolean otherThreadEventOccurred = false;
 	private final Object lock = new Object();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 

@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -26,8 +26,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.13
@@ -41,7 +41,7 @@ public class DecorationOverlayIconTest {
 	private ImageDescriptor overlayDescriptor1;
 	private ImageDescriptor overlayDescriptor2;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
 		baseImage1 = imageRegistry.get(Dialog.DLG_IMG_HELP);

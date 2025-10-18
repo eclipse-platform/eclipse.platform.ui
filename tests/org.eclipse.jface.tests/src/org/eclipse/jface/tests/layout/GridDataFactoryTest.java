@@ -13,12 +13,12 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.layout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.5

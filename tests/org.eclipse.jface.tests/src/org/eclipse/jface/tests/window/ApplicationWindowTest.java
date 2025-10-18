@@ -17,14 +17,14 @@ package org.eclipse.jface.tests.window;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class ApplicationWindowTest {
 
 	private ApplicationWindow window;
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (window != null) {
 			// close the window

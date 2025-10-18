@@ -13,11 +13,11 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.util.SafeRunnable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * NOTE - these tests are not really very good, in order to really test this you

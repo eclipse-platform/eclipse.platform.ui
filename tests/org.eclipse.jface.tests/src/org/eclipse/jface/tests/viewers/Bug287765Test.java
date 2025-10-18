@@ -27,9 +27,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.4
@@ -127,7 +127,7 @@ public class Bug287765Test {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		final Shell shell = new Shell();
 		shell.setLayout(new GridLayout());
@@ -156,7 +156,7 @@ public class Bug287765Test {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		treeViewer.getControl().getShell().dispose();
 		treeViewer = null;

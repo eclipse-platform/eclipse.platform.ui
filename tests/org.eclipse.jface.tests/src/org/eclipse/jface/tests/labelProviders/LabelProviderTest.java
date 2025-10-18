@@ -1,15 +1,16 @@
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Function;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 public class LabelProviderTest {
 
@@ -21,7 +22,7 @@ public class LabelProviderTest {
 	private final Function<Object, String> textFunction = o -> o instanceof Car ? ((Car) o).getMake() : "unknown";
 	private final Function<Object, Image> imageFunction = o -> o instanceof Car ? horchImage : defaultImage;
 
-	@AfterClass
+	@AfterAll
 	public static void classTeardown() {
 		horchImage.dispose();
 		defaultImage.dispose();
@@ -74,24 +75,32 @@ public class LabelProviderTest {
 		assertEquals("unknown", labelProvider.getText(new Object()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsExceptionOnNullTextProvider() {
-		LabelProvider.createTextProvider(null);
+		assertThrows(NullPointerException.class, () -> {
+			LabelProvider.createTextProvider(null);
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsExceptionOnNullImageProvider() {
-		LabelProvider.createImageProvider(null);
+		assertThrows(NullPointerException.class, () -> {
+			LabelProvider.createImageProvider(null);
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsExceptionOnNullTextProviderInTextImageProvider() {
-		LabelProvider.createTextImageProvider(null, imageFunction);
+		assertThrows(NullPointerException.class, () -> {
+			LabelProvider.createTextImageProvider(null, imageFunction);
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsExceptionOnNullImageProviderInTextImageProvider() {
-		LabelProvider.createTextImageProvider(textFunction, null);
+		assertThrows(NullPointerException.class, () -> {
+			LabelProvider.createTextImageProvider(textFunction, null);
+		});
 	}
 
 	static class Car {

@@ -19,11 +19,11 @@
 
 package org.eclipse.jface.tests.images;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +37,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -98,7 +98,7 @@ public class FileImageDescriptorTest {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
 
 		Image image = descriptor.createImage();
-		assertNotNull("Could not find image", image);
+		assertNotNull(image, "Could not find image");
 		image.dispose();
 
 	}
@@ -112,7 +112,7 @@ public class FileImageDescriptorTest {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(false);
-		assertNull("Found an image but should be null", image);
+		assertNull(image, "Found an image but should be null");
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class FileImageDescriptorTest {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(true);
-		assertNotNull("Did not find default image", image);
+		assertNotNull(image, "Did not find default image");
 	}
 
 	/**
@@ -135,10 +135,10 @@ public class FileImageDescriptorTest {
 	public void testDifferentImagesPerFileImageDescriptor() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
 		Image image1 = descriptor.createImage();
-		assertNotNull("Could not find first image", image1);
+		assertNotNull(image1, "Could not find first image");
 		Image image2 = descriptor.createImage();
-		assertNotNull("Could not find second image", image2);
-		assertNotEquals("Found equal images for FileImageDescriptor", image1, image2);
+		assertNotNull(image2, "Could not find second image");
+		assertNotEquals(image1, image2, "Found equal images for FileImageDescriptor");
 		image1.dispose();
 		image2.dispose();
 	}
@@ -194,23 +194,23 @@ public class FileImageDescriptorTest {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");
 		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
-		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		assertNotNull(fileNameProvider, "FileImageDescriptor does not adapt to ImageFileNameProvider");
 		ImageFileNameProvider fileNameProvider2nd = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		// Issue #679: The returned ImageFileNameProvider must be different each time,
 		// because Image#equals depends on this non-uniqueness:
-		assertNotSame("FileImageDescriptor does return identical ImageFileNameProvider", fileNameProvider,
-				fileNameProvider2nd);
+		assertNotSame(fileNameProvider,
+				fileNameProvider2nd, "FileImageDescriptor does return identical ImageFileNameProvider");
 		String imagePath100 = fileNameProvider.getImagePath(100);
-		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);
+		assertNotNull(imagePath100, "FileImageDescriptor's ImageFileNameProvider does not return the 100% path");
 		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
-		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 200% path", imagePath200);
+		assertNotNull(imagePath200, "FileImageDescriptor's ImageFileNameProvider does not return the 200% path");
 		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
-		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 150% path", imagePath150);
+		assertNotNull(imagePath150, "FileImageDescriptor's ImageFileNameProvider does not return the 150% path");
 		assertEquals(IPath.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
 		String imagePath250 = fileNameProvider.getImagePath(250);
-		assertNull("FileImageDescriptor's ImageFileNameProvider does return a 250% path", imagePath250);
+		assertNull(imagePath250, "FileImageDescriptor's ImageFileNameProvider does return a 250% path");
 	}
 
 	@Test
@@ -218,15 +218,15 @@ public class FileImageDescriptorTest {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/zoomIn.png");
 		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
-		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		assertNotNull(fileNameProvider, "FileImageDescriptor does not adapt to ImageFileNameProvider");
 		String imagePath100 = fileNameProvider.getImagePath(100);
-		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);
+		assertNotNull(imagePath100, "FileImageDescriptor's ImageFileNameProvider does not return the 100% path");
 		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "zoomIn.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
-		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the @2x path", imagePath200);
+		assertNotNull(imagePath200, "FileImageDescriptor's ImageFileNameProvider does not return the @2x path");
 		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
-		assertNull("FileImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+		assertNull(imagePath150, "FileImageDescriptor's ImageFileNameProvider does return a @1.5x path");
 	}
 
 	@Test
@@ -235,20 +235,20 @@ public class FileImageDescriptorTest {
 				"/icons/imagetests/rectangular-57x16.png");
 
 		URL url = Adapters.adapt(descriptor, URL.class);
-		assertNotNull("FileImageDescriptor does not adapt to URL", url);
+		assertNotNull(url, "FileImageDescriptor does not adapt to URL");
 
 		ImageDescriptor descriptorFromUrl = ImageDescriptor.createFromURL(url);
 
 		ImageData imageDataOrig = descriptor.getImageData(100);
-		assertNotNull("Original URL does not return 100% image data", imageDataOrig);
+		assertNotNull(imageDataOrig, "Original URL does not return 100% image data");
 
 		ImageData imageDataURL = descriptorFromUrl.getImageData(100);
-		assertNotNull("Adapted URL does not return 100% image data", imageDataURL);
+		assertNotNull(imageDataURL, "Adapted URL does not return 100% image data");
 		assertEquals(imageDataOrig.width, imageDataURL.width);
 		assertEquals(imageDataOrig.height, imageDataURL.height);
 
 		ImageData imageDataOrig200 = descriptor.getImageData(200);
-		assertNotNull("Original URL does not return 200% image data", imageDataOrig200);
+		assertNotNull(imageDataOrig200, "Original URL does not return 200% image data");
 
 		ImageData imageDataURL200 = descriptorFromUrl.getImageData(200);
 		assertEquals(imageDataOrig200.width, imageDataURL200.width);

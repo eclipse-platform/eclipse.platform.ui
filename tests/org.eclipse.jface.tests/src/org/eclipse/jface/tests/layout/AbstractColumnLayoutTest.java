@@ -15,8 +15,8 @@
 
 package org.eclipse.jface.tests.layout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -28,9 +28,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.4
@@ -39,7 +39,7 @@ public final class AbstractColumnLayoutTest {
 	Display display;
 	Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		display = Display.getCurrent();
 		if (display == null) {
@@ -51,7 +51,7 @@ public final class AbstractColumnLayoutTest {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}
