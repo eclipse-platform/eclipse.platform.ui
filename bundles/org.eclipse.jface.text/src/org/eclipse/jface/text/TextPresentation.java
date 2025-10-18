@@ -52,8 +52,9 @@ public class TextPresentation {
 
 		int i= 0;
 		Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
-		while (e.hasNext())
+		while (e.hasNext()) {
 			ranges[i++]= e.next();
+		}
 
 		text.setStyleRanges(ranges);
 	}
@@ -89,8 +90,9 @@ public class TextPresentation {
 			fIndex= getFirstIndexInWindow(fWindow);
 			fLength= getFirstIndexAfterWindow(fWindow);
 
-			if (fSkipDefaults)
+			if (fSkipDefaults) {
 				computeIndex();
+			}
 		}
 
 		@Override
@@ -101,8 +103,9 @@ public class TextPresentation {
 			} catch (IndexOutOfBoundsException x) {
 				throw new NoSuchElementException();
 			} finally {
-				if (fSkipDefaults)
+				if (fSkipDefaults) {
 					computeIndex();
+				}
 			}
 		}
 
@@ -126,8 +129,9 @@ public class TextPresentation {
 		 * Computes the index of the styled range that is the next to be enumerated.
 		 */
 		protected void computeIndex() {
-			while (fIndex < fLength && skip(fRanges.get(fIndex)))
+			while (fIndex < fLength && skip(fRanges.get(fIndex))) {
 				++fIndex;
+			}
 		}
 	}
 
@@ -208,8 +212,9 @@ public class TextPresentation {
 	 */
 	public StyleRange getDefaultStyleRange() {
 		StyleRange range= createWindowRelativeRange(fResultWindow, fDefaultRange);
-		if (range == null)
+		if (range == null) {
 			return null;
+		}
 		return (StyleRange)range.clone();
 
 	}
@@ -256,8 +261,9 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	private void applyStyleRange(StyleRange range, boolean merge) {
-		if (range.length == 0)
+		if (range.length == 0) {
 			return;
+		}
 
 		checkConsistency(range);
 
@@ -267,8 +273,9 @@ public class TextPresentation {
 
 		if (fRanges.isEmpty()) {
 			StyleRange defaultRange= getDefaultStyleRange();
-			if (defaultRange == null)
+			if (defaultRange == null) {
 				defaultRange= range;
+			}
 
 			defaultRange.start= start;
 			defaultRange.length= length;
@@ -280,8 +287,9 @@ public class TextPresentation {
 
 			if (first == fRanges.size()) {
 				StyleRange defaultRange= getDefaultStyleRange();
-				if (defaultRange == null)
+				if (defaultRange == null) {
 					defaultRange= range;
+				}
 				defaultRange.start= start;
 				defaultRange.length= length;
 				applyStyle(range, defaultRange, merge);
@@ -301,15 +309,17 @@ public class TextPresentation {
 					return;
 				}
 
-				if (start >= currentEnd)
+				if (start >= currentEnd) {
 					continue;
+				}
 
 				StyleRange currentCopy= (end < currentEnd) ? (StyleRange) current.clone() : null;
 				if (start < currentStart) {
 					// Apply style to new default range and add it
 					StyleRange defaultRange= getDefaultStyleRange();
-					if (defaultRange == null)
+					if (defaultRange == null) {
 						defaultRange= new StyleRange();
+					}
 
 					defaultRange.start= start;
 					defaultRange.length= currentStart - start;
@@ -355,8 +365,9 @@ public class TextPresentation {
 			if (length > 0) {
 				// Apply style to new default range and add it
 				StyleRange defaultRange= getDefaultStyleRange();
-				if (defaultRange == null)
+				if (defaultRange == null) {
 					defaultRange= range;
+				}
 				defaultRange.start= start;
 				defaultRange.length= end - start;
 				applyStyle(range, defaultRange, merge);
@@ -404,13 +415,15 @@ public class TextPresentation {
 		ArrayList<StyleRange> newRanges= new ArrayList<>(2*ranges.length + oldRanges.size());
 		for (StyleRange range : ranges) {
 			fRanges= oldRanges; // for getFirstIndexAfterWindow(...)
-			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
+			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++) {
 				newRanges.add(oldRanges.get(j));
+			}
 			fRanges= newRanges; // for mergeStyleRange(...)
 			applyStyleRange(range, merge);
 		}
-		for (int m= oldRanges.size(); j < m; j++)
+		for (int m= oldRanges.size(); j < m; j++) {
 			newRanges.add(oldRanges.get(j));
+		}
 		fRanges= newRanges;
 	}
 
@@ -424,33 +437,42 @@ public class TextPresentation {
 	 */
 	private void applyStyle(StyleRange template, StyleRange target, boolean merge) {
 		if (merge) {
-			if (template.font != null)
+			if (template.font != null) {
 				target.font= template.font;
+			}
 			target.fontStyle|= template.fontStyle;
 
-			if (template.metrics != null)
+			if (template.metrics != null) {
 				target.metrics= template.metrics;
+			}
 
-			if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK)
+			if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK) {
 				target.foreground= template.foreground;
-			if (template.background != null)
+			}
+			if (template.background != null) {
 				target.background= template.background;
+			}
 
 			target.strikeout|= template.strikeout;
-			if (template.strikeoutColor != null)
+			if (template.strikeoutColor != null) {
 				target.strikeoutColor= template.strikeoutColor;
+			}
 
 			target.underline|= template.underline;
-			if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK)
+			if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK) {
 				target.underlineStyle= template.underlineStyle;
+			}
 
-			if (template.underlineColor != null)
+			if (template.underlineColor != null) {
 				target.underlineColor= template.underlineColor;
+			}
 
-			if (template.borderStyle != SWT.NONE)
+			if (template.borderStyle != SWT.NONE) {
 				target.borderStyle= template.borderStyle;
-			if (template.borderColor != null)
+			}
+			if (template.borderColor != null) {
 				target.borderColor= template.borderColor;
+			}
 
 		} else {
 			target.font= template.font;
@@ -477,18 +499,21 @@ public class TextPresentation {
 	 */
 	private void checkConsistency(StyleRange range) {
 
-		if (range == null)
+		if (range == null) {
 			throw new IllegalArgumentException();
+		}
 
 		if (fDefaultRange != null) {
 
-			if (range.start < fDefaultRange.start)
+			if (range.start < fDefaultRange.start) {
 				range.start= fDefaultRange.start;
+			}
 
 			int defaultEnd= fDefaultRange.start + fDefaultRange.length;
 			int end= range.start + range.length;
-			if (end > defaultEnd)
+			if (end > defaultEnd) {
 				range.length -= (end - defaultEnd);
+			}
 		}
 	}
 
@@ -506,10 +531,11 @@ public class TextPresentation {
 			while (j - i > 1) {
 				int k= (i + j) >> 1;
 				StyleRange r= fRanges.get(k);
-				if (r.start + r.length > start)
+				if (r.start + r.length > start) {
 					j= k;
-				else
+				} else {
 					i= k;
+				}
 			}
 			return j;
 		}
@@ -530,10 +556,11 @@ public class TextPresentation {
 			while (j - i > 1) {
 				int k= (i + j) >> 1;
 				StyleRange r= fRanges.get(k);
-				if (r.start < end)
+				if (r.start < end) {
 					i= k;
-				else
+				} else {
 					j= k;
+				}
 			}
 			return j;
 		}
@@ -550,12 +577,14 @@ public class TextPresentation {
 	 * @return the window relative range based on the absolute range
 	 */
 	private StyleRange createWindowRelativeRange(IRegion window, StyleRange range) {
-		if (window == null || range == null)
+		if (window == null || range == null) {
 			return range;
+		}
 
 		int start= range.start - window.getOffset();
-		if (start < 0)
+		if (start < 0) {
 			start= 0;
+		}
 
 		int rangeEnd= range.start + range.length;
 		int windowEnd= window.getOffset() + window.getLength();
@@ -577,12 +606,14 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	private IRegion createWindowRelativeRegion(IRegion coverage) {
-		if (fResultWindow == null || coverage == null)
+		if (fResultWindow == null || coverage == null) {
 			return coverage;
+		}
 
 		int start= coverage.getOffset() - fResultWindow.getOffset();
-		if (start < 0)
+		if (start < 0) {
 			start= 0;
+		}
 
 		int rangeEnd= coverage.getOffset() + coverage.getLength();
 		int windowEnd= fResultWindow.getOffset() + fResultWindow.getLength();
@@ -680,8 +711,9 @@ public class TextPresentation {
 		StyleRange first= getFirstStyleRange();
 		StyleRange last= getLastStyleRange();
 
-		if (first == null || last == null)
+		if (first == null || last == null) {
 			return null;
+		}
 
 		return new Region(first.start, last.start - first. start + last.length);
 	}
@@ -694,8 +726,9 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public IRegion getExtent() {
-		if (fExtent != null)
+		if (fExtent != null) {
 			return createWindowRelativeRegion(fExtent);
+		}
 		return getCoverage();
 	}
 

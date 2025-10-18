@@ -40,7 +40,7 @@ public class MonoReconciler extends AbstractReconciler {
 
 
 	/** The reconciling strategy. */
-	private IReconcilingStrategy fStrategy;
+	private final IReconcilingStrategy fStrategy;
 
 
 	/**
@@ -69,12 +69,13 @@ public class MonoReconciler extends AbstractReconciler {
 	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 
-		if(dirtyRegion != null)
+		if(dirtyRegion != null) {
 			fStrategy.reconcile(dirtyRegion, dirtyRegion);
-		else {
+		} else {
 			IDocument document= getDocument();
-			if (document != null)
+			if (document != null) {
 				fStrategy.reconcile(new Region(0, document.getLength()));
+			}
 		}
 	}
 

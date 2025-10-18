@@ -80,7 +80,7 @@ public class HTML2TextReader extends SubstitutionReader {
 	}
 
 	private int fCounter= 0;
-	private TextPresentation fTextPresentation;
+	private final TextPresentation fTextPresentation;
 	private int fBold= 0;
 	private int fItalic= 0;
 	private int fStrikeout= 0;

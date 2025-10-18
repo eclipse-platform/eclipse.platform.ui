@@ -186,8 +186,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fResizeHandleSize= -1;
 		fToolBarManager= toolBarManager;
 
-		if ((shellStyle & SWT.NO_TRIM) != 0)
+		if ((shellStyle & SWT.NO_TRIM) != 0) {
 			shellStyle&= ~(SWT.NO_TRIM | SWT.SHELL_TRIM); // make sure we get the OS border but no other trims
+		}
 
 		fResizable= (shellStyle & SWT.RESIZE) != 0;
 		fShell= new Shell(parentShell, shellStyle);
@@ -215,8 +216,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	}
 
 	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
-		if (toolBarManager == null && statusFieldText == null)
+		if (toolBarManager == null && statusFieldText == null) {
 			return;
+		}
 
 		fStatusComposite= new Composite(fShell, SWT.NONE);
 		GridData gridData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
@@ -284,8 +286,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=23980 : platform specific shell resize behavior
 		String platform= SWT.getPlatform();
 		final boolean isWin= platform.equals("win32"); //$NON-NLS-1$
-		if (!isWin && !Util.isGtk()) 
+		if (!isWin && !Util.isGtk()) {
 			return;
+		}
 
 		final Canvas resizer= new Canvas(bars, SWT.NONE);
 
@@ -304,14 +307,18 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				// draw dots
 				e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 				int end= min - 1;
-				for (int i1= 0; i1 <= 2; i1++)
-					for (int j1= 0; j1 <= 2 - i1; j1++)
+				for (int i1= 0; i1 <= 2; i1++) {
+					for (int j1= 0; j1 <= 2 - i1; j1++) {
 						e.gc.fillRectangle(end - 4 * i1, end - 4 * j1, 2, 2);
+					}
+				}
 				end--;
 				e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-				for (int i2= 0; i2 <= 2; i2++)
-					for (int j2= 0; j2 <= 2 - i2; j2++)
+				for (int i2= 0; i2 <= 2; i2++) {
+					for (int j2= 0; j2 <= 2 - i2; j2++) {
 						e.gc.fillRectangle(end - 4 * i2, end - 4 * j2, 2, 2);
+					}
+				}
 
 			} else {
 				// draw diagonal lines
@@ -505,16 +512,18 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 	@Override
 	public void setVisible(boolean visible) {
-		if (visible && fShell.isVisible() == visible)
+		if (visible && fShell.isVisible() == visible) {
 			return;
+		}
 
 		fShell.setVisible(visible);
 	}
 
 	@Override
 	public void dispose() {
-		if (fShell != null && !fShell.isDisposed())
+		if (fShell != null && !fShell.isDisposed()) {
 			fShell.dispose();
+		}
 	}
 
 	/**
@@ -559,8 +568,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public Point computeSizeHint() {
 		// XXX: Verify whether this is a good default implementation. If yes, document it.
 		Point constrains= getSizeConstraints();
-		if (constrains == null)
+		if (constrains == null) {
 			return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		}
 
 		return fShell.computeSize(constrains.x, constrains.y, true);
 	}
@@ -576,8 +586,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public Rectangle computeTrim() {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
 
-		if (fStatusComposite != null)
+		if (fStatusComposite != null) {
 			trim.height+= fStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		}
 
 		return trim;
 	}
@@ -641,7 +652,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	}
 
 	private void setStatusLabelColors(Color foreground, Color background) {
-		if (foreground == null || background == null) return;
+		if (foreground == null || background == null) {
+			return;
+		}
 		Color statusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
 		fStatusLabel.setForeground(statusLabelForeground);
 		fStatusLabel.setBackground(background);
@@ -665,8 +678,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	@Override
 	public void setFocus() {
 		boolean focusTaken= fShell.setFocus();
-		if (!focusTaken)
+		if (!focusTaken) {
 			fShell.forceFocus();
+		}
 	}
 
 	/**
@@ -734,10 +748,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	@Override
 	public boolean containsControl(Control control) {
 		do {
-			if (control == fShell)
+			if (control == fShell) {
 				return true;
-			if (control instanceof Shell)
+			}
+			if (control instanceof Shell) {
 				return false;
+			}
 			control= control.getParent();
 		} while (control != null);
 		return false;

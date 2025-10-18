@@ -43,13 +43,13 @@ public class TextAttribute {
 
 
 	/** Foreground color */
-	private Color foreground;
+	private final Color foreground;
 
 	/** Background color */
-	private Color background;
+	private final Color background;
 
 	/** The text style */
-	private int style;
+	private final int style;
 
 	/**
 	 * The text font.
@@ -105,11 +105,13 @@ public class TextAttribute {
 	@Override
 	public boolean equals(Object object) {
 
-		if (object == this)
+		if (object == this) {
 			return true;
+		}
 
-		if (!(object instanceof TextAttribute a))
+		if (!(object instanceof TextAttribute a)) {
 			return false;
+		}
 		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background) && equals(a.font, font));
 	}
 
@@ -122,8 +124,9 @@ public class TextAttribute {
 	 * @since 2.0
 	 */
 	private boolean equals(Object o1, Object o2) {
-		if (o1 != null)
+		if (o1 != null) {
 			return o1.equals(o2);
+		}
 		return (o2 == null);
 	}
 

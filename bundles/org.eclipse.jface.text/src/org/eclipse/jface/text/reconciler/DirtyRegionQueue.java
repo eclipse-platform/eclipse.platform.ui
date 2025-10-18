@@ -28,7 +28,7 @@ import java.util.List;
 class DirtyRegionQueue {
 
 	/** The list of dirty regions. */
-	private List<DirtyRegion> fDirtyRegions= new ArrayList<>();
+	private final List<DirtyRegion> fDirtyRegions= new ArrayList<>();
 
 	/**
 	 * Creates a new empty dirty region.
@@ -47,8 +47,8 @@ class DirtyRegionQueue {
 		// region on the queue then merge the two dirty regions together.
 		DirtyRegion lastDR= getLastDirtyRegion();
 		boolean wasMerged= false;
-		if (lastDR != null)
-			if (lastDR.getType() == dr.getType())
+		if (lastDR != null) {
+			if (lastDR.getType() == dr.getType()) {
 				if (lastDR.getType() == DirtyRegion.INSERT) {
 					if (lastDR.getOffset() + lastDR.getLength() == dr.getOffset()) {
 						lastDR.mergeWith(dr);
@@ -60,10 +60,13 @@ class DirtyRegionQueue {
 						wasMerged= true;
 					}
 				}
+			}
+		}
 
-		if (!wasMerged)
+		if (!wasMerged) {
 			// Don't merge- just add the new one onto the queue.
 			fDirtyRegions.add(dr);
+		}
 	}
 
 	/**
@@ -102,8 +105,9 @@ class DirtyRegionQueue {
 	 * @return the next dirty region on the queue
 	 */
 	public DirtyRegion removeNextDirtyRegion() {
-		if (fDirtyRegions.isEmpty())
+		if (fDirtyRegions.isEmpty()) {
 			return null;
+		}
 		DirtyRegion dr= fDirtyRegions.get(0);
 		fDirtyRegions.remove(0);
 		return dr;
