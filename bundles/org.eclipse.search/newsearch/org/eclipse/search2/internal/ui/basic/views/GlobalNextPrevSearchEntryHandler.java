@@ -48,18 +48,26 @@ public class GlobalNextPrevSearchEntryHandler extends AbstractHandler implements
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		ICommandService cs = window.getService(ICommandService.class);
 
-		// Show the Search view
+		// Check if search view is available
 		Command showView = cs.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
-		HashMap<String, Object> parms = new HashMap<String, Object>();
-		parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, "org.eclipse.search.ui.views.SearchView");
+		if (!showView.isDefined()) {
+			return null; // Search view not available, exit gracefully
+		}
+
+		// Show the Search view
+		HashMap<String, Object> parms = new HashMap<>();
+		parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, "org.eclipse.search.ui.views.SearchView"); //$NON-NLS-1$
 		ParameterizedCommand showSearchView = ParameterizedCommand.generateCommand(showView, parms);
 
 		IHandlerService hs = window.getService(IHandlerService.class);
+		Object triggerObj = event.getTrigger();
+		Event trigger = (triggerObj instanceof Event) ? (Event) triggerObj : new Event();
+		
 		try {
 			// Execute the sequence: show search view -> navigate -> activate editor
-			hs.executeCommand(showSearchView, (Event)event.getTrigger());
-			hs.executeCommand(searchCommand, (Event)event.getTrigger());
-			hs.executeCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR, (Event)event.getTrigger());
+			hs.executeCommand(showSearchView, trigger);
+			hs.executeCommand(searchCommand, trigger);
+			hs.executeCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR, trigger);
 		} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
 			throw new ExecutionException(e.getMessage(), e);
 		}
@@ -69,7 +77,7 @@ public class GlobalNextPrevSearchEntryHandler extends AbstractHandler implements
 
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-		if ("previous".equals(data)) {
+		if ("previous".equals(data)) { //$NON-NLS-1$
 			searchCommand = IWorkbenchCommandConstants.NAVIGATE_PREVIOUS;
 		}
 	}
