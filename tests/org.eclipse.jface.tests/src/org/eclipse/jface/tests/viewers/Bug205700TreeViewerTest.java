@@ -88,7 +88,7 @@ public class Bug205700TreeViewerTest {
 	}
 
 	private void assertItemName(int index, String name) {
-		assertEquals("at " + index, name, viewer.getTree().getItem(index).getText());
+		assertEquals(name, viewer.getTree().getItem(index).getText(), "at " + index);
 	}
 
 	@Test

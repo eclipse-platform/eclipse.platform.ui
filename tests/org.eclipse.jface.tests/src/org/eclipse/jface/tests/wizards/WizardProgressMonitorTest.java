@@ -84,8 +84,8 @@ public class WizardProgressMonitorTest {
 
 	protected void performAsserts() {
 
-		assertEquals("The progress monitor's label should have been cleared", //$NON-NLS-1$
-				"", dialog.getProgressMonitorLabelText()); //$NON-NLS-1$
+		assertEquals("", dialog.getProgressMonitorLabelText(), //$NON-NLS-1$
+				"The progress monitor's label should have been cleared"); //$NON-NLS-1$
 
 		String subTask = dialog.getProgressMonitorSubTaskText();
 		if (subTask != null && !subTask.isEmpty()) {
@@ -97,8 +97,8 @@ public class WizardProgressMonitorTest {
 		return monitor -> {
 
 			// check that the label is empty
-			assertEquals("The progress monitor's label is not initially empty", //$NON-NLS-1$
-					"", dialog.getProgressMonitorLabelText()); //$NON-NLS-1$
+			assertEquals("", dialog.getProgressMonitorLabelText(), //$NON-NLS-1$
+					"The progress monitor's label is not initially empty"); //$NON-NLS-1$
 
 			// check the subtask as well
 			String subTask = dialog.getProgressMonitorSubTaskText();
