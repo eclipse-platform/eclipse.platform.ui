@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ConfigurableLineTracker;
@@ -37,7 +37,7 @@ public abstract class TextStoreTest {
 	private ITextStore fTextStore;
 	private ILineTracker fTracker;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 		fTextStore= createTextStore();
@@ -61,7 +61,7 @@ public abstract class TextStoreTest {
 
 	abstract protected ITextStore createTextStore();
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fTextStore= null;
 		fTracker= null;
