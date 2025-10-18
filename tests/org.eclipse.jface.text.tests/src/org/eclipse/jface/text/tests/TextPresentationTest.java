@@ -13,19 +13,19 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -53,7 +53,7 @@ public class TextPresentationTest {
 
 	private Display fDisplay;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDisplay= Display.getDefault();
 		setUpStyleRanges();
@@ -86,7 +86,7 @@ public class TextPresentationTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fColors.clear();
 		if (!fDisplay.isDisposed()) {
@@ -158,11 +158,11 @@ public class TextPresentationTest {
 		int lastEnd= defaultRange != null ? defaultRange.start : Integer.MIN_VALUE;
 		for (int i= 0; i < expectedRanges.length; i++) {
 			StyleRange expectedRange= expectedRanges[i];
-			assertTrue("Presentation has less ranges than expected.", rangeIterator.hasNext());
+			assertTrue(rangeIterator.hasNext(), "Presentation has less ranges than expected.");
 			StyleRange actualRange= rangeIterator.next();
 			assertEquals(expectedRange, actualRange);
-			assertTrue("Unexpected default style.", withDefaults || !actualRange.similarTo(defaultRange));
-			assertTrue("Overlapping or wrong ordered style.", lastEnd <= actualRange.start);
+			assertTrue(withDefaults || !actualRange.similarTo(defaultRange), "Unexpected default style.");
+			assertTrue(lastEnd <= actualRange.start, "Overlapping or wrong ordered style.");
 			lastEnd= actualRange.start + actualRange.length;
 
 			// test first and last range methods
@@ -170,32 +170,32 @@ public class TextPresentationTest {
 				start= actualRange.start;
 				StyleRange first= fTextPresentation.getFirstStyleRange();
 				if (withDefaults) {
-					assertEquals("getFirstStyleRange() failed", expectedRange, first);
+					assertEquals(expectedRange, first, "getFirstStyleRange() failed");
 				} else {
-					assertTrue("getFirstStyleRange() failed", first.equals(expectedRange) || first.similarTo(defaultRange));
+					assertTrue(first.equals(expectedRange) || first.similarTo(defaultRange), "getFirstStyleRange() failed");
 				}
 			} else if (i == expectedRanges.length - 1) {
 				end= actualRange.start + actualRange.length;
 				StyleRange last= fTextPresentation.getLastStyleRange();
 				if (withDefaults) {
-					assertEquals("getLastStyleRange() failed", expectedRange, last);
+					assertEquals(expectedRange, last, "getLastStyleRange() failed");
 				} else {
-					assertTrue("getLastStyleRange() failed", last.equals(expectedRange) || last.similarTo(defaultRange));
+					assertTrue(last.equals(expectedRange) || last.similarTo(defaultRange), "getLastStyleRange() failed");
 				}
 			}
 		}
-		assertTrue("Presentation has more ranges than expected.", !rangeIterator.hasNext());
+		assertTrue(!rangeIterator.hasNext(), "Presentation has more ranges than expected.");
 		if (withDefaults) {
-			assertEquals("getDenumerableRanges() failed", expectedRanges.length, fTextPresentation.getDenumerableRanges());
+			assertEquals(expectedRanges.length, fTextPresentation.getDenumerableRanges(), "getDenumerableRanges() failed");
 		}
-		assertEquals("isEmpty() failed", Boolean.valueOf(expectedRanges.length == 0 && defaultRange == null), Boolean.valueOf(fTextPresentation.isEmpty()));
+		assertEquals(Boolean.valueOf(expectedRanges.length == 0 && defaultRange == null), Boolean.valueOf(fTextPresentation.isEmpty()), "isEmpty() failed");
 		IRegion expectedCover;
 		if (defaultRange == null) {
 			expectedCover= (start == -1 && end == -1 ? null : new Region(start, end - start));
 		} else {
 			expectedCover= new Region(defaultRange.start, defaultRange.length);
 		}
-		assertEquals("Wrong coverage", expectedCover, fTextPresentation.getCoverage());
+		assertEquals(expectedCover, fTextPresentation.getCoverage(), "Wrong coverage");
 	}
 
 	@Test
