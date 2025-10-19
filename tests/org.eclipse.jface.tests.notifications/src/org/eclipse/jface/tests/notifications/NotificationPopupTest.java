@@ -39,25 +39,25 @@ import org.eclipse.swt.widgets.Text;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
-public class NotificationPopupTest {
+class NotificationPopupTest {
 
 	private Display display;
 	private Builder builder;
 	private Shell shell;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		this.display = Display.getDefault();
 		this.builder = NotificationPopup.forDisplay(this.display);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterEach
+	void tearDown() {
 		if (shell != null) {
 			shell.close();
 			shell.dispose();
@@ -70,7 +70,7 @@ public class NotificationPopupTest {
 	}
 
 	@Test
-	public void createsWithTextAndTitle() {
+	void createsWithTextAndTitle() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", false).delay(1).build();
 		notication.open();
 		List<Control> controls = getNotificationPopupControls(notication);
@@ -81,7 +81,7 @@ public class NotificationPopupTest {
 	}
 
 	@Test
-	public void createsWithCloseButton() {
+	void createsWithCloseButton() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).delay(1).build();
 		notication.open();
 		List<Control> controls = getNotificationPopupControls(notication);
@@ -91,7 +91,7 @@ public class NotificationPopupTest {
 	}
 
 	@Test
-	public void createsWithTextContent() {
+	void createsWithTextContent() {
 		Text[] text = new Text[1];
 		NotificationPopup notication = this.builder.title("Hello World", false).content(parent -> {
 			text[0] = new Text(parent, SWT.NONE);
@@ -107,7 +107,7 @@ public class NotificationPopupTest {
 	}
 
 	@Test
-	public void createsWithTitleContent() {
+	void createsWithTitleContent() {
 		Text[] text = new Text[1];
 		NotificationPopup notication = this.builder.title(parent -> {
 			text[0] = new Text(parent, SWT.NONE);
@@ -122,7 +122,7 @@ public class NotificationPopupTest {
 	}
 
 	@Test
-	public void createsForShell() {
+	void createsForShell() {
 		shell = WidgetFactory.shell(SWT.NONE).create(display);
 		this.builder = NotificationPopup.forShell(shell);
 
