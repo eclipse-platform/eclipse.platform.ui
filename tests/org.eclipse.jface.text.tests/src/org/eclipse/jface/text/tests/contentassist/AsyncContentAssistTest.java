@@ -14,17 +14,17 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -58,7 +58,7 @@ public class AsyncContentAssistTest {
 
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		shell= new Shell();
 		listener= (status, plugin) -> {
@@ -69,7 +69,7 @@ public class AsyncContentAssistTest {
 		Platform.addLogListener(listener);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 		Platform.removeLogListener(listener);
@@ -123,13 +123,13 @@ public class AsyncContentAssistTest {
 		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
 		contentAssistant.showPossibleCompletions();
 		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
-		assertTrue("Completion item not shown", new DisplayHelper() {
+		assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				Table completionTable= findCompletionSelectionControl(newShell);
 				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
 			}
-		}.waitForCondition(display, 2000));
+		}.waitForCondition(display, 2000), "Completion item not shown");
 	}
 
 	@Test
@@ -164,13 +164,13 @@ public class AsyncContentAssistTest {
 		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
 		AbstractContentAssistTest.processEvents();
 		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
-		assertTrue("Completion item not shown", new DisplayHelper() {
+		assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				Table completionTable= findCompletionSelectionControl(newShell);
 				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
 			}
-		}.waitForCondition(display, 4000));
+		}.waitForCondition(display, 4000), "Completion item not shown");
 	}
 
 	private static Table findCompletionSelectionControl(Widget control) {

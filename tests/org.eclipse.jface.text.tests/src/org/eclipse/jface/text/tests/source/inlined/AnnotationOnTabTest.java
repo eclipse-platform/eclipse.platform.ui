@@ -12,10 +12,10 @@ package org.eclipse.jface.text.tests.source.inlined;
 
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -43,12 +43,12 @@ public class AnnotationOnTabTest {
 
 	private Shell fParent;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fParent= new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fParent.dispose();
 		fParent = null;
@@ -78,7 +78,7 @@ public class AnnotationOnTabTest {
 		annotation.setText("a"); // single char, so overall annotation is 3 chars, less than default 4 chars
 		support.updateAnnotations(Collections.singleton(annotation));
 		fParent.open();
-		Assert.assertTrue(new DisplayHelper() {
+		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return textWidget.isVisible() && painter.wasPainted();
@@ -88,7 +88,7 @@ public class AnnotationOnTabTest {
 		int referenceIndex = textWidget.getText().indexOf("reference");
 		Rectangle referenceBounds = textWidget.getTextBounds(referenceIndex, referenceIndex);
 		Rectangle annotatedCharactedBounds = textWidget.getTextBounds(annotationIndex, annotationIndex);
-		Assert.assertTrue("Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it",
-				referenceBounds.x + referenceBounds.width < annotatedCharactedBounds.x + annotatedCharactedBounds.width);
+		Assertions.assertTrue(referenceBounds.x + referenceBounds.width < annotatedCharactedBounds.x + annotatedCharactedBounds.width,
+				"Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it");
 	}
 }

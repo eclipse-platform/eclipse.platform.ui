@@ -13,7 +13,7 @@
  */
 package org.eclipse.jface.text.tests.codemining;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.SWT;
@@ -90,7 +90,7 @@ public class CodeMiningProjectionViewerTest {
 	private Shell fParent;
 	private ProjectionViewer fViewer;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Shell[] shells= Display.getDefault().getShells();
 		for (Shell shell : shells) {
@@ -112,7 +112,7 @@ public class CodeMiningProjectionViewerTest {
 		fViewer.doOperation(ProjectionViewer.TOGGLE);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fParent.dispose();
 	}
@@ -137,7 +137,7 @@ public class CodeMiningProjectionViewerTest {
 			DisplayHelper.sleep(fParent.getDisplay(), 1000);
 		}
 		afterShells= findNewShells(beforeShells);
-		assertTrue("No new shell found, existing: " + beforeShells, afterShells.size() > beforeShells.size());
+		assertTrue(afterShells.size() > beforeShells.size(), "No new shell found, existing: " + beforeShells);
 		return afterShells.get(0);
 	}
 
@@ -166,7 +166,7 @@ public class CodeMiningProjectionViewerTest {
 		try {
 			// without workbench, next line throws Exception directly
 			DisplayHelper.sleep(fParent.getDisplay(), 1000);
-			Assert.assertNull(logError.get());
+			Assertions.assertNull(logError.get());
 		} finally {
 			if (log != null) {
 				log.removeLogListener(logListener);

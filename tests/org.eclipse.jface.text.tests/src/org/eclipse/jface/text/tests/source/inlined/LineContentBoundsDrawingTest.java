@@ -12,13 +12,11 @@ package org.eclipse.jface.text.tests.source.inlined;
 
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -48,21 +46,13 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
  * This test verify that the bounds of the text as returned by StyledText.getTextBounds()
  * actually match what's printed on the widget.
  */
-@RunWith(Parameterized.class)
 public class LineContentBoundsDrawingTest {
-	@Parameters(name="{0}")
 	public static String[] contents() {
 		return new String[] {
 				"annotation inside text",
 				" annotation just after initial space",
 				"\tannoation just after initial tab"
 		};
-	}
-
-	private final String text;
-
-	public LineContentBoundsDrawingTest(String text) {
-		this.text = text;
 	}
 
 	public static final class AccessAllAnnoations implements IAnnotationAccess {
@@ -102,25 +92,26 @@ public class LineContentBoundsDrawingTest {
 
 	private Shell fParent;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fParent= new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fParent.dispose();
 		fParent = null;
 	}
 
-	@Test
-	public void testTextBoundsMatchPaintedArea() {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("contents")
+	public void testTextBoundsMatchPaintedArea(String text) {
 		fParent.setLayout(new FillLayout());
 
 		// Create source viewer and initialize the content
 		ISourceViewer sourceViewer = new SourceViewer(fParent,null,
 				SWT.V_SCROLL | SWT.BORDER);
-		sourceViewer.setDocument(new Document(this.text), new AnnotationModel());
+		sourceViewer.setDocument(new Document(text), new AnnotationModel());
 
 		// Initialize inlined annotations support
 		InlinedAnnotationSupport support = new InlinedAnnotationSupport();
@@ -135,7 +126,7 @@ public class LineContentBoundsDrawingTest {
 		support.updateAnnotations(Collections.singleton(annotation));
 		fParent.open();
 		StyledText textWidget= sourceViewer.getTextWidget();
-		Assert.assertTrue(new DisplayHelper() {
+		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return textWidget.isVisible() && painter.wasPainted();
@@ -145,7 +136,7 @@ public class LineContentBoundsDrawingTest {
 		Rectangle textBounds= textWidget.getTextBounds(0, textWidget.getText().length() - 1);
 		int supposedMostRightPaintedPixel = textBounds.x + textBounds.width - 1;
 		int mostRightPaintedPixel= getMostRightPaintedPixel(textWidget);
-		Assert.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
+		Assertions.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {

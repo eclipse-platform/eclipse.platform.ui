@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 
@@ -31,8 +31,8 @@ public class FindReplaceDocumentAdapterContentProposalProviderTest {
 				break;
 			}
 		}
-		assertNotNull("No proposal for " + prefix + " found", match);
-		assertEquals("Unexpected replacement", replacement, match.getContent());
+		assertNotNull(match, "No proposal for " + prefix + " found");
+		assertEquals(replacement, match.getContent(), "Unexpected replacement");
 	}
 
 	@Test

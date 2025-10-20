@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.source;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -28,12 +28,12 @@ public class LineNumberRulerColumnTest {
 
 	private Shell fParent;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fParent= new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fParent.dispose();
 	}

@@ -11,9 +11,9 @@
 package org.eclipse.jface.text.tests.contentassist;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -64,7 +64,7 @@ public class FilteringAsyncContentAssistTests {
 	private SourceViewer viewer;
 	private ContentAssistant ca;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		tearDown();
 
@@ -79,7 +79,7 @@ public class FilteringAsyncContentAssistTests {
 		ca = new ContentAssistant(true);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (shell != null) {
 			ca.uninstall();
@@ -288,7 +288,8 @@ public class FilteringAsyncContentAssistTests {
 	 *
 	 * @throws Exception exception
 	 */
-	@Test @Ignore
+	@Test
+	@Disabled("Bug: filtering only applied after all CA processors have completed")
 	public void testFastCompletionsNotFilteredUntilLongComplitionsCalculated() throws Exception {
 		IDocument document = viewer.getDocument();
 
