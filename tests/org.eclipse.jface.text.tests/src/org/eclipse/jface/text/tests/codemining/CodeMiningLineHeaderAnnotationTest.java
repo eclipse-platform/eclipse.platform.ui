@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -46,7 +46,7 @@ public class CodeMiningLineHeaderAnnotationTest {
 
 	private Document document;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fShell= new Shell(Display.getDefault());
 		fShell.setSize(500, 200);
@@ -58,7 +58,7 @@ public class CodeMiningLineHeaderAnnotationTest {
 		fViewer.setDocument(document, new AnnotationModel());
 		final Display display= textWidget.getDisplay();
 		fShell.open();
-		Assert.assertTrue(new DisplayHelper() {
+		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return fViewer.getTextWidget().isVisible();
@@ -67,7 +67,7 @@ public class CodeMiningLineHeaderAnnotationTest {
 		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fViewer= null;
 	}

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -165,7 +165,7 @@ public class MultiSelectionTest {
 	}
 
 	@Test
-	@Ignore(value = "this is currently for manual testing")
+	@Disabled("this is currently for manual testing")
 	public void testViewer() {
 		Shell shell= new Shell();
 		Button b = new Button(shell, SWT.PUSH);

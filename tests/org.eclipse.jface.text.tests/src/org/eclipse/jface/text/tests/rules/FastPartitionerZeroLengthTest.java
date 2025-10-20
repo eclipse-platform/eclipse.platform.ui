@@ -14,10 +14,10 @@
 
 package org.eclipse.jface.text.tests.rules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -42,7 +42,7 @@ public class FastPartitionerZeroLengthTest {
 	private IDocument fDoc;
 	private FastPartitioner fPartitioner;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDoc= new Document();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {

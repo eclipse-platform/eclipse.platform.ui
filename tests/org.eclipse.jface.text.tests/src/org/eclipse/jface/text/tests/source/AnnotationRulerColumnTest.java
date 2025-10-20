@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.source;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -50,7 +50,7 @@ public class AnnotationRulerColumnTest {
 
 	private IStatus errorStatus;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		shell= new Shell();
 		listener= (status, plugin) -> {
@@ -62,7 +62,7 @@ public class AnnotationRulerColumnTest {
 		Platform.addLogListener(listener);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 		shell= null;
@@ -84,7 +84,7 @@ public class AnnotationRulerColumnTest {
 
 		shell.open();
 
-		Assert.assertTrue(new DisplayHelper() {
+		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return projectionViewer.getTextWidget().isVisible() && paintListener.wasPainted();
