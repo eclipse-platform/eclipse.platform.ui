@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -24,21 +24,21 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.text.quicksearch.internal.core.priority.DefaultPriorityFunction;
 import org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction;
 import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DefaultPriorityFunctionTest {
+class DefaultPriorityFunctionTest {
 
 	private DefaultPriorityFunction fPriorityFunction;
 
-	@Before
-	public void setup() {
+	@BeforeEach
+	void setup() {
 		fPriorityFunction = new DefaultPriorityFunction();
 		fPriorityFunction.configure(QuickSearchActivator.getDefault().getPreferences());
 	}
 
 	@Test
-	public void testIgnoreLinkedContainers() throws Exception {
+	void testIgnoreLinkedContainers() throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject p1 = root.getProject("p1");
 		p1.create(null);
@@ -63,7 +63,7 @@ public class DefaultPriorityFunctionTest {
 	}
 
 	@Test
-	public void testDoNotIgnoreVirtualFolder() throws Exception {
+	void testDoNotIgnoreVirtualFolder() throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		IProject p3 = root.getProject("p3");
