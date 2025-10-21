@@ -64,8 +64,21 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 			setBaseEnabled(false);
 			return super.isEnabled();
 		}
+		
+		// Check for enabledWhen expression first (takes precedence over @CanExecute)
+		Object actualHandler = handler;
+		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
+			org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper wrapper =
+					(org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler;
+			if (!wrapper.evaluateEnabledWhen(executionContext)) {
+				setBaseEnabled(false);
+				return super.isEnabled();
+			}
+			actualHandler = wrapper.getHandler();
+		}
+		
 		IEclipseContext staticContext = contexts.staticContext; // getStaticContext(contexts);
-		Boolean result = (Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
+		Boolean result = (Boolean) ContextInjectionFactory.invoke(actualHandler, CanExecute.class,
 				executionContext, staticContext, Boolean.TRUE);
 		setBaseEnabled(result.booleanValue());
 		return super.isEnabled();
@@ -83,12 +96,19 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		if (handler == null) {
 			return;
 		}
+		
+		// Unwrap handler if needed
+		Object actualHandler = handler;
+		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
+			actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
+		}
+		
 		IEclipseContext staticContext = getStaticContext(executionContext);
 		if (staticContext == null) {
 			staticContext = EclipseContextFactory.create();
 			createContext = true;
 		}
-		ContextInjectionFactory.invoke(handler, SetEnabled.class, executionContext, staticContext,
+		ContextInjectionFactory.invoke(actualHandler, SetEnabled.class, executionContext, staticContext,
 				Boolean.TRUE);
 		if (createContext) {
 			staticContext.dispose();
@@ -132,10 +152,17 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		if (contexts != null) {
 			Object handler = HandlerServiceImpl.lookUpHandler(contexts.context, commandId);
 			switchHandler(handler);
-			if (handler instanceof IHandler) {
-				return ((IHandler) handler).isHandled();
+			
+			// Unwrap handler if needed
+			Object actualHandler = handler;
+			if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
+				actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
 			}
-			return handler != null;
+			
+			if (actualHandler instanceof IHandler) {
+				return ((IHandler) actualHandler).isHandled();
+			}
+			return actualHandler != null;
 
 		}
 		return false;
@@ -154,6 +181,13 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		if (handler == null) {
 			return null;
 		}
+		
+		// Unwrap handler if needed
+		Object actualHandler = handler;
+		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
+			actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
+		}
+		
 		IEclipseContext staticContext = getStaticContext(executionContext);
 		IEclipseContext localStaticContext = null;
 		try {
@@ -162,11 +196,11 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 						.create(HandlerServiceImpl.TMP_STATIC_CONTEXT);
 				staticContext.set(HandlerServiceImpl.PARM_MAP, event.getParameters());
 			}
-			Object result = ContextInjectionFactory.invoke(handler, Execute.class,
+			Object result = ContextInjectionFactory.invoke(actualHandler, Execute.class,
  executionContext,
 					staticContext, missingExecute);
 			if (result == missingExecute) {
-				throw new ExecutionException(handler.getClass().getName() + HANDLER_MISSING_EXECUTE_ANNOTATION,
+				throw new ExecutionException(actualHandler.getClass().getName() + HANDLER_MISSING_EXECUTE_ANNOTATION,
 						new NotHandledException(getClass().getName()));
 			}
 			return result;
