@@ -5,6 +5,8 @@ Eclipse4/RCP/FAQ
 Adopting the Eclipse 4 Application Platform
 -------------------------------------------
 
+> **Migrating from Eclipse 3.x?** See the [Eclipse 4 Migration Guide](Eclipse4_Migration.md) for step-by-step instructions on migrating commands, handlers, views, and menus from E3 to E4.
+
 ### How do the Eclipse 3.x and 4.x programming models differ?
 
 Conceptually, the models aren't very different. The Eclipse 4 programming model is strongly influenced by the Eclipse 3.x model, but rectifies some of the mistakes that were only realized in hindsight. If you are a proficient Eclipse 3.x RCP developer, then most concepts and approaches will be fairly familiar.
