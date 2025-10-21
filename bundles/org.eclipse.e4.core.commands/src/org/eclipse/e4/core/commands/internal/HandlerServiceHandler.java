@@ -25,6 +25,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.ExpressionContext;
+import org.eclipse.e4.core.commands.IHandlerWithExpression;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl.ExecutionContexts;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -67,14 +68,13 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		
 		// Check for enabledWhen expression first (takes precedence over @CanExecute)
 		Object actualHandler = handler;
-		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
-			org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper wrapper =
-					(org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler;
-			if (!wrapper.evaluateEnabledWhen(executionContext)) {
+		if (handler instanceof IHandlerWithExpression) {
+			IHandlerWithExpression handlerWithExpr = (IHandlerWithExpression) handler;
+			if (!handlerWithExpr.evaluateEnabledWhen(executionContext)) {
 				setBaseEnabled(false);
 				return super.isEnabled();
 			}
-			actualHandler = wrapper.getHandler();
+			actualHandler = handlerWithExpr.getHandler();
 		}
 		
 		IEclipseContext staticContext = contexts.staticContext; // getStaticContext(contexts);
@@ -99,8 +99,8 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		
 		// Unwrap handler if needed
 		Object actualHandler = handler;
-		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
-			actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
+		if (handler instanceof IHandlerWithExpression) {
+			actualHandler = ((IHandlerWithExpression) handler).getHandler();
 		}
 		
 		IEclipseContext staticContext = getStaticContext(executionContext);
@@ -155,8 +155,8 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 			
 			// Unwrap handler if needed
 			Object actualHandler = handler;
-			if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
-				actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
+			if (handler instanceof IHandlerWithExpression) {
+				actualHandler = ((IHandlerWithExpression) handler).getHandler();
 			}
 			
 			if (actualHandler instanceof IHandler) {
@@ -184,8 +184,8 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		
 		// Unwrap handler if needed
 		Object actualHandler = handler;
-		if (handler instanceof org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) {
-			actualHandler = ((org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper) handler).getHandler();
+		if (handler instanceof IHandlerWithExpression) {
+			actualHandler = ((IHandlerWithExpression) handler).getHandler();
 		}
 		
 		IEclipseContext staticContext = getStaticContext(executionContext);

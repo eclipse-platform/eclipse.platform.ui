@@ -135,6 +135,7 @@ public class HandlerEnabledWhenTest {
 		MHandler handlerModel = createHandlerWithExpression(handler, new TrueExpression());
 
 		// Use the wrapper created by HandlerProcessingAddon simulation
+		// The wrapper implements IHandlerWithExpression interface
 		org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper wrapper = 
 				new org.eclipse.e4.ui.internal.workbench.addons.HandlerEnabledWhenWrapper(handler, handlerModel);
 		service.activateHandler(TEST_COMMAND_ID, wrapper);

@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ReferenceExpression;
 import org.eclipse.e4.core.commands.ExpressionContext;
+import org.eclipse.e4.core.commands.IHandlerWithExpression;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -29,7 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.MExpression;
  *
  * @since 1.4
  */
-public class HandlerEnabledWhenWrapper {
+public class HandlerEnabledWhenWrapper implements IHandlerWithExpression {
 	private final Object handler;
 	private final MHandler handlerModel;
 
@@ -38,6 +39,7 @@ public class HandlerEnabledWhenWrapper {
 		this.handlerModel = handlerModel;
 	}
 
+	@Override
 	public Object getHandler() {
 		return handler;
 	}
@@ -46,12 +48,7 @@ public class HandlerEnabledWhenWrapper {
 		return handlerModel;
 	}
 
-	/**
-	 * Evaluates the enabledWhen expression if present.
-	 *
-	 * @param context the eclipse context for evaluation
-	 * @return true if no expression is defined or if the expression evaluates to true
-	 */
+	@Override
 	public boolean evaluateEnabledWhen(IEclipseContext context) {
 		MExpression enabledWhen = handlerModel.getEnabledWhen();
 		if (enabledWhen == null) {
