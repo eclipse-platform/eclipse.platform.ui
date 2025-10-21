@@ -73,6 +73,8 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	/** Indicates whether this annotation should be painted as range */
 	private boolean fIsRangeIndication= false;
 
+	private boolean hidden= false;
+
 	/**
 	 * Creates a new expanded projection annotation.
 	 */
@@ -115,6 +117,9 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 
 	@Override
 	public void paint(GC gc, Canvas canvas, Rectangle rectangle) {
+		if (hidden) {
+			return;
+		}
 		Image image= getImage(canvas.getDisplay());
 		if (image != null) {
 			ImageUtilities.drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
@@ -126,6 +131,10 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 				drawRangeIndication(gc, canvas, rectangle);
 			}
 		}
+	}
+
+	void setHidden(boolean hidden) {
+		this.hidden= hidden;
 	}
 
 	@Override

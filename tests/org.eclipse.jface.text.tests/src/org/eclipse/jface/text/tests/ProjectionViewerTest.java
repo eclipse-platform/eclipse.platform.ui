@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +22,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -367,5 +371,149 @@ public class ProjectionViewerTest {
 		} finally {
 			shell.dispose();
 		}
+	}
+
+	@Test
+	public void testSetVisibleRegionDoesNotExpandOutsideProjectionRegions() {
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				Hello
+				World
+				abc
+				123
+				456
+				789
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		viewer.enableProjection();
+		ProjectionAnnotation firstAnnotation= new ProjectionAnnotation(true);
+		ProjectionAnnotation secondAnnotation= new ProjectionAnnotation(true);
+		viewer.getProjectionAnnotationModel().addAnnotation(firstAnnotation, new Position(0, documentContent.indexOf("World")));
+		viewer.getProjectionAnnotationModel().addAnnotation(secondAnnotation, new Position(documentContent.indexOf("456"), documentContent.length() - documentContent.indexOf("456")));
+
+		viewer.setVisibleRegion(documentContent.indexOf("abc"), documentContent.indexOf("123") - documentContent.indexOf("abc"));
+		shell.setVisible(true);
+		try {
+			assertTrue(firstAnnotation.isCollapsed());
+			assertTrue(secondAnnotation.isCollapsed());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testSetVisibleRegionExpandsBorderingProjectionRegions() {
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				Hello
+				World
+				123
+				456
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		viewer.enableProjection();
+		ProjectionAnnotation firstAnnotation= new ProjectionAnnotation(true);
+		ProjectionAnnotation secondAnnotation= new ProjectionAnnotation(true);
+		viewer.getProjectionAnnotationModel().addAnnotation(firstAnnotation, new Position(0, documentContent.indexOf("123")));
+		viewer.getProjectionAnnotationModel().addAnnotation(secondAnnotation, new Position(documentContent.indexOf("123"), documentContent.length() - documentContent.indexOf("123")));
+
+		viewer.setVisibleRegion(documentContent.indexOf("World"), documentContent.indexOf("456") - documentContent.indexOf("World"));
+		shell.setVisible(true);
+		try {
+			assertFalse(firstAnnotation.isCollapsed());
+			assertFalse(secondAnnotation.isCollapsed());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testProjectionRegionsShownOnlyInVisibleRegion() {
+		Shell shell= new Shell(Display.getCurrent());
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, true, SWT.ALL);
+		String documentContent= """
+
+				visible_region_start
+
+				projection_start
+
+				visible_region_end
+
+				projection_end
+
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		ProjectionAnnotation annotation= addVisibleRegionAndProjection(viewer, documentContent);
+		try {
+			assertEquals("""
+					visible_region_start
+
+					projection_start
+
+					visible_region_end
+					""", viewer.getVisibleDocument().get());
+
+			annotation.paint(null, null, null); //should exit early and not throw NPE
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testProjectionRegionsShownWithinVisibleRegion() {
+		Shell shell= new Shell(Display.getCurrent());
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, true, SWT.ALL);
+		String documentContent= """
+
+				visible_region_start
+
+				projection_start
+
+				projection_end
+
+				visible_region_end
+
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		ProjectionAnnotation annotation= addVisibleRegionAndProjection(viewer, documentContent);
+		try {
+			assertEquals("""
+					visible_region_start
+
+					projection_start
+
+					projection_end
+
+					visible_region_end
+					""", viewer.getVisibleDocument().get());
+
+			assertThrows(NullPointerException.class, () -> annotation.paint(null, null, null), "expected to run painting logic");
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	private ProjectionAnnotation addVisibleRegionAndProjection(TestProjectionViewer viewer, String documentContent) {
+		int visibleRegionStart= documentContent.indexOf("visible_region_start");
+		int visibleRegionEnd= documentContent.indexOf("\n", documentContent.indexOf("visible_region_end")) + 1;
+
+		int projectionStart= documentContent.indexOf("projection_start");
+		int projectionEnd= documentContent.indexOf("\n", documentContent.indexOf("projection_end")) + 1;
+
+		viewer.setVisibleRegion(visibleRegionStart, visibleRegionEnd - visibleRegionStart);
+		viewer.enableProjection();
+		ProjectionAnnotation annotation= new ProjectionAnnotation();
+		viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(projectionStart, projectionEnd - projectionStart));
+		return annotation;
 	}
 }
