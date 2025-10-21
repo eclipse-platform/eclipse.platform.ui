@@ -12,24 +12,24 @@ package org.eclipse.text.quicksearch.tests;
 
 import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction.PRIORITY_DEFAULT;
 import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction.PRIORITY_IGNORE;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.text.quicksearch.internal.core.priority.PrioriTree;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class PrioriTreeTest {
+class PrioriTreeTest {
 
 	PrioriTree tree;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		tree = PrioriTree.create();
 	}
 
 	@Test
-	public void testWithEmptyTree() {
+	void testWithEmptyTree() {
 		//In the empty tree most paths are assigned 'DEFAULT' priority.
 		checkPriority(PRIORITY_DEFAULT, "/");
 		checkPriority(PRIORITY_DEFAULT, "/foo/bar/zor");
@@ -48,7 +48,7 @@ public class PrioriTreeTest {
 
 	}
 	@Test
-	public void testSinglePathSet() {
+	void testSinglePathSet() {
 		setPriority("/foo/bar/zor", 100.0);
 
 		//Path itself should have the set priority
@@ -71,7 +71,7 @@ public class PrioriTreeTest {
 		checkPriority(PRIORITY_IGNORE, "/foo/bar/zor/nested/big.zip");
 	}
 	@Test
-	public void testSetOverlappingPaths() {
+	void testSetOverlappingPaths() {
 		setPriority("/shared/foo", 50.0);
 		setPriority("/shared/bar", 100.0);
 
@@ -94,7 +94,7 @@ public class PrioriTreeTest {
 	 * be the same.
 	 */
 	@Test
-	public void testSetOverlappingPaths2() {
+	void testSetOverlappingPaths2() {
 		setPriority("/shared/bar", 100.0);
 		setPriority("/shared/foo", 50.0);
 
@@ -113,7 +113,7 @@ public class PrioriTreeTest {
 	 * Need support for setting priority of an entire subtree.
 	 */
 	@Test
-	public void testSetTreePriority() {
+	void testSetTreePriority() {
 		setPriority("/promoted", 100.0);
 
 		//Stuff not in the raised subtree should be unchanged
@@ -133,7 +133,7 @@ public class PrioriTreeTest {
 	 * children already had a priority assigned before.
 	 */
 	@Test
-	public void testSetTreePriority2() {
+	void testSetTreePriority2() {
 		setPriority("/promoted/sub/sub", 50.0);
 		checkPriority(50.0, 			"/promoted");
 		checkPriority(50.0, 			"/promoted/sub");
@@ -161,8 +161,7 @@ public class PrioriTreeTest {
 	}
 
 	private void checkPriority(double expected, String pathStr) {
-		assertEquals(pathStr,
-				expected, tree.priority(new MockResource(pathStr)), 0);
+		assertEquals(expected, tree.priority(new MockResource(pathStr)), 0.0, pathStr);
 	}
 
 }

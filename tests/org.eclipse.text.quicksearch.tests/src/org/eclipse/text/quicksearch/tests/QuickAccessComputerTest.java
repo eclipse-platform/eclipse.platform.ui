@@ -9,8 +9,8 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +25,9 @@ import org.eclipse.text.quicksearch.internal.ui.QuickSearchQuickAccessComputer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class QuickAccessComputerTest {
+class QuickAccessComputerTest {
 
 	private final class QuickSearchDialogExtension extends QuickSearchDialog {
 		private QuickSearchDialogExtension(IWorkbenchWindow window) {
@@ -42,7 +42,7 @@ public class QuickAccessComputerTest {
 	}
 
 	@Test
-	public void testQuickAccessComputer() throws CoreException, IOException {
+	void testQuickAccessComputer() throws CoreException, IOException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		project.create(null);
 		project.open(null);
