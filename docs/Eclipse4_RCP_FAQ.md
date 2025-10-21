@@ -334,6 +334,8 @@ This problem usually occurs in testing, where an object is created explictly via
 Commands and Handlers
 ---------------------
 
+> **Need to execute commands programmatically?** See [Eclipse4 Commands](Eclipse4_Commands.md) for detailed instructions on calling commands using ECommandService and EHandlerService in E4 applications.
+
 ### Why aren't my handler fields being re-injected?
 
 Handler instances are singleton-ish — that is, only a single instance is created within the Eclipse-4 workbench — and the handler may actually be invoked by different threads in parallel. So the handler instance can’t be re-injected since that may result in field clobbering. Only the method arguments of the @CanExecute and @Execute arguments are injected, since they can't be clobbered with parallel invocations.

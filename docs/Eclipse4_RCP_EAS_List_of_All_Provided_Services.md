@@ -3,6 +3,8 @@ Eclipse4/RCP/EAS/List of All Provided Services
 
 This page provides a listing of the services and other data values that can be injected or obtained from a [context](Eclipse4_RCP_Contexts.md).
 
+> **For detailed information on using ECommandService and EHandlerService**, see [Eclipse4 Commands](Eclipse4_Commands.md).
+
 
 Application Context
 -------------------
