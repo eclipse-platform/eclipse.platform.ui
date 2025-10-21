@@ -124,6 +124,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					fProjectionSummary.updateSummaries();
 				}
 				processCatchupRequest(event);
+				correctChangedAnnotationVisibility(event);
 
 			} else if (model == getAnnotationModel() && fProjectionSummary != null) {
 				fProjectionSummary.updateSummaries();
@@ -770,12 +771,43 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			// If the visible region changes, make sure collapsed regions outside of the old visible regions are expanded
 			// and collapse everything outside the new visible region
 			int end= computeEndOfVisibleRegion(start, length, document);
+			Region newVisibleRegion= new Region(start, end - start - 1);
+			expandProjectionAnnotationsBorderingRegion(newVisibleRegion);
 			expandOutsideCurrentVisibleRegion(document);
 			collapseOutsideOfNewVisibleRegion(start, end, document);
-			fConfiguredVisibleRegion= new Region(start, end - start - 1);
+			fConfiguredVisibleRegion= newVisibleRegion;
+			hideProjectionAnnotationsOutsideOfVisibleRegion();
 		} catch (BadLocationException e) {
 			ILog log= ILog.of(getClass());
 			log.log(new Status(IStatus.WARNING, getClass(), IStatus.OK, null, e));
+		}
+	}
+
+	private void expandProjectionAnnotationsBorderingRegion(Region region) throws BadLocationException {
+		for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+			Annotation annotation= it.next();
+			Position position= fProjectionAnnotationModel.getPosition(annotation);
+			if (bordersOrSurroundsRegion(position, region)) {
+				fProjectionAnnotationModel.expand(annotation);
+			}
+		}
+	}
+
+	private void hideProjectionAnnotationsOutsideOfVisibleRegion() throws BadLocationException {
+		for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+			Annotation annotation= it.next();
+			hideProjectionAnnotationIfPartsAreOutsideOfVisibleRegion(annotation);
+		}
+	}
+
+	private void hideProjectionAnnotationIfPartsAreOutsideOfVisibleRegion(Annotation annotation) throws BadLocationException {
+		Position position= fProjectionAnnotationModel.getPosition(annotation);
+		if (annotation instanceof ProjectionAnnotation a) {
+			if (overlapsWithNonVisibleRegions(position.getOffset(), position.getLength())) {
+				a.setHidden(true);
+			} else {
+				a.setHidden(false);
+			}
 		}
 	}
 
@@ -855,6 +887,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			super.resetVisibleRegion();
 		}
 		fConfiguredVisibleRegion= null;
+		for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+			Annotation annotation= it.next();
+			if (annotation instanceof ProjectionAnnotation a) {
+				a.setHidden(false);
+			}
+		}
 	}
 
 	@Override
@@ -1014,9 +1052,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			return false;
 		}
 		// ignore overlaps within the same line
-		int visibleRegionStartLineOffset= getDocument().getLineInformationOfOffset(fConfiguredVisibleRegion.getOffset()).getOffset();
-		int regionToCheckEndLineOffset= getDocument().getLineInformationOfOffset(offset + length).getOffset();
+		int visibleRegionStartLineOffset= atStartOfLine(fConfiguredVisibleRegion.getOffset());
+		int regionToCheckEndLineOffset= atStartOfLine(offset + length);
 		return offset < visibleRegionStartLineOffset || regionToCheckEndLineOffset > fConfiguredVisibleRegion.getOffset() + fConfiguredVisibleRegion.getLength();
+	}
+
+
+	private boolean bordersOrSurroundsRegion(Position position, Region region) throws BadLocationException {
+		if (atStartOfLine(position.getOffset()) <= region.getOffset() + region.getLength()
+				&& atStartOfLine(position.getOffset() + position.length) >= region.getOffset() + region.getLength()) {
+			return true;
+		}
+		return atStartOfLine(position.getOffset()) <= region.getOffset()
+				&& position.getOffset() + position.getLength() > atStartOfLine(region.getOffset());
+	}
+
+	private int atStartOfLine(int off) throws BadLocationException {
+		return getDocument().getLineInformationOfOffset(off).getOffset();
 	}
 
 	/**
@@ -1087,6 +1139,20 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					}
 				}
 			}
+		}
+	}
+
+	private void correctChangedAnnotationVisibility(AnnotationModelEvent event) {
+		try {
+			for (Annotation annotation : event.getAddedAnnotations()) {
+				hideProjectionAnnotationIfPartsAreOutsideOfVisibleRegion(annotation);
+			}
+			for (Annotation annotation : event.getChangedAnnotations()) {
+				hideProjectionAnnotationIfPartsAreOutsideOfVisibleRegion(annotation);
+			}
+		} catch (BadLocationException e) {
+			ILog log= ILog.of(getClass());
+			log.log(new Status(IStatus.WARNING, getClass(), IStatus.OK, null, e));
 		}
 	}
 
