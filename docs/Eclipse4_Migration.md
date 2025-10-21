@@ -795,6 +795,247 @@ After migrating components, test thoroughly:
    - Execute commands multiple times
    - Check resource disposal (no memory leaks)
 
+## Migrate Programmatic Command Execution
+
+Commands can be executed programmatically in both E3 and E4, but the approach and services differ.
+
+### E3 Approach
+
+In E3, you use `ICommandService` to get a command and `IHandlerService` to execute it:
+
+```java
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
+
+public class MyView extends ViewPart {
+    
+    public void executeCommand() {
+        ICommandService commandService = (ICommandService) getSite()
+            .getService(ICommandService.class);
+        IHandlerService handlerService = (IHandlerService) getSite()
+            .getService(IHandlerService.class);
+        
+        try {
+            // Execute command without parameters
+            handlerService.executeCommand("com.example.mycommand", null);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**With Parameters (E3):**
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
+
+public void executeCommandWithParameters() {
+    ICommandService commandService = (ICommandService) getSite()
+        .getService(ICommandService.class);
+    IHandlerService handlerService = (IHandlerService) getSite()
+        .getService(IHandlerService.class);
+    
+    // Get the command
+    Command showView = commandService.getCommand("org.eclipse.ui.views.showView");
+    
+    // Create parameter
+    IParameter viewIdParam = showView.getParameter("org.eclipse.ui.views.showView.viewId");
+    Parameterization parm = new Parameterization(viewIdParam, "org.eclipse.ui.views.ProblemView");
+    
+    // Create parameterized command
+    ParameterizedCommand parmCommand = new ParameterizedCommand(
+        showView, 
+        new Parameterization[] { parm }
+    );
+    
+    try {
+        handlerService.executeCommand(parmCommand, null);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
+
+### E4 Approach
+
+In E4, you use `ECommandService` to create commands and `EHandlerService` to execute them:
+
+```java
+import jakarta.inject.Inject;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.core.commands.ParameterizedCommand;
+
+public class MyView {
+    
+    @Inject
+    private ECommandService commandService;
+    
+    @Inject
+    private EHandlerService handlerService;
+    
+    public void executeCommand() {
+        // Execute command without parameters
+        ParameterizedCommand command = commandService.createCommand(
+            "com.example.mycommand", 
+            null
+        );
+        
+        handlerService.executeHandler(command);
+    }
+}
+```
+
+**With Parameters (E4):**
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import jakarta.inject.Inject;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.core.commands.ParameterizedCommand;
+
+public class MyView {
+    
+    @Inject
+    private ECommandService commandService;
+    
+    @Inject
+    private EHandlerService handlerService;
+    
+    public void executeCommandWithParameters() {
+        // Create parameter map
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("org.eclipse.ui.views.showView.viewId", 
+                      "org.eclipse.ui.views.ProblemView");
+        
+        // Create parameterized command
+        ParameterizedCommand command = commandService.createCommand(
+            "org.eclipse.ui.views.showView", 
+            parameters
+        );
+        
+        // Execute the command
+        handlerService.executeHandler(command);
+    }
+}
+```
+
+### Migration Steps
+
+1. **Replace service retrieval**:
+   ```java
+   // E3:
+   ICommandService commandService = (ICommandService) getSite()
+       .getService(ICommandService.class);
+   IHandlerService handlerService = (IHandlerService) getSite()
+       .getService(IHandlerService.class);
+   
+   // E4:
+   @Inject
+   private ECommandService commandService;
+   
+   @Inject
+   private EHandlerService handlerService;
+   ```
+
+2. **Update command creation**:
+   ```java
+   // E3:
+   Command cmd = commandService.getCommand("com.example.mycommand");
+   ParameterizedCommand parmCmd = new ParameterizedCommand(cmd, parameterizations);
+   
+   // E4:
+   ParameterizedCommand command = commandService.createCommand(
+       "com.example.mycommand", 
+       parametersMap
+   );
+   ```
+
+3. **Update command execution**:
+   ```java
+   // E3:
+   handlerService.executeCommand("com.example.mycommand", null);
+   // or
+   handlerService.executeCommand(parameterizedCommand, null);
+   
+   // E4:
+   handlerService.executeHandler(command);
+   // or with context
+   handlerService.executeHandler(command, context);
+   ```
+
+4. **Update parameter handling**:
+   ```java
+   // E3: Create Parameterization objects
+   IParameter viewIdParam = showView.getParameter("viewId");
+   Parameterization parm = new Parameterization(viewIdParam, "myViewId");
+   ParameterizedCommand parmCmd = new ParameterizedCommand(
+       showView, 
+       new Parameterization[] { parm }
+   );
+   
+   // E4: Use a Map
+   Map<String, Object> parameters = new HashMap<>();
+   parameters.put("viewId", "myViewId");
+   ParameterizedCommand command = commandService.createCommand(
+       "com.example.showView", 
+       parameters
+   );
+   ```
+
+### Key Differences
+
+| Aspect | E3 | E4 |
+|--------|----|----|
+| **Command Service** | `ICommandService` | `ECommandService` |
+| **Handler Service** | `IHandlerService` | `EHandlerService` |
+| **Service Access** | `getSite().getService()` | `@Inject` annotation |
+| **Command Creation** | `getCommand()` + `new ParameterizedCommand()` | `createCommand()` |
+| **Parameter Format** | `Parameterization[]` array | `Map<String, Object>` |
+| **Execution Method** | `executeCommand()` | `executeHandler()` |
+| **Return Value** | Returns `Object` | Returns `Object` |
+
+### Common Migration Patterns
+
+**Opening a View:**
+
+```java
+// E3:
+handlerService.executeCommand("org.eclipse.ui.views.showView", null);
+
+// E4:
+Map<String, Object> params = new HashMap<>();
+params.put("org.eclipse.ui.views.showView.viewId", "com.example.myview");
+ParameterizedCommand cmd = commandService.createCommand(
+    "org.eclipse.ui.views.showView", params);
+handlerService.executeHandler(cmd);
+```
+
+**Saving:**
+
+```java
+// E3:
+handlerService.executeCommand("org.eclipse.ui.file.save", null);
+
+// E4:
+ParameterizedCommand cmd = commandService.createCommand(
+    "org.eclipse.ui.file.save", null);
+handlerService.executeHandler(cmd);
+```
+
+For more details on E4 command execution, see [Eclipse4 Commands](Eclipse4_Commands.md).
+
 ## Common Migration Pitfalls
 
 1. **Forgot @PostConstruct**: Methods won't be called without the annotation
@@ -803,9 +1044,12 @@ After migrating components, test thoroughly:
 4. **Persisted state**: Use `-clearPersistedState` when testing model changes
 5. **Class not injectable**: Handler/view class must have a public no-arg constructor or an @Inject constructor
 6. **Shell auto-generation**: Always use `@Named(IServiceConstants.ACTIVE_SHELL)` to avoid getting a new Shell
+7. **Service name confusion**: Use `ECommandService` and `EHandlerService` (not `ICommandService` and `IHandlerService`)
+8. **Wrong method names**: Use `createCommand()` and `executeHandler()` in E4 (not `getCommand()` and `executeCommand()`)
 
 ## Additional Resources
 
+- [Eclipse4 Commands](Eclipse4_Commands.md) - How to call commands in E4
 - [Eclipse4 RCP FAQ](Eclipse4_RCP_FAQ.md) - Common questions and answers
 - [Eclipse4 RCP Dependency Injection](Eclipse4_RCP_Dependency_Injection.md) - DI details
 - [Eclipse4 RCP Contexts](Eclipse4_RCP_Contexts.md) - Context hierarchy
