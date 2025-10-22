@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <title>Demo Icon</title>
+  <desc>A simple icon for demonstrating SVG size hints</desc>
+  
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+  
+  <!-- Star shape -->
+  <path d="M 64 20 L 74 50 L 104 50 L 80 68 L 90 98 L 64 80 L 38 98 L 48 68 L 24 50 L 54 50 Z" 
+        fill="#FFEB3B" stroke="#FBC02D" stroke-width="2"/>
+  
+  <!-- Center circle -->
+  <circle cx="64" cy="64" r="12" fill="#FF9800" stroke="#F57C00" stroke-width="2"/>
+  
+  <!-- Text -->
+  <text x="64" y="118" font-family="Arial, sans-serif" font-size="14" 
+        fill="#FFFFFF" text-anchor="middle" font-weight="bold">DEMO</text>
+</svg>
