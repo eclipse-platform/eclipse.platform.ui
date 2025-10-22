@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.ConfigurableLineTracker;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -20,12 +21,12 @@ import org.eclipse.jface.text.GapTextStore;
 
 public class ConfigurableLineTrackerTest extends AbstractLineTrackerTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fText= new GapTextStore();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fTracker= null;
 		fText= null;

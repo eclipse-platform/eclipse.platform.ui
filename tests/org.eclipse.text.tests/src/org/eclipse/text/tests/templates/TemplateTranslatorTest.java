@@ -14,17 +14,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests.templates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateException;
@@ -38,14 +40,16 @@ public class TemplateTranslatorTest {
 
 	private TemplateTranslator fTranslator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fTranslator= new TemplateTranslator();
 	}
 
-	@Test(expected= NullPointerException.class)
-	public void testNullTemplate() throws Exception {
-		fTranslator.translate((String) null);
+	@Test
+	public void testNullTemplate() {
+		assertThrows(NullPointerException.class, () -> {
+			fTranslator.translate((String) null);
+		});
 	}
 
 	@Test
@@ -152,19 +156,25 @@ public class TemplateTranslatorTest {
 		assertEquals(Arrays.asList(new Object[] { "1", "2 ", "3" }), vars[0].getVariableType().getParams());
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax1() throws Exception {
-		fTranslator.translate("foo ${var");
+	@Test
+	public void testIllegalSyntax1() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax2() throws Exception {
-		fTranslator.translate("foo $");
+	@Test
+	public void testIllegalSyntax2() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo $");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax3() throws Exception {
-		fTranslator.translate("foo ${] } bar");
+	@Test
+	public void testIllegalSyntax3() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${] } bar");
+		});
 	}
 
 	@Test
@@ -271,14 +281,18 @@ public class TemplateTranslatorTest {
 		assertEquals(Collections.singletonList("param"), vars[0].getVariableType().getParams());
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegallyParameterizedTypeTemplate1() throws Exception {
-		fTranslator.translate("foo ${var:type(param)} bar ${var:type(other)} end");
+	@Test
+	public void testIllegallyParameterizedTypeTemplate1() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:type(param)} bar ${var:type(other)} end");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegallyParameterizedTypeTemplate2() throws Exception {
-		fTranslator.translate("foo ${var:type(param)} bar ${var:type} end");
+	@Test
+	public void testIllegallyParameterizedTypeTemplate2() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:type(param)} bar ${var:type} end");
+		});
 	}
 
 	@Test
@@ -349,24 +363,32 @@ public class TemplateTranslatorTest {
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax4() throws Exception {
-		fTranslator.translate("foo ${var:} bar");
+	@Test
+	public void testIllegalSyntax4() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:} bar");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax5() throws Exception {
-		fTranslator.translate("foo ${var:type(} bar");
+	@Test
+	public void testIllegalSyntax5() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:type(} bar");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax6() throws Exception {
-		fTranslator.translate("foo ${var:type(] )} bar");
+	@Test
+	public void testIllegalSyntax6() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:type(] )} bar");
+		});
 	}
 
-	@Test(expected=TemplateException.class)
-	public void testIllegalSyntax7() throws Exception {
-		fTranslator.translate("foo ${var:type((} bar");
+	@Test
+	public void testIllegalSyntax7() {
+		assertThrows(TemplateException.class, () -> {
+			fTranslator.translate("foo ${var:type((} bar");
+		});
 	}
 
 }

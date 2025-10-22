@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.MultiStringMatcher;
 import org.eclipse.jface.text.MultiStringMatcher.Match;
@@ -35,14 +36,14 @@ public class MultiStringMatcherTest {
 
 	private static Match run(TestCharSequence text, int offset, String... needles) {
 		Match result = MultiStringMatcher.indexOf(text, offset, needles);
-		assertEquals("Algorithm backtracked", 0, text.getBackTrack());
+		assertEquals(0, text.getBackTrack(), "Algorithm backtracked");
 		return result;
 	}
 
 	private static void test(Match m, String expected, int index) {
-		assertNotNull("No match", m);
-		assertEquals("Unexpected match", expected, m.getText());
-		assertEquals("Unexpected index", index, m.getOffset());
+		assertNotNull(m, "No match");
+		assertEquals(expected, m.getText(), "Unexpected match");
+		assertEquals(index, m.getOffset(), "Unexpected index");
 	}
 
 	private static void testList(List<Match> matches, String expected) {
@@ -53,7 +54,7 @@ public class MultiStringMatcherTest {
 			}
 			return Integer.compare(a.getText().length(), b.getText().length());
 		});
-		assertEquals("Unexpected results", expected, matches.toString());
+		assertEquals(expected, matches.toString(), "Unexpected results");
 	}
 
 	@Test
@@ -137,13 +138,13 @@ public class MultiStringMatcherTest {
 	@Test
 	public void test014() throws Exception {
 		Match m = run("", "a", "b", "ab");
-		assertNull("Expected no match", m);
+		assertNull(m, "Expected no match");
 	}
 
 	@Test
 	public void test015() throws Exception {
 		Match m = run("dddca", "ac", "cac", "ab");
-		assertNull("Expected no match", m);
+		assertNull(m, "Expected no match");
 	}
 
 	@Test
@@ -221,7 +222,7 @@ public class MultiStringMatcherTest {
 	@Test
 	public void test028() throws Exception {
 		Match m = run("dddhisheddd", 7, "he", "she", "his", "hers");
-		assertNull("Expected no match", m);
+		assertNull(m, "Expected no match");
 	}
 
 	@Test
@@ -377,7 +378,7 @@ public class MultiStringMatcherTest {
 	public void multi012() throws Exception {
 		MultiStringMatcher m = MultiStringMatcher.create("she", "his", "hers");
 		List<Match> matches = m.find("dddhiheddd", 0);
-		assertEquals("Expected no match", 0, matches.size());
+		assertEquals(0, matches.size(), "Expected no match");
 	}
 
 	@Test
@@ -397,25 +398,25 @@ public class MultiStringMatcherTest {
 	@Test
 	public void noStrings001() throws Exception {
 		MultiStringMatcher m = MultiStringMatcher.builder().build();
-		assertNull("Expected no match", m.indexOf("dhihedd", 0));
+		assertNull(m.indexOf("dhihedd", 0), "Expected no match\"");
 		List<Match> matches = m.find("dddhiheddd", 0);
-		assertEquals("Expected no match", 0, matches.size());
+		assertEquals(0, matches.size(), "Expected no match");
 	}
 
 	@Test
 	public void noStrings002() throws Exception {
 		MultiStringMatcher m = MultiStringMatcher.builder().add("").build();
-		assertNull("Expected no match", m.indexOf("dhihedd", 0));
+		assertNull(m.indexOf("dhihedd", 0), "Expected no match");
 		List<Match> matches = m.find("dddhiheddd", 0);
-		assertEquals("Expected no match", 0, matches.size());
+		assertEquals(0, matches.size(), "Expected no match");
 	}
 
 	@Test
 	public void noStrings003() throws Exception {
 		MultiStringMatcher m = MultiStringMatcher.builder().add((String[]) null).build();
-		assertNull("Expected no match", m.indexOf("dhihedd", 0));
+		assertNull(m.indexOf("dhihedd", 0), "Expected no match");
 		List<Match> matches = m.find("dddhiheddd", 0);
-		assertEquals("Expected no match", 0, matches.size());
+		assertEquals(0, matches.size(), "Expected no match");
 	}
 
 	@Test
@@ -455,7 +456,7 @@ public class MultiStringMatcherTest {
 		TestCharSequence text = new TestCharSequence("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		Match m = run(text, 0, "x", "xx", "xxx", "xxxx");
 		test(m, "xxxx", 0);
-		assertEquals("Scanned too far", 3, text.getLastIndex());
+		assertEquals(3, text.getLastIndex(), "Scanned too far");
 	}
 
 	@Test
@@ -463,7 +464,7 @@ public class MultiStringMatcherTest {
 		TestCharSequence text = new TestCharSequence("ddcababababababcabxdd");
 		Match m = run(text, 0, "ca", "cabx", "ababc");
 		test(m, "ca", 2);
-		assertEquals("Scanned too far", 5, text.getLastIndex());
+		assertEquals(5, text.getLastIndex(), "Scanned too far");
 	}
 
 	@Test
@@ -471,7 +472,7 @@ public class MultiStringMatcherTest {
 		TestCharSequence text = new TestCharSequence("ddcabarbarazz");
 		Match m = run(text, 0, "a", "cabby", "barbara");
 		test(m, "a", 3);
-		assertEquals("Scanned too far", 5, text.getLastIndex());
+		assertEquals(5, text.getLastIndex(), "Scanned too far");
 	}
 
 	private static class TestCharSequence implements CharSequence {

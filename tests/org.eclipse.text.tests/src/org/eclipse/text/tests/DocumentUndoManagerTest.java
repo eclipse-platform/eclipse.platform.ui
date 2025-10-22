@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.commands.ExecutionException;
 
@@ -71,12 +73,12 @@ public class DocumentUndoManagerTest {
 	/** The undo manager. */
 	private IDocumentUndoManager fUndoManager;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fUndoManager = null;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fUndoManager.disconnect(this);
 		fUndoManager = null;

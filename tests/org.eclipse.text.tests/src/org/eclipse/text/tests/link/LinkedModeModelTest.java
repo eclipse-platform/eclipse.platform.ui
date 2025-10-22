@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.text.tests.link;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +24,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -429,7 +430,7 @@ public class LinkedModeModelTest {
 
 		assertEquals(group1, "MARGARETE");
 		assertFalse(isExit[0]);
-		Assert.assertEquals("	MARGARETE:\n" +
+		Assertions.assertEquals("	MARGARETE:\n" +
 				"	Verbrich mir, Heinrich!", doc1.get(0, 36));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -458,7 +459,7 @@ public class LinkedModeModelTest {
 
 		assertEquals(group1, "MARGARINE-PLANTA");
 		assertFalse(isExit[0]);
-		Assert.assertEquals("	MARGARINE-PLANTA" +
+		Assertions.assertEquals("	MARGARINE-PLANTA" +
 				"Versprich mir, Heinrich!", doc1.get(0, 41));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -487,7 +488,7 @@ public class LinkedModeModelTest {
 
 		assertEquals(group1, "MARGAR");
 		assertFalse(isExit[0]);
-		Assert.assertEquals("	MARGAR" +
+		Assertions.assertEquals("	MARGAR" +
 				"Versprich mir, Heinrich!", doc1.get(0, 31));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -558,7 +559,7 @@ public class LinkedModeModelTest {
 		LinkedPosition[] positions= group.getPositions();
 		for (LinkedPosition pos : positions) {
 			if (!pos.isDeleted())
-				Assert.assertEquals(expected, pos.getContent());
+				Assertions.assertEquals(expected, pos.getContent());
 		}
 	}
 
@@ -576,7 +577,7 @@ public class LinkedModeModelTest {
 		Arrays.sort(act, new PositionComparator());
 		Arrays.sort(exp, new PositionComparator());
 
-		Assert.assertEquals(exp.length, act.length);
+		Assertions.assertEquals(exp.length, act.length);
 
 		LinkedPosition e_prev= null, a_prev= null;
 		for (int i= 0; i <= exp.length; i++) {
@@ -587,10 +588,10 @@ public class LinkedModeModelTest {
 			IDocument e_doc= e_prev != null ? e_prev.getDocument() : e_next.getDocument();
 			if (e_next != null && e_next.getDocument() != e_doc) {
 				// split at document boundaries
-				Assert.assertEquals(getContentBetweenPositions(e_prev, null), getContentBetweenPositions(a_prev, null));
-				Assert.assertEquals(getContentBetweenPositions(null, e_next), getContentBetweenPositions(null, a_next));
+				Assertions.assertEquals(getContentBetweenPositions(e_prev, null), getContentBetweenPositions(a_prev, null));
+				Assertions.assertEquals(getContentBetweenPositions(null, e_next), getContentBetweenPositions(null, a_next));
 			} else {
-				Assert.assertEquals(getContentBetweenPositions(e_prev, e_next), getContentBetweenPositions(a_prev, a_next));
+				Assertions.assertEquals(getContentBetweenPositions(e_prev, e_next), getContentBetweenPositions(a_prev, a_next));
 			}
 
 			e_prev= e_next;
@@ -616,7 +617,7 @@ public class LinkedModeModelTest {
 	}
 
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fPositions.clear();
 		fDocumentMap.clear();

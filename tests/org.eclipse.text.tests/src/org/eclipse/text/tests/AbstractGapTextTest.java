@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.text.GapTextStore;
 
@@ -72,7 +73,7 @@ public class AbstractGapTextTest {
 	}
 
 	protected void assertGap(int start, int end) {
-		assertTrue("Invalid gap. Expected: " + printGap(start, end) + " actual:" + printGap() , fText.getGapStart() == start && fText.getGapEnd() == end);
+		assertTrue(fText.getGapStart() == start && fText.getGapEnd() == end, "Invalid gap. Expected: " + printGap(start, end) + " actual:" + printGap());
 	}
 
 	protected void assertContents(String expected) {

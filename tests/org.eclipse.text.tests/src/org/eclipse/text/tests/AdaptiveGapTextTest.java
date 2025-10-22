@@ -13,19 +13,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AdaptiveGapTextTest extends AbstractGapTextTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fText= new GapText(2, 10, 0.5f);
 		fText.set("xxxxx");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fText= null;
 	}

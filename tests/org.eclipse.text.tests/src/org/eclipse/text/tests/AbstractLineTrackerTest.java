@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ILineTracker;
@@ -29,14 +30,14 @@ public abstract class AbstractLineTrackerTest {
 	protected ILineTracker  fTracker;
 
 	protected final void checkLines(int[] lines) throws BadLocationException {
-		assertEquals("number of lines", lines.length, fTracker.getNumberOfLines());
+		assertEquals(lines.length, fTracker.getNumberOfLines(), "number of lines");
 
 		for (int i= 0; i < lines.length; i++) {
 			IRegion line= fTracker.getLineInformation(i);
 
-			assertEquals("line lenght of line " + i, lines[i],  line.getLength());
+			assertEquals(lines[i], line.getLength(), "line lenght of line " + i);
 
-			assertEquals("line offset of line " + i, getLineOffset(i, lines),  line.getOffset());
+			assertEquals(getLineOffset(i, lines), line.getOffset(), "line offset of line " + i);
 		}
 	}
 

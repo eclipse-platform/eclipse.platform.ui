@@ -14,20 +14,20 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -117,7 +117,7 @@ public class ProjectionDocumentTest {
 			"99999999999999999999";
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fMasterDocument= new Document();
 		fMasterDocument.set(getOriginalMasterContents());
@@ -125,7 +125,7 @@ public class ProjectionDocumentTest {
 		fSlaveDocument= (ProjectionDocument) fSlaveDocumentManager.createSlaveDocument(fMasterDocument);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fSlaveDocumentManager.freeSlaveDocument(fSlaveDocument);
 		fSlaveDocument= null;
@@ -251,12 +251,12 @@ public class ProjectionDocumentTest {
 		}
 
 		Position[] segmentation= fSlaveDocument.getSegments2();
-		assertTrue("invalid number of segments", expected.length == segmentation.length);
+		assertTrue(expected.length == segmentation.length, "invalid number of segments");
 
 		for (int i= 0; i < expected.length; i++) {
 			Segment segment= (Segment) segmentation[i];
 			Fragment actual= segment.fragment;
-			Assert.assertEquals(print(actual) + " != " + print(expected[i]), expected[i], actual);
+			Assertions.assertEquals(expected[i], actual, print(actual) + " != " + print(expected[i]));
 		}
 
 	}
@@ -267,15 +267,15 @@ public class ProjectionDocumentTest {
 
 		int textLines= textTracker.getNumberOfLines();
 		int trackerLines= document.getNumberOfLines();
-		Assert.assertEquals(trackerLines, textLines);
+		Assertions.assertEquals(trackerLines, textLines);
 
 		for (int i= 0; i < trackerLines; i++) {
 			try {
 				IRegion trackerLine= document.getLineInformation(i);
 				IRegion textLine= textTracker.getLineInformation(i);
 
-				Assert.assertEquals(trackerLine.getOffset(), textLine.getOffset());
-				Assert.assertEquals(trackerLine.getLength(), textLine.getLength());
+				Assertions.assertEquals(trackerLine.getOffset(), textLine.getOffset());
+				Assertions.assertEquals(trackerLine.getLength(), textLine.getLength());
 
 			} catch (BadLocationException e) {
 				assertTrue(false);
@@ -286,7 +286,7 @@ public class ProjectionDocumentTest {
 	private void assertContents(String expected, IDocument document) {
 		assertWellFormedSegmentation();
 		assertWellFormedFragmentation();
-		Assert.assertEquals(expected, document.get());
+		Assertions.assertEquals(expected, document.get());
 		assertLineInformationConsistency(document);
 	}
 
@@ -682,9 +682,9 @@ public class ProjectionDocumentTest {
 
 		try {
 			int startOffset= fMasterDocument.getLineOffset(4);
-			Assert.assertEquals(80, startOffset);
+			Assertions.assertEquals(80, startOffset);
 			int endOffset= fMasterDocument.getLineOffset(7);
-			Assert.assertEquals(140, endOffset);
+			Assertions.assertEquals(140, endOffset);
 			fSlaveDocument.addMasterDocumentRange(startOffset, endOffset - startOffset);
 
 			assertSlaveContents(getOriginalMasterContents().substring(80, 140));
@@ -1629,12 +1629,12 @@ public class ProjectionDocumentTest {
 
 	private void assertEquals(DocumentEvent expected, DocumentEvent received) {
 		assertSame(expected.getDocument(), received.getDocument());
-		Assert.assertEquals(expected.getOffset(), received.getOffset());
-		Assert.assertEquals(expected.getLength(), received.getLength());
+		Assertions.assertEquals(expected.getOffset(), received.getOffset());
+		Assertions.assertEquals(expected.getLength(), received.getLength());
 		if (expected.getText() == null || expected.getText().isEmpty())
 			assertTrue(received.getText() == null || received.getText().isEmpty());
 		else
-			Assert.assertEquals(expected.getText(), received.getText());
+			Assertions.assertEquals(expected.getText(), received.getText());
 	}
 
 	private void assertSlaveEvents(DocumentEvent[] expected, DocumentEvent[] received) {
@@ -2120,9 +2120,9 @@ public class ProjectionDocumentTest {
 			assertNull(expected);
 		}
 
-		assertTrue("invalid number of regions", expected.length == actual.length);
+		assertTrue(expected.length == actual.length, "invalid number of regions");
 		for (int i= 0; i < expected.length; i++)
-			Assert.assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
+			Assertions.assertEquals(expected[i], actual[i], print(actual[i]) + " != " + print(expected[i]));
 	}
 
 	private void assertUnprojectedMasterRegions(IRegion[] expected, int offsetInMaster, int lengthInMaster) {

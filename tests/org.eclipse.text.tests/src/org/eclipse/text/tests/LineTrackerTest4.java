@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.ConfigurableLineTracker;
 import org.eclipse.jface.text.GapTextStore;
@@ -26,14 +29,14 @@ import org.eclipse.jface.text.IRegion;
 public class LineTrackerTest4 extends AbstractLineTrackerTest {
 
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\r\n" });
 		set("x\r\nx\r\nx\r\nx\r\nx\r\n");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fTracker= null;
 		fText= null;
@@ -80,7 +83,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		for (int i= 0; i < 10; i++) {
 			int no= fTracker.getLineNumberOfOffset(i);
 			double l= Math.floor(i / 2);
-			assertTrue("invalid line number " + no + " for position " + i + " should be " + l, l == no);
+			assertTrue(l == no, "invalid line number " + no + " for position " + i + " should be " + l);
 		}
 	}
 
@@ -123,7 +126,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		for (int i= 0; i < 5; i++) {
 			for (int j= 0; j <= i; j++) {
 				int no= fTracker.getLineNumberOfOffset(offset + j);
-				assertTrue("invalid line number " + no + " reported instead of " + i, no == i);
+				assertTrue(no == i, "invalid line number " + no + " reported instead of " + i);
 			}
 			offset+= (i + 2);
 		}
@@ -137,29 +140,29 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 			IRegion line= fTracker.getLineInformation(i);
 			int pos= line.getOffset() + line.getLength() + 1;
 			int offset= (3 * i) + 2;
-			assertTrue("invalid line end offset " + pos + " for line " + i + " should be " + offset, offset == pos);
+			assertTrue(offset == pos, "invalid line end offset " + pos + " for line " + i + " should be " + offset);
 		}
 
 		for (int i= 0; i < 5; i++) {
 			int pos= fTracker.getLineOffset(i);
 			int offset= 3 * i;
-			assertTrue("invalid line start offset " + pos + " for line " + i + " should be " + offset, pos == offset);
+			assertTrue(pos == offset, "invalid line start offset " + pos + " for line " + i + " should be " + offset);
 		}
 
 		for (int i= 0; i < 15; i++) {
 			int line= fTracker.getLineNumberOfOffset(i);
 			double l= Math.floor(i / 3);
-			assertTrue("invalid line number " + line + " for position " + i + " should be " + l, l == line);
+			assertTrue(l == line, "invalid line number " + line + " for position " + i + " should be " + l);
 		}
 
 		int lastLine= fTracker.getLineNumberOfOffset(fText.getLength());
-		assertTrue("invalid last line number " + lastLine, 5 == lastLine);
+		assertTrue(5 == lastLine, "invalid last line number " + lastLine);
 
 		int offset= fTracker.getLineOffset(lastLine);
-		assertTrue("invalid last line start offset " + offset, fText.getLength() == offset);
+		assertTrue(fText.getLength() == offset, "invalid last line start offset " + offset);
 
 		int length= fTracker.getLineLength(lastLine);
-		assertTrue("invalid last line end offset " + (offset + length - 1), 0 == length);
+		assertTrue(0 == length, "invalid last line end offset " + (offset + length - 1));
 	}
 
 	@Test
@@ -200,7 +203,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		}
 
 		String txt= fText.get(0, fText.getLength());
-		assertEquals("invalid text", "x\r\nx\r\nx\r\nx\r\nx\r\n", txt);
+		assertEquals("x\r\nx\r\nx\r\nx\r\nx\r\n", txt, "invalid text");
 	}
 
 	@Test
@@ -215,6 +218,6 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		checkLines(new int[] { 2, 2, 2, 2, 2, 0 });
 
 		String txt= fText.get(0, fText.getLength());
-		assertEquals("invalid text", "\tx\r\n\tx\r\n\tx\r\n\tx\r\n\tx\r\n", txt);
+		assertEquals("\tx\r\n\tx\r\n\tx\r\n\tx\r\n\tx\r\n", txt, "invalid text");
 	}
 }

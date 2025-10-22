@@ -13,12 +13,17 @@
  *******************************************************************************/
 package org.eclipse.text.tests.link;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.eclipse.core.runtime.AssertionFailedException;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -31,7 +36,7 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 public class LinkedPositionTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDoc= new Document(GARTEN1);
 		fPos= new LinkedPosition(fDoc, 3, 10);
@@ -45,10 +50,12 @@ public class LinkedPositionTest {
 		LinkedPosition linkedPosition2 = new LinkedPosition(new Document(), 123, 234);
 	}
 
-	@Test(expected=Throwable.class)
+	@Test
 	public void testNullCreate() {
-		@SuppressWarnings("unused")
-		LinkedPosition linkedPosition = new LinkedPosition(null, 1, 9);
+		assertThrows(AssertionFailedException.class, () -> {
+			@SuppressWarnings("unused")
+			LinkedPosition linkedPosition = new LinkedPosition(null, 1, 9);
+		});
 	}
 
 	/*
@@ -182,17 +189,21 @@ public class LinkedPositionTest {
 		assertEquals("FAUST", p.getContent());
 	}
 
-	@Test(expected= BadLocationException.class)
-	public void testBadLocationContentNull() throws BadLocationException {
-		LinkedPosition p= new LinkedPosition(new Document(), 23, 3);
-		p.getContent();
+	@Test
+	public void testBadLocationContentNull() {
+		assertThrows(BadLocationException.class, () -> {
+			LinkedPosition p= new LinkedPosition(new Document(), 23, 3);
+			p.getContent();
+		});
 	}
 
-	@Test(expected= BadLocationException.class)
-	public void testBadLocationContentEmpty() throws BadLocationException {
-		LinkedPosition p= new LinkedPosition(fDoc, 23, 3);
-		fDoc.set("");
-		p.getContent();
+	@Test
+	public void testBadLocationContentEmpty() {
+		assertThrows(BadLocationException.class, () -> {
+			LinkedPosition p= new LinkedPosition(fDoc, 23, 3);
+			fDoc.set("");
+			p.getContent();
+		});
 	}
 
 	@Test
