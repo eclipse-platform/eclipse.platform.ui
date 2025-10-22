@@ -81,19 +81,29 @@ public class NestedResourcesTests {
 		testProjects.add(projectABA);
 		testProjects.add(projectABB);
 
+		// Wait for NestedProjectManager to process all resource changes
+		assertTrue("NestedProjectManager did not update children for projectA",
+				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectA).length == 1));
+
 		IProject[] childrenOfProjectA = NestedProjectManager.getInstance().getDirectChildrenProjects(projectA);
-		Assert.assertEquals(1, childrenOfProjectA.length);
 		Assert.assertEquals(projectAB, childrenOfProjectA[0]);
 		Assert.assertNull(NestedProjectManager.getInstance().getMostDirectOpenContainer(projectA));
 
+		// Wait for NestedProjectManager to process projectAAA
+		assertTrue("NestedProjectManager did not update children for folderAA",
+				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(folderAA).length == 1));
+
 		IProject[] childrenOfFolderAA = NestedProjectManager.getInstance().getDirectChildrenProjects(folderAA);
-		Assert.assertEquals(1, childrenOfFolderAA.length);
 		Assert.assertEquals("aaa", childrenOfFolderAA[0].getName());
 		Assert.assertEquals(folderAA,
 				NestedProjectManager.getInstance().getMostDirectOpenContainer(childrenOfFolderAA[0]));
 
-		IProject[] childrenOfProjectAB = NestedProjectManager.getInstance().getDirectChildrenProjects(projectAB);
-		Assert.assertEquals(2, childrenOfProjectAB.length);
+		// Wait for NestedProjectManager to process both projectABA and projectABB
+		assertTrue("NestedProjectManager did not update children for projectAB",
+				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectAB).length == 2));
 	}
 
 	@Test
