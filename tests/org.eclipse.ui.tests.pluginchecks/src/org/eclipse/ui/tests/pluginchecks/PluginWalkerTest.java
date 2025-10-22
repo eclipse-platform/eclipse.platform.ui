@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.tests.pluginchecks;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,8 +37,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -66,10 +66,10 @@ public class PluginWalkerTest {
 	private BundleContext bundleContext;
 	private List<String> bundlesWithPluginXml;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		Bundle bundle = FrameworkUtil.getBundle(PluginWalkerTest.class);
-		assertNotNull("Make sure you're running this as a plugin test", bundle);
+		assertNotNull(bundle, "Make sure you're running this as a plugin test");
 		assertNotNull(bundle);
 		bundleContext = bundle.getBundleContext();
 		bundlesWithPluginXml = List.of("org.eclipse.e4.ui.css.swt", "org.eclipse.e4.ui.model.workbench",
@@ -101,10 +101,8 @@ public class PluginWalkerTest {
 			boolean hasExtension = extensions.getLength() > 0;
 			boolean hasExtensionPoint = extensionpoint.getLength() > 0;
 
-			assertTrue(
-					"plugin.xml from " + bundleSymbolicName
-							+ "  must contain at least one extension point or extension",
-					hasExtension || hasExtensionPoint);
+			assertTrue(hasExtension || hasExtensionPoint, "plugin.xml from " + bundleSymbolicName
+					+ "  must contain at least one extension point or extension");
 		}
 
 	}
