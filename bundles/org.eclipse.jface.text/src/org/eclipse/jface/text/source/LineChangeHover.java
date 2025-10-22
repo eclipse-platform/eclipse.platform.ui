@@ -51,8 +51,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			StringBuilder sb= new StringBuilder(content);
 			final String tabReplacement= getTabReplacement();
 			for (int pos= 0; pos < sb.length(); pos++) {
-				if (sb.charAt(pos) == '\t')
+				if (sb.charAt(pos) == '\t') {
 					sb.replace(pos, pos + 1, tabReplacement);
+				}
 			}
 			return sb.toString();
 		}
@@ -85,14 +86,16 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 */
 	private String computeContent(ISourceViewer viewer, int first, int last, int maxLines) {
 		ILineDiffer differ= getDiffer(viewer);
-		if (differ == null)
+		if (differ == null) {
 			return null;
+		}
 
 		final List<ILineDiffInfo> lines= new LinkedList<>();
 		for (int l= first; l <= last; l++) {
 			ILineDiffInfo info= differ.getLineInfo(l);
-			if (info != null)
+			if (info != null) {
 				lines.add(info);
+			}
 		}
 
 		return decorateText(lines, maxLines);
@@ -122,21 +125,23 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			String[] original= info.getOriginalText();
 			int type= info.getChangeType();
 			int i= 0;
-			if (type == ILineDiffInfo.ADDED)
+			if (type == ILineDiffInfo.ADDED) {
 				added++;
-			else if (type == ILineDiffInfo.CHANGED) {
+			} else if (type == ILineDiffInfo.CHANGED) {
 				text.append("> ").append(original.length > 0 ? original[i++] : ""); //$NON-NLS-1$ //$NON-NLS-2$
 				maxLines--;
 			} else if (type == ILineDiffInfo.UNCHANGED) {
 				maxLines++;
 			}
-			if (maxLines == 0)
+			if (maxLines == 0) {
 				return trimTrailing(text.toString());
+			}
 			for (; i < original.length; i++) {
 				text.append("- ").append( original[i]); //$NON-NLS-1$
 				added--;
-				if (--maxLines == 0)
+				if (--maxLines == 0) {
 					return trimTrailing(text.toString());
+				}
 			}
 		}
 
@@ -172,17 +177,20 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	private ILineDiffer getDiffer(ISourceViewer viewer) {
 		IAnnotationModel model= viewer.getAnnotationModel();
 
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModel diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-			if (diffModel != null)
+			if (diffModel != null) {
 				model= diffModel;
+			}
 		}
 		if (model instanceof ILineDiffer) {
-			if (model instanceof ILineDifferExtension2 && ((ILineDifferExtension2)model).isSuspended())
+			if (model instanceof ILineDifferExtension2 && ((ILineDifferExtension2)model).isSuspended()) {
 				return null;
+			}
 			return (ILineDiffer)model;
 		}
 		return null;
@@ -213,8 +221,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		 */
 
 		ILineDiffer differ= getDiffer(viewer);
-		if (differ == null)
+		if (differ == null) {
 			return new Point(-1, -1);
+		}
 
 		// backward search
 
@@ -263,8 +272,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		if (differ != null && startLine > 0) {
 			int l= startLine - 1;
 			ILineDiffInfo info= differ.getLineInfo(l);
-			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
+			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0) {
 				return l;
+			}
 		}
 		return startLine;
 	}
@@ -282,8 +292,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		ILineDiffer differ= getDiffer(viewer);
 		if (differ != null && lastLine > 0) {
 			ILineDiffInfo info= differ.getLineInfo(lastLine);
-			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED)
+			if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED) {
 				return lastLine - 1;
+			}
 		}
 		return lastLine;
 	}
@@ -293,8 +304,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		IDocument document= viewer.getDocument();
 		if (document != null) {
 			Point range= computeLineRange(viewer, lineNumber, 0, Math.max(0, document.getNumberOfLines() - 1));
-			if (range.x != -1 && range.y != -1)
+			if (range.x != -1 && range.y != -1) {
 				return new LineRange(range.x, range.y - range.x + 1);
+			}
 		}
 		return null;
 	}

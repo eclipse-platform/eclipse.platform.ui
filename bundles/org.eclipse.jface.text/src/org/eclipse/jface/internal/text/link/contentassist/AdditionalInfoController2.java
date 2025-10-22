@@ -69,9 +69,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	/** Object to synchronize initial display of additional info */
 	private Object fStartSignal;
 	/** The table selection listener */
-	private SelectionListener fSelectionListener= new TableSelectionListener();
+	private final SelectionListener fSelectionListener= new TableSelectionListener();
 	/** The delay after which additional information is displayed */
-	private int fDelay;
+	private final int fDelay;
 
 
 	/**

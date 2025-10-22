@@ -86,7 +86,7 @@ public class SourceViewerConfiguration {
 
 	/**
 	 * Returns the line space for the given source viewer. This implementation always returns 0.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the line space
 	 * @see org.eclipse.swt.custom.StyledText#setLineSpacing(int)
@@ -252,10 +252,11 @@ public class SourceViewerConfiguration {
 			char[] spaceChars= new char[i];
 			Arrays.fill(spaceChars, ' ');
 			String spaces= new String(spaceChars);
-			if (i < tabWidth)
+			if (i < tabWidth) {
 				indentPrefixes[i]= spaces + '\t';
-			else
+			} else {
 				indentPrefixes[i]= new String(spaces);
+			}
 		}
 		indentPrefixes[tabWidth + 1]= ""; //$NON-NLS-1$
 		return indentPrefixes;
@@ -314,8 +315,9 @@ public class SourceViewerConfiguration {
 	 * @since 2.1
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
-		if (stateMask == ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK)
+		if (stateMask == ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK) {
 			return getTextHover(sourceViewer, contentType);
+		}
 		return null;
 	}
 
@@ -397,8 +399,9 @@ public class SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return null;
+		}
 
 		return new IHyperlinkDetector[] { new URLHyperlinkDetector() };
 	}

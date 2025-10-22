@@ -183,7 +183,7 @@ public class LinkedModeUI {
 
 	private static final class EmptyTarget extends LinkedModeUITarget {
 
-		private ITextViewer fTextViewer;
+		private final ITextViewer fTextViewer;
 
 		/**
 		 * @param viewer the viewer
@@ -229,8 +229,9 @@ public class LinkedModeUI {
 				leave(flags);
 			} else {
 				connect();
-				if ((flags & ILinkedModeListener.SELECT) != 0)
+				if ((flags & ILinkedModeListener.SELECT) != 0) {
 					select();
+				}
 				ensureAnnotationModelInstalled();
 				redraw();
 			}
@@ -357,8 +358,9 @@ public class LinkedModeUI {
 					if (fIsActive && viewer instanceof IEditingSupportRegistry) {
 						IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
 						for (IEditingSupport helper : helpers) {
-							if (helper.ownsFocusShell())
+							if (helper.ownsFocusShell()) {
 								return;
+							}
 						}
 					}
 
@@ -401,8 +403,9 @@ public class LinkedModeUI {
 						if (fFramePosition != null && viewer instanceof IEditingSupportRegistry) {
 							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
 							for (IEditingSupport helper : helpers) {
-								if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+								if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength()))) {
 									return;
+								}
 							}
 						}
 
@@ -433,8 +436,9 @@ public class LinkedModeUI {
 					if (fFramePosition != null && viewer instanceof IEditingSupportRegistry) {
 						IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
 						for (IEditingSupport helper : helpers) {
-							if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+							if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength()))) {
 								return;
+							}
 						}
 					}
 
@@ -473,8 +477,9 @@ public class LinkedModeUI {
 		@Override
 		public void verifyKey(VerifyEvent event) {
 
-			if (!event.doit || !fIsEnabled)
+			if (!event.doit || !fIsEnabled) {
 				return;
+			}
 
 			Point selection= fCurrentTarget.getViewer().getSelectedRange();
 			int offset= selection.x;
@@ -504,10 +509,11 @@ public class LinkedModeUI {
 						break;
 					}
 
-					if (event.stateMask == SWT.SHIFT)
+					if (event.stateMask == SWT.SHIFT) {
 						previous();
-					else
+					} else {
 						next();
+					}
 
 					event.doit= false;
 					break;
@@ -551,8 +557,9 @@ public class LinkedModeUI {
 			if (position != null) {
 
 				// if the last position is not the same and there is an open change: close it.
-				if (!position.equals(fPreviousPosition))
+				if (!position.equals(fPreviousPosition)) {
 					endCompoundChangeIfNeeded();
+				}
 
 				beginCompoundChangeIfNeeded();
 			}
@@ -589,11 +596,13 @@ public class LinkedModeUI {
 						if (offset >= 0 && length >= 0) {
 							LinkedPosition find= new LinkedPosition(doc, offset, length, LinkedPositionGroup.NO_STOP);
 							LinkedPosition pos= fModel.findPosition(find);
-							if (pos == null && fExitPosition != null && fExitPosition.includes(find))
+							if (pos == null && fExitPosition != null && fExitPosition.includes(find)) {
 								pos= fExitPosition;
+							}
 
-							if (pos != null)
+							if (pos != null) {
 								switchPosition(pos, false, false);
+							}
 						}
 					}
 				}
@@ -624,18 +633,18 @@ public class LinkedModeUI {
 
 	/* Our team of event listeners */
 	/** The shell listener. */
-	private Closer fCloser= new Closer();
+	private final Closer fCloser= new Closer();
 	/** The linked mode listener. */
-	private ILinkedModeListener fLinkedListener= new ExitListener();
+	private final ILinkedModeListener fLinkedListener= new ExitListener();
 	/** The selection listener. */
-	private MySelectionListener fSelectionListener= new MySelectionListener();
+	private final MySelectionListener fSelectionListener= new MySelectionListener();
 	/** The content assist listener. */
-	private ProposalListener fProposalListener= new ProposalListener();
+	private final ProposalListener fProposalListener= new ProposalListener();
 	/**
 	 * The document listener.
 	 * @since 3.1
 	 */
-	private IDocumentListener fDocumentListener= new DocumentListener();
+	private final IDocumentListener fDocumentListener= new DocumentListener();
 
 	/** The last caret position, used by fCaretListener. */
 	private final Position fCaretPosition= new Position(0, 0);
@@ -652,7 +661,7 @@ public class LinkedModeUI {
 	/** State indicator to prevent multiple invocation of leave. */
 	private boolean fIsActive= false;
 	/** The position updater for the exit position. */
-	private IPositionUpdater fPositionUpdater= new DefaultPositionUpdater(getCategory());
+	private final IPositionUpdater fPositionUpdater= new DefaultPositionUpdater(getCategory());
 	/** Whether to show context info. */
 	private boolean fDoContextInfo= false;
 	/** Whether we have begun a compound change, but not yet closed. */
@@ -660,7 +669,7 @@ public class LinkedModeUI {
 	/** The position listener. */
 	private ILinkedModeUIFocusListener fPositionListener= new EmtpyFocusListener();
 
-	private IAutoEditStrategy fAutoEditVetoer= (document, command) -> {
+	private final IAutoEditStrategy fAutoEditVetoer= (document, command) -> {
 		// invalidate the change to ensure that the change is performed on the document only.
 		if (fModel.anyPositionContains(command.offset)) {
 			command.doit= false;
@@ -789,13 +798,15 @@ public class LinkedModeUI {
 		}
 
 		IDocument doc= target.getViewer().getDocument();
-		if (doc == null)
+		if (doc == null) {
 			return;
+		}
 
 		fExitPosition= new LinkedPosition(doc, offset, length, sequence);
 		doc.addPosition(fExitPosition); // gets removed in leave()
-		if (sequence != LinkedPositionGroup.NO_STOP)
+		if (sequence != LinkedPositionGroup.NO_STOP) {
 			fIterator.addPosition(fExitPosition);
+		}
 
 	}
 
@@ -823,13 +834,15 @@ public class LinkedModeUI {
 	 * @param mode the new cycling mode.
 	 */
 	public void setCyclingMode(Object mode) {
-		if (mode != CYCLE_ALWAYS && mode != CYCLE_NEVER && mode != CYCLE_WHEN_NO_PARENT)
+		if (mode != CYCLE_ALWAYS && mode != CYCLE_NEVER && mode != CYCLE_WHEN_NO_PARENT) {
 			throw new IllegalArgumentException();
+		}
 
-		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fModel.isNested())
+		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fModel.isNested()) {
 			fIterator.setCycling(true);
-		else
+		} else {
 			fIterator.setCycling(false);
+		}
 	}
 
 	void next() {
@@ -843,9 +856,10 @@ public class LinkedModeUI {
 	void previous() {
 		if (fIterator.hasPrevious(fFramePosition)) {
 			switchPosition(fIterator.previous(fFramePosition), true, true);
-		} else
+		} else { // dont't update caret, but rather select the current frame
 			// dont't update caret, but rather select the current frame
 			leave(ILinkedModeListener.SELECT);
+		}
 	}
 
 	private void triggerContextInfo() {
@@ -869,11 +883,13 @@ public class LinkedModeUI {
 
 	private void switchPosition(LinkedPosition pos, boolean select, boolean showProposals) {
 		Assert.isNotNull(pos);
-		if (pos.equals(fFramePosition))
+		if (pos.equals(fFramePosition)) {
 			return;
+		}
 
-		if (fFramePosition != null && fCurrentTarget != null)
+		if (fFramePosition != null && fCurrentTarget != null) {
 			fPositionListener.linkingFocusLost(fFramePosition, fCurrentTarget);
+		}
 
 		// undo
 		endCompoundChangeIfNeeded();
@@ -885,21 +901,25 @@ public class LinkedModeUI {
 		switchViewer(oldDoc, newDoc, pos);
 		fFramePosition= pos;
 
-		if (select)
+		if (select) {
 			select();
-		if (fFramePosition == fExitPosition && !fIterator.isCycling())
+		}
+		if (fFramePosition == fExitPosition && !fIterator.isCycling()) {
 			leave(ILinkedModeListener.NONE);
-		else {
+		} else {
 			redraw(); // redraw new position
 			ensureAnnotationModelInstalled();
 		}
-		if (showProposals)
+		if (showProposals) {
 			triggerContentAssist();
-		if (fFramePosition != fExitPosition && fDoContextInfo)
+		}
+		if (fFramePosition != fExitPosition && fDoContextInfo) {
 			triggerContextInfo();
+		}
 
-		if (fFramePosition != null && fCurrentTarget != null)
+		if (fFramePosition != null && fCurrentTarget != null) {
 			fPositionListener.linkingFocusGained(fFramePosition, fCurrentTarget);
+		}
 
 	}
 
@@ -933,8 +953,9 @@ public class LinkedModeUI {
 		if (oldDoc != newDoc) {
 
 			// redraw current document with new position before switching viewer
-			if (fCurrentTarget.fAnnotationModel != null)
+			if (fCurrentTarget.fAnnotationModel != null) {
 				fCurrentTarget.fAnnotationModel.switchToPosition(fModel, pos);
+			}
 
 			LinkedModeUITarget target= null;
 			for (LinkedModeUITarget fTarget : fTargets) {
@@ -952,8 +973,9 @@ public class LinkedModeUI {
 				target.linkingFocusLost(fFramePosition, target);
 				connect();
 				ensureAnnotationModelInstalled();
-				if (fCurrentTarget != null)
+				if (fCurrentTarget != null) {
 					fCurrentTarget.linkingFocusGained(pos, fCurrentTarget);
+				}
 			}
 		}
 	}
@@ -970,8 +992,9 @@ public class LinkedModeUI {
 	}
 
 	private void redraw() {
-		if (fCurrentTarget.fAnnotationModel != null)
+		if (fCurrentTarget.fAnnotationModel != null) {
 			fCurrentTarget.fAnnotationModel.switchToPosition(fModel, fFramePosition);
+		}
 	}
 
 	private void connect() {
@@ -979,14 +1002,16 @@ public class LinkedModeUI {
 		ITextViewer viewer= fCurrentTarget.getViewer();
 		Assert.isNotNull(viewer);
 		fCurrentTarget.fWidget= viewer.getTextWidget();
-		if (fCurrentTarget.fWidget == null)
+		if (fCurrentTarget.fWidget == null) {
 			leave(ILinkedModeListener.EXIT_ALL);
+		}
 
 		if (fCurrentTarget.fKeyListener == null) {
 			fCurrentTarget.fKeyListener= new KeyListener();
 			((ITextViewerExtension) viewer).prependVerifyKeyListener(fCurrentTarget.fKeyListener);
-		} else
+		} else {
 			fCurrentTarget.fKeyListener.setEnabled(true);
+		}
 
 		registerAutoEditVetoer(viewer);
 
@@ -997,8 +1022,9 @@ public class LinkedModeUI {
 		showSelection();
 
 		fCurrentTarget.fShell= fCurrentTarget.fWidget.getShell();
-		if (fCurrentTarget.fShell == null)
+		if (fCurrentTarget.fShell == null) {
 			leave(ILinkedModeListener.EXIT_ALL);
+		}
 		fCurrentTarget.fShell.addShellListener(fCloser);
 
 		fAssistant.install(viewer);
@@ -1018,12 +1044,13 @@ public class LinkedModeUI {
 	 */
 	private void showSelection() {
 		final StyledText widget= fCurrentTarget.fWidget;
-		if (widget == null || widget.isDisposed())
+		if (widget == null || widget.isDisposed()) {
 			return;
+		}
 
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132263
 		widget.getDisplay().asyncExec(() -> {
-			if (!widget.isDisposed())
+			if (!widget.isDisposed()) {
 				try {
 					widget.showSelection();
 				} catch (IllegalArgumentException e) {
@@ -1037,6 +1064,7 @@ public class LinkedModeUI {
 					 * and ignore an IAE.
 					 */
 				}
+			}
 		});
 	}
 
@@ -1133,8 +1161,9 @@ public class LinkedModeUI {
 		Shell shell= fCurrentTarget.fShell;
 		fCurrentTarget.fShell= null;
 
-		if (shell != null && !shell.isDisposed())
+		if (shell != null && !shell.isDisposed()) {
 			shell.removeShellListener(fCloser);
+		}
 
 		// this one is asymmetric: we don't install the model in
 		// connect, but leave it to its callers to ensure they
@@ -1145,8 +1174,9 @@ public class LinkedModeUI {
 
 		// don't remove the verify key listener to let it keep its position
 		// in the listener queue
-		if (fCurrentTarget.fKeyListener != null)
+		if (fCurrentTarget.fKeyListener != null) {
 			fCurrentTarget.fKeyListener.setEnabled(false);
+		}
 
 		((IPostSelectionProvider) viewer).removePostSelectionChangedListener(fSelectionListener);
 
@@ -1159,18 +1189,21 @@ public class LinkedModeUI {
 	}
 
 	void leave(final int flags) {
-		if (!fIsActive)
+		if (!fIsActive) {
 			return;
+		}
 		fIsActive= false;
 
 		endCompoundChangeIfNeeded();
 
 		Display display= null;
-		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed())
+		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed()) {
 			display= fCurrentTarget.fWidget.getDisplay();
+		}
 
-		if (fCurrentTarget.fAnnotationModel != null)
+		if (fCurrentTarget.fAnnotationModel != null) {
 			fCurrentTarget.fAnnotationModel.removeAllAnnotations();
+		}
 		disconnect();
 
 		for (LinkedModeUITarget fTarget : fTargets) {
@@ -1194,21 +1227,24 @@ public class LinkedModeUI {
 		}
 
 
-		if ((flags & ILinkedModeListener.UPDATE_CARET) != 0 && fExitPosition != null && fFramePosition != fExitPosition && !fExitPosition.isDeleted())
+		if ((flags & ILinkedModeListener.UPDATE_CARET) != 0 && fExitPosition != null && fFramePosition != fExitPosition && !fExitPosition.isDeleted()) {
 			switchPosition(fExitPosition, true, false);
+		}
 
 		final List<IDocument> docs= new ArrayList<>();
 		for (LinkedModeUITarget fTarget : fTargets) {
 			IDocument doc= fTarget.getViewer().getDocument();
-			if (doc != null)
+			if (doc != null) {
 				docs.add(doc);
+			}
 		}
 
 		fModel.stopForwarding(flags);
 
 		Runnable runnable= () -> {
-			if (fExitPosition != null)
+			if (fExitPosition != null) {
 				fExitPosition.getDocument().removePosition(fExitPosition);
+			}
 
 			for (IDocument doc : docs) {
 				doc.removePositionUpdater(fPositionUpdater);
@@ -1220,12 +1256,13 @@ public class LinkedModeUI {
 						break;
 					}
 				}
-				if (uninstallCat)
+				if (uninstallCat) {
 					try {
 						doc.removePositionCategory(getCategory());
 					} catch (BadPositionCategoryException e) {
 						// ignore
 					}
+				}
 			}
 			fModel.exit(flags);
 		};
@@ -1233,10 +1270,11 @@ public class LinkedModeUI {
 		// remove positions (both exit positions AND linked positions in the
 		// model) asynchronously to make sure that the annotation painter
 		// gets correct document offsets.
-		if (display != null)
+		if (display != null) {
 			display.asyncExec(runnable);
-		else
+		} else {
 			runnable.run();
+		}
 	}
 
 	private void endCompoundChangeIfNeeded() {
@@ -1263,10 +1301,12 @@ public class LinkedModeUI {
 	 * @return the currently selected region or <code>null</code>
 	 */
 	public IRegion getSelectedRegion() {
-		if (fFramePosition != null)
+		if (fFramePosition != null) {
 			return new Region(fFramePosition.getOffset(), fFramePosition.getLength());
-		if (fExitPosition != null)
+		}
+		if (fExitPosition != null) {
 			return new Region(fExitPosition.getOffset(), fExitPosition.getLength());
+		}
 		return null;
 	}
 

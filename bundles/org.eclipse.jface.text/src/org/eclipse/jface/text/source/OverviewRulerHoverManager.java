@@ -44,8 +44,9 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 		StyledText textWidget= sourceViewer.getTextWidget();
 		if (textWidget != null) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
-			if (verticalBar != null)
+			if (verticalBar != null) {
 				setMargins(verticalBar.getSize().x, 5);
+			}
 		}
 	}
 
@@ -56,8 +57,9 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 		IAnnotationHover hover= getAnnotationHover();
 
 		IInformationControlCreator controlCreator= null;
-		if (hover instanceof IAnnotationHoverExtension)
+		if (hover instanceof IAnnotationHoverExtension) {
 			controlCreator= ((IAnnotationHoverExtension)hover).getHoverControlCreator();
+		}
 		setCustomInformationControlCreator(controlCreator);
 
 		setInformation(hover.getHoverInfo(getSourceViewer(), line), computeArea(location.y));

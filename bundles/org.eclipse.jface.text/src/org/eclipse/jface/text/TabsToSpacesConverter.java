@@ -49,21 +49,24 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 
 	private int insertTabString(StringBuilder buffer, int offsetInLine) {
 
-		if (fTabRatio == 0)
+		if (fTabRatio == 0) {
 			return 0;
+		}
 
 		int remainder= offsetInLine % fTabRatio;
 		remainder= fTabRatio - remainder;
-		for (int i= 0; i < remainder; i++)
+		for (int i= 0; i < remainder; i++) {
 			buffer.append(' ');
+		}
 		return remainder;
 	}
 
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 		String text= command.text;
-		if (text == null)
+		if (text == null) {
 			return;
+		}
 
 		if (text.isEmpty()) {
 
@@ -112,14 +115,17 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 	}
 
 	private void replaceDeleteSpaceByDeleteTab(IDocument document, DocumentCommand command) {
-		if (!fDeleteSpacesAsTab || fTabRatio == 0 || command.length != 1)
+		if (!fDeleteSpacesAsTab || fTabRatio == 0 || command.length != 1) {
 			return;
+		}
 		ITextSelection selection= command.fSelection;
-		if (selection == null || selection.getLength() != 0)
+		if (selection == null || selection.getLength() != 0) {
 			return;
+		}
 		try {
-			if (document.getChar(command.offset) != ' ')
+			if (document.getChar(command.offset) != ' ') {
 				return;
+			}
 
 			IRegion line= document.getLineInformationOfOffset(command.offset);
 			int offsetInLine= command.offset - line.getOffset();

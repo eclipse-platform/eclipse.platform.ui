@@ -164,8 +164,9 @@ public class ContentFormatter implements IContentFormatter {
 		 * @return the referenced character position
 		 */
 		protected int getCharacterPosition() {
-			if (fRefersToOffset)
+			if (fRefersToOffset) {
 				return getOffset();
+			}
 			return getOffset() + getLength();
 		}
 
@@ -222,9 +223,9 @@ public class ContentFormatter implements IContentFormatter {
 	class UpdateAffectedPositions implements IPositionUpdater {
 
 		/** The affected positions */
-		private int[] fPositions;
+		private final int[] fPositions;
 		/** The offset */
-		private int fOffset;
+		private final int fOffset;
 
 		/**
 		 * Creates a new updater.
@@ -302,13 +303,15 @@ public class ContentFormatter implements IContentFormatter {
 
 		Assert.isNotNull(contentType);
 
-		if (fStrategies == null)
+		if (fStrategies == null) {
 			fStrategies= new HashMap<>();
+		}
 
-		if (strategy == null)
+		if (strategy == null) {
 			fStrategies.remove(contentType);
-		else
+		} else {
 			fStrategies.put(contentType, strategy);
+		}
 	}
 
 	/**
@@ -349,8 +352,9 @@ public class ContentFormatter implements IContentFormatter {
 
 		Assert.isNotNull(contentType);
 
-		if (fStrategies == null)
+		if (fStrategies == null) {
 			return null;
+		}
 
 		return fStrategies.get(contentType);
 	}
@@ -361,10 +365,11 @@ public class ContentFormatter implements IContentFormatter {
 		fDocument= document;
 		try {
 
-			if (fIsPartitionAware)
+			if (fIsPartitionAware) {
 				formatPartitions(region);
-			else
+			} else {
 				formatRegion(region);
+			}
 
 		} finally {
 			fNeedsComputation= true;
@@ -458,8 +463,9 @@ public class ContentFormatter implements IContentFormatter {
 	private void start(TypedPosition[] regions, String indentation) {
 		for (TypedPosition region : regions) {
 			IFormattingStrategy s= getFormattingStrategy(region.getType());
-			if (s != null)
+			if (s != null) {
 				s.formatterStarts(indentation);
+			}
 		}
 	}
 
@@ -530,8 +536,9 @@ public class ContentFormatter implements IContentFormatter {
 	private void stop(TypedPosition[] regions) {
 		for (TypedPosition region : regions) {
 			IFormattingStrategy s= getFormattingStrategy(region.getType());
-			if (s != null)
+			if (s != null) {
 				s.formatterStops();
+			}
 		}
 	}
 
@@ -573,8 +580,9 @@ public class ContentFormatter implements IContentFormatter {
 		if (fNeedsComputation) {
 			fNeedsComputation= false;
 			fPartitionManagingCategories= TextUtilities.computePartitionManagingCategories(fDocument);
-			if (fPartitionManagingCategories == null)
+			if (fPartitionManagingCategories == null) {
 				fPartitionManagingCategories= fExternalPartitonManagingCategories;
+			}
 		}
 		return fPartitionManagingCategories;
 	}
@@ -617,8 +625,9 @@ public class ContentFormatter implements IContentFormatter {
 		if (categories != null) {
 			for (String cat : categories) {
 
-				if (ignoreCategory(cat))
+				if (ignoreCategory(cat)) {
 					continue;
+				}
 
 				try {
 
@@ -628,11 +637,13 @@ public class ContentFormatter implements IContentFormatter {
 
 						if (p.overlapsWith(offset, length)) {
 
-							if (offset < p.getOffset())
+							if (offset < p.getOffset()) {
 								fOverlappingPositionReferences.add(new PositionReference(p, true, cat));
+							}
 
-							if (p.getOffset() + p.getLength() < offset + length)
+							if (p.getOffset() + p.getLength() < offset + length) {
 								fOverlappingPositionReferences.add(new PositionReference(p, false, cat));
+							}
 						}
 					}
 
@@ -697,27 +708,31 @@ public class ContentFormatter implements IContentFormatter {
 	 */
 	protected void updateAffectedPositions(IDocument document, int[] positions, int offset) {
 
-		if (document != fDocument)
+		if (document != fDocument) {
 			return;
+		}
 
-		if (positions.length == 0)
+		if (positions.length == 0) {
 			return;
+		}
 
 		for (int i= 0; i < positions.length; i++) {
 
 			PositionReference r= fOverlappingPositionReferences.get(i);
 
-			if (r.refersToOffset())
+			if (r.refersToOffset()) {
 				r.setOffset(offset + positions[i]);
-			else
+			} else {
 				r.setLength((offset + positions[i]) - r.getOffset());
+			}
 
 			Position p= r.getPosition();
 			String category= r.getCategory();
 			if (!document.containsPosition(category, p.offset, p.length)) {
 				try {
-					if (positionAboutToBeAdded(document, category, p))
+					if (positionAboutToBeAdded(document, category, p)) {
 						document.addPosition(r.getCategory(), p);
+					}
 				} catch (BadPositionCategoryException x) {
 					// can not happen
 				} catch (BadLocationException x) {
@@ -758,8 +773,9 @@ public class ContentFormatter implements IContentFormatter {
 
 			int end= start;
 			char c= fDocument.getChar(end);
-			while ('\t' == c || ' ' == c)
+			while ('\t' == c || ' ' == c) {
 				c= fDocument.getChar(++end);
+			}
 
 			return fDocument.get(start, end - start);
 		} catch (BadLocationException x) {

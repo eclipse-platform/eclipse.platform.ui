@@ -30,8 +30,8 @@ import org.eclipse.jface.text.IRegion;
  */
 public class URLHyperlink implements IHyperlink {
 
-	private String fURLString;
-	private IRegion fRegion;
+	private final String fURLString;
+	private final IRegion fRegion;
 
 	/**
 	 * Creates a new URL hyperlink.

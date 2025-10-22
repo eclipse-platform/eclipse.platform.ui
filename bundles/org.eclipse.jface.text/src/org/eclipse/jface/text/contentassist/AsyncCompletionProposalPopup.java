@@ -70,9 +70,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	 */
 	private CompletableFuture<?> fAggregatedPopulateFuture;
 
-	private Collection<CompletableFuture<?>> toCancelFutures= new LinkedList<>();
+	private final Collection<CompletableFuture<?>> toCancelFutures= new LinkedList<>();
 
-	private PopupVisibleTimer fPopupVisibleTimer= new PopupVisibleTimer();
+	private final PopupVisibleTimer fPopupVisibleTimer= new PopupVisibleTimer();
 
 	private static final class ComputingProposal implements ICompletionProposal, ICompletionProposalExtension {
 
@@ -113,10 +113,10 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		@Override
 		public String getAdditionalProposalInfo() {
-			 return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computingDetails"), new Object[] { //$NON-NLS-1$;
-				Integer.valueOf(fSize),
-				Integer.valueOf(fSize - fRemaining),
-				Integer.valueOf(fRemaining) });
+			 return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computingDetails"), //$NON-NLS-1$;
+							Integer.valueOf(fSize),
+							Integer.valueOf(fSize - fRemaining),
+							Integer.valueOf(fRemaining));
 		}
 
 		@Override
@@ -447,9 +447,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	private class PopupVisibleTimer implements Runnable {
 		private Thread fThread;
 
-		private Object fMutex= new Object();
+		private final Object fMutex= new Object();
 
-		private int fAutoActivationDelay= 500;
+		private final int fAutoActivationDelay= 500;
 
 		protected void start() {
 			fThread= new Thread(this, JFaceTextMessages.getString("ContentAssistant.assist_delay_timer_name")); //$NON-NLS-1$

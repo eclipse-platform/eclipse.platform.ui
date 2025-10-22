@@ -107,9 +107,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 
 	private ITextViewer fViewer;
-	private ContentAssistant fContentAssistant;
+	private final ContentAssistant fContentAssistant;
 
-	private PopupCloser fPopupCloser= new PopupCloser();
+	private final PopupCloser fPopupCloser= new PopupCloser();
 	private Shell fContextSelectorShell;
 	private Point fContextSelectorPopupSize;
 	private Table fContextSelectorTable;
@@ -120,7 +120,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	private StyledText fContextInfoText;
 	private TextPresentation fTextPresentation;
 
-	private Stack<ContextFrame> fContextFrameStack= new Stack<>();
+	private final Stack<ContextFrame> fContextFrameStack= new Stack<>();
 	/**
 	 * The content assist subject control.
 	 *
@@ -132,7 +132,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 *
 	 * @since 3.0
 	 */
-	private ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
+	private final ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
 
 	/**
 	 * Selection listener on the text widget which is active
@@ -911,7 +911,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
 
-			private ContextFrame fFrame= fContextFrameStack.peek();
+			private final ContextFrame fFrame= fContextFrameStack.peek();
 
 			@Override
 			public void run() {

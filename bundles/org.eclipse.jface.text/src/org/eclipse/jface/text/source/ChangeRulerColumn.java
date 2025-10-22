@@ -86,18 +86,21 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 
 		@Override
 		public void viewportChanged(int verticalPosition) {
-			if (verticalPosition != fScrollPos)
+			if (verticalPosition != fScrollPos) {
 				redraw();
+			}
 		}
 
 		@Override
 		public void textChanged(TextEvent event) {
 
-			if (!event.getViewerRedrawState())
+			if (!event.getViewerRedrawState()) {
 				return;
+			}
 
-			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
+			if (fSensitiveToTextChanges || event.getDocumentEvent() == null) {
 				postRedraw();
+			}
 
 		}
 	}
@@ -173,8 +176,9 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 * @return the System background color for list widgets
 	 */
 	private Color getBackground() {
-		if (fBackground == null)
+		if (fBackground == null) {
 			return fCachedTextWidget.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
 		return fBackground;
 	}
 
@@ -189,8 +193,9 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		fCanvas.setBackground(getBackground());
 
 		fCanvas.addPaintListener(event -> {
-			if (fCachedTextViewer != null)
+			if (fCachedTextViewer != null) {
 				doubleBufferPaint(event.gc);
+			}
 		});
 
 		fCanvas.addDisposeListener(e -> {
@@ -246,8 +251,9 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 
 		Point size= fCanvas.getSize();
 
-		if (size.x <= 0 || size.y <= 0)
+		if (size.x <= 0 || size.y <= 0) {
 			return;
+		}
 
 		if (fBuffer != null) {
 			Rectangle r= fBuffer.getBounds();
@@ -309,16 +315,18 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 */
 	private void doPaint(GC gc) {
 		ILineRange visibleModelLines= computeVisibleModelLines();
-		if (visibleModelLines == null)
+		if (visibleModelLines == null) {
 			return;
+		}
 
 		fSensitiveToTextChanges= isViewerCompletelyShown();
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
 
 		fRevisionPainter.paint(gc, visibleModelLines);
-		if (!fRevisionPainter.hasInformation()) // don't paint quick diff colors if revisions are painted
+		if (!fRevisionPainter.hasInformation()) { // don't paint quick diff colors if revisions are painted
 			fDiffPainter.paint(gc, visibleModelLines);
+		}
 	}
 
 	@Override
@@ -362,10 +370,12 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	@Override
 	public IAnnotationHover getHover() {
 		int activeLine= getParentRuler().getLineOfLastMouseButtonActivity();
-		if (fRevisionPainter.hasHover(activeLine))
+		if (fRevisionPainter.hasHover(activeLine)) {
 			return fRevisionPainter.getHover();
-		if (fDiffPainter.hasHover(activeLine))
+		}
+		if (fDiffPainter.hasHover(activeLine)) {
 			return fDiffPainter.getHover();
+		}
 		return null;
 	}
 
@@ -383,15 +393,17 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	}
 
 	private void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != model)
+		if (fAnnotationModel != model) {
 			fAnnotationModel= model;
+		}
 	}
 
 	@Override
 	public void setBackground(Color background) {
 		fBackground= background;
-		if (fCanvas != null && !fCanvas.isDisposed())
+		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.setBackground(getBackground());
+		}
 		fRevisionPainter.setBackground(background);
 		fDiffPainter.setBackground(background);
 	}
@@ -456,8 +468,9 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 */
 	private final ILineRange computeVisibleModelLines() {
 		IDocument doc= fCachedTextViewer.getDocument();
-		if (doc == null)
+		if (doc == null) {
 			return null;
+		}
 
 		int topLine;
 		IRegion coverage;
@@ -476,18 +489,21 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		}
 
 		int bottomLine= fCachedTextViewer.getBottomIndex();
-		if (bottomLine != -1)
+		if (bottomLine != -1) {
 			++ bottomLine;
+		}
 
 		// clip by coverage window
 		try {
 			int firstLine= doc.getLineOfOffset(coverage.getOffset());
-			if (firstLine > topLine)
+			if (firstLine > topLine) {
 				topLine= firstLine;
+			}
 
 			int lastLine= doc.getLineOfOffset(coverage.getOffset() + coverage.getLength());
-			if (lastLine < bottomLine || bottomLine == -1)
+			if (lastLine < bottomLine || bottomLine == -1) {
 				bottomLine= lastLine;
+			}
 		} catch (BadLocationException x) {
 			return null;
 		}

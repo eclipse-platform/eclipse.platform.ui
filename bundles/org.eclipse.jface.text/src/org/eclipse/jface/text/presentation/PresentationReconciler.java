@@ -124,10 +124,11 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		@Override
 		public void documentPartitioningChanged(IDocument document) {
-			if (!fDocumentChanging && fCachedRedrawState)
+			if (!fDocumentChanging && fCachedRedrawState) {
 				processDamage(new Region(0, document.getLength()), document);
-			else
+			} else {
 				fDocumentPartitioningChanged= true;
+			}
 		}
 
 		@Override
@@ -143,8 +144,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		@Override
 		public void documentPartitioningChanged(DocumentPartitioningChangedEvent event) {
 			IRegion changedRegion= event.getChangedRegion(getDocumentPartitioning());
-			if (changedRegion != null)
+			if (changedRegion != null) {
 				documentPartitioningChanged(event.getDocument(), changedRegion);
+			}
 		}
 
 		@Override
@@ -181,8 +183,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		public void textChanged(TextEvent e) {
 
 			fCachedRedrawState= e.getViewerRedrawState();
-	 		if (!fCachedRedrawState)
-	 			return;
+	 		if (!fCachedRedrawState) {
+				return;
+			}
 
 	 		IRegion damage= null;
 	 		IDocument document= null;
@@ -211,8 +214,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 		damage= getDamage(de, true);
 		 	}
 
-			if (damage != null && document != null)
+			if (damage != null && document != null) {
 				processDamage(damage, document);
+			}
 
 			fDocumentPartitioningChanged= false;
 			fChangedDocumentPartitions= null;
@@ -248,11 +252,11 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	/** The target viewer. */
 	private ITextViewer fViewer;
 	/** The internal listener. */
-	private InternalListener fInternalListener= new InternalListener();
+	private final InternalListener fInternalListener= new InternalListener();
 	/** The name of the position category to track damage regions. */
-	private String fPositionCategory;
+	private final String fPositionCategory;
 	/** The position updated for the damage regions' position category. */
-	private IPositionUpdater fPositionUpdater;
+	private final IPositionUpdater fPositionUpdater;
 	/** The positions representing the damage regions. */
 	private TypedPosition fRememberedPosition;
 	/** Flag indicating the receipt of a partitioning changed notification. */
@@ -309,13 +313,15 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		Assert.isNotNull(contentType);
 
-		if (fDamagers == null)
+		if (fDamagers == null) {
 			fDamagers= new HashMap<>();
+		}
 
-		if (damager == null)
+		if (damager == null) {
 			fDamagers.remove(contentType);
-		else
+		} else {
 			fDamagers.put(contentType, damager);
+		}
 	}
 
 	/**
@@ -330,13 +336,15 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		Assert.isNotNull(contentType);
 
-		if (fRepairers == null)
+		if (fRepairers == null) {
 			fRepairers= new HashMap<>();
+		}
 
-		if (repairer == null)
+		if (repairer == null) {
 			fRepairers.remove(contentType);
-		else
+		} else {
 			fRepairers.put(contentType, repairer);
+		}
 	}
 
 	@Override
@@ -347,8 +355,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		fViewer.addTextInputListener(fInternalListener);
 
 		IDocument document= viewer.getDocument();
-		if (document != null)
+		if (document != null) {
 			fInternalListener.inputDocumentChanged(null, document);
+		}
 	}
 
 	@Override
@@ -362,8 +371,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	@Override
 	public IPresentationDamager getDamager(String contentType) {
 
-		if (fDamagers == null)
+		if (fDamagers == null) {
 			return null;
+		}
 
 		return fDamagers.get(contentType);
 	}
@@ -371,8 +381,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	@Override
 	public IPresentationRepairer getRepairer(String contentType) {
 
-		if (fRepairers == null)
+		if (fRepairers == null) {
 			return null;
+		}
 
 		return fRepairers.get(contentType);
 	}
@@ -431,8 +442,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength(), false);
 			for (ITypedRegion r : partitioning) {
 				IPresentationRepairer repairer= getRepairer(r.getType());
-				if (repairer != null)
+				if (repairer != null) {
 					repairer.createPresentation(presentation, r);
+				}
 			}
 
 			return presentation;
@@ -469,12 +481,14 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		IRegion damage= null;
 		try {
 			int offset= e.getOffset();
-			if (isDeletion)
+			if (isDeletion) {
 				offset= Math.max(0, offset - 1);
+			}
 			ITypedRegion partition= getPartition(e.getDocument(), offset);
 			IPresentationDamager damager= getDamager(partition.getType());
-			if (damager == null)
+			if (damager == null) {
 				return null;
+			}
 
 			IRegion r= damager.getDamageRegion(partition, e, fDocumentPartitioningChanged);
 
@@ -516,22 +530,26 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		int length= 0;
 		if (e.getText() != null) {
 			length= e.getText().length();
-			if (length > 0)
+			if (length > 0) {
 				-- length;
+			}
 		}
 
 		ITypedRegion partition= getPartition(d, e.getOffset() + length);
 		int endOffset= partition.getOffset() + partition.getLength();
-		if (endOffset == e.getOffset())
+		if (endOffset == e.getOffset()) {
 			return -1;
+		}
 
 		int end= fRememberedPosition == null ? -1 : fRememberedPosition.getOffset() + fRememberedPosition.getLength();
-		if (endOffset < end && end < d.getLength())
+		if (endOffset < end && end < d.getLength()) {
 			partition= getPartition(d, end);
+		}
 
 		IPresentationDamager damager= getDamager(partition.getType());
-		if (damager == null)
+		if (damager == null) {
 			return -1;
+		}
 
 		IRegion r= damager.getDamageRegion(partition, e, fDocumentPartitioningChanged);
 
@@ -546,8 +564,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	private void processDamage(IRegion damage, IDocument document) {
 		if (damage != null && damage.getLength() > 0) {
 			TextPresentation p= createPresentation(damage, document);
-			if (p != null)
+			if (p != null) {
 				applyTextRegionCollection(p);
+			}
 		}
 	}
 

@@ -58,14 +58,16 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
 
 		// adjust offset to end of normalized selection
-		if (selection.getOffset() == offset)
+		if (selection.getOffset() == offset) {
 			offset= selection.getOffset() + selection.getLength();
+		}
 
 		String prefix= extractPrefix(viewer, offset);
 		Region region= new Region(offset - prefix.length(), prefix.length());
 		TemplateContext context= createContext(viewer, region);
-		if (context == null)
+		if (context == null) {
 			return new ICompletionProposal[0];
+		}
 
 		context.setVariable("selection", selection.getText()); // name of the selection variables {line, word}_selection //$NON-NLS-1$
 
@@ -78,8 +80,9 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 			} catch (TemplateException e) {
 				continue;
 			}
-			if (template.matches(prefix, context.getContextType().getId()))
+			if (template.matches(prefix, context.getContextType().getId())) {
 				matches.add(createProposal(template, context, (IRegion) region, getRelevance(template, prefix)));
+			}
 		}
 
 		Collections.sort(matches, fgProposalComparator);
@@ -174,8 +177,9 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @see #extractPrefix(ITextViewer, int)
 	 */
 	protected int getRelevance(Template template, String prefix) {
-		if (template.getName().startsWith(prefix))
+		if (template.getName().startsWith(prefix)) {
 			return 90;
+		}
 		return 0;
 	}
 
@@ -192,14 +196,16 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	protected String extractPrefix(ITextViewer viewer, int offset) {
 		int i= offset;
 		IDocument document= viewer.getDocument();
-		if (i > document.getLength())
+		if (i > document.getLength()) {
 			return ""; //$NON-NLS-1$
+		}
 
 		try {
 			while (i > 0) {
 				char ch= document.getChar(i - 1);
-				if (!Character.isJavaIdentifierPart(ch))
+				if (!Character.isJavaIdentifierPart(ch)) {
 					break;
+				}
 				i--;
 			}
 

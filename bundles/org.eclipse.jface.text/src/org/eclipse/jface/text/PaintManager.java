@@ -70,13 +70,15 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 
 			int yoursStart= fOffset;
 
-			if (myEnd < yoursStart)
+			if (myEnd < yoursStart) {
 				return;
+			}
 
-			if (myStart <= yoursStart)
+			if (myStart <= yoursStart) {
 				fPosition.length += fReplaceLength;
-			else
+			} else {
 				fPosition.offset += fReplaceLength;
+			}
 		}
 	}
 
@@ -90,9 +92,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 //		/** The document this position manager works on */
 		private IDocument fDocument;
 		/** The position updater used for the managing position category */
-		private IPositionUpdater fPositionUpdater;
+		private final IPositionUpdater fPositionUpdater;
 		/** The managing position category */
-		private String fCategory;
+		private final String fCategory;
 
 		/**
 		 * Creates a new position manager. Initializes the managing
@@ -175,11 +177,11 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 
 
 	/** The painters managed by this paint manager. */
-	private List<IPainter> fPainters= new ArrayList<>(2);
+	private final List<IPainter> fPainters= new ArrayList<>(2);
 	/** The position manager used by this paint manager */
 	private PositionManager fManager;
 	/** The associated text viewer */
-	private ITextViewer fTextViewer;
+	private final ITextViewer fTextViewer;
 
 	/**
 	 * Creates a new paint manager for the given text viewer.
@@ -201,8 +203,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	public void addPainter(IPainter painter) {
 		if (!fPainters.contains(painter)) {
 			fPainters.add(painter);
-			if (fPainters.size() == 1)
+			if (fPainters.size() == 1) {
 				install();
+			}
 			painter.setPositionManager(fManager);
 			painter.paint(IPainter.INTERNAL);
 		}
@@ -220,8 +223,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			painter.deactivate(true);
 			painter.setPositionManager(null);
 		}
-		if (fPainters.isEmpty())
+		if (fPainters.isEmpty()) {
 			dispose();
+		}
 	}
 
 	/**
@@ -267,8 +271,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			fManager= null;
 		}
 
-		for (IPainter iPainter : fPainters)
+		for (IPainter iPainter : fPainters) {
 			iPainter.dispose();
+		}
 		fPainters.clear();
 
 		fTextViewer.removeTextInputListener(this);
@@ -282,8 +287,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 */
 	private void removeListeners() {
 		ISelectionProvider provider= fTextViewer.getSelectionProvider();
-		if (provider != null)
+		if (provider != null) {
 			provider.removeSelectionChangedListener(this);
+		}
 
 		fTextViewer.removeTextListener(this);
 
@@ -301,8 +307,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @see IPainter
 	 */
 	private void paint(int reason) {
-		for (IPainter iPainter : fPainters)
+		for (IPainter iPainter : fPainters) {
 			iPainter.paint(reason);
+		}
 	}
 
 	@Override
@@ -335,14 +342,16 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	@Override
 	public void textChanged(TextEvent event) {
 
-		if (!event.getViewerRedrawState())
+		if (!event.getViewerRedrawState()) {
 			return;
+		}
 
 		Control control= fTextViewer.getTextWidget();
 		if (control != null) {
 			control.getDisplay().asyncExec(() -> {
-				if (fTextViewer != null)
+				if (fTextViewer != null) {
 					paint(IPainter.TEXT_CHANGE);
+				}
 			});
 		}
 	}
@@ -350,8 +359,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput != null) {
-			for (IPainter iPainter : fPainters)
+			for (IPainter iPainter : fPainters) {
 				iPainter.deactivate(false);
+			}
 			fManager.uninstall(oldInput);
 			removeListeners();
 		}

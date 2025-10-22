@@ -104,11 +104,13 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 		@Override
 		public char previous() {
-			if (fIndex == fOffset)
+			if (fIndex == fOffset) {
 				return DONE;
+			}
 
-			if (fIndex > fOffset)
+			if (fIndex > fOffset) {
 				-- fIndex;
+			}
 
 			return current();
 		}
@@ -150,7 +152,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * The document character iterator used by this strategy.
 	 * @since 2.0
 	 */
-	private DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
+	private final DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
 
 	/**
 	 * The locale specific word break iterator.
@@ -181,15 +183,18 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 		int offset= text.getSelectedRange().x;
 
-		if (offset < 0)
+		if (offset < 0) {
 			return;
+		}
 
 		final IDocument document= text.getDocument();
 		IRegion region= findExtendedDoubleClickSelection(document, offset);
-		if (region == null)
+		if (region == null) {
 			region= findWord(document, offset);
-		if (region != null)
+		}
+		if (region != null) {
 			text.setSelectedRange(region.getOffset(), region.getLength());
+		}
 
 	}
 
@@ -228,8 +233,9 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.7
 	 */
 	private BreakIterator getWordBreakIterator() {
-		if (fWordBreakIterator == null)
+		if (fWordBreakIterator == null) {
 			fWordBreakIterator= BreakIterator.getWordInstance();
+		}
 		return fWordBreakIterator;
 	}
 
@@ -245,8 +251,9 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.7
 	 */
 	private BreakIterator getPOSIXWordBreakIterator() {
-		if (fPOSIXWordBreakIterator == null)
+		if (fPOSIXWordBreakIterator == null) {
 			fPOSIXWordBreakIterator= BreakIterator.getWordInstance(new Locale("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return fPOSIXWordBreakIterator;
 	}
 
@@ -267,30 +274,35 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return null;
 		}
 
-		if (offset > line.getOffset() + line.getLength())
+		if (offset > line.getOffset() + line.getLength()) {
 			return null;
+		}
 
 		fDocIter.setDocument(document, line);
 
 		wordBreakIterator.setText(fDocIter);
 
 		int start= wordBreakIterator.preceding(offset);
-		if (start == BreakIterator.DONE)
+		if (start == BreakIterator.DONE) {
 			start= line.getOffset();
-
-		int end= wordBreakIterator.following(offset);
-		if (end == BreakIterator.DONE)
-			end= line.getOffset() + line.getLength();
-
-		if (wordBreakIterator.isBoundary(offset)) {
-			if (end - offset > offset - start)
-				start= offset;
-			else
-				end= offset;
 		}
 
-		if (end == start)
+		int end= wordBreakIterator.following(offset);
+		if (end == BreakIterator.DONE) {
+			end= line.getOffset() + line.getLength();
+		}
+
+		if (wordBreakIterator.isBoundary(offset)) {
+			if (end - offset > offset - start) {
+				start= offset;
+			} else {
+				end= offset;
+			}
+		}
+
+		if (end == start) {
 			return null;
+		}
 
 		int length= end - start;
 		try {
@@ -301,8 +313,9 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 					int wordStart= wordRegion.getOffset();
 					int wordEnd= wordStart + wordRegion.getLength();
 					// Check that no additional breaks besides '.' are introduced
-					if ((wordStart == start || wordStart > start && document.getChar(wordStart - 1) == '.') && (wordEnd == end || wordEnd < end && document.getChar(wordEnd) == '.'))
+					if ((wordStart == start || wordStart > start && document.getChar(wordStart - 1) == '.') && (wordEnd == end || wordEnd < end && document.getChar(wordEnd) == '.')) {
 						return wordRegion;
+					}
 				}
 			}
 		} catch (BadLocationException e) {

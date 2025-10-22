@@ -60,8 +60,9 @@ public class DocumentCommand {
 		 * @since 3.0
 		 */
 		public Command(int offset, int length, String text, IDocumentListener owner) {
-			if (offset < 0 || length < 0)
+			if (offset < 0 || length < 0) {
 				throw new IllegalArgumentException();
+			}
 			fOffset= offset;
 			fLength= length;
 			fText= text;
@@ -76,40 +77,47 @@ public class DocumentCommand {
 		 */
 		public void execute(IDocument document) throws BadLocationException {
 
-			if (fLength == 0 && fText == null)
+			if (fLength == 0 && fText == null) {
 				return;
+			}
 
-			if (fOwner != null)
+			if (fOwner != null) {
 				document.removeDocumentListener(fOwner);
+			}
 
 			document.replace(fOffset, fLength, fText);
 
-			if (fOwner != null)
+			if (fOwner != null) {
 				document.addDocumentListener(fOwner);
+			}
 		}
 
 		@Override
 		public int compareTo(Command object) {
-			if (isEqual(object))
+			if (isEqual(object)) {
 				return 0;
+			}
 
 			Command command= object;
 
 			// diff middle points if not intersecting
 			if (fOffset + fLength <= command.fOffset || command.fOffset + command.fLength <= fOffset) {
 				int value= (2 * fOffset + fLength) - (2 * command.fOffset + command.fLength);
-				if (value != 0)
+				if (value != 0) {
 					return value;
+				}
 			}
 			// the answer
 			return 42;
 		}
 
 		private boolean isEqual(Object object) {
-			if (object == this)
+			if (object == this) {
 				return true;
-			if (!(object instanceof final Command command))
+			}
+			if (!(object instanceof final Command command)) {
 				return false;
+			}
 			return command.fOffset == fOffset && command.fLength == fLength;
 		}
 	}
@@ -129,8 +137,9 @@ public class DocumentCommand {
 		 * @param listIterator the iterator that this reverse iterator is based upon
 		 */
 		public ReverseListIterator(ListIterator<E> listIterator) {
-			if (listIterator == null)
+			if (listIterator == null) {
 				throw new IllegalArgumentException();
+			}
 			fListIterator= listIterator;
 		}
 
@@ -162,7 +171,7 @@ public class DocumentCommand {
 		private Command fCommand;
 
 		/** A flag indicating the direction of iteration. */
-		private boolean fForward;
+		private final boolean fForward;
 
 		/**
 		 * Creates a command iterator.
@@ -172,8 +181,9 @@ public class DocumentCommand {
 		 * @param forward the direction
 		 */
 		public CommandIterator(final List<Command> commands, final Command command, final boolean forward) {
-			if (commands == null || command == null)
+			if (commands == null || command == null) {
 				throw new IllegalArgumentException();
+			}
 			fIterator= forward ? commands.iterator() : new ReverseListIterator<>(commands.listIterator(commands.size()));
 			fCommand= command;
 			fForward= forward;
@@ -187,11 +197,13 @@ public class DocumentCommand {
 		@Override
 		public Command next() {
 
-			if (!hasNext())
+			if (!hasNext()) {
 				throw new NoSuchElementException();
+			}
 
-			if (fCommand == null)
+			if (fCommand == null) {
 				return fIterator.next();
+			}
 
 			if (!fIterator.hasNext()) {
 				final Command tempCommand= fCommand;
@@ -308,25 +320,29 @@ public class DocumentCommand {
 	public void addCommand(int commandOffset, int commandLength, String commandText, IDocumentListener commandOwner) throws BadLocationException {
 		final Command command= new Command(commandOffset, commandLength, commandText, commandOwner);
 
-		if (intersects(command))
+		if (intersects(command)) {
 			throw new BadLocationException();
+		}
 
 		final int index= Collections.binarySearch(fCommands, command);
 
 		// a command with exactly the same ranges exists already
-		if (index >= 0)
+		if (index >= 0) {
 			throw new BadLocationException();
+		}
 
 		// binary search result is defined as (-(insertionIndex) - 1)
 		final int insertionIndex= -(index + 1);
 
 		// overlaps to the right?
-		if (insertionIndex != fCommands.size() && intersects(fCommands.get(insertionIndex), command))
+		if (insertionIndex != fCommands.size() && intersects(fCommands.get(insertionIndex), command)) {
 			throw new BadLocationException();
+		}
 
 		// overlaps to the left?
-		if (insertionIndex != 0 && intersects(fCommands.get(insertionIndex - 1), command))
+		if (insertionIndex != 0 && intersects(fCommands.get(insertionIndex - 1), command)) {
 			throw new BadLocationException();
+		}
 
 		fCommands.add(insertionIndex, command);
 	}
@@ -363,8 +379,9 @@ public class DocumentCommand {
 	 */
 	private boolean intersects(Command command0, Command command1) {
 		// diff middle points if not intersecting
-		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset)
+		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset) {
 			return (2 * command0.fOffset + command0.fLength) - (2 * command1.fOffset + command1.fLength) == 0;
+		}
 		return true;
 	}
 
@@ -377,8 +394,9 @@ public class DocumentCommand {
 	 */
 	private boolean intersects(Command command) {
 		// diff middle points if not intersecting
-		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset)
+		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset) {
 			return (2 * offset + length) - (2 * command.fOffset + command.fLength) == 0;
+		}
 		return true;
 	}
 
@@ -391,8 +409,9 @@ public class DocumentCommand {
 	 */
 	void execute(IDocument document) throws BadLocationException {
 
-		if (length == 0 && text == null && fCommands.isEmpty())
+		if (length == 0 && text == null && fCommands.isEmpty()) {
 			return;
+		}
 
 		DefaultPositionUpdater updater= new DefaultPositionUpdater(getCategory());
 		Position caretPosition= null;
@@ -405,8 +424,9 @@ public class DocumentCommand {
 			}
 
 			final Command originalCommand= new Command(offset, length, text, owner);
-			for (final Iterator<Command> iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); )
+			for (final Iterator<Command> iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); ) {
 				iterator.next().execute(document);
+			}
 
 		} catch (BadLocationException e) {
 			// ignore

@@ -110,8 +110,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		@Override
 		public void start(Rectangle subjectArea) {
 
-			if (fIsActive)
+			if (fIsActive) {
 				return;
+			}
 			fIsActive= true;
 			fWaitForMouseUp= false;
 
@@ -124,11 +125,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addKeyListener(this);
 				if (fSubjectControl instanceof Scrollable scrollable) {
 					ScrollBar vBar= scrollable.getVerticalBar();
-					if (vBar != null)
+					if (vBar != null) {
 						vBar.addSelectionListener(this);
+					}
 					ScrollBar hBar= scrollable.getHorizontalBar();
-					if (hBar != null)
+					if (hBar != null) {
 						hBar.addSelectionListener(this);
+					}
 				}
 
 				fDisplay= fSubjectControl.getDisplay();
@@ -150,13 +153,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 		@Override
 		public void stop() {
-			if (!fIsActive)
+			if (!fIsActive) {
 				return;
+			}
 
 			fIsActive= false;
 
-			if (DEBUG)
+			if (DEBUG) {
 				System.out.println("AbstractHoverInformationControlManager.Closer stopped"); //$NON-NLS-1$
+			}
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseListener(this);
@@ -165,11 +170,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeKeyListener(this);
 				if (fSubjectControl instanceof Scrollable scrollable) {
 					ScrollBar vBar= scrollable.getVerticalBar();
-					if (vBar != null)
+					if (vBar != null) {
 						vBar.removeSelectionListener(this);
+					}
 					ScrollBar hBar= scrollable.getHorizontalBar();
-					if (hBar != null)
+					if (hBar != null) {
 						hBar.removeSelectionListener(this);
+					}
 				}
 			}
 
@@ -250,16 +257,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			switch (event.type) {
 				case SWT.Activate:
 				case SWT.MouseVerticalWheel:
-					if (!hasInformationControlReplacer())
+					if (!hasInformationControlReplacer()) {
 						hideInformationControl();
-					else if (!isReplaceInProgress()) {
+					} else if (!isReplaceInProgress()) {
 						IInformationControl infoControl= getCurrentInformationControl();
 						// During isReplaceInProgress(), events can come from the replacing information control
 						if (event.widget instanceof Control control && infoControl instanceof IInformationControlExtension5 iControl5) {
-							if (!(iControl5.containsControl(control)))
+							if (!(iControl5.containsControl(control))) {
 								hideInformationControl();
-							else if (event.type == SWT.MouseVerticalWheel && cancelReplacingDelay())
+							} else if (event.type == SWT.MouseVerticalWheel && cancelReplacingDelay()) {
 								replaceInformationControl(false);
+							}
 						} else if (infoControl != null && infoControl.isFocusControl() && cancelReplacingDelay()) {
 							replaceInformationControl(true);
 						}
@@ -268,9 +276,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 				case SWT.MouseUp:
 				case SWT.MouseDown:
-					if (!hasInformationControlReplacer())
+					if (!hasInformationControlReplacer()) {
 						hideInformationControl();
-					else if (!isReplaceInProgress()) {
+					} else if (!isReplaceInProgress()) {
 						IInformationControl infoControl= getCurrentInformationControl();
 						if (event.widget instanceof Control control && infoControl instanceof final IInformationControlExtension5 iControl5) {
 							if (!(iControl5.containsControl(control))) {
@@ -299,8 +307,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 				case SWT.FocusOut:
 					IInformationControl iControl= getCurrentInformationControl();
-					if (iControl != null && ! iControl.isFocusControl())
+					if (iControl != null && ! iControl.isFocusControl()) {
 						hideInformationControl();
+					}
 					break;
 
 				case SWT.MouseMove:
@@ -321,19 +330,22 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 //			if (DEBUG)
 //				System.out.println("AbstractHoverInformationControl.Closer.handleMouseMove():" + event); //$NON-NLS-1$
 
-			if (!(event.widget instanceof Control eventControl))
+			if (!(event.widget instanceof Control eventControl)) {
 				return;
+			}
 			//transform coordinates to subject control:
 			Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
 
-			if (fSubjectArea.contains(mouseLoc))
+			if (fSubjectArea.contains(mouseLoc)) {
 				return;
+			}
 
 			IInformationControl iControl= getCurrentInformationControl();
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(iControl)) {
 				if (AbstractHoverInformationControlManager.this instanceof AnnotationBarHoverManager) {
-					if (getInternalAccessor().getAllowMouseExit())
+					if (getInternalAccessor().getAllowMouseExit()) {
 						return;
+					}
 				}
 				hideInformationControl();
 				return;
@@ -344,8 +356,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (controlBounds != null) {
 				Rectangle tooltipBounds= event.display.map(null, eventControl, controlBounds);
 				if (tooltipBounds.contains(event.x, event.y)) {
-					if (!isReplaceInProgress() && event.type != SWT.MouseExit)
+					if (!isReplaceInProgress() && event.type != SWT.MouseExit) {
 						startReplaceInformationControl(event.display);
+					}
 					return;
 				}
 				cancelReplacingDelay();
@@ -439,8 +452,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fSubjectControl= subjectControl;
 			fAreaControl= areaControl;
 
-			if (fSubjectControl != null && !fSubjectControl.isDisposed())
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseTrackListener(this);
+			}
 
 			fIsInRestartMode= false;
 			fIsComputing= false;
@@ -474,8 +488,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public void mouseHover(MouseEvent event) {
 			if (fIsComputing || fIsInRestartMode ||
 					(fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControl.getShell() != fSubjectControl.getShell().getDisplay().getActiveShell())) {
-				if (DEBUG)
+				if (DEBUG) {
 					System.out.println("AbstractHoverInformationControlManager...mouseHover: @ " + event.x + "/" + event.y + " : hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
 				return;
 			}
 
@@ -487,10 +502,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fHoverEventStateMask= event.stateMask;
 			fHoverEvent= event;
 			fHoverArea= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
-			if (fHoverArea.x < 0)
+			if (fHoverArea.x < 0) {
 				fHoverArea.x= 0;
-			if (fHoverArea.y < 0)
+			}
+			if (fHoverArea.y < 0) {
 				fHoverArea.y= 0;
+			}
 			setSubjectArea(fHoverArea);
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -508,8 +525,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * computing the information to be presented.
 		 */
 		protected void deactivate() {
-			if (fIsComputing)
+			if (fIsComputing) {
 				return;
+			}
 
 			fIsInRestartMode= false;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -535,11 +553,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl())) {
-				if (!fSubjectArea.contains(event.x, event.y))
+				if (!fSubjectArea.contains(event.x, event.y)) {
 					deactivate();
+				}
 			} else {
-				if (!inKeepUpZone(event.x, event.y, fSubjectControl, fSubjectArea, false))
+				if (!inKeepUpZone(event.x, event.y, fSubjectControl, fSubjectArea, false)) {
 					deactivate();
+				}
 			}
 		}
 
@@ -574,15 +594,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public boolean isMouseLost() {
 
-			if (fMouseLostWhileComputing || fShellDeactivatedWhileComputing)
+			if (fMouseLostWhileComputing || fShellDeactivatedWhileComputing) {
 				return true;
+			}
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				Display display= fSubjectControl.getDisplay();
 				Point p= display.getCursorLocation();
 				p= fSubjectControl.toControl(p);
-				if (!fSubjectArea.contains(p) && !fHoverArea.contains(p))
+				if (!fSubjectArea.contains(p) && !fHoverArea.contains(p)) {
 					return true;
+				}
 			}
 
 			return false;
@@ -658,8 +680,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @since 3.4
 	 */
 	private boolean inKeepUpZone(int x, int y, Control subjectControl, Rectangle subjectArea, boolean blowUp) {
-		if (subjectArea.contains(x, y))
+		if (subjectArea.contains(x, y)) {
 			return true;
+		}
 
 		IInformationControl iControl= getCurrentInformationControl();
 		if ((iControl instanceof IInformationControlExtension5 && !((IInformationControlExtension5) iControl).isVisible())) {
@@ -682,8 +705,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 
 			if (!blowUp) {
-				if (iControlBounds.contains(x, y))
+				if (iControlBounds.contains(x, y)) {
 					return true;
+				}
 
 				if (subjectArea.y + subjectArea.height < iControlBounds.y) {
 					// special case for hover events: subjectArea totally above iControl:
@@ -740,8 +764,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 			// FIXME: should maybe use convex hull, not bounding box
 			totalBounds.add(subjectArea);
-			if (totalBounds.contains(x, y))
+			if (totalBounds.contains(x, y)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -811,16 +836,18 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 *        {@link #replaceInformationControl(boolean)} in the UI thread
 	 */
 	private void startReplaceInformationControl(final Display display) {
-		if (fEnrichMode == EnrichMode.ON_CLICK)
+		if (fEnrichMode == EnrichMode.ON_CLICK) {
 			return;
+		}
 
 		if (fReplacingDelayJob != null) {
 			if (fReplacingDelayJob.getState() != Job.RUNNING) {
 				if (fReplacingDelayJob.cancel()) {
 					if (fEnrichMode == EnrichMode.IMMEDIATELY) {
 						fReplacingDelayJob= null;
-						if (! fWaitForMouseUp)
+						if (! fWaitForMouseUp) {
 							replaceInformationControl(false);
+						}
 					} else {
 //						if (DEBUG)
 //							System.out.println("AbstractHoverInformationControlManager.startReplaceInformationControl(): rescheduled"); //$NON-NLS-1$
@@ -839,10 +866,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				}
 				display.syncExec(() -> {
 					fReplacingDelayJob= null;
-					if (monitor.isCanceled())
+					if (monitor.isCanceled()) {
 						return;
-					if (!fWaitForMouseUp)
+					}
+					if (!fWaitForMouseUp) {
 						replaceInformationControl(false);
+					}
 				});
 				return Status.OK_STATUS;
 			}
@@ -862,8 +891,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 
 		Rectangle area= getSubjectArea();
-		if (area != null)
+		if (area != null) {
 			fMouseTracker.setSubjectArea(area);
+		}
 
 		if (fMouseTracker.isMouseLost()) {
 			fMouseTracker.computationCompleted();
@@ -887,10 +917,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		boolean is= isEnabled();
 
 		if (was != is && fMouseTracker != null) {
-			if (is)
+			if (is) {
 				fMouseTracker.start(getSubjectControl(), fAreaControl);
-			else
+			} else {
 				fMouseTracker.stop();
+			}
 		}
 	}
 

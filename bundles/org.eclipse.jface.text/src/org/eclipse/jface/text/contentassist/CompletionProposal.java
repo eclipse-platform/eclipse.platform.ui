@@ -28,21 +28,21 @@ import org.eclipse.jface.text.IDocument;
 public final class CompletionProposal implements ICompletionProposal {
 
 	/** The string to be displayed in the completion proposal popup. */
-	private String fDisplayString;
+	private final String fDisplayString;
 	/** The replacement string. */
-	private String fReplacementString;
+	private final String fReplacementString;
 	/** The replacement offset. */
-	private int fReplacementOffset;
+	private final int fReplacementOffset;
 	/** The replacement length. */
-	private int fReplacementLength;
+	private final int fReplacementLength;
 	/** The cursor position after this proposal has been applied. */
-	private int fCursorPosition;
+	private final int fCursorPosition;
 	/** The image to be displayed in the completion proposal popup. */
-	private Image fImage;
+	private final Image fImage;
 	/** The context information of this proposal. */
-	private IContextInformation fContextInformation;
+	private final IContextInformation fContextInformation;
 	/** The additional info of this proposal. */
-	private String fAdditionalProposalInfo;
+	private final String fAdditionalProposalInfo;
 
 	/**
 	 * Creates a new completion proposal based on the provided information. The replacement string is

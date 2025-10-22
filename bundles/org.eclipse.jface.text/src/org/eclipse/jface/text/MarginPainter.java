@@ -88,8 +88,9 @@ public class MarginPainter implements IPainter, PaintListener {
 	 * @param lineWidth the line width
 	 */
 	public void setMarginRulerWidth(int lineWidth) {
-		if (lineWidth == 1)
+		if (lineWidth == 1) {
 			lineWidth= 0; // NOTE: 0 means width is 1 but with optimized performance
+		}
 		fLineWidth= lineWidth;
 	}
 
@@ -130,8 +131,9 @@ public class MarginPainter implements IPainter, PaintListener {
 			fIsActive= false;
 			fCachedWidgetX= -1;
 			fTextWidget.removePaintListener(this);
-			if (redraw)
+			if (redraw) {
 				fTextWidget.redraw();
+			}
 		}
 	}
 
@@ -145,11 +147,13 @@ public class MarginPainter implements IPainter, PaintListener {
 		if (!fIsActive) {
 			fIsActive= true;
 			fTextWidget.addPaintListener(this);
-			if (fCachedWidgetX == -1)
+			if (fCachedWidgetX == -1) {
 				computeWidgetX();
+			}
 			fTextWidget.redraw();
-		} else if (CONFIGURATION == reason || INTERNAL == reason)
+		} else if (CONFIGURATION == reason || INTERNAL == reason) {
 			fTextWidget.redraw();
+		}
 	}
 
 	@Override

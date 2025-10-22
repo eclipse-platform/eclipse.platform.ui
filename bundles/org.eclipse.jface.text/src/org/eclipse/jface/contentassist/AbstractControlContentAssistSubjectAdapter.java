@@ -58,11 +58,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	/**
 	 * VerifyKeyListeners for the control.
 	 */
-	private List<VerifyKeyListener> fVerifyKeyListeners;
+	private final List<VerifyKeyListener> fVerifyKeyListeners;
 	/**
 	 * KeyListeners for the control.
 	 */
-	private Set<KeyListener> fKeyListeners;
+	private final Set<KeyListener> fKeyListeners;
 	/**
 	 * The Listener installed on the control which passes events to
 	 * {@link #fVerifyKeyListeners fVerifyKeyListeners} and {@link #fKeyListeners}.

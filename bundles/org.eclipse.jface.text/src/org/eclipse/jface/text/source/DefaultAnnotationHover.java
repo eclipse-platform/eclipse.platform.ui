@@ -38,7 +38,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	 *
 	 * @since 3.4
 	 */
-	private boolean fShowLineNumber;
+	private final boolean fShowLineNumber;
 
 	/**
 	 * Creates a new default annotation hover.
@@ -69,8 +69,9 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				// optimization
 				Annotation annotation= javaAnnotations.get(0);
 				String message= annotation.getText();
-				if (message != null && !message.trim().isEmpty())
+				if (message != null && !message.trim().isEmpty()) {
 					return formatSingleMessage(message);
+				}
 
 			} else {
 
@@ -80,20 +81,24 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				while (e.hasNext()) {
 					Annotation annotation= e.next();
 					String message= annotation.getText();
-					if (message != null && !message.trim().isEmpty())
+					if (message != null && !message.trim().isEmpty()) {
 						messages.add(message.trim());
+					}
 				}
 
-				if (messages.size() == 1)
+				if (messages.size() == 1) {
 					return formatSingleMessage(messages.get(0));
+				}
 
-				if (messages.size() > 1)
+				if (messages.size() > 1) {
 					return formatMultipleMessages(messages);
+				}
 			}
 		}
 
-		if (fShowLineNumber && lineNumber > -1)
+		if (fShowLineNumber && lineNumber > -1) {
 			return JFaceTextMessages.getFormattedString("DefaultAnnotationHover.lineNumber", Integer.toString(lineNumber + 1)); //$NON-NLS-1$
+		}
 
 		return null;
 	}
@@ -166,14 +171,16 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	private boolean isDuplicateAnnotation(Map<Position, Object> messagesAtPosition, Position position, String message) {
 		if (messagesAtPosition.containsKey(position)) {
 			Object value= messagesAtPosition.get(position);
-			if (message.equals(value))
+			if (message.equals(value)) {
 				return true;
+			}
 
 			if (value instanceof List) {
 				@SuppressWarnings("unchecked")
 				List<Object> messages= (List<Object>) value;
-				if (messages.contains(message))
+				if (messages.contains(message)) {
 					return true;
+				}
 
 				messages.add(message);
 			} else {
@@ -182,14 +189,16 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
 			}
-		} else
+		} else {
 			messagesAtPosition.put(position, message);
+		}
 		return false;
 	}
 
 	private boolean includeAnnotation(Annotation annotation, Position position, HashMap<Position, Object> messagesAtPosition) {
-		if (!isIncluded(annotation))
+		if (!isIncluded(annotation)) {
 			return false;
+		}
 
 		String text= annotation.getText();
 		return (text != null && !isDuplicateAnnotation(messagesAtPosition, position, text));
@@ -197,8 +206,9 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 
 	private List<Annotation> getAnnotationsForLine(ISourceViewer viewer, int line) {
 		IAnnotationModel model= getAnnotationModel(viewer);
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 
 		IDocument document= viewer.getDocument();
 		List<Annotation> javaAnnotations= new ArrayList<>();
@@ -209,25 +219,29 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 			Annotation annotation= iterator.next();
 
 			Position position= model.getPosition(annotation);
-			if (position == null)
+			if (position == null) {
 				continue;
+			}
 
-			if (!isRulerLine(position, document, line))
+			if (!isRulerLine(position, document, line)) {
 				continue;
+			}
 
 			if (annotation instanceof AnnotationBag bag) {
 				Iterator<Annotation> e= bag.iterator();
 				while (e.hasNext()) {
 					annotation= e.next();
 					position= model.getPosition(annotation);
-					if (position != null && includeAnnotation(annotation, position, messagesAtPosition))
+					if (position != null && includeAnnotation(annotation, position, messagesAtPosition)) {
 						javaAnnotations.add(annotation);
+					}
 				}
 				continue;
 			}
 
-			if (includeAnnotation(annotation, position, messagesAtPosition))
+			if (includeAnnotation(annotation, position, messagesAtPosition)) {
 				javaAnnotations.add(annotation);
+			}
 		}
 
 		return javaAnnotations;

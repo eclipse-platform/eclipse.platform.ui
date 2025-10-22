@@ -49,7 +49,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/** Indicates whether this painter is active */
 	private boolean fIsActive= false;
 	/** The source viewer this painter is associated with */
-	private ISourceViewer fSourceViewer;
+	private final ISourceViewer fSourceViewer;
 	/** The viewer's widget */
 	private StyledText fTextWidget;
 	/** The color in which to highlight the peer character */
@@ -59,7 +59,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/** The strategy for finding matching characters */
 	private ICharacterPairMatcher fMatcher;
 	/** The position tracking the matching characters */
-	private Position fPairPosition= new Position(0, 0);
+	private final Position fPairPosition= new Position(0, 0);
 	/** The anchor indicating whether the character is left or right of the caret */
 	private int fAnchor;
 
@@ -171,18 +171,21 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		if (fIsActive) {
 			fIsActive= false;
 			fTextWidget.removePaintListener(this);
-			if (fPaintPositionManager != null)
+			if (fPaintPositionManager != null) {
 				fPaintPositionManager.unmanagePosition(fPairPosition);
-			if (redraw)
+			}
+			if (redraw) {
 				handleDrawRequest(null);
+			}
 		}
 		fPreviousSelection= null;
 	}
 
 	@Override
 	public void paintControl(PaintEvent event) {
-		if (fTextWidget != null)
+		if (fTextWidget != null) {
 			handleDrawRequest(event.gc);
+		}
 	}
 
 	/**
@@ -192,18 +195,21 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void handleDrawRequest(GC gc) {
 
-		if (fPairPosition.isDeleted)
+		if (fPairPosition.isDeleted) {
 			return;
+		}
 
 		int offset= fPairPosition.getOffset();
 		int length= fPairPosition.getLength();
-		if (length < 1)
+		if (length < 1) {
 			return;
+		}
 
 		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			IRegion widgetRange= extension.modelRange2WidgetRange(new Region(offset, length));
-			if (widgetRange == null)
+			if (widgetRange == null) {
 				return;
+			}
 
 			try {
 				// don't draw if the pair position is really hidden and widgetRange just
@@ -211,8 +217,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				IDocument doc= fSourceViewer.getDocument();
 				int startLine= doc.getLineOfOffset(offset);
 				int endLine= doc.getLineOfOffset(offset + length);
-				if (extension.modelLine2WidgetLine(startLine) == -1 || extension.modelLine2WidgetLine(endLine) == -1)
+				if (extension.modelLine2WidgetLine(startLine) == -1 || extension.modelLine2WidgetLine(endLine) == -1) {
 					return;
+				}
 			} catch (BadLocationException e) {
 				return;
 			}
@@ -222,8 +229,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 		} else {
 			IRegion region= fSourceViewer.getVisibleRegion();
-			if (region.getOffset() > offset || region.getOffset() + region.getLength() < offset + length)
+			if (region.getOffset() > offset || region.getOffset() + region.getLength() < offset + length) {
 				return;
+			}
 			offset -= region.getOffset();
 		}
 
@@ -231,10 +239,11 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			draw(gc, offset);
 			draw(gc, offset + length - 1);
 		} else {
-			if (ICharacterPairMatcher.RIGHT == fAnchor)
+			if (ICharacterPairMatcher.RIGHT == fAnchor) {
 				draw(gc, offset);
-			else
+			} else {
 				draw(gc, offset + length - 1);
+			}
 		}
 	}
 
@@ -401,8 +410,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @since 3.8
 	 */
 	private void installUninstallTextListener(boolean install) {
-		if (!(fMatcher instanceof ICharacterPairMatcherExtension))
+		if (!(fMatcher instanceof ICharacterPairMatcherExtension)) {
 			return;
+		}
 
 		if (install) {
 			fTextListener= new TextListener();
@@ -428,17 +438,20 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		 */
 		@Override
 		public void textChanged(TextEvent event) {
-			if (!fHighlightEnclosingPeerCharacters || !(fMatcher instanceof ICharacterPairMatcherExtension))
+			if (!fHighlightEnclosingPeerCharacters || !(fMatcher instanceof ICharacterPairMatcherExtension)) {
 				return;
+			}
 
-			if (!event.getViewerRedrawState())
+			if (!event.getViewerRedrawState()) {
 				return;
+			}
 
 			String text= event.getText();
 			String replacedText= event.getReplacedText();
 			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
-			if (searchForCharacters(text, matcher) || searchForCharacters(replacedText, matcher))
+			if (searchForCharacters(text, matcher) || searchForCharacters(replacedText, matcher)) {
 				paint(IPainter.INTERNAL);
+			}
 		}
 
 		/**
@@ -449,8 +462,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		 * @return <code>true</code> if a matched character is found, <code>false</code> otherwise
 		 */
 		private boolean searchForCharacters(String text, ICharacterPairMatcherExtension matcher) {
-			if (text == null)
+			if (text == null) {
 				return false;
+			}
 			for (int i= 0; i < text.length(); i++) {
 				if (matcher.isMatchedChar(text.charAt(i))) {
 					return true;

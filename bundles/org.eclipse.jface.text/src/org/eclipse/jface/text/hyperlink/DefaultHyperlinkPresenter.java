@@ -167,18 +167,21 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		Assert.isNotNull(textViewer);
 		fTextViewer= textViewer;
 		fTextViewer.addTextInputListener(this);
-		if (fTextViewer instanceof ITextViewerExtension4)
+		if (fTextViewer instanceof ITextViewerExtension4) {
 			((ITextViewerExtension4)fTextViewer).addTextPresentationListener(this);
+		}
 
 		if (fPreferenceStore != null) {
 			fIsUsingNativeLinkColor= fPreferenceStore.getBoolean(HYPERLINK_COLOR_SYSTEM_DEFAULT);
-			if (!fIsUsingNativeLinkColor)
+			if (!fIsUsingNativeLinkColor) {
 				fColor= createColorFromPreferenceStore();
+			}
 			fPreferenceStore.addPropertyChangeListener(this);
 		} else if (fRGB != null) {
 			StyledText text= fTextViewer.getTextWidget();
-			if (text != null && !text.isDisposed())
+			if (text != null && !text.isDisposed()) {
 				fColor= new Color(text.getDisplay(), fRGB);
+			}
 		}
 	}
 
@@ -186,15 +189,17 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	public void uninstall() {
 		fTextViewer.removeTextInputListener(this);
 		IDocument document= fTextViewer.getDocument();
-		if (document != null)
+		if (document != null) {
 			document.removeDocumentListener(this);
+		}
 
 		if (fColor != null) {
 			fColor= null;
 		}
 
-		if (fTextViewer instanceof ITextViewerExtension4)
+		if (fTextViewer instanceof ITextViewerExtension4) {
 			((ITextViewerExtension4)fTextViewer).removeTextPresentationListener(this);
+		}
 		fTextViewer= null;
 
 		if (fPreferenceStore != null) {
@@ -217,13 +222,15 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	@Override
 	public void applyTextPresentation(TextPresentation textPresentation) {
-		if (fActiveRegion == null)
+		if (fActiveRegion == null) {
 			return;
+		}
 		IRegion region= textPresentation.getExtent();
 		if (fActiveRegion.getOffset() + fActiveRegion.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > fActiveRegion.getOffset()) {
 			Color color= null;
-			if (!fIsUsingNativeLinkColor)
+			if (!fIsUsingNativeLinkColor) {
 				color= fColor;
+			}
 			StyleRange styleRange= new StyleRange(fActiveRegion.getOffset(), fActiveRegion.getLength(), color, null);
 			styleRange.underlineStyle= SWT.UNDERLINE_LINK;
 			styleRange.underline= true;
@@ -233,37 +240,42 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	private void highlightRegion(IRegion region) {
 
-		if (region.equals(fActiveRegion))
+		if (region.equals(fActiveRegion)) {
 			return;
+		}
 
 		repairRepresentation();
 
 		StyledText text= fTextViewer.getTextWidget();
-		if (text == null || text.isDisposed())
+		if (text == null || text.isDisposed()) {
 			return;
+		}
 
 		// Invalidate region ==> apply text presentation
 		fActiveRegion= region;
-		if (fTextViewer instanceof ITextViewerExtension2)
+		if (fTextViewer instanceof ITextViewerExtension2) {
 			((ITextViewerExtension2)fTextViewer).invalidateTextPresentation(region.getOffset(), region.getLength());
-		else
+		} else {
 			fTextViewer.invalidateTextPresentation();
+		}
 	}
 
 	private void repairRepresentation() {
 
-		if (fActiveRegion == null)
+		if (fActiveRegion == null) {
 			return;
+		}
 
 		int offset= fActiveRegion.getOffset();
 		int length= fActiveRegion.getLength();
 		fActiveRegion= null;
 
 		// Invalidate ==> remove applied text presentation
-		if (fTextViewer instanceof ITextViewerExtension2)
+		if (fTextViewer instanceof ITextViewerExtension2) {
 			((ITextViewerExtension2) fTextViewer).invalidateTextPresentation(offset, length);
-		else
+		} else {
 			fTextViewer.invalidateTextPresentation();
+		}
 
 	}
 
@@ -299,16 +311,18 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-		if (oldInput == null)
+		if (oldInput == null) {
 			return;
+		}
 		hideHyperlinks();
 		oldInput.removeDocumentListener(this);
 	}
 
 	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-		if (newInput == null)
+		if (newInput == null) {
 			return;
+		}
 		newInput.addDocumentListener(this);
 	}
 
@@ -320,20 +334,23 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 */
 	private Color createColorFromPreferenceStore() {
 		StyledText textWidget= fTextViewer.getTextWidget();
-		if (textWidget == null || textWidget.isDisposed())
+		if (textWidget == null || textWidget.isDisposed()) {
 			return null;
+		}
 
 		RGB rgb= null;
 
 		if (fPreferenceStore.contains(HYPERLINK_COLOR)) {
 
-			if (fPreferenceStore.isDefault(HYPERLINK_COLOR))
+			if (fPreferenceStore.isDefault(HYPERLINK_COLOR)) {
 				rgb= PreferenceConverter.getDefaultColor(fPreferenceStore, HYPERLINK_COLOR);
-			else
+			} else {
 				rgb= PreferenceConverter.getColor(fPreferenceStore, HYPERLINK_COLOR);
+			}
 
-			if (rgb != null)
+			if (rgb != null) {
 				return new Color(textWidget.getDisplay(), rgb);
+			}
 		}
 
 		return null;
@@ -348,8 +365,9 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 		if (HYPERLINK_COLOR_SYSTEM_DEFAULT.equals(event.getProperty())) {
 			fIsUsingNativeLinkColor= fPreferenceStore.getBoolean(HYPERLINK_COLOR_SYSTEM_DEFAULT);
-			if (!fIsUsingNativeLinkColor && fColor == null)
+			if (!fIsUsingNativeLinkColor && fColor == null) {
 				fColor= createColorFromPreferenceStore();
+			}
 			return;
 		}
 	}

@@ -76,13 +76,13 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 	/** The associated text viewer */
-	private ITextViewer fViewer;
+	private final ITextViewer fViewer;
 	/** The associated content assistant */
-	private ContentAssistant2 fContentAssistant;
+	private final ContentAssistant2 fContentAssistant;
 	/** The used additional info controller */
-	private AdditionalInfoController2 fAdditionalInfoController;
+	private final AdditionalInfoController2 fAdditionalInfoController;
 	/** The closing strategy for this completion proposal popup */
-	private PopupCloser2 fPopupCloser= new PopupCloser2();
+	private final PopupCloser2 fPopupCloser= new PopupCloser2();
 	/** The popup shell */
 	private Shell fProposalShell;
 	/** The proposal table */
@@ -92,7 +92,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	/** The key listener to control navigation */
 	private KeyListener fKeyListener;
 	/** List of document events used for filtering proposals */
-	private List<DocumentEvent> fDocumentEvents= new ArrayList<>();
+	private final List<DocumentEvent> fDocumentEvents= new ArrayList<>();
 	/** Listener filling the document event queue */
 	private IDocumentListener fDocumentListener;
 	/** Reentrance count for <code>filterProposals</code> */
