@@ -138,7 +138,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 *
 	 * @deprecated use {@link #ProcessorBasedRefactoring(RefactoringProcessor)} instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected ProcessorBasedRefactoring() {
 	}
 

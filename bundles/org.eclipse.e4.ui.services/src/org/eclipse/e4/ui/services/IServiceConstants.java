@@ -34,7 +34,7 @@ public interface IServiceConstants {
 	 *
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String SELECTION = ACTIVE_SELECTION;
 
 	/**

@@ -30,7 +30,7 @@ public interface IStylingEngine {
 	 * @deprecated please use IStylingEngine.class or
 	 *             IStylingEngine.class.getName() for context access
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String SERVICE_NAME = IStylingEngine.class.getName();
 
 	public void setClassname(Object widget, String classname);

@@ -52,7 +52,7 @@ public interface IModelProcessorContribution {
 	 *             {@link Beforefragment @Beforefragment(true|false)} component
 	 *             property type
 	 */
-	@Deprecated(forRemoval = true, since = "1.16")
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String BEFORE_FRAGMENT_PROPERTY_PREFIX = "beforefragment:Boolean="; //$NON-NLS-1$
 
 	/**
@@ -88,7 +88,7 @@ public interface IModelProcessorContribution {
 	 * @deprecated Instead annotate the component with the {@link Apply @Apply(&lt;
 	 *             a-value &gt;)} component property type
 	 */
-	@Deprecated(forRemoval = true, since = "1.16")
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String APPLY_PROPERTY_PREFIX = "apply="; //$NON-NLS-1$
 
 	/**
