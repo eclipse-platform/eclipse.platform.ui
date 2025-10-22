@@ -13,13 +13,15 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ConfigurableLineTracker;
@@ -37,7 +39,7 @@ public abstract class TextStoreTest {
 	private ITextStore fTextStore;
 	private ILineTracker fTracker;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 		fTextStore= createTextStore();
@@ -61,7 +63,7 @@ public abstract class TextStoreTest {
 
 	abstract protected ITextStore createTextStore();
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fTextStore= null;
 		fTracker= null;
@@ -172,7 +174,7 @@ public abstract class TextStoreTest {
 		for (int i= 0; i < 5; i++) {
 			for (int j= 0; j < i; j++) {
 				int no= fTracker.getLineNumberOfOffset(offset + j);
-				assertTrue("invalid line number " + no + " reported instead of " + i, no == i);
+				assertTrue(no == i, "invalid line number " + no + " reported instead of " + i);
 			}
 			offset+= (i + 1);
 		}
@@ -184,19 +186,19 @@ public abstract class TextStoreTest {
 			IRegion line= fTracker.getLineInformation(i);
 			int pos= line.getOffset() + line.getLength();
 			int offset= (2 * i) + 1;
-			assertTrue("invalid line end offset " + pos + " for line " + i + " should be " + offset, offset == pos);
+			assertTrue(offset == pos, "invalid line end offset " + pos + " for line " + i + " should be " + offset);
 		}
 
 		for (int i= 0; i < 5; i++) {
 			int pos= fTracker.getLineOffset(i);
 			int offset= 2 * i;
-			assertTrue("invalid line start offset " + pos + " for line " + i + " should be " + offset, pos == offset);
+			assertTrue(pos == offset, "invalid line start offset " + pos + " for line " + i + " should be " + offset);
 		}
 
 		for (int i= 0; i < 10; i++) {
 			int line= fTracker.getLineNumberOfOffset(i);
 			double l= Math.floor(i / 2);
-			assertTrue("invalid line number " + line + " for position " + i + " should be " + l, l == line);
+			assertTrue(l == line, "invalid line number " + line + " for position " + i + " should be " + l);
 		}
 	}
 
@@ -390,12 +392,12 @@ public abstract class TextStoreTest {
 		int[] offsets= {0, 2};
 		int[] lengths= {1, 0};
 
-		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines());
-		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines(0, fTextStore.getLength()));
+		assertEquals(lengths.length, fTracker.getNumberOfLines(), "invalid number of lines, ");
+		assertEquals(lengths.length, fTracker.getNumberOfLines(0, fTextStore.getLength()), "invalid number of lines, ");
 		for (int i= 0; i < lengths.length; i++) {
 			IRegion line= fTracker.getLineInformation(i);
-			assertEquals("line: " + i, lengths[i], line.getLength());
-			assertEquals("line: " + i, offsets[i], line.getOffset());
+			assertEquals(lengths[i], line.getLength(), "line: " + i);
+			assertEquals(offsets[i], line.getOffset(), "line: " + i);
 		}
 		try {
 			fTracker.getLineInformation(lengths.length);
@@ -414,22 +416,22 @@ public abstract class TextStoreTest {
 		assertTextStoreContents("x\nx");
 		offsets= new int[]{0, 2, 3};
 		lengths= new int[]{1, 1, 0};
-		assertEquals("invalid number of lines, ", lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines());
-		assertEquals("invalid number of lines, ", lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines(0, fTextStore.getLength()));
+		assertEquals(lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines(), "invalid number of lines, ");
+		assertEquals(lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines(0, fTextStore.getLength()), "invalid number of lines, ");
 		for (int i= 0; i < lengths.length; i++) {
 			IRegion line= fTracker.getLineInformation(i);
 			int len= lengths[i];
 			int offset= offsets[i];
-			assertEquals("length of line: " + i, len, line.getLength());
-			assertEquals("offset of line: " + i, offset, line.getOffset());
+			assertEquals(len, line.getLength(), "length of line: " + i);
+			assertEquals(offset, line.getOffset(), "offset of line: " + i);
 
 			line= fTracker.getLineInformationOfOffset(offset);
 			if (i == lengths.length - 1) { // phantom line cannot be queried by offset
 				len= lengths[i - 1];
 				offset= offsets[i - 1];
 			}
-			assertEquals("length of line: " + i, len, line.getLength());
-			assertEquals("offset of line: " + i, offset, line.getOffset());
+			assertEquals(len, line.getLength(), "length of line: " + i);
+			assertEquals(offset, line.getOffset(), "offset of line: " + i);
 		}
 
 		try {

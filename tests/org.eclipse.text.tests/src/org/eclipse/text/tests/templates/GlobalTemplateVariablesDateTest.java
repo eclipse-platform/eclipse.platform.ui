@@ -14,15 +14,16 @@
  *******************************************************************************/
 package org.eclipse.text.tests.templates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
@@ -40,7 +41,7 @@ public class GlobalTemplateVariablesDateTest  {
 
 	private TemplateContextType fType;
 
-	@Before
+	@BeforeEach
 	public void setUp()  {
 		fTranslator= new TemplateTranslator();
 

@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +22,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -102,7 +103,7 @@ public class AnnotationModelExtension2Test {
 	private Annotation fAfterIn;
 	private Annotation fAfterOut;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDocument= new Document("How much wood\nwould a woodchuck chuck\nif a woodchuck\ncould chuck wood?\n42");
 
@@ -129,7 +130,7 @@ public class AnnotationModelExtension2Test {
 		fAnnotationModel.connect(fDocument);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fAnnotationModel.disconnect(fDocument);
 	}

@@ -13,22 +13,22 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GapTextTest extends AbstractGapTextTest {
 	/**
 	 * @deprecated tests the legacy constructor of GapTextStore
 	 */
 	@Deprecated
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fText= new GapText(5, 10);
 		fText.set("xxxxx");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fText= null;
 	}

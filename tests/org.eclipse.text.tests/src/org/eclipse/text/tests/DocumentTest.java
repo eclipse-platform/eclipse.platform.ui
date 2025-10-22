@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -39,15 +41,15 @@ public class DocumentTest {
 
 	protected void checkPositions(Position[] expected, Position[] actual) {
 
-		assertTrue("invalid number of positions", expected.length == actual.length);
+		assertTrue(expected.length == actual.length, "invalid number of positions");
 
 		for (int i= 0; i < expected.length; i++) {
-			assertEquals("Position " + i + " wrong:", expected[i], actual[i]);
+			assertEquals(expected[i], actual[i], "Position " + i + " wrong:");
 		}
 
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws BadLocationException {
 
 		fDocument= new Document();
@@ -78,7 +80,7 @@ public class DocumentTest {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fDocument= null;
 	}

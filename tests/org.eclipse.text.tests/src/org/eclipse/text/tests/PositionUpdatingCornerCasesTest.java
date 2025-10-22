@@ -13,11 +13,13 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
@@ -31,10 +33,10 @@ public class PositionUpdatingCornerCasesTest {
 
 	protected void checkPositions(Position[] expected) throws BadPositionCategoryException {
 		Position[] actual= fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
-		assertTrue("invalid number of positions", actual.length == expected.length);
+		assertTrue(actual.length == expected.length, "invalid number of positions");
 
 		for (int i= 0; i < expected.length; i++) {
-			assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
+			assertEquals(expected[i], actual[i], print(actual[i]) + " != " + print(expected[i]));
 		}
 	}
 
@@ -42,7 +44,7 @@ public class PositionUpdatingCornerCasesTest {
 		return "[" + p.getOffset() + "," + p.getLength() + "]";
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fDocument= null;
 	}

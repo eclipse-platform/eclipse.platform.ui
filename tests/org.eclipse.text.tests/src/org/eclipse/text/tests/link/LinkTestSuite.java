@@ -14,8 +14,8 @@
 
 package org.eclipse.text.tests.link;
 
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test Suite org.eclipse.text.tests.link.

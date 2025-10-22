@@ -13,17 +13,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.text.edits.CopySourceEdit;
 import org.eclipse.text.edits.CopyTargetEdit;
@@ -49,13 +51,13 @@ public class TextEditTests {
 	private IDocument fDocument;
 	private MultiTextEdit fRoot;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDocument= new Document("0123456789");
 		fRoot= new MultiTextEdit();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fRoot= null;
 		fRoot= null;
@@ -65,14 +67,14 @@ public class TextEditTests {
 	public void testCovers1() throws Exception {
 		InsertEdit insert= new InsertEdit(1, "");
 		DeleteEdit delete= new DeleteEdit(2, 2);
-		Assert.assertFalse(insert.covers(delete));
+		Assertions.assertFalse(insert.covers(delete));
 	}
 
 	@Test
 	public void testCovers2() throws Exception {
 		MultiTextEdit multi= new MultiTextEdit(0,0);
 		MultiTextEdit child= new MultiTextEdit(0,0);
-		Assert.assertTrue(multi.covers(child));
+		Assertions.assertTrue(multi.covers(child));
 	}
 
 	@Test
@@ -221,11 +223,11 @@ public class TextEditTests {
 	@Test
 	public void testUndefinedMultiEdit3() throws Exception {
 		MultiTextEdit m2= new MultiTextEdit();
-		Assert.assertEquals(0, m2.getOffset());
-		Assert.assertEquals(0, m2.getLength());
+		Assertions.assertEquals(0, m2.getOffset());
+		Assertions.assertEquals(0, m2.getLength());
 		m2.addChild(new DeleteEdit(1,3));
-		Assert.assertEquals(1, m2.getOffset());
-		Assert.assertEquals(3, m2.getLength());
+		Assertions.assertEquals(1, m2.getOffset());
+		Assertions.assertEquals(3, m2.getLength());
 	}
 
 	@Test
@@ -233,8 +235,8 @@ public class TextEditTests {
 		MultiTextEdit m2= new MultiTextEdit();
 		m2.addChild(new DeleteEdit(1,3));
 		m2.addChild(new DeleteEdit(4, 2));
-		Assert.assertEquals(1, m2.getOffset());
-		Assert.assertEquals(5, m2.getLength());
+		Assertions.assertEquals(1, m2.getOffset());
+		Assertions.assertEquals(5, m2.getLength());
 	}
 
 	@Test
@@ -242,8 +244,8 @@ public class TextEditTests {
 		MultiTextEdit m2= new MultiTextEdit();
 		m2.addChild(new DeleteEdit(4, 2));
 		m2.addChild(new DeleteEdit(1,3));
-		Assert.assertEquals(1, m2.getOffset());
-		Assert.assertEquals(5, m2.getLength());
+		Assertions.assertEquals(1, m2.getOffset());
+		Assertions.assertEquals(5, m2.getLength());
 	}
 
 	@Test
@@ -324,25 +326,25 @@ public class TextEditTests {
 	}
 
 	private static void compare(List<TextEdit> org, List<TextEdit> copy) {
-		assertTrue("Same length", org.size() == copy.size());
+		assertTrue(org.size() == copy.size(), "Same length");
 		for (TextEdit edit : copy) {
-			assertTrue("Original is part of copy list", !org.contains(edit));
+			assertTrue(!org.contains(edit), "Original is part of copy list");
 			if (edit instanceof MoveSourceEdit) {
 				MoveSourceEdit source= (MoveSourceEdit)edit;
-				assertTrue("Target edit isn't a copy", copy.contains(source.getTargetEdit()));
-				assertTrue("Traget edit is a original", !org.contains(source.getTargetEdit()));
+				assertTrue(copy.contains(source.getTargetEdit()), "Target edit isn't a copy");
+				assertTrue(!org.contains(source.getTargetEdit()), "Traget edit is a original");
 			} else if (edit instanceof MoveTargetEdit) {
 				MoveTargetEdit target= (MoveTargetEdit)edit;
-				assertTrue("Source edit isn't a copy", copy.contains(target.getSourceEdit()));
-				assertTrue("Source edit is a original", !org.contains(target.getSourceEdit()));
+				assertTrue(copy.contains(target.getSourceEdit()), "Source edit isn't a copy");
+				assertTrue(!org.contains(target.getSourceEdit()), "Source edit is a original");
 			} else if (edit instanceof CopySourceEdit) {
 				CopySourceEdit source= (CopySourceEdit)edit;
-				assertTrue("Target edit isn't a copy", copy.contains(source.getTargetEdit()));
-				assertTrue("Traget edit is a original", !org.contains(source.getTargetEdit()));
+				assertTrue(copy.contains(source.getTargetEdit()), "Target edit isn't a copy");
+				assertTrue(!org.contains(source.getTargetEdit()), "Traget edit is a original");
 			} else if (edit instanceof CopyTargetEdit) {
 				CopyTargetEdit target= (CopyTargetEdit)edit;
-				assertTrue("Source edit isn't a copy", copy.contains(target.getSourceEdit()));
-				assertTrue("Source edit is a original", !org.contains(target.getSourceEdit()));
+				assertTrue(copy.contains(target.getSourceEdit()), "Source edit isn't a copy");
+				assertTrue(!org.contains(target.getSourceEdit()), "Source edit is a original");
 			}
 		}
 	}
@@ -358,7 +360,7 @@ public class TextEditTests {
 		assertEquals(fRoot, 2, 6);
 		assertEquals(e1, 2, 2);
 		assertEquals(e2, 4, 4);
-		Assert.assertEquals("Buffer content", "01yy345656789", fDocument.get());
+		Assertions.assertEquals("01yy345656789", fDocument.get());
 		doUndoRedo(undo, "01yy345656789");
 	}
 
@@ -373,7 +375,7 @@ public class TextEditTests {
 		assertEquals(fRoot, 2, 4);
 		assertEquals(e1, 2, 2);
 		assertEquals(e2, 4, 2);
-		Assert.assertEquals("Buffer content", "01yyxx23456789", fDocument.get());
+		Assertions.assertEquals("01yyxx23456789", fDocument.get());
 		doUndoRedo(undo, "01yyxx23456789");
 	}
 
@@ -391,7 +393,7 @@ public class TextEditTests {
 		assertEquals(e1, 0, 3);
 		assertEquals(e2, 3, 2);
 		assertEquals(e3, 5, 1);
-		Assert.assertEquals("Buffer content", "011xx2456789", fDocument.get());
+		Assertions.assertEquals("011xx2456789", fDocument.get());
 		doUndoRedo(undo, "011xx2456789");
 	}
 
@@ -400,10 +402,10 @@ public class TextEditTests {
 		TextEdit e1= new InsertEdit(0, "xx");
 		fRoot.addChild(e1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer length", 12, fDocument.getLength());
+		Assertions.assertEquals(12, fDocument.getLength(), "Buffer length");
 		assertEquals(fRoot, 0, 2);
 		assertEquals(e1, 0, 2);
-		Assert.assertEquals("Buffer content", "xx0123456789", fDocument.get());
+		Assertions.assertEquals("xx0123456789", fDocument.get());
 		doUndoRedo(undo, "xx0123456789");
 	}
 
@@ -412,10 +414,10 @@ public class TextEditTests {
 		TextEdit e1= new InsertEdit(10, "xx");
 		fRoot.addChild(e1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer length", 12, fDocument.getLength());
+		Assertions.assertEquals(12, fDocument.getLength(), "Buffer length");
 		assertEquals(fRoot, 10, 2);
 		assertEquals(e1, 10, 2);
-		Assert.assertEquals("Buffer content", "0123456789xx", fDocument.get());
+		Assertions.assertEquals("0123456789xx", fDocument.get());
 		doUndoRedo(undo, "0123456789xx");
 	}
 
@@ -429,7 +431,7 @@ public class TextEditTests {
 		assertEquals(fRoot, 2, 3);
 		assertEquals(e1, 4, 1);
 		assertEquals(e2, 2, 2);
-		Assert.assertEquals("Buffer content", "01xxy3456789", fDocument.get());
+		Assertions.assertEquals("01xxy3456789", fDocument.get());
 		doUndoRedo(undo, "01xxy3456789");
 	}
 
@@ -440,7 +442,7 @@ public class TextEditTests {
 		UndoEdit undo= fRoot.apply(fDocument);
 		assertEquals(fRoot, 3, 0);
 		assertEquals(e1, 3, 0);
-		Assert.assertEquals("Buffer content", "012456789", fDocument.get());
+		Assertions.assertEquals("012456789", fDocument.get());
 		doUndoRedo(undo, "012456789");
 	}
 
@@ -457,7 +459,7 @@ public class TextEditTests {
 		assertEquals(e1, 3, 0);
 		assertEquals(e2, 3, 0);
 		assertEquals(e3, 3, 0);
-		Assert.assertEquals("Buffer content", "0126789", fDocument.get());
+		Assertions.assertEquals("0126789", fDocument.get());
 		doUndoRedo(undo, "0126789");
 	}
 
@@ -471,7 +473,7 @@ public class TextEditTests {
 		assertEquals(fRoot, 3, 1);
 		assertEquals(e1, 3, 1);
 		assertEquals(e2, 4, 0);
-		Assert.assertEquals("Buffer content", "012x456789", fDocument.get());
+		Assertions.assertEquals("012x456789", fDocument.get());
 		doUndoRedo(undo, "012x456789");
 	}
 
@@ -486,7 +488,7 @@ public class TextEditTests {
 		e2.addChild(e4);
 		fRoot.addChild(e1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0189", fDocument.get());
+		Assertions.assertEquals("0189", fDocument.get());
 		assertEquals(fRoot, 2, 0);
 		assertEquals(e1, 2, 0);
 		assertTrue(e2.isDeleted());
@@ -512,7 +514,7 @@ public class TextEditTests {
 		assertEquals(m1, 2, 2);
 		assertEquals(m2, 6, 2);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "01aa23bb45cc67dd89", fDocument.get());
+		Assertions.assertEquals("01aa23bb45cc67dd89", fDocument.get());
 		assertEquals(e1, 2, 2);
 		assertEquals(e2, 6, 2);
 		assertEquals(e3, 10, 2);
@@ -530,7 +532,7 @@ public class TextEditTests {
 		fRoot.addChild(s1);
 		fRoot.addChild(t1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0142356789", fDocument.get());
+		Assertions.assertEquals("0142356789", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 3, 2);
 		doUndoRedo(undo, "0142356789");
@@ -543,7 +545,7 @@ public class TextEditTests {
 		fRoot.addChild(s1);
 		fRoot.addChild(t1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0156234789", fDocument.get());
+		Assertions.assertEquals("0156234789", fDocument.get());
 		assertEquals(s1, 7, 0);
 		assertEquals(t1, 2, 2);
 		doUndoRedo(undo, "0156234789");
@@ -558,7 +560,7 @@ public class TextEditTests {
 		fRoot.addChild(t1);
 		fRoot.addChild(e2);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "01x5623789", fDocument.get());
+		Assertions.assertEquals("01x5623789", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 5, 2);
 		assertEquals(e2, 2, 1);
@@ -574,7 +576,7 @@ public class TextEditTests {
 		fRoot.addChild(t1);
 		fRoot.addChild(e2);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0178234x69", fDocument.get());
+		Assertions.assertEquals("0178234x69", fDocument.get());
 		assertEquals(s1, 9, 0);
 		assertEquals(t1, 2, 2);
 		assertEquals(e2, 7, 1);
@@ -594,7 +596,7 @@ public class TextEditTests {
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 2, 1);
 		assertEquals(e2, 2, 1);
-		Assert.assertEquals("Buffer content", "01x3456789", fDocument.get());
+		Assertions.assertEquals("01x3456789", fDocument.get());
 		doUndoRedo(undo, "01x3456789");
 	}
 
@@ -611,7 +613,7 @@ public class TextEditTests {
 		assertEquals(s1, 3, 0);
 		assertEquals(t1, 2, 1);
 		assertEquals(e2, 2, 1);
-		Assert.assertEquals("Buffer content", "01x3456789", fDocument.get());
+		Assertions.assertEquals("01x3456789", fDocument.get());
 		doUndoRedo(undo,"01x3456789");
 	}
 
@@ -624,7 +626,7 @@ public class TextEditTests {
 		fRoot.addChild(s1);
 		fRoot.addChild(t1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "01562x4789", fDocument.get());
+		Assertions.assertEquals("01562x4789", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 4, 3);
 		assertEquals(e2, 5, 1);
@@ -640,7 +642,7 @@ public class TextEditTests {
 		fRoot.addChild(s1);
 		fRoot.addChild(t1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "05x7123489", fDocument.get());
+		Assertions.assertEquals("05x7123489", fDocument.get());
 		assertEquals(s1, 8, 0);
 		assertEquals(t1, 1, 3);
 		assertEquals(e2, 2, 1);
@@ -665,7 +667,7 @@ public class TextEditTests {
 
 		assertEquals(s2, 2, 0);
 		assertEquals(t2, 3, 1);
-		Assert.assertEquals("Buffer content", "0421356789", fDocument.get());
+		Assertions.assertEquals("0421356789", fDocument.get());
 		doUndoRedo(undo, "0421356789");
 	}
 
@@ -686,7 +688,7 @@ public class TextEditTests {
 		assertEquals(t1, 6, 2);
 		assertEquals(s2, 5, 0);
 		assertEquals(t2, 1, 2);
-		Assert.assertEquals("Buffer content", "0561472389", fDocument.get());
+		Assertions.assertEquals("0561472389", fDocument.get());
 		doUndoRedo(undo, "0561472389");
 	}
 
@@ -702,7 +704,7 @@ public class TextEditTests {
 		fRoot.addChild(t1);
 
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0142356789", fDocument.get());
+		Assertions.assertEquals("0142356789", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 3, 2);
 		assertEquals(marker, 3, 2);
@@ -718,7 +720,7 @@ public class TextEditTests {
 		fRoot.addChild(s1);
 		fRoot.addChild(e2);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "01589", fDocument.get());
+		Assertions.assertEquals("01589", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertTrue(t1.isDeleted());
 		assertEquals(e2, 3, 0);
@@ -740,7 +742,7 @@ public class TextEditTests {
 		fRoot.addChild(t1);
 
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0156234789", fDocument.get());
+		Assertions.assertEquals("0156234789", fDocument.get());
 		assertEquals(t1, 2, 2);
 		assertEquals(marker, 2, 2);
 		assertTrue(s1.isDeleted());
@@ -764,7 +766,7 @@ public class TextEditTests {
 		fRoot.addChild(d1);
 
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "014x562378", fDocument.get());
+		Assertions.assertEquals("014x562378", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(i1, 3, 1);
 		assertEquals(t1, 6, 2);
@@ -789,7 +791,7 @@ public class TextEditTests {
 		fRoot.addChild(d1);
 
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0178234x56", fDocument.get());
+		Assertions.assertEquals("0178234x56", fDocument.get());
 		assertEquals(s1, 10, 0);
 		assertEquals(i1, 7, 1);
 		assertEquals(t1, 2, 2);
@@ -813,7 +815,7 @@ public class TextEditTests {
 		fRoot.addChild(d1);
 
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0145623789", fDocument.get());
+		Assertions.assertEquals("0145623789", fDocument.get());
 		assertEquals(d1, 2, 0);
 		assertTrue(s1.isDeleted());
 		assertEquals(t1, 5, 2);
@@ -830,7 +832,7 @@ public class TextEditTests {
 		fRoot.addChild(m);
 		fRoot.addChild(s1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "017823yy569", fDocument.get());
+		Assertions.assertEquals("017823yy569", fDocument.get());
 		assertEquals(s1, 10, 0);
 		assertEquals(t1, 2, 2);
 		assertEquals(m, 6, 2);
@@ -846,7 +848,7 @@ public class TextEditTests {
 		fRoot.addChild(m);
 		fRoot.addChild(s1);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "01yy5623789", fDocument.get());
+		Assertions.assertEquals("01yy5623789", fDocument.get());
 		assertEquals(s1, 2, 0);
 		assertEquals(t1, 6, 2);
 		assertEquals(m, 2, 2);
@@ -862,7 +864,7 @@ public class TextEditTests {
 		m.addChild(t1);
 		fRoot.addChild(m);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0124536789", fDocument.get());
+		Assertions.assertEquals("0124536789", fDocument.get());
 		assertEquals(m, 2, 6);
 		assertEquals(t1, 3, 2);
 		assertEquals(s1, 6, 0);
@@ -878,7 +880,7 @@ public class TextEditTests {
 		m.addChild(t1);
 		fRoot.addChild(m);
 		UndoEdit undo= fRoot.apply(fDocument);
-		Assert.assertEquals("Buffer content", "0142356789", fDocument.get());
+		Assertions.assertEquals("0142356789", fDocument.get());
 		assertEquals(m, 2, 6);
 		assertEquals(t1, 3, 2);
 		assertEquals(s1, 2, 0);
@@ -907,7 +909,7 @@ public class TextEditTests {
 		assertEquals(t2, 4, 2);
 		assertEquals(t3, 2, 1);
 		String result= "0637248159";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -936,7 +938,7 @@ public class TextEditTests {
 		assertEquals(t2, 5, 2);
 		assertEquals(t3, 2, 2);
 		String result= "063x7248159";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -956,7 +958,7 @@ public class TextEditTests {
 		assertEquals(t1, 5, 2);
 		assertEquals(t2, 4, 5);
 		String result= "0348512679";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -971,7 +973,7 @@ public class TextEditTests {
 		assertEquals(s1, 2, 3);
 		assertEquals(t1, 8, 3);
 		String result= "0123456723489";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -986,7 +988,7 @@ public class TextEditTests {
 		assertEquals(s1, 9, 2);
 		assertEquals(t1, 3, 2);
 		String result= "012783456789";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -1007,7 +1009,7 @@ public class TextEditTests {
 		assertEquals(s2, 7, 2);
 		assertEquals(t2, 2, 2);
 		String result= "01562345675689";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -1033,7 +1035,7 @@ public class TextEditTests {
 		assertEquals(t2, 9, 3);
 		assertEquals(t3, 7, 1);
 		String result= "0123456372348123459";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -1062,7 +1064,7 @@ public class TextEditTests {
 		assertEquals(t2, 11, 4);
 		assertEquals(t3, 8, 2);
 		String result= "0123x4563x723x48123x459";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -1082,7 +1084,7 @@ public class TextEditTests {
 		assertEquals(t1, 6, 2);
 		assertEquals(t2, 11, 5);
 		String result= "01234512678512679";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
 
@@ -1110,7 +1112,7 @@ public class TextEditTests {
 		root.apply(document);
 
 		String result= "3, foo(1, 2)";
-		Assert.assertEquals("Buffer content", result, document.get());
+		Assertions.assertEquals(result, document.get());
 	}
 
 	@Test
@@ -1136,7 +1138,7 @@ public class TextEditTests {
 		root.apply(document);
 
 		String result= "foo(2, 1), 3";
-		Assert.assertEquals("Buffer content", result, document.get());
+		Assertions.assertEquals(result, document.get());
 	}
 
 	@Test
@@ -1178,7 +1180,7 @@ public class TextEditTests {
 		root.apply(document);
 
 		String result= "3, foo(2, 1)";
-		Assert.assertEquals("Buffer content", result, document.get());
+		Assertions.assertEquals(result, document.get());
 	}
 
 	@Test
@@ -1189,12 +1191,12 @@ public class TextEditTests {
 		TextEdit e2= new ReplaceEdit(2, 2, "");
 		root.addChild(e2);
 		root.moveTree(3);
-		Assert.assertEquals(3, root.getOffset());
-		Assert.assertEquals(4, root.getLength());
-		Assert.assertEquals(3, e1.getOffset());
-		Assert.assertEquals(1, e1.getLength());
-		Assert.assertEquals(5, e2.getOffset());
-		Assert.assertEquals(2, e2.getLength());
+		Assertions.assertEquals(3, root.getOffset());
+		Assertions.assertEquals(4, root.getLength());
+		Assertions.assertEquals(3, e1.getOffset());
+		Assertions.assertEquals(1, e1.getLength());
+		Assertions.assertEquals(5, e2.getOffset());
+		Assertions.assertEquals(2, e2.getLength());
 	}
 
 	@Test
@@ -1205,12 +1207,12 @@ public class TextEditTests {
 		TextEdit e2= new ReplaceEdit(5, 2, "");
 		root.addChild(e2);
 		root.moveTree(-3);
-		Assert.assertEquals(0, root.getOffset());
-		Assert.assertEquals(4, root.getLength());
-		Assert.assertEquals(0, e1.getOffset());
-		Assert.assertEquals(1, e1.getLength());
-		Assert.assertEquals(2, e2.getOffset());
-		Assert.assertEquals(2, e2.getLength());
+		Assertions.assertEquals(0, root.getOffset());
+		Assertions.assertEquals(4, root.getLength());
+		Assertions.assertEquals(0, e1.getOffset());
+		Assertions.assertEquals(1, e1.getLength());
+		Assertions.assertEquals(2, e2.getOffset());
+		Assertions.assertEquals(2, e2.getLength());
 	}
 
 	@Test
@@ -1251,9 +1253,9 @@ public class TextEditTests {
 		TextEdit edit3= new InsertEdit(57, "test3");
 
 		assertTrue(edit1.equals(edit1));
-		Assert.assertEquals(0, comparator.compare(edit1, edit1));
-		Assert.assertEquals(0, comparator.compare(edit1, edit2));
-		Assert.assertEquals(0, comparator.compare(edit2, edit1));
+		Assertions.assertEquals(0, comparator.compare(edit1, edit1));
+		Assertions.assertEquals(0, comparator.compare(edit1, edit2));
+		Assertions.assertEquals(0, comparator.compare(edit2, edit1));
 		assertTrue(comparator.compare(edit1, edit3) == -comparator.compare(edit3, edit1));
 
 	}
@@ -1278,7 +1280,7 @@ public class TextEditTests {
 		});
 		fRoot.apply(fDocument);
 		String result= "016782aa459";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		assertEquals(r1, 6, 3);
 	}
 
@@ -1307,7 +1309,7 @@ public class TextEditTests {
 		});
 		fRoot.apply(fDocument);
 		String result= "01678aa459";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		assertTrue(r1.isDeleted());
 		assertTrue(r2.isDeleted());
 		assertEquals(r3, 7, 2);
@@ -1333,7 +1335,7 @@ public class TextEditTests {
 		});
 		fRoot.apply(fDocument);
 		String result= "01678aa459";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		assertEquals(r1, 7, 1);
 	}
 
@@ -1357,7 +1359,7 @@ public class TextEditTests {
 		});
 		fRoot.apply(fDocument);
 		String result= "0167823aa9";
-		Assert.assertEquals("Buffer content", result, fDocument.get());
+		Assertions.assertEquals(result, fDocument.get());
 		assertEquals(r1, 6, 3);
 	}
 
@@ -1389,23 +1391,23 @@ public class TextEditTests {
 		UndoEdit redo= undo.apply(fDocument);
 		assertBufferContent();
 		undo= redo.apply(fDocument);
-		Assert.assertEquals("Buffer content redo", redoResult, fDocument.get());
+		Assertions.assertEquals(redoResult, fDocument.get(), "Buffer content redo");
 		undo.apply(fDocument);
 		assertBufferContent();
 	}
 
 	private void assertEquals(TextEdit edit, int offset, int length) {
-		Assert.assertEquals("Offset", offset, edit.getOffset());
-		Assert.assertEquals("Length", length, edit.getLength());
+		Assertions.assertEquals(offset, edit.getOffset(), "Offset");
+		Assertions.assertEquals(length, edit.getLength(), "Length");
 	}
 
 	private void assertEquals(IRegion region, int offset, int length) {
-		Assert.assertEquals("Offset", offset, region.getOffset());
-		Assert.assertEquals("Length", length, region.getLength());
+		Assertions.assertEquals(offset, region.getOffset(), "Offset");
+		Assertions.assertEquals(length, region.getLength(), "Length");
 	}
 
 	private void assertBufferContent() {
-		Assert.assertEquals("Buffer content restored", "0123456789", fDocument.get());
+		Assertions.assertEquals("0123456789", fDocument.get(), "Buffer content restored");
 	}
 }
 

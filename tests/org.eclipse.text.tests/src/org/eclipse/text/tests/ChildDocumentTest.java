@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -40,20 +42,20 @@ public class ChildDocumentTest {
 	protected void checkPositions(Position[] positions) throws BadPositionCategoryException {
 
 		Position[] v = fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
-		assertTrue("invalid number of positions", v.length == positions.length);
+		assertTrue(v.length == positions.length, "invalid number of positions");
 
 		for (int i = 0; i < positions.length; i++) {
-			assertEquals(print(v[i]) + " != " + print(positions[i]), positions[i], v[i]);
+			assertEquals(positions[i], v[i], print(v[i]) + " != " + print(positions[i]));
 		}
 
 	}
 
 	protected void checkPositions(Position[] expected, Position[] actual) {
 
-		assertTrue("invalid number of positions", expected.length == actual.length);
+		assertTrue(expected.length == actual.length, "invalid number of positions");
 
 		for (int i= 0; i < expected.length; i++) {
-			assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
+			assertEquals(expected[i], actual[i], print(actual[i]) + " != " + print(expected[i]));
 		}
 
 	}
@@ -69,19 +71,19 @@ public class ChildDocumentTest {
 		int textLines= textTracker.getNumberOfLines();
 		int trackerLines= fDocument.getNumberOfLines();
 
-		assertEquals("Child document store and child line tracker are inconsistent", trackerLines, textLines);
+		assertEquals(trackerLines, textLines, "Child document store and child line tracker are inconsistent");
 
 		for (int i = 0; i < trackerLines; i++) {
 			IRegion trackerLine = fDocument.getLineInformation(i);
 			IRegion textLine = textTracker.getLineInformation(i);
-			assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getOffset(),
-					textLine.getOffset());
-			assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getLength(),
-					textLine.getLength());
+			assertEquals(trackerLine.getOffset(), textLine.getOffset(),
+					"Child document store and child line tracker are inconsistent");
+			assertEquals(trackerLine.getLength(), textLine.getLength(),
+					"Child document store and child line tracker are inconsistent");
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws BadLocationException {
 
 		fParent= new Document();
@@ -117,7 +119,7 @@ public class ChildDocumentTest {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fDocument= null;
 	}
