@@ -174,7 +174,7 @@ public class RefactoringUI {
 	 * @deprecated use {@link PerformChangeOperation#PerformChangeOperation(Change)}.
 	 *             Since 3.1, undo batching is implemented in {@link TextChange}.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
 		return new PerformChangeOperation(change);
 	}

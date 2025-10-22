@@ -217,7 +217,7 @@ public interface IPresentationEngine {
 	 *
 	 * @deprecated not supported in the Eclipse platform anymore
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
 
 	/**

@@ -66,7 +66,7 @@ public class NewSearchUI {
 	 * Use {@link #runQueryInBackground(ISearchQuery)} to run a query in background
 	 * or {@link #runQueryInForeground(IRunnableContext, ISearchQuery)} to run it in foreground
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static void runQuery(ISearchQuery query) {
 		if (query == null) {
 			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$

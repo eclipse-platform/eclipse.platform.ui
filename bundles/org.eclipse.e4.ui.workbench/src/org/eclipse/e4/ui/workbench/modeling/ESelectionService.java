@@ -29,7 +29,7 @@ public interface ESelectionService {
 	 * {@link IServiceConstants#ACTIVE_SELECTION}. All clients of this API should change their
 	 * references to <code>IServiceConstants.ACTIVE_SELECTION</code>.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final String SELECTION = IServiceConstants.ACTIVE_SELECTION; // "in.selection";
 
 	/**

@@ -114,7 +114,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * @deprecated Use {@link #DIALOG_BASED_USER_INTERFACE} instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final int DIALOG_BASED_UESR_INTERFACE= DIALOG_BASED_USER_INTERFACE;
 
 	/**
@@ -356,7 +356,7 @@ public abstract class RefactoringWizard extends Wizard {
      * @deprecated {@link #WIZARD_BASED_USER_INTERFACE} always shows a '?' button.
 	 *  To show the button with {@link #DIALOG_BASED_USER_INTERFACE}, add the {@link #SHOW_HELP_CONTROL} flag.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	@Override
 	public void setHelpAvailable(boolean b) {
 		super.setHelpAvailable(b);

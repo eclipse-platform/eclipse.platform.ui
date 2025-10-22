@@ -52,7 +52,7 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-12")
 public class UndoRefactoringAction extends UndoManagerAction {
 
 	private int fPatternLength;
