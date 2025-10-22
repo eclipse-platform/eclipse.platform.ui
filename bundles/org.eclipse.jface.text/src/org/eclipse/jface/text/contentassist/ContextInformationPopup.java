@@ -190,11 +190,12 @@ class ContextInformationPopup implements IContentAssistListener {
 			IContextInformation[] contexts= computeContextInformation(offset);
 			if (contexts != null && contexts.length == 1) {
 				ContextFrame frame1= createContextFrame(contexts[0], offset);
-				if (isDuplicate(frame1))
+				if (isDuplicate(frame1)) {
 					validateContextInformation();
-				else
+				} else {
 					// Show context information directly
 					internalShowContextInfo(frame1);
+				}
 			} else if (contexts != null && contexts.length > 0) {
 
 				// if any of the proposed context matches any of the contexts on the stack,
@@ -227,8 +228,9 @@ class ContextInformationPopup implements IContentAssistListener {
 				// otherwise:
 				// Precise context must be selected
 
-				if (fLineDelimiter == null)
+				if (fLineDelimiter == null) {
 					fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
+				}
 
 				createContextSelector();
 				setContexts(contexts, index);
@@ -249,14 +251,15 @@ class ContextInformationPopup implements IContentAssistListener {
 	public void showContextInformation(final IContextInformation info, final int offset) {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), () -> {
-			if (info == null)
+			if (info == null) {
 				validateContextInformation();
-			else {
+			} else {
 				ContextFrame frame= createContextFrame(info, offset);
-				if (isDuplicate(frame))
+				if (isDuplicate(frame)) {
 					validateContextInformation();
-				else
+				} else {
 					internalShowContextInfo(frame);
+				}
 				hideContextSelector();
 			}
 		});
@@ -271,8 +274,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	private void internalShowContextInfo(ContextFrame frame) {
 		if (frame != null && canShowFrame(frame)) {
 			fContextFrameStack.push(frame);
-			if (fContextFrameStack.size() == 1)
+			if (fContextFrameStack.size() == 1) {
 				fLastContext= null;
+			}
 			internalShowContextFrame(frame, fContextFrameStack.size() == 1);
 			validateContextInformation();
 		}
@@ -291,7 +295,9 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		if (validator != null) {
 			int beginOffset= (information instanceof IContextInformationExtension i) ? i.getContextInformationPosition() : offset;
-			if (beginOffset == -1) beginOffset= offset;
+			if (beginOffset == -1) {
+				beginOffset= offset;
+			}
 			int visibleOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x - (offset - beginOffset);
 			IContextInformationPresenter presenter = fContentAssistSubjectControlAdapter.getContextInformationPresenter(fContentAssistant, offset);
 			return new ContextFrame(information, beginOffset, offset, visibleOffset, validator, presenter);
@@ -309,10 +315,12 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	private boolean isDuplicate(ContextFrame frame) {
-		if (frame == null)
+		if (frame == null) {
 			return false;
-		if (fContextFrameStack.isEmpty())
+		}
+		if (fContextFrameStack.isEmpty()) {
 			return false;
+		}
 		// stack not empty
 		ContextFrame top= fContextFrameStack.peek();
 		return frame.equals(top);
@@ -355,8 +363,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContentAssistSubjectControlAdapter.installValidator(frame);
 
 		if (frame.fPresenter != null) {
-			if (fTextPresentation == null)
+			if (fTextPresentation == null) {
 				fTextPresentation= new TextPresentation();
+			}
 			fContentAssistSubjectControlAdapter.installContextInformationPresenter(frame);
 			frame.fPresenter.updatePresentation(frame.fOffset, fTextPresentation);
 		}
@@ -364,8 +373,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		createContextInfoPopup();
 
 		fContextInfoText.setText(frame.fInformation.getInformationDisplayString());
-		if (fTextPresentation != null)
+		if (fTextPresentation != null) {
 			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+		}
 		resize(frame.fVisibleOffset);
 
 		if (initial) {
@@ -410,8 +420,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * Creates the context information popup. This is the tool tip like overlay window.
 	 */
 	private void createContextInfoPopup() {
-		if (isValid(fContextInfoPopup))
+		if (isValid(fContextInfoPopup)) {
 			return;
+		}
 
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		Display display= control.getDisplay();
@@ -422,13 +433,15 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoText= new StyledText(fContextInfoPopup, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 
 		Color c= fContentAssistant.getContextInformationPopupBackground();
-		if (c == null)
+		if (c == null) {
 			c= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
 		fContextInfoText.setBackground(c);
 
 		c= fContentAssistant.getContextInformationPopupForeground();
-		if (c == null)
+		if (c == null) {
 			c= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
 		fContextInfoText.setForeground(c);
 	}
 
@@ -445,9 +458,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		final int PAD= TEXT_PAD + BORDER_PAD;
 		size.x += PAD;
 		Rectangle bounds= fContentAssistant.getLayoutManager().computeBoundsAboveBelow(fContextInfoPopup, size, offset);
-		if (bounds.width < size.x)
+		if (bounds.width < size.x) {
 			// we don't fit on the screen - try again and wrap
 			size= fContextInfoText.computeSize(bounds.width - PAD, SWT.DEFAULT, true);
+		}
 
 		size.x += TEXT_PAD;
 		fContextInfoText.setSize(size);
@@ -483,8 +497,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			}
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
 
-			if (fContentAssistSubjectControlAdapter.getControl() != null)
+			if (fContentAssistSubjectControlAdapter.getControl() != null) {
 				fContentAssistSubjectControlAdapter.removeSelectionListener(fTextWidgetSelectionListener);
+			}
 			fTextWidgetSelectionListener= null;
 
 			fContextInfoPopup.setVisible(false);
@@ -497,8 +512,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			}
 		}
 
-		if (fContextInfoPopup == null)
+		if (fContextInfoPopup == null) {
 			fContentAssistant.contextInformationClosed();
+		}
 	}
 
 	/**
@@ -506,8 +522,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * at a given offset.
 	 */
 	private void createContextSelector() {
-		if (isValid(fContextSelectorShell))
+		if (isValid(fContextSelectorShell)) {
 			return;
+		}
 
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fContextSelectorShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE);
@@ -554,19 +571,22 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextSelectorTable.setLayoutData(gd);
 
 		Point size= fContentAssistant.restoreContextSelectorPopupSize();
-		if (size != null)
+		if (size != null) {
 			fContextSelectorShell.setSize(size);
-		else
+		} else {
 			fContextSelectorShell.pack(true);
+		}
 
 		Color c= fContentAssistant.getContextSelectorBackground();
-		if (c == null)
+		if (c == null) {
 			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
 		fContextSelectorTable.setBackground(c);
 
 		c= fContentAssistant.getContextSelectorForeground();
-		if (c == null)
+		if (c == null) {
 			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
 		fContextSelectorTable.setForeground(c);
 
 		fContextSelectorTable.addSelectionListener(new SelectionListener() {
@@ -621,8 +641,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	private void insertSelectedContext() {
 		int i= fContextSelectorTable.getSelectionIndex();
 
-		if (i < 0 || i >= fContextSelectorInput.length)
+		if (i < 0 || i >= fContextSelectorInput.length) {
 			return;
+		}
 
 		int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 		internalShowContextInfo(createContextFrame(fContextSelectorInput[i], offset));
@@ -647,8 +668,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			for (IContextInformation context : contexts) {
 				t= context;
 				item= new TableItem(fContextSelectorTable, SWT.NULL);
-				if (t.getImage() != null)
+				if (t.getImage() != null) {
 					item.setImage(t.getImage());
+				}
 				item.setText(t.getContextDisplayString());
 			}
 
@@ -661,8 +683,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * Displays the context selector.
 	 */
 	private void displayContextSelector() {
-		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR))
+		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR)) {
 			fContextSelectorShell.setVisible(true);
+		}
 	}
 
 	/**
@@ -679,8 +702,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			fContextSelectorShell= null;
 		}
 
-		if (!isValid(fContextInfoPopup))
+		if (!isValid(fContextInfoPopup)) {
 			fContentAssistant.contextInformationClosed();
+		}
 	}
 
 	/**
@@ -689,8 +713,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @return <code>true</code> if the context selector has the focus
 	 */
 	public boolean hasFocus() {
-		if (isValid(fContextSelectorShell))
+		if (isValid(fContextSelectorShell)) {
 			return fContextSelectorShell.getDisplay().getActiveShell() == fContextSelectorShell;
+		}
 
 		return false;
 	}
@@ -715,10 +740,12 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	@Override
 	public boolean verifyKey(VerifyEvent e) {
-		if (isValid(fContextSelectorShell))
+		if (isValid(fContextSelectorShell)) {
 			return contextSelectorKeyPressed(e);
-		if (isValid(fContextInfoPopup))
+		}
+		if (isValid(fContextInfoPopup)) {
 			return contextInfoPopupKeyPressed(e);
+		}
 		return true;
 	}
 
@@ -739,26 +766,30 @@ class ContextInformationPopup implements IContentAssistListener {
 			switch (e.keyCode) {
 				case SWT.ARROW_UP :
 					newSelection -= 1;
-					if (newSelection < 0)
+					if (newSelection < 0) {
 						newSelection= itemCount - 1;
+					}
 					break;
 
 				case SWT.ARROW_DOWN :
 					newSelection += 1;
-					if (newSelection > itemCount - 1)
+					if (newSelection > itemCount - 1) {
 						newSelection= 0;
+					}
 					break;
 
 				case SWT.PAGE_DOWN :
 					newSelection += visibleRows;
-					if (newSelection >= itemCount)
+					if (newSelection >= itemCount) {
 						newSelection= itemCount - 1;
+					}
 					break;
 
 				case SWT.PAGE_UP :
 					newSelection -= visibleRows;
-					if (newSelection < 0)
+					if (newSelection < 0) {
 						newSelection= 0;
+					}
 					break;
 
 				case SWT.HOME :
@@ -770,8 +801,9 @@ class ContextInformationPopup implements IContentAssistListener {
 					break;
 
 				default :
-					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4) {
 						hideContextSelector();
+					}
 					return true;
 			}
 
@@ -812,8 +844,9 @@ class ContextInformationPopup implements IContentAssistListener {
 					validateContextInformation();
 					break;
 				default:
-					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4) {
 						hideContextInfoPopup(true);
+					}
 					break;
 			}
 
@@ -828,10 +861,12 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	@Override
 	public void processEvent(VerifyEvent event) {
-		if (isValid(fContextSelectorShell))
+		if (isValid(fContextSelectorShell)) {
 			contextSelectorProcessEvent(event);
-		if (isValid(fContextInfoPopup))
+		}
+		if (isValid(fContextInfoPopup)) {
 			contextInfoPopupProcessEvent(event);
+		}
 	}
 
 	/**
@@ -855,8 +890,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @param e the verify event describing the key stroke
 	 */
 	private void contextInfoPopupProcessEvent(VerifyEvent e) {
-		if (e.start != e.end && (e.text == null || e.text.isEmpty()))
+		if (e.start != e.end && (e.text == null || e.text.isEmpty())) {
 			validateContextInformation();
+		}
 	}
 
 	/**
@@ -869,8 +905,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		 * Otherwise, we'd validate the context information based on the
 		 * pre-key-stroke state.
 		 */
-		if (!isValid(fContextInfoPopup))
+		if (!isValid(fContextInfoPopup)) {
 			return;
+		}
 
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
 
@@ -892,8 +929,9 @@ class ContextInformationPopup implements IContentAssistListener {
 							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
 							resize(widgetOffset);
 							break;
-						} else
+						} else {
 							break;
+						}
 					}
 				}
 			}

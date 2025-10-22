@@ -287,16 +287,19 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				long oldWakeup= fNextWakeup;
 				Task task= taskOnReset(p);
 				schedule(task, System.currentTimeMillis());
-				if (fNextWakeup < oldWakeup)
+				if (fNextWakeup < oldWakeup) {
 					notifyAll();
+				}
 			}
 		}
 
 		private Task taskOnReset(ICompletionProposal p) {
-			if (p == null)
+			if (p == null) {
 				return IDLE;
-			if (isExt5(p))
+			}
+			if (isExt5(p)) {
 				return FIRST_WAIT;
+			}
 			return LEGACY_WAIT;
 		}
 
@@ -325,10 +328,11 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		private void schedule(Task task, long current) {
 			fTask= task;
 			long nextWakeup= current + task.delay();
-			if (nextWakeup <= current)
+			if (nextWakeup <= current) {
 				fNextWakeup= Long.MAX_VALUE;
-			else
+			} else {
 				fNextWakeup= nextWakeup;
+			}
 		}
 
 		private boolean isExt5(ICompletionProposal p) {
@@ -473,8 +477,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			@Override
 			protected void showInformation(ICompletionProposal proposal, Object info) {
 				InformationControlReplacer replacer= getInternalAccessor().getInformationControlReplacer();
-				if (replacer != null)
+				if (replacer != null) {
 					replacer.hideInformationControl();
+				}
 				AdditionalInfoController.this.showInformation(proposal, info);
 			}
 		};
@@ -601,10 +606,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			size.y -= shellTrim.height;
 		}
 
-		if (sizeConstraint.x < size.x)
+		if (sizeConstraint.x < size.x) {
 			sizeConstraint.x= size.x;
-		if (sizeConstraint.y < size.y)
+		}
+		if (sizeConstraint.y < size.y) {
 			sizeConstraint.y= size.y;
+		}
 		return sizeConstraint;
 	}
 
