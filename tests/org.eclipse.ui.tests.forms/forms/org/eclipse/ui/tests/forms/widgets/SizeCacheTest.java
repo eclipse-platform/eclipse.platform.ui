@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -32,9 +33,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SizeCacheTest {
 	private static Display display;
@@ -60,7 +61,7 @@ public class SizeCacheTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		font = new Font(display, "Arial", 12, SWT.NORMAL);
 		shell = new Shell(display);
@@ -70,7 +71,7 @@ public class SizeCacheTest {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (humanWatching)
 			dispatch(1000);

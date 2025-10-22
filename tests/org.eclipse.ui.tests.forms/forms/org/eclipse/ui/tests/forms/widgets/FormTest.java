@@ -22,10 +22,10 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FormTest {
 	private static Display display;
@@ -41,12 +41,12 @@ public class FormTest {
 
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}
@@ -60,10 +60,10 @@ public class FormTest {
 		SizeCache bodyCache = new SizeCache();
 		headCache.setControl(form.getHead());
 		bodyCache.setControl(form.getBody());
-		Assert.assertEquals(Math.max(headCache.computeMinimumWidth(), bodyCache.computeMinimumWidth()),
+		Assertions.assertEquals(Math.max(headCache.computeMinimumWidth(), bodyCache.computeMinimumWidth()),
 				((ILayoutExtension) form.getLayout()).computeMinimumWidth(form, true));
 		form.setData(FormUtil.IGNORE_BODY, Boolean.TRUE);
-		Assert.assertEquals(Math.max(headCache.computeMinimumWidth(), 0),
+		Assertions.assertEquals(Math.max(headCache.computeMinimumWidth(), 0),
 				((ILayoutExtension) form.getLayout()).computeMinimumWidth(form, true));
 	}
 }

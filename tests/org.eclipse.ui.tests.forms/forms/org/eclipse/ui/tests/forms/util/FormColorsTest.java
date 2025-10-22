@@ -15,15 +15,16 @@
 
 package org.eclipse.ui.tests.forms.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class FormColorsTest {
@@ -65,14 +66,14 @@ public class FormColorsTest {
 		Color fg = fColors.getForeground();
 		Color bc = fColors.getBorderColor();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
-			assertEquals("FormColors did not return the same instance for key: " + KEYS_NON_NULL[i], colors[i], fColors.getColor(KEYS_NON_NULL[i]));
+			assertEquals(colors[i], fColors.getColor(KEYS_NON_NULL[i]), "FormColors did not return the same instance for key: " + KEYS_NON_NULL[i]);
 		for (int i = 0; i < KEYS_NULL.length; i++)
-			assertEquals("FormColors did not return the same instance for key: " + KEYS_NULL[i], nullColors[i], fColors.getColor(KEYS_NULL[i]));
-		assertEquals("FormColors did not return the same instance for getInactiveBackground()", inactiveBg,
-				fColors.getInactiveBackground());
-		assertEquals("FormColors did not return the same instance for getBackground()", bg, fColors.getBackground());
-		assertEquals("FormColors did not return the same instance for getForeground()", fg, fColors.getForeground());
-		assertEquals("FormColors did not return the same instance for getBorderColor()", bc, fColors.getBorderColor());
+			assertEquals(nullColors[i], fColors.getColor(KEYS_NULL[i]), "FormColors did not return the same instance for key: " + KEYS_NULL[i]);
+		assertEquals(inactiveBg, fColors.getInactiveBackground(),
+				"FormColors did not return the same instance for getInactiveBackground()");
+		assertEquals(bg, fColors.getBackground(), "FormColors did not return the same instance for getBackground()");
+		assertEquals(fg, fColors.getForeground(), "FormColors did not return the same instance for getForeground()");
+		assertEquals(bc, fColors.getBorderColor(), "FormColors did not return the same instance for getBorderColor()");
 		fColors.dispose();
 	}
 
@@ -101,30 +102,26 @@ public class FormColorsTest {
 		Color fg2 = fColors2.getForeground();
 		Color bc2 = fColors2.getBorderColor();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
-			assertEquals("Different concurrent instances of FormColors did not return the same Color for key: "
-					+ KEYS_NON_NULL[i], colors[i], colors2[i]);
+			assertEquals(colors[i], colors2[i], "Different concurrent instances of FormColors did not return the same Color for key: "
+					+ KEYS_NON_NULL[i]);
 		for (int i = 0; i < KEYS_NULL.length; i++)
-			assertEquals("Different concurrent instances of FormColors did not return the same Color for key: "
-					+ KEYS_NULL[i], nullColors[i], nullColors2[i]);
-		assertEquals(
-				"Different concurrent instances of FormColors did not return the same Color for getInactiveBackground()",
-				inactiveBg, inactiveBg2);
-		assertEquals("Different concurrent instances of FormColors did not return the same Color for getBackground()",
-				bg, bg2);
-		assertEquals("Different concurrent instances of FormColors did not return the same Color for getForeground()",
-				fg, fg2);
-		assertEquals("Different concurrent instances of FormColors did not return the same Color for getBorderColor()",
-				bc, bc2);
+			assertEquals(nullColors[i], nullColors2[i], "Different concurrent instances of FormColors did not return the same Color for key: "
+					+ KEYS_NULL[i]);
+		assertEquals(inactiveBg, inactiveBg2,
+				"Different concurrent instances of FormColors did not return the same Color for getInactiveBackground()");
+		assertEquals(bg, bg2, "Different concurrent instances of FormColors did not return the same Color for getBackground()");
+		assertEquals(fg, fg2, "Different concurrent instances of FormColors did not return the same Color for getForeground()");
+		assertEquals(bc, bc2, "Different concurrent instances of FormColors did not return the same Color for getBorderColor()");
 		fColors2.dispose();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
-			assertFalse("FormColors disposed different instance's key: " + KEYS_NON_NULL[i], colors[i].isDisposed());
+			assertFalse(colors[i].isDisposed(), "FormColors disposed different instance's key: " + KEYS_NON_NULL[i]);
 		for (int i = 0; i < KEYS_NULL.length; i++)
-			assertFalse("FormColors disposed different instance's key: " + KEYS_NULL[i],
-					nullColors[i] != null && nullColors[i].isDisposed());
-		assertFalse("FormColors disposed different instance's getInactiveBackground()", inactiveBg.isDisposed());
-		assertFalse("FormColors disposed different instance's getBackground()", bg.isDisposed());
-		assertFalse("FormColors disposed different instance's getForeground()", fg.isDisposed());
-		assertFalse("FormColors disposed different instance's getBorderColor()", bc.isDisposed());
+			assertFalse(nullColors[i] != null && nullColors[i].isDisposed(),
+					"FormColors disposed different instance's key: " + KEYS_NULL[i]);
+		assertFalse(inactiveBg.isDisposed(), "FormColors disposed different instance's getInactiveBackground()");
+		assertFalse(bg.isDisposed(), "FormColors disposed different instance's getBackground()");
+		assertFalse(fg.isDisposed(), "FormColors disposed different instance's getForeground()");
+		assertFalse(bc.isDisposed(), "FormColors disposed different instance's getBorderColor()");
 		fColors.dispose();
 	}
 
@@ -153,27 +150,27 @@ public class FormColorsTest {
 		boolean testBorderDispose = !bc.equals(fColors.getColor(IFormColors.BORDER));
 		tk2.dispose();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
-			assertFalse("FormToolkit disposed shared FormColor's key: " + KEYS_NON_NULL[i], colors[i].isDisposed());
+			assertFalse(colors[i].isDisposed(), "FormToolkit disposed shared FormColor\'s key: " + KEYS_NON_NULL[i]);
 		for (int i = 0; i < KEYS_NULL.length; i++)
-			assertFalse("FormToolkit disposed shared FormColor's key: " + KEYS_NULL[i],
-					nullColors[i] != null && nullColors[i].isDisposed());
-		assertFalse("FormToolkit disposed shared FormColor's getInactiveBackground()", inactiveBg.isDisposed());
-		assertFalse("FormToolkit disposed shared FormColor's getBackground()", bg.isDisposed());
-		assertFalse("FormToolkit disposed shared FormColor's getForeground()", fg.isDisposed());
-		assertFalse("FormToolkit disposed shared FormColor's getBorderColor()", bc.isDisposed());
+			assertFalse(nullColors[i] != null && nullColors[i].isDisposed(),
+					"FormToolkit disposed shared FormColor\'s key: " + KEYS_NULL[i]);
+		assertFalse(inactiveBg.isDisposed(), "FormToolkit disposed shared FormColor\'s getInactiveBackground()");
+		assertFalse(bg.isDisposed(), "FormToolkit disposed shared FormColor\'s getBackground()");
+		assertFalse(fg.isDisposed(), "FormToolkit disposed shared FormColor\'s getForeground()");
+		assertFalse(bc.isDisposed(), "FormToolkit disposed shared FormColor\'s getBorderColor()");
 		tk.dispose();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
-			assertFalse("Last FormToolkit disposed shared FormColor's key: " + KEYS_NON_NULL[i],
-					colors[i].isDisposed());
+			assertFalse(colors[i].isDisposed(),
+					"Last FormToolkit disposed shared FormColor\'s key: " + KEYS_NON_NULL[i]);
 		for (int i = 0; i < KEYS_NULL.length; i++)
-			assertFalse("Last FormToolkit disposed shared FormColor's key: " + KEYS_NULL[i],
-					nullColors[i] != null && nullColors[i].isDisposed());
-		assertFalse("Last FormToolkit disposed shared FormColor's getInactiveBackground()", inactiveBg.isDisposed());
-		assertFalse("Last FormToolkit disposed shared FormColor's getBackground()", bg.isDisposed());
-		assertFalse("Last FormToolkit disposed shared FormColor's getForeground()", fg.isDisposed());
+			assertFalse(nullColors[i] != null && nullColors[i].isDisposed(),
+					"Last FormToolkit disposed shared FormColor\'s key: " + KEYS_NULL[i]);
+		assertFalse(inactiveBg.isDisposed(), "Last FormToolkit disposed shared FormColor\'s getInactiveBackground()");
+		assertFalse(bg.isDisposed(), "Last FormToolkit disposed shared FormColor\'s getBackground()");
+		assertFalse(fg.isDisposed(), "Last FormToolkit disposed shared FormColor\'s getForeground()");
 		if (testBorderDispose)
-			assertFalse("Last FormToolkit with shared FormColors disposed getBorderColor() when it shouldn't have",
-					bc.isDisposed());
+			assertFalse(bc.isDisposed(),
+					"Last FormToolkit with shared FormColors disposed getBorderColor() when it shouldn\'t have");
 		fColors.dispose();
 	}
 
@@ -182,8 +179,8 @@ public class FormColorsTest {
 		FormColors fColors = new FormColors(Display.getCurrent());
 		Color test1 = fColors.createColor(TEST_KEY_1, 255, 155, 55);
 		Color test2 = fColors.createColor(TEST_KEY_2, 55, 155, 255);
-		assertEquals("FormColors returned wrong color for an existing key.", fColors.getColor(TEST_KEY_1), test1);
-		assertEquals("FormColors returned wrong color for an existing key.", fColors.getColor(TEST_KEY_2), test2);
+		assertEquals(test1, fColors.getColor(TEST_KEY_1), "FormColors returned wrong color for an existing key.");
+		assertEquals(test2, fColors.getColor(TEST_KEY_2), "FormColors returned wrong color for an existing key.");
 		fColors.dispose();
 	}
 }

@@ -1,6 +1,8 @@
 package org.eclipse.ui.tests.forms.events;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Consumer;
 
@@ -9,10 +11,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.Section;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ExpansionListenerTest {
 
@@ -22,19 +24,19 @@ public class ExpansionListenerTest {
 	private static Shell shell;
 	private static Section section;
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		shell = new Shell();
 		section = new Section(shell, SWT.NONE);
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		firedEvent = new ExpansionEvent(section, true);
 		expansionEventConsumer = event -> this.catchedEvent = event;
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTeardown() {
 		shell.dispose();
 	}
@@ -50,14 +52,13 @@ public class ExpansionListenerTest {
 		IExpansionListener.expansionStateChangingAdapter(expansionEventConsumer).expansionStateChanging(firedEvent);
 		assertEquals(firedEvent, catchedEvent);
 	}
-
-	@Test(expected = NullPointerException.class)
-	public void throwsNullPointerOnNullStateChangedAdapter() {
-		IExpansionListener.expansionStateChangedAdapter(null);
+	@Test
+	void throwsNullPointerOnNullStateChangedAdapter() {
+		assertThrows(NullPointerException.class, () -> IExpansionListener.expansionStateChangedAdapter(null));
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void throwsNullPointerOnNullStateChangingAdapter() {
-		IExpansionListener.expansionStateChangingAdapter(null);
+	@Test
+	void throwsNullPointerOnNullStateChangingAdapter() {
+		assertThrows(NullPointerException.class, () -> IExpansionListener.expansionStateChangingAdapter(null));
 	}
 }

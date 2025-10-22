@@ -42,7 +42,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FormsPerformanceTest extends PerformanceTestCase {
 

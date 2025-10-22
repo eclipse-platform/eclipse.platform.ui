@@ -17,7 +17,7 @@ package org.eclipse.ui.tests.forms.util;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FormToolkitTest {
 

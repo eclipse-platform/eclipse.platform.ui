@@ -14,8 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -36,9 +37,9 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.tests.forms.layout.ControlFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for expandable composite
@@ -106,7 +107,7 @@ public class ExpandableCompositeTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		font = new Font(display, "Arial", 12, SWT.NORMAL);
 		shell = new Shell(display);
@@ -116,7 +117,7 @@ public class ExpandableCompositeTest {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (humanWatching)
 			dispatch(1000);
@@ -478,7 +479,7 @@ public class ExpandableCompositeTest {
 
 		Rectangle bounds = update();
 
-		assertEquals("Width", 500, bounds.width);
+		assertEquals(500, bounds.width, "Width");
 		assertAround("Text Client width", 500 / 2, client.getBounds().width, 3);
 		assertTextLines(7, bounds);
 	}
@@ -493,15 +494,15 @@ public class ExpandableCompositeTest {
 
 		Rectangle bounds = update();
 
-		assertEquals("Width", 500, bounds.width);
+		assertEquals(500, bounds.width, "Width");
 		int w = getTextExtend(shortText).x;
 		assertAround("Text Client width", 500 - w, client.getBounds().width, 8);
 		assertTextLines(4, bounds);
 	}
 
 	private void assertAround(String prefix, int len1, int len2, int delta) {
-		assertTrue(prefix + ": expected around " + len1 + " pixes +/- " + delta + " but was " + len2,
-				len1 - delta <= len2 && len2 <= len1 + delta);
+		assertTrue(len1 - delta <= len2 && len2 <= len1 + delta,
+				prefix + ": expected around " + len1 + " pixes +/- " + delta + " but was " + len2);
 	}
 
 	@Test
