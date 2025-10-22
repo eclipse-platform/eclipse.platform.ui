@@ -111,8 +111,9 @@ public final class CompletionProposal implements ICompletionProposal {
 
 	@Override
 	public String getDisplayString() {
-		if (fDisplayString != null)
+		if (fDisplayString != null) {
 			return fDisplayString;
+		}
 		return fReplacementString;
 	}
 

@@ -52,9 +52,11 @@ public final class ContextInformationValidator implements IContextInformationVal
 	public boolean isContextInformationValid(int offset) {
 		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, offset);
 		if (infos != null && infos.length > 0) {
-			for (IContextInformation info : infos)
-				if (fContextInformation.equals(info))
+			for (IContextInformation info : infos) {
+				if (fContextInformation.equals(info)) {
 					return true;
+				}
+			}
 		}
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -159,8 +159,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	 */
 	@Override
 	public String showProposals(boolean autoActivated) {
-		if (fKeyListener == null)
+		if (fKeyListener == null) {
 			fKeyListener= new ProposalSelectionListener();
+		}
 
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 
@@ -304,11 +305,13 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 
-		if (fKeyListener == null)
+		if (fKeyListener == null) {
 			fKeyListener= new ProposalSelectionListener();
+		}
 
-		if (!isValid(fProposalShell) && !control.isDisposed())
+		if (!isValid(fProposalShell) && !control.isDisposed()) {
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
+		}
 
 		fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 		fFilterOffset= fInvocationOffset;
@@ -458,8 +461,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			try {
 				while (true) {
 					synchronized (fMutex) {
-						if (fAutoActivationDelay != 0)
+						if (fAutoActivationDelay != 0) {
 							fMutex.wait(fAutoActivationDelay);
+						}
 					}
 					Optional<Display> display= Optional.ofNullable(fContentAssistSubjectControlAdapter.getControl()).map(Control::getDisplay);
 					display.ifPresent(d -> d.asyncExec(() -> displayProposals(true)));
@@ -472,8 +476,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		protected void stop() {
 			Thread threadToStop= fThread;
-			if (threadToStop != null && threadToStop.isAlive())
+			if (threadToStop != null && threadToStop.isAlive()) {
 				threadToStop.interrupt();
+			}
 		}
 
 	}
