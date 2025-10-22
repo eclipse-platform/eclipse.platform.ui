@@ -96,6 +96,33 @@ public class ActionContributionItem extends ContributionItem {
 		USE_COLOR_ICONS = useColorIcons;
 	}
 
+	private static boolean IGNORE_DISABLED_ICONS = false;
+
+	/**
+	 * Returns whether explicitly defined disabled icons should be ignored, such
+	 * that all disabled icons are generated on-the-fly.
+	 *
+	 * @return <code>true</code> if disabled icons set to tool items should be
+	 *         ignored, <code>false</code> otherwise
+	 * @since 3.40
+	 */
+	public static boolean getIgnoreDisabledIcons() {
+		return IGNORE_DISABLED_ICONS;
+	}
+
+	/**
+	 * Sets whether explicitly defined disabled icons should be ignored, such that
+	 * all disabled icons are generated on-the-fly.
+	 *
+	 * @param ignoreDisabledIcons <code>true</code> if disabled icons set to tool
+	 *                            items should be ignored, <code>false</code>
+	 *                            otherwise
+	 * @since 3.40
+	 */
+	public static void setIgnoreDisabledIcons(boolean ignoreDisabledIcons) {
+		IGNORE_DISABLED_ICONS = ignoreDisabledIcons;
+	}
+
 	/**
 	 * The presentation mode.
 	 */
@@ -988,7 +1015,10 @@ public class ActionContributionItem extends ContributionItem {
 		if (widget instanceof ToolItem) {
 			ImageDescriptor image = action.getImageDescriptor();
 			ImageDescriptor hoverImage = action.getHoverImageDescriptor();
-			ImageDescriptor disabledImage = action.getDisabledImageDescriptor();
+			ImageDescriptor disabledImage = null;
+			if (!getIgnoreDisabledIcons()) {
+				disabledImage = action.getDisabledImageDescriptor();
+			}
 			// Make sure there is a valid image in case images are forced.
 			if (image == null && forceImage) {
 				image = ImageDescriptor.getMissingImageDescriptor();

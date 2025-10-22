@@ -115,6 +115,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private Button themingEnabled;
 	private Button rescaleAtRuntime;
+	private Button ignoreDisabledIcons;
 
 	private Button hideIconsForViewTabs;
 	private Button showFullTextForViewTabs;
@@ -140,6 +141,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
 			createThemeIndependentComposits(comp);
+			createDisabledIconsButtons(comp);
 			createRescaleAtRuntimeCheckButton(comp);
 			return comp;
 		}
@@ -184,6 +186,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createHideIconsForViewTabs(comp);
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
+		createDisabledIconsButtons(comp);
 		createRescaleAtRuntimeCheckButton(comp);
 
 		if (currentTheme != null) {
@@ -233,6 +236,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		} else {
 			rescaleAtRuntime.setToolTipText(WorkbenchMessages.RescaleAtRuntimeDescription);
 		}
+	}
+
+	private void createDisabledIconsButtons(Composite parent) {
+		createLabel(parent, ""); //$NON-NLS-1$
+		createLabel(parent, WorkbenchMessages.ViewsPreference_disabledIcons_description);
+
+		boolean initialStateIgnoreDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS);
+		ignoreDisabledIcons = createCheckButton(parent, WorkbenchMessages.ViewsPreference_ignoreDisabledIcons,
+				initialStateIgnoreDisabledIcons);
+		ignoreDisabledIcons.setToolTipText(WorkbenchMessages.ViewsPreference_ignoreDisabledIcons_tooltip);
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
@@ -364,6 +378,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 					.getSelection();
 			prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
 		}
+		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS,
+				ignoreDisabledIcons.getSelection());
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
@@ -467,6 +483,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
+		ignoreDisabledIcons
+				.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS));
 
 		useRoundTabs.setSelection(
 				defaultPrefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT));
