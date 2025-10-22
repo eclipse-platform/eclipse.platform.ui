@@ -6,10 +6,10 @@ Bundle-Version: 3.10.600.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.test.performance,
- org.eclipse.ui.forms,
- org.junit
+ org.eclipse.ui.forms
 Bundle-Vendor: Eclipse.org
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.api.function;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir

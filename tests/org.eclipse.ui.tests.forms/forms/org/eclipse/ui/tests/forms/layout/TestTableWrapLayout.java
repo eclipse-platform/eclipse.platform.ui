@@ -15,8 +15,9 @@
 
 package org.eclipse.ui.tests.forms.layout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -30,9 +31,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTableWrapLayout {
 
@@ -47,7 +48,7 @@ public class TestTableWrapLayout {
 		return r.x + r.width;
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		display = PlatformUI.getWorkbench().getDisplay();
 		shell = new Shell(display);
@@ -64,7 +65,7 @@ public class TestTableWrapLayout {
 		inner.setLayout(layout);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 	}
@@ -135,8 +136,8 @@ public class TestTableWrapLayout {
 		inner.setSize(300, 1000);
 		inner.layout(false);
 
-		assertEquals("l1 had the wrong bounds", new Rectangle(0, 0, 300, 10), l1.getBounds());
-		assertEquals("l2 had the wrong bounds", new Rectangle(0, 10, 300, 40), l2.getBounds());
+		assertEquals(new Rectangle(0, 0, 300, 10), l1.getBounds(), "l1 had the wrong bounds");
+		assertEquals(new Rectangle(0, 10, 300, 40), l2.getBounds(), "l2 had the wrong bounds");
 	}
 
 	/**

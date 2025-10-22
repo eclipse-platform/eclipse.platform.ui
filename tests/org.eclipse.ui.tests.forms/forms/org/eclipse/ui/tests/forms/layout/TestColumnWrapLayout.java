@@ -15,7 +15,8 @@
 
 package org.eclipse.ui.tests.forms.layout;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -29,9 +30,9 @@ import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 import org.eclipse.ui.internal.forms.widgets.ColumnLayoutUtils;
 import org.eclipse.ui.tests.forms.layout.ControlFactory.TestLayout;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestColumnWrapLayout {
 
@@ -46,7 +47,7 @@ public class TestColumnWrapLayout {
 	private Composite inner;
 	private ColumnLayout layout;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		display = PlatformUI.getWorkbench().getDisplay();
 		shell = new Shell(display);
@@ -62,7 +63,7 @@ public class TestColumnWrapLayout {
 		inner.setLayout(layout);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 	}
@@ -348,7 +349,7 @@ public class TestColumnWrapLayout {
 			Control next = children[idx];
 
 			Rectangle bounds = next.getBounds();
-			assertEquals("Child " + idx + " should have the correct width", desiredWidth, bounds.width);
+			assertEquals(desiredWidth, bounds.width, "Child " + idx + " should have the correct width");
 		}
 	}
 }

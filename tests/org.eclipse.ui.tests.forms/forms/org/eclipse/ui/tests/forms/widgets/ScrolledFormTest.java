@@ -13,7 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -22,9 +23,9 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.tests.forms.layout.ControlFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for {@link ScrolledForm}.
@@ -33,13 +34,13 @@ public class ScrolledFormTest {
 	private Shell shell;
 	private Display display;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		display = Display.getDefault();
 		shell = new Shell(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}
@@ -124,10 +125,10 @@ public class ScrolledFormTest {
 		form.layout(true);
 		while (!shell.isDisposed() && shell.getDisplay().readAndDispatch()) {
 		}
-		assertEquals("Horizontal scrollbar visibility was wrong for " + testData, testData.expectsHScroll(),
-				form.getHorizontalBar().getVisible());
-		assertEquals("Vertical scrollbar visibility was wrong for " + testData, testData.expectsVScroll(),
-				form.getVerticalBar().getVisible());
+		assertEquals(testData.expectsHScroll(), form.getHorizontalBar().getVisible(),
+				"Horizontal scrollbar visibility was wrong for " + testData);
+		assertEquals(testData.expectsVScroll(),
+				form.getVerticalBar().getVisible(), "Vertical scrollbar visibility was wrong for " + testData);
 		Point result = parent.getSize();
 		form.dispose();
 		return result;
@@ -141,8 +142,8 @@ public class ScrolledFormTest {
 		boolean heightOkay = (Math.abs(expectedHeight - result.y) <= 1);
 		boolean widthOkay = (expectedWidth == result.x);
 		if (!(heightOkay && widthOkay)) {
-			assertEquals("Child control had unexpected size for test case " + testData,
-					new Point(expectedWidth, expectedHeight), result);
+			assertEquals(new Point(expectedWidth, expectedHeight), result,
+					"Child control had unexpected size for test case " + testData);
 		}
 	}
 

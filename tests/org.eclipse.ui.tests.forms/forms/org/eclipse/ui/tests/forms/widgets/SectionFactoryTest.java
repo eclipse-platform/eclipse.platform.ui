@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -25,19 +26,19 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.SectionFactory;
 import org.eclipse.ui.forms.widgets.Twistie;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SectionFactoryTest {
 	protected static Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		shell = new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 	}
@@ -73,7 +74,7 @@ public class SectionFactoryTest {
 		Section section = SectionFactory.newSection(ExpandableComposite.TWISTIE).onExpanded(e -> raisedEvents[0] = e)
 				.create(shell);
 		Control twistie = section.getChildren()[0];
-		assertTrue("Expected a twistie", twistie instanceof Twistie);
+		assertTrue(twistie instanceof Twistie, "Expected a twistie");
 		click(twistie);
 
 		assertNotNull(raisedEvents[0]);
@@ -85,7 +86,7 @@ public class SectionFactoryTest {
 		Section section = SectionFactory.newSection(ExpandableComposite.TWISTIE).onExpanding(e -> raisedEvents[0] = e)
 				.create(shell);
 		Control twistie = section.getChildren()[0];
-		assertTrue("Expected a twistie", twistie instanceof Twistie);
+		assertTrue(twistie instanceof Twistie, "Expected a twistie");
 		click(twistie);
 
 		assertNotNull(raisedEvents[0]);

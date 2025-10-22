@@ -14,11 +14,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -33,9 +34,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ImageHyperlinkTest {
 
@@ -44,7 +45,7 @@ public class ImageHyperlinkTest {
 	private GC gc;
 	private TestImageHyperlink imageHyperlink;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		display = PlatformUI.getWorkbench().getDisplay();
 		shell = new Shell(display);
@@ -56,7 +57,7 @@ public class ImageHyperlinkTest {
 		gc = new GC(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 		gc.dispose();
@@ -128,6 +129,7 @@ public class ImageHyperlinkTest {
 
 		assertSame(prevDisabledImage, getDisabledImage(imageHyperlink));
 	}
+
 	@Test
 	public void testSetImageNullClearsDisabledImage() throws Exception {
 		Image image = createGradient();
@@ -142,8 +144,8 @@ public class ImageHyperlinkTest {
 	}
 
 	private Image createGradient() {
-		return FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 1,
-				1, 1, display);
+		return FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 1, 1,
+				1, display);
 	}
 
 	private static Image getDisabledImage(ImageHyperlink link) throws Exception {

@@ -15,9 +15,9 @@
 package org.eclipse.ui.tests.forms;
 
 import org.eclipse.ui.tests.forms.performance.FormsPerformanceTest;
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
+
 
 /*
  * Tests forms performance (automated).

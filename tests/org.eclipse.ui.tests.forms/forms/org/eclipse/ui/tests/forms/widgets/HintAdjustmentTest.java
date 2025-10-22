@@ -13,7 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -34,9 +35,9 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TreeNode;
 import org.eclipse.ui.forms.widgets.Twistie;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * SWT controls have a complicated contract on
@@ -74,12 +75,12 @@ public class HintAdjustmentTest {
 
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}
@@ -103,10 +104,10 @@ public class HintAdjustmentTest {
 
 		Point computedSize = control.computeSize(TEST_VALUE, TEST_VALUE);
 
-		assertEquals("control is not applying the width adjustment correctly", TEST_VALUE + widthAdjustment,
-				computedSize.x);
-		assertEquals("control is not applying the height adjustment correctly", TEST_VALUE + heightAdjustment,
-				computedSize.y);
+		assertEquals(TEST_VALUE + widthAdjustment, computedSize.x,
+				"control is not applying the width adjustment correctly");
+		assertEquals(TEST_VALUE + heightAdjustment, computedSize.y,
+				"control is not applying the height adjustment correctly");
 	}
 
 	@Test

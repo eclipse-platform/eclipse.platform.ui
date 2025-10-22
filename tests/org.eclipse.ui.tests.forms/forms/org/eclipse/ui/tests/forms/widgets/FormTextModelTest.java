@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.ui.internal.forms.widgets.FormTextModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for FormTextModel
@@ -28,8 +29,8 @@ public class FormTextModelTest {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(true);
 		formTextModel.parseTaggedText("<form><p>   line with   \r\n   <b>  whitespace </b> Test </p></form>", false);
-		assertEquals("FormTextModel does not remove whitespace correctly according to the rules",
-				"line with whitespace Test" + System.lineSeparator(), formTextModel.getAccessibleText());
+		assertEquals("line with whitespace Test" + System.lineSeparator(), formTextModel.getAccessibleText(),
+				"FormTextModel does not remove whitespace correctly according to the rules");
 	}
 
 	@Test
@@ -37,8 +38,9 @@ public class FormTextModelTest {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(false);
 		formTextModel.parseTaggedText("<form><p>   line with      <b>  whitespace </b> Test </p></form>", false);
-		assertEquals("FormTextModel does not preserve whitespace correctly according to the rules",
-				"   line with        whitespace  Test " + System.lineSeparator(), formTextModel.getAccessibleText());
+		assertEquals("   line with        whitespace  Test " + System.lineSeparator(),
+				formTextModel.getAccessibleText(),
+				"FormTextModel does not preserve whitespace correctly according to the rules");
 	}
 
 	@Test

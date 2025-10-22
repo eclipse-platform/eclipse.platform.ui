@@ -1,6 +1,8 @@
 package org.eclipse.ui.tests.forms.events;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Consumer;
 
@@ -9,10 +11,10 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HyperLinkListenerTest {
 
@@ -22,19 +24,19 @@ public class HyperLinkListenerTest {
 	private Consumer<HyperlinkEvent> linkEventConsumer;
 	private static Link link;
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		shell = new Shell();
 		link = new Link(shell, SWT.NONE);
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		firedEvent = new HyperlinkEvent(link, "uri://test", "link", 0);
 		linkEventConsumer = event -> this.catchedEvent = event;
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTeardown() {
 		shell.dispose();
 	}
@@ -57,18 +59,19 @@ public class HyperLinkListenerTest {
 		assertEquals(firedEvent, catchedEvent);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsNullPointerOnNullActivatedAdapter() {
-		IHyperlinkListener.linkActivatedAdapter(null);
+		assertThrows(NullPointerException.class, () -> IHyperlinkListener.linkActivatedAdapter(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsNullPointerOnNullExitedAdapter() {
-		IHyperlinkListener.linkExitedAdapter(null);
+		assertThrows(NullPointerException.class, () -> IHyperlinkListener.linkExitedAdapter(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void throwsNullPointerOnNullEnteredAdapter() {
-		IHyperlinkListener.linkEnteredAdapter(null);
+		assertThrows(NullPointerException.class, () -> IHyperlinkListener.linkEnteredAdapter(null));
 	}
+
 }
