@@ -174,19 +174,22 @@ public class TextViewer extends Viewer implements
 
 					if (e instanceof SlaveDocumentEvent slave) {
 						DocumentEvent master= slave.getMasterEvent();
-						if (master != null)
+						if (master != null) {
 							preservedText= master.getDocument().get(master.getOffset(), master.getLength());
+						}
 					} else {
 						preservedText= e.getDocument().get(e.getOffset(), e.getLength());
 					}
 
 				} catch (BadLocationException x) {
 					preservedText= null;
-					if (TRACE_ERRORS)
+					if (TRACE_ERRORS) {
 						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.WidgetCommand.setEvent")); //$NON-NLS-1$
+					}
 				}
-			} else
+			} else {
 				preservedText= null;
+			}
 		}
 	}
 
@@ -208,8 +211,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void getNextOffset(MovementEvent event) {
-			if (event.movement != SWT.MOVEMENT_WORD_END)
+			if (event.movement != SWT.MOVEMENT_WORD_END) {
 				return;
+			}
 
 			if (TRACE_DOUBLE_CLICK) {
 				System.out.println("\n+++"); //$NON-NLS-1$
@@ -217,15 +221,17 @@ public class TextViewer extends Viewer implements
 			}
 
 			if (fDoubleClickSelection != null) {
-				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y)
+				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y) {
 					event.newOffset= fDoubleClickSelection.y;
+				}
 			}
 		}
 
 		@Override
 		public void getPreviousOffset(MovementEvent event) {
-			if (event.movement != SWT.MOVEMENT_WORD_START)
+			if (event.movement != SWT.MOVEMENT_WORD_START) {
 				return;
+			}
 
 			if (TRACE_DOUBLE_CLICK) {
 				System.out.println("\n---"); //$NON-NLS-1$
@@ -238,12 +244,14 @@ public class TextViewer extends Viewer implements
 					s.doubleClicked(TextViewer.this);
 					fDoubleClickSelection= textWidget.getSelection();
 					event.newOffset= fDoubleClickSelection.x;
-					if (TRACE_DOUBLE_CLICK)
+					if (TRACE_DOUBLE_CLICK) {
 						System.out.println("- setting selection: x= " + fDoubleClickSelection.x + ", y= " + fDoubleClickSelection.y); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 			} else {
-				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y)
+				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y) {
 					event.newOffset= fDoubleClickSelection.x;
+				}
 			}
 		}
 	}
@@ -301,8 +309,9 @@ public class TextViewer extends Viewer implements
 		 */
 		@Override
 		public void mouseUp(MouseEvent e) {
-			if (fTextWidget != null)
+			if (fTextWidget != null) {
 				fTextWidget.removeSelectionListener(this);
+			}
 			updateViewportListeners(MOUSE_END);
 		}
 
@@ -311,8 +320,9 @@ public class TextViewer extends Viewer implements
 		 */
 		@Override
 		public void mouseDown(MouseEvent e) {
-			if (fTextWidget != null)
+			if (fTextWidget != null) {
 				fTextWidget.addSelectionListener(this);
+			}
 		}
 
 		/*
@@ -320,10 +330,11 @@ public class TextViewer extends Viewer implements
 		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (e.widget == fScroller)
+			if (e.widget == fScroller) {
 				updateViewportListeners(SCROLLER);
-			else
+			} else {
 				updateViewportListeners(MOUSE);
+			}
 		}
 
 		/*
@@ -360,16 +371,18 @@ public class TextViewer extends Viewer implements
 
 			int yoursStart= fOffset;
 
-			if (myEnd < yoursStart)
+			if (myEnd < yoursStart) {
 				return;
+			}
 
 			if (myStart <= yoursStart) {
 				fPosition.length += fReplaceLength;
 				return;
 			}
 
-			if (myStart > yoursStart)
+			if (myStart > yoursStart) {
 				fPosition.offset += fReplaceLength;
+			}
 		}
 	}
 
@@ -383,8 +396,9 @@ public class TextViewer extends Viewer implements
 		 */
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
-			if (e.getDocument() == getVisibleDocument())
+			if (e.getDocument() == getVisibleDocument()) {
 				fWidgetCommand.setEvent(e);
+			}
 			handleVisibleDocumentAboutToBeChanged(e);
 		}
 
@@ -393,8 +407,9 @@ public class TextViewer extends Viewer implements
 		 */
 		@Override
 		public void documentChanged(DocumentEvent e) {
-			if (fWidgetCommand.event == e)
+			if (fWidgetCommand.event == e) {
 				updateTextListeners(fWidgetCommand);
+			}
 			fLastSentSelectionChange= null;
 			handleVisibleDocumentChanged(e);
 		}
@@ -423,8 +438,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void verifyText(VerifyEvent e) {
-			if (fForward)
+			if (fForward) {
 				handleVerifyEvent(e);
+			}
 		}
 	}
 
@@ -462,16 +478,17 @@ public class TextViewer extends Viewer implements
 		}
 
 		/** List of registered verify key listeners. */
-		private List<VerifyKeyListener> fListeners= new ArrayList<>();
+		private final List<VerifyKeyListener> fListeners= new ArrayList<>();
 		/** List of pending batches. */
-		private List<Batch> fBatched= new ArrayList<>();
+		private final List<Batch> fBatched= new ArrayList<>();
 		/** The reentrance count. */
 		private int fReentranceCount= 0;
 
 		@Override
 		public void verifyKey(VerifyEvent event) {
-			if (fListeners.isEmpty())
+			if (fListeners.isEmpty()) {
 				return;
+			}
 
 			try {
 				fReentranceCount++;
@@ -483,8 +500,9 @@ public class TextViewer extends Viewer implements
 			} finally {
 				fReentranceCount--;
 			}
-			if (fReentranceCount == 0)
+			if (fReentranceCount == 0) {
 				processBatchedRequests();
+			}
 		}
 
 		/**
@@ -543,17 +561,20 @@ public class TextViewer extends Viewer implements
 					// move or add it
 					if (idx != index) {
 
-						if (idx != -1)
+						if (idx != -1) {
 							fListeners.remove(idx);
+						}
 
-						if (index > fListeners.size())
+						if (index > fListeners.size()) {
 							fListeners.add(listener);
-						else
+						} else {
 							fListeners.add(index, listener);
+						}
 					}
 
-					if (size == 0)  // checking old size, i.e. current size == size + 1
+					if (size == 0) { // checking old size, i.e. current size == size + 1
 						install();
+					}
 				}
 			}
 		}
@@ -564,8 +585,9 @@ public class TextViewer extends Viewer implements
 		 * @param listener the listener to be removed
 		 */
 		public void removeListener(VerifyKeyListener listener) {
-			if (listener == null)
+			if (listener == null) {
 				return;
+			}
 
 			if (fReentranceCount > 0) {
 
@@ -577,8 +599,9 @@ public class TextViewer extends Viewer implements
 				for (int i= 0; i < size; i++) {
 					if (listener == fListeners.get(i)) {
 						fListeners.remove(i);
-						if (size == 1)  // checking old size, i.e. current size == size - 1
+						if (size == 1) { // checking old size, i.e. current size == size - 1
 							uninstall();
+						}
 						return;
 					}
 				}
@@ -590,8 +613,9 @@ public class TextViewer extends Viewer implements
 		 */
 		private void install() {
 			StyledText textWidget= getTextWidget();
-			if (textWidget != null && !textWidget.isDisposed())
+			if (textWidget != null && !textWidget.isDisposed()) {
 				textWidget.addVerifyKeyListener(this);
+			}
 		}
 
 		/**
@@ -599,8 +623,9 @@ public class TextViewer extends Viewer implements
 		 */
 		private void uninstall() {
 			StyledText textWidget= getTextWidget();
-			if (textWidget != null && !textWidget.isDisposed())
+			if (textWidget != null && !textWidget.isDisposed()) {
 				textWidget.removeVerifyKeyListener(this);
+			}
 		}
 	}
 
@@ -663,8 +688,9 @@ public class TextViewer extends Viewer implements
 
 			if (fTextWidget != null) {
 				int offset= widgetOffset2ModelOffset(event.lineOffset);
-				if (fPosition.includes(offset))
+				if (fPosition.includes(offset)) {
 					event.lineBackground= fHighlightColor;
+				}
 			}
 		}
 
@@ -705,8 +731,9 @@ public class TextViewer extends Viewer implements
 				document.removePosition(fPosition);
 			}
 
-			if (fTextWidget != null && !fTextWidget.isDisposed())
+			if (fTextWidget != null && !fTextWidget.isDisposed()) {
 				fTextWidget.removeLineBackgroundListener(this);
+			}
 
 			TextViewer.this.removeTextListener(this);
 
@@ -717,8 +744,9 @@ public class TextViewer extends Viewer implements
 		 * Clears the highlighting of this range.
 		 */
 		private void clear() {
-			if (fTextWidget != null && !fTextWidget.isDisposed())
+			if (fTextWidget != null && !fTextWidget.isDisposed()) {
 				fTextWidget.redraw();
+			}
 		}
 
 		/**
@@ -746,8 +774,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void textChanged(TextEvent event) {
-			if (event.getViewerRedrawState())
+			if (event.getViewerRedrawState()) {
 				paint();
+			}
 		}
 
 		@Override
@@ -756,10 +785,11 @@ public class TextViewer extends Viewer implements
 			int length= event.getLength();
 			int delta= event.getText().length() - length;
 
-			if (offset < fPosition.getOffset())
+			if (offset < fPosition.getOffset()) {
 				fPosition.setOffset(fPosition.getOffset() + delta);
-			else if (offset < fPosition.getOffset() + fPosition.getLength())
+			} else if (offset < fPosition.getOffset() + fPosition.getLength()) {
 				fPosition.setLength(fPosition.getLength() + delta);
+			}
 		}
 	}
 
@@ -805,11 +835,13 @@ public class TextViewer extends Viewer implements
 				try {
 					IRegion matchRegion= TextViewer.this.getFindReplaceDocumentAdapter().replace(text, regExReplace);
 					int length= -1;
-					if (matchRegion != null)
+					if (matchRegion != null) {
 						length= matchRegion.getLength();
+					}
 
-					if (text != null && length > 0)
+					if (text != null && length > 0) {
 						TextViewer.this.setSelectedRange(s.x, length);
+					}
 				} catch (BadLocationException x) {
 				}
 			}
@@ -926,8 +958,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void setScope(IRegion scope) {
-			if (fRange != null)
+			if (fRange != null) {
 				fRange.uninstall();
+			}
 
 			if (scope == null) {
 				fRange= null;
@@ -941,8 +974,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void setScopeHighlightColor(Color color) {
-			if (fRange != null)
+			if (fRange != null) {
 				fRange.setHighlightColor(color);
+			}
 			fScopeHighlightColor= color;
 		}
 
@@ -961,8 +995,9 @@ public class TextViewer extends Viewer implements
 					TextViewer.this.setRedraw(false);
 					TextViewer.this.startSequentialRewriteMode(false);
 
-					if (fUndoManager != null)
+					if (fUndoManager != null) {
 						fUndoManager.beginCompoundChange();
+					}
 
 					fRememberedPartitioners= TextUtilities.removeDocumentPartitioners(document);
 				}
@@ -975,11 +1010,13 @@ public class TextViewer extends Viewer implements
 					TextViewer.this.setRedraw(true);
 					TextViewer.this.stopSequentialRewriteMode();
 
-					if (fUndoManager != null)
+					if (fUndoManager != null) {
 						fUndoManager.endCompoundChange();
+					}
 
-					if (fRememberedPartitioners != null)
+					if (fRememberedPartitioners != null) {
 						TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
+					}
 				}
 			}
 		}
@@ -994,14 +1031,16 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void beginCompoundChange() {
-			if (fUndoManager != null)
+			if (fUndoManager != null) {
 				fUndoManager.beginCompoundChange();
+			}
 		}
 
 		@Override
 		public void endCompoundChange() {
-			if (fUndoManager != null)
+			if (fUndoManager != null) {
 				fUndoManager.endCompoundChange();
+			}
 		}
 
 		@Override
@@ -1025,7 +1064,7 @@ public class TextViewer extends Viewer implements
 	protected class TextHoverKey {
 
 		/** The content type this key belongs to */
-		private String fContentType;
+		private final String fContentType;
 		/** The state mask */
 		private int fStateMask;
 
@@ -1043,8 +1082,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj == null || obj.getClass() != getClass())
+			if (obj == null || obj.getClass() != getClass()) {
 				return false;
+			}
 			TextHoverKey textHoverKey= (TextHoverKey)obj;
 			return textHoverKey.fContentType.equals(fContentType) && textHoverKey.fStateMask == fStateMask;
 		}
@@ -1113,8 +1153,9 @@ public class TextViewer extends Viewer implements
 		 */
 		public ViewerState() {
 			IDocument document= getDocument();
-			if (document != null)
+			if (document != null) {
 				connect(document);
+			}
 		}
 
 		/**
@@ -1123,8 +1164,9 @@ public class TextViewer extends Viewer implements
 		 * @return the normalized selection
 		 */
 		public Point[] getSelection() {
-			if (fSelections == null)
+			if (fSelections == null) {
 				return new Point[0];
+			}
 			return Arrays.stream(fSelections).map(position -> new Point(position.getOffset(), position.getLength())).toArray(Point[]::new);
 		}
 
@@ -1156,8 +1198,9 @@ public class TextViewer extends Viewer implements
 		 *        <code>false</code> to only restore the selection
 		 */
 		public void restore(boolean restoreViewport) {
-			if (isConnected())
+			if (isConnected()) {
 				disconnect();
+			}
 			if (fSelections != null && fSelections.length > 0) {
 				if (fSelections[0] instanceof ColumnPosition cp) {
 					IDocument document= fDocument;
@@ -1182,8 +1225,9 @@ public class TextViewer extends Viewer implements
 									: new Region(position.getOffset(), position.getLength()))
 							.toArray(IRegion[]::new));
 				}
-				if (restoreViewport)
+				if (restoreViewport) {
 					updateViewport();
+				}
 			}
 		}
 
@@ -1204,8 +1248,9 @@ public class TextViewer extends Viewer implements
 					return;
 				}
 				int stableWidgetLine= getClosestWidgetLineForModelLine(stableLine);
-				if (stableWidgetLine == -1)
+				if (stableWidgetLine == -1) {
 					return;
+				}
 				int linePixel= getTextWidget().getLinePixel(stableWidgetLine);
 				int delta= fStablePixel - linePixel;
 				int topPixel= getTextWidget().getTopPixel();
@@ -1381,8 +1426,9 @@ public class TextViewer extends Viewer implements
 
 		@Override
 		public void mouseUp(MouseEvent event) {
-			if (!fTextWidget.isTextSelected())
+			if (!fTextWidget.isTextSelected()) {
 				queuePostSelectionChanged(false);
+			}
 		}
 	}
 
@@ -1396,25 +1442,29 @@ public class TextViewer extends Viewer implements
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			IRewriteTarget target= TextViewer.this.getRewriteTarget();
 			final boolean toggleRedraw;
-			if (REDRAW_BUG_158746)
+			if (REDRAW_BUG_158746) {
 				toggleRedraw= true;
-			else
+			} else {
 				toggleRedraw= event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+			}
 			final boolean viewportStabilize= !toggleRedraw;
 			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
-				if (toggleRedraw)
+				if (toggleRedraw) {
 					target.setRedraw(false);
+				}
 				target.beginCompoundChange();
-				if (viewportStabilize && fViewerState == null)
+				if (viewportStabilize && fViewerState == null) {
 					fViewerState= new ViewerState();
+				}
 			} else if (DocumentRewriteSessionEvent.SESSION_STOP == event.getChangeType()) {
 				if (viewportStabilize && fViewerState != null) {
 					fViewerState.restore(true);
 					fViewerState= null;
 				}
 				target.endCompoundChange();
-				if (toggleRedraw)
+				if (toggleRedraw) {
 					target.setRedraw(true);
+				}
 			}
 		}
 	}
@@ -1479,15 +1529,15 @@ public class TextViewer extends Viewer implements
 	/** Caches the graphical coordinate of the first visible line */
 	private int fTopInset= 0;
 	/** The most recent document modification as widget command */
-	private WidgetCommand fWidgetCommand= new WidgetCommand();
+	private final WidgetCommand fWidgetCommand= new WidgetCommand();
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
 	/** Listener on the visible document */
 	private VisibleDocumentListener fVisibleDocumentListener= new VisibleDocumentListener();
 	/** Verify listener */
-	private TextVerifyListener fVerifyListener= new TextVerifyListener();
+	private final TextVerifyListener fVerifyListener= new TextVerifyListener();
 	/** The most recent widget modification as document command */
-	private DocumentCommand fDocumentCommand= new DocumentCommand();
+	private final DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
 	/**
@@ -1504,7 +1554,7 @@ public class TextViewer extends Viewer implements
 	 * The viewer's manager of verify key listeners
 	 * @since 2.0
 	 */
-	private VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
+	private final VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
 	/**
 	 * The mark position.
 	 * @since 2.0
@@ -1559,12 +1609,12 @@ public class TextViewer extends Viewer implements
 	 * The set of registered editor helpers.
 	 * @since 3.1
 	 */
-	private Set<IEditingSupport> fEditorHelpers= new HashSet<>();
+	private final Set<IEditingSupport> fEditorHelpers= new HashSet<>();
 	/**
 	 * The internal rewrite session listener.
 	 * @since 3.1
 	 */
-	private DocumentRewriteSessionListener fDocumentRewriteSessionListener= new DocumentRewriteSessionListener();
+	private final DocumentRewriteSessionListener fDocumentRewriteSessionListener= new DocumentRewriteSessionListener();
 
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1724,16 +1774,18 @@ public class TextViewer extends Viewer implements
 
 		// Support scroll page upon MOD1+MouseWheel
 		fTextWidget.addListener(SWT.MouseVerticalWheel, event -> {
-			if (((event.stateMask & SWT.MOD1) == 0))
+			if (((event.stateMask & SWT.MOD1) == 0)) {
 				return;
+			}
 
 			int topIndex= fTextWidget.getTopIndex();
 			int bottomIndex= JFaceTextUtil.getBottomIndex(fTextWidget);
 
-			if (event.count > 0)
+			if (event.count > 0) {
 				fTextWidget.setTopIndex(2 * topIndex - bottomIndex);
-			else
+			} else {
 				fTextWidget.setTopIndex(bottomIndex);
+			}
 
 			updateViewportListeners(INTERNAL);
 		});
@@ -1753,8 +1805,9 @@ public class TextViewer extends Viewer implements
 		 * 1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
 		 */
 		fTextWidget.addTraverseListener(e -> {
-			if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
+			if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character)) {
 				e.doit= !fTextWidget.getEditable();
+			}
 		});
 
 		// where does the first line start
@@ -1817,8 +1870,9 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void resetPlugins() {
-		if (fUndoManager != null)
+		if (fUndoManager != null) {
 			fUndoManager.reset();
+		}
 	}
 
 	/**
@@ -1885,8 +1939,9 @@ public class TextViewer extends Viewer implements
 		}
 
 		if (fVisibleDocumentListener !=null) {
-			if (fVisibleDocument != null)
+			if (fVisibleDocument != null) {
 				fVisibleDocument.removeDocumentListener(fVisibleDocumentListener);
+			}
 			fVisibleDocumentListener= null;
 		}
 
@@ -1896,8 +1951,9 @@ public class TextViewer extends Viewer implements
 		}
 
 		if (fSlaveDocumentManager != null) {
-			if (fVisibleDocument != null)
+			if (fVisibleDocument != null) {
 				fSlaveDocumentManager.freeSlaveDocument(fVisibleDocument);
+			}
 			fSlaveDocumentManager= null;
 		}
 
@@ -1966,14 +2022,16 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	protected final void setAutoEditStrategies(IAutoEditStrategy[] strategies, String contentType) {
-		if (fAutoIndentStrategies == null)
+		if (fAutoIndentStrategies == null) {
 			fAutoIndentStrategies= new HashMap<>();
+		}
 
 		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
 
 		if (strategies == null) {
-			if (autoEditStrategies == null)
+			if (autoEditStrategies == null) {
 				return;
+			}
 
 			fAutoIndentStrategies.put(contentType, null);
 
@@ -1991,11 +2049,13 @@ public class TextViewer extends Viewer implements
 	@Override
 	public void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
 
-		if (strategy == null || contentType == null)
+		if (strategy == null || contentType == null) {
 			throw new IllegalArgumentException();
+		}
 
-		if (fAutoIndentStrategies == null)
+		if (fAutoIndentStrategies == null) {
 			fAutoIndentStrategies= new HashMap<>();
+		}
 
 		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
 		if (autoEditStrategies == null) {
@@ -2008,12 +2068,14 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
-		if (fAutoIndentStrategies == null)
+		if (fAutoIndentStrategies == null) {
 			return;
+		}
 
 		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
-		if (autoEditStrategies == null)
+		if (autoEditStrategies == null) {
 			return;
+		}
 
 		for (final Iterator<IAutoEditStrategy> iterator= autoEditStrategies.iterator(); iterator.hasNext(); ) {
 			if (iterator.next().equals(strategy)) {
@@ -2022,8 +2084,9 @@ public class TextViewer extends Viewer implements
 			}
 		}
 
-		if (autoEditStrategies.isEmpty())
+		if (autoEditStrategies.isEmpty()) {
 			fAutoIndentStrategies.put(contentType, null);
+		}
 	}
 
 	@Override
@@ -2059,15 +2122,17 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public boolean isEditable() {
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return false;
+		}
 		return fTextWidget.getEditable();
 	}
 
 	@Override
 	public void setEditable(boolean editable) {
-		if (fTextWidget != null)
+		if (fTextWidget != null) {
 			fTextWidget.setEditable(editable);
+		}
 	}
 
 	/*
@@ -2078,11 +2143,13 @@ public class TextViewer extends Viewer implements
 	public void setDefaultPrefixes(String[] defaultPrefixes, String contentType) {
 
 		if (defaultPrefixes != null && defaultPrefixes.length > 0) {
-			if (fDefaultPrefixChars == null)
+			if (fDefaultPrefixChars == null) {
 				fDefaultPrefixChars= new HashMap<>();
+			}
 			fDefaultPrefixChars.put(contentType, defaultPrefixes);
-		} else if (fDefaultPrefixChars != null)
+		} else if (fDefaultPrefixChars != null) {
 			fDefaultPrefixChars.remove(contentType);
+		}
 	}
 
 	@Override
@@ -2108,22 +2175,25 @@ public class TextViewer extends Viewer implements
 				fTextHovers= new HashMap<>();
 			}
 			fTextHovers.put(key, hover);
-		} else if (fTextHovers != null)
+		} else if (fTextHovers != null) {
 			fTextHovers.remove(key);
+		}
 
 		ensureHoverControlManagerInstalled();
 	}
 
 	@Override
 	public void removeTextHovers(String contentType) {
-		if (fTextHovers == null)
+		if (fTextHovers == null) {
 			return;
+		}
 
 		Iterator<TextHoverKey> iter= new HashSet<>(fTextHovers.keySet()).iterator();
 		while (iter.hasNext()) {
 			TextHoverKey key= iter.next();
-			if (key.fContentType.equals(contentType))
+			if (key.fContentType.equals(contentType)) {
 				fTextHovers.remove(key);
+			}
 		}
 	}
 
@@ -2146,12 +2216,14 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected ITextHover getTextHover(int offset, int stateMask) {
-		if (fTextHovers == null)
+		if (fTextHovers == null) {
 			return null;
+		}
 
 		IDocument document= getDocument();
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 
 		try {
 			TextHoverKey key= new TextHoverKey(TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true), stateMask);
@@ -2163,8 +2235,9 @@ public class TextViewer extends Viewer implements
 			}
 			return (ITextHover) textHover;
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -2196,8 +2269,9 @@ public class TextViewer extends Viewer implements
 	 */
 	@Override
 	public void setHoverEnrichMode(ITextViewerExtension8.EnrichMode mode) {
-		if (fTextHoverManager == null)
+		if (fTextHoverManager == null) {
 			return;
+		}
 		fTextHoverManager.setHoverEnrichMode(mode);
 	}
 
@@ -2205,8 +2279,9 @@ public class TextViewer extends Viewer implements
 	public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
 		 if (fTextWidget != null) {
 			 if (fWidgetTokenKeeper != null) {
-				 if (fWidgetTokenKeeper == requester)
-					 return true;
+				 if (fWidgetTokenKeeper == requester) {
+					return true;
+				 }
 				 if (fWidgetTokenKeeper.requestWidgetToken(this)) {
 					 fWidgetTokenKeeper= requester;
 					 return true;
@@ -2224,8 +2299,9 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget != null) {
 			if (fWidgetTokenKeeper != null) {
 
-				if (fWidgetTokenKeeper == requester)
+				if (fWidgetTokenKeeper == requester) {
 					return true;
+				}
 
 				boolean accepted= false;
 				if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension extension)  {
@@ -2249,8 +2325,9 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper) {
-		if (fWidgetTokenKeeper == tokenKeeper)
+		if (fWidgetTokenKeeper == tokenKeeper) {
 			fWidgetTokenKeeper= null;
+		}
 	}
 
 
@@ -2284,8 +2361,9 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
 			p= widgetSelection2ModelSelection(p);
-			if (p != null)
+			if (p != null) {
 				return p;
+			}
 		}
 
 		return new Point(-1, -1);
@@ -2306,13 +2384,15 @@ public class TextViewer extends Viewer implements
 	 */
 	private void setSelectedRanges(IRegion[] modelRanges) {
 		if (!redraws()) {
-			if (fViewerState != null)
+			if (fViewerState != null) {
 				fViewerState.updateSelection(Arrays.stream(modelRanges).map(TextViewer::toPosition).toArray(Position[]::new));
+			}
 			return;
 		}
 
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return;
+		}
 
 		IRegion[] widgetSelection= Arrays.stream(modelRanges)
 				.map(range -> new Region(range.getOffset(), range.getLength()))
@@ -2370,15 +2450,18 @@ public class TextViewer extends Viewer implements
 			offset -= length;
 		}
 
-		if (offset <0)
+		if (offset <0) {
 			offset= 0;
+		}
 
-		if (offset > documentLength)
+		if (offset > documentLength) {
 			offset= documentLength;
+		}
 
 		int delta= (offset + length) - documentLength;
-		if (delta > 0)
+		if (delta > 0) {
 			length -= delta;
+		}
 
 		try {
 
@@ -2460,8 +2543,9 @@ public class TextViewer extends Viewer implements
 				// fall back to linear selection mode
 				setSelectedRange(s.getOffset(), s.getLength());
 			}
-			if (reveal)
+			if (reveal) {
 				revealRange(s.getOffset(), s.getLength());
+			}
 		} else if (selection instanceof IMultiTextSelection multiSelection && multiSelection.getRegions().length > 1) {
 			setSelectedRanges(Arrays.stream(multiSelection.getRegions())
 					.map(region -> new Region(region.getOffset(), region.getLength()))
@@ -2471,8 +2555,9 @@ public class TextViewer extends Viewer implements
 			}
 		} else if (selection instanceof ITextSelection s) {
 			setSelectedRange(s.getOffset(), s.getLength());
-			if (reveal)
+			if (reveal) {
 				revealRange(s.getOffset(), s.getLength());
+			}
 		}
 	}
 
@@ -2500,8 +2585,9 @@ public class TextViewer extends Viewer implements
 
 			IDocument document= getDocument();
 			Point modelSelection= widgetSelection2ModelSelection(new Point(startOffset, endOffset - startOffset));
-			if (modelSelection == null)
+			if (modelSelection == null) {
 				return TextSelection.emptySelection();
+			}
 			startOffset= modelSelection.x;
 			endOffset= modelSelection.x + modelSelection.y;
 
@@ -2511,8 +2597,9 @@ public class TextViewer extends Viewer implements
 
 				int startColumn= startOffset - document.getLineOffset(startLine) + startVirtuals;
 				int endColumn= endOffset - document.getLineOffset(endLine) + endVirtuals;
-				if (startLine == -1 || endLine == -1)
+				if (startLine == -1 || endLine == -1) {
 					return TextSelection.emptySelection();
+				}
 				return new BlockTextSelection(document, startLine, startColumn, endLine, endColumn, fTextWidget.getTabs());
 			} catch (BadLocationException e) {
 				return TextSelection.emptySelection();
@@ -2523,8 +2610,9 @@ public class TextViewer extends Viewer implements
 			return toSelection(Arrays.stream(fViewerState.getSelection()).map(point -> new Region(point.x, point.y)).toArray(IRegion[]::new));
 		}
 
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return TextSelection.emptySelection();
+		}
 
 		int[] ranges= fTextWidget.getSelectionRanges();
 		IRegion[] selectedRanges= new IRegion[ranges.length / 2];
@@ -2562,11 +2650,13 @@ public class TextViewer extends Viewer implements
 
 		Assert.isNotNull(listener);
 
-		if (fPostSelectionChangedListeners == null)
+		if (fPostSelectionChangedListeners == null) {
 			fPostSelectionChangedListeners= new ArrayList<>();
+		}
 
-		if (!fPostSelectionChangedListeners.contains(listener))
+		if (!fPostSelectionChangedListeners.contains(listener)) {
 			fPostSelectionChangedListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -2576,8 +2666,9 @@ public class TextViewer extends Viewer implements
 
 		if (fPostSelectionChangedListeners != null)  {
 			fPostSelectionChangedListeners.remove(listener);
-			if (fPostSelectionChangedListeners.isEmpty())
+			if (fPostSelectionChangedListeners.isEmpty()) {
 				fPostSelectionChangedListeners= null;
+			}
 		}
 	}
 
@@ -2588,12 +2679,14 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	private Display getDisplay() {
-		if (fTextWidget == null || fTextWidget.isDisposed())
+		if (fTextWidget == null || fTextWidget.isDisposed()) {
 			return null;
+		}
 
 		Display display= fTextWidget.getDisplay();
-		if (display != null && display.isDisposed())
+		if (display != null && display.isDisposed()) {
 			return null;
+		}
 
 		return display;
 	}
@@ -2606,8 +2699,9 @@ public class TextViewer extends Viewer implements
 	 */
 	private void queuePostSelectionChanged(final boolean fireEqualSelection) {
 		Display display= getDisplay();
-		if (display == null)
+		if (display == null) {
 			return;
+		}
 		// no synchronization or volatile access needed
 		// because postSelectionChanged() will also run in the same (UI) thread, just later:
 		fFireEqualPostSelectionChange|= fireEqualSelection;
@@ -2746,11 +2840,13 @@ public class TextViewer extends Viewer implements
 
 		Assert.isNotNull(listener);
 
-		if (fTextListeners == null)
+		if (fTextListeners == null) {
 			fTextListeners= new ArrayList<>();
+		}
 
-		if (!fTextListeners.contains(listener))
+		if (!fTextListeners.contains(listener)) {
 			fTextListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -2760,8 +2856,9 @@ public class TextViewer extends Viewer implements
 
 		if (fTextListeners != null) {
 			fTextListeners.remove(listener);
-			if (fTextListeners.isEmpty())
+			if (fTextListeners.isEmpty()) {
 				fTextListeners= null;
+			}
 		}
 	}
 
@@ -2776,8 +2873,9 @@ public class TextViewer extends Viewer implements
 		if (textListeners != null) {
 			textListeners= new ArrayList<>(textListeners);
 			DocumentEvent event= cmd.event;
-			if (event instanceof SlaveDocumentEvent)
+			if (event instanceof SlaveDocumentEvent) {
 				event= ((SlaveDocumentEvent) event).getMasterEvent();
+			}
 
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
 			for (ITextListener l : textListeners) {
@@ -2793,11 +2891,13 @@ public class TextViewer extends Viewer implements
 
 		Assert.isNotNull(listener);
 
-		if (fTextInputListeners == null)
+		if (fTextInputListeners == null) {
 			fTextInputListeners= new ArrayList<>();
+		}
 
-		if (!fTextInputListeners.contains(listener))
+		if (!fTextInputListeners.contains(listener)) {
 			fTextInputListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -2807,8 +2907,9 @@ public class TextViewer extends Viewer implements
 
 		if (fTextInputListeners != null) {
 			fTextInputListeners.remove(listener);
-			if (fTextInputListeners.isEmpty())
+			if (fTextInputListeners.isEmpty()) {
 				fTextInputListeners= null;
+			}
 		}
 	}
 
@@ -2862,8 +2963,9 @@ public class TextViewer extends Viewer implements
 	public void setInput(Object input) {
 
 		IDocument document= null;
-		if (input instanceof IDocument)
+		if (input instanceof IDocument) {
 			document= (IDocument) input;
+		}
 
 		setDocument(document);
 	}
@@ -2925,8 +3027,9 @@ public class TextViewer extends Viewer implements
 	protected IDocument createSlaveDocument(IDocument document) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
 		if (manager != null) {
-			if (manager.isSlaveDocument(document))
+			if (manager.isSlaveDocument(document)) {
 				return document;
+			}
 			return manager.createSlaveDocument(document);
 		}
 		return document;
@@ -2987,8 +3090,9 @@ public class TextViewer extends Viewer implements
 	 */
 	private void initializeViewportUpdate() {
 
-		if (fViewportGuard != null)
+		if (fViewportGuard != null) {
 			return;
+		}
 
 		if (fTextWidget != null) {
 
@@ -2999,8 +3103,9 @@ public class TextViewer extends Viewer implements
 			fTextWidget.addMouseListener(fViewportGuard);
 
 			fScroller= fTextWidget.getVerticalBar();
-			if (fScroller != null)
+			if (fScroller != null) {
 				fScroller.addSelectionListener(fViewportGuard);
+			}
 		}
 	}
 
@@ -3031,14 +3136,16 @@ public class TextViewer extends Viewer implements
 			initializeViewportUpdate();
 		}
 
-		if (!fViewportListeners.contains(listener))
+		if (!fViewportListeners.contains(listener)) {
 			fViewportListeners.add(listener);
+		}
 	}
 
 	@Override
 	public void removeViewportListener(IViewportListener listener) {
-		if (fViewportListeners != null)
+		if (fViewportListeners != null) {
 			fViewportListeners.remove(listener);
+		}
 	}
 
 	/**
@@ -3084,8 +3191,9 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget != null) {
 
 			int widgetLine= modelLine2WidgetLine(index);
-			if (widgetLine == -1)
+			if (widgetLine == -1) {
 				widgetLine= getClosestWidgetLineForModelLine(index);
+			}
 
 			if (widgetLine > -1) {
 				fTextWidget.setTopIndex(widgetLine);
@@ -3108,8 +3216,9 @@ public class TextViewer extends Viewer implements
 	protected int getVisibleLinesInViewport() {
 		if (fTextWidget != null) {
 			Rectangle clArea= fTextWidget.getClientArea();
-			if (!clArea.isEmpty())
+			if (!clArea.isEmpty()) {
 				return clArea.height / fTextWidget.getLineHeight();
+			}
 		}
 		return -1;
 	}
@@ -3117,8 +3226,9 @@ public class TextViewer extends Viewer implements
 	@Override
 	public int getBottomIndex() {
 
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return -1;
+		}
 
 		int widgetBottom= JFaceTextUtil.getBottomIndex(fTextWidget);
 		return widgetLine2ModelLine(widgetBottom);
@@ -3133,8 +3243,9 @@ public class TextViewer extends Viewer implements
 				top= getVisibleDocument().getLineOffset(top);
 				return widgetOffset2ModelOffset(top);
 			} catch (BadLocationException ex) {
-				if (TRACE_ERRORS)
+				if (TRACE_ERRORS) {
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndexStartOffset")); //$NON-NLS-1$
+				}
 			}
 		}
 
@@ -3149,15 +3260,17 @@ public class TextViewer extends Viewer implements
 			int bottomEndOffset= line.getOffset() + line.getLength() - 1;
 
 			IRegion coverage= getModelCoverage();
-			if (coverage == null)
+			if (coverage == null) {
 				return -1;
+			}
 
 			int coverageEndOffset=  coverage.getOffset() + coverage.getLength() - 1;
 			return Math.min(coverageEndOffset, bottomEndOffset);
 
 		} catch (BadLocationException ex) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getBottomIndexEndOffset")); //$NON-NLS-1$
+			}
 			return getDocument().getLength() - 1;
 		}
 	}
@@ -3165,8 +3278,9 @@ public class TextViewer extends Viewer implements
 	@Override
 	public void revealRange(int start, int length) {
 
-		if (fTextWidget == null || !redraws())
+		if (fTextWidget == null || !redraws()) {
 			return;
+		}
 
 		IRegion modelRange= new Region(start, length);
 		IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
@@ -3174,8 +3288,9 @@ public class TextViewer extends Viewer implements
 
 			int[] range= new int[] { widgetRange.getOffset(), widgetRange.getLength() };
 			validateSelectionRange(range);
-			if (range[0] >= 0)
+			if (range[0] >= 0) {
 				internalRevealRangeWithWorkaround(range[0], range[0] + range[1]);
+			}
 
 		} else {
 
@@ -3202,13 +3317,15 @@ public class TextViewer extends Viewer implements
 		// XXX: Workaround for https://bugs.eclipse.org/375576
 		final Shell shell= fTextWidget.getShell(); // only the shell layout is deferred
 		int d= 0;
-		for (; shell.isLayoutDeferred(); d++)
+		for (; shell.isLayoutDeferred(); d++) {
 			shell.setLayoutDeferred(false);
+		}
 		try {
 			internalRevealRange(start, end);
 		} finally {
-			for (; d > 0; d--)
+			for (; d > 0; d--) {
 				shell.setLayoutDeferred(true);
+			}
 		}
 
 	}
@@ -3286,12 +3403,13 @@ public class TextViewer extends Viewer implements
 					int visibleWidth= visibleEnd - visibleStart;
 					int selectionPixelWidth= endPixel - startPixel;
 
-					if (startPixel < visibleStart)
+					if (startPixel < visibleStart) {
 						newOffset= startPixel;
-					else if (selectionPixelWidth  + bufferZone < visibleWidth)
+					} else if (selectionPixelWidth  + bufferZone < visibleWidth) {
 						newOffset= endPixel + bufferZone - visibleWidth;
-					else
+					} else {
 						newOffset= startPixel;
+					}
 
 					float index= ((float)newOffset) / ((float)getAverageCharWidth());
 
@@ -3376,8 +3494,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected ISlaveDocumentManager getSlaveDocumentManager() {
-		if (fSlaveDocumentManager == null)
+		if (fSlaveDocumentManager == null) {
 			fSlaveDocumentManager= createSlaveDocumentManager();
+		}
 		return fSlaveDocumentManager;
 	}
 
@@ -3440,8 +3559,9 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget != null && fVisibleDocument != null) {
 
 			// set widget content
-			if (fDocumentAdapter == null)
+			if (fDocumentAdapter == null) {
 				fDocumentAdapter= createDocumentAdapter();
+			}
 
 			fDocumentAdapter.setDocument(fVisibleDocument);
 			fTextWidget.setContent(fDocumentAdapter);
@@ -3459,8 +3579,9 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void freeSlaveDocument(IDocument slave) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
-		if (manager != null && manager.isSlaveDocument(slave))
+		if (manager != null && manager.isSlaveDocument(slave)) {
 			manager.freeSlaveDocument(slave);
+		}
 	}
 
 	/**
@@ -3477,10 +3598,12 @@ public class TextViewer extends Viewer implements
 		}
 
 		if (fVisibleDocument != null) {
-			if (fVisibleDocumentListener != null)
+			if (fVisibleDocumentListener != null) {
 				fVisibleDocument.removeDocumentListener(fVisibleDocumentListener);
-			if (fVisibleDocument != document)
+			}
+			if (fVisibleDocument != document) {
 				freeSlaveDocument(fVisibleDocument);
+			}
 		}
 
 		fVisibleDocument= document;
@@ -3489,8 +3612,9 @@ public class TextViewer extends Viewer implements
 		initializeWidgetContents();
 
 		fFindReplaceDocumentAdapter= null;
-		if (fVisibleDocument != null && fVisibleDocumentListener != null)
+		if (fVisibleDocument != null && fVisibleDocumentListener != null) {
 			fVisibleDocument.addDocumentListener(fVisibleDocumentListener);
+		}
 	}
 
 	/**
@@ -3588,8 +3712,9 @@ public class TextViewer extends Viewer implements
 		try {
 
 			IDocument slaveDocument= createSlaveDocument(getVisibleDocument());
-			if (updateSlaveDocument(slaveDocument, start, length))
+			if (updateSlaveDocument(slaveDocument, start, length)) {
 				setVisibleDocument(slaveDocument);
+			}
 
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
@@ -3618,11 +3743,13 @@ public class TextViewer extends Viewer implements
 	public void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType) {
 
 		if (strategy != null) {
-			if (fDoubleClickStrategies == null)
+			if (fDoubleClickStrategies == null) {
 				fDoubleClickStrategies= new HashMap<>();
+			}
 			fDoubleClickStrategies.put(contentType, strategy);
-		} else if (fDoubleClickStrategies != null)
+		} else if (fDoubleClickStrategies != null) {
 			fDoubleClickStrategies.remove(contentType);
+		}
 	}
 
 	/**
@@ -3635,13 +3762,15 @@ public class TextViewer extends Viewer implements
 	 */
 	protected Object selectContentTypePlugin(int offset, Map<String, ?> plugins) {
 		final IDocument document= getDocument();
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 		try {
 			return selectContentTypePlugin(TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true), plugins);
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -3656,8 +3785,9 @@ public class TextViewer extends Viewer implements
 	 */
 	private Object selectContentTypePlugin(String type, Map<String, ?> plugins) {
 
-		if (plugins == null)
+		if (plugins == null) {
 			return null;
+		}
 
 		return plugins.get(type);
 	}
@@ -3671,18 +3801,21 @@ public class TextViewer extends Viewer implements
 	 * @param command the document command representing the verify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
-		if (isIgnoringAutoEditStrategies())
+		if (isIgnoringAutoEditStrategies()) {
 			return;
+		}
 
 		IDocument document= getDocument();
 
-		if (fTabsToSpacesConverter != null)
+		if (fTabsToSpacesConverter != null) {
 			fTabsToSpacesConverter.customizeDocumentCommand(document, command);
+		}
 
 		@SuppressWarnings("unchecked")
 		List<IAutoEditStrategy> strategies= (List<IAutoEditStrategy>) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
-		if (strategies == null)
+		if (strategies == null) {
 			return;
+		}
 
 		switch (strategies.size()) {
 		// optimization
@@ -3696,8 +3829,9 @@ public class TextViewer extends Viewer implements
 		// make iterator robust against adding/removing strategies from within strategies
 		default:
 			strategies= new ArrayList<>(strategies);
-				for (IAutoEditStrategy iAutoEditStrategy : strategies)
+				for (IAutoEditStrategy iAutoEditStrategy : strategies) {
 					iAutoEditStrategy.customizeDocumentCommand(document, command);
+				}
 
 			break;
 		}
@@ -3713,8 +3847,9 @@ public class TextViewer extends Viewer implements
 
 		if (fEventConsumer != null) {
 			fEventConsumer.processEvent(e);
-			if (!e.doit)
+			if (!e.doit) {
 				return;
+			}
 		}
 
 		ITextSelection selection= (ITextSelection)getSelection();
@@ -3740,8 +3875,9 @@ public class TextViewer extends Viewer implements
 
 				fVerifyListener.forward(false);
 
-				if (compoundChange && fUndoManager != null)
+				if (compoundChange && fUndoManager != null) {
 					fUndoManager.beginCompoundChange();
+				}
 
 				fDocumentCommand.execute(getDocument());
 
@@ -3757,10 +3893,11 @@ public class TextViewer extends Viewer implements
 						// try to move it to the closest spot
 						IRegion region= getModelCoverage();
 						if (region != null) {
-							if (documentCaret <= region.getOffset())
+							if (documentCaret <= region.getOffset()) {
 								widgetCaret= 0;
-							else if (documentCaret >= region.getOffset() + region.getLength())
+							} else if (documentCaret >= region.getOffset() + region.getLength()) {
 								widgetCaret= getVisibleRegion().getLength();
+							}
 						}
 					}
 
@@ -3773,13 +3910,15 @@ public class TextViewer extends Viewer implements
 				}
 			} catch (BadLocationException x) {
 
-				if (TRACE_ERRORS)
+				if (TRACE_ERRORS) {
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+				}
 
 			} finally {
 
-				if (compoundChange && fUndoManager != null)
+				if (compoundChange && fUndoManager != null) {
 					fUndoManager.endCompoundChange();
+				}
 
 				fVerifyListener.forward(true);
 
@@ -3828,8 +3967,9 @@ public class TextViewer extends Viewer implements
 						processor.doReplace(selection, e.text);
 					}
 				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
+					if (TRACE_ERRORS) {
 						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+					}
 				}
 			});
 		}
@@ -3854,8 +3994,9 @@ public class TextViewer extends Viewer implements
 	@Override
 	public boolean canDoOperation(int operation) {
 
-		if (fTextWidget == null || !redraws())
+		if (fTextWidget == null || !redraws()) {
 			return false;
+		}
 
 		switch (operation) {
 			case CUT:
@@ -3894,8 +4035,9 @@ public class TextViewer extends Viewer implements
 	@Override
 	public void doOperation(int operation) {
 
-		if (fTextWidget == null || !redraws())
+		if (fTextWidget == null || !redraws()) {
 			return;
+		}
 
 		Point selection= null;
 
@@ -3916,20 +4058,22 @@ public class TextViewer extends Viewer implements
 				}
 				break;
 			case CUT:
-				if (!fTextWidget.isTextSelected())
+				if (!fTextWidget.isTextSelected()) {
 					copyMarkedRegion(true);
-				else
+				} else {
 					wrapCompoundChange(() -> fTextWidget.cut());
+				}
 
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
 
 				break;
 			case COPY:
-				if (!fTextWidget.isTextSelected())
+				if (!fTextWidget.isTextSelected()) {
 					copyMarkedRegion(false);
-				else
+				} else {
 					fTextWidget.copy();
+				}
 				break;
 			case PASTE:
 				paste();
@@ -3940,11 +4084,12 @@ public class TextViewer extends Viewer implements
 			case SELECT_ALL: {
 				IDocument doc= getDocument();
 				if (doc != null) {
-					if (fTextWidget.getBlockSelection())
+					if (fTextWidget.getBlockSelection()) {
 						// XXX: performance hack: use 1000 for the endColumn - StyledText will not select more than what's possible in the viewport.
 						setSelection(new BlockTextSelection(doc, 0, 0, doc.getNumberOfLines() - 1, 1000, fTextWidget.getTabs()));
-					else
+					} else {
 						setSelectedRange(0, doc.getLength());
+					}
 				}
 				break;
 			}
@@ -3965,9 +4110,10 @@ public class TextViewer extends Viewer implements
 				break;
 			case HyperlinkManager.OPEN_HYPERLINK:
 				boolean atleastOneLinkOpened= fHyperlinkManager.openHyperlink();
-				if (!atleastOneLinkOpened)
+				if (!atleastOneLinkOpened) {
 					MessageDialog.openInformation(getControl().getShell(),
 							JFaceTextMessages.getString("TextViewer.open_hyperlink_error_title"), JFaceTextMessages.getString("TextViewer.open_hyperlink_error_message")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				return;
 
 			// Workaround to fix bug 434791 during 4.4 RC2. Will be replaced by official API during 4.5.
@@ -3988,8 +4134,9 @@ public class TextViewer extends Viewer implements
 				try {
 					new SelectionProcessor(TextViewer.this).doDelete(getSelection());
 				} catch (BadLocationException e) {
-					if (TRACE_ERRORS)
+					if (TRACE_ERRORS) {
 						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.delete")); //$NON-NLS-1$
+					}
 				}
 			});
 		}
@@ -4044,8 +4191,9 @@ public class TextViewer extends Viewer implements
 					}
 					processor.doReplace(selection, toInsert);
 				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
+					if (TRACE_ERRORS) {
 						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.paste")); //$NON-NLS-1$
+					}
 				} finally {
 					clipboard.dispose();
 				}
@@ -4087,17 +4235,19 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected void ignoreAutoEditStrategies(boolean ignore) {
-		if (fIgnoreAutoIndent == ignore)
+		if (fIgnoreAutoIndent == ignore) {
 			return;
+		}
 
 		fIgnoreAutoIndent= ignore;
 
 		IDocument document= getDocument();
 		if (document instanceof IDocumentExtension2 extension) {
-			if (ignore)
+			if (ignore) {
 				extension.ignorePostNotificationReplaces();
-			else
+			} else {
 				extension.acceptPostNotificationReplaces();
+			}
 		}
 	}
 
@@ -4127,18 +4277,21 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void copyMarkedRegion(boolean delete) {
 
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return;
+		}
 
-		if (fMarkPosition == null || fMarkPosition.isDeleted() || modelRange2WidgetRange(fMarkPosition) == null)
+		if (fMarkPosition == null || fMarkPosition.isDeleted() || modelRange2WidgetRange(fMarkPosition) == null) {
 			return;
+		}
 
 		int widgetMarkOffset= modelOffset2WidgetOffset(fMarkPosition.offset);
 		Point selection= fTextWidget.getSelection();
-		if (selection.x <= widgetMarkOffset)
+		if (selection.x <= widgetMarkOffset) {
 			fTextWidget.setSelection(selection.x, widgetMarkOffset);
-		else
+		} else {
 			fTextWidget.setSelection(widgetMarkOffset, selection.x);
+		}
 
 		if (delete) {
 			wrapCompoundChange(() -> fTextWidget.cut());
@@ -4169,8 +4322,9 @@ public class TextViewer extends Viewer implements
 	protected boolean isBlockSelected() {
 
 		Point s= getSelectedRange();
-		if (s.y == 0)
+		if (s.y == 0) {
 			return false;
+		}
 
 		try {
 
@@ -4195,8 +4349,9 @@ public class TextViewer extends Viewer implements
 	 */
 	protected boolean areMultipleLinesSelected() {
 		Point s= getSelectedRange();
-		if (s.y == 0)
+		if (s.y == 0) {
 			return false;
+		}
 
 		try {
 
@@ -4227,15 +4382,17 @@ public class TextViewer extends Viewer implements
 			int startLine= d.getLineOfOffset(region.getOffset());
 
 			int offset= d.getLineOffset(startLine);
-			if (offset >= region.getOffset())
+			if (offset >= region.getOffset()) {
 				return startLine;
+			}
 
 			offset= d.getLineOffset(startLine + 1);
 			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getFirstCompleteLineOfRegion")); //$NON-NLS-1$
+			}
 		}
 
 		return -1;
@@ -4288,8 +4445,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
-		if (fUndoManager != null)
+		if (fUndoManager != null) {
 			fUndoManager.beginCompoundChange();
+		}
 
 		IDocument d= getDocument();
 		Map<String, IDocumentPartitioner> partitioners= null;
@@ -4307,8 +4465,9 @@ public class TextViewer extends Viewer implements
 				// end line of region
 				int length= regions[i].getLength();
 				int offset= regions[i].getOffset() + length;
-				if (length > 0)
+				if (length > 0) {
 					offset--;
+				}
 				lines[j + 1]= (lines[j] == -1 ? -1 : d.getLineOfOffset(offset));
 				lineCount += lines[j + 1] - lines[j] + 1;
 			}
@@ -4319,29 +4478,33 @@ public class TextViewer extends Viewer implements
 				setRedraw(false);
 				startSequentialRewriteMode(true);
 			}
-			if (lineCount >= 20)
+			if (lineCount >= 20) {
 				partitioners= TextUtilities.removeDocumentPartitioners(d);
+			}
 
 			// Perform the shift operation.
 			Map<String, String[]> map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
 				for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= (String[]) selectContentTypePlugin(regions[i].getType(), map);
 				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
-					if (right)
+					if (right) {
 						shiftRight(lines[j], lines[j + 1], prefixes[0]);
-					else
+					} else {
 						shiftLeft(lines[j], lines[j + 1], prefixes, ignoreWhitespace);
+					}
 				}
 			}
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_1")); //$NON-NLS-1$
+			}
 
 		} finally {
 
-			if (partitioners != null)
+			if (partitioners != null) {
 				TextUtilities.addDocumentPartitioners(d, partitioners);
+			}
 
 			if (d instanceof IDocumentExtension4 extension) {
 				extension.stopRewriteSession(rewriteSession);
@@ -4350,8 +4513,9 @@ public class TextViewer extends Viewer implements
 				setRedraw(true);
 			}
 
-			if (fUndoManager != null)
+			if (fUndoManager != null) {
 				fUndoManager.endCompoundChange();
+			}
 		}
 	}
 
@@ -4374,8 +4538,9 @@ public class TextViewer extends Viewer implements
 			}
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println("TextViewer.shiftRight: BadLocationException"); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -4422,10 +4587,12 @@ public class TextViewer extends Viewer implements
 					if (ignoreWhitespace) {
 						String s= d.get(line.getOffset(), matchOffset);
 						s= s.trim();
-						if (s.isEmpty())
+						if (s.isEmpty()) {
 							index= line.getOffset() + matchOffset;
-					} else if (matchOffset == 0)
+						}
+					} else if (matchOffset == 0) {
 						index= line.getOffset();
+					}
 				}
 
 				if (index > -1) {
@@ -4450,8 +4617,9 @@ public class TextViewer extends Viewer implements
 			}
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println("TextViewer.shiftLeft: BadLocationException"); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -4568,8 +4736,9 @@ public class TextViewer extends Viewer implements
 	 * @return the model offset of the first match
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return -1;
+		}
 
 		try {
 
@@ -4585,8 +4754,9 @@ public class TextViewer extends Viewer implements
 				char endChar= adapter.charAt(widgetPos+length-1);
 				boolean borderHasLineDelimiter= startChar == '\n' || startChar == '\r' || endChar == '\n' || endChar == '\r';
 				boolean redraws= redraws();
-				if (borderHasLineDelimiter && redraws)
+				if (borderHasLineDelimiter && redraws) {
 					setRedraw(false);
+				}
 
 				if (redraws()) {
 					fTextWidget.setSelectionRange(widgetPos, length);
@@ -4594,16 +4764,18 @@ public class TextViewer extends Viewer implements
 					selectionChanged(widgetPos, length);
 				} else {
 					setSelectedRange(widgetOffset2ModelOffset(widgetPos), length);
-					if (redraws)
+					if (redraws) {
 						setRedraw(true);
+					}
 				}
 
 				return widgetOffset2ModelOffset(widgetPos);
 			}
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
+			}
 		}
 
 		return -1;
@@ -4624,8 +4796,9 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return -1;
+		}
 
 		try {
 
@@ -4639,8 +4812,9 @@ public class TextViewer extends Viewer implements
 			}
 
 			int widgetOffset= modelOffset2WidgetOffset(modelOffset);
-			if (widgetOffset == -1)
+			if (widgetOffset == -1) {
 				return -1;
+			}
 
 			FindReplaceDocumentAdapter adapter= getFindReplaceDocumentAdapter();
 			IRegion matchRegion= adapter.find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
@@ -4652,8 +4826,9 @@ public class TextViewer extends Viewer implements
 			}
 			int modelPos= widgetPos == -1 ? -1 : widgetOffset2ModelOffset(widgetPos);
 
-			if (widgetPos != -1 && (modelPos < rangeOffset || modelPos + length > rangeOffset + rangeLength))
+			if (widgetPos != -1 && (modelPos < rangeOffset || modelPos + length > rangeOffset + rangeLength)) {
 				widgetPos= -1;
+			}
 
 			if (widgetPos > -1) {
 
@@ -4662,8 +4837,9 @@ public class TextViewer extends Viewer implements
 				char endChar= adapter.charAt(widgetPos+length-1);
 				boolean borderHasLineDelimiter= startChar == '\n' || startChar == '\r' || endChar == '\n' || endChar == '\r';
 				boolean redraws= redraws();
-				if (borderHasLineDelimiter && redraws)
+				if (borderHasLineDelimiter && redraws) {
 					setRedraw(false);
+				}
 
 				if (redraws()) {
 					fTextWidget.setSelectionRange(widgetPos, length);
@@ -4671,8 +4847,9 @@ public class TextViewer extends Viewer implements
 					selectionChanged(widgetPos, length);
 				} else {
 					setSelectedRange(modelPos, length);
-					if (redraws)
+					if (redraws) {
 						setRedraw(true);
+					}
 				}
 
 				return modelPos;
@@ -4680,8 +4857,9 @@ public class TextViewer extends Viewer implements
 
 
 		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
+			if (TRACE_ERRORS) {
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
+			}
 		}
 
 		return -1;
@@ -4691,8 +4869,9 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void setTextColor(Color color) {
-		if (color != null)
+		if (color != null) {
 			setTextColor(color, 0, getDocument().getLength(), true);
+		}
 	}
 
 	@Override
@@ -4706,13 +4885,15 @@ public class TextViewer extends Viewer implements
 
 			s= modelStyleRange2WidgetStyleRange(s);
 			if (s != null) {
-				if (controlRedraw)
+				if (controlRedraw) {
 					fTextWidget.setRedraw(false);
+				}
 				try {
 					fTextWidget.setStyleRange(s);
 				} finally {
-					if (controlRedraw)
+					if (controlRedraw) {
 						fTextWidget.setRedraw(true);
+					}
 				}
 			}
 		}
@@ -4729,33 +4910,38 @@ public class TextViewer extends Viewer implements
 		if (range != null) {
 
 			range= modelStyleRange2WidgetStyleRange(range);
-			if (range != null)
+			if (range != null) {
 				fTextWidget.setStyleRange(range);
+			}
 
 			ArrayList<StyleRange> ranges= new ArrayList<>(presentation.getDenumerableRanges());
 			Iterator<StyleRange> e= presentation.getNonDefaultStyleRangeIterator();
 			while (e.hasNext()) {
 				range= e.next();
 				range= modelStyleRange2WidgetStyleRange(range);
-				if (range != null)
+				if (range != null) {
 					ranges.add(range);
+				}
 			}
 
-			if (!ranges.isEmpty())
+			if (!ranges.isEmpty()) {
 				fTextWidget.replaceStyleRanges(0, 0, ranges.toArray(new StyleRange[ranges.size()]));
+			}
 
 		} else {
 			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
-			if (region == null)
+			if (region == null) {
 				return;
+			}
 
 			List<StyleRange> list= new ArrayList<>(presentation.getDenumerableRanges());
 			Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 			while (e.hasNext()) {
 				range= e.next();
 				range= modelStyleRange2WidgetStyleRange(range);
-				if (range != null)
+				if (range != null) {
 					list.add(range);
+				}
 			}
 
 			if (!list.isEmpty()) {
@@ -4779,8 +4965,9 @@ public class TextViewer extends Viewer implements
 		while (e.hasNext()) {
 			StyleRange range= e.next();
 			range= modelStyleRange2WidgetStyleRange(range);
-			if (range != null)
+			if (range != null) {
 				list.add(range);
+			}
 		}
 
 		if (!list.isEmpty()) {
@@ -4810,11 +4997,13 @@ public class TextViewer extends Viewer implements
 	@Override
 	public void changeTextPresentation(TextPresentation presentation, boolean controlRedraw) {
 
-		if (presentation == null || !redraws())
+		if (presentation == null || !redraws()) {
 			return;
+		}
 
-		if (fTextWidget == null)
+		if (fTextWidget == null) {
 			return;
+		}
 
 
 		/*
@@ -4829,25 +5018,30 @@ public class TextViewer extends Viewer implements
 			}
 		}
 
-		if (presentation.isEmpty())
+		if (presentation.isEmpty()) {
 			return;
+		}
 
-		if (controlRedraw)
+		if (controlRedraw) {
 			fTextWidget.setRedraw(false);
+		}
 
-		if (fReplaceTextPresentation)
+		if (fReplaceTextPresentation) {
 			applyTextPresentation(presentation);
-		else
+		} else {
 			addPresentation(presentation);
+		}
 
-		if (controlRedraw)
+		if (controlRedraw) {
 			fTextWidget.setRedraw(true);
+		}
 	}
 
 	@Override
 	public IFindReplaceTarget getFindReplaceTarget() {
-		if (fFindReplaceTarget == null)
+		if (fFindReplaceTarget == null) {
 			fFindReplaceTarget= new FindReplaceTarget();
+		}
 		return fFindReplaceTarget;
 	}
 
@@ -4858,8 +5052,9 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
-		if (fFindReplaceDocumentAdapter == null)
+		if (fFindReplaceDocumentAdapter == null) {
 			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
+		}
 		return fFindReplaceDocumentAdapter;
 	}
 
@@ -4898,8 +5093,9 @@ public class TextViewer extends Viewer implements
 			if (fMarkPosition != null && !fMarkPosition.isDeleted()) {
 
 				IDocument document= getDocument();
-				if (document != null)
+				if (document != null) {
 					document.removePosition(fMarkPosition);
+				}
 			}
 
 			fMarkPosition= null;
@@ -4915,8 +5111,9 @@ public class TextViewer extends Viewer implements
 				return;
 			}
 
-			if (fMarkPosition != null)
+			if (fMarkPosition != null) {
 				document.removePosition(fMarkPosition);
+			}
 
 			fMarkPosition= null;
 
@@ -4942,8 +5139,9 @@ public class TextViewer extends Viewer implements
 		IDocument oldDocument= (IDocument) oldInput;
 		if (oldDocument != null) {
 
-			if (fMarkPosition != null && !fMarkPosition.isDeleted())
+			if (fMarkPosition != null && !fMarkPosition.isDeleted()) {
 				oldDocument.removePosition(fMarkPosition);
+			}
 
 			try {
 				oldDocument.removePositionUpdater(fMarkPositionUpdater);
@@ -5017,8 +5215,9 @@ public class TextViewer extends Viewer implements
 			fViewerState= null;
 		}
 
-		if (fTextWidget != null && !fTextWidget.isDisposed())
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			fTextWidget.setRedraw(true);
+		}
 
 		fireRedrawChanged();
 	}
@@ -5028,15 +5227,17 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	protected void disableRedrawing() {
-		if (fViewerState == null)
+		if (fViewerState == null) {
 			fViewerState= new ViewerState();
+		}
 
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension extension) {
 			extension.stopForwardingDocumentChanges();
 		}
 
-		if (fTextWidget != null && !fTextWidget.isDisposed())
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			fTextWidget.setRedraw(false);
+		}
 
 		fireRedrawChanged();
 	}
@@ -5062,16 +5263,18 @@ public class TextViewer extends Viewer implements
 		if (!redraw) {
 
 			++ fRedrawCounter;
-			if (fRedrawCounter == 1)
+			if (fRedrawCounter == 1) {
 				disableRedrawing();
+			}
 
 		} else {
 			-- fRedrawCounter;
 			if (fRedrawCounter == 0) {
-				if (topIndex == -1)
+				if (topIndex == -1) {
 					enabledRedrawing();
-				else
+				} else {
 					enabledRedrawing(topIndex);
+				}
 			}
 		}
 	}
@@ -5117,22 +5320,25 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public IRewriteTarget getRewriteTarget() {
-		if (fRewriteTarget == null)
+		if (fRewriteTarget == null) {
 			fRewriteTarget= new RewriteTarget();
+		}
 		return fRewriteTarget;
 	}
 
 	@Override
 	public ITextHover getCurrentTextHover() {
-		if (fTextHoverManager == null)
+		if (fTextHoverManager == null) {
 			return null;
+		}
 		return fTextHoverManager.getCurrentTextHover();
 	}
 
 	@Override
 	public Point getHoverEventLocation() {
-		if (fTextHoverManager == null)
+		if (fTextHoverManager == null) {
 			return null;
+		}
 		return fTextHoverManager.getHoverEventLocation();
 	}
 
@@ -5143,8 +5349,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected PaintManager getPaintManager() {
-		if (fPaintManager == null)
+		if (fPaintManager == null) {
 			fPaintManager= new PaintManager(this);
+		}
 		return fPaintManager;
 	}
 
@@ -5182,8 +5389,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	public int modelLine2WidgetLine(int modelLine) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return modelLine;
+		}
 
 		try {
 			return fInformationMapping.toImageLine(modelLine);
@@ -5201,8 +5409,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	public int modelOffset2WidgetOffset(int modelOffset) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return modelOffset;
+		}
 
 		try {
 			return fInformationMapping.toImageOffset(modelOffset);
@@ -5220,16 +5429,18 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	public IRegion modelRange2WidgetRange(IRegion modelRange) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return modelRange;
+		}
 
 		try {
 
 			if (modelRange.getLength() < 0) {
 				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
 				IRegion result= fInformationMapping.toImageRegion(reversed);
-				if (result != null)
+				if (result != null) {
 					return new Region(result.getOffset() + result.getLength(), -result.getLength());
+				}
 			}
 			return fInformationMapping.toImageRegion(modelRange);
 
@@ -5250,15 +5461,17 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	protected IRegion modelRange2ClosestWidgetRange(IRegion modelRange) {
-		if (!(fInformationMapping instanceof IDocumentInformationMappingExtension2))
+		if (!(fInformationMapping instanceof IDocumentInformationMappingExtension2)) {
 			return modelRange2WidgetRange(modelRange);
+		}
 
 		try {
 			if (modelRange.getLength() < 0) {
 				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
 				IRegion result= ((IDocumentInformationMappingExtension2) fInformationMapping).toClosestImageRegion(reversed);
-				if (result != null)
+				if (result != null) {
 					return new Region(result.getOffset() + result.getLength(), -result.getLength());
+				}
 			}
 			return ((IDocumentInformationMappingExtension2) fInformationMapping).toClosestImageRegion(modelRange);
 
@@ -5287,8 +5500,9 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	public int widgetLine2ModelLine(int widgetLine) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return widgetLine;
+		}
 
 		try {
 			return fInformationMapping.toOriginLine(widgetLine);
@@ -5306,8 +5520,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	public int widgetOffset2ModelOffset(int widgetOffset) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return widgetOffset;
+		}
 
 		try {
 			return fInformationMapping.toOriginOffset(widgetOffset);
@@ -5329,8 +5544,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	public IRegion widgetRange2ModelRange(IRegion widgetRange) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return widgetRange;
+		}
 
 		try {
 
@@ -5346,8 +5562,9 @@ public class TextViewer extends Viewer implements
 			int modelOffset= widgetOffset2ModelOffset(widgetRange.getOffset());
 			if (modelOffset > -1) {
 				int modelEndOffset= widgetOffset2ModelOffset(widgetRange.getOffset() + widgetRange.getLength());
-				if (modelEndOffset > -1)
+				if (modelEndOffset > -1) {
 					return new Region(modelOffset, modelEndOffset - modelOffset);
+				}
 			}
 		}
 
@@ -5363,8 +5580,9 @@ public class TextViewer extends Viewer implements
 	public IRegion getModelCoverage() {
 		if (fInformationMapping == null) {
 			IDocument document= getDocument();
-			if (document == null)
+			if (document == null) {
 				return null;
+			}
 			return new Region(0, document.getLength());
 		}
 
@@ -5380,8 +5598,9 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected int getClosestWidgetLineForModelLine(int modelLine) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return modelLine;
+		}
 
 		try {
 			return fInformationMapping.toClosestImageLine(modelLine);
@@ -5432,10 +5651,11 @@ public class TextViewer extends Viewer implements
 	protected IRegion event2ModelRange(VerifyEvent event) {
 
 		Region region= null;
-		if (event.start <= event.end)
+		if (event.start <= event.end) {
 			region= new Region(event.start, event.end - event.start);
-		else
+		} else {
 			region= new Region(event.end, event.start - event.end);
+		}
 
 		return widgetRange2ModelRange(region);
 	}
@@ -5463,14 +5683,16 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected Point modelSelection2WidgetSelection(Point modelSelection) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return modelSelection;
+		}
 
 		try {
 			IRegion region= new Region(modelSelection.x, modelSelection.y);
 			region= fInformationMapping.toImageRegion(region);
-			if (region != null)
+			if (region != null) {
 				return new Point(region.getOffset(), region.getLength());
+			}
 		} catch (BadLocationException x) {
 		}
 
@@ -5531,11 +5753,13 @@ public class TextViewer extends Viewer implements
 
 		Assert.isNotNull(listener);
 
-		if (fTextPresentationListeners == null)
+		if (fTextPresentationListeners == null) {
 			fTextPresentationListeners= new ArrayList<>();
+		}
 
-		if (!fTextPresentationListeners.contains(listener))
+		if (!fTextPresentationListeners.contains(listener)) {
 			fTextPresentationListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -5545,8 +5769,9 @@ public class TextViewer extends Viewer implements
 
 		if (fTextPresentationListeners != null) {
 			fTextPresentationListeners.remove(listener);
-			if (fTextPresentationListeners.isEmpty())
+			if (fTextPresentationListeners.isEmpty()) {
 				fTextPresentationListeners= null;
+			}
 		}
 	}
 
@@ -5582,8 +5807,9 @@ public class TextViewer extends Viewer implements
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask) {
 		if (fHyperlinkDetectors != null) {
 			for (IHyperlinkDetector fHyperlinkDetector : fHyperlinkDetectors) {
-				if (fHyperlinkDetector instanceof IHyperlinkDetectorExtension)
+				if (fHyperlinkDetector instanceof IHyperlinkDetectorExtension) {
 					((IHyperlinkDetectorExtension)fHyperlinkDetector).dispose();
+				}
 			}
 		}
 
@@ -5597,8 +5823,9 @@ public class TextViewer extends Viewer implements
 			}
 			ensureHyperlinkManagerInstalled();
 		} else {
-			if (fHyperlinkManager != null)
+			if (fHyperlinkManager != null) {
 				fHyperlinkManager.uninstall();
+			}
 			fHyperlinkManager= null;
 		}
 	}
@@ -5615,8 +5842,9 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	public void setHyperlinkPresenter(IHyperlinkPresenter hyperlinkPresenter) throws IllegalStateException {
-		if (fHyperlinkManager != null)
+		if (fHyperlinkManager != null) {
 			throw new IllegalStateException();
+		}
 
 		fHyperlinkPresenter= hyperlinkPresenter;
 		ensureHyperlinkManagerInstalled();

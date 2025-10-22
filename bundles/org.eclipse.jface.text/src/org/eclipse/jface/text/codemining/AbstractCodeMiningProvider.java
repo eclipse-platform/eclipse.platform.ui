@@ -41,8 +41,9 @@ public abstract class AbstractCodeMiningProvider implements ICodeMiningProvider 
 	 */
 	public final void setContext(IAdaptable context) throws IllegalStateException, IllegalArgumentException {
 		Assert.isLegal(context != null);
-		if (this.context != null)
+		if (this.context != null) {
 			throw new IllegalStateException();
+		}
 		this.context= context;
 	}
 
@@ -61,8 +62,9 @@ public abstract class AbstractCodeMiningProvider implements ICodeMiningProvider 
 	 */
 	protected final <T> T getAdapter(Class<T> adapterClass) {
 		Assert.isLegal(adapterClass != null);
-		if (context != null)
+		if (context != null) {
 			return context.getAdapter(adapterClass);
+		}
 		return null;
 	}
 }

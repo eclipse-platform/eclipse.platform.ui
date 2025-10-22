@@ -26,9 +26,9 @@ import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
  */
 public class TextInvocationContext implements IQuickAssistInvocationContext {
 
-	private ISourceViewer fSourceViewer;
-	private int fOffset;
-	private int fLength;
+	private final ISourceViewer fSourceViewer;
+	private final int fOffset;
+	private final int fLength;
 
 	public TextInvocationContext(ISourceViewer sourceViewer, int offset, int length) {
 		fSourceViewer= sourceViewer;

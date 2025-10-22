@@ -412,7 +412,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	/** The proposal table. */
 	private volatile Table fProposalTable;
 	/** The table selection listener */
-	private SelectionListener fSelectionListener= new TableSelectionListener();
+	private final SelectionListener fSelectionListener= new TableSelectionListener();
 	/** The delay after which additional information is displayed */
 	private final int fDelay;
 	/**

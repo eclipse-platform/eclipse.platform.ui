@@ -30,7 +30,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 
 	protected static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	private Reader fReader;
+	private final Reader fReader;
 	protected boolean fWasWhiteSpace;
 	private int fCharAfterWhiteSpace;
 
@@ -40,7 +40,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 	private boolean fSkipWhiteSpace= true;
 
 	private boolean fReadFromBuffer;
-	private StringBuilder fBuffer;
+	private final StringBuilder fBuffer;
 	private int fIndex;
 
 

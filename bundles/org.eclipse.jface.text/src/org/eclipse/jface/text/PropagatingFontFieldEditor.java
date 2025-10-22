@@ -41,9 +41,9 @@ import org.eclipse.jface.preference.PreferenceConverter;
 public class PropagatingFontFieldEditor extends FontFieldEditor {
 
 	/** The editor's parent widget */
-	private Composite fParent;
+	private final Composite fParent;
 	/** The representation of the default font choice */
-	private String fDefaultFontLabel;
+	private final String fDefaultFontLabel;
 
 	/**
 	 * Creates a new font field editor with the given parameters.
@@ -61,8 +61,9 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 
 	@Override
 	protected void doLoad() {
-		if (getPreferenceStore().isDefault(getPreferenceName()))
+		if (getPreferenceStore().isDefault(getPreferenceName())) {
 			loadDefault();
+		}
 		super.doLoad();
 		checkForDefault();
 	}
@@ -117,8 +118,9 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 */
 	public static void startPropagate(final IPreferenceStore source, final String sourceKey, final IPreferenceStore target, final String targetKey) {
 		source.addPropertyChangeListener(event -> {
-			if (sourceKey.equals(event.getProperty()))
+			if (sourceKey.equals(event.getProperty())) {
 				propagateFont(source, sourceKey, target, targetKey);
+			}
 		});
 
 		propagateFont(source, sourceKey, target, targetKey);

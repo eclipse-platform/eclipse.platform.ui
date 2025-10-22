@@ -53,12 +53,13 @@ public class Positions {
 		int counter= 0;
 		char[] chars= line.toCharArray();
 		for (char c : chars) {
-			if (c == '\t')
+			if (c == '\t') {
 				counter++;
-			else if (c == ' ')
+			} else if (c == ' ') {
 				counter++;
-			else
+			} else {
 				break;
+			}
 		}
 		return counter;
 	}

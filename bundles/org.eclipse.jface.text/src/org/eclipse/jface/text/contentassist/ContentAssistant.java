@@ -284,7 +284,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		private Thread fThread;
 		private boolean fIsReset= false;
-		private Object fMutex= new Object();
+		private final Object fMutex= new Object();
 		private int fShowStyle;
 
 		private final static int SHOW_PROPOSALS= 1;
@@ -993,7 +993,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	private boolean fVerifyKeyListenerHooked= false;
-	private IContentAssistListener[] fListeners= new IContentAssistListener[4];
+	private final IContentAssistListener[] fListeners= new IContentAssistListener[4];
 	/**
 	 * The content assist subject control.
 	 *
@@ -1035,7 +1035,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/**
 	 * The message to display at the bottom of the proposal popup.
 	 *
@@ -1100,7 +1100,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.12
 	 */
-	private boolean fAsynchronous;
+	private final boolean fAsynchronous;
 
 	private boolean fCompletionProposalTriggerCharsEnabled= true;
 

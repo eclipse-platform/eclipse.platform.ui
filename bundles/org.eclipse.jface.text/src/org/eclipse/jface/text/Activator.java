@@ -43,8 +43,9 @@ public class Activator implements BundleActivator {
 	}
 
 	private void createExecutor() {
-		if (activator.executor != null)
+		if (activator.executor != null) {
 			return;
+		}
 
 		executor= new ThreadPoolExecutor(
 				Runtime.getRuntime().availableProcessors(),

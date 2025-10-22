@@ -66,7 +66,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	/** The text font (do not dispose!) */
 	private Font fTextFont;
 	/** The control's source viewer */
-	private SourceViewer fViewer;
+	private final SourceViewer fViewer;
 	/** The optional status field. */
 	private Label fStatusField;
 	/** The separator for the optional status field. */

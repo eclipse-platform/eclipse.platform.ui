@@ -33,7 +33,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistantExtension4;
  */
 public final class ContentAssistantFacade {
 
-	private IContentAssistant fContentAssistant;
+	private final IContentAssistant fContentAssistant;
 
 	/**
 	 * Creates a new facade.
@@ -60,8 +60,9 @@ public final class ContentAssistantFacade {
 	 *             uninstalled
 	 */
 	public IHandler getHandler(String commandId) {
-		if (fContentAssistant == null)
+		if (fContentAssistant == null) {
 			throw new IllegalStateException();
+		}
 		return ((IContentAssistantExtension4)fContentAssistant).getHandler(commandId);
 	}
 
@@ -74,8 +75,9 @@ public final class ContentAssistantFacade {
 	 *             uninstalled
 	 */
 	public void addCompletionListener(ICompletionListener listener) {
-		if (fContentAssistant == null)
+		if (fContentAssistant == null) {
 			throw new IllegalStateException();
+		}
 		((IContentAssistantExtension2)fContentAssistant).addCompletionListener(listener);
 	}
 

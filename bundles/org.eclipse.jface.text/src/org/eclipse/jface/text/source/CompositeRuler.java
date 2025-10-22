@@ -133,7 +133,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * Internal listener for opening the context menu.
 		 * @since 3.0
 		 */
-		private Listener fMenuDetectListener;
+		private final Listener fMenuDetectListener;
 
 		/**
 		 * Creates a new composite ruler canvas.
@@ -298,8 +298,9 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			// Keep as first statement to ensure checkWidget() is called.
 			Control[] children= getChildren();
 
-			if (fCachedListeners == null) // already disposed
+			if (fCachedListeners == null) { // already disposed
 				return;
+			}
 
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
@@ -495,18 +496,18 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	/** The ruler's annotation model */
 	private IAnnotationModel fModel;
 	/** The list of columns */
-	private List<IVerticalRulerColumn> fDecorators= new ArrayList<>(2);
+	private final List<IVerticalRulerColumn> fDecorators= new ArrayList<>(2);
 	/** The cached location of the last mouse button activity */
-	private Point fLocation= new Point(-1, -1);
+	private final Point fLocation= new Point(-1, -1);
 	/** The cached line of the list mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
 	/** The gap between the individual columns of this composite ruler */
-	private int fGap;
+	private final int fGap;
 	/**
 	 * The set of annotation listeners.
 	 * @since 3.0
 	 */
-	private Set<IVerticalRulerListener> fAnnotationListeners= new HashSet<>();
+	private final Set<IVerticalRulerListener> fAnnotationListeners= new HashSet<>();
 
 
 	/**
@@ -535,10 +536,11 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	public void addDecorator(int index, IVerticalRulerColumn rulerColumn) {
 		rulerColumn.setModel(getModel());
 
-		if (index > fDecorators.size())
+		if (index > fDecorators.size()) {
 			fDecorators.add(rulerColumn);
-		else
+		} else {
 			fDecorators.add(index, rulerColumn);
+		}
 
 		if (fComposite != null && !fComposite.isDisposed()) {
 			rulerColumn.createControl(this, fComposite);
@@ -587,8 +589,9 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			parent= extension.getControl();
 		}
 
-		if (parent instanceof Composite && !parent.isDisposed())
+		if (parent instanceof Composite && !parent.isDisposed()) {
 			((Composite) parent).layout(true, true);
+		}
 	}
 
 	@Override
@@ -676,25 +679,28 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 	@Override
 	public int getLineOfLastMouseButtonActivity() {
-		if (fLastMouseButtonActivityLine == -1)
+		if (fLastMouseButtonActivityLine == -1) {
 			fLastMouseButtonActivityLine= toDocumentLineNumber(fLocation.y);
-		else if (fTextViewer.getDocument() == null || fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
+		} else if (fTextViewer.getDocument() == null || fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines()) {
 			fLastMouseButtonActivityLine= -1;
+		}
 		return fLastMouseButtonActivityLine;
 	}
 
 	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
-		if (fTextViewer == null || y_coordinate == -1)
+		if (fTextViewer == null || y_coordinate == -1) {
 			return -1;
+		}
 
 		StyledText text= fTextViewer.getTextWidget();
 		int line= text.getLineIndex(y_coordinate);
 
 		if (line == text.getLineCount() - 1) {
 			// check whether y_coordinate exceeds last line
-			if (y_coordinate > text.getLinePixel(line + 1))
+			if (y_coordinate > text.getLinePixel(line + 1)) {
 				return -1;
+			}
 		}
 
 		return widgetLine2ModelLine(fTextViewer, line);

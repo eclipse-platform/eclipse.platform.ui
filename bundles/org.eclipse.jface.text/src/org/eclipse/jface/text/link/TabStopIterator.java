@@ -43,8 +43,9 @@ class TabStopIterator {
 		@Override
 		public int compare(LinkedPosition p1, LinkedPosition p2) {
 			int i= p1.getSequenceNumber() - p2.getSequenceNumber();
-			if (i != 0)
+			if (i != 0) {
 				return i;
+			}
 			return p1.getOffset() - p2.getOffset();
 		}
 
@@ -76,13 +77,14 @@ class TabStopIterator {
 	}
 
 	private int getNextIndex(LinkedPosition current) {
-		if (current != null && fList.get(fIndex) != current)
+		if (current != null && fList.get(fIndex) != current) {
 			return findNext(current);
-		else if (fIsCycling && fIndex == fSize - 1)
+		} else if (fIsCycling && fIndex == fSize - 1) {
 			return 0;
-		else
+		} else { // default: increase
 			// default: increase
 			return fIndex + 1;
+		}
 	}
 
 	/**
@@ -98,8 +100,9 @@ class TabStopIterator {
 		// if the position is in the iteration set, jump to the next one
 		int index= fList.indexOf(current);
 		if (index != -1) {
-			if (fIsCycling && index == fSize - 1)
+			if (fIsCycling && index == fSize - 1) {
 				return 0;
+			}
 			return index + 1;
 		}
 
@@ -108,17 +111,20 @@ class TabStopIterator {
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
 		for (LinkedPosition p : fList) {
-			if (p.offset > current.offset)
-				if (found == null || found.offset > p.offset)
+			if (p.offset > current.offset) {
+				if (found == null || found.offset > p.offset) {
 					found= p;
+				}
+			}
 		}
 
 		if (found != null) {
 			return fList.indexOf(found);
 		} else if (fIsCycling) {
 			return 0;
-		} else
+		} else {
 			return fSize;
+		}
 	}
 
 	boolean hasPrevious(LinkedPosition current) {
@@ -126,12 +132,13 @@ class TabStopIterator {
 	}
 
 	private int getPreviousIndex(LinkedPosition current) {
-		if (current != null && fList.get(fIndex) != current)
+		if (current != null && fList.get(fIndex) != current) {
 			return findPrevious(current);
-		else if (fIsCycling && fIndex == 0)
+		} else if (fIsCycling && fIndex == 0) {
 			return fSize - 1;
-		else
+		} else {
 			return fIndex - 1;
+		}
 	}
 
 	/**
@@ -147,8 +154,9 @@ class TabStopIterator {
 		// if the position is in the iteration set, jump to the next one
 		int index= fList.indexOf(current);
 		if (index != -1) {
-			if (fIsCycling && index == 0)
+			if (fIsCycling && index == 0) {
 				return fSize - 1;
+			}
 			return index - 1;
 		}
 
@@ -157,27 +165,32 @@ class TabStopIterator {
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
 		for (LinkedPosition p : fList) {
-			if (p.offset < current.offset)
-				if (found == null || found.offset < p.offset)
+			if (p.offset < current.offset) {
+				if (found == null || found.offset < p.offset) {
 					found= p;
+				}
+			}
 		}
 		if (found != null) {
 			return fList.indexOf(found);
 		} else if (fIsCycling) {
 			return fSize - 1;
-		} else
+		} else {
 			return -1;
+		}
 	}
 
 	LinkedPosition next(LinkedPosition current) {
-		if (!hasNext(current))
+		if (!hasNext(current)) {
 			throw new NoSuchElementException();
+		}
 		return fList.get(fIndex= getNextIndex(current));
 	}
 
 	LinkedPosition previous(LinkedPosition current) {
-		if (!hasPrevious(current))
+		if (!hasPrevious(current)) {
 			throw new NoSuchElementException();
+		}
 		return fList.get(fIndex= getPreviousIndex(current));
 	}
 
@@ -191,8 +204,9 @@ class TabStopIterator {
 	}
 
 	void removePosition(Position position) {
-		if (fList.remove(position))
+		if (fList.remove(position)) {
 			fSize--;
+		}
 	}
 
 	/**

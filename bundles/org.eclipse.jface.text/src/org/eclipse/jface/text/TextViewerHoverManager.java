@@ -49,13 +49,13 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 
 
 	/** The text viewer */
-	private TextViewer fTextViewer;
+	private final TextViewer fTextViewer;
 	/** The hover information computation thread */
 	private Thread fThread;
 	/** The stopper of the computation thread */
-	private ITextListener fStopper;
+	private final ITextListener fStopper;
 	/** Internal monitor */
-	private Object fMutex= new Object();
+	private final Object fMutex= new Object();
 	/** The currently shown text hover. */
 	private volatile ITextHover fTextHover;
 	/**
@@ -151,10 +151,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 					if (fThread != null) {
 						Object information;
 						try {
-							if (hover instanceof ITextHoverExtension2)
+							if (hover instanceof ITextHoverExtension2) {
 								information= ((ITextHoverExtension2)hover).getHoverInfo2(fTextViewer, region);
-							else
+							} else {
 								information= hover.getHoverInfo(fTextViewer, region);
+							}
 						} catch (ArrayIndexOutOfBoundsException x) {
 							/*
 							 * This code runs in a separate thread which can
@@ -164,14 +165,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 							information= null;
 						}
 
-						if (hover instanceof ITextHoverExtension)
+						if (hover instanceof ITextHoverExtension) {
 							setCustomInformationControlCreator(((ITextHoverExtension) hover).getHoverControlCreator());
-						else
+						} else {
 							setCustomInformationControlCreator(null);
+						}
 
 						setInformation(information, area);
-						if (information != null)
+						if (information != null) {
 							fTextHover= hover;
+						}
 					} else {
 						setInformation(null, null);
 					}
@@ -184,12 +187,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 					log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, "Unexpected runtime error while computing a text hover", ex)); //$NON-NLS-1$
 				} finally {
 					synchronized (fMutex) {
-						if (fTextViewer != null)
+						if (fTextViewer != null) {
 							fTextViewer.removeTextListener(fStopper);
+						}
 						fThread= null;
 						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44756
-						if (!hasFinished)
+						if (!hasFinished) {
 							setInformation(null, null);
+						}
 					}
 				}
 			}
@@ -271,11 +276,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 
 	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
+		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY)) {
 			super.showInformationControl(subjectArea);
-		else
-			if (DEBUG)
+		} else
+			if (DEBUG) {
 				System.out.println("TextViewerHoverManager#showInformationControl(..) did not get widget token"); //$NON-NLS-1$
+			}
 	}
 
 	@Override
@@ -284,15 +290,17 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			fTextHover= null;
 			super.hideInformationControl();
 		} finally {
-			if (fTextViewer != null)
+			if (fTextViewer != null) {
 				fTextViewer.releaseWidgetToken(this);
+			}
 		}
 	}
 
 	@Override
 	void replaceInformationControl(boolean takeFocus) {
-		if (fTextViewer != null)
+		if (fTextViewer != null) {
 			fTextViewer.releaseWidgetToken(this);
+		}
 		super.replaceInformationControl(takeFocus);
 	}
 
@@ -301,8 +309,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		try {
 			super.handleInformationControlDisposed();
 		} finally {
-			if (fTextViewer != null)
+			if (fTextViewer != null) {
 				fTextViewer.releaseWidgetToken(this);
+			}
 		}
 	}
 
@@ -325,13 +334,15 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 
 	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
-		if (! hasInformationControlReplacer())
+		if (! hasInformationControlReplacer()) {
 			return false;
+		}
 
 		IInformationControl iControl= getCurrentInformationControl();
 		if (canReplace(iControl)) {
-			if (cancelReplacingDelay())
+			if (cancelReplacingDelay()) {
 				replaceInformationControl(true);
+			}
 
 			return true;
 		}
@@ -359,8 +370,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			fViewportListener= null;
 
 			StyledText st= fTextViewer.getTextWidget();
-			if (st != null && !st.isDisposed())
+			if (st != null && !st.isDisposed()) {
 				st.removeMouseMoveListener(fMouseMoveListener);
+			}
 			fMouseMoveListener= null;
 		}
 		super.dispose();

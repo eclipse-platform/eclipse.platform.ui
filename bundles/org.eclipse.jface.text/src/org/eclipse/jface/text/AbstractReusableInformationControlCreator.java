@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
 
-	private Map<Shell, IInformationControl> fInformationControls= new HashMap<>();
+	private final Map<Shell, IInformationControl> fInformationControls= new HashMap<>();
 
 	/**
 	 * Creates the control.
@@ -53,10 +53,12 @@ public abstract class AbstractReusableInformationControlCreator implements IInfo
 	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		Composite parent= null;
-		if (e.widget instanceof Shell)
+		if (e.widget instanceof Shell) {
 			parent= ((Shell)e.widget).getParent();
-		if (parent instanceof Shell)
+		}
+		if (parent instanceof Shell) {
 			fInformationControls.remove(parent);
+		}
 	}
 
 

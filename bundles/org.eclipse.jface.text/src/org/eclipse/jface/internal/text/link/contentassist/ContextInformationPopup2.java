@@ -76,10 +76,10 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 		public IContextInformationPresenter fPresenter;
 	}
 
-	private ITextViewer fViewer;
-	private ContentAssistant2 fContentAssistant;
+	private final ITextViewer fViewer;
+	private final ContentAssistant2 fContentAssistant;
 
-	private PopupCloser2 fPopupCloser= new PopupCloser2();
+	private final PopupCloser2 fPopupCloser= new PopupCloser2();
 	private Shell fContextSelectorShell;
 	private Table fContextSelectorTable;
 	private IContextInformation[] fContextSelectorInput;
@@ -89,7 +89,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	private StyledText fContextInfoText;
 	private TextPresentation fTextPresentation;
 
-	private Stack<ContextFrame> fContextFrameStack= new Stack<>();
+	private final Stack<ContextFrame> fContextFrameStack= new Stack<>();
 
 
 	/**
@@ -639,7 +639,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 		 */
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
 
-			private ContextFrame fFrame= fContextFrameStack.peek();
+			private final ContextFrame fFrame= fContextFrameStack.peek();
 
 			@Override
 			public void run() {

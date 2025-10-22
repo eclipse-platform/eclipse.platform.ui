@@ -38,19 +38,19 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 final class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
 
 	/** The string to be displayed in the completion proposal popup */
-	private String fDisplayString;
+	private final String fDisplayString;
 	/** The replacement string */
-	private String fReplacementString;
+	private final String fReplacementString;
 	/** The replacement position. */
-	private Position fReplacementPosition;
+	private final Position fReplacementPosition;
 	/** The cursor position after this proposal has been applied */
-	private int fCursorPosition;
+	private final int fCursorPosition;
 	/** The image to be displayed in the completion proposal popup */
-	private Image fImage;
+	private final Image fImage;
 	/** The context information of this proposal */
-	private IContextInformation fContextInformation;
+	private final IContextInformation fContextInformation;
 	/** The additional info of this proposal */
-	private String fAdditionalProposalInfo;
+	private final String fAdditionalProposalInfo;
 
 	/**
 	 * Creates a new completion proposal based on the provided information.  The replacement string is
@@ -114,8 +114,9 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 
 	@Override
 	public String getDisplayString() {
-		if (fDisplayString != null)
+		if (fDisplayString != null) {
 			return fDisplayString;
+		}
 		return fReplacementString;
 	}
 
@@ -141,8 +142,9 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
 			String content= document.get(fReplacementPosition.getOffset(), offset - fReplacementPosition.getOffset());
-			if (fReplacementString.startsWith(content))
+			if (fReplacementString.startsWith(content)) {
 				return true;
+			}
 		} catch (BadLocationException e) {
 			// ignore concurrently modified document
 		}

@@ -50,7 +50,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		/**
 		 * Updates this document with changes in this adapter's text widget.
 		 */
-		private ModifyListener fModifyListener;
+		private final ModifyListener fModifyListener;
 
 		private InternalDocument() {
 			super(fText.getText());
@@ -68,9 +68,9 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	}
 
 	/** The text. */
-	private Text fText;
+	private final Text fText;
 	/** The modify listeners. */
-	private HashMap<SelectionListener, Listener> fModifyListeners= new HashMap<>();
+	private final HashMap<SelectionListener, Listener> fModifyListeners= new HashMap<>();
 
 	/**
 	 * Creates a content assist subject control adapter for the given text widget.

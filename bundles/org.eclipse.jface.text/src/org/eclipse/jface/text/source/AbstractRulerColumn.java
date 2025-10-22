@@ -108,8 +108,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		@Override
 		public void viewportChanged(int topPixel) {
 			int delta= topPixel - fLastTopPixel;
-			if (scrollVertical(delta))
+			if (scrollVertical(delta)) {
 				fCanvas.update(); // force update the invalidated regions
+			}
 		}
 
 		@Override
@@ -120,11 +121,13 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 			 * was a visual modification (no document event attached) - for example when the
 			 * projection changes.
 			 */
-			if (!event.getViewerRedrawState())
+			if (!event.getViewerRedrawState()) {
 				return;
+			}
 
-			if (fWasShowingEntireContents || event.getDocumentEvent() == null || JFaceTextUtil.isShowingEntireContents(fStyledText))
+			if (fWasShowingEntireContents || event.getDocumentEvent() == null || JFaceTextUtil.isShowingEntireContents(fStyledText)) {
 				redraw();
+			}
 		}
 	}
 
@@ -234,8 +237,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		if (fWidth != width) {
 			fWidth= width;
 			CompositeRuler composite= getParentRuler();
-			if (composite != null)
+			if (composite != null) {
 				composite.relayout();
+			}
 		}
 	}
 
@@ -274,10 +278,12 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @return the font used to render text on the ruler.
 	 */
 	protected final Font getFont() {
-		if (fFont != null)
+		if (fFont != null) {
 			return fFont;
-		if (fStyledText != null && !fStyledText.isDisposed())
+		}
+		if (fStyledText != null && !fStyledText.isDisposed()) {
 			return fStyledText.getFont();
+		}
 		return JFaceResources.getTextFont();
 	}
 
@@ -327,8 +333,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	protected final void setDefaultBackground(Color background) {
 		if (fBackground != background) {
 			fBackground= background;
-			if (fCanvas != null && !fCanvas.isDisposed())
+			if (fCanvas != null && !fCanvas.isDisposed()) {
 				fCanvas.setBackground(getDefaultBackground());
+			}
 			redraw();
 		}
 	}
@@ -339,17 +346,21 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @return the background color
 	 */
 	protected final Color getDefaultBackground() {
-		if (fBackground != null)
+		if (fBackground != null) {
 			return fBackground;
-		if (fStyledText != null && !fStyledText.isDisposed())
+		}
+		if (fStyledText != null && !fStyledText.isDisposed()) {
 			return fStyledText.getBackground();
+		}
 		Display display;
-		if (fCanvas != null && !fCanvas.isDisposed())
+		if (fCanvas != null && !fCanvas.isDisposed()) {
 			display= fCanvas.getDisplay();
-		else
+		} else {
 			display= Display.getCurrent();
-		if (display != null)
+		}
+		if (display != null) {
 			return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
 		return null;
 	}
 
@@ -359,8 +370,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @param hover the annotation hover, <code>null</code> for no hover
 	 */
 	protected final void setHover(IAnnotationHover hover) {
-		if (fHover != hover)
+		if (fHover != hover) {
 			fHover= hover;
+		}
 	}
 
 	@Override
@@ -383,8 +395,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 			fTextViewer= null;
 		}
 
-		if (fStyledText != null)
+		if (fStyledText != null) {
 			fStyledText= null;
+		}
 
 		if (fCanvas != null) {
 			fCanvas.dispose();
@@ -394,8 +407,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	@Override
 	public final void redraw() {
-		if (fCanvas != null && !fCanvas.isDisposed())
+		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.redraw();
+		}
 	}
 
 	/**
@@ -404,8 +418,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @param lines the lines to be redrawn in document coordinates
 	 */
 	protected final void redraw(ILineRange lines) {
-		if (fCanvas == null || fCanvas.isDisposed())
+		if (fCanvas == null || fCanvas.isDisposed()) {
 			return;
+		}
 		int firstModelLine= lines.getStartLine();
 		int lastModelLine= firstModelLine + lines.getNumberOfLines();
 		int firstWidgetLine= JFaceTextUtil.modelLineToWidgetLine(fTextViewer, firstModelLine);
@@ -423,8 +438,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @param event the paint event
 	 */
 	private void paintControl(PaintEvent event) {
-		if (fTextViewer == null)
+		if (fTextViewer == null) {
 			return;
+		}
 		fWasShowingEntireContents= JFaceTextUtil.isShowingEntireContents(fStyledText);
 		fLastTopPixel= fStyledText.getTopPixel();
 
@@ -472,8 +488,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		final int lastLine= firstLine + lines.getNumberOfLines();
 		for (int line= firstLine; line < lastLine; line++) {
 			int modelLine= JFaceTextUtil.widgetLine2ModelLine(fTextViewer, line);
-			if (modelLine == -1)
+			if (modelLine == -1) {
 				continue;
+			}
 			int linePixel= fStyledText.getLinePixel(line);
 			int lineHeight= fStyledText.getLineHeight(fStyledText.getOffsetAtLine(line));
 			paintLine(gc, modelLine, line, linePixel, lineHeight);
@@ -578,8 +595,9 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 *         was not scrolled
 	 */
 	private boolean scrollVertical(int pixels) {
-		if (pixels == 0 || fCanvas == null || fCanvas.isDisposed())
+		if (pixels == 0 || fCanvas == null || fCanvas.isDisposed()) {
 			return false;
+		}
 
 		final int width= getWidth();
 		final int clientAreaHeight= fStyledText.getClientArea().height;
@@ -591,9 +609,10 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 			// downwards scrolling - content moves upwards
 			int sourceY= topMargin + pixels;
 			int scrollHeight= clientAreaHeight - sourceY - bottomMargin;
-			if (scrollHeight > 0)
+			if (scrollHeight > 0) {
 				// scroll recycled area
 				fCanvas.scroll(leftMargin, topMargin, leftMargin, sourceY, width, scrollHeight, true);
+			}
 			if (sourceY > scrollHeight) {
 				// redraw in-between area
 				int redrawY= Math.max(0, topMargin + scrollHeight);
@@ -604,9 +623,10 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 			// upwards scrolling - content moves downwards
 			int destinationY= topMargin - pixels;
 			int scrollHeight= clientAreaHeight - destinationY - bottomMargin;
-			if (scrollHeight > 0)
+			if (scrollHeight > 0) {
 				// scroll recycled area
 				fCanvas.scroll(leftMargin, destinationY, leftMargin, topMargin, width, scrollHeight, true);
+			}
 			if (destinationY > scrollHeight) {
 				// redraw in-between area
 				int redrawY= Math.max(0, topMargin + scrollHeight);

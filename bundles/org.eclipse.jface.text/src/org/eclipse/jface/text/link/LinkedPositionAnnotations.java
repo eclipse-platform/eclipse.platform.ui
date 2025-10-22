@@ -68,8 +68,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 			if (position != null) {
 				fFocusAnnotation= new Annotation(FOCUS_ANNOTATION_TYPE, false, ""); //$NON-NLS-1$
 				addAnnotation(fFocusAnnotation, position, false);
-			} else
+			} else {
 				fFocusAnnotation= null;
+			}
 		}
 	}
 
@@ -87,8 +88,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 			if (position != null) {
 				fExitAnnotation= new Annotation(EXIT_ANNOTATION_TYPE, false, ""); //$NON-NLS-1$
 				addAnnotation(fExitAnnotation, position, false);
-			} else
+			} else {
 				fExitAnnotation= null;
+			}
 		}
 	}
 
@@ -100,8 +102,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
 	private void setGroupPositions(List<Position> positions) throws BadLocationException {
-		if (!fMarkSlaves)
+		if (!fMarkSlaves) {
 			return;
+		}
 
 		// remove all positions which are already there
 		// Algorithm: toRemove contains all mappings at first, but all that are in
@@ -133,8 +136,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
 	private void setTargetPositions(List<Position> positions) throws BadLocationException {
-		if (!fMarkTargets)
+		if (!fMarkTargets) {
 			return;
+		}
 
 		// remove all positions which are already there
 		// Algorithm: toRemove contains all mappings at first, but all that are in
@@ -169,30 +173,35 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	public void switchToPosition(LinkedModeModel env, LinkedPosition position) {
 		if (fDocument == null ||
 				(position != null && getPosition(fFocusAnnotation) == position) ||
-				(position == null && fFocusAnnotation == null))
+				(position == null && fFocusAnnotation == null)) {
 			return;
+		}
 
 		LinkedPositionGroup linkedGroup= null;
-		if (position != null)
+		if (position != null) {
 			linkedGroup= env.getGroupForPosition(position);
+		}
 
 		List<Position> targets= new ArrayList<>();
 		targets.addAll(Arrays.asList(fTargets));
 
 		List<Position> group;
-		if (linkedGroup != null)
+		if (linkedGroup != null) {
 			group= new ArrayList<>(Arrays.asList(linkedGroup.getPositions()));
-		else
+		} else {
 			group= new ArrayList<>();
+		}
 
-		if (position == null || !fDocument.equals(position.getDocument()))
+		if (position == null || !fDocument.equals(position.getDocument())) {
 			// position is not valid if not in this document
 			position= null;
+		}
 
 		LinkedPosition exit= fExitPosition;
-		if (exit == null || !fDocument.equals(exit.getDocument()))
+		if (exit == null || !fDocument.equals(exit.getDocument())) {
 			// position is not valid if not in this document
 			exit= null;
+		}
 
 
 		if (exit != null) {
@@ -229,8 +238,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	private void prune(List<Position> list) {
 		for (Iterator<Position> iter= list.iterator(); iter.hasNext();) {
 			LinkedPosition pos= (LinkedPosition) iter.next();
-			if (!pos.getDocument().equals(fDocument))
+			if (!pos.getDocument().equals(fDocument)) {
 				iter.remove();
+			}
 		}
 	}
 

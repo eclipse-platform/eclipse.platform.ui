@@ -31,7 +31,7 @@ public class ProposalPosition extends LinkedPosition {
 	/**
 	 * The proposals
 	 */
-	private ICompletionProposal[] fProposals;
+	private final ICompletionProposal[] fProposals;
 
 	/**
 	 * Creates a new instance.

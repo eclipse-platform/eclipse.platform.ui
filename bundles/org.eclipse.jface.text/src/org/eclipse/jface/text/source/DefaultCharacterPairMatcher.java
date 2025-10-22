@@ -99,7 +99,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 	@Override
 	public IRegion match(IDocument doc, int offset) {
-		if (doc == null || offset < 0 || offset > doc.getLength()) return null;
+		if (doc == null || offset < 0 || offset > doc.getLength()) {
+			return null;
+		}
 		try {
 			return performMatch(doc, offset);
 		} catch (BadLocationException ble) {
@@ -114,15 +116,17 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 */
 	@Override
 	public IRegion match(IDocument document, int offset, int length) {
-		if (document == null || offset < 0 || offset > document.getLength() || Math.abs(length) > 1)
+		if (document == null || offset < 0 || offset > document.getLength() || Math.abs(length) > 1) {
 			return null;
+		}
 
 		try {
 			int sourceCaretOffset= offset + length;
 			if (Math.abs(length) == 1) {
 				char ch= length > 0 ? document.getChar(offset) : document.getChar(sourceCaretOffset);
-				if (!fPairs.contains(ch))
+				if (!fPairs.contains(ch)) {
 					return null;
+				}
 			}
 			int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
 			sourceCaretOffset+= adjustment;
@@ -139,8 +143,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 */
 	@Override
 	public IRegion findEnclosingPeerCharacters(IDocument document, int offset, int length) {
-		if (document == null || offset < 0 || offset > document.getLength())
+		if (document == null || offset < 0 || offset > document.getLength()) {
 			return null;
+		}
 
 		//maybe a bracket is selected
 		IRegion region= match(document, offset, length);
@@ -154,8 +159,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			final String partition= TextUtilities.getContentType(document, fPartitioning, offset, false);
 			DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(document, fPartitioning, partition);
 			IRegion enclosingPeers= findEnclosingPeers(document, partDoc, offset, length, 0, document.getLength());
-			if (enclosingPeers != null)
+			if (enclosingPeers != null) {
 				return enclosingPeers;
+			}
 			partDoc= new DocumentPartitionAccessor(document, fPartitioning, IDocument.DEFAULT_CONTENT_TYPE);
 			return findEnclosingPeers(document, partDoc, offset, length, 0, document.getLength());
 		} catch (BadLocationException ble) {
@@ -198,13 +204,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		try {
 			String prevEndContentType= TextUtilities.getContentType(document, fPartitioning, previousEndOffset, false);
 			String currEndContentType= TextUtilities.getContentType(document, fPartitioning, currentEndOffset, false);
-			if (!prevEndContentType.equals(currEndContentType))
+			if (!prevEndContentType.equals(currEndContentType)) {
 				return true;
+			}
 
 			String prevStartContentType= TextUtilities.getContentType(document, fPartitioning, previousStartOffset, true);
 			String currStartContentType= TextUtilities.getContentType(document, fPartitioning, currentStartOffset, true);
-			if (!prevStartContentType.equals(currStartContentType))
+			if (!prevStartContentType.equals(currStartContentType)) {
 				return true;
+			}
 
 			int start;
 			int end;
@@ -250,8 +258,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * @since 3.8
 	 */
 	private int getOffsetAdjustment(IDocument document, int offset, int length) {
-		if (length == 0 || Math.abs(length) > 1 || offset >= document.getLength())
+		if (length == 0 || Math.abs(length) > 1 || offset >= document.getLength()) {
 			return 0;
+		}
 		try {
 			if (length < 0) {
 				if (fPairs.isStartCharacter(document.getChar(offset))) {
@@ -294,8 +303,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			}
 			ch= isForward ? prevChar : currChar;
 		} else {
-			if (!fPairs.contains(prevChar))
+			if (!fPairs.contains(prevChar)) {
 				return null;
+			}
 			isForward= fPairs.isStartCharacter(prevChar);
 			ch= prevChar;
 		}
@@ -307,11 +317,13 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(doc, fPartitioning, partition);
 		int endOffset= findMatchingPeer(partDoc, ch, fPairs.getMatching(ch),
 				isForward, isForward ? doc.getLength() : -1, searchStartPosition);
-		if (endOffset == -1)
+		if (endOffset == -1) {
 			return null;
+		}
 		final int adjustedEndOffset= isForward ? endOffset + 1 : endOffset;
-		if (adjustedEndOffset == adjustedOffset)
+		if (adjustedEndOffset == adjustedOffset) {
 			return null;
+		}
 		return new Region(Math.min(adjustedOffset, adjustedEndOffset),
 				Math.abs(adjustedEndOffset - adjustedOffset));
 	}
@@ -334,8 +346,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		while (pos != boundary) {
 			final char c= doc.getChar(pos);
 			if (c == end && doc.inPartition(pos)) {
-				if (nestingLevel == 0)
+				if (nestingLevel == 0) {
 					return pos;
+				}
 				nestingLevel--;
 			} else if (c == start && doc.inPartition(pos)) {
 				nestingLevel++;
@@ -427,8 +440,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			}
 		}
 		pos2++;
-		if (pos1 < lowerBoundary || pos2 > upperBoundary)
+		if (pos1 < lowerBoundary || pos2 > upperBoundary) {
 			return null;
+		}
 		return new Region(pos1, pos2 - pos1);
 	}
 
@@ -477,7 +491,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		private final IDocument fDocument;
 		private final String fPartitioning, fPartition;
 		private ITypedRegion fCachedPartition;
-		private int fLength;
+		private final int fLength;
 
 		/**
 		 * Creates a new partitioned document for the specified document.
@@ -527,16 +541,19 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public int getNextPosition(int pos, boolean searchForward) {
 			final ITypedRegion partition= getPartition(pos);
-			if (partition == null || fPartition.equals(partition.getType()))
+			if (partition == null || fPartition.equals(partition.getType())) {
 				return simpleIncrement(pos, searchForward);
+			}
 			if (searchForward) {
 				int end= partition.getOffset() + partition.getLength();
-				if (pos < end)
+				if (pos < end) {
 					return end;
+				}
 			} else {
 				int offset= partition.getOffset();
-				if (pos > offset)
+				if (pos > offset) {
 					return offset - 1;
+				}
 			}
 			return simpleIncrement(pos, searchForward);
 		}
@@ -592,8 +609,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		public boolean contains(char c) {
 			char[] pairs= fPairs;
 			for (char pair : pairs) {
-				if (c == pair)
+				if (c == pair) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -608,8 +626,11 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public boolean isOpeningCharacter(char c, boolean searchForward) {
 			for (int i= 0; i < fPairs.length; i += 2) {
-				if (searchForward && getStartChar(i) == c) return true;
-				else if (!searchForward && getEndChar(i) == c) return true;
+				if (searchForward && getStartChar(i) == c) {
+					return true;
+				} else if (!searchForward && getEndChar(i) == c) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -643,8 +664,11 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public char getMatching(char c) {
 			for (int i= 0; i < fPairs.length; i += 2) {
-				if (getStartChar(i) == c) return getEndChar(i);
-				else if (getEndChar(i) == c) return getStartChar(i);
+				if (getStartChar(i) == c) {
+					return getEndChar(i);
+				} else if (getEndChar(i) == c) {
+					return getStartChar(i);
+				}
 			}
 			Assert.isTrue(false);
 			return '\0';

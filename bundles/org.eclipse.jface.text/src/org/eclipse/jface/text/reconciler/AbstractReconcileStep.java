@@ -67,8 +67,9 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 
-		if (!isLastStep())
+		if (!isLastStep()) {
 			fNextStep.setProgressMonitor(monitor);
+		}
 	}
 
 	@Override
@@ -128,11 +129,13 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	 * @return an array with the merged reconcile results
 	 */
 	private IReconcileResult[] merge(IReconcileResult[] results1, IReconcileResult[] results2) {
-		if (results1 == null)
+		if (results1 == null) {
 			return results2;
+		}
 
-		if (results2 == null)
+		if (results2 == null) {
 			return results1;
+		}
 
 		// XXX: not yet performance optimized
 		Collection<IReconcileResult> collection= new ArrayList<>(Arrays.asList(results1));
@@ -158,8 +161,9 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	public void setInputModel(IReconcilableModel inputModel) {
 		fInputModel= inputModel;
 
-		if (!isLastStep())
+		if (!isLastStep()) {
 			fNextStep.setInputModel(getModel());
+		}
 	}
 
 	/**

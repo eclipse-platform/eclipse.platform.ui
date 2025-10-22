@@ -28,7 +28,7 @@ class DocumentClone extends AbstractDocument {
 
 	private static class StringTextStore implements ITextStore {
 
-		private String fContent;
+		private final String fContent;
 
 		/**
 		 * Creates a new string text store with the given content.

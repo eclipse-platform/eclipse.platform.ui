@@ -101,8 +101,9 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 	}
 
 	private void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != model)
+		if (fAnnotationModel != model) {
 			fAnnotationModel= model;
+		}
 	}
 
 
@@ -129,10 +130,12 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 	@Override
 	protected String createDisplayString(int line) {
 		StringBuilder buffer= new StringBuilder();
-		if (fShowNumbers)
+		if (fShowNumbers) {
 			buffer.append(super.createDisplayString(line));
-		if (fCharacterDisplay && getModel() != null)
+		}
+		if (fCharacterDisplay && getModel() != null) {
 			buffer.append(fDiffPainter.getDisplayCharacter(line));
+		}
 		return buffer.toString();
 	}
 
@@ -140,18 +143,21 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 	protected int computeNumberOfDigits() {
 		int digits;
 		if (fCharacterDisplay && getModel() != null) {
-			if (fShowNumbers)
+			if (fShowNumbers) {
 				digits= super.computeNumberOfDigits() + 1;
-			else
+			} else {
 				digits= 1;
+			}
 		} else {
-			if (fShowNumbers)
+			if (fShowNumbers) {
 				digits= super.computeNumberOfDigits();
-			else
+			} else {
 				digits= 0;
+			}
 		}
-		if (fRevisionPainter.hasInformation())
+		if (fRevisionPainter.hasInformation()) {
 			digits+= fRevisionPainter.getRequiredWidth();
+		}
 		return digits;
 	}
 
@@ -176,17 +182,20 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 			}
 		}
 		gc.setForeground(foreground);
-		if (fShowNumbers || fCharacterDisplay)
+		if (fShowNumbers || fCharacterDisplay) {
 			super.doPaint(gc, visibleLines);
+		}
 	}
 
 	@Override
 	public IAnnotationHover getHover() {
 		int activeLine= getParentRuler().getLineOfLastMouseButtonActivity();
-		if (fRevisionPainter.hasHover(activeLine))
+		if (fRevisionPainter.hasHover(activeLine)) {
 			return fRevisionPainter.getHover();
-		if (fDiffPainter.hasHover(activeLine))
+		}
+		if (fDiffPainter.hasHover(activeLine)) {
 			return fDiffPainter.getHover();
+		}
 		return null;
 	}
 

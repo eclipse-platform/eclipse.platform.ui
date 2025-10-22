@@ -34,7 +34,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension5;
 class CodeMiningStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 
-	private Supplier<ITextViewer> fViewerSupplier;
+	private final Supplier<ITextViewer> fViewerSupplier;
 
 	public CodeMiningStrategy(Supplier<ITextViewer> viewerSupplier) {
 		fViewerSupplier= viewerSupplier;

@@ -217,7 +217,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		private Thread fThread;
 		private boolean fIsReset= false;
-		private Object fMutex= new Object();
+		private final Object fMutex= new Object();
 		private int fShowStyle;
 
 		private final static int SHOW_PROPOSALS= 1;
@@ -710,7 +710,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private ContextInformationPopup2 fContextInfoPopup;
 
 	private boolean fKeyListenerHooked= false;
-	private IContentAssistListener2[] fListeners= new IContentAssistListener2[4];
+	private final IContentAssistListener2[] fListeners= new IContentAssistListener2[4];
 	private int fCompletionPosition;
 	private String[] fProposalStrings;
 	private ICompletionProposal[] fProposals;
