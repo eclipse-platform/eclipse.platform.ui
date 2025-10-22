@@ -108,6 +108,12 @@ public final class UIPlugin extends AbstractUIPlugin {
 		boolean ignoreDisabledIcons = PrefUtil.getAPIPreferenceStore()
 				.getBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS);
 		ActionContributionItem.setIgnoreDisabledIcons(ignoreDisabledIcons);
+
+		boolean useDesaturatedDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS);
+		if (useDesaturatedDisabledIcons) {
+			System.setProperty("org.eclipse.swt.image.disablement", "desaturated"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 }

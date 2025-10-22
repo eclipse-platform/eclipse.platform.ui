@@ -116,6 +116,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private Button themingEnabled;
 	private Button rescaleAtRuntime;
 	private Button ignoreDisabledIcons;
+	private Button useDesaturatedDisabledIcons;
 
 	private Button hideIconsForViewTabs;
 	private Button showFullTextForViewTabs;
@@ -247,6 +248,13 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		ignoreDisabledIcons = createCheckButton(parent, WorkbenchMessages.ViewsPreference_ignoreDisabledIcons,
 				initialStateIgnoreDisabledIcons);
 		ignoreDisabledIcons.setToolTipText(WorkbenchMessages.ViewsPreference_ignoreDisabledIcons_tooltip);
+
+		boolean initialStateDesaturatedDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS);
+		useDesaturatedDisabledIcons = createCheckButton(parent,
+				WorkbenchMessages.ViewsPreference_useDesaturatedDisabledIcons, initialStateDesaturatedDisabledIcons);
+		useDesaturatedDisabledIcons
+				.setToolTipText(WorkbenchMessages.ViewsPreference_useDesaturatedDisabledIcons_tooltip);
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
@@ -380,6 +388,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS,
 				ignoreDisabledIcons.getSelection());
+		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS,
+				useDesaturatedDisabledIcons.getSelection());
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
@@ -485,6 +495,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 		ignoreDisabledIcons
 				.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS));
+		useDesaturatedDisabledIcons
+				.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS));
 
 		useRoundTabs.setSelection(
 				defaultPrefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT));

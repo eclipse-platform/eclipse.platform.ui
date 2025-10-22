@@ -62,6 +62,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		node.putBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, true);
 		node.putBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS, true);
+		node.putBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS, true);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
 				false);
