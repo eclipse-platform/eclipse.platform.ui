@@ -64,21 +64,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class ThemeEngine implements IThemeEngine {
-	private List<Theme> themes = new ArrayList<>();
-	private List<CSSEngine> cssEngines = new ArrayList<>();
+	private final List<Theme> themes = new ArrayList<>();
+	private final List<CSSEngine> cssEngines = new ArrayList<>();
 
 	// kept for theme notifications only
-	private Display display;
+	private final Display display;
 
 	private ITheme currentTheme;
 
-	private List<String> globalStyles = new ArrayList<>();
-	private List<IResourceLocator> globalSourceLocators = new ArrayList<>();
+	private final List<String> globalStyles = new ArrayList<>();
+	private final List<IResourceLocator> globalSourceLocators = new ArrayList<>();
 
-	private HashMap<String, List<String>> stylesheets = new HashMap<>();
-	private HashMap<String, List<String>> stylesheetPluginExtensions = new HashMap<>();
-	private HashMap<String, List<String>> modifiedStylesheets = new HashMap<>();
-	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<>();
+	private final HashMap<String, List<String>> stylesheets = new HashMap<>();
+	private final HashMap<String, List<String>> stylesheetPluginExtensions = new HashMap<>();
+	private final HashMap<String, List<String>> modifiedStylesheets = new HashMap<>();
+	private final HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<>();
 
 	private static final String THEMEID_KEY = "themeid";
 
