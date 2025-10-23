@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.search.tests;
 
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
+
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.junit.Test;
 
 public class TextSearchRegistryTest {
 
