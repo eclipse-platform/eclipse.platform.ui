@@ -13,13 +13,14 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -51,10 +52,12 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
 public class PositionTrackerTest {
 	FileSearchQuery fQuery1;
 
-	@ClassRule
+	@RegisterExtension
+	static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
+
 	public static JUnitSourceSetup junitSource= new JUnitSourceSetup();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
@@ -79,7 +82,7 @@ public class PositionTrackerTest {
 
 	@Test
 	public void testInsertInsideMatch() throws Exception {
-		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/882", Util.isMac());
+		assumeFalse(Util.isMac(), "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/882");
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
@@ -102,14 +105,14 @@ public class PositionTrackerTest {
 			IDocument doc= fb.getDocument();
 
 			for (Match matche : matches) {
-				assertNotNull("null match for file: " + file, matche);
+				assertNotNull(matche, "null match for file: " + file);
 				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
-				assertNotNull("null position for match: " + matche, currentPosition);
+				assertNotNull(currentPosition, "null position for match: " + matche);
 				doc.replace(currentPosition.offset + 1, 0, "Test");
 			}
 			for (Match matche : matches) {
 				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
-				assertNotNull("null position for match: " + matche, currentPosition);
+				assertNotNull(currentPosition, "null position for match: " + matche);
 				String text= doc.get(currentPosition.offset, currentPosition.length);
 				StringBuilder buf= new StringBuilder();
 				buf.append(text.charAt(0));
@@ -137,7 +140,7 @@ public class PositionTrackerTest {
 
 			for (int i= 0; i < originalStarts.length; i++) {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-				assertNotNull("null position for match: " + matches[i], currentPosition);
+				assertNotNull(currentPosition, "null position for match: " + matches[i]);
 				assertEquals(originalStarts[i] + "Test".length(), currentPosition.getOffset());
 
 			}

@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import org.junit.rules.ExternalResource;
-
-import org.eclipse.core.runtime.CoreException;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.tests.ResourceHelper;
 
-public class JUnitSourceSetup extends ExternalResource {
+public class JUnitSourceSetup implements BeforeAllCallback, AfterAllCallback {
 
 	public static final String STANDARD_PROJECT_NAME= "JUnitSource";
 
@@ -42,7 +42,7 @@ public class JUnitSourceSetup extends ExternalResource {
 	}
 
 	@Override
-	public void before() throws Exception {
+	public void beforeAll(ExtensionContext context) throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(fProjectName);
 		if (!project.exists()) { // allow nesting of JUnitSetups
 			fProject= ResourceHelper.createJUnitSourceProject(fProjectName);
@@ -50,13 +50,9 @@ public class JUnitSourceSetup extends ExternalResource {
 	}
 
 	@Override
-	public void after() /*throws Exception (but JUnit4 API is stupid...)*/ {
+	public void afterAll(ExtensionContext context) throws Exception {
 		if (fProject != null) { // delete only by the setup who created the project
-			try {
-				ResourceHelper.deleteProject(fProjectName);
-			} catch (CoreException e) {
-				throw new AssertionError(e); // workaround stupid JUnit4 API
-			}
+			ResourceHelper.deleteProject(fProjectName);
 			fProject= null;
 		}
 	}

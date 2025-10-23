@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,12 +38,12 @@ public class FileCharSequenceTests {
 
 	private IProject fProject;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("my-project"); //$NON-NLS-1$
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}
@@ -114,23 +114,23 @@ public class FileCharSequenceTests {
 
 	private void assertEquals(String desc, CharSequence actual, CharSequence expected) {
 		for (int i= 0; i < expected.length(); i++) {
-			Assert.assertEquals(desc + " - forward " + i, expected.charAt(i), actual.charAt(i));
+			Assertions.assertEquals(expected.charAt(i), actual.charAt(i), desc + " - forward " + i);
 		}
-		Assert.assertEquals(desc + " - length", expected.length(), actual.length());
+		Assertions.assertEquals(expected.length(), actual.length(), desc + " - length");
 		for (int i= expected.length() - 1; i >= 0; i--) {
-			Assert.assertEquals(desc + " - backward " + i, expected.charAt(i), actual.charAt(i));
+			Assertions.assertEquals(expected.charAt(i), actual.charAt(i), desc + " - backward " + i);
 		}
 		for (int i= 0; i < expected.length(); i+= 567) {
-			Assert.assertEquals(desc + " - forward - steps" + i, expected.charAt(i), actual.charAt(i));
+			Assertions.assertEquals(expected.charAt(i), actual.charAt(i), desc + " - forward - steps" + i);
 		}
 		for (int i= 0; i < expected.length(); i+= FileCharSequenceProvider.BUFFER_SIZE) {
-			Assert.assertEquals(desc + " - forward - buffersize" + i, expected.charAt(i), actual.charAt(i));
+			Assertions.assertEquals(expected.charAt(i), actual.charAt(i), desc + " - forward - buffersize" + i);
 		}
 
 		assertOutOfBound(desc + "access at length", actual, expected.length());
 		assertOutOfBound(desc + "access at -1", actual, -1);
 
-		Assert.assertEquals(desc + " - length", actual.toString(), expected.toString());
+		Assertions.assertEquals(expected.toString(), actual.toString(), desc + " - length");
 	}
 
 
@@ -140,7 +140,7 @@ public class FileCharSequenceTests {
 		} catch (IndexOutOfBoundsException e) {
 			return;
 		}
-		assertFalse(message, true);
+		assertFalse(true, message);
 	}
 
 

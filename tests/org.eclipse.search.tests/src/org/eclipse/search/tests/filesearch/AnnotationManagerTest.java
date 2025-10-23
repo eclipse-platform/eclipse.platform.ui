@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -59,10 +59,10 @@ public class AnnotationManagerTest {
 
 	private final AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
-	@ClassRule
-	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
+	@RegisterExtension
+	static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		SearchTestUtil.ensureWelcomePageClosed();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
@@ -72,7 +72,7 @@ public class AnnotationManagerTest {
 		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fQuery1= null;
@@ -104,7 +104,7 @@ public class AnnotationManagerTest {
 				Match[] matches= result.getMatches(file);
 				for (int j= 0; j < matches.length; j++) {
 					Position position= new Position(matches[j].getOffset(), matches[j].getLength());
-					assertTrue("position not found at: "+j, positions.remove(position)); //$NON-NLS-1$
+					assertTrue(positions.remove(position), "position not found at: "+j); //$NON-NLS-1$
 				}
 				assertEquals(0, positions.size());
 

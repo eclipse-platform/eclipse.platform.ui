@@ -13,16 +13,17 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
@@ -33,10 +34,10 @@ import org.eclipse.search.ui.text.Match;
 public class SortingTest {
 	FileSearchQuery fQuery1;
 
-	@ClassRule
-	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
+	@RegisterExtension
+	static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
@@ -60,20 +61,20 @@ public class SortingTest {
 		}
 		// now remove them and readd them in reverse order
 		result.removeAll();
-		assertEquals("removed all matches", 0, result.getMatchCount());
+		assertEquals(0, result.getMatchCount(), "removed all matches");
 
 		for (int i= allMatches.size()-1; i >= 0; i--) {
 			result.addMatch(allMatches.get(i));
 		}
 
-		assertEquals("Test that all matches have been added again", result.getMatchCount(), originalMatchCount);
+		assertEquals(result.getMatchCount(), originalMatchCount, "Test that all matches have been added again");
 
 		// now check that they're ordered by position.
 		for (Object element : elements) {
 			Match[] matches = result.getMatches(element);
-			assertTrue("has matches", matches.length > 0);
+			assertTrue(matches.length > 0, "has matches");
 			for (int j= 1; j < matches.length; j++) {
-				assertTrue("order problem", isLessOrEqual(matches[j-1], matches[j]));
+				assertTrue(isLessOrEqual(matches[j - 1], matches[j]), "order problem");
 			}
 		}
 	}

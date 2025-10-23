@@ -18,10 +18,12 @@ Require-Bundle:
  org.eclipse.jface.text;bundle-version="[3.24.200,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.17.100,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="[3.14.100,4.0.0)",
- org.junit;bundle-version="4.13.2"
+ org.hamcrest;bundle-version="3.0.0"
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.14.0,6.0.0)",
  org.junit.jupiter.api.function;version="[5.14.0,6.0.0)",
- org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
+ org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
+ org.opentest4j
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir

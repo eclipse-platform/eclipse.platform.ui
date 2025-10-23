@@ -14,13 +14,14 @@
 
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -47,10 +48,10 @@ import org.eclipse.search.ui.text.Match;
 public class SearchResultPageTest {
 	FileSearchQuery fQuery1;
 
-	@ClassRule
-	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
+	@RegisterExtension
+	static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		SearchTestUtil.ensureWelcomePageClosed();
 		String[] fileNamePatterns= { "*.java" };
@@ -60,7 +61,7 @@ public class SearchResultPageTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testBasicDisplay() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
@@ -86,7 +87,7 @@ public class SearchResultPageTest {
 
 
 	@Test
-	@Ignore // checkElementDisplay(..) misses cases where one line contains multiple matches
+	@Disabled // checkElementDisplay(..) misses cases where one line contains multiple matches
 	public void testRemoveTreeMatches() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
