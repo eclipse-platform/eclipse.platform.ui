@@ -34,7 +34,7 @@ public class CSS2PrimitiveValueImpl implements CSSPrimitiveValue {
 
 	private int i = -9999;
 
-	private short primitiveType;
+	private final short primitiveType;
 
 	public CSS2PrimitiveValueImpl(String s) {
 		this.s = s;

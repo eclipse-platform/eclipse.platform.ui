@@ -21,8 +21,8 @@ import org.w3c.dom.NodeList;
 
 public class ArrayNodeList implements NodeList {
 
-	private Object[] elements;
-	private CSSEngine engine;
+	private final Object[] elements;
+	private final CSSEngine engine;
 
 	public ArrayNodeList(List<?> elements, CSSEngine engine) {
 		this(elements.toArray(), engine);

@@ -29,8 +29,8 @@ import org.w3c.dom.css.CSSValue;
 public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyleDeclaration {
 
 	private boolean readOnly;
-	private CSSRule parentRule;
-	private List<CSSProperty> properties = new ArrayList<>();
+	private final CSSRule parentRule;
+	private final List<CSSProperty> properties = new ArrayList<>();
 	private CSSPropertyList cssPropertyListView;
 
 	public CSSStyleDeclarationImpl(CSSRule parentRule) {

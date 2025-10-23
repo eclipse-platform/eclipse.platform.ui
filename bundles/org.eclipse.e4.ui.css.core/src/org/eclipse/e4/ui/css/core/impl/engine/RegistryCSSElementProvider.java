@@ -36,7 +36,7 @@ public class RegistryCSSElementProvider implements IElementProvider {
 
 	final private IExtensionRegistry registry;
 
-	private Map<Class<?>, IElementProvider> providerCache = Collections
+	private final Map<Class<?>, IElementProvider> providerCache = Collections
 			.synchronizedMap(new WeakHashMap<>());
 
 	public RegistryCSSElementProvider(IExtensionRegistry registry) {

@@ -27,7 +27,7 @@ import org.w3c.dom.css.CSSStyleSheet;
 
 public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, ExtendedCSSRule {
 
-	private SelectorList selectors;
+	private final SelectorList selectors;
 	private CSSStyleDeclaration styleDeclaration;
 
 	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule, SelectorList selectors) {

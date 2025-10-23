@@ -113,12 +113,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * w3c {@link DocumentCSS}.
 	 */
-	private ExtendedDocumentCSS documentCSS;
+	private final ExtendedDocumentCSS documentCSS;
 
 	/**
 	 * w3c {@link ViewCSS}.
 	 */
-	private ViewCSS viewCSS;
+	private final ViewCSS viewCSS;
 
 	/**
 	 * {@link IElementProvider} used to retrieve w3c Element linked to the
@@ -144,7 +144,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 */
 	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<>();
 	// for performance hold a map of handlers to singleton list
-	private Map<ICSSPropertyHandler2, List<ICSSPropertyHandler2>> propertyHandler2InstanceMap = new HashMap<>();
+	private final Map<ICSSPropertyHandler2, List<ICSSPropertyHandler2>> propertyHandler2InstanceMap = new HashMap<>();
 
 	private Map<String, String> currentCSSPropertiesApplied;
 

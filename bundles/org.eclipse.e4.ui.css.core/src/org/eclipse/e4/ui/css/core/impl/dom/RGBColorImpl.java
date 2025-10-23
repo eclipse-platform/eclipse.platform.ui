@@ -22,9 +22,9 @@ import org.w3c.dom.css.RGBColor;
 
 public class RGBColorImpl extends CSSValueImpl implements RGBColor {
 
-	private CSSPrimitiveValue red;
-	private CSSPrimitiveValue green;
-	private CSSPrimitiveValue blue;
+	private final CSSPrimitiveValue red;
+	private final CSSPrimitiveValue green;
+	private final CSSPrimitiveValue blue;
 
 	public RGBColorImpl(LexicalUnit lexicalUnit) {
 		LexicalUnit nextUnit = lexicalUnit.getParameters();
