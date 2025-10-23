@@ -53,8 +53,8 @@ public class PlistFileWriter {
 	private static final String KEY_VALUE_CF_BUNDLE_URL_TYPES = "CFBundleURLTypes"; //$NON-NLS-1$
 	private static final String KEY_VALUE_CF_BUNDLE_URL_NAME = "CFBundleURLName"; //$NON-NLS-1$
 	private static final String KEY_VALUE_CF_BUNDLE_URL_SCHEMES = "CFBundleURLSchemes"; //$NON-NLS-1$
-	private Document document;
-	private Element array;
+	private final Document document;
+	private final Element array;
 
 	/**
 	 * Creates an instance of the PlistFileWriter. Throws an
