@@ -46,13 +46,13 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 	 */
 	private static Map<String, Class<? extends ICSSPropertyHandler>> defaultCSSProperties = new HashMap<>();
 
-	private Map<Class<?>, List<ICSSPropertyHandler>> propertiesHandler = new HashMap<>();
+	private final Map<Class<?>, List<ICSSPropertyHandler>> propertiesHandler = new HashMap<>();
 
 	/**
 	 * Custom <code>Map</code> of <code>ICSSPropertyHandler</code> stored
 	 * under a CSS property <code>name</code> key.
 	 */
-	private Map<String, Class<? extends ICSSPropertyHandler>> customCSSProperties = new HashMap<>();
+	private final Map<String, Class<? extends ICSSPropertyHandler>> customCSSProperties = new HashMap<>();
 
 	/**
 	 * True if custom CSS properties is merged with default CSS Properties.

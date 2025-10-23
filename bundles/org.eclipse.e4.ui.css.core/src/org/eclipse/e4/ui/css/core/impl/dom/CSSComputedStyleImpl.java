@@ -29,7 +29,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  */
 public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 
-	private List<StyleWrapper> styleRules;
+	private final List<StyleWrapper> styleRules;
 
 	public CSSComputedStyleImpl(List<StyleWrapper> styleRules) {
 		super(null);

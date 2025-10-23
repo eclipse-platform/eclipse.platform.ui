@@ -40,14 +40,14 @@ import org.w3c.dom.stylesheets.StyleSheetList;
  */
 public class DocumentCSSImpl implements ExtendedDocumentCSS {
 
-	private StyleSheetListImpl styleSheetList = new StyleSheetListImpl();
+	private final StyleSheetListImpl styleSheetList = new StyleSheetListImpl();
 
 	/**
 	 * key=selector type, value = CSSStyleDeclaration
 	 */
 	private Map<Integer, List<?>> styleDeclarationMap;
 
-	private List<StyleSheetChangeListener> styleSheetChangeListeners = new ArrayList<>(1);
+	private final List<StyleSheetChangeListener> styleSheetChangeListeners = new ArrayList<>(1);
 
 	@Override
 	public StyleSheetList getStyleSheets() {

@@ -48,12 +48,12 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 
 	private static final String PROPERTY_HANDLERS_EXTPOINT = "org.eclipse.e4.ui.css.core.propertyHandler";
 
-	private IExtensionRegistry registry;
+	private final IExtensionRegistry registry;
 	private boolean hasDeprecatedProperties = false; // mild optimization for getCSSProperties()
 
-	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();
+	private final Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();
 	// for performance hold a map of handlers to singleton list
-	private Map<ICSSPropertyHandler, List<ICSSPropertyHandler>> propertyHandlerInstanceMap = new HashMap<>();
+	private final Map<ICSSPropertyHandler, List<ICSSPropertyHandler>> propertyHandlerInstanceMap = new HashMap<>();
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
 		this.registry = registry;
@@ -234,9 +234,9 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 	}
 
 	private class DeprecatedPropertyHandlerWrapper implements ICSSPropertyHandler {
-		private ICSSPropertyHandler delegate;
-		private String message;
-		private Set<String> logged = new HashSet<>();
+		private final ICSSPropertyHandler delegate;
+		private final String message;
+		private final Set<String> logged = new HashSet<>();
 
 		DeprecatedPropertyHandlerWrapper(ICSSPropertyHandler handler, String message) {
 			delegate = handler;

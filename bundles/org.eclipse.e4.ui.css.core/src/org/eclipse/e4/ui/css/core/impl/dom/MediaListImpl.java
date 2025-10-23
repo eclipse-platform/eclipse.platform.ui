@@ -23,7 +23,7 @@ import org.w3c.dom.stylesheets.MediaList;
 
 public class MediaListImpl implements MediaList {
 
-	private List<String> mediaList;
+	private final List<String> mediaList;
 
 	public MediaListImpl(SACMediaList media) {
 		mediaList = new ArrayList<>();

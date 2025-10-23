@@ -37,11 +37,11 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	private static final String[] EMPTY_STRING = new String[0];
 
-	private Object nativeWidget;
+	private final Object nativeWidget;
 
 	protected CSSEngine engine;
 
-	private Map <String, CSSStyleDeclaration> defaultStyleDeclarationMap = new HashMap<>();
+	private final Map <String, CSSStyleDeclaration> defaultStyleDeclarationMap = new HashMap<>();
 
 	private CSSExtendedProperties style;
 

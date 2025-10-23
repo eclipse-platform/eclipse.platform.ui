@@ -24,9 +24,9 @@ import org.w3c.dom.css.RGBColor;
  */
 public class CSS2RGBColorImpl implements RGBColor {
 
-	private CSSPrimitiveValue red;
-	private CSSPrimitiveValue green;
-	private CSSPrimitiveValue blue;
+	private final CSSPrimitiveValue red;
+	private final CSSPrimitiveValue green;
+	private final CSSPrimitiveValue blue;
 
 	public CSS2RGBColorImpl(int r, int g, int b) {
 		red = new CSS2PrimitiveValueImpl(r);

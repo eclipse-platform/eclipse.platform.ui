@@ -22,7 +22,7 @@ import org.w3c.dom.css.CSSRuleList;
 
 public class CSSRuleListImpl implements CSSRuleList {
 
-	private List<CSSRule> ruleList;
+	private final List<CSSRule> ruleList;
 
 	public CSSRuleListImpl() {
 		super();

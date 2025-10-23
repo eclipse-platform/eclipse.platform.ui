@@ -35,7 +35,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 AbstractCSSPropertyHandlerProvider {
 
 	// List of package names containing handlers class for properties
-	private List<String> packageNames = new ArrayList<>();
+	private final List<String> packageNames = new ArrayList<>();
 
 	// Map used as a cache for properties handlers found
 	private Map<String, List<ICSSPropertyHandler>> propertyToHandlersMap = new HashMap<>();

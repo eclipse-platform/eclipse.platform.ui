@@ -26,7 +26,7 @@ public class CSSPropertyImpl implements CSSProperty {
 	 */
 	protected static String IMPORTANT_IDENTIFIER = "important";
 
-	private String name;
+	private final String name;
 	private CSSValue value;
 	private boolean important;
 
