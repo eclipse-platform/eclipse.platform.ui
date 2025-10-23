@@ -14,14 +14,15 @@
 
 package org.eclipse.search.core.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,7 +50,7 @@ public class LineConversionTest {
 
 	private static final String LINE_THREE= "This is the third line";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
 		project.create(null);
@@ -58,7 +59,7 @@ public class LineConversionTest {
 		fFile.create(new ByteArrayInputStream(getFileContents().getBytes()), true, null);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		SearchPlugin.getActivePage().closeAllEditors(false);
 		fFile.getProject().delete(true, true, null);

@@ -14,12 +14,14 @@
 package org.eclipse.search.core.tests;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -60,9 +62,9 @@ public class TestSearchResult {
 		Match match3= new Match(object, 0, 2);
 		result.addMatch(match3);
 		Match[] matches= result.getMatches(object);
-		assertSame("matches[0]", matches[0], match3);
-		assertSame("matches[1]", matches[1], match2);
-		assertSame("matches[2]", matches[2], match1);
+		assertSame(matches[0], match3, "matches[0]");
+		assertSame(matches[1], match2, "matches[1]");
+		assertSame(matches[2], match1, "matches[2]");
 	}
 
 	@Test
@@ -80,9 +82,9 @@ public class TestSearchResult {
 		Match match3= new Match(object, 2, 2);
 		result.addMatch(match3);
 		Match[] matches= result.getMatches(object);
-		assertSame("matches[0]", matches[0], match1);
-		assertSame("matches[1]", matches[1], match2);
-		assertSame("matches[2]", matches[2], match3);
+		assertSame(matches[0], match1, "matches[0]");
+		assertSame(matches[1], match2, "matches[1]");
+		assertSame(matches[2], match3, "matches[2]");
 	}
 
 	@Test
@@ -98,8 +100,8 @@ public class TestSearchResult {
 		Match match2= new Match(object, 1, 0);
 		result.addMatch(match2);
 		Match[] matches= result.getMatches(object);
-		assertSame("matches[0]", matches[0], match2);
-		assertSame("matches[1]", matches[1], match1);
+		assertSame(matches[0], match2, "matches[0]");
+		assertSame(matches[1], match1, "matches[1]");
 	}
 
 	@Test

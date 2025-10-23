@@ -15,11 +15,10 @@ package org.eclipse.search.core.tests;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.search.internal.ui.text.FileSearchResult;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
-
-import org.eclipse.search.internal.ui.text.FileSearchResult;
 
 public class NullSearchResult extends FileSearchResult { // inherit from FileSearchResult so a search result view can be found
 

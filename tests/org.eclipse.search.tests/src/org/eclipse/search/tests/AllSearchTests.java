@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.tests;
 
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.search.core.tests.AllSearchModelTests;
 import org.eclipse.search.tests.filesearch.AllFileSearchTests;

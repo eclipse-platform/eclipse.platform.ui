@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
