@@ -25,8 +25,8 @@ import org.w3c.dom.css.CSSValue;
  * used by renderers.
  */
 public class CSSEngineHelper {
-	private IEclipseContext context;
-	private Control control;
+	private final IEclipseContext context;
+	private final Control control;
 	private IStylingEngine engine;
 	private CSSStyleDeclaration style;
 
