@@ -79,14 +79,14 @@ public class DialogSettings implements IDialogSettings {
 
 	/* A Map of DialogSettings representing each sections in a DialogSettings.
 	 It maps the DialogSettings' name to the DialogSettings */
-	private Map<String, IDialogSettings> sections;
+	private final Map<String, IDialogSettings> sections;
 
 	/* A Map with all the keys and values of this sections.
 	 Either the keys an values are restricted to strings. */
-	private Map<String, String> items;
+	private final Map<String, String> items;
 
 	// A Map with all the keys mapped to array of strings.
-	private Map<String, String[]> arrayItems;
+	private final Map<String, String[]> arrayItems;
 
 	private static final String TAG_SECTION = "section";//$NON-NLS-1$
 
