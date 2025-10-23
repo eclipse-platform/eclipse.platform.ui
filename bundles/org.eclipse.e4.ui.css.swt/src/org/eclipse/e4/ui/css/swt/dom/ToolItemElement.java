@@ -34,7 +34,7 @@ public class ToolItemElement extends ItemElement {
 
 	boolean dynamicEnabled = Boolean.getBoolean("org.eclipse.e4.ui.css.dynamic");
 
-	private SelectionListener selectionListener = new SelectionAdapter() {
+	private final SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			ToolItem toolItem = getToolItem();

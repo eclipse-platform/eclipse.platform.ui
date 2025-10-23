@@ -41,7 +41,7 @@ public class ControlElement extends WidgetElement {
 
 	protected boolean hasMouseHover = false;
 
-	private FocusListener focusListener = new FocusAdapter() {
+	private final FocusListener focusListener = new FocusAdapter() {
 		@Override
 		public void focusGained(FocusEvent e) {
 			ControlElement.this.hasFocus = true;
@@ -56,7 +56,7 @@ public class ControlElement extends WidgetElement {
 	};
 
 	// Create SWT MouseTrack listener
-	private MouseTrackListener mouseHoverListener = new MouseTrackAdapter() {
+	private final MouseTrackListener mouseHoverListener = new MouseTrackAdapter() {
 		@Override
 		public void mouseEnter(MouseEvent e) {
 			// mouse hover, apply styles

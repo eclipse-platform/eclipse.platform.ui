@@ -255,7 +255,7 @@ implements ICSSPropertyHandler2 {
 		 * retrieved from the style sheet. This list must be updated if
 		 * AbstractCSSPropertyFontHandler's listing changes.
 		 */
-		private String[] fontAttributes = { "font", "font-family", "font-size",
+		private final String[] fontAttributes = { "font", "font-family", "font-size",
 				"font-adjust", "font-stretch", "font-style", "font-variant",
 		"font-weight" };
 
