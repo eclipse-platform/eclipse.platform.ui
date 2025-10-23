@@ -46,9 +46,9 @@ import org.xml.sax.SAXParseException;
  * @see IMemento
  */
 public final class XMLMemento implements IMemento {
-	private Document factory;
+	private final Document factory;
 
-	private Element element;
+	private final Element element;
 
 	/**
 	 * Creates a <code>Document</code> from the <code>Reader</code> and returns a
