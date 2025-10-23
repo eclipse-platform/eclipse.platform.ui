@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import org.junit.ClassRule;
-
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
@@ -29,6 +27,4 @@ import org.junit.platform.suite.api.SelectClasses;
 		SortingTest.class
 })
 public class AllFileSearchTests {
-	@ClassRule
-	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 }

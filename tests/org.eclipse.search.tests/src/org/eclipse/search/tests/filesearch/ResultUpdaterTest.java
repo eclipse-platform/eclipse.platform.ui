@@ -13,23 +13,22 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.tests.ResourceHelper;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
-
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-
-import org.eclipse.search.tests.ResourceHelper;
 
 public class ResultUpdaterTest {
 	private FileSearchQuery fQuery1;
@@ -38,7 +37,7 @@ public class ResultUpdaterTest {
 
 	private static final String PROJECT_TO_MODIFY= "ModifiableProject";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
@@ -49,7 +48,7 @@ public class ResultUpdaterTest {
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject(PROJECT_TO_MODIFY);
 	}

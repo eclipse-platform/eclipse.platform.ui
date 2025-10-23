@@ -20,10 +20,10 @@ import static org.hamcrest.Matchers.hasItem;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -52,10 +52,10 @@ public class LineAnnotationManagerTest {
 	private LineBasedFileSearch fLineQuery;
 	private final AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
-	@ClassRule
-	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
+	@RegisterExtension
+	static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 
@@ -65,7 +65,7 @@ public class LineAnnotationManagerTest {
 		fLineQuery= new LineBasedFileSearch(scope, false, true, "Test");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fLineQuery= null;
