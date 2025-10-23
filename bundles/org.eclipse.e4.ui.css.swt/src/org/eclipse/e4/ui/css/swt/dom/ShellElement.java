@@ -34,7 +34,7 @@ public class ShellElement extends CompositeElement {
 	protected boolean isActive;
 
 	// Create SWT Shell Listener
-	private ShellListener shellListener = new ShellListener() {
+	private final ShellListener shellListener = new ShellListener() {
 
 		@Override
 		public void shellActivated(ShellEvent e) {

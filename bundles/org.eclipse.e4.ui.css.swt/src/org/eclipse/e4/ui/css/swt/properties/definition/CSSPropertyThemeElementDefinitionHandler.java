@@ -44,7 +44,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 
 	private static final String EDITABLE_PROP = "editable";
 
-	private Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<>();
+	private final Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<>();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
