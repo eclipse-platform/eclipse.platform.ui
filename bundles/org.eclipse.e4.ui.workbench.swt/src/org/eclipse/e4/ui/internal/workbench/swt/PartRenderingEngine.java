@@ -122,11 +122,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public static final String ENABLED_THEME_KEY = "themeEnabled";
 
-	private String factoryUrl;
+	private final String factoryUrl;
 
 	IRendererFactory curFactory = null;
 
-	private Map<String, AbstractPartRenderer> customRendererMap = new HashMap<>();
+	private final Map<String, AbstractPartRenderer> customRendererMap = new HashMap<>();
 
 	org.eclipse.swt.widgets.Listener keyListener;
 
