@@ -10,14 +10,12 @@ Eclipse Platform UI provides the UI building blocks for Eclipse IDE and Eclipse 
 - **Language:** Java 17
 - **Build System:** Maven 3.9.x with Tycho (OSGi/Eclipse plugin build)
 - **Architecture:** OSGi bundles, E4 application model
-- **Size:** 127 MB, 7,675+ Java files
-- **Structure:** 57 production bundles + 34 test bundles + 25 examples
 
 ## Project Structure
 
 ```
 eclipse.platform.ui/
-├── bundles/          # 57 OSGi bundles (production code)
+├── bundles/          # OSGi bundles (production code)
 │   ├── org.eclipse.ui.workbench          # Main workbench implementation
 │   ├── org.eclipse.jface                 # JFace toolkit (viewers, dialogs, etc.)
 │   ├── org.eclipse.jface.databinding     # Data binding framework
@@ -26,8 +24,8 @@ eclipse.platform.ui/
 │   ├── org.eclipse.core.databinding*     # Core data binding
 │   ├── org.eclipse.e4.ui.*               # E4 workbench, CSS, DI, model
 │   └── org.eclipse.ui.*                  # UI components (IDE, editors, views, etc.)
-├── tests/            # 34 test bundles (mirror structure of bundles/)
-├── examples/         # 25 example bundles
+├── tests/            # Test bundles (mirror structure of bundles/)
+├── examples/         # Example bundles
 ├── features/         # Eclipse feature definitions
 ├── releng/           # Release engineering artifacts
 ├── docs/             # Documentation (JFace, RCP, Commands, etc.)
@@ -128,18 +126,13 @@ mvn clean compile -Pbuild-individual-bundles -DskipTests
 - Production: `bundles/org.eclipse.jface`
 - Tests: `tests/org.eclipse.jface.tests`
 
-### JUnit Version Status (October 2025)
+### JUnit Guidelines
 
-**Current Migration State:**
-- **JUnit 5 (Modern):** 7 bundles fully migrated, 5 partially migrated
-- **JUnit 4 (Current):** 11 bundles ready for migration, majority of tests
-- **JUnit 3 (Legacy):** Only in `org.eclipse.ui.tests.harness` as compatibility bridge
-
-**When writing new tests:**
 - Prefer JUnit 5 (`org.junit.jupiter.api.*`) for new tests
 - Use `@BeforeEach`/`@AfterEach` instead of `@Before`/`@After`
 - Use `@Disabled` instead of `@Ignore`
 - Use `Assertions.*` instead of `Assert.*`
+- JUnit 3 usage is limited to compatibility helpers (e.g., `org.eclipse.ui.tests.harness`)
 
 **Common test pattern:**
 ```java
@@ -321,17 +314,9 @@ public void execute(IEclipseContext context) {
 
 ## CI/GitHub Workflows
 
-**Primary workflow:** `.github/workflows/ci.yml`
-- Triggers on push/PR to master (ignores `docs/` and `*.md`)
-- Uses `eclipse.platform.releng.aggregator` for full build
-- Runs on Java 21 with xvnc for headless UI tests
-
-**Validation steps:**
-1. Compiler checks (Eclipse compiler)
-2. API compatibility (API tools)
-3. Javadoc generation
-4. Unit tests (JUnit with UI harness)
-5. Test reports published
+- CI definition: `.github/workflows/ci.yml` (runs full aggregator build)
+- PRs are gated by: compiler checks, API compatibility, Javadoc, and unit/UI tests
+- UI tests run with the Eclipse UI harness in headless mode
 
 ## Troubleshooting
 
