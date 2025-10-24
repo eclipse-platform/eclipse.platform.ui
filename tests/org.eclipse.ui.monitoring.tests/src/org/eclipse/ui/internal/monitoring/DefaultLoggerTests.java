@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.eclipse.ui.monitoring.StackSample;
 import org.eclipse.ui.monitoring.UiFreezeEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * JUnit test for the {@link DefaultUiFreezeEventLogger}.
@@ -45,7 +45,7 @@ public class DefaultLoggerTests {
 	private ThreadInfo thread;
 	private IStatus loggedStatus;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logger = new DefaultUiFreezeEventLogger(DURATION * 10);
 		createLogListener();
@@ -68,30 +68,31 @@ public class DefaultLoggerTests {
 	}
 
 	@Test
-	public void testLogEvent() {
-		UiFreezeEvent event = createFreezeEvent();
-		String expectedTime = dateFormat.format(new Date(TIME).toInstant());
-		String expectedHeader =
-				String.format("UI freeze of %.2gs at %s", DURATION / 1000.0, expectedTime);
-		String expectedEventMessage = String.format("Sample at %s (+%.3fs)", expectedTime, 0.000);
+	void testLogEvent() {
+	    UiFreezeEvent event = createFreezeEvent();
+	    String expectedTime = dateFormat.format(new Date(TIME).toInstant());
+	    String expectedHeader =
+	            String.format("UI freeze of %.2gs at %s", DURATION / 1000.0, expectedTime);
+	    String expectedEventMessage = String.format("Sample at %s (+%.3fs)", expectedTime, 0.000);
 
-		logger.log(event);
+	    logger.log(event);
 
-		assertEquals(PreferenceConstants.PLUGIN_ID, loggedStatus.getPlugin());
-		assertTrue("Logged status was not a MultiStatus", loggedStatus.isMultiStatus());
-		assertEquals(expectedHeader, loggedStatus.getMessage());
-		assertEquals("One nested IStatus did not get logged correctly.", 1,
-				loggedStatus.getChildren().length);
+	    assertEquals(PreferenceConstants.PLUGIN_ID, loggedStatus.getPlugin());
+	    assertTrue(loggedStatus.isMultiStatus(), "Logged status was not a MultiStatus");
+	    assertEquals(expectedHeader, loggedStatus.getMessage());
+	    assertEquals(1, loggedStatus.getChildren().length,
+	            "One nested IStatus did not get logged correctly.");
 
-		IStatus freezeEvent = loggedStatus.getChildren()[0];
-		assertTrue(freezeEvent.getMessage().contains(expectedEventMessage));
+	    IStatus freezeEvent = loggedStatus.getChildren()[0];
+	    assertTrue(freezeEvent.getMessage().contains(expectedEventMessage));
 
-		StackTraceElement[] threadStackTrace = thread.getStackTrace();
-		StackTraceElement[] loggedStackTrace = freezeEvent.getException().getStackTrace();
-		assertEquals(threadStackTrace.length, loggedStackTrace.length);
+	    StackTraceElement[] threadStackTrace = thread.getStackTrace();
+	    StackTraceElement[] loggedStackTrace = freezeEvent.getException().getStackTrace();
+	    assertEquals(threadStackTrace.length, loggedStackTrace.length);
 
-		for (int i = 0; i < threadStackTrace.length; i++) {
-			assertEquals(threadStackTrace[i], loggedStackTrace[i]);
-		}
+	    for (int i = 0; i < threadStackTrace.length; i++) {
+	    	assertEquals(threadStackTrace[i], loggedStackTrace[i]);
+	    }
 	}
+
 }

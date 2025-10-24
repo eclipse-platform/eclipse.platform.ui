@@ -17,9 +17,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -29,9 +30,9 @@ import org.eclipse.ui.internal.monitoring.EventLoopMonitorThread.Parameters;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.eclipse.ui.monitoring.StackSample;
 import org.eclipse.ui.monitoring.UiFreezeEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link EventLoopMonitorThread} class.
@@ -89,7 +90,7 @@ public class EventLoopMonitorThreadTests {
 	private static ThreadControl monitorThreadControl;
 	private static long timestamp;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 		logger = new MockUiFreezeEventLogger();
@@ -98,7 +99,7 @@ public class EventLoopMonitorThreadTests {
 		timestamp = 1;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (monitoringThread != null) {
 			shutdownMonitoringThread();
@@ -210,9 +211,9 @@ public class EventLoopMonitorThreadTests {
 		runForCycles(3);
 
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertNotNull("A freeze event was not automatically published", event);
-		assertEquals("Decimation did not resize the stack trace array properly", MIN_STACK_TRACES,
-				event.getStackTraceSamples().length);
+		assertNotNull(event, "A freeze event was not automatically published");
+		assertEquals(MIN_STACK_TRACES,
+				event.getStackTraceSamples().length, "Decimation did not resize the stack trace array properly");
 
 		// Decimation slows down the sampling rate by a factor of 2, so test the resampling reduction.
 		eventLength = MAX_STACK_TRACES + (MIN_MAX_STACK_TRACE_DELTA - 1) * 2;
@@ -222,9 +223,9 @@ public class EventLoopMonitorThreadTests {
 		runForCycles(3);
 
 		event = loggedEvents.get(1);
-		assertNotNull("A freeze event was not automatically published", event);
-		assertEquals("Decimation did not reset the sampiling rate properly", MIN_STACK_TRACES,
-				event.getStackTraceSamples().length);
+		assertNotNull(event, "A freeze event was not automatically published");
+		assertEquals(MIN_STACK_TRACES,
+				event.getStackTraceSamples().length, "Decimation did not reset the sampiling rate properly");
 
 		// Test the resampling reduction after two decimations.
 		eventLength =
@@ -235,9 +236,9 @@ public class EventLoopMonitorThreadTests {
 		runForCycles(3);
 
 		event = loggedEvents.get(2);
-		assertNotNull("A freeze event was not automatically published", event);
-		assertEquals("Decimation did not reset the sampiling rate properly", MIN_STACK_TRACES,
-				event.getStackTraceSamples().length);
+		assertNotNull(event, "A freeze event was not automatically published");
+		assertEquals(MIN_STACK_TRACES,
+				event.getStackTraceSamples().length, "Decimation did not reset the sampiling rate properly");
 	}
 
 	@Test
@@ -260,21 +261,21 @@ public class EventLoopMonitorThreadTests {
 
 		long remaining = maxDeadlock - (timestamp - startTime);
 		runForTime(remaining - 1);
-		assertTrue("No deadlock should get logged before its time", loggedEvents.isEmpty());
+		assertTrue(loggedEvents.isEmpty(), "No deadlock should get logged before its time");
 
 		// March time forward to trigger the possible deadlock logging.
 		runForCycles(4);
 
-		assertEquals("Incorrect number of events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertTrue("Possible deadlock logging should have a valid number of stack traces",
-				event.getStackTraceSamples().length >= MIN_STACK_TRACES);
+		assertTrue(event.getStackTraceSamples().length >= MIN_STACK_TRACES,
+				"Possible deadlock logging should have a valid number of stack traces");
 
 		// Extending the UI freeze shouldn't log any more events.
 		runForTime(maxDeadlock * 2);
 		runForCycles(3);
 
-		assertEquals("No more deadlock events should get logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "No more deadlock events should get logged");
 	}
 
 	@Test
@@ -295,7 +296,7 @@ public class EventLoopMonitorThreadTests {
 		runForTime(FORCE_DEADLOCK_LOG_TIME_MS * 2);
 		runForCycles(3);
 
-		assertTrue("No deadlock events should get logged", loggedEvents.isEmpty());
+		assertTrue(loggedEvents.isEmpty(), "No deadlock events should get logged");
 	}
 
 	@Test
@@ -310,7 +311,7 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostExternalEventDispatch);
 		runForCycles(3);
 
-		assertTrue("Sleeping should not trigger a freeze event", loggedEvents.isEmpty());
+		assertTrue(loggedEvents.isEmpty(), "Sleeping should not trigger a freeze event");
 	}
 
 	@Test
@@ -329,15 +330,15 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event log has an incorrect start time", eventStartTime,
-				event.getStartTimestamp());
-		assertEquals("A freeze event's duration was incorrect", freezeDuration,
-				event.getTotalDuration());
-		assertEquals("A freeze event didn't capture a good range of stack samples ("
-				+ getStackSamplesTimeline(event) + ")",
-				expectedStackCount(freezeDuration), event.getStackTraceSamples().length);
+		assertEquals(eventStartTime,
+				event.getStartTimestamp(), "A freeze event log has an incorrect start time");
+		assertEquals(freezeDuration,
+				event.getTotalDuration(), "A freeze event's duration was incorrect");
+		assertEquals(expectedStackCount(freezeDuration), event.getStackTraceSamples().length,
+				"A freeze event didn't capture a good range of stack samples ("
+				+ getStackSamplesTimeline(event) + ")");
 	}
 
 	@Test
@@ -359,15 +360,15 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event log has an incorrect start time", eventStartTime,
-				event.getStartTimestamp());
-		assertEquals("A freeze event's duration was incorrect", freezeDuration,
-				event.getTotalDuration());
-		assertEquals("A freeze event didn't capture a good range of stack samples ("
-				+ getStackSamplesTimeline(event) + ")",
-				expectedStackCount(freezeDuration), event.getStackTraceSamples().length);
+		assertEquals(eventStartTime,
+				event.getStartTimestamp(), "A freeze event log has an incorrect start time");
+		assertEquals(freezeDuration,
+				event.getTotalDuration(), "A freeze event's duration was incorrect");
+		assertEquals(expectedStackCount(freezeDuration), event.getStackTraceSamples().length,
+				"A freeze event didn't capture a good range of stack samples ("
+				+ getStackSamplesTimeline(event) + ")");
 	}
 
 	@Test
@@ -392,15 +393,15 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event log has an incorrect start time", eventStartTime,
-				event.getStartTimestamp());
-		assertEquals("A freeze event's duration was incorrect", freezeDuration,
-				event.getTotalDuration());
-		assertEquals("A freeze event didn't capture a good range of stack samples ("
-				+ getStackSamplesTimeline(event) + ")",
-				expectedStackCount(freezeDuration), event.getStackTraceSamples().length);
+		assertEquals(eventStartTime,
+				event.getStartTimestamp(), "A freeze event log has an incorrect start time");
+		assertEquals(freezeDuration,
+				event.getTotalDuration(), "A freeze event's duration was incorrect");
+		assertEquals(expectedStackCount(freezeDuration), event.getStackTraceSamples().length,
+				"A freeze event didn't capture a good range of stack samples ("
+				+ getStackSamplesTimeline(event) + ")");
 	}
 
 	@Test
@@ -427,15 +428,15 @@ public class EventLoopMonitorThreadTests {
 		freezeDuration = timestamp - eventResumeTime;
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event didn't start from the nested return point",
-				eventResumeTime, event.getStartTimestamp());
-		assertEquals("A freeze event's duration was incorrect", freezeDuration,
-				event.getTotalDuration());
-		assertEquals("A freeze event didn't capture a good range of stack samples ("
-				+ getStackSamplesTimeline(event) + ")",
-				expectedStackCount(freezeDuration), event.getStackTraceSamples().length);
+		assertEquals(eventResumeTime, event.getStartTimestamp(),
+				"A freeze event didn't start from the nested return point");
+		assertEquals(freezeDuration,
+				event.getTotalDuration(), "A freeze event's duration was incorrect");
+		assertEquals(expectedStackCount(freezeDuration), event.getStackTraceSamples().length,
+				"A freeze event didn't capture a good range of stack samples ("
+				+ getStackSamplesTimeline(event) + ")");
 	}
 
 	@Test
@@ -471,15 +472,15 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event didn't start from the nested return point",
-				eventResumeTime, event.getStartTimestamp());
-		assertEquals("A freeze event's duration was incorrect", freezeDuration,
-				event.getTotalDuration());
-		assertEquals("A freeze event didn't capture a good range of stack samples ("
-				+ getStackSamplesTimeline(event) + ")",
-				expectedStackCount(freezeDuration), event.getStackTraceSamples().length);
+		assertEquals(eventResumeTime, event.getStartTimestamp(),
+				"A freeze event didn't start from the nested return point");
+		assertEquals(freezeDuration,
+				event.getTotalDuration(), "A freeze event's duration was incorrect");
+		assertEquals(expectedStackCount(freezeDuration), event.getStackTraceSamples().length,
+				"A freeze event didn't capture a good range of stack samples ("
+				+ getStackSamplesTimeline(event) + ")");
 	}
 
 	@Test
@@ -514,8 +515,8 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertTrue("A freeze event should not be published during an external event dispatch",
-				loggedEvents.isEmpty());
+		assertTrue(loggedEvents.isEmpty(),
+				"A freeze event should not be published during an external event dispatch");
 	}
 
 	@Test
@@ -533,8 +534,8 @@ public class EventLoopMonitorThreadTests {
 		eventStartTime = timestamp;
 		runForCycles(3);
 
-		assertTrue("A freeze event shold not be published during an external event dispatch",
-				loggedEvents.isEmpty());
+		assertTrue(loggedEvents.isEmpty(),
+				"A freeze event shold not be published during an external event dispatch");
 
 		// Let a long time elapse between the last PostExternalEventDispatch and the next
 		// PreExternalEventDispatch.
@@ -545,11 +546,11 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PostEvent);
 		runForCycles(3);
 
-		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
+		assertEquals(1, loggedEvents.size(), "Incorrect number of freeze events was logged");
 		UiFreezeEvent event = loggedEvents.get(0);
-		assertEquals("A freeze event log has an incorrect start time", eventStartTime,
-				event.getStartTimestamp());
-		assertEquals("A freeze event's duration is incorrect", eventDuration,
-				event.getTotalDuration());
+		assertEquals(eventStartTime,
+				event.getStartTimestamp(), "A freeze event log has an incorrect start time");
+		assertEquals(eventDuration,
+				event.getTotalDuration(), "A freeze event's duration is incorrect");
 	}
 }
