@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecorationResult;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
+import org.eclipse.ui.tests.harness.util.UITestUtil;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
 import org.junit.After;
 import org.junit.Before;
@@ -63,6 +64,10 @@ public class DecoratorAdaptableTests {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestUnadaptableDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, true);
+
+		// Process all pending UI events to ensure decorator enablement has completed
+		// This prevents race conditions where decorators may not be fully registered yet
+		UITestUtil.processEvents();
 	}
 
 	@After
@@ -71,6 +76,9 @@ public class DecoratorAdaptableTests {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestUnadaptableDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, false);
+
+		// Process all pending UI events to ensure clean state for next test
+		UITestUtil.processEvents();
 	}
 
 	/**
