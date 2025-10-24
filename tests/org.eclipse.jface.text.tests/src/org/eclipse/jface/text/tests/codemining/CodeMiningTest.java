@@ -511,7 +511,7 @@ public class CodeMiningTest {
 		Assert.assertTrue("Line header code minigs were used. Expected in-line code minings instead.", new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return widget.getStyleRangeAtOffset(index - 1) != null
+				return widget.getStyleRangeAtOffset(index) != null
 						&& widget.isVisible() && widget.getLineVerticalIndent(0) == 0;
 			}
 		}.waitForCondition(widget.getDisplay(), 1000));
@@ -523,7 +523,7 @@ public class CodeMiningTest {
 		Assert.assertTrue("In-line code minigs were used (or no code minings at all). Expected line header code minings.", new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return widget.getStyleRangeAtOffset(index - 1) == null && widget.getLineVerticalIndent(0) > 0;
+				return widget.getStyleRangeAtOffset(index) == null && widget.getLineVerticalIndent(0) > 0;
 			}
 		}.waitForCondition(widget.getDisplay(), 1000));
 
@@ -534,7 +534,7 @@ public class CodeMiningTest {
 		Assert.assertTrue("Line header code minigs were used. Expected in-line code minings instead.", new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return widget.getStyleRangeAtOffset(index - 1) != null && widget.getLineVerticalIndent(0) == 0;
+				return widget.getStyleRangeAtOffset(index) != null && widget.getLineVerticalIndent(0) == 0;
 			}
 		}.waitForCondition(widget.getDisplay(), 1000));
 	}
@@ -681,7 +681,7 @@ public class CodeMiningTest {
 	private static class ReferenceInLineCodeMining extends LineContentCodeMining {
 
 		public ReferenceInLineCodeMining(String label, int positionOffset, ICodeMiningProvider provider) {
-			super(new Position(positionOffset, 1), provider);
+			super(new Position(positionOffset, 1), true, provider);
 			this.setLabel(label);
 		}
 

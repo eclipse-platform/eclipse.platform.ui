@@ -23,7 +23,7 @@ public class ReferenceInLineCodeMining extends LineContentCodeMining {
 
 	public ReferenceInLineCodeMining(String label, int positionOffset, IDocument document,
 			ICodeMiningProvider provider) {
-		super(new Position(positionOffset, 1), provider);
+		super(new Position(positionOffset, 1), true, provider);
 		this.setLabel(label);
 	}
 
