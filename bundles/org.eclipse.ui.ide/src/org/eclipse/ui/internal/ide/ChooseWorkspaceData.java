@@ -21,8 +21,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -540,13 +543,12 @@ public class ChooseWorkspaceData {
 			}
 
 			// make sure the file exists
-			url = new URL(dir.toURL(), PERS_FILENAME);
-			File persFile = new File(url.getFile());
-			if (!persFile.exists() && (!create || !persFile.createNewFile())) {
+			Path p = Path.of(URIUtil.toURI(baseUrl.getPath() + File.pathSeparator + PERS_FILENAME));
+			if (!Files.exists(p) && (!create || !p.toFile().createNewFile())) {
 				return null;
 			}
 
-			return persFile.toURL();
+			return p.toUri().toURL();
 		} catch (IOException e) {
 			// cannot log because instance area has not been set
 			return null;
