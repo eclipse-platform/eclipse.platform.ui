@@ -82,6 +82,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertFalse("One file should be selected by default", selected.isEmpty());
@@ -99,6 +102,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -119,6 +125,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Don't wait for full refresh - this test checks that invalid initial
+		// selections don't cause a selection before dialog is fully loaded
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertTrue("No file should be selected by default", selected.isEmpty());
@@ -135,6 +144,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -155,6 +167,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Don't wait for full refresh - this test checks that filtered initial
+		// selections don't cause a selection before dialog is fully loaded
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertTrue("No file should be selected by default", selected.isEmpty());
@@ -174,6 +189,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertEquals("The first file should be selected by default", asList(FILES.get("foo.txt")), selected);
@@ -191,6 +209,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialPattern("**");
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -211,6 +232,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertEquals("One file should be selected by default", asList(FILES.get("foo.txt")), selected);
@@ -227,6 +251,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -247,6 +274,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Don't wait for full refresh - this test checks that invalid initial
+		// selections don't cause a selection before dialog is fully loaded
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertTrue("No file should be selected by default", selected.isEmpty());
@@ -265,6 +295,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("bar.txt"), "not an available item", FILES.get("foofoo")));
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 		Set<IFile> expectedSelection = new HashSet<>(asList(FILES.get("bar.txt"), FILES.get("foofoo")));
@@ -288,6 +321,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
+
 		List<Object> selected = getSelectedItems(dialog);
 		boolean initialElementsAreSelected = selected.containsAll(initialSelection)
 				&& initialSelection.containsAll(selected);
@@ -309,6 +345,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt"), FILES.get("bar.txt"), FILES.get("foofoo")));
 		dialog.open();
 		dialog.refresh();
+
+		// Wait for background refresh jobs to complete
+		waitForDialogRefresh();
 
 		List<Object> selected = getSelectedItems(dialog);
 		List<IFile> expectedSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
@@ -406,6 +445,26 @@ public class ResourceInitialSelectionTest {
 				// Process all pending events
 			}
 		}
+	}
+
+	/**
+	 * Wait for dialog refresh jobs to complete and process UI events.
+	 * This ensures background jobs finish before assertions are made.
+	 */
+	private void waitForDialogRefresh() {
+		// Process UI events multiple times to allow background jobs to complete
+		// Similar to the fix in DecoratorAdaptableTests
+		for (int i = 0; i < 3; i++) {
+			processUIEvents();
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+		}
+		// Final event loop processing
+		processUIEvents();
 	}
 
 	/**
