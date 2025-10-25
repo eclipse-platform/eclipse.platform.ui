@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -55,6 +58,7 @@ import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.DocumentFooterCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -62,6 +66,7 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.inlined.Positions;
 import org.eclipse.jface.text.tests.TextViewerTest;
 
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -491,6 +496,49 @@ public class CodeMiningTest {
 		}.waitForCondition(widget.getDisplay(), 1000));
 	}
 
+	@Test
+	public void testCodeMiningSwitchingBetweenInLineAndLineHeader() {
+		String ref= "REF-X";
+		String text= "Here " + ref + " is a reference.";
+		fViewer.getDocument().set(text);
+		int index= text.indexOf(ref);
+
+		// in-line mode
+		AtomicReference<Boolean> useInLineCodeMinings= new AtomicReference<>(true);
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new RefTestCodeMiningProvider(useInLineCodeMinings) });
+
+		StyledText widget= fViewer.getTextWidget();
+		Assert.assertTrue("Line header code minigs were used. Expected in-line code minings instead.", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getStyleRangeAtOffset(index) != null
+						&& widget.isVisible() && widget.getLineVerticalIndent(0) == 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 1000));
+
+		// switch to line header mode
+		useInLineCodeMinings.set(false);
+		fViewer.updateCodeMinings();
+
+		Assert.assertTrue("In-line code minigs were used (or no code minings at all). Expected line header code minings.", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getStyleRangeAtOffset(index) == null && widget.getLineVerticalIndent(0) > 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 1000));
+
+		// switch back to in-line mode
+		useInLineCodeMinings.set(true);
+		fViewer.updateCodeMinings();
+
+		Assert.assertTrue("Line header code minigs were used. Expected in-line code minings instead.", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getStyleRangeAtOffset(index) != null && widget.getLineVerticalIndent(0) == 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 1000));
+	}
+
 	private static boolean hasCodeMiningPrintedBelowLine(ITextViewer viewer, int line) throws BadLocationException {
 		StyledText widget= viewer.getTextWidget();
 		IDocument document= viewer.getDocument();
@@ -573,5 +621,86 @@ public class CodeMiningTest {
 		}
 		image.dispose();
 		return false;
+	}
+
+	private static class RefTestCodeMiningProvider extends AbstractCodeMiningProvider {
+
+		private static final String REGEX_REF= "REF-X";
+
+		private static final Pattern REGEX_PATTERN= Pattern.compile(REGEX_REF);
+
+		private AtomicReference<Boolean> useInLineCodeMinings;
+
+		public RefTestCodeMiningProvider(AtomicReference<Boolean> useInLineCodeMinings) {
+			this.useInLineCodeMinings= useInLineCodeMinings;
+		}
+
+		@Override
+		public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer,
+				IProgressMonitor monitor) {
+			return CompletableFuture.supplyAsync(() -> {
+				IDocument document= viewer.getDocument();
+
+				if (document == null) {
+					return Collections.emptyList();
+				}
+
+				return createCodeMiningsFor(document);
+			});
+		}
+
+		List<ICodeMining> createCodeMiningsFor(IDocument document) {
+			String documentContent= document.get();
+			List<ICodeMining> minings= new ArrayList<>();
+
+			Matcher regexMatcher= REGEX_PATTERN.matcher(documentContent);
+			while (regexMatcher.find()) {
+				int startIndex= regexMatcher.start();
+				String title= "Building commercial quality plug-ins";
+
+				if (useInLineCodeMinings.get()) {
+					minings.add(new ReferenceInLineCodeMining(title + ": ", startIndex, this));
+				} else {
+					try {
+						int offset= startIndex;
+						int line= document.getLineOfOffset(offset);
+						int lineOffset= document.getLineOffset(line);
+
+						minings.add(new ReferenceLineHeaderCodeMining(title, line, offset - lineOffset,
+								document, this));
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return minings;
+		}
+	}
+
+	private static class ReferenceInLineCodeMining extends LineContentCodeMining {
+
+		public ReferenceInLineCodeMining(String label, int positionOffset, ICodeMiningProvider provider) {
+			super(new Position(positionOffset, 1), true, provider);
+			this.setLabel(label);
+		}
+
+	}
+
+	private static class ReferenceLineHeaderCodeMining extends LineHeaderCodeMining {
+
+		public ReferenceLineHeaderCodeMining(String label, int beforeLineNumber, int columnInLine,
+				IDocument document, ICodeMiningProvider provider) throws BadLocationException {
+			super(calculatePosition(beforeLineNumber, columnInLine, document), provider, null);
+			this.setLabel(label);
+		}
+
+		private static Position calculatePosition(int beforeLineNumber, int columnInLine, IDocument document)
+				throws BadLocationException {
+			Position pos= Positions.of(beforeLineNumber, document, true);
+			pos.setOffset(pos.offset + columnInLine);
+			return pos;
+		}
+
 	}
 }

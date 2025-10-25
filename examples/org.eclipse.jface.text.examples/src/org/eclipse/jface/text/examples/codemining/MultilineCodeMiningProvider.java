@@ -19,9 +19,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.codemining.AbstractCodeMining;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
+import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 
 public class MultilineCodeMiningProvider extends AbstractCodeMiningProvider {
@@ -35,7 +35,7 @@ public class MultilineCodeMiningProvider extends AbstractCodeMiningProvider {
 		int index = 0;
 		while ((index = document.get().indexOf(multiLineText, index)) != -1) {
 			index += multiLineText.length();
-			res.add(new AbstractCodeMining(new Position(index, 1), this, null) {
+			res.add(new LineContentCodeMining(new Position(index, 1), this, null) {
 				@Override
 				public String getLabel() {
 					return "multiline first part in same line";
