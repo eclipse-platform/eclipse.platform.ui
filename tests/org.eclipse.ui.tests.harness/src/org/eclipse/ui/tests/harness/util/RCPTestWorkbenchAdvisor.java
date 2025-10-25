@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -43,6 +46,9 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	public static volatile Boolean asyncWithoutDisplayAccess = null;
 
 	private static boolean started = false;
+
+	// Use a CountDownLatch to ensure async operations complete before postStartup
+	private static final CountDownLatch asyncLatch = new CountDownLatch(4);
 
 	public static boolean isSTARTED() {
 		synchronized (RCPTestWorkbenchAdvisor.class) {
@@ -122,12 +128,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void preStartup() {
 		super.preStartup();
 		final Display display = Display.getCurrent();
+
 		if (display != null) {
 			display.asyncExec(() -> {
-				if (isSTARTED())
-					asyncDuringStartup = Boolean.FALSE;
-				else
-					asyncDuringStartup = Boolean.TRUE;
+				asyncDuringStartup = !isSTARTED();
 			});
 		}
 
@@ -160,15 +164,18 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 					display.syncExec(() -> {
 						synchronized (RCPTestWorkbenchAdvisor.class) {
 							if (callDisplayAccess)
-								syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+								syncWithDisplayAccess = !isSTARTED();
 							else
-								syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+								syncWithoutDisplayAccess = !isSTARTED();
 						}
 					});
 				} catch (SWTException e) {
 					// this can happen because we shut down the workbench just
 					// as soon as we're initialized - ie: when we're trying to
 					// run this runnable in the deferred case.
+				} finally {
+					// Signal that this operation has completed
+					asyncLatch.countDown();
 				}
 			}
 		};
@@ -182,14 +189,20 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 			public void run() {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
-				display.asyncExec(() -> {
-					synchronized (RCPTestWorkbenchAdvisor.class) {
-						if (callDisplayAccess)
-							asyncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
-						else
-							asyncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
-					}
-				});
+				try {
+					display.asyncExec(() -> {
+						synchronized (RCPTestWorkbenchAdvisor.class) {
+							if (callDisplayAccess)
+								asyncWithDisplayAccess = !isSTARTED();
+							else
+								asyncWithoutDisplayAccess = !isSTARTED();
+						}
+					});
+				} finally {
+					// Signal that this operation has been scheduled (not necessarily executed yet)
+					// This avoids deadlock since we're not waiting for execution on the UI thread
+					asyncLatch.countDown();
+				}
 			}
 		};
 		asyncThread.setDaemon(true);
@@ -199,6 +212,38 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
+
+		// Wait for all async/sync operations to be scheduled (not blocking UI thread)
+		try {
+			// Wait up to 5 seconds for all operations to be scheduled
+			boolean completed = asyncLatch.await(5, TimeUnit.SECONDS);
+			if (!completed) {
+				throw new AssertionError("Not all async/sync operations were scheduled within timeout");
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException("Interrupted while waiting for async/sync operations", e);
+		}
+
+		// Pump the event loop to ensure async runnables execute before marking as started
+		// This prevents the original race condition where async variables might not be set yet
+		Display display = Display.getCurrent();
+		if (display != null) {
+			// Process pending async events multiple times to ensure they execute
+			for (int i = 0; i < 10; i++) {
+				while (display.readAndDispatch()) {
+					// Keep processing events
+				}
+				// Small yield to allow any final async operations to complete
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+		}
+
 		synchronized (RCPTestWorkbenchAdvisor.class) {
 			started = true;
 		}
