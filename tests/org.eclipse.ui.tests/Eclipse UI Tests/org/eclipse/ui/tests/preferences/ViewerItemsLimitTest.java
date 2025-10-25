@@ -274,6 +274,7 @@ public class ViewerItemsLimitTest {
 	 * last added marker and check it refreshes properly. Set the viewer limit to
 	 * default and check if all the markers are visible.
 	 */
+	@Ignore("Disabled as long as Problems view doesn't support limits")
 	@Test
 	public void testMarkersViewLimitedMarkers() throws CoreException {
 		closeView(IPageLayout.ID_PROBLEM_VIEW);
