@@ -829,10 +829,91 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.setFindString("test");
 		assertThat(textViewer.getSelectedRange(), is(new Point(0, 4)));
+
+		// Move caret after first "test" i.e., caret after "test\n", so after 5 characters
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
 		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+
+		// Move caret inside second "test" i.e., caret after "test\nte", so after 7 characters
+		textViewer.setSelectedRange(7, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+
+		// Move caret to position to third "test" i.e., caret after "test\ntest\n", so after 10 characters
+		textViewer.setSelectedRange(10, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+
+		findReplaceLogic.setFindString("");
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
+	}
+
+	@Test
+	public void testSelectionRestoredAfterClearingSearch() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(6, 0); // caret after 'alpha '
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		logic.setFindString("gamma");
+		assertThat(textViewer.getSelectedRange(), is(new Point(11, 5))); // "gamma" found
+
+		logic.setFindString("");
+		assertThat(textViewer.getSelectedRange(), is(new Point(6, 0)));
+	}
+
+
+	@Test
+	public void testCaretRestoredWhenSearchCleared() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(0, 0);
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		logic.setFindString("beta");
+		assertThat(textViewer.getSelectedRange(), is(new Point(6, 4))); // found "beta"
+
+		// Clear the search field - should restore caret
+		logic.setFindString("");
+		logic.performSearch();
+		// Expect caret restored to starting location (0,0)
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
+	}
+
+
+	@Test
+	public void testCaretRestoredBetweenSearchSessions() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		textViewer.setSelectedRange(0, 0); // caret at start
+		logic.setFindString("alpha");
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 5))); // "alpha" found
+
+		// Clear the search (simulate reopen of overlay)
+		logic.setFindString("");
+		logic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0))); // caret restored
+
+		textViewer.setSelectedRange(6, 0); // caret before "beta"
+		logic.setFindString("beta");
+		assertThat(textViewer.getSelectedRange(), is(new Point(6, 4))); // "beta" found
+
+		logic.setFindString("");
+		logic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(6, 0))); // caret restored to new base
 	}
 
 	@Test
@@ -867,7 +948,7 @@ public class FindReplaceLogicTest {
 		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
 
 		findReplaceLogic.setFindString(""); // this clears the incremental search, but the "old search" still remains active
-		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
+		assertEquals(new Point(0, 0), findReplaceLogic.getTarget().getSelection()); // after #3379 pr
 	}
 
 	@Test
