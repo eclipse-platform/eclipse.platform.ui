@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.internal.DPIUtil.ElementAtZoom;
 import org.eclipse.swt.internal.NativeImageLoader;
 import org.eclipse.swt.internal.image.FileFormat;
@@ -133,7 +135,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(URL url, int fileZoom, int targetZoom) {
 		try (InputStream in = getStream(url)) {
 			if (in != null) {
-				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom);
+				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom, new URLHintProvider(url));
 			}
 		} catch (SWTException e) {
 			if (e.code != SWT.ERROR_INVALID_IMAGE) {
@@ -147,8 +149,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	@SuppressWarnings("restriction")
-	private static ImageData loadImageFromStream(InputStream stream, int fileZoom, int targetZoom) {
-		return NativeImageLoader.load(new ElementAtZoom<>(stream, fileZoom), new ImageLoader(), targetZoom).get(0)
+	private static ImageData loadImageFromStream(InputStream stream, int fileZoom, int targetZoom,
+			Supplier<Point> hintProvider) {
+		return NativeImageLoader
+				.load(new ElementAtZoom<>(stream, fileZoom), new ImageLoader(), targetZoom, hintProvider).get(0)
 				.element();
 	}
 
