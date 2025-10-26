@@ -45,6 +45,8 @@ import org.eclipse.ui.part.FileEditorInput;
  *
  * This class is intentionally package-public in org.eclipse.ui.actions to be a
  * drop-in replacement for {@link OpenFileAction} in CNF wiring.
+ *
+ * @since 3.22
  */
 public class OpenFileWithReuseAction extends OpenFileAction {
 
