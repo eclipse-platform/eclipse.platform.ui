@@ -80,6 +80,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showInlineRenameButton;
 
+	private Button reuseLastOpenedEditorButton;
+
 	protected static int MAX_SAVE_INTERVAL = 9999;
 	protected static int MAX_VIEW_LIMIT = 1_000_000;
 
@@ -295,6 +297,14 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalIndent = LayoutConstants.getIndent();
 		openAfterDelayButton.setLayoutData(data);
 
+		// reuse last opened editor when opening a file (currently only in Project
+		// Explorer)
+		reuseLastOpenedEditorButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
+		reuseLastOpenedEditorButton
+				.setText(WorkbenchMessages.WorkbenchPreference_reuseLastOpenedEditor);
+		reuseLastOpenedEditorButton.setSelection(
+				getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_LAST_OPENED_EDITOR));
+
 		createNoteComposite(font, buttonComposite, WorkbenchMessages.Preference_note,
 				WorkbenchMessages.WorkbenchPreference_noEffectOnAllViews);
 	}
@@ -419,6 +429,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openAfterDelayButton.setSelection(openAfterDelay);
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
+		reuseLastOpenedEditorButton
+				.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_LAST_OPENED_EDITOR));
 		stickyCycleButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));
 		showUserDialogButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.RUN_IN_BACKGROUND));
 		showHeapStatusButton.setSelection(
@@ -443,6 +455,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, openOnSingleClick);
 		store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
+		store.setValue(IPreferenceConstants.REUSE_LAST_OPENED_EDITOR,
+				reuseLastOpenedEditorButton.getSelection());
 		store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND, showUserDialogButton.getSelection());
 		store.setValue(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, saveInterval.getIntValue());
 		store.setValue(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, largeViewLimit.getIntValue());

@@ -26,6 +26,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.OpenFileAction;
+import org.eclipse.ui.actions.OpenFileWithReuseAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -51,7 +52,7 @@ public class OpenActionProvider extends CommonActionProvider {
 	public void init(ICommonActionExtensionSite aConfig) {
 		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
 			viewSite = (ICommonViewerWorkbenchSite) aConfig.getViewSite();
-			openFileAction = new OpenFileAction(viewSite.getPage());
+			openFileAction = new OpenFileWithReuseAction(viewSite.getPage(), viewSite.getSite().getId());
 			contribute = true;
 		}
 	}

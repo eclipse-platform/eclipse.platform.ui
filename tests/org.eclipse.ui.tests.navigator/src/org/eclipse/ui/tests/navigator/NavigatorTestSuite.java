@@ -25,9 +25,8 @@ import org.eclipse.ui.tests.navigator.resources.FoldersAsProjectsContributionTes
 import org.eclipse.ui.tests.navigator.resources.NestedResourcesTests;
 import org.eclipse.ui.tests.navigator.resources.PathComparatorTest;
 import org.eclipse.ui.tests.navigator.resources.ResourceMgmtActionProviderTests;
-
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({ InitialActivationTest.class, ActionProviderTest.class, ExtensionsTest.class, FilterTest.class,
@@ -37,7 +36,7 @@ import org.junit.platform.suite.api.SelectClasses;
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
 		EvaluationCacheTest.class, ResourceMgmtActionProviderTests.class,
 		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class,
-		GoBackForwardsTest.class
+		GoBackForwardsTest.class, OpenFileWithReuseActionTest.class,
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
 		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })

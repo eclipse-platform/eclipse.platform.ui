@@ -327,4 +327,10 @@ public interface IPreferenceConstants {
 	 */
 	String SHOW_KEYS_TIME_TO_CLOSE = "showCommandKeys_timeToClose"; //$NON-NLS-1$
 
+	/**
+	 * Preference to enable editor reuse for opens from (currently only) Project
+	 * Explorer. Applies to both single- and double-click. Default false.
+	 */
+	String REUSE_LAST_OPENED_EDITOR = "REUSE_LAST_OPENED_EDITOR"; //$NON-NLS-1$
+
 }

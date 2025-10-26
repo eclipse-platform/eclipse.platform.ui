@@ -545,6 +545,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_singleClick;
 	public static String WorkbenchPreference_singleClick_SelectOnHover;
 	public static String WorkbenchPreference_singleClick_OpenAfterDelay;
+	public static String WorkbenchPreference_reuseLastOpenedEditor;
 	public static String WorkbenchPreference_noEffectOnAllViews;
 	public static String WorkbenchPreference_HeapStatusButton;
 	public static String WorkbenchPreference_HeapStatusButtonToolTip;
