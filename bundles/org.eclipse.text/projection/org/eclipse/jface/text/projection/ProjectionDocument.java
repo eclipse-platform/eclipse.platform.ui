@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
 package org.eclipse.jface.text.projection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.text.AbstractDocument;
@@ -345,7 +346,9 @@ public class ProjectionDocument extends AbstractDocument {
 				int endOffset= offsetInMaster +lengthInMaster;
 				left.setLength(endOffset - left.getOffset());
 				left.segment.markForStretch();
-
+				if (index < fragments.length && fragments[index].getOffset() + fragments[index].getLength() < left.getOffset() + left.getLength()) {
+					((Fragment)fragments[index]).segment.delete();
+				}
 			} else if (right != null) {
 				right.setOffset(right.getOffset() - lengthInMaster);
 				right.setLength(right.getLength() + lengthInMaster);
@@ -438,6 +441,11 @@ public class ProjectionDocument extends AbstractDocument {
 				segment= new Segment(offset, fragment.segment.getOffset() + fragment.segment.getLength() - offset);
 				newFragment.segment= segment;
 				segment.fragment= newFragment;
+				if (newFragment.getLength() != 0 && fMasterDocument.containsPosition(fFragmentsCategory, newFragment.getOffset(), 0)) {
+					// prevent inserting position with non-zero length after position with 0-length by removing zero-length position
+					removePositionAt(fMasterDocument, fFragmentsCategory, new Position(newFragment.getOffset(), 0));
+					removePositionAt(this, fSegmentsCategory, new Position(fMapping.toImageOffset(newFragment.getOffset()), 0));
+				}
 				fMasterDocument.addPosition(fFragmentsCategory, newFragment);
 				addPosition(fSegmentsCategory, segment);
 
@@ -451,6 +459,14 @@ public class ProjectionDocument extends AbstractDocument {
 
 		} catch (BadPositionCategoryException x) {
 			internalError();
+		}
+	}
+
+	private void removePositionAt(IDocument document, String category, Position toRemove) throws BadPositionCategoryException {
+		Position[] positions= document.getPositions(category);
+		int index= super.computeIndexInPositionList(Arrays.asList(positions), toRemove.getOffset(), true);
+		if (index != -1 && positions[index].getLength() == toRemove.getLength()) {
+			document.removePosition(category, positions[index]);
 		}
 	}
 
