@@ -233,6 +233,17 @@
            </enablement>
         </actionProvider>
 
+        <!-- Wrapper OPEN handler for Project Explorer: applies reuse-last-open-editor for IFile, delegates otherwise -->
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.OpenFileWithReuseActionProvider"
+              id="org.eclipse.ui.navigator.resources.ReuseOpenActions"
+              dependsOn="org.eclipse.jdt.ui.navigator.actions.OpenActions">
+           <!-- true: always enabled so we can wrap any OPEN handler and delegate when needed -->
+           <enablement>
+              <or/>
+           </enablement>
+        </actionProvider>
+
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.ResourceMgmtActionProvider"
               id="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
