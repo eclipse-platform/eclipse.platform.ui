@@ -30,11 +30,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentInformationMapping;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.projection.ProjectionDocument;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -433,6 +435,134 @@ public class ProjectionViewerTest {
 		} finally {
 			shell.dispose();
 		}
+	}
+
+	@Test
+	public void testImageLineStateAfterSettingVisibleRegionsWithProjectionsSetMethodAndClass() throws BadLocationException {
+		// https://github.com/eclipse-platform/eclipse.platform.ui/pull/3456
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				public class TM {
+					void a() {
+						// ...
+					}
+
+					void b() {
+						// ...
+					}
+
+					void c() {
+						// ...
+					}
+				}
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		viewer.enableProjection();
+		addAnnotationBetween(viewer, new ProjectionAnnotation(false), "\tvoid a()", "\t}");
+		ProjectionAnnotation annotationToCollapse= new ProjectionAnnotation(false);
+		addAnnotationBetween(viewer, annotationToCollapse, "\tvoid b()", "\t}");
+		addAnnotationBetween(viewer, new ProjectionAnnotation(false), "\tvoid c()", "\t}");
+
+		shell.setVisible(true);
+		try {
+			viewer.getProjectionAnnotationModel().collapse(annotationToCollapse);
+
+			Position firstMethod= findPositionFromStartAndEndText(viewer, "\tvoid a()", "}");
+			viewer.setVisibleRegion(firstMethod.getOffset(), firstMethod.getLength() + 1);
+			viewer.setVisibleRegion(documentContent.indexOf("class"), documentContent.length() - documentContent.indexOf("class"));
+
+			IDocumentInformationMapping mapping= ((ProjectionDocument) viewer.getVisibleDocument()).getDocumentInformationMapping();
+			// toImageLine should not throw exceptions and yield the correct values
+			for (int i= 0; i < 5; i++) {
+				int imageLine= mapping.toImageLine(i);// should not throw exception
+				assertEquals(i, imageLine);
+			}
+			assertEquals(-1, mapping.toImageLine(6), "should still be collapsed");
+			for (int i= 7; i < documentContent.split("\n").length; i++) {
+				int imageLine= mapping.toImageLine(i);// should not throw exception
+				assertEquals(i - 1, imageLine);
+			}
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testImageLineStateAfterSettingVisibleRegionsWithProjectionsSetDifferentMethods() throws BadLocationException {
+		// https://github.com/eclipse-platform/eclipse.platform.ui/pull/3456
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				public class TM {
+					void a() {
+						// ...
+					}
+
+					void b() {
+						// ...
+					}
+
+					void c() {
+						// ...
+					}
+				}
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		viewer.enableProjection();
+		addAnnotationBetween(viewer, new ProjectionAnnotation(false), "\tvoid a()", "\t}");
+		ProjectionAnnotation annotationToCollapse= new ProjectionAnnotation(false);
+		addAnnotationBetween(viewer, annotationToCollapse, "\tvoid b()", "\t}");
+		addAnnotationBetween(viewer, new ProjectionAnnotation(false), "\tvoid c()", "\t}");
+
+		shell.setVisible(true);
+		try {
+			viewer.getProjectionAnnotationModel().collapse(annotationToCollapse);
+
+			Position firstMethod= findPositionFromStartAndEndText(viewer, "\tvoid a()", "}");
+			viewer.setVisibleRegion(firstMethod.getOffset(), firstMethod.getLength() + 1);
+			Position secondMethod= findPositionFromStartAndEndText(viewer, "\tvoid b()", "}");
+			viewer.setVisibleRegion(secondMethod.getOffset(), secondMethod.getLength() + 1);
+
+			// the '}' is cut off because this test doesn't include it
+			assertEquals("""
+						void b() {
+							// ...
+						}
+					""", viewer.getVisibleDocument().get());
+
+			IDocumentInformationMapping mapping= ((ProjectionDocument) viewer.getVisibleDocument()).getDocumentInformationMapping();
+
+			// there should be no image regions outside of the visible region
+
+			assertEquals(0, mapping.toImageLine(5));
+			assertEquals(1, mapping.toImageLine(6));
+			assertEquals(2, mapping.toImageLine(7));
+			for (int i= 0; i < documentContent.split("\n").length; i++) {
+				if (i < 5 || i > 7) {
+					assertEquals(-1, mapping.toImageLine(i));
+				}
+			}
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	private void addAnnotationBetween(TestProjectionViewer viewer, ProjectionAnnotation annotationToCollapse, String startText, String endText) {
+		Position position= findPositionFromStartAndEndText(viewer, startText, endText);
+		viewer.getProjectionAnnotationModel().addAnnotation(annotationToCollapse, position);
+	}
+
+	private Position findPositionFromStartAndEndText(TestProjectionViewer viewer, String startText, String endText) {
+		String documentContent= viewer.getDocument().get();
+		int startIndex= documentContent.indexOf(startText);
+		int endIndex= documentContent.indexOf(endText, startIndex + 1);
+		Position position= new Position(startIndex, endIndex - startIndex);
+		return position;
 	}
 
 	@Test
