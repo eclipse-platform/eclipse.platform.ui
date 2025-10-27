@@ -47,7 +47,7 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 	 * @param textViewer the text viewer in which to detect the hyperlink
 	 * @deprecated As of 3.2, replaced by {@link URLHyperlinkDetector}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public URLHyperlinkDetector(ITextViewer textViewer) {
 	}
 

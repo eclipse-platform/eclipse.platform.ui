@@ -1141,7 +1141,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 *             {@link #addTextStyleStrategy(Object, AnnotationPainter.ITextStyleStrategy)} and
 	 *             {@link UnderlineStrategy}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public void addAnnotationType(Object annotationType) {
 		addAnnotationType(annotationType, SQUIGGLES);
 	}

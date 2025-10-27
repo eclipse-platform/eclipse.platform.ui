@@ -382,7 +382,7 @@ public final class RevisionPainter {
 					 *
 					 * @deprecated use {@link #setInput(Object)}
 					 */
-					@Deprecated
+					@Deprecated(forRemoval= true, since= "2025-12")
 					@Override
 					public void setInformation(String content) {
 						content= addCSSToHTMLFragment(content);
@@ -390,8 +390,8 @@ public final class RevisionPainter {
 					}
 
 					/**
-					 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
-					 * &lt;html&gt; section).
+					 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment
+					 * (has no &lt;html&gt; section).
 					 *
 					 * @param html the html / text produced by a revision
 					 * @return modified html

@@ -177,7 +177,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @param delayRestart <code>true</code> if restart should be delayed
 		 * @deprecated As of 3.4, replaced by {@link #stop()}. Note that <code>delayRestart</code> was never honored.
 		 */
-		@Deprecated
+		@Deprecated(forRemoval= true, since= "2025-12")
 		protected void stop(boolean delayRestart) {
 			stop();
 		}
@@ -313,7 +313,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @param creator the information control creator
 	 * @deprecated As of 2.1, replaced by {@link AnnotationBarHoverManager#AnnotationBarHoverManager(IVerticalRulerInfo, ISourceViewer, IAnnotationHover, IInformationControlCreator)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public AnnotationBarHoverManager(ISourceViewer sourceViewer, IVerticalRuler ruler, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		this(ruler, sourceViewer, annotationHover, creator);
 	}

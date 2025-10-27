@@ -323,7 +323,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * @deprecated incompatible with an open set of document partitionings. The provided information is only used
 	 * 		if this formatter can not compute the partition managing position categories.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public void setPartitionManagingPositionCategories(String[] categories) {
 		fExternalPartitonManagingCategories= TextUtilities.copy(categories);
 	}

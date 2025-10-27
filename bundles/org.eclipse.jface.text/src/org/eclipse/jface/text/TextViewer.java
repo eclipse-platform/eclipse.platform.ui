@@ -2008,7 +2008,7 @@ public class TextViewer extends Viewer implements
 	 *             {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
 	 *             {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)} instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	@Override
 	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
 		setAutoEditStrategies(new IAutoEditStrategy[] { strategy }, contentType);
@@ -3212,7 +3212,7 @@ public class TextViewer extends Viewer implements
 	 * @return the view port height in lines
 	 * @deprecated as of 3.2
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected int getVisibleLinesInViewport() {
 		if (fTextWidget != null) {
 			Rectangle clArea= fTextWidget.getClientArea();
@@ -3429,7 +3429,7 @@ public class TextViewer extends Viewer implements
 	 * @return the width of the presentation of the given string
 	 * @deprecated use <code>getWidthInPixels(int, int)</code> instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	final protected int getWidthInPixels(String text) {
 		GC gc= new GC(fTextWidget);
 		gc.setFont(fTextWidget.getFont());
@@ -4308,7 +4308,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @deprecated use <code>StyledText.invokeAction</code> instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected void deleteText() {
 		fTextWidget.invokeAction(ST.DELETE_NEXT);
 	}
@@ -4429,7 +4429,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @deprecated use shift(boolean, boolean, boolean) instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected void shift(boolean useDefaultPrefixes, boolean right) {
 		shift(useDefaultPrefixes, right, false);
 	}
@@ -4712,7 +4712,7 @@ public class TextViewer extends Viewer implements
 	 * @return the model offset of the first match
 	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
 		try {
 			return findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false);

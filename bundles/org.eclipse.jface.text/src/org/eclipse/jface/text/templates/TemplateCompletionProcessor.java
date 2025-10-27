@@ -106,7 +106,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @deprecated use the version specifying <code>IRegion</code> as third parameter
 	 * @since 3.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
 		return createProposal(template, context, (IRegion) region, relevance);
 	}

@@ -129,7 +129,7 @@ public class HTMLPrinter {
 	 * @param bgRGB Background-Color
 	 * @param styleSheet Stylesheet
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
 		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position, fromRGB(fgRGB), fromRGB(bgRGB), styleSheet));
 	}
@@ -164,7 +164,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated As of 3.13, replaced by {@link #insertStyles(StringBuilder, String[])}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
 		runOp(buffer, (sb) -> CORE.insertStyles(sb, styles));
 	}
@@ -186,7 +186,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void insertPageProlog(StringBuffer buffer, int position) {
 		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position));
 	}
@@ -199,7 +199,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
 		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position, styleSheetURL));
 	}
@@ -234,7 +234,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
 		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position, styleSheet));
 	}
@@ -254,7 +254,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addPageProlog(StringBuffer buffer) {
 		runOp(buffer, CORE::addPageProlog);
 	}
@@ -269,7 +269,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addPageEpilog(StringBuffer buffer) {
 		runOp(buffer, CORE::addPageEpilog);
 	}
@@ -289,7 +289,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void startBulletList(StringBuffer buffer) {
 		runOp(buffer, CORE::startBulletList);
 	}
@@ -311,7 +311,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void endBulletList(StringBuffer buffer) {
 		runOp(buffer, CORE::endBulletList);
 	}
@@ -335,7 +335,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addBullet(StringBuffer buffer, String bullet) {
 		runOp(buffer, (sb) -> CORE.addBullet(sb, bullet));
 	}
@@ -361,7 +361,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addSmallHeader(StringBuffer buffer, String header) {
 		runOp(buffer, (sb) -> CORE.addSmallHeader(sb, header));
 	}
@@ -383,7 +383,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addParagraph(StringBuffer buffer, String paragraph) {
 		runOp(buffer, (sb) -> CORE.addParagraph(sb, paragraph));
 	}
@@ -391,9 +391,9 @@ public class HTMLPrinter {
 	/**
 	 * Appends a string and keeps its whitespace and newlines.
 	 * <p>
-	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but
-	 * it doesn't starts a new paragraph when rendered with a {@link HTML2TextReader}
-	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
+	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but it doesn't starts
+	 * a new paragraph when rendered with a {@link HTML2TextReader} (e.g. in a
+	 * {@link DefaultInformationControl} that renders simple HTML).
 	 *
 	 * @param buffer the output StringBuilder
 	 * @param preFormatted the string that should be rendered with whitespace preserved
@@ -409,9 +409,9 @@ public class HTMLPrinter {
 	/**
 	 * Appends a string and keeps its whitespace and newlines.
 	 * <p>
-	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but
-	 * it doesn't starts a new paragraph when rendered with a {@link HTML2TextReader}
-	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
+	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but it doesn't starts
+	 * a new paragraph when rendered with a {@link HTML2TextReader} (e.g. in a
+	 * {@link DefaultInformationControl} that renders simple HTML).
 	 *
 	 * @param buffer the output buffer
 	 * @param preFormatted the string that should be rendered with whitespace preserved
@@ -422,7 +422,7 @@ public class HTMLPrinter {
 	 * @see #convertToHTMLContentWithWhitespace(String)
 	 * @since 3.7
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addPreFormatted(StringBuffer buffer, String preFormatted) {
 		runOp(buffer, (sb) -> CORE.addPreFormatted(sb, preFormatted));
 	}
@@ -444,7 +444,7 @@ public class HTMLPrinter {
 	 *
 	 * @deprecated migrate to new StringBuilder API
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public static void addParagraph(StringBuffer buffer, Reader paragraphReader) {
 		runOp(buffer, (sb) -> CORE.addParagraph(sb, paragraphReader));
 	}

@@ -599,7 +599,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public void addMouseListener(MouseListener listener) {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.addMouseListener(listener);
@@ -613,7 +613,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public void removeMouseListener(MouseListener listener) {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.removeMouseListener(listener);
