@@ -152,7 +152,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 *
 	 * @deprecated since 3.2 use {@link #ChangeRulerColumn(ISharedTextColors)} instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public ChangeRulerColumn() {
 		fRevisionPainter= null;
 		fDiffPainter= new DiffPainter(this, null);
@@ -283,7 +283,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 * @deprecated as of 3.2 the number of lines in the viewport cannot be computed because
 	 *             StyledText supports variable line heights
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	protected int getVisibleLinesInViewport() {
 		// Hack to reduce amount of copied code.
 		return LineNumberRulerColumn.getVisibleLinesInViewport(fCachedTextWidget);

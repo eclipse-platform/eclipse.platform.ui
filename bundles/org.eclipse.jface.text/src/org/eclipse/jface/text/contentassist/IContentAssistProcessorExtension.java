@@ -98,13 +98,13 @@ public interface IContentAssistProcessorExtension extends IContentAssistProcesso
 				return processor.computeCompletionProposals(viewer, offset);
 			}
 
-			@Deprecated
+			@Deprecated(forRemoval= true, since= "2025-12")
 			@Override
 			public char[] getCompletionProposalAutoActivationCharacters() {
 				return processor.getCompletionProposalAutoActivationCharacters();
 			}
 
-			@Deprecated
+			@Deprecated(forRemoval= true, since= "2025-12")
 			@Override
 			public char[] getContextInformationAutoActivationCharacters() {
 				return processor.getContextInformationAutoActivationCharacters();

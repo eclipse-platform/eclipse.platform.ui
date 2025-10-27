@@ -21,7 +21,7 @@ import org.eclipse.jface.text.TextAttribute;
 /**
  * @deprecated use <code>DefaultDamagerRepairer</code>
  */
-@Deprecated
+@Deprecated(forRemoval= true, since= "2025-12")
 public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 
 	/**
@@ -34,7 +34,7 @@ public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 	 *
 	 * @deprecated use RuleBasedDamagerRepairer(RuleBasedScanner) instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public RuleBasedDamagerRepairer(RuleBasedScanner scanner, TextAttribute defaultTextAttribute) {
 		super(scanner, defaultTextAttribute);
 	}

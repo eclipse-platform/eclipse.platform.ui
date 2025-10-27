@@ -232,7 +232,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @param presenter the presenter to be used
 	 * @deprecated As of 3.4, replaced by simpler constructors
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter) {
 		this(parent, shellStyle, style, presenter, null);
 	}
@@ -269,7 +269,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @param presenter the presenter to be used
 	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, DefaultInformationControl.IInformationPresenter)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter) {
 		this(parent, textStyles, presenter, null);
 	}

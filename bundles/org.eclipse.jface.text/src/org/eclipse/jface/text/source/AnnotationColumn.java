@@ -21,7 +21,7 @@ package org.eclipse.jface.text.source;
  *             instead.
  * @since 2.0
  */
-@Deprecated
+@Deprecated(forRemoval= true, since= "2025-12")
 public final class AnnotationColumn extends AnnotationRulerColumn {
 
 	/**
@@ -32,7 +32,7 @@ public final class AnnotationColumn extends AnnotationRulerColumn {
 	 *             {@link org.eclipse.jface.text.source.AnnotationRulerColumn#AnnotationRulerColumn(int)}
 	 *             instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2025-12")
 	public AnnotationColumn(int width) {
 		super(width);
 	}
