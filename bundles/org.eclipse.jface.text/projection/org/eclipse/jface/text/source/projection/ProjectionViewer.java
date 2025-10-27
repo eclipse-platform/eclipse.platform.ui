@@ -776,7 +776,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			expandOutsideCurrentVisibleRegion(document);
 			collapseOutsideOfNewVisibleRegion(start, end, document);
 			fConfiguredVisibleRegion= newVisibleRegion;
-			hideProjectionAnnotationsOutsideOfVisibleRegion();
+			if (fProjectionAnnotationModel != null) {
+				hideProjectionAnnotationsOutsideOfVisibleRegion();
+			}
 		} catch (BadLocationException e) {
 			ILog log= ILog.of(getClass());
 			log.log(new Status(IStatus.WARNING, getClass(), IStatus.OK, null, e));
@@ -887,10 +889,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			super.resetVisibleRegion();
 		}
 		fConfiguredVisibleRegion= null;
-		for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
-			Annotation annotation= it.next();
-			if (annotation instanceof ProjectionAnnotation a) {
-				a.setHidden(false);
+		if (fProjectionAnnotationModel != null) {
+			for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+				Annotation annotation= it.next();
+				if (annotation instanceof ProjectionAnnotation a) {
+					a.setHidden(false);
+				}
 			}
 		}
 	}
