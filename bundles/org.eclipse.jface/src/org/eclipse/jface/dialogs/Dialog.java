@@ -16,6 +16,7 @@ package org.eclipse.jface.dialogs;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -1086,7 +1088,60 @@ public abstract class Dialog extends Window {
 	@Override
 	public void create() {
 		super.create();
+		hookZoomChangeListenerForDefaultSizedDialogs();
 		applyDialogFont(buttonBar);
+	}
+
+	/*
+	 * There is no linear relation between font size and containing control size
+	 * scaled according to some zoom value. In consequence, text with a scaled font
+	 * size may not fit into a control/shell with a size scaled by the same zoom. To
+	 * adhere for this in case of Windows using the default computed size, ensure
+	 * that on zoom change the new proper size is computed and applied. This will
+	 * not affect Windows that have a custom size, either programmatically or
+	 * manually applied.
+	 */
+	private void hookZoomChangeListenerForDefaultSizedDialogs() {
+		boolean hasCustomSize = !getShell().getSize().equals(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		boolean isEmpty = getShell().getChildren().length == 0;
+		if (resizeHasOccurred || hasCustomSize || isEmpty || isResizable()) {
+			return;
+		}
+
+		AtomicReference<Listener> customResizeListener = new AtomicReference<>();
+		Listener adaptDefaultSizeListener = event -> {
+			Shell shell = getShell();
+			if (shell == null || shell.isDisposed()) {
+				return;
+			}
+			Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			shell.setSize(size);
+		};
+		AtomicReference<Listener> zoomChangeListener = new AtomicReference<>();
+		zoomChangeListener.set(event -> {
+			Shell shell = getShell();
+			if (shell == null || shell.isDisposed()) {
+				return;
+			}
+			shell.addListener(SWT.Resize, adaptDefaultSizeListener);
+			shell.removeListener(SWT.Resize, customResizeListener.get());
+			shell.getChildren()[0].removeListener(SWT.ZoomChanged, zoomChangeListener.get());
+		});
+		customResizeListener.set(event -> {
+			Shell shell = getShell();
+			if (shell == null || shell.isDisposed()) {
+				return;
+			}
+			shell.getChildren()[0].removeListener(SWT.ZoomChanged, zoomChangeListener.get());
+		});
+
+		// We need to detect the zoom change event before the resize triggered by the
+		// zoom change happened, which is why we cannot listen to the zoom change at the
+		// shell but must use one of its children
+		getShell().getChildren()[0].addListener(SWT.ZoomChanged, zoomChangeListener.get());
+		// If custom resize happens before first zoom change, the dialog is custom sized
+		// and should not be auto-resized on zoom change
+		getShell().addListener(SWT.Resize, customResizeListener.get());
 	}
 
 	/**
