@@ -183,7 +183,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @param theDevice the device that was used to create the Image
 	 * @return a newly created image descriptor
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static ImageDescriptor createFromImage(Image img, Device theDevice) {
 		return new ImageDataImageDescriptor(img);
 	}
@@ -261,7 +261,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @since 3.19
 	 * @deprecated Use {@link #createFromURI(URI)} instead.
 	 */
-	@Deprecated(since = "3.36", forRemoval = true)
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public ImageDescriptor imageDescriptorFromURI(URI uriIconPath) {
 		return createFromURI(uriIconPath);
 	}
@@ -451,7 +451,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 *             {@link #getImageData(int)} to prevent endless cycle between the 2
 	 *             implementation in this class since 2017.</b>
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public ImageData getImageData() {
 		return getImageData(100);
 	}
