@@ -271,7 +271,7 @@ public final class Util {
 	 *         <code>false</code> otherwise.
 	 * @deprecated Use {@link Objects#equals(Object, Object)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static boolean equals(final Object left, final Object right) {
 		return Objects.equals(left, right);
 	}
@@ -290,7 +290,7 @@ public final class Util {
 	 *         the same position are equal; <code>false</code> otherwise.
 	 * @deprecated Use {@link Arrays#equals(Object[], Object[])}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static boolean equals(final Object[] leftArray,
 			final Object[] rightArray) {
 		return Arrays.equals(leftArray, rightArray);
@@ -303,7 +303,7 @@ public final class Util {
 	 * @return <code>i</code>
 	 * @deprecated return directly value, or use {@link Integer#hashCode(int)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static int hashCode(final int i) {
 		return i;
 	}
@@ -316,7 +316,7 @@ public final class Util {
 	 *         if <code>null</code>.
 	 * @deprecated use {@link Objects#hashCode(Object)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static int hashCode(final Object object) {
 		return object != null ? object.hashCode() : 0;
 	}
@@ -331,7 +331,7 @@ public final class Util {
 	 *         <code>objects</code> is <code>null</code>.
 	 * @deprecated use {@link Arrays#hashCode(Object[])}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static int hashCode(final Object[] objects) {
 		if (objects == null) {
 			return 0;

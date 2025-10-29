@@ -71,7 +71,7 @@ public class OpenStrategy {
 	 *
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final int NO_TIMER = SINGLE_CLICK;
 
 	/** A single click will generate an open
@@ -80,7 +80,7 @@ public class OpenStrategy {
 	 *
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final int FILE_EXPLORER = SINGLE_CLICK | ARROW_KEYS_OPEN;
 
 	/** Pointing to an item will change the selection
@@ -88,7 +88,7 @@ public class OpenStrategy {
 	 *
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final int ACTIVE_DESKTOP = SINGLE_CLICK | SELECT_ON_HOVER;
 
 	// Time used in FILE_EXPLORER and ACTIVE_DESKTOP

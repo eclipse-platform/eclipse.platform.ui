@@ -45,7 +45,7 @@ public final class ProgressMonitorUtil {
 	 *
 	 * @since 3.13
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static org.eclipse.core.runtime.IProgressMonitorWithBlocking createAccumulatingProgressMonitor(
 			IProgressMonitor monitor,
 			Display display) {

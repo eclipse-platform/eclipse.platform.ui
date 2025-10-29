@@ -205,7 +205,7 @@ public abstract class SubContributionManager implements IContributionManager {
 	 * @return fetch all enumeration of wrappers for the item
 	 * @deprecated Use getItems(String value) instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public Enumeration<SubContributionItem> items() {
 		final Iterator<SubContributionItem> i = mapItemToWrapper.values().iterator();
 		return new Enumeration<>() {
