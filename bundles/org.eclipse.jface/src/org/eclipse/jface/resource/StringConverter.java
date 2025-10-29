@@ -861,7 +861,7 @@ public class StringConverter {
 	 * @return The string representation of the font data object.
 	 * @deprecated use asString(FontData)
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static String asDisplayableString(FontData value) {
 		Assert.isNotNull(value);
 		StringBuilder buffer = new StringBuilder();
