@@ -722,7 +722,7 @@ public class LogView extends ViewPart implements LogListener {
 	 */
 	void handleImport() {
 		FileDialog dialog = new FileDialog(getViewSite().getShell());
-		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
+		dialog.setFilterExtensions("*.log"); //$NON-NLS-1$
 		if (fDirectory != null) {
 			dialog.setFilterPath(fDirectory);
 		}
@@ -776,7 +776,7 @@ public class LogView extends ViewPart implements LogListener {
 
 	private void handleExport(boolean exportWholeLog) {
 		FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.SAVE);
-		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
+		dialog.setFilterExtensions("*.log"); //$NON-NLS-1$
 		if (fDirectory != null) {
 			dialog.setFilterPath(fDirectory);
 		}
