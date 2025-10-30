@@ -426,8 +426,8 @@ public class KeyController {
 
 	public void exportCSV(Shell shell) {
 		final FileDialog fileDialog = new FileDialog(shell, SWT.SAVE | SWT.SHEET);
-		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
-		fileDialog.setFilterNames(new String[] { Util.translateString(RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+		fileDialog.setFilterExtensions("*.csv"); //$NON-NLS-1$
+		fileDialog.setFilterNames(Util.translateString(RESOURCE_BUNDLE, "csvFilterName")); //$NON-NLS-1$
 		fileDialog.setOverwrite(true);
 		final String filePath = fileDialog.open();
 		if (filePath == null) {
