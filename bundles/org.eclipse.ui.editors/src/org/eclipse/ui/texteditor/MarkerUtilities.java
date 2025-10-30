@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -258,7 +259,11 @@ public final class MarkerUtilities {
 		try {
 			return marker.getType();
 		} catch (CoreException x) {
-			handleCoreException(x);
+			// check if the marker marker was deleted and an exception was thrown due to that
+			boolean deletedMarkerNotFound = x.getStatus().getCode() == IResourceStatus.MARKER_NOT_FOUND && !marker.exists();
+			if (!deletedMarkerNotFound) {
+				handleCoreException(x);
+			}
 		}
 		return null;
 	}
