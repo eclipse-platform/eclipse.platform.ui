@@ -449,8 +449,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
 				dialog.setText(DataTransferMessages.SmartImportWizardPage_selectArchiveTitle);
-				dialog.setFilterExtensions(new String[] { "*.zip;*.tar;*.tar.gz" }); //$NON-NLS-1$
-				dialog.setFilterNames(new String[] { DataTransferMessages.SmartImportWizardPage_allSupportedArchives });
+				dialog.setFilterExtensions("*.zip;*.tar;*.tar.gz"); //$NON-NLS-1$
+				dialog.setFilterNames(DataTransferMessages.SmartImportWizardPage_allSupportedArchives);
 				if (rootDirectoryText.getText() != null) {
 					File current = new File(rootDirectoryText.getText());
 					if (current.isDirectory()) {
