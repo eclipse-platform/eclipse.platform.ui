@@ -1233,7 +1233,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private void import_() {
 		FileDialog dialog= new FileDialog(getShell());
 		dialog.setText(TemplatesMessages.TemplatePreferencePage_import_title);
-		dialog.setFilterExtensions(new String[] {TemplatesMessages.TemplatePreferencePage_import_extension});
+		dialog.setFilterExtensions(TemplatesMessages.TemplatePreferencePage_import_extension);
 		String path= dialog.open();
 
 		if (path == null) {
@@ -1290,7 +1290,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private void export(TemplatePersistenceData[] templates) {
 		FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(TemplatesMessages.TemplatePreferencePage_export_title);
-		dialog.setFilterExtensions(new String[] {TemplatesMessages.TemplatePreferencePage_export_extension});
+		dialog.setFilterExtensions(TemplatesMessages.TemplatePreferencePage_export_extension);
 		dialog.setFileName(TemplatesMessages.TemplatePreferencePage_export_filename);
 		String path= dialog.open();
 
