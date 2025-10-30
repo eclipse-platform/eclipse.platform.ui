@@ -709,7 +709,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		FileDialog dialog = new FileDialog(getContainer().getShell(), getFileDialogStyle());
 		dialog.setText(getFileDialogTitle());
 		dialog.setFilterPath(getDestinationValue());
-		dialog.setFilterExtensions(new String[] { "*.epf", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+		dialog.setFilterExtensions("*.epf", "*.*"); //$NON-NLS-1$ //$NON-NLS-2$
 		String selectedFileName = dialog.open();
 
 		if (selectedFileName != null) {

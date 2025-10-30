@@ -1209,8 +1209,8 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private void selectedButtonExport() {
 		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
-		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
-		fileDialog.setFilterNames(new String[] { Util.translateString(RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+		fileDialog.setFilterExtensions("*.csv"); //$NON-NLS-1$
+		fileDialog.setFilterNames(Util.translateString(RESOURCE_BUNDLE, "csvFilterName")); //$NON-NLS-1$
 		final String filePath = fileDialog.open();
 		if (filePath == null) {
 			return;
