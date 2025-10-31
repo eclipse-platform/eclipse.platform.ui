@@ -25,7 +25,6 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 /**
  * Implementation of the workbench browser support.
  */
-@SuppressWarnings("deprecation") // java.util.Observable since 9;
 public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	static final String SHARED_ID = "org.eclipse.ui.browser"; //$NON-NLS-1$
 	static final String DEFAULT_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
