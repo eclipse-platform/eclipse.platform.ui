@@ -704,6 +704,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 		}
+
+		if (DPIUtil.isMonitorSpecificScalingActive() && !DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
+			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(false));
+			MessageDialog.openError(new Shell(Display.getDefault()),
+					WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle,
+					NLS.bind(WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription));
+		}
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {
