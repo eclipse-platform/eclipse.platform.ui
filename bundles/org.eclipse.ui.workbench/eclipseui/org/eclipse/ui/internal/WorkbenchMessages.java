@@ -38,6 +38,12 @@ public class WorkbenchMessages extends NLS {
 
 	public static String RescaleAtRuntimeDescription;
 
+	public static String RescaleAtRuntimeDisabledDescription;
+
+	public static String RescaleAtRuntimeIncompatibilityTitle;
+
+	public static String RescaleAtRuntimeIncompatibilityDescription;
+
 	public static String RescaleAtRuntimeEnabled;
 
 	public static String RescaleAtRuntimeSettingChangeWarningTitle;
