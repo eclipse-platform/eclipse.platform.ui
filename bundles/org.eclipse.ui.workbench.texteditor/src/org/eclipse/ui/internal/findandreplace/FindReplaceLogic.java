@@ -50,7 +50,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private IFindReplaceStatus status;
 	private IFindReplaceTarget target;
 	private Point incrementalBaseLocation;
-
+	private Point restoreBaseLocation = new Point(0, 0);
 	private boolean isTargetSupportingRegEx;
 	private boolean isTargetEditable;
 	private final Set<SearchOptions> searchOptions = new HashSet<>();
@@ -60,6 +60,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public void setFindString(String findString) {
+		if (this.findString.isEmpty() && !findString.isEmpty()) {
+			// User just started a new search after clearing previous search.
+			if (target != null) {
+				restoreBaseLocation = target.getSelection();
+			}
+		}
 		this.findString = Objects.requireNonNull(findString);
 		if (isAvailableAndActive(SearchOptions.INCREMENTAL)) {
 			performSearch(true);
@@ -324,6 +330,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private boolean performSearch(boolean updateFromIncrementalBaseLocation) {
 		resetStatus();
 		if (findString.isEmpty()) {
+			restoreSelectionIfEmpty();
 			return false;
 		}
 
@@ -336,6 +343,18 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			// we don't keep state in this dialog
 		}
 		return somethingFound;
+	}
+
+	/**
+	 * Restores the original caret/selection position when the search field becomes
+	 * empty.
+	 */
+	private void restoreSelectionIfEmpty() {
+		if (restoreBaseLocation == null)
+			return;
+		incrementalBaseLocation = restoreBaseLocation;
+		if (target instanceof IFindReplaceTargetExtension extension)
+			extension.setSelection(restoreBaseLocation.x, restoreBaseLocation.y);
 	}
 
 	/**
