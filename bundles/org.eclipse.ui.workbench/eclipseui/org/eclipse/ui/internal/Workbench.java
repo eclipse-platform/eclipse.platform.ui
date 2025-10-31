@@ -773,6 +773,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 		setRescaleAtRuntimePropertyFromPreference();
 
+		if (DPIUtil.isMonitorSpecificScalingActive() && !DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
+			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(false));
+			MessageDialog.openError(new Shell(Display.getDefault()),
+					WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle, NLS.bind(
+							WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription, DPIUtil.getAutoScaleValue()));
+		}
+
 		// create the display
 		Display newDisplay = Display.getCurrent();
 		if (newDisplay == null) {
