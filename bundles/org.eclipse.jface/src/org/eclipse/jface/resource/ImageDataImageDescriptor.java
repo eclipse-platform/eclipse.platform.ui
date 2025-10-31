@@ -46,7 +46,7 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 	 * @param data describing the image
 	 * @deprecated use {@link #ImageDataImageDescriptor(ImageDataProvider)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	ImageDataImageDescriptor(ImageData data) {
 		this(zoom -> zoom == 100 ? data : null);
 	}
