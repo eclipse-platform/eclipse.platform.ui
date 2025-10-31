@@ -17,9 +17,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -35,9 +36,9 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.monitoring.PreferenceConstants;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * A test that measures performance overhead of {@link EventLoopMonitorThread}.
@@ -111,12 +112,12 @@ public class EventLoopMonitorThreadManualTests {
 	 */
 	protected static final long PN63_GENERATOR_POLY = (3L << 62) | 1;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		MonitoringPlugin.getPreferenceStore().setToDefault(PreferenceConstants.MONITORING_ENABLED);
 	}
@@ -163,7 +164,7 @@ public class EventLoopMonitorThreadManualTests {
 	@Test
 	public void testFixedWork() throws Exception{
 		final Display display = Display.getDefault();
-		assertNotNull("No SWT Display available.", display);
+		assertNotNull(display, "No SWT Display available.");
 
 		final MockUiFreezeEventLogger logger = new MockUiFreezeEventLogger();
 		final CountDownLatch backgroundJobsDone = new CountDownLatch(1);
@@ -246,13 +247,18 @@ public class EventLoopMonitorThreadManualTests {
 					maxRelativeIncreaseOneStackAllowed * 100));
 			}
 			assertTrue(
-					String.format("""
-						Relative overhead of monitoring surpassed threshold for
-						measurement %d of %d. It took %.3fs with a relative increase of %.3f%%
-						(allowed < %.3f%%).""",
-					i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
-					maxRelativeIncreaseOneStackAllowed * 100),
-				relativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
+				    relativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed,
+				    String.format("""
+				        Relative overhead of monitoring surpassed threshold for \
+				        measurement %d of %d. It took %.3fs with a relative increase of %.3f%% \
+				        (allowed < %.3f%%).""",
+				        i,
+				        NUM_UI_STACK_MEASUREMENTS,
+				        tWork[0] / 1e9,
+				        relativeDiffOneThread * 100,
+				        maxRelativeIncreaseOneStackAllowed * 100)
+				);
+
 		}
 		killMonitorThread(monitor1, display);
 
@@ -277,13 +283,19 @@ public class EventLoopMonitorThreadManualTests {
 					i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
 					maxRelativeIncreaseAllStacksAllowed * 100));
 			}
-			assertTrue(String.format("""
-					Relative overhead of monitoring with stack traces of all threads
-					surpassed threshold for measurement %d of %d. It took %.3fs with a relative
-					increase of %.3f%% (allowed < %.3f%%).""",
-				i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
-				maxRelativeIncreaseAllStacksAllowed * 100),
-				relativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
+			assertTrue(
+				    relativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed,
+				    String.format("""
+				        Relative overhead of monitoring with stack traces of all threads \
+				        surpassed threshold for measurement %d of %d. It took %.3fs with a relative \
+				        increase of %.3f%% (allowed < %.3f%%).""",
+				        i,
+				        NUM_ALL_STACKS_MEASUREMENTS,
+				        tWork[0] / 1e9,
+				        relativeDiffAllThreads * 100,
+				        maxRelativeIncreaseAllStacksAllowed * 100)
+				);
+
 		}
 		killMonitorThread(monitor2, display);
 
@@ -376,22 +388,30 @@ public class EventLoopMonitorThreadManualTests {
 				threads.offer(t); // Retry.
 			}
 		}
-
-		assertEquals("Did not log expected number of freeze events,",
+		assertEquals(
 				NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS,
-				logger.getLoggedEvents().size());
-		assertTrue(String.format("""
-					Relative overhead of monitoring with stack traces of the UI
-					thread was %.3f%% (allowed < %.3f%%).""",
-				worstRelativeDiffOneThread * 100,
-				maxRelativeIncreaseOneStackAllowed * 100),
-				worstRelativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
-		assertTrue(String.format("""
-					Relative overhead of monitoring with stack traces of all
-					threads was %.3f%% (allowed < %.3f%%).""",
-				worstRelativeDiffAllThreads * 100,
-				maxRelativeIncreaseAllStacksAllowed * 100),
-				worstRelativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
+				logger.getLoggedEvents().size(),
+				"Did not log expected number of freeze events."
+				);
+
+		assertTrue(
+				worstRelativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed,
+				String.format("""
+						Relative overhead of monitoring with stack traces of the UI \
+						thread was %.3f%% (allowed < %.3f%%).""",
+						worstRelativeDiffOneThread * 100,
+						maxRelativeIncreaseOneStackAllowed * 100)
+				);
+
+		assertTrue(
+				worstRelativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed,
+				String.format("""
+						Relative overhead of monitoring with stack traces of all \
+						threads was %.3f%% (allowed < %.3f%%).""",
+						worstRelativeDiffAllThreads * 100,
+						maxRelativeIncreaseAllStacksAllowed * 100)
+				);
+
 	}
 
 	private Thread createAndStartMonitoringThread(Display display, boolean dumpAll) throws Exception {
