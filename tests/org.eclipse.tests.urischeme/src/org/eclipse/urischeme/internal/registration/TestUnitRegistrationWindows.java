@@ -26,14 +26,10 @@ import org.eclipse.urischeme.ISchemeInformation;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 public class TestUnitRegistrationWindows {
 
-	@Rule
-	public TestName name = new TestName();
 
 	private static final String PATH_TO_OTHER_APPLICATION_EXE = "c:\\path\\to\\otherApplication.exe";
 	private static final String PATH_TO_ECLIPSE_EXE = "c:\\path\\with spaces\\to\\eclipse\\Eclipse.exe";
