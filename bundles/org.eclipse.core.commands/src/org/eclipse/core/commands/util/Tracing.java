@@ -34,6 +34,7 @@ public final class Tracing {
 	/**
 	 * The separator to place between the component and the message.
 	 */
+	@Deprecated
 	public static final String SEPARATOR = " >>> "; //$NON-NLS-1$
 
 	/**
@@ -52,6 +53,7 @@ public final class Tracing {
 	 * @param message
 	 *            The message to print to standard out; may be <code>null</code>.
 	 */
+	@Deprecated
 	public static final void printTrace(final String component,
 			final String message) {
 		StringBuilder buffer = new StringBuilder();
