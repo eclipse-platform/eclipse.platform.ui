@@ -150,66 +150,97 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.NullProvider_error, null);
 
+		@Deprecated
 		@Override
 		public void connect(Object element) throws CoreException {}
+		@Deprecated
 		@Override
 		public void disconnect(Object element) {}
+		@Deprecated
 		@Override
 		public IDocument getDocument(Object element) { return null; }
+		@Deprecated
 		@Override
 		public void resetDocument(Object element) throws CoreException {}
+		@Deprecated
 		@Override
 		public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {}
+		@Deprecated
 		@Override
 		public long getModificationStamp(Object element) { return 0; }
+		@Deprecated
 		@Override
 		public long getSynchronizationStamp(Object element) { return 0; }
+		@Deprecated
 		@Override
 		public boolean isDeleted(Object element) { return true; }
+		@Deprecated
 		@Override
 		public boolean mustSaveDocument(Object element) { return false; }
+		@Deprecated
 		@Override
 		public boolean canSaveDocument(Object element) { return false; }
+		@Deprecated
 		@Override
 		public IAnnotationModel getAnnotationModel(Object element) { return null; }
+		@Deprecated
 		@Override
 		public void aboutToChange(Object element) {}
+		@Deprecated
 		@Override
 		public void changed(Object element) {}
+		@Deprecated
 		@Override
 		public void addElementStateListener(IElementStateListener listener) {}
+		@Deprecated
 		@Override
 		public void removeElementStateListener(IElementStateListener listener) {}
+		@Deprecated
 		@Override
 		public boolean isReadOnly(Object element) { return true; }
+		@Deprecated
 		@Override
 		public boolean isModifiable(Object element) { return false; }
+		@Deprecated
 		@Override
 		public void validateState(Object element, Object computationContext) throws CoreException {}
+		@Deprecated
 		@Override
 		public boolean isStateValidated(Object element) { return true; }
+		@Deprecated
 		@Override
 		public void updateStateCache(Object element) throws CoreException {}
+		@Deprecated
 		@Override
 		public void setCanSaveDocument(Object element) {}
+		@Deprecated
 		@Override
 		public IStatus getStatus(Object element) { return STATUS_ERROR; }
+		@Deprecated
 		@Override
 		public void synchronize(Object element) throws CoreException {}
+		@Deprecated
 		@Override
 		public void setProgressMonitor(IProgressMonitor progressMonitor) {}
+		@Deprecated
 		@Override
 		public IProgressMonitor getProgressMonitor() { return new NullProgressMonitor(); }
+		@Deprecated
 		@Override
 		public boolean isSynchronized(Object element) { return true; }
+		@Deprecated
 		@Override
 		public boolean isNotSynchronizedException(Object element, CoreException ex) { return false; }
+		@Deprecated
 		@Override
 		public String getDefaultEncoding() { return null; }
+		@Deprecated
 		@Override
 		public String getEncoding(Object element) { return null; }
+		@Deprecated
 		@Override
 		public void setEncoding(Object element, String encoding) {}
+		@Deprecated
 		@Override
 		public IContentType getContentType(Object element) throws CoreException { return null; }
 	}
