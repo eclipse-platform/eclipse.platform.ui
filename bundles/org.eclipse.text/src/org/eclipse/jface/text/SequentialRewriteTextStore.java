@@ -59,6 +59,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 *
 	 * @param source the source text store
 	 */
+	@Deprecated
 	public SequentialRewriteTextStore(ITextStore source) {
 		fReplaceList= new LinkedList<>();
 		fSource= source;
@@ -69,11 +70,13 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 *
 	 * @return  the source store of this rewrite store
 	 */
+	@Deprecated
 	public ITextStore getSourceStore() {
 		commit();
 		return fSource;
 	}
 
+	@Deprecated
 	@Override
 	public void replace(int offset, int length, String text) {
 		if (text == null) {
@@ -113,12 +116,14 @@ public class SequentialRewriteTextStore implements ITextStore {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void set(String text) {
 		fSource.set(text);
 		fReplaceList.clear();
 	}
 
+	@Deprecated
 	@Override
 	public String get(int offset, int length) {
 
@@ -178,6 +183,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		return replace.newOffset - replace.offset + replace.text.length() - replace.length;
 	}
 
+	@Deprecated
 	@Override
 	public char get(int offset) {
 		if (fReplaceList.isEmpty()) {
@@ -216,6 +222,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public int getLength() {
 		if (fReplaceList.isEmpty()) {
@@ -229,6 +236,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	/**
 	 * Disposes this rewrite store.
 	 */
+	@Deprecated
 	public void dispose() {
 		fReplaceList= null;
 		fSource= null;

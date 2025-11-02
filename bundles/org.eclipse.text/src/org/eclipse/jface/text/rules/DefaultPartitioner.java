@@ -63,20 +63,28 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 
 	/** The partitioner's scanner */
+	@Deprecated
 	protected IPartitionTokenScanner fScanner;
 	/** The legal content types of this partitioner */
+	@Deprecated
 	protected String[] fLegalContentTypes;
 	/** The partitioner's document */
+	@Deprecated
 	protected IDocument fDocument;
 	/** The document length before a document change occurred */
+	@Deprecated
 	protected int fPreviousDocumentLength;
 	/** The position updater used to for the default updating of partitions */
+	@Deprecated
 	protected DefaultPositionUpdater fPositionUpdater;
 	/** The offset at which the first changed partition starts */
+	@Deprecated
 	protected int fStartOffset;
 	/** The offset at which the last changed partition ends */
+	@Deprecated
 	protected int fEndOffset;
 	/**The offset at which a partition has been deleted */
+	@Deprecated
 	protected int fDeleteOffset;
 	/**
 	 * The position category this partitioner uses to store the document's partitioning information.
@@ -101,6 +109,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @param scanner the scanner this partitioner is supposed to use
 	 * @param legalContentTypes the legal content types of this partitioner
 	 */
+	@Deprecated
 	public DefaultPartitioner(IPartitionTokenScanner scanner, String[] legalContentTypes) {
 		fScanner= scanner;
 		fLegalContentTypes= TextUtilities.copy(legalContentTypes);
@@ -108,16 +117,19 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
+	@Deprecated
 	@Override
 	public String[] getManagingPositionCategories() {
 		return new String[] { fPositionCategory };
 	}
 
+	@Deprecated
 	@Override
 	public void connect(IDocument document) {
 		connect(document, false);
 	}
 
+	@Deprecated
 	@Override
 	public void connect(IDocument document, boolean delayInitialization) {
 		Assert.isNotNull(document);
@@ -135,6 +147,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	/*
 	 * @since 3.1
 	 */
+	@Deprecated
 	protected final void checkInitialization() {
 		if (!fIsInitialized) {
 			initialize();
@@ -144,6 +157,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	/**
 	 * Performs the initial partitioning of the partitioner's document.
 	 */
+	@Deprecated
 	protected void initialize() {
 		fIsInitialized= true;
 		fScanner.setRange(fDocument, 0, fDocument.getLength());
@@ -168,6 +182,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void disconnect() {
 
@@ -180,6 +195,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		if (fIsInitialized) {
@@ -193,6 +209,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
+	@Deprecated
 	@Override
 	public boolean documentChanged(DocumentEvent e) {
 		if (fIsInitialized) {
@@ -258,6 +275,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
+	@Deprecated
 	@Override
 	public IRegion documentChanged2(DocumentEvent e) {
 
@@ -397,6 +415,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @param offset the offset for which to search the closest position
 	 * @return the closest position in the partitioner's category
 	 */
+	@Deprecated
 	protected TypedPosition findClosestPosition(int offset) {
 
 		try {
@@ -428,6 +447,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 
 
+	@Deprecated
 	@Override
 	public String getContentType(int offset) {
 		checkInitialization();
@@ -440,6 +460,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion getPartition(int offset) {
 		checkInitialization();
@@ -490,11 +511,13 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		return computePartitioning(offset, length, false);
 	}
 
+	@Deprecated
 	@Override
 	public String[] getLegalContentTypes() {
 		return TextUtilities.copy(fLegalContentTypes);
@@ -506,6 +529,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @param contentType the content type to check
 	 * @return <code>true</code> if the content type is a legal content type
 	 */
+	@Deprecated
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
 			for (String fLegalContentType : fLegalContentTypes) {
@@ -526,6 +550,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * @param token the token whose content type is to be determined
 	 * @return the token's content type
 	 */
+	@Deprecated
 	protected String getTokenContentType(IToken token) {
 		Object data= token.getData();
 		if (data instanceof String) {
@@ -536,11 +561,13 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/* zero-length partition support */
 
+	@Deprecated
 	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		return getPartition(offset, preferOpenPartitions).getType();
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		ITypedRegion region= getPartition(offset);
@@ -558,6 +585,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return region;
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		checkInitialization();
@@ -681,6 +709,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return j;
 	}
 
+	@Deprecated
 	@Override
 	public void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException {
 		if (fActiveRewriteSession != null) {
@@ -689,6 +718,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fActiveRewriteSession= session;
 	}
 
+	@Deprecated
 	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		if (fActiveRewriteSession == session) {
@@ -696,6 +726,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
+	@Deprecated
 	@Override
 	public DocumentRewriteSession getActiveRewriteSession() {
 		return fActiveRewriteSession;
@@ -706,6 +737,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 *
 	 * @since 3.1
 	 */
+	@Deprecated
 	protected final void flushRewriteSession() {
 		fActiveRewriteSession= null;
 
