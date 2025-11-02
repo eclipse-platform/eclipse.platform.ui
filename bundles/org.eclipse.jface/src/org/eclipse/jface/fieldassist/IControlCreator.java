@@ -38,5 +38,6 @@ public interface IControlCreator {
 	 *
 	 * @return the Control that was created.
 	 */
+	@Deprecated
 	public Control createControl(Composite parent, int style);
 }

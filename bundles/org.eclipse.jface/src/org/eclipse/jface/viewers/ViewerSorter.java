@@ -52,6 +52,7 @@ public class ViewerSorter extends ViewerComparator {
 	 * Creates a new viewer sorter, which uses the default collator
 	 * to sort strings.
 	 */
+	@Deprecated
 	public ViewerSorter() {
 		this(Collator.getInstance());
 	}
@@ -62,6 +63,7 @@ public class ViewerSorter extends ViewerComparator {
 	 *
 	 * @param collator the collator to use to sort strings
 	 */
+	@Deprecated
 	public ViewerSorter(Collator collator) {
 		super(collator);
 		this.collator = collator;

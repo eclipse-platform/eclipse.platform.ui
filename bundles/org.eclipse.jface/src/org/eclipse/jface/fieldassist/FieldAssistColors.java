@@ -77,6 +77,7 @@ public class FieldAssistColors {
 	 * @return the RGB value indicating a background color appropriate for
 	 *         indicating an error in the control.
 	 */
+	@Deprecated
 	public static RGB computeErrorFieldBackgroundRGB(Control control) {
 		/*
 		 * Use a 10% alpha of the error color applied on top of the widget
@@ -109,6 +110,7 @@ public class FieldAssistColors {
 	 *            the control on which the background color will be used.
 	 * @return the color used to indicate that a field is required.
 	 */
+	@Deprecated
 	public static Color getRequiredFieldBackgroundColor(Control control) {
 		final Display display = control.getDisplay();
 

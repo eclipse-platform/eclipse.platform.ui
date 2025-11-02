@@ -37,6 +37,7 @@ public class AnimatorFactory {
 	 * @return the ControlAnimator.
 	 * @since 3.2
 	 */
+	@Deprecated
 	public ControlAnimator createAnimator(Control control) {
 		return new ControlAnimator(control);
 	}

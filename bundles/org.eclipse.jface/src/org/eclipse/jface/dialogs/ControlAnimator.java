@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 @Deprecated(forRemoval = true, since = "2025-03")
 public class ControlAnimator {
 	/** the control that will be displayed or hidden */
+	@Deprecated
 	protected Control control;
 
 	/**
@@ -39,6 +40,7 @@ public class ControlAnimator {
 	 *
 	 * @param control the control that will be displayed or hidden.
 	 */
+	@Deprecated
 	public ControlAnimator(Control control) {
 		this.control = control;
 	}
@@ -51,6 +53,7 @@ public class ControlAnimator {
 	 * @param visible <code>true</code> if the control should be shown,
 	 * 		  and <code>false</code> otherwise.
 	 */
+	@Deprecated
 	public void setVisible(boolean visible){
 		// Using the SWT visible flag to determine if the control has
 		// already been displayed or hidden. Return if already displayed
