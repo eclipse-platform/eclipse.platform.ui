@@ -35,5 +35,6 @@ public interface ISubjectControlContextInformationPresenter extends IContextInfo
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset the document offset for which the information has been computed
 	 */
+	@Deprecated
 	void install(IContextInformation info, IContentAssistSubjectControl contentAssistSubjectControl, int offset);
 }

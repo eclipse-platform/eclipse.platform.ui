@@ -32,6 +32,7 @@ public interface ITextViewerExtension3 {
 	 *
 	 * @return the minimal region of the viewer's document comprising the contents of the viewer's widget or <code>null</code>
 	 */
+	@Deprecated
 	IRegion getModelCoverage();
 
 
@@ -41,6 +42,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelLine the line of the viewer's document
 	 * @return the corresponding widget line or <code>-1</code>
 	 */
+	@Deprecated
 	int modelLine2WidgetLine(int modelLine);
 
 	/**
@@ -50,6 +52,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelOffset the offset in the viewer's document
 	 * @return the corresponding widget offset or <code>-1</code>
 	 */
+	@Deprecated
 	int modelOffset2WidgetOffset(int modelOffset);
 
 	/**
@@ -59,6 +62,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelRange the region of the viewer's document
 	 * @return the minimal region of the widget comprising <code>modelRange</code> or <code>null</code>
 	 */
+	@Deprecated
 	IRegion modelRange2WidgetRange(IRegion modelRange);
 
 
@@ -69,6 +73,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetOffset the widget offset
 	 * @return the corresponding offset in the viewer's document or <code>-1</code>
 	 */
+	@Deprecated
 	int widgetOffset2ModelOffset(int widgetOffset);
 
 	/**
@@ -78,6 +83,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetRange the widget region
 	 * @return the minimal region of the viewer's document comprising <code>widgetRange</code> or <code>null</code>
 	 */
+	@Deprecated
 	IRegion widgetRange2ModelRange(IRegion widgetRange);
 
 	/**
@@ -86,6 +92,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetLine the widget line
 	 * @return the corresponding line of the viewer's document or <code>-1</code>
 	 */
+	@Deprecated
 	int widgetlLine2ModelLine(int widgetLine);
 
 	/**
@@ -94,5 +101,6 @@ public interface ITextViewerExtension3 {
 	 * @param widgetOffset the widget offset
 	 * @return the widget line of the widget offset
 	 */
+	@Deprecated
 	int widgetLineOfWidgetOffset(int widgetOffset);
 }

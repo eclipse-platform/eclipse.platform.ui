@@ -88,27 +88,32 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	 *
 	 * @param combo the combo to adapt
 	 */
+	@Deprecated
 	public ComboContentAssistSubjectAdapter(Combo combo) {
 		Assert.isNotNull(combo);
 		fCombo= combo;
 		fModifyListeners= new HashMap<>();
 	 }
 
+	@Deprecated
 	@Override
 	public Control getControl() {
 		return fCombo;
 	}
 
+	@Deprecated
 	@Override
 	public int getLineHeight() {
 		return fCombo.getTextHeight();
 	}
 
+	@Deprecated
 	@Override
 	public int getCaretOffset() {
 		return fCombo.getCaretPosition();
 	}
 
+	@Deprecated
 	@Override
 	public Point getLocationAtOffset(int offset) {
 		String comboString= fCombo.getText();
@@ -124,16 +129,19 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return new Point(x, fCombo.getClientArea().y);
 	}
 
+	@Deprecated
 	@Override
 	public Point getWidgetSelectionRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
+	@Deprecated
 	@Override
 	public Point getSelectedRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
+	@Deprecated
 	@Override
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fCombo.getData("document"); //$NON-NLS-1$
@@ -144,17 +152,20 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return document;
 	}
 
+	@Deprecated
 	@Override
 	public void setSelectedRange(int i, int j) {
 		fCombo.setSelection(new Point(i, i+j));
 	}
 
+	@Deprecated
 	@Override
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fCombo.setSelection(new Point(i, i+j));
 	}
 
+	@Deprecated
 	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fCombo.addSelectionListener(selectionListener);
@@ -164,6 +175,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fCombo.removeSelectionListener(selectionListener);

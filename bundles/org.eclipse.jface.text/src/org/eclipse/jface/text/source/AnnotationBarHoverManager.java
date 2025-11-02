@@ -95,9 +95,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		/**
 		 * Creates a new information control closer.
 		 */
+		@Deprecated
 		public Closer() {
 		}
 
+		@Deprecated
 		@Override
 		public void setSubjectControl(Control control) {
 			fSubjectControl= control;
@@ -106,11 +108,13 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		/*
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
+		@Deprecated
 		@Override
 		public void setInformationControl(IInformationControl control) {
 			fInformationControlToClose= control;
 		}
 
+		@Deprecated
 		@Override
 		public void start(Rectangle subjectArea) {
 
@@ -139,6 +143,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			}
 		}
 
+		@Deprecated
 		@Override
 		public void stop() {
 
@@ -177,6 +182,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			stop();
 		}
 
+		@Deprecated
 		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!fSubjectArea.contains(event.x, event.y)) {
@@ -184,20 +190,24 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			}
 		}
 
+		@Deprecated
 		@Override
 		public void mouseUp(MouseEvent event) {
 		}
 
+		@Deprecated
 		@Override
 		public void mouseDown(MouseEvent event) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MouseHorizontalWheel || event.type == SWT.MouseVerticalWheel) {
@@ -205,6 +215,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			}
 		}
 
+		@Deprecated
 		@Override
 		public void mouseExit(MouseEvent event) {
 			if (!fAllowMouseExit) {
@@ -212,46 +223,56 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			}
 		}
 
+		@Deprecated
 		@Override
 		public void controlResized(ControlEvent event) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void controlMoved(ControlEvent event) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void keyReleased(KeyEvent event) {
 		}
 
+		@Deprecated
 		@Override
 		public void keyPressed(KeyEvent event) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void shellActivated(ShellEvent e) {
 		}
 
+		@Deprecated
 		@Override
 		public void shellClosed(ShellEvent e) {
 		}
 
+		@Deprecated
 		@Override
 		public void shellDeactivated(ShellEvent e) {
 			hideInformationControl();
 		}
 
+		@Deprecated
 		@Override
 		public void shellDeiconified(ShellEvent e) {
 		}
 
+		@Deprecated
 		@Override
 		public void shellIconified(ShellEvent e) {
 		}
 
+		@Deprecated
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			hideInformationControl();

@@ -81,6 +81,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * Since 3.1 this implements the interface for IUndoableOperation.
 	 * </p>
 	 */
+	@Deprecated
 	class TextCommand extends AbstractOperation {
 
 		/** The start index of the replaced text. */
@@ -426,6 +427,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * Represents an undo-able edit command consisting of several
 	 * individual edit commands.
 	 */
+	@Deprecated
 	class CompoundTextCommand extends TextCommand {
 
 		/** The list of individual commands */
@@ -591,6 +593,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/**
 	 * Internal listener to mouse and key events.
 	 */
+	@Deprecated
 	class KeyAndMouseListener implements MouseListener, KeyListener {
 
 		/*
@@ -645,6 +648,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/**
 	 * Internal listener to document changes.
 	 */
+	@Deprecated
 	class DocumentListener implements IDocumentListener {
 
 		private String fReplacedText;
@@ -696,6 +700,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/**
 	 * Internal text input listener.
 	 */
+	@Deprecated
 	class TextInputListener implements ITextInputListener {
 
 		@Override
@@ -722,6 +727,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @see IOperationHistoryListener
 	 * @since 3.1
 	 */
+	@Deprecated
 	class HistoryListener implements IOperationHistoryListener {
 		private IUndoableOperation fOperation;
 
@@ -782,8 +788,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/** Text buffer to collect viewer content which has been replaced */
 	private StringBuilder fPreservedTextBuffer;
 	/** The document modification stamp for undo. */
+	@Deprecated
 	protected long fPreservedUndoModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** The document modification stamp for redo. */
+	@Deprecated
 	protected long fPreservedRedoModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** The internal key and mouse event listener */
 	private KeyAndMouseListener fKeyAndMouseListener;
@@ -839,6 +847,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 *
 	 * @param undoLevel the length of this manager's history
 	 */
+	@Deprecated
 	public DefaultUndoManager(int undoLevel) {
 		fHistory= OperationHistoryFactory.getOperationHistory();
 		setMaximalUndoLevel(undoLevel);
@@ -857,6 +866,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/*
 	 * @see IUndoManager#beginCompoundChange
 	 */
+	@Deprecated
 	@Override
 	public void beginCompoundChange() {
 		if (isConnected()) {
@@ -869,6 +879,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/*
 	 * @see IUndoManager#endCompoundChange
 	 */
+	@Deprecated
 	@Override
 	public void endCompoundChange() {
 		if (isConnected()) {
@@ -1211,6 +1222,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void setMaximalUndoLevel(int undoLevel) {
 		fUndoLevel= Math.max(0, undoLevel);
@@ -1219,6 +1231,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void connect(ITextViewer textViewer) {
 		if (!isConnected() && textViewer != null) {
@@ -1241,6 +1254,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void disconnect() {
 		if (isConnected()) {
@@ -1256,6 +1270,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void reset() {
 		if (isConnected()) {
@@ -1271,16 +1286,19 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public boolean redoable() {
 		return fHistory.canRedo(fUndoContext);
 	}
 
+	@Deprecated
 	@Override
 	public boolean undoable() {
 		return fHistory.canUndo(fUndoContext);
 	}
 
+	@Deprecated
 	@Override
 	public void redo() {
 		if (isConnected() && redoable()) {
@@ -1292,6 +1310,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void undo() {
 		if (isConnected() && undoable()) {
@@ -1310,6 +1329,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @param length the length of the range
 	 * @since 3.0
 	 */
+	@Deprecated
 	protected void selectAndReveal(int offset, int length) {
 		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			extension.exposeModelRange(new Region(offset, length));
@@ -1321,6 +1341,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		fTextViewer.revealRange(offset, length);
 	}
 
+	@Deprecated
 	@Override
 	public IUndoContext getUndoContext() {
 		return fUndoContext;

@@ -35,9 +35,11 @@ import java.util.ResourceBundle;
 @Deprecated
 public class TemplateReaderWriter extends org.eclipse.text.templates.TemplateReaderWriter {
 
+	@Deprecated
 	public TemplateReaderWriter() {
 	}
 
+	@Deprecated
 	@Override
 	public TemplatePersistenceData[] read(Reader reader) throws IOException {
 		org.eclipse.text.templates.TemplatePersistenceData[] list= super.read(reader);
@@ -48,11 +50,13 @@ public class TemplateReaderWriter extends org.eclipse.text.templates.TemplateRea
 		return result;
 	}
 
+	@Deprecated
 	@Override
 	public TemplatePersistenceData readSingle(Reader reader, String id) throws IOException {
 		return new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(super.readSingle(reader, id));
 	}
 
+	@Deprecated
 	@Override
 	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws IOException {
 		org.eclipse.text.templates.TemplatePersistenceData[] list= super.read(reader, bundle);
@@ -63,6 +67,7 @@ public class TemplateReaderWriter extends org.eclipse.text.templates.TemplateRea
 		return result;
 	}
 
+	@Deprecated
 	@Override
 	public TemplatePersistenceData[] read(InputStream stream, ResourceBundle bundle) throws IOException {
 		org.eclipse.text.templates.TemplatePersistenceData[] list= super.read(stream, bundle);
@@ -73,10 +78,12 @@ public class TemplateReaderWriter extends org.eclipse.text.templates.TemplateRea
 		return result;
 	}
 
+	@Deprecated
 	public void save(TemplatePersistenceData[] templates, OutputStream stream) throws IOException {
 		super.save(templates, stream);
 	}
 
+	@Deprecated
 	public void save(TemplatePersistenceData[] templates, Writer writer) throws IOException {
 		super.save(templates, writer);
 	}

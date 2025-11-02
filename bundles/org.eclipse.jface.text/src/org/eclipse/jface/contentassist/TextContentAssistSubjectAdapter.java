@@ -77,26 +77,31 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	 *
 	 * @param text the text widget to adapt
 	 */
+	@Deprecated
 	public TextContentAssistSubjectAdapter(Text text) {
 		Assert.isNotNull(text);
 		fText= text;
 	}
 
+	@Deprecated
 	@Override
 	public Control getControl() {
 		return fText;
 	}
 
+	@Deprecated
 	@Override
 	public int getLineHeight() {
 		return fText.getLineHeight();
 	}
 
+	@Deprecated
 	@Override
 	public int getCaretOffset() {
 		return fText.getCaretPosition();
 	}
 
+	@Deprecated
 	@Override
 	public Point getLocationAtOffset(int offset) {
 		Point caretLocation= fText.getCaretLocation();
@@ -107,16 +112,19 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return caretLocation;
 	}
 
+	@Deprecated
 	@Override
 	public Point getWidgetSelectionRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
+	@Deprecated
 	@Override
 	public Point getSelectedRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
+	@Deprecated
 	@Override
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fText.getData("document"); //$NON-NLS-1$
@@ -127,17 +135,20 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return document;
 	}
 
+	@Deprecated
 	@Override
 	public void setSelectedRange(int i, int j) {
 		fText.setSelection(new Point(i, i+j));
 	}
 
+	@Deprecated
 	@Override
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fText.setSelection(new Point(i, i+j));
 	}
 
+	@Deprecated
 	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fText.addSelectionListener(selectionListener);
@@ -147,6 +158,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fText.removeSelectionListener(selectionListener);

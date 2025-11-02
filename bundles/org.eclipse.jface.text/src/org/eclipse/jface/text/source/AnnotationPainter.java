@@ -113,6 +113,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	@Deprecated
 	public static class SquigglesStrategy implements IDrawingStrategy {
 
+		@Deprecated
 		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
