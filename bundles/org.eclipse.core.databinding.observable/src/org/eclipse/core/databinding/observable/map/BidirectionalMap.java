@@ -45,6 +45,7 @@ public class BidirectionalMap<K, V> extends ObservableMap<K, V> {
 	 * @param wrappedMap backing store for the map data, used to implement all map
 	 *                   operations
 	 */
+	@Deprecated
 	public BidirectionalMap(IObservableMap<K, V> wrappedMap) {
 		super(wrappedMap.getRealm(), wrappedMap);
 		wrappedMap.addMapChangeListener(mapListener);
