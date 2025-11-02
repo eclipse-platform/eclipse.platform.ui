@@ -38,6 +38,7 @@ public interface XPathContext {
 	 *            to evaluate
 	 * @return Object found
 	 */
+	@Deprecated
 	Object getValue(String xpath);
 
 	/**
@@ -50,6 +51,7 @@ public interface XPathContext {
 	 *            required type
 	 * @return Object found
 	 */
+	@Deprecated
 	<T> T getValue(String xpath, Class<T> requiredType);
 
 	/**
@@ -62,6 +64,7 @@ public interface XPathContext {
 	 * @param xpath to iterate
 	 * @return Iterator&lt;Object&gt;
 	 */
+	@Deprecated
 	<T> Iterator<T> iterate(String xpath);
 
 	/**
@@ -76,6 +79,7 @@ public interface XPathContext {
 	 *         type
 	 * @since 0.5
 	 */
+	@Deprecated
 	default <T> Stream<T> stream(String xpath, Class<T> type) {
 		Iterator<?> iterator = iterate(xpath);
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
