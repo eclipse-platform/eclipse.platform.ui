@@ -60,15 +60,18 @@ public class UndoRefactoringAction extends UndoManagerAction {
 	/**
 	 * Creates a new undo refactoring action.
 	 */
+	@Deprecated
 	public UndoRefactoringAction() {
 	}
 
+	@Deprecated
 	@Override
 	protected String getName() {
 		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactoring change
 		return RefactoringUIMessages.UndoRefactoringAction_name;
 	}
 
+	@Deprecated
 	@Override
 	protected IRunnableWithProgress createOperation(Shell parent) {
 		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.UndoRefactoringAction_error_title) {
@@ -88,6 +91,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
+	@Deprecated
 	@Override
 	protected UndoManagerAdapter createUndoManagerListener() {
 		return new UndoManagerAdapter() {
@@ -111,6 +115,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
+	@Deprecated
 	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
