@@ -60,14 +60,17 @@ public class RedoRefactoringAction extends UndoManagerAction {
 	/**
 	 * Creates a new redo refactoring action.
 	 */
+	@Deprecated
 	public RedoRefactoringAction() {
 	}
 
+	@Deprecated
 	@Override
 	protected String getName() {
 		return RefactoringUIMessages.RedoRefactoringAction_name;
 	}
 
+	@Deprecated
 	@Override
 	protected IRunnableWithProgress createOperation(Shell parent) {
 		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) {
@@ -87,6 +90,7 @@ public class RedoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
+	@Deprecated
 	@Override
 	protected UndoManagerAdapter createUndoManagerListener() {
 		return new UndoManagerAdapter() {
@@ -110,6 +114,7 @@ public class RedoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
+	@Deprecated
 	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
