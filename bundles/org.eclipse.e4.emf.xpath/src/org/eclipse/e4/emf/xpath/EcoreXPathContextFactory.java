@@ -29,6 +29,7 @@ public class EcoreXPathContextFactory {
 	 *
 	 * @return the factory
 	 */
+	@Deprecated
 	public static XPathContextFactory<EObject> newInstance() {
 		return new JavaXPathContextFactoryImpl<>();
 	}

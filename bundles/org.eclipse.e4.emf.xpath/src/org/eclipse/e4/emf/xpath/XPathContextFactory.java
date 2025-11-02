@@ -32,6 +32,7 @@ public abstract class XPathContextFactory<T> {
 	 * @param contextBean Object
 	 * @return XPathContext
 	 */
+	@Deprecated
 	public abstract XPathContext newContext(T contextBean);
 
 	/**
@@ -55,6 +56,7 @@ public abstract class XPathContextFactory<T> {
 	 * @param <T> the object type the xpath is created for
 	 * @return Create a new XPath-Factory
 	 */
+	@Deprecated
 	public static <T> XPathContextFactory<T> newInstance() {
 		return new JavaXPathContextFactoryImpl<>();
 	}

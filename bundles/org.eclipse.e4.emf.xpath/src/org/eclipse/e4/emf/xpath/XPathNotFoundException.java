@@ -24,6 +24,7 @@ package org.eclipse.e4.emf.xpath;
 public class XPathNotFoundException extends IllegalArgumentException {
 	private static final long serialVersionUID = -4174244860692153739L;
 
+	@Deprecated
 	public XPathNotFoundException(String message) {
 		super(message);
 	}
