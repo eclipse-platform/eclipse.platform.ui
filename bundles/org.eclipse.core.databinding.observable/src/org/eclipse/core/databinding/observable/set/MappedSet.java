@@ -109,6 +109,7 @@ public class MappedSet extends ObservableSet {
 	 * @param input input set with keys from the map
 	 * @param map   the map to map
 	 */
+	@Deprecated
 	public MappedSet(IObservableSet input, IObservableMap map) {
 		super(input.getRealm(), Collections.EMPTY_SET, Object.class);
 		setWrappedSet(valueCounts.keySet());
@@ -126,6 +127,7 @@ public class MappedSet extends ObservableSet {
 	 * @param mapValue map value to add
 	 * @return true if the given mapValue was an addition
 	 */
+	@Deprecated
 	protected boolean handleAddition(Object mapValue) {
 		Integer count = (Integer) valueCounts.get(mapValue);
 		if (count == null) {
@@ -140,6 +142,7 @@ public class MappedSet extends ObservableSet {
 	 * @param mapValue map value to remove
 	 * @return true if the given mapValue has been removed
 	 */
+	@Deprecated
 	protected boolean handleRemoval(Object mapValue) {
 		Integer count = (Integer) valueCounts.get(mapValue);
 		if (count.intValue() <= 1) {
@@ -150,6 +153,7 @@ public class MappedSet extends ObservableSet {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public synchronized void dispose() {
 		wrappedMap.removeMapChangeListener(mapChangeListener);
