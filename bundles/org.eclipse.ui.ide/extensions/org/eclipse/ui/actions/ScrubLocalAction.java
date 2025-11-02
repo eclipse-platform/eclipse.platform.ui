@@ -38,6 +38,7 @@ public class ScrubLocalAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
+	@Deprecated
 	public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
 
 	/**
@@ -45,6 +46,7 @@ public class ScrubLocalAction extends WorkspaceAction {
 	 *
 	 * @param shell the shell for any dialogs
 	 */
+	@Deprecated
 	public ScrubLocalAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.ScrubLocalAction_text);
 		setToolTipText(IDEWorkbenchMessages.ScrubLocalAction_toolTip);
@@ -53,21 +55,25 @@ public class ScrubLocalAction extends WorkspaceAction {
 				IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
 	}
 
+	@Deprecated
 	@Override
 	protected String getOperationMessage() {
 		return IDEWorkbenchMessages.ScrubLocalAction_progress;
 	}
 
+	@Deprecated
 	@Override
 	protected String getProblemsMessage() {
 		return IDEWorkbenchMessages.ScrubLocalAction_problemsMessage;
 	}
 
+	@Deprecated
 	@Override
 	protected String getProblemsTitle() {
 		return IDEWorkbenchMessages.ScrubLocalAction_problemsTitle;
 	}
 
+	@Deprecated
 	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 			throws CoreException {
@@ -79,6 +85,7 @@ public class ScrubLocalAction extends WorkspaceAction {
 	 * <code>SelectionListenerAction</code> method ensures that this action is
 	 * disabled if any of the selections are not resources.
 	 */
+	@Deprecated
 	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
 		return super.updateSelection(s)

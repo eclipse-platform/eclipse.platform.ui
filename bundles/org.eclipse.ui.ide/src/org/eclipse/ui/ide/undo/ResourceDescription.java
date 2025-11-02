@@ -40,6 +40,7 @@ public abstract class ResourceDescription {
 	 * @param resource the resource from which a description should be created
 	 * @return the resource description
 	 */
+	@Deprecated
 	public static ResourceDescription fromResource(IResource resource) {
 		IResourceSnapshot<IResource> delegate = ResourceSnapshotFactory.fromResource(resource);
 		return new ResourceDescription() {
@@ -91,6 +92,7 @@ public abstract class ResourceDescription {
 	 * @return the resource handle that can be used to create a resource from this
 	 *         description
 	 */
+	@Deprecated
 	public abstract IResource createResourceHandle();
 
 	/**
@@ -98,6 +100,7 @@ public abstract class ResourceDescription {
 	 *
 	 * @return the name of the Resource
 	 */
+	@Deprecated
 	public abstract String getName();
 
 	/**
@@ -107,6 +110,7 @@ public abstract class ResourceDescription {
 	 * @return a resource that has the attributes of this resource description
 	 * @throws CoreException if creation failed
 	 */
+	@Deprecated
 	public abstract IResource createResource(IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -117,6 +121,7 @@ public abstract class ResourceDescription {
 	 * @param monitor  the progress monitor to be used when creating the resource
 	 * @throws CoreException if creation failed
 	 */
+	@Deprecated
 	public abstract void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor)
 			throws CoreException;
 
@@ -127,6 +132,7 @@ public abstract class ResourceDescription {
 	 * @return <code>true</code> if the resource can be created, and
 	 *         <code>false</code> if it does not have enough information
 	 */
+	@Deprecated
 	public abstract boolean isValid();
 
 	/**
@@ -137,6 +143,7 @@ public abstract class ResourceDescription {
 	 * @param monitor  the progress monitor to be used
 	 * @throws CoreException in case of error
 	 */
+	@Deprecated
 	public abstract void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -151,6 +158,7 @@ public abstract class ResourceDescription {
 	 * @return a boolean indicating whether this description represents an existent
 	 *         resource.
 	 */
+	@Deprecated
 	public abstract boolean verifyExistence(boolean checkMembers);
 }
 

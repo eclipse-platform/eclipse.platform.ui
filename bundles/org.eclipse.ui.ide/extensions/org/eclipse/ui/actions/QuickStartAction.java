@@ -66,6 +66,7 @@ public class QuickStartAction extends Action implements
 	 * page.
 	 * </p>
 	 */
+	@Deprecated
 	public QuickStartAction() {
 		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 	}
@@ -74,6 +75,7 @@ public class QuickStartAction extends Action implements
 	 * Creates an instance of this action, for use in the given window.
 	 * @param window the window
 	 */
+	@Deprecated
 	public QuickStartAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.QuickStart_text);
 		if (window == null) {
@@ -90,6 +92,7 @@ public class QuickStartAction extends Action implements
 	 * The user has invoked this action.  Prompts for a feature with a welcome page,
 	 * then opens the corresponding welcome page.
 	 */
+	@Deprecated
 	@Override
 	public void run() {
 		if (workbenchWindow == null) {
@@ -155,6 +158,7 @@ public class QuickStartAction extends Action implements
 	 * @return <code>true</code> if successful, <code>false</code> otherwise
 	 * @throws WorkbenchException if operation failed
 	 */
+	@Deprecated
 	public boolean openWelcomePage(String featureId) throws WorkbenchException {
 		AboutInfo feature = findFeature(featureId);
 		if (feature == null || feature.getWelcomePageURL() == null) {
@@ -252,6 +256,7 @@ public class QuickStartAction extends Action implements
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public void dispose() {
 		if (workbenchWindow == null) {
