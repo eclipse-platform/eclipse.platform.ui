@@ -53,12 +53,14 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 * @param parent the editor's parent widget
 	 * @param defaultFontLabel the label shown in the editor value field when the default value should be taken
 	 */
+	@Deprecated
 	public PropagatingFontFieldEditor(String name, String labelText, Composite parent, String defaultFontLabel) {
 		super(name, labelText, parent);
 		fParent= parent;
 		fDefaultFontLabel= defaultFontLabel == null ? "" : defaultFontLabel; //$NON-NLS-1$
 	}
 
+	@Deprecated
 	@Override
 	protected void doLoad() {
 		if (getPreferenceStore().isDefault(getPreferenceName())) {
@@ -68,6 +70,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		checkForDefault();
 	}
 
+	@Deprecated
 	@Override
 	protected void doLoadDefault() {
 		super.doLoadDefault();
@@ -116,6 +119,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 * @param target the target preference store
 	 * @param targetKey the key to be used in the target preference store
 	 */
+	@Deprecated
 	public static void startPropagate(final IPreferenceStore source, final String sourceKey, final IPreferenceStore target, final String targetKey) {
 		source.addPropertyChangeListener(event -> {
 			if (sourceKey.equals(event.getProperty())) {

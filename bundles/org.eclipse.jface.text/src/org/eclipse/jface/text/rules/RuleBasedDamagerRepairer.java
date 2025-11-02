@@ -46,6 +46,7 @@ public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 	 * @param scanner the rule based scanner to be used, may not be <code>null</code>
 	 * @since 2.0
 	 */
+	@Deprecated
 	public RuleBasedDamagerRepairer(RuleBasedScanner scanner) {
 		super(scanner);
 	}

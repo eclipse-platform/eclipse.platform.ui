@@ -53,6 +53,7 @@ import org.eclipse.jface.text.IEventConsumer;
 @Deprecated
 public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubjectControl {
 
+	@Deprecated
 	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/ContentAssistSubjectAdapters"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
@@ -87,14 +88,17 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	/**
 	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
 	 */
+	@Deprecated
 	public AbstractControlContentAssistSubjectAdapter() {
 		fVerifyKeyListeners= new ArrayList<>(1);
 		fKeyListeners= new HashSet<>(1);
 	}
 
+	@Deprecated
 	@Override
 	public abstract Control getControl();
 
+	@Deprecated
 	@Override
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);
@@ -106,6 +110,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		installControlListener();
 	}
 
+	@Deprecated
 	@Override
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
@@ -120,11 +125,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
+	@Deprecated
 	@Override
 	public boolean supportsVerifyKeyListener() {
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
@@ -137,6 +144,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
@@ -149,6 +157,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
+	@Deprecated
 	@Override
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
@@ -160,6 +169,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
+	@Deprecated
 	@Override
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
@@ -168,6 +178,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		}
 	}
 
+	@Deprecated
 	@Override
 	public String getLineDelimiter() {
 		return System.lineSeparator();
@@ -329,6 +340,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * @param labelProvider a {@link ILabelProvider}, or <code>null</code>
 	 * 	if no visual feedback should be shown
 	 */
+	@Deprecated
 	public void setContentAssistCueProvider(final ILabelProvider labelProvider) {
 		if (fCueLabelProvider != null) {
 			fCueLabelProvider.dispose();

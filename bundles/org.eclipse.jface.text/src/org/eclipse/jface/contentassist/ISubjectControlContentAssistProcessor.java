@@ -41,6 +41,7 @@ public interface ISubjectControlContentAssistProcessor extends IContentAssistPro
 	 * @return an array of completion proposals or <code>null</code> if no
 	 *         proposals are possible
 	 */
+	@Deprecated
 	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset);
 
 	/**
@@ -55,5 +56,6 @@ public interface ISubjectControlContentAssistProcessor extends IContentAssistPro
 	 * @return an array of context information objects or <code>null</code>
 	 *         if no context could be found
 	 */
+	@Deprecated
 	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset);
 }

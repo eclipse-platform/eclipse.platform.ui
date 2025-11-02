@@ -45,84 +45,101 @@ public class TemplatePersistenceData extends org.eclipse.text.templates.Template
 	 * underlie this object.
 	 * @since 3.14
 	 */
+	@Deprecated
 	public TemplatePersistenceData(org.eclipse.text.templates.TemplatePersistenceData data) {
 		super(data.getTemplate(), data.isEnabled(), data.getId()); // these are ignored
 		this.ref= data instanceof TemplatePersistenceData t ? t.ref : data; // no double wrapping
 	}
 
+	@Deprecated
 	public TemplatePersistenceData(Template template, boolean enabled) {
 		this(new org.eclipse.text.templates.TemplatePersistenceData(template, enabled));
 	}
 
+	@Deprecated
 	public TemplatePersistenceData(Template template, boolean enabled, String id) {
 		this(new org.eclipse.text.templates.TemplatePersistenceData(template, enabled, id));
 	}
 
+	@Deprecated
 	@Override
 	public String getId() {
 		return ref.getId();
 	}
 
+	@Deprecated
 	@Override
 	public boolean isDeleted() {
 		return ref.isDeleted();
 	}
 
+	@Deprecated
 	@Override
 	public void setDeleted(boolean isDeleted) {
 		ref.setDeleted(isDeleted);
 	}
 
+	@Deprecated
 	@Override
 	public Template getTemplate() {
 		return ref.getTemplate();
 	}
 
+	@Deprecated
 	@Override
 	public void setTemplate(Template template) {
 		ref.setTemplate(template);
 	}
 
+	@Deprecated
 	@Override
 	public boolean isCustom() {
 		return ref.isCustom();
 	}
 
+	@Deprecated
 	@Override
 	public boolean isModified() {
 		return ref.isModified();
 	}
 
+	@Deprecated
 	@Override
 	public boolean isUserAdded() {
 		return ref.isUserAdded();
 	}
 
+	@Deprecated
 	@Override
 	public void revert() {
 		ref.revert();
 	}
 
+	@Deprecated
 	@Override
 	public boolean isEnabled() {
 		return ref.isEnabled();
 	}
 
+	@Deprecated
 	@Override
 	public void setEnabled(boolean isEnabled) {
 		ref.setEnabled(isEnabled);
 	}
 
+	@Deprecated
 	@Override
 	public boolean equals(Object other) {
 		return ref.equals(other);
 	}
 
+	@Deprecated
 	@Override
 	public int hashCode() {
 		return ref.hashCode();
 	}
 
+	@Deprecated
 	@Override
 	protected UUID getUniqueIdForEquals() {
 		return getUniqueIdForEquals(ref);

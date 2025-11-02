@@ -32,5 +32,6 @@ public interface ISubjectControlContentAssistant extends IContentAssistant {
 	 *
 	 * @param contentAssistSubjectControl the one who requests content assist
 	 */
+	@Deprecated
 	void install(IContentAssistSubjectControl contentAssistSubjectControl);
 }

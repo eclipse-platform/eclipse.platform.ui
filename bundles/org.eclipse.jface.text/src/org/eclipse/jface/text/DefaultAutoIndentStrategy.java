@@ -29,6 +29,7 @@ public class DefaultAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 	/**
 	 * Creates a new default auto indent strategy.
 	 */
+	@Deprecated
 	public DefaultAutoIndentStrategy() {
 	}
 }

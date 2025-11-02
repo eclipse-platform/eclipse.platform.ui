@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Assert;
 @Deprecated
 public class SubjectControlContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements ISubjectControlContentAssistant {
 
+	@Deprecated
 	@Override
 	public void install(IContentAssistSubjectControl contentAssistSubjectControl) {
 		Assert.isNotNull(contentAssistSubjectControl);

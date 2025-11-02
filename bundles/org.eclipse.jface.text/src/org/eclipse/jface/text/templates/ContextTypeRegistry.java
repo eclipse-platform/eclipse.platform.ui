@@ -29,16 +29,19 @@ import java.util.Iterator;
 @Deprecated
 public class ContextTypeRegistry extends org.eclipse.text.templates.ContextTypeRegistry {
 
+	@Deprecated
 	@Override
 	public void addContextType(TemplateContextType contextType) {
 		super.addContextType(contextType);
 	}
 
+	@Deprecated
 	@Override
 	public TemplateContextType getContextType(String id) {
 		return super.getContextType(id);
 	}
 
+	@Deprecated
 	@Override
 	public Iterator<TemplateContextType> contextTypes() {
 		return super.contextTypes();
