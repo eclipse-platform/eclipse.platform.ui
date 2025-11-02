@@ -35,5 +35,6 @@ public interface IDocumentFactory {
 	 *
 	 * @return a new, empty document
 	 */
+	@Deprecated
 	IDocument createDocument();
 }
