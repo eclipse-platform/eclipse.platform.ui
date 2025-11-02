@@ -66,20 +66,28 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 
 	/** The partitioner's scanner */
+	@Deprecated
 	protected RuleBasedScanner fScanner;
 	/** The legal content types of this partitioner */
+	@Deprecated
 	protected String[] fLegalContentTypes;
 	/** The partitioner's document */
+	@Deprecated
 	protected IDocument fDocument;
 	/** The document length before a document change occurred */
+	@Deprecated
 	protected int fPreviousDocumentLength;
 	/** The position updater used to for the default updating of partitions */
+	@Deprecated
 	protected DefaultPositionUpdater fPositionUpdater;
 	/** The offset at which the first changed partition starts */
+	@Deprecated
 	protected int fStartOffset;
 	/** The offset at which the last changed partition ends */
+	@Deprecated
 	protected int fEndOffset;
 	/**The offset at which a partition has been deleted */
+	@Deprecated
 	protected int fDeleteOffset;
 	/**
 	 * The position category for managing partitioning information.
@@ -95,6 +103,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @param scanner the scanner this partitioner is supposed to use
 	 * @param legalContentTypes the legal content types of this partitioner
 	 */
+	@Deprecated
 	public RuleBasedPartitioner(RuleBasedScanner scanner, String[] legalContentTypes) {
 		fScanner= scanner;
 		fLegalContentTypes= TextUtilities.copy(legalContentTypes);
@@ -102,6 +111,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
+	@Deprecated
 	@Override
 	public String[] getManagingPositionCategories() {
 		return new String[] { fPositionCategory };
@@ -110,6 +120,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#connect
 	 */
+	@Deprecated
 	@Override
 	public void connect(IDocument document) {
 		Assert.isNotNull(document);
@@ -124,6 +135,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/**
 	 * Performs the initial partitioning of the partitioner's document.
 	 */
+	@Deprecated
 	protected void initialize() {
 
 		fScanner.setRange(fDocument, 0, fDocument.getLength());
@@ -151,6 +163,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#disconnect
 	 */
+	@Deprecated
 	@Override
 	public void disconnect() {
 
@@ -166,6 +179,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#documentAboutToBeChanged
 	 */
+	@Deprecated
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 
@@ -180,6 +194,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#documentChanged
 	 */
+	@Deprecated
 	@Override
 	public boolean documentChanged(DocumentEvent e) {
 		IRegion region= documentChanged2(e);
@@ -241,6 +256,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		}
 	}
 
+	@Deprecated
 	@Override
 	public IRegion documentChanged2(DocumentEvent e) {
 
@@ -379,6 +395,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @param offset the offset for which to search the closest position
 	 * @return the closest position in the partitioner's category
 	 */
+	@Deprecated
 	protected TypedPosition findClosestPosition(int offset) {
 
 		try {
@@ -413,6 +430,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getContentType
 	 */
+	@Deprecated
 	@Override
 	public String getContentType(int offset) {
 
@@ -427,6 +445,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getPartition
 	 */
+	@Deprecated
 	@Override
 	public ITypedRegion getPartition(int offset) {
 
@@ -479,6 +498,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#computePartitioning
 	 */
+	@Deprecated
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		return computePartitioning(offset, length, false);
@@ -487,6 +507,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getLegalContentTypes
 	 */
+	@Deprecated
 	@Override
 	public String[] getLegalContentTypes() {
 		return TextUtilities.copy(fLegalContentTypes);
@@ -498,6 +519,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @param contentType the content type to check
 	 * @return <code>true</code> if the content type is a legal content type
 	 */
+	@Deprecated
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
 			for (String fLegalContentType : fLegalContentTypes) {
@@ -518,6 +540,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @param token the token whose content type is to be determined
 	 * @return the token's content type
 	 */
+	@Deprecated
 	protected String getTokenContentType(IToken token) {
 		Object data= token.getData();
 		if (data instanceof String) {
@@ -528,11 +551,13 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 	/* zero-length partition support */
 
+	@Deprecated
 	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		return getPartition(offset, preferOpenPartitions).getType();
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		ITypedRegion region= getPartition(offset);
@@ -550,6 +575,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		return region;
 	}
 
+	@Deprecated
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		List<TypedRegion> list= new ArrayList<>();
