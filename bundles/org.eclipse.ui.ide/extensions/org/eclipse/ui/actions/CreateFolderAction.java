@@ -44,12 +44,14 @@ public class CreateFolderAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
+	@Deprecated
 	public static final String ID = PlatformUI.PLUGIN_ID
 			+ ".CreateFolderAction";//$NON-NLS-1$
 
 	/**
 	 * The shell in which to show any dialogs.
 	 */
+	@Deprecated
 	protected IShellProvider shellProvider;
 
 	/**
@@ -100,6 +102,7 @@ public class CreateFolderAction extends SelectionListenerAction {
 	 * <code>IAction</code> method opens a <code>BasicNewFolderResourceWizard</code>
 	 * in a wizard dialog under the shell passed to the constructor.
 	 */
+	@Deprecated
 	@Override
 	public void run() {
 		BasicNewFolderResourceWizard wizard = new BasicNewFolderResourceWizard();
@@ -120,6 +123,7 @@ public class CreateFolderAction extends SelectionListenerAction {
 	 * <code>SelectionListenerAction</code> method enables the action only
 	 * if the selection contains folders and open projects.
 	 */
+	@Deprecated
 	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
 		if (!super.updateSelection(s)) {

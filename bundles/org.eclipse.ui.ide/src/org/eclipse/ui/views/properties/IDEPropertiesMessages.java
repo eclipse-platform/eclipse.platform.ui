@@ -34,6 +34,7 @@ class IDEPropertiesMessages {
 	 * @param args the message arguments
 	 * @return the string
 	 */
+	@Deprecated
 	public static String format(String key, Object[] args) {
 		return key;
 	}
@@ -46,6 +47,7 @@ class IDEPropertiesMessages {
 	 * @param key the resource name
 	 * @return the string
 	 */
+	@Deprecated
 	public static String getString(String key) {
 		return key;
 	}

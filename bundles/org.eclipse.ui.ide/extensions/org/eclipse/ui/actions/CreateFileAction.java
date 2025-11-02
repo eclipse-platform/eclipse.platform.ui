@@ -43,11 +43,13 @@ public class CreateFileAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
+	@Deprecated
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFileAction";//$NON-NLS-1$
 
 	/**
 	 * The shell in which to show any dialogs.
 	 */
+	@Deprecated
 	protected IShellProvider shellProvider;
 
 	/**
@@ -96,6 +98,7 @@ public class CreateFileAction extends SelectionListenerAction {
 	 * <code>IAction</code> method opens a <code>BasicNewFileResourceWizard</code>
 	 * in a wizard dialog under the shell passed to the constructor.
 	 */
+	@Deprecated
 	@Override
 	public void run() {
 		BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
@@ -115,6 +118,7 @@ public class CreateFileAction extends SelectionListenerAction {
 	 * <code>SelectionListenerAction</code> method enables the action only
 	 * if the selection contains folders and open projects.
 	 */
+	@Deprecated
 	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
 		if (!super.updateSelection(s)) {
