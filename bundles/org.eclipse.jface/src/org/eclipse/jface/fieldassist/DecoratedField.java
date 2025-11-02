@@ -154,6 +154,7 @@ public class DecoratedField {
 	/**
 	 * The hover used to show a decoration image's description.
 	 */
+	@Deprecated
 	class Hover {
 		private static final String EMPTY = ""; //$NON-NLS-1$
 
@@ -349,6 +350,7 @@ public class DecoratedField {
 	 *
 	 * @see IControlCreator
 	 */
+	@Deprecated
 	public DecoratedField(Composite parent, int style,
 			IControlCreator controlCreator) {
 		this.form = createForm(parent);
@@ -394,6 +396,7 @@ public class DecoratedField {
 	 *            when the associated control has focus, <code>false</code> if
 	 *            it should always be shown.
 	 */
+	@Deprecated
 	public void addFieldDecoration(FieldDecoration decoration, int position,
 			boolean showOnFocus) {
 		final Label label;
@@ -534,6 +537,7 @@ public class DecoratedField {
 	 * @return the Control decorated by the receiver, or <code>null</code> if
 	 *         none has been created yet.
 	 */
+	@Deprecated
 	public Control getControl() {
 		return control;
 	}
@@ -546,6 +550,7 @@ public class DecoratedField {
 	 *         layout. This is typically not the control itself, since
 	 *         additional controls are used to represent the decorations.
 	 */
+	@Deprecated
 	public Control getLayoutControl() {
 		return form;
 	}
@@ -671,6 +676,7 @@ public class DecoratedField {
 	 *            the text to be shown in the info hover, or <code>null</code>
 	 *            if no text should be shown.
 	 */
+	@Deprecated
 	public void showHoverText(String text) {
 		showHoverText(text, control);
 	}
@@ -686,6 +692,7 @@ public class DecoratedField {
 	 * <p>
 	 * This message has no effect if there is no current hover.
 	 */
+	@Deprecated
 	public void hideHover() {
 		if (hover != null) {
 			hover.setVisible(false);
@@ -724,6 +731,7 @@ public class DecoratedField {
 	 * @param decoration
 	 *            the decoration to be shown.
 	 */
+	@Deprecated
 	public void showDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
 		if (data == null) {
@@ -746,6 +754,7 @@ public class DecoratedField {
 	 * @param decoration
 	 *            the decoration to be hidden.
 	 */
+	@Deprecated
 	public void hideDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
 		if (data == null) {
@@ -767,6 +776,7 @@ public class DecoratedField {
 	 * @param decoration
 	 *            the decoration to be hidden.
 	 */
+	@Deprecated
 	public void updateDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
 		if (data == null) {
@@ -852,6 +862,7 @@ public class DecoratedField {
 	 *
 	 * @see FieldDecorationRegistry#getMaximumDecorationWidth()
 	 */
+	@Deprecated
 	public void setUseMaximumDecorationWidth(boolean useMaximumWidth) {
 		useMaxDecorationWidth = useMaximumWidth;
 	}
