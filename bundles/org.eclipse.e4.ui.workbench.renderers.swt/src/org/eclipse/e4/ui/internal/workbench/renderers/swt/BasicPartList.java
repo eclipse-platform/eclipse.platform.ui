@@ -17,6 +17,8 @@ package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -24,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -78,6 +81,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		@Override
 		public Image getImage(Object element) {
+			// Check if icons should be hidden for view tabs
+			if (shouldHideIcons()) {
+				return null;
+			}
 			return renderer.getImage((MUILabel) element);
 		}
 
@@ -207,5 +214,26 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 		return false;
 
+	}
+
+	/**
+	 * Checks if icons should be hidden based on the preference setting.
+	 * Icons are only hidden for view stacks, not for editor stacks.
+	 *
+	 * @return true if icons should be hidden, false otherwise
+	 */
+	private boolean shouldHideIcons() {
+		// Check if this is an editor stack - if so, don't hide icons
+		if (PartStackUtil.isEditorStack(input)) {
+			return false;
+		}
+
+		// Get the preference value for hiding icons in view tabs
+		// Note: The preference qualifier is hardcoded here as it's private in CTabRendering
+		return Platform.getPreferencesService().getBoolean(
+				"org.eclipse.e4.ui.workbench.renderers.swt", //$NON-NLS-1$
+				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
+				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT,
+				null);
 	}
 }
