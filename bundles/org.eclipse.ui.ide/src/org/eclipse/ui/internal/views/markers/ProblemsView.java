@@ -17,9 +17,11 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
@@ -62,6 +64,16 @@ public class ProblemsView extends MarkerSupportView {
 	protected String getDeleteOperationName(IMarker[] markers) {
 		Assert.isLegal(markers.length > 0);
 		return markers.length == 1 ? MarkerMessages.deleteProblemMarker_operationName : MarkerMessages.deleteProblemMarkers_operationName;
+	}
+
+	@Override
+	protected boolean isProjectNestingActive(IWorkbenchPart part) {
+		if (part instanceof CommonNavigator navigator) {
+			return navigator.getNavigatorContentService().getActivationService().isNavigatorExtensionActive(
+					"org.eclipse.ui.navigator.resources.nested.nestedProjectContentProvider"); //$NON-NLS-1$
+
+		}
+		return false;
 	}
 
 }

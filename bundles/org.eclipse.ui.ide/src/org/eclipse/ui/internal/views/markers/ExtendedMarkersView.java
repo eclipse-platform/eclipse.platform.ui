@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
@@ -1642,16 +1645,35 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 			// try to adapt them in resources and add it to the
 			// selectedElements
-			List<Object> selectedElements = new ArrayList<>();
+			Set<Object> selectedElements = new LinkedHashSet<>();
 			for (Object object : objectsToAdapt) {
 				Object resElement = MarkerResourceUtil.adapt2ResourceElement(object);
 				if (resElement != null) {
 					selectedElements.add(resElement);
 				}
 			}
+			if (isProjectNestingActive(part)) {
+				List<IProject> selectedProjects = selectedElements.stream().filter(IProject.class::isInstance)
+						.map(IProject.class::cast).toList();
+				if (!selectedProjects.isEmpty()) {
+					selectedElements.addAll(MarkerResourceUtil.getNestedChildProjects(selectedProjects));
+				}
+			}
 			MarkerContentGenerator gen = view.getGenerator();
 			gen.updateSelectedResource(selectedElements.toArray(), part == null);
 		}
+
+	}
+
+	/**
+	 * Check if project nesting is active for this marker view
+	 *
+	 * @param part the currently selected part
+	 * @return <code>true</code> if nesting should be performed, <code>false</code>
+	 *         otherwise
+	 */
+	protected boolean isProjectNestingActive(IWorkbenchPart part) {
+		return false;
 	}
 
 	/**
