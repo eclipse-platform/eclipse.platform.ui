@@ -31,6 +31,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.util.Util;
@@ -284,6 +285,45 @@ class MarkerResourceUtil {
 			}
 		}
 		return projects;
+	}
+
+	/**
+	 * Returns all nested child projects of the given projects. A project is
+	 * considered a nested child if its location is a descendant of the parent
+	 * project's location. This supports the hierarchical project display feature.
+	 *
+	 * @param parentProjects
+	 *            the projects to find nested children for
+	 * @return collection of all nested child projects (does not include the parent
+	 *         projects themselves)
+	 */
+	static Collection<IProject> getNestedChildProjects(Collection<IProject> parentProjects) {
+		if (parentProjects == null || parentProjects.isEmpty()) {
+			return Set.of();
+		}
+		Set<IProject> nestedChildren = new HashSet<>();
+
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (!project.exists() || !project.isAccessible()) {
+				continue;
+			}
+			IPath projectLocation = project.getLocation();
+			if (projectLocation == null) {
+				continue;
+			}
+			// Check if this project is nested under any of the parent projects
+			for (IProject parentProject : parentProjects) {
+				if (parentProject.equals(project)) {
+					continue; // Skip the project itself
+				}
+				IPath parentLocation = parentProject.getLocation();
+				if (parentLocation != null && parentLocation.isPrefixOf(projectLocation)) {
+					nestedChildren.add(project);
+					break;
+				}
+			}
+		}
+		return nestedChildren;
 	}
 
 	/**
