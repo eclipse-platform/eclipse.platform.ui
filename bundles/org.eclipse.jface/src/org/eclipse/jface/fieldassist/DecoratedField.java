@@ -181,27 +181,32 @@ public class DecoratedField {
 		/**
 		 * This info hover's shell.
 		 */
+		@Deprecated
 		Shell hoverShell;
 
 		/**
 		 * The info hover text.
 		 */
+		@Deprecated
 		String text = EMPTY;
 
 		/**
 		 * The region used to manage the shell shape
 		 */
+		@Deprecated
 		Region region;
 
 		/**
 		 * Boolean indicating whether the last computed polygon location had an
 		 * arrow on left. (true if left, false if right).
 		 */
+		@Deprecated
 		boolean arrowOnLeft = true;
 
 		/*
 		 * Create a hover parented by the specified shell.
 		 */
+		@Deprecated
 		Hover(Shell parent) {
 			final Display display = parent.getDisplay();
 			hoverShell = new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP
@@ -229,6 +234,7 @@ public class DecoratedField {
 		 * border is true, compute the polygon inset by 1-pixel border. Consult
 		 * the arrowOnLeft flag to determine which side the arrow is on.
 		 */
+		@Deprecated
 		int[] getPolygon(boolean border) {
 			Point e = getExtent();
 			int b = border ? 1 : 0;
@@ -246,6 +252,7 @@ public class DecoratedField {
 		 * Dispose the hover, it is no longer needed. Dispose any resources
 		 * allocated by the hover.
 		 */
+		@Deprecated
 		void dispose() {
 			if (!hoverShell.isDisposed()) {
 				hoverShell.dispose();
@@ -258,6 +265,7 @@ public class DecoratedField {
 		/*
 		 * Set the visibility of the hover.
 		 */
+		@Deprecated
 		void setVisible(boolean visible) {
 			if (visible) {
 				if (!hoverShell.isVisible()) {
@@ -273,6 +281,7 @@ public class DecoratedField {
 		 * and location of the hover to hover near the specified control,
 		 * pointing the arrow toward the target control.
 		 */
+		@Deprecated
 		void setText(String t, Control hoverNear, Control targetControl) {
 			if (t == null) {
 				t = EMPTY;
@@ -304,6 +313,7 @@ public class DecoratedField {
 		/*
 		 * Return whether or not the hover (shell) is visible.
 		 */
+		@Deprecated
 		boolean isVisible() {
 			return hoverShell.isVisible();
 		}
@@ -311,6 +321,7 @@ public class DecoratedField {
 		/*
 		 * Compute the extent of the hover for the current text.
 		 */
+		@Deprecated
 		Point getExtent() {
 			GC gc = new GC(hoverShell);
 			Point e = gc.textExtent(text);
@@ -323,6 +334,7 @@ public class DecoratedField {
 		/*
 		 * Compute a new shape for the hover shell.
 		 */
+		@Deprecated
 		void setNewShape() {
 			Region oldRegion = region;
 			region = new Region();
