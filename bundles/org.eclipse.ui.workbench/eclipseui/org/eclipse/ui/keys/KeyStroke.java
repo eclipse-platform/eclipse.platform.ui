@@ -62,6 +62,7 @@ public final class KeyStroke implements Comparable {
 	 * the formal key stroke grammar. This is not to be displayed to the user. It is
 	 * only intended as an internal representation.
 	 */
+	@Deprecated
 	public static final String KEY_DELIMITER = "\u002B"; //$NON-NLS-1$
 
 	/**
@@ -78,6 +79,7 @@ public final class KeyStroke implements Comparable {
 	 * The set of delimiters for <code>Key</code> objects allowed during parsing of
 	 * the formal string representation.
 	 */
+	@Deprecated
 	public static final String KEY_DELIMITERS = KEY_DELIMITER;
 
 	/**
@@ -88,6 +90,7 @@ public final class KeyStroke implements Comparable {
 	 * @param naturalKey  the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null) {
 			throw new NullPointerException();
@@ -106,6 +109,7 @@ public final class KeyStroke implements Comparable {
 	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);
 		return new KeyStroke(new TreeSet<>(Arrays.asList(modifierKeys)), naturalKey);
@@ -118,6 +122,7 @@ public final class KeyStroke implements Comparable {
 	 * @return a key stroke. This key stroke will have no modifier keys. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeyStroke getInstance(NaturalKey naturalKey) {
 		return new KeyStroke(Collections.unmodifiableSortedSet(new TreeSet<>()), naturalKey);
 	}
@@ -133,6 +138,7 @@ public final class KeyStroke implements Comparable {
 	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
@@ -146,6 +152,7 @@ public final class KeyStroke implements Comparable {
 	 * @throws ParseException if the given formal string representation could not be
 	 *                        parsed to a valid key stroke.
 	 */
+	@Deprecated
 	public static KeyStroke getInstance(String string) throws ParseException {
 		if (string == null) {
 			throw new NullPointerException();
@@ -247,6 +254,7 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public int compareTo(Object object) {
 		KeyStroke castedObject = (KeyStroke) object;
@@ -259,6 +267,7 @@ public final class KeyStroke implements Comparable {
 		return compareTo;
 	}
 
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof KeyStroke castedObject)) {
@@ -277,6 +286,7 @@ public final class KeyStroke implements Comparable {
 	 * @return A string representation for this key stroke using the default look;
 	 *         never <code>null</code>.
 	 */
+	@Deprecated
 	public String format() {
 		return KeyFormatterFactory.getDefault().format(this);
 	}
@@ -288,6 +298,7 @@ public final class KeyStroke implements Comparable {
 	 *         not to be <code>null</code>. If this set is not empty, it is
 	 *         guaranteed to only contain instances of <code>ModifierKey</code>.
 	 */
+	@Deprecated
 	public Set getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
@@ -297,10 +308,12 @@ public final class KeyStroke implements Comparable {
 	 *
 	 * @return the natural key. May be <code>null</code>.
 	 */
+	@Deprecated
 	public NaturalKey getNaturalKey() {
 		return naturalKey;
 	}
 
+	@Deprecated
 	@Override
 	public int hashCode() {
 		if (!hashCodeComputed) {
@@ -319,6 +332,7 @@ public final class KeyStroke implements Comparable {
 	 *
 	 * @return <code>true</code>, iff the key stroke is complete.
 	 */
+	@Deprecated
 	public boolean isComplete() {
 		return naturalKey != null;
 	}
@@ -329,6 +343,7 @@ public final class KeyStroke implements Comparable {
 	 * @return The formal string representation for this key stroke. Guaranteed not
 	 *         to be <code>null</code>.
 	 */
+	@Deprecated
 	@Override
 	public String toString() {
 		return KeyFormatterFactory.getFormalKeyFormatter().format(this);

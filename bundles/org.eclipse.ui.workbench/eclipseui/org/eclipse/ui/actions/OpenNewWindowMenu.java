@@ -62,6 +62,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
 	 * @param window the window where a new page is created if an item within the
 	 *               menu is selected
 	 */
+	@Deprecated
 	public OpenNewWindowMenu(IWorkbenchWindow window) {
 		this(window, null);
 	}
@@ -73,6 +74,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
 	 *               menu is selected
 	 * @param input  the page input
 	 */
+	@Deprecated
 	public OpenNewWindowMenu(IWorkbenchWindow window, IAdaptable input) {
 		super(window, "Open New Page Menu");//$NON-NLS-1$
 		this.pageInput = input;
@@ -81,6 +83,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
 	/**
 	 * Opens a new window with a particular perspective and input.
 	 */
+	@Deprecated
 	@Override
 	protected void run(IPerspectiveDescriptor desc) {
 		// Verify page input.
@@ -104,6 +107,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
 	 *
 	 * @param input the page input
 	 */
+	@Deprecated
 	public void setPageInput(IAdaptable input) {
 		pageInput = input;
 	}

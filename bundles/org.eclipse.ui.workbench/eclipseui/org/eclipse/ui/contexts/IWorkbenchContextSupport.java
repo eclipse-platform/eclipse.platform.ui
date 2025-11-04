@@ -41,18 +41,21 @@ public interface IWorkbenchContextSupport {
 	 * The identifier for the context that is active when a shell registered as a
 	 * dialog.
 	 */
+	@Deprecated
 	String CONTEXT_ID_DIALOG = IContextService.CONTEXT_ID_DIALOG;
 
 	/**
 	 * The identifier for the context that is active when a shell is registered as
 	 * either a window or a dialog.
 	 */
+	@Deprecated
 	String CONTEXT_ID_DIALOG_AND_WINDOW = IContextService.CONTEXT_ID_DIALOG_AND_WINDOW;
 
 	/**
 	 * The identifier for the context that is active when a shell is registered as a
 	 * window.
 	 */
+	@Deprecated
 	String CONTEXT_ID_WINDOW = IContextService.CONTEXT_ID_WINDOW;
 
 	/**
@@ -60,6 +63,7 @@ public interface IWorkbenchContextSupport {
 	 * a dialog. When the given shell is active, the "In Dialogs" context should
 	 * also be active.
 	 */
+	@Deprecated
 	int TYPE_DIALOG = IContextService.TYPE_DIALOG;
 
 	/**
@@ -68,6 +72,7 @@ public interface IWorkbenchContextSupport {
 	 * provide any <code>EnabledSubmission</code> instances for the "In Dialogs" or
 	 * "In Windows" contexts.
 	 */
+	@Deprecated
 	int TYPE_NONE = IContextService.TYPE_NONE;
 
 	/**
@@ -75,6 +80,7 @@ public interface IWorkbenchContextSupport {
 	 * a window. When the given shell is active, the "In Windows" context should
 	 * also be active.
 	 */
+	@Deprecated
 	int TYPE_WINDOW = IContextService.TYPE_WINDOW;
 
 	/**
@@ -94,6 +100,7 @@ public interface IWorkbenchContextSupport {
 	 * @param enabledSubmission The enabled submission to be considered; must not be
 	 *                          <code>null</code>.
 	 */
+	@Deprecated
 	void addEnabledSubmission(EnabledSubmission enabledSubmission);
 
 	/**
@@ -116,6 +123,7 @@ public interface IWorkbenchContextSupport {
 	 *                           element in the collection must be an instance of
 	 *                           <code>EnabledSubmission</code>.
 	 */
+	@Deprecated
 	void addEnabledSubmissions(Collection enabledSubmissions);
 
 	/**
@@ -124,6 +132,7 @@ public interface IWorkbenchContextSupport {
 	 * @return the context manager for the workbench. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	IContextManager getContextManager();
 
 	/**
@@ -137,6 +146,7 @@ public interface IWorkbenchContextSupport {
 	 *         <code>IWorkbenchContextSupport.TYPE_NONE</code>.
 	 * @since 3.1
 	 */
+	@Deprecated
 	int getShellType(final Shell shell);
 
 	/**
@@ -145,6 +155,7 @@ public interface IWorkbenchContextSupport {
 	 * @return <code>true</code> if the key bindings are active; <code>false</code>
 	 *         otherwise.
 	 */
+	@Deprecated
 	boolean isKeyFilterEnabled();
 
 	/**
@@ -153,6 +164,7 @@ public interface IWorkbenchContextSupport {
 	 *
 	 * @since 3.1
 	 */
+	@Deprecated
 	void openKeyAssistDialog();
 
 	/**
@@ -183,6 +195,7 @@ public interface IWorkbenchContextSupport {
 	 * @return <code>true</code> if the shell had already been registered (i.e., the
 	 *         registration has changed); <code>false</code> otherwise.
 	 */
+	@Deprecated
 	boolean registerShell(final Shell shell, final int type);
 
 	/**
@@ -200,6 +213,7 @@ public interface IWorkbenchContextSupport {
 	 * @param enabledSubmission The enabled submission to be removed; must not be
 	 *                          <code>null</code>.
 	 */
+	@Deprecated
 	void removeEnabledSubmission(EnabledSubmission enabledSubmission);
 
 	/**
@@ -219,6 +233,7 @@ public interface IWorkbenchContextSupport {
 	 *                           must only contain instances of
 	 *                           <code>EnabledSubmission</code>.
 	 */
+	@Deprecated
 	void removeEnabledSubmissions(Collection enabledSubmissions);
 
 	/**
@@ -235,6 +250,7 @@ public interface IWorkbenchContextSupport {
 	 *
 	 * @param enabled Whether the key filter should be enabled.
 	 */
+	@Deprecated
 	void setKeyFilterEnabled(final boolean enabled);
 
 	/**
@@ -255,5 +271,6 @@ public interface IWorkbenchContextSupport {
 	 * @return <code>true</code> if the shell had been registered;
 	 *         <code>false</code> otherwise.
 	 */
+	@Deprecated
 	boolean unregisterShell(final Shell shell);
 }

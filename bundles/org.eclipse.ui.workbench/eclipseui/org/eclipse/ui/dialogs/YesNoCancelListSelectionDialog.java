@@ -48,6 +48,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 		super(parentShell, input, contentProvider, labelProvider, message);
 	}
 
+	@Deprecated
 	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -66,6 +67,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 		}
 	}
 
+	@Deprecated
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -73,6 +75,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 				IWorkbenchHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
 	}
 
+	@Deprecated
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
@@ -88,6 +91,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 	 * dialog. Subclasses may override if desired.
 	 * </p>
 	 */
+	@Deprecated
 	protected void noPressed() {
 		setReturnCode(IDialogConstants.NO_ID);
 		close();
@@ -97,6 +101,7 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 	 * Notifies that the yes button of this dialog has been pressed. Do the same as
 	 * an OK but set the return code to YES_ID instead.
 	 */
+	@Deprecated
 	protected void yesPressed() {
 		okPressed();
 		setReturnCode(IDialogConstants.YES_ID);

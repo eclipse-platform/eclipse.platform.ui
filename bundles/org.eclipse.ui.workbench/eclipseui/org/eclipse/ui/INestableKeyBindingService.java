@@ -46,6 +46,7 @@ public interface INestableKeyBindingService extends IKeyBindingService {
 	 *         case of a <code>null</code> parameter); <code>false</code> if nothing
 	 *         changed.
 	 */
+	@Deprecated
 	boolean activateKeyBindingService(IWorkbenchSite nestedSite);
 
 	/**
@@ -58,6 +59,7 @@ public interface INestableKeyBindingService extends IKeyBindingService {
 	 * @return The associated service, if any; or a new associated service, if none
 	 *         existed previously.
 	 */
+	@Deprecated
 	IKeyBindingService getKeyBindingService(IWorkbenchSite nestedSite);
 
 	/**
@@ -70,6 +72,7 @@ public interface INestableKeyBindingService extends IKeyBindingService {
 	 * @return <code>true</code> if the service existed and could be removed;
 	 *         <code>false</code> otherwise.
 	 */
+	@Deprecated
 	boolean removeKeyBindingService(IWorkbenchSite nestedSite);
 
 }

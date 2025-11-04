@@ -40,6 +40,7 @@ public abstract class NaturalKey extends Key {
 	 *
 	 * @param key The key to be wrapped.
 	 */
+	@Deprecated
 	NaturalKey(final int key) {
 		super(key);
 	}

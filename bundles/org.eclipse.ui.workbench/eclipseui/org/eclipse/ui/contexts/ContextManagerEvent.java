@@ -90,6 +90,7 @@ public final class ContextManagerEvent {
 	 *                                    enabledContextIdsChanged is
 	 *                                    <code>true</code>.
 	 */
+	@Deprecated
 	public ContextManagerEvent(IContextManager contextManager, boolean definedContextIdsChanged,
 			boolean enabledContextIdsChanged, Set previouslyDefinedContextIds, Set previouslyEnabledContextIds) {
 		if (contextManager == null) {
@@ -127,6 +128,7 @@ public final class ContextManagerEvent {
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	public IContextManager getContextManager() {
 		return contextManager;
 	}
@@ -141,6 +143,7 @@ public final class ContextManagerEvent {
 	 *         <code>false</code> and is guaranteed to not be null if
 	 *         haveDefinedContextIdsChanged() is <code>true</code>.
 	 */
+	@Deprecated
 	public Set getPreviouslyDefinedContextIds() {
 		return previouslyDefinedContextIds;
 	}
@@ -155,6 +158,7 @@ public final class ContextManagerEvent {
 	 *         <code>false</code> and is guaranteed to not be null if
 	 *         haveEnabledContextIdsChanged() is <code>true</code>.
 	 */
+	@Deprecated
 	public Set getPreviouslyEnabledContextIds() {
 		return previouslyEnabledContextIds;
 	}
@@ -164,6 +168,7 @@ public final class ContextManagerEvent {
 	 *
 	 * @return true, iff the definedContextIds property changed.
 	 */
+	@Deprecated
 	public boolean haveDefinedContextIdsChanged() {
 		return definedContextIdsChanged;
 	}
@@ -173,6 +178,7 @@ public final class ContextManagerEvent {
 	 *
 	 * @return true, iff the enabledContextIds property changed.
 	 */
+	@Deprecated
 	public boolean haveEnabledContextIdsChanged() {
 		return enabledContextIdsChanged;
 	}

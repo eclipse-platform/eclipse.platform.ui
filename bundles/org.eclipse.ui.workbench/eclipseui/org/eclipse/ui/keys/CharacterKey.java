@@ -40,66 +40,77 @@ public final class CharacterKey extends NaturalKey {
 	 * An internal map used to lookup instances of <code>CharacterKey</code> given
 	 * the formal string representation of a character key.
 	 */
+	@Deprecated
 	static SortedMap characterKeysByName = new TreeMap();
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * backspace key (U+0008).
 	 */
+	@Deprecated
 	public static final CharacterKey BS;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * carriage return (U+000D) key
 	 */
+	@Deprecated
 	public static final CharacterKey CR;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * delete (U+007F) key.
 	 */
+	@Deprecated
 	public static final CharacterKey DEL;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * escape (U+001B) key.
 	 */
+	@Deprecated
 	public static final CharacterKey ESC;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * form feed (U+000C) key.
 	 */
+	@Deprecated
 	public static final CharacterKey FF;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * line feed (U+000A) key.
 	 */
+	@Deprecated
 	public static final CharacterKey LF;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * null (U+0000) key.
 	 */
+	@Deprecated
 	public static final CharacterKey NUL;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * space (U+0020) key.
 	 */
+	@Deprecated
 	public static final CharacterKey SPACE;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * tab (U+0009) key.
 	 */
+	@Deprecated
 	public static final CharacterKey TAB;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which represents the
 	 * vertical tab (U+000B) key.
 	 */
+	@Deprecated
 	public static final CharacterKey VT;
 
 	/**
@@ -112,6 +123,7 @@ public final class CharacterKey extends NaturalKey {
 	 *                  instance is to represent.
 	 * @return an instance of <code>CharacterKey</code> representing the character.
 	 */
+	@Deprecated
 	public static CharacterKey getInstance(final char character) {
 		return new CharacterKey(character);
 	}
@@ -161,6 +173,7 @@ public final class CharacterKey extends NaturalKey {
 	 *
 	 * @return the character that this object represents.
 	 */
+	@Deprecated
 	public char getCharacter() {
 		return (char) key;
 	}

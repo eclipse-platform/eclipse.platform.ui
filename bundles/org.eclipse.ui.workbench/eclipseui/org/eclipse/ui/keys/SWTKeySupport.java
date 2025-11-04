@@ -38,6 +38,7 @@ public final class SWTKeySupport {
 	 *                    accelerator value.
 	 * @return The equivalent key stroke; never <code>null</code>.
 	 */
+	@Deprecated
 	public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
 		final SortedSet<ModifierKey> modifierKeys = new TreeSet<>();
 		NaturalKey naturalKey;
@@ -220,6 +221,7 @@ public final class SWTKeySupport {
 	 * @param event The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
+	@Deprecated
 	public static int convertEventToModifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
 		char character = topKey(event);
@@ -241,6 +243,7 @@ public final class SWTKeySupport {
 	 * @param event The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
+	@Deprecated
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
 		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
 	}
@@ -282,6 +285,7 @@ public final class SWTKeySupport {
 	 * @param event The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
+	@Deprecated
 	public static int convertEventToUnmodifiedAccelerator(KeyEvent event) {
 		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
 	}
@@ -296,6 +300,7 @@ public final class SWTKeySupport {
 	 * @return The combination of the state mask without shift, and the modified
 	 *         character.
 	 */
+	@Deprecated
 	public static int convertEventToUnshiftedModifiedAccelerator(Event event) {
 		// Disregard alphabetic key strokes.
 		if (Character.isLetter((char) event.keyCode)) {
@@ -314,6 +319,7 @@ public final class SWTKeySupport {
 	 * @param keyStroke The key stroke to convert; must not be <code>null</code>.
 	 * @return The SWT accelerator value
 	 */
+	@Deprecated
 	public static int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
 		int accelerator = 0;
 		final Iterator<ModifierKey> iterator = keyStroke.getModifierKeys().iterator();
@@ -394,6 +400,7 @@ public final class SWTKeySupport {
 	 * @return an instance of <code>IKeyFormatter</code> appropriate for the current
 	 *         instance; never <code>null</code>.
 	 */
+	@Deprecated
 	public static IKeyFormatter getKeyFormatterForPlatform() {
 		return NATIVE_FORMATTER;
 	}

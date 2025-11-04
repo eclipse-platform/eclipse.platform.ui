@@ -38,5 +38,6 @@ public interface IContextManagerListener {
 	 * @param contextManagerEvent the context manager event. Guaranteed not to be
 	 *                            <code>null</code>.
 	 */
+	@Deprecated
 	void contextManagerChanged(ContextManagerEvent contextManagerEvent);
 }
