@@ -21,23 +21,23 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests bug 56822 -- NPE thrown when setTitle(null) is called.
  *
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ViewPartTitleTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkbenchWindow window;
 
@@ -67,7 +67,7 @@ public class ViewPartTitleTest {
 		}
 	};
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
@@ -80,7 +80,7 @@ public class ViewPartTitleTest {
 		contentChangeEvent = false;
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		view.removePropertyListener(propertyListener);
 		page.hideView(view);
@@ -152,7 +152,7 @@ public class ViewPartTitleTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestCustomName() throws Throwable {
 		view.setPartName("CustomPartName");
 		verifySettings("CustomPartName", "CustomPartName", "");
@@ -175,7 +175,7 @@ public class ViewPartTitleTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestCustomNameAndContentDescription() throws Throwable {
 		view.setPartName("CustomName");
 		view.setContentDescription("CustomContentDescription");

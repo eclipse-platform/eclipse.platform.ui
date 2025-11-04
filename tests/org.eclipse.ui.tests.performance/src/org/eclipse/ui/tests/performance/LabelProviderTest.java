@@ -48,15 +48,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test scrolling performance with various label styles
@@ -64,13 +64,13 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 3.5
  */
 @RunWith(Parameterized.class)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static class CountryEntry {
 		private final String name;
@@ -253,7 +253,7 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 		return viewer;
 	}
 
-	@Before
+	@BeforeEach
 	public final void prepareShellUp() throws Exception {
 		Display display = Display.getCurrent();
 		if (display == null)
@@ -273,7 +273,7 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 		fShell.open();
 	}
 
-	@After
+	@AfterEach
 	public final void closeShell() throws Exception {
 		if (fShell != null) {
 			fShell.close();

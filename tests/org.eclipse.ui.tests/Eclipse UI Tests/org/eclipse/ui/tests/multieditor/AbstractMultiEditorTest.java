@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.multieditor;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,15 +48,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class AbstractMultiEditorTest {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static final String PROJECT_NAME = "TiledEditorProject";
 
@@ -194,7 +194,7 @@ public class AbstractMultiEditorTest {
 	/**
 	 * Close any editors at the beginner of a test, so the test can be clean.
 	 */
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage();

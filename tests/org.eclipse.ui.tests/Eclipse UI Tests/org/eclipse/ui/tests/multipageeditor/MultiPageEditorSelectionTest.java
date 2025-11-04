@@ -15,9 +15,9 @@ package org.eclipse.ui.tests.multipageeditor;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -35,22 +35,22 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.views.properties.PropertySheet;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class MultiPageEditorSelectionTest {
 
 	private static final String MTEST01_FILE = "mtest01.multivar";
 
 	private static final String PROJECT_NAME = "MultiPageEditorSelction";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject(PROJECT_NAME);

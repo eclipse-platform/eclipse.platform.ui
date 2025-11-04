@@ -15,10 +15,10 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,22 +48,22 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests various aspects of command state.
  *
  * @since 3.2
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class HandlerActivationTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	static class ActTestHandler extends AbstractHandler {
 		public String contextId;
@@ -185,7 +185,7 @@ public class HandlerActivationTest {
 		makeHandler(handlerId, contextId, expression);
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		for (final String[] contextInfo : CREATE_CONTEXTS) {
 			final Context context = contextService.getContext(contextInfo[0]);
@@ -203,7 +203,7 @@ public class HandlerActivationTest {
 
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		handlerService.deactivateHandlers(testHandlerActivations.values());
 		testHandlerActivations.clear();

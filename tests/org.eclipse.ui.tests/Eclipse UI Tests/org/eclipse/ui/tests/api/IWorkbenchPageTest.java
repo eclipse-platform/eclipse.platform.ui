@@ -22,12 +22,12 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,25 +86,22 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.tests.harness.util.CallHistory;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkbenchPageTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbench fWorkbench;
 
@@ -172,7 +169,7 @@ public class IWorkbenchPageTest {
 		}
 	};
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
@@ -182,7 +179,7 @@ public class IWorkbenchPageTest {
 		Platform.addLogListener(openAndHideListener);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		Platform.removeLogListener(openAndHideListener);
 		if (proj != null) {
@@ -1147,7 +1144,7 @@ public class IWorkbenchPageTest {
 		boolean activeShell = forceActive(fWin.getShell());
 
 		final AtomicBoolean shellIsActive = new AtomicBoolean(activeShell);
-		Assume.assumeTrue(shellIsActive.get());
+		Assumptions.assumeTrue(shellIsActive.get());
 
 		ShellListener shellListener = new ShellStateListener(shellIsActive);
 		fWin.getShell().addShellListener(shellListener);
@@ -1162,13 +1159,13 @@ public class IWorkbenchPageTest {
 		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
 
-		Assume.assumeTrue(forceActive(fWin.getShell()));
+		Assumptions.assumeTrue(forceActive(fWin.getShell()));
 
 		showViewViaCommand(MockViewPart.ID2);
 
-		Assume.assumeTrue(fWin.getShell().isVisible());
-		Assume.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
-		Assume.assumeTrue(shellIsActive.get());
+		Assumptions.assumeTrue(fWin.getShell().isVisible());
+		Assumptions.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assumptions.assumeTrue(shellIsActive.get());
 
 		assertNotNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
@@ -1200,7 +1197,7 @@ public class IWorkbenchPageTest {
 		boolean activeShell = forceActive(fWin.getShell());
 
 		final AtomicBoolean shellIsActive = new AtomicBoolean(activeShell);
-		Assume.assumeTrue(shellIsActive.get());
+		Assumptions.assumeTrue(shellIsActive.get());
 
 		ShellListener shellListener = new ShellStateListener(shellIsActive);
 		fWin.getShell().addShellListener(shellListener);
@@ -1217,12 +1214,12 @@ public class IWorkbenchPageTest {
 		assertNull(fActivePage.findViewReference(historyView));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
 
-		Assume.assumeTrue(forceActive(fWin.getShell()));
+		Assumptions.assumeTrue(forceActive(fWin.getShell()));
 		showViewViaCommand(historyView);
 
-		Assume.assumeTrue(fWin.getShell().isVisible());
-		Assume.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
-		Assume.assumeTrue(shellIsActive.get());
+		Assumptions.assumeTrue(fWin.getShell().isVisible());
+		Assumptions.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assumptions.assumeTrue(shellIsActive.get());
 
 		assertNotNull(fActivePage.findView(historyView));
 		assertNotNull(fActivePage.findViewReference(historyView));
@@ -2149,7 +2146,7 @@ public class IWorkbenchPageTest {
 	 * @since 3.1
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() throws WorkbenchException {
 
 		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersAtTopLevel.PERSP_ID, fWin);
@@ -2174,7 +2171,7 @@ public class IWorkbenchPageTest {
 	 * @since 3.1
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() throws WorkbenchException {
 
 		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder.PERSP_ID, fWin);
@@ -2198,7 +2195,7 @@ public class IWorkbenchPageTest {
 	 * @since 3.1
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() throws WorkbenchException {
 		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersInFolder.PERSP_ID, fWin);
 
@@ -2654,7 +2651,7 @@ public class IWorkbenchPageTest {
 	 * @since 3.2
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndFindEditorWithMatchFlags() throws Exception {
 		IWorkbenchPage page = fActivePage;
 		proj = FileUtil.createProject("testOpenEditorMatchFlags");
@@ -2765,7 +2762,7 @@ public class IWorkbenchPageTest {
 	 * editor references.  Check that close still works.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor1() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
@@ -2788,7 +2785,7 @@ public class IWorkbenchPageTest {
 	 * close still works.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor2() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
@@ -2834,7 +2831,7 @@ public class IWorkbenchPageTest {
 	 * generate a log message and not effect the list of editors.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor3() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
@@ -2867,7 +2864,7 @@ public class IWorkbenchPageTest {
 	 * add it a second time should not effect the list of editor references.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor4() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
@@ -2899,7 +2896,7 @@ public class IWorkbenchPageTest {
 	 * outline view.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor5() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
@@ -2939,7 +2936,7 @@ public class IWorkbenchPageTest {
 	 * reflects the default page.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor6() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
@@ -2987,7 +2984,7 @@ public class IWorkbenchPageTest {
 	 * the window title.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor7() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
@@ -3035,7 +3032,7 @@ public class IWorkbenchPageTest {
 	 * causes another part to become active.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor8() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
@@ -3076,7 +3073,7 @@ public class IWorkbenchPageTest {
 	 * of some commands.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor9() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
@@ -3210,7 +3207,7 @@ public class IWorkbenchPageTest {
 	 * openEditors(IWorkbenchPage page, IFile[] inputs)
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenEditorsReuse() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditors");
 
@@ -3301,7 +3298,7 @@ public class IWorkbenchPageTest {
 	 * Make sure there are no editor errors.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenAndHideEditor11() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);

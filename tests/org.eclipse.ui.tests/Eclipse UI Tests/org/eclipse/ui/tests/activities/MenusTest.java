@@ -15,10 +15,10 @@
 package org.eclipse.ui.tests.activities;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
@@ -30,13 +30,14 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class MenusTest {
 
 	private TestFactory factory;
@@ -44,8 +45,7 @@ public class MenusTest {
 	private IMenuService service;
 	private Set<String> enabledActivities;
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * @since 3.3
@@ -87,7 +87,7 @@ public class MenusTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		window = openTestWindow();
 		enabledActivities = window.getWorkbench().getActivitySupport()
@@ -96,7 +96,7 @@ public class MenusTest {
 		assertNotNull(service);
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		window.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				enabledActivities);
@@ -131,7 +131,7 @@ public class MenusTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestMenuVisibilityWithCustomFactory() {
 		window.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				Collections.singleton("menuTest1")); // enable the foo

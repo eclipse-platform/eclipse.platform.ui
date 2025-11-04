@@ -14,10 +14,10 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -32,29 +32,29 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkingSet;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IA;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IModelElement;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkingSetTest {
 	static final String WORKING_SET_NAME_1 = "ws1";
 
 	static final String WORKING_SET_NAME_2 = "ws2";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkspace fWorkspace;
 
 	IWorkingSet fWorkingSet;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 
@@ -65,7 +65,7 @@ public class IWorkingSetTest {
 		workingSetManager.addWorkingSet(fWorkingSet);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 		workingSetManager.removeWorkingSet(fWorkingSet);
@@ -338,7 +338,8 @@ public class IWorkingSetTest {
 
 	}
 
-	public class ToFoo implements IAdaptable {
+	@ExtendWith(CloseTestWindowsExtension.class)
+public class ToFoo implements IAdaptable {
 
 		@SuppressWarnings("unchecked")
 		@Override

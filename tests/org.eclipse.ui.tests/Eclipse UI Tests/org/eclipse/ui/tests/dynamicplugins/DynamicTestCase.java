@@ -14,9 +14,9 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -28,23 +28,23 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.leaks.LeakTests;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Baseclass for all dynamic tests.
  *
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class DynamicTestCase implements IRegistryChangeListener {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private volatile boolean addedRecieved;
 
@@ -58,7 +58,7 @@ public abstract class DynamicTestCase implements IRegistryChangeListener {
 
 	private ReferenceQueue<IExtensionDelta> queue;
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		try {
 			removeBundle();

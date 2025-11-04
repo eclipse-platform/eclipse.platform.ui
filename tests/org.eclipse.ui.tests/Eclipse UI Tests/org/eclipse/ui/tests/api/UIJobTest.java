@@ -24,25 +24,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class UIJobTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

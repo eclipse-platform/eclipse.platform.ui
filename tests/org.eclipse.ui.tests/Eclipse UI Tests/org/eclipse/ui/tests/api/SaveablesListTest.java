@@ -15,7 +15,7 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -35,20 +35,20 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.tests.harness.util.CallHistory;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class SaveablesListTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow fWin;
 
@@ -56,13 +56,13 @@ public class SaveablesListTest {
 
 	private IWorkbenchPage page;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWin = openTestWindow();
 		page = openTestPage(fWin);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		if (proj != null) {
 			FileUtil.deleteProject(proj);

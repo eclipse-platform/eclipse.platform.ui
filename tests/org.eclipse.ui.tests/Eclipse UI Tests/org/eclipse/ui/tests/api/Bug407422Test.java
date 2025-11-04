@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +31,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug407422Test {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Test
 	public void test() throws CoreException {

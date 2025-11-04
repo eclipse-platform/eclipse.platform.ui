@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -30,25 +30,25 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * This class contains tests for text selection action enablement
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class TextSelectionActionExpressionTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

@@ -16,9 +16,9 @@ package org.eclipse.ui.tests.contexts;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 
@@ -31,11 +31,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockViewPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestUtil;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test that the contexts activated through their local services are only in
@@ -43,6 +43,7 @@ import org.junit.Test;
  *
  * @since 3.2
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class PartContextTest {
 	public static final String PAGE_VIEW_ID = "org.eclipse.ui.tests.contexts.MockPageView";
 
@@ -50,8 +51,7 @@ public class PartContextTest {
 
 	public static final String WINDOW_CONTEXT_ID = "org.eclipse.ui.tests.contexts.WorkbenchWindow";
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Test
 	public void testBasicContextActivation() throws Exception {

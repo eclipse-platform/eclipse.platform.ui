@@ -16,10 +16,10 @@
 package org.eclipse.ui.tests.services;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -35,18 +35,18 @@ import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.4
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ContributedServiceTest {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Test
 	public void testGlobalService() throws Exception {
@@ -70,7 +70,7 @@ public class ContributedServiceTest {
 	}
 
 	@Test
-	@Ignore // TODO
+	@Disabled // TODO
 	public void testWindowService() throws Exception {
 		IServiceLocator locator = getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
@@ -107,7 +107,7 @@ public class ContributedServiceTest {
 	}
 
 	@Test
-	@Ignore // TODO
+	@Disabled // TODO
 	public void testLocalServiceCreated() throws Exception {
 		IServiceLocator parent = getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchLocationService wls = parent.getService(IWorkbenchLocationService.class);
@@ -151,7 +151,7 @@ public class ContributedServiceTest {
 	}
 
 	@Test
-	@Ignore // TODO
+	@Disabled // TODO
 	public void testLocalDialogService() throws Exception {
 		IServiceLocator parent = getWorkbench();
 		IServiceLocatorCreator lc = parent.getService(IServiceLocatorCreator.class);

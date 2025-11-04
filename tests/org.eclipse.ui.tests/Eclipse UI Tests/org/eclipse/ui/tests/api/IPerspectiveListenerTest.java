@@ -14,7 +14,7 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -22,18 +22,18 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IPerspectiveListenerTest implements IPerspectiveListener {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private int fEvent;
 
@@ -51,7 +51,7 @@ public class IPerspectiveListenerTest implements IPerspectiveListener {
 	public static final int NONE = 0x00, OPEN = 0x01, CLOSED = 0x02,
 			ACTIVATED = 0x04, CHANGED = 0x08;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fEvent = NONE;
 		fWorkbench = PlatformUI.getWorkbench();
@@ -59,14 +59,14 @@ public class IPerspectiveListenerTest implements IPerspectiveListener {
 		fWindow.addPerspectiveListener(this);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		fWindow.removePerspectiveListener(this);
 		fWorkbench = null;
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testPerspectiveActivated() {
 		/*
 		 * Commented out because until test case can be updated to work with new
@@ -80,7 +80,7 @@ public class IPerspectiveListenerTest implements IPerspectiveListener {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testPerspectiveChanged() {
 		/*
 		 * Commented out because until test case can be updated to work with new

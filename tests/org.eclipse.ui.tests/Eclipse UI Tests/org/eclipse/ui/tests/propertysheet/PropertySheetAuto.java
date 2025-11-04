@@ -15,11 +15,11 @@
 package org.eclipse.ui.tests.propertysheet;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.api.SaveableMockViewPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -43,10 +43,10 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  *  The class implements a test for the workbench's default
@@ -58,10 +58,10 @@ import org.junit.Test;
  * properties.
  */
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class PropertySheetAuto {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * This car serves as a simple porperty source.
@@ -281,7 +281,7 @@ public class PropertySheetAuto {
 		return new Car(modelYear, color, manufacturer, model, engineSize);
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
@@ -346,7 +346,7 @@ public class PropertySheetAuto {
 	 * </p>
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XtestInputIfHiddenBug69953() throws Throwable {
 		PropertySheetPerspectiveFactory2.applyPerspective(activePage);
 		PropertySheet propView = (PropertySheet) createTestParts(activePage);

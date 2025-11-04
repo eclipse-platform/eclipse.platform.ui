@@ -14,11 +14,11 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -28,17 +28,17 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the ISelectionService class.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ISelectionServiceTest implements ISelectionListener {
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow fWindow;
 
@@ -51,7 +51,7 @@ public class ISelectionServiceTest implements ISelectionListener {
 
 	private IWorkbenchPart eventPart;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -35,21 +35,21 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests Bug 43321
  *
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug43321Test {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Tests that non-check box items on the menu are not checked when activated

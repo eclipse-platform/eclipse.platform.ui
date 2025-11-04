@@ -16,10 +16,10 @@ package org.eclipse.ui.tests.api;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.closeAllPages;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.StatusLineManager;
@@ -34,23 +34,23 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkbenchWindowTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbench fWorkbench;
 
 	private IWorkbenchWindow fWin;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
@@ -65,7 +65,7 @@ public class IWorkbenchWindowTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetActivePage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -90,7 +90,7 @@ public class IWorkbenchWindowTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestSetActivePage() throws Throwable {
 		openTestPage(fWin, 5);
 		IWorkbenchPage[] pages = fWin.getPages();
@@ -105,7 +105,7 @@ public class IWorkbenchWindowTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetPages() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -144,7 +144,7 @@ public class IWorkbenchWindowTest {
 	 * tests openPage(String)
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -166,7 +166,7 @@ public class IWorkbenchWindowTest {
 	 * tests openPage(String, IAdaptable)
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPage2() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work

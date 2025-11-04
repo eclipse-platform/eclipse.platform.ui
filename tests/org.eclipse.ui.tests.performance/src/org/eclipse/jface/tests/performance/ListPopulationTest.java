@@ -23,18 +23,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * The ListPopulationTest is the test for simple
  * SWT lists.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ListPopulationTest extends PerformanceTestCaseJunit4 {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	List list;
 

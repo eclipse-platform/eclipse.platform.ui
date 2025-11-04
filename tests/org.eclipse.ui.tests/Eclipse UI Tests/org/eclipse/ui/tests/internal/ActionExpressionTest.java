@@ -22,18 +22,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * This class contains tests for popup menu enablement
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class ActionExpressionTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	protected IWorkbenchWindow fWindow;
 
@@ -47,7 +47,7 @@ public abstract class ActionExpressionTest {
 
 	ListElement redTrue = new ListElement("red", true);
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

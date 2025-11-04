@@ -16,10 +16,10 @@ package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.SaveablesLifecycleEvent.POST_CLOSE;
 import static org.eclipse.ui.SaveablesLifecycleEvent.POST_OPEN;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,18 +40,18 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.internal.SaveablesList;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class SaveablesListTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	static class GoodSaveable extends Saveable {
 
@@ -187,7 +187,7 @@ public class SaveablesListTest {
 	private DummyPart part2;
 	private DummyPart part3;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		slist = new SaveablesListForTest();
 		source = new Object();

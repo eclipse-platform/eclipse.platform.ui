@@ -16,9 +16,9 @@ package org.eclipse.ui.tests.menus;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -32,18 +32,18 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug264804Test {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Test
 	public void testPopup() throws Exception {

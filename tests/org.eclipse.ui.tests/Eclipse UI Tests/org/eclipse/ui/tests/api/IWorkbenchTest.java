@@ -17,9 +17,9 @@ import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,25 +33,25 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the IWorkbench interface.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkbenchTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Tests the activation of two windows.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestGetActiveWorkbenchWindow() throws Throwable {
 		IWorkbenchWindow win1, win2;
 
@@ -152,7 +152,7 @@ public class IWorkbenchTest {
 	 * openWorkbenchWindow(String, IAdaptable)
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestOpenWorkbenchWindow() throws Throwable {
 		// open a window with valid perspective
 		IWorkbenchWindow win = null;
@@ -183,7 +183,7 @@ public class IWorkbenchTest {
 	 * openWorkbenchWindow(IAdaptable)
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestOpenWorkbenchWindow2() throws Throwable {
 		// open a window with valid perspective
 		IWorkbenchWindow win = null;
@@ -206,7 +206,7 @@ public class IWorkbenchTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPage1() throws Throwable {
 		IWorkbenchWindow win = null;
 		//IWorkbenchPage page1, page2;
@@ -254,7 +254,7 @@ public class IWorkbenchTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testOpenPage2() throws Throwable {
 		IWorkbenchWindow win = null;
 		//IWorkbenchPage page1, page2;
@@ -303,7 +303,7 @@ public class IWorkbenchTest {
 	 * to entire test suites
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testClose() {
 	}
 }

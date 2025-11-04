@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 
@@ -40,15 +40,16 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test opening and closing of items.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class OpenCloseTest {
 	private static final String ORG_ECLIPSE_RESOURCE_PERSPECTIVE = "org.eclipse.ui.resourcePerspective";
 
@@ -58,10 +59,9 @@ public class OpenCloseTest {
 	private IWorkbench workbench;
 	private IWorkbenchPage page;
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		workbench = PlatformUI.getWorkbench();
 		workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

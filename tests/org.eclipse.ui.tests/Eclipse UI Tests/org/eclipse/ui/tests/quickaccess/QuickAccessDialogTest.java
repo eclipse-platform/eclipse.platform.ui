@@ -17,9 +17,9 @@ package org.eclipse.ui.tests.quickaccess;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
@@ -47,17 +47,18 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the quick access UI
  * @since 3.4
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class QuickAccessDialogTest {
 
 	private class TestQuickAccessDialog extends QuickAccessDialog {
@@ -72,8 +73,7 @@ public class QuickAccessDialogTest {
 		}
 	}
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static final int TIMEOUT = 5000;
 	// As defined in QuickAccessDialog and in SearchField
@@ -84,7 +84,7 @@ public class QuickAccessDialogTest {
 	private IWorkbenchWindow activeWorkbenchWindow;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell).forEach(Shell::close);
 		dialogSettings = new DialogSettings("QuickAccessDialogTest" + System.currentTimeMillis());
@@ -99,7 +99,7 @@ public class QuickAccessDialogTest {
 				.map(QuickAccessDialog.class::cast);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell)
 				.forEach(Shell::close);

@@ -14,10 +14,10 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
@@ -25,24 +25,24 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the site for an IWorkbenchPart.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class IWorkbenchPartSiteTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

@@ -21,19 +21,19 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Measures the performance of a widget's computeSize method
  *
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ComputeSizeTest extends PerformanceTestCaseJunit4 {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private final TestWidgetFactory widgetFactory;
 	private final int xIterations = 10;

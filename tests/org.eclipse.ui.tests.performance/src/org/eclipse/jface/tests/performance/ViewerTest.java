@@ -22,22 +22,22 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * The LinearViewerTest is a test that tests viewers.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class ViewerTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	Shell browserShell;
 
@@ -81,7 +81,7 @@ public abstract class ViewerTest extends PerformanceTestCaseJunit4 {
 		};
 	}
 
-	@After
+	@AfterEach
 	public final void closeBrowserShell() throws Exception {
 		if(browserShell!= null){
 			browserShell.close();

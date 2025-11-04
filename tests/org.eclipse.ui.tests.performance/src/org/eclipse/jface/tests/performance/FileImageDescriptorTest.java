@@ -27,20 +27,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
  * viewer.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class FileImageDescriptorTest extends PerformanceTestCaseJunit4 {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	protected static final String IMAGES_DIRECTORY = "/icons/imagetests";
 

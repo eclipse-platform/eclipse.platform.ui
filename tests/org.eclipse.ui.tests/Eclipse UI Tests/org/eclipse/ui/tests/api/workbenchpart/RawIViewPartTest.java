@@ -21,22 +21,22 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 
 /**
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class RawIViewPartTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkbenchWindow window;
 
@@ -66,7 +66,7 @@ public class RawIViewPartTest {
 		}
 	};
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
@@ -80,7 +80,7 @@ public class RawIViewPartTest {
 		contentChangeEvent = false;
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		view.removePropertyListener(propertyListener);
 		page.hideView(view);
@@ -136,7 +136,7 @@ public class RawIViewPartTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestCustomTitle() throws Throwable {
 		view.setTitle("CustomTitle");
 		verifySettings("CustomTitle", "RawIViewPart", "CustomTitle");
@@ -148,7 +148,7 @@ public class RawIViewPartTest {
 	 * as the default part name
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestEmptyContentDescription() throws Throwable {
 		view.setTitle("RawIViewPart");
 		verifySettings("RawIViewPart", "RawIViewPart", "");

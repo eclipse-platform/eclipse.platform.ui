@@ -27,16 +27,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.eclipse.ui.tests.performance.ViewPerformanceUtil;
 import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Measures the time to resize the widget 10 times, including the time required
@@ -45,13 +45,13 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 3.1
  */
 @RunWith(Parameterized.class)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ResizeTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
 	// Note: to test perspective switching properly, we need perspectives with lots

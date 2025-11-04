@@ -14,9 +14,9 @@
 package org.eclipse.ui.tests.adaptable;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.internal.propertytester.ResourceMappingPropertyTester;
 import org.eclipse.core.resources.IProject;
@@ -30,18 +30,18 @@ import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TestName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test that Working Sets adapt to resource mappings
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class WorkingSetTestCase {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	@Rule
 	public final TestName testName = new TestName();

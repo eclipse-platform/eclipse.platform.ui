@@ -14,7 +14,7 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,17 +22,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@Ignore
+@Disabled
+@ExtendWith(CloseTestWindowsExtension.class)
 public class WorkbenchPageTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	@Test
 	public void test1() {
@@ -92,7 +92,7 @@ public class WorkbenchPageTest {
 		return (WorkbenchPage) getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		clearMruPartIds();
 	}

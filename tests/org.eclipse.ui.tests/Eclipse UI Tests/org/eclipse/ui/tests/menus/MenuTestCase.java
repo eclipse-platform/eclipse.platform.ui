@@ -26,10 +26,10 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Base class for tests concerning the 'org.eclipse.ui.menus'
@@ -42,19 +42,19 @@ import org.junit.Rule;
  *
  * @since 3.3
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class MenuTestCase {
 
 	protected static final String TEST_CONTRIBUTIONS_CACHE_ID = "org.eclipse.ui.tests.IfYouChangeMe.FixTheTests";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	protected IContextService contextService;
 	protected IMenuService menuService;
 	protected IWorkbenchWindow window;
 	protected IContextActivation activeContext;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 
 		window = openTestWindow();
@@ -70,7 +70,7 @@ public class MenuTestCase {
 		menuService = window.getService(IMenuService.class);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		if (activeContext != null) {
 			contextService.deactivateContext(activeContext);

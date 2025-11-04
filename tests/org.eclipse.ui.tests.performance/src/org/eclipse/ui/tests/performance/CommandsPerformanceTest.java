@@ -36,12 +36,12 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * <p>
@@ -58,8 +58,7 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * <p>
@@ -184,7 +183,7 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 * @throws NotDefinedException
 	 *             If something went wrong initializing the active scheme.
 	 */
-	@Before
+	@BeforeEach
 	public final void setUpBindings() throws NotDefinedException, Exception {
 		/*
 		 * The constants to use in creating the various objects. The platform
@@ -352,7 +351,7 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 		bindingManager.setBindings(bindings);
 	}
 
-	@After
+	@AfterEach
 	public final void clearBindings() throws Exception {
 		bindingManager = null;
 		commandManager = null;

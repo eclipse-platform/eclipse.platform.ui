@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +23,22 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@Ignore
+@Disabled
+@ExtendWith(CloseTestWindowsExtension.class)
 public class FileEditorMappingTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private EditorDescriptor textEditor;
 	private EditorDescriptor pdeEditor;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		textEditor = (EditorDescriptor) IDE.getEditorDescriptor("test.txt");
 		pdeEditor = (EditorDescriptor) IDE.getEditorDescriptor("plugin.xml");

@@ -13,22 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ImportExportWizardsCategoryTests {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private static String WIZARD_ID_IMPORT_NO_CATEGORY = "org.eclipse.ui.tests.import.NoCategory";
 	private static String WIZARD_ID_IMPORT_INVALID_CATEGORY = "org.eclipse.ui.tests.import.InvalidCategory";
@@ -228,7 +228,7 @@ public class ImportExportWizardsCategoryTests {
 				category == null);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		importRoot = null;
 		exportRoot = null;

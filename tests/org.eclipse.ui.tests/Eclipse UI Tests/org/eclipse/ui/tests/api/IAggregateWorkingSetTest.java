@@ -15,11 +15,11 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -42,21 +42,21 @@ import org.eclipse.ui.internal.AbstractWorkingSet;
 import org.eclipse.ui.internal.AbstractWorkingSetManager;
 import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IAggregateWorkingSetTest {
 
 	static final String WORKING_SET_NAME = "testws";
 	static final String AGGREGATE_WORKING_SET_NAME_ = "testaggregatews";
 	static final String WSET_PAGE_ID="org.eclipse.ui.resourceWorkingSetPage";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkspace fWorkspace;
 	IWorkbench fWorkbench;
@@ -65,7 +65,7 @@ public class IAggregateWorkingSetTest {
 	List<IWorkingSet> backup;
 	IAggregateWorkingSet fWorkingSet;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		backup = Arrays.asList(workingSetManager.getAllWorkingSets());
@@ -85,7 +85,7 @@ public class IAggregateWorkingSetTest {
 		workingSetManager.addWorkingSet(fWorkingSet);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
 		workingSetManager.removeWorkingSet(fWorkingSet);
@@ -250,7 +250,7 @@ public class IAggregateWorkingSetTest {
 	 */
 	/* TODO test must be enabled after bug 479217 is fixed */
 	@Test
-	@Ignore("Bug 479217")
+	@Disabled("Bug 479217")
 	public void XXXtestWorkingSetSaveRestoreAggregates() throws Throwable {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 		String nameA = "A";

@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -43,21 +43,21 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test for Bug 44460.
  *
  * @since 3.0
  */
-@Ignore("disabled since it refers to the Java builder and nature, which are not available in an RCP build")
+@Disabled("disabled since it refers to the Java builder and nature, which are not available in an RCP build")
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug44460Test {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Test that pressing "Ctrl+Shift+T" in the Team Synchronizing perspective
@@ -87,7 +87,8 @@ public class Bug44460Test {
 		projectDescription.setBuildSpec(new ICommand[] { buildCommand });
 		testProject.setDescription(projectDescription, null);
 		IFile javaFile = testProject.getFile("A.java"); //$NON-NLS-1$
-		String classContents = "public class Main { public static main(String[] args) { ; } }"; //$NON-NLS-1$
+		String classContents = "@ExtendWith(CloseTestWindowsExtension.class)
+public class Main { public static main(String[] args) { ; } }"; //$NON-NLS-1$
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(
 				classContents.getBytes());
 		javaFile.create(inputStream, true, null);

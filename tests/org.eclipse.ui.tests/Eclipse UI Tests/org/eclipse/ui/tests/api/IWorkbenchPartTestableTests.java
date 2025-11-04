@@ -15,8 +15,8 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,26 +31,26 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkbenchPartTestableTests {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Iterate over all parts to ensure that they all return a part testable
 	 * that contains a real composite.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestGetComposite() throws CoreException {
 		IWorkbenchPage page = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID)
 				.getActivePage();

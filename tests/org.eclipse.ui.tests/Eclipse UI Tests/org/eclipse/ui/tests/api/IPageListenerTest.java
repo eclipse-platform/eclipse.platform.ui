@@ -14,28 +14,28 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the IPageListener class.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IPageListenerTest implements IPageListener {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow fWindow;
 	private IWorkspace fWorkspace;
@@ -50,14 +50,14 @@ public class IPageListenerTest implements IPageListener {
 
 	private IWorkbenchPage pageMask;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWindow.addPageListener(this);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		fWindow.removePageListener(this);
 	}
@@ -66,7 +66,7 @@ public class IPageListenerTest implements IPageListener {
 	 * Tests the pageOpened method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testPageOpened() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work with new
@@ -88,7 +88,7 @@ public class IPageListenerTest implements IPageListener {
 	 * Tests the pageClosed method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testPageClosed() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -111,7 +111,7 @@ public class IPageListenerTest implements IPageListener {
 	 * Tests the pageActivated method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testPageActivate() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
