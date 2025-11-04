@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -152,35 +151,48 @@ public class ProgressViewTests extends ProgressTestCase {
 //		allJobs.add(keptJob);
 
 		try {
+			// Set all jobs to not finish immediately so they stay running for comparison
+			for (DummyJob job : jobsToSchedule) {
+				job.shouldFinish = false;
+			}
+
+			// Close and reopen the progress view to get a fresh comparator with empty lastIndexes
+			hideProgressView();
+			openProgressView();
+
+			// Schedule all jobs in random order rapidly to minimize throttled updates between schedules
 			ArrayList<DummyJob> shuffledJobs = new ArrayList<>(jobsToSchedule);
 			Collections.shuffle(shuffledJobs);
 			StringBuilder scheduleOrder = new StringBuilder("Jobs schedule order: ");
-			progressView.getViewer().refresh(); // order will only hold on the first time.
-			Thread.sleep(200); // wait till throttled update ran.
-			Job dummyJob = new Job("dummy throttled caller") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					return Status.OK_STATUS;
-				}
-			};
-			dummyJob.schedule(); // trigger throttled update to clear ProgressViewerComparator.lastIndexes
-			// now hope the loop is executed before next throttled update (could fail if VM
-			// is busy otherwise):
 			for (DummyJob job : shuffledJobs) {
-				job.shouldFinish = false;
-				job.schedule(); // if the schedule updates the progress View (throttled) the sort order is
-								// affected
+				job.schedule();
 				scheduleOrder.append(job.getName()).append(", ");
 			}
 			TestPlugin.getDefault().getLog()
 					.log(new Status(IStatus.OK, TestPlugin.PLUGIN_ID, scheduleOrder.toString()));
 
+			// Wait for all jobs to be running
 			for (DummyJob job : allJobs) {
 				processEventsUntil(() -> job.inProgress, TimeUnit.SECONDS.toMillis(3));
 			}
-			progressView.getViewer().refresh();
+
+			// Wait for the progress view to be updated with all jobs
 			processEventsUntil(() -> progressView.getViewer().getProgressInfoItems().length == allJobs.size(),
 					TimeUnit.SECONDS.toMillis(5));
+
+			// The ProgressViewerComparator uses lastIndexes for stable sorting. After throttled updates
+			// during job scheduling, lastIndexes may contain jobs in schedule order rather than priority order.
+			// Close and reopen the view again to reset the comparator's state, then do a single refresh
+			// to sort all jobs by priority from a clean state.
+			hideProgressView();
+			openProgressView();
+
+			// Wait for the view to be populated again
+			processEventsUntil(() -> progressView.getViewer().getProgressInfoItems().length == allJobs.size(),
+					TimeUnit.SECONDS.toMillis(5));
+
+			// Give time for any pending updates
+			processEventsUntil(() -> false, 500);
 
 			ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
 			assertEquals("Not all jobs visible in progress view", allJobs.size(), progressInfoItems.length);
