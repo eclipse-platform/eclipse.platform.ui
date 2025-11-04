@@ -71,7 +71,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
@@ -98,9 +97,6 @@ public class PartRenderingEngineTests {
 	};
 	private boolean logged = false;
 	private Consumer<RuntimeException> runtimeExceptionHandler;
-
-	@Rule
-	public TestName testName = new TestName();
 
 	@Before
 	public void setUp() {
