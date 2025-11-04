@@ -43,6 +43,7 @@ public interface IKeyBindingService {
 	 *
 	 * @return the active accelerator scope ids.
 	 */
+	@Deprecated
 	String[] getScopes();
 
 	/**
@@ -50,6 +51,7 @@ public interface IKeyBindingService {
 	 *
 	 * @param action the action to be registered with the key binding service.
 	 */
+	@Deprecated
 	void registerAction(IAction action);
 
 	/**
@@ -57,6 +59,7 @@ public interface IKeyBindingService {
 	 *
 	 * @param scopes the active accelerator scope ids.
 	 */
+	@Deprecated
 	void setScopes(String[] scopes);
 
 	/**
@@ -64,5 +67,6 @@ public interface IKeyBindingService {
 	 *
 	 * @param action the action to be unregistered with the key binding service.
 	 */
+	@Deprecated
 	void unregisterAction(IAction action);
 }

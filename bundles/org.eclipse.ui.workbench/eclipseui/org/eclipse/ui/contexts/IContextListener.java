@@ -38,5 +38,6 @@ public interface IContextListener {
 	 * @param contextEvent the context event. Guaranteed not to be
 	 *                     <code>null</code>.
 	 */
+	@Deprecated
 	void contextChanged(ContextEvent contextEvent);
 }

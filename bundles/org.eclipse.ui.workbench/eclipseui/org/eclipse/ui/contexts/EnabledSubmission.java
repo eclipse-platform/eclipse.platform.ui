@@ -91,6 +91,7 @@ public final class EnabledSubmission implements Comparable {
 	 * @param contextId               the identifier of the context to be enabled.
 	 *                                Must not be <code>null</code>.
 	 */
+	@Deprecated
 	public EnabledSubmission(String activePartId, Shell activeShell, IWorkbenchPartSite activeWorkbenchPartSite,
 			String contextId) {
 		if (contextId == null) {
@@ -106,6 +107,7 @@ public final class EnabledSubmission implements Comparable {
 	/**
 	 * @see Comparable#compareTo(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public int compareTo(Object object) {
 		EnabledSubmission castedObject = (EnabledSubmission) object;
@@ -133,6 +135,7 @@ public final class EnabledSubmission implements Comparable {
 	 * @return the identifier of the part that must be active for this request to be
 	 *         considered. May be <code>null</code>.
 	 */
+	@Deprecated
 	public String getActivePartId() {
 		return activePartId;
 	}
@@ -143,6 +146,7 @@ public final class EnabledSubmission implements Comparable {
 	 * @return the shell that must be active for this request to be considered. May
 	 *         be <code>null</code>.
 	 */
+	@Deprecated
 	public Shell getActiveShell() {
 		return activeShell;
 	}
@@ -154,6 +158,7 @@ public final class EnabledSubmission implements Comparable {
 	 * @return the workbench part site of the part that must be active for this
 	 *         request to be considered. May be <code>null</code>.
 	 */
+	@Deprecated
 	public IWorkbenchPartSite getActiveWorkbenchPartSite() {
 		return activeWorkbenchPartSite;
 	}
@@ -164,6 +169,7 @@ public final class EnabledSubmission implements Comparable {
 	 * @return the identifier of the context to be enabled. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	public String getContextId() {
 		return contextId;
 	}
@@ -171,6 +177,7 @@ public final class EnabledSubmission implements Comparable {
 	/**
 	 * @see Object#toString()
 	 */
+	@Deprecated
 	@Override
 	public String toString() {
 		if (string == null) {

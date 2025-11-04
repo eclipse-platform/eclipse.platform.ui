@@ -34,6 +34,7 @@ public interface IKeyFormatter {
 	 * @param key The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
+	@Deprecated
 	String format(Key key);
 
 	/**
@@ -46,6 +47,7 @@ public interface IKeyFormatter {
 	 * @return A string representation of the key sequence; must not be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	String format(KeySequence keySequence);
 
 	/**
@@ -57,5 +59,6 @@ public interface IKeyFormatter {
 	 * @return A string representation of the key stroke; must not be <code>
 	 *         null</code>
 	 */
+	@Deprecated
 	String format(KeyStroke keyStroke);
 }

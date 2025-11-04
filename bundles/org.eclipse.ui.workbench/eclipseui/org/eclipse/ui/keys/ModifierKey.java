@@ -43,24 +43,28 @@ public final class ModifierKey extends Key {
 	 * An internal map used to lookup instances of <code>ModifierKey</code> given
 	 * the formal string representation of a modifier key.
 	 */
+	@Deprecated
 	static SortedMap<String, ModifierKey> modifierKeysByName = new TreeMap<>();
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents the
 	 * 'Alt' key.
 	 */
+	@Deprecated
 	public static final ModifierKey ALT;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents the
 	 * 'Command' key.
 	 */
+	@Deprecated
 	public static final ModifierKey COMMAND;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents the
 	 * 'Ctrl' key.
 	 */
+	@Deprecated
 	public static final ModifierKey CTRL;
 
 	/**
@@ -87,6 +91,7 @@ public final class ModifierKey extends Key {
 	 * The single static instance of <code>ModifierKey</code> which represents the
 	 * 'Shift' key.
 	 */
+	@Deprecated
 	public static final ModifierKey SHIFT;
 
 	static {

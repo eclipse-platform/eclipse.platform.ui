@@ -41,6 +41,7 @@ public abstract class ContextException extends Exception {
 	 *
 	 * @param message the detail message.
 	 */
+	@Deprecated
 	public ContextException(String message) {
 		super(message);
 	}
@@ -52,6 +53,7 @@ public abstract class ContextException extends Exception {
 	 * @param message the detail message.
 	 * @param cause   the cause.
 	 */
+	@Deprecated
 	public ContextException(String message, Throwable cause) {
 		super(message);
 		// don't pass the cause to super, to allow compilation against JCL Foundation
@@ -65,6 +67,7 @@ public abstract class ContextException extends Exception {
 	 * @return the cause or <code>null</code>
 	 * @since 3.1
 	 */
+	@Deprecated
 	@Override
 	public Throwable getCause() {
 		return cause;

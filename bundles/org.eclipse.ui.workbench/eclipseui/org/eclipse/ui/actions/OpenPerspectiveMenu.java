@@ -70,6 +70,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 * @param window      the window where a new page is created if an item within
 	 *                    the menu is selected
 	 */
+	@Deprecated
 	public OpenPerspectiveMenu(IMenuManager menuManager, IWorkbenchWindow window) {
 		this(window);
 		this.parentMenuManager = menuManager;
@@ -88,6 +89,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 * @param window the window where a new page is created if an item within the
 	 *               menu is selected
 	 */
+	@Deprecated
 	public OpenPerspectiveMenu(IWorkbenchWindow window) {
 		this(window, null);
 		showActive(true);
@@ -100,6 +102,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 *               menu is selected
 	 * @param input  the page input
 	 */
+	@Deprecated
 	public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
 		super(window, "Open New Page Menu");//$NON-NLS-1$
 		this.pageInput = input;
@@ -129,6 +132,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 *
 	 * @param desc the selected perspective
 	 */
+	@Deprecated
 	@Override
 	protected void run(IPerspectiveDescriptor desc) {
 		openPage(desc);
@@ -140,6 +144,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 * @param desc  the selected perspective
 	 * @param event the event sent along with the selection callback
 	 */
+	@Deprecated
 	@Override
 	protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
 		openPage(desc);
@@ -166,6 +171,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 *
 	 * @param input the page input
 	 */
+	@Deprecated
 	public void setPageInput(IAdaptable input) {
 		pageInput = input;
 	}
@@ -173,6 +179,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	/**
 	 * @param isEnabled true if replace menu item is enabled within its parent menu.
 	 */
+	@Deprecated
 	public void setReplaceEnabled(boolean isEnabled) {
 		if (replaceEnabled != isEnabled) {
 			replaceEnabled = isEnabled;

@@ -32,6 +32,7 @@ public class WorkbenchViewerSorter extends ViewerSorter {
 	/**
 	 * Creates a workbench viewer sorter using the default collator.
 	 */
+	@Deprecated
 	public WorkbenchViewerSorter() {
 		super();
 	}
@@ -41,10 +42,12 @@ public class WorkbenchViewerSorter extends ViewerSorter {
 	 *
 	 * @param collator the collator to use to sort strings
 	 */
+	@Deprecated
 	public WorkbenchViewerSorter(Collator collator) {
 		super(collator);
 	}
 
+	@Deprecated
 	@Override
 	public boolean isSorterProperty(Object element, String propertyId) {
 		return propertyId.equals(IBasicPropertyConstants.P_TEXT);

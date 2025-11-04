@@ -44,288 +44,336 @@ public final class SpecialKey extends NaturalKey {
 	 * An internal map used to lookup instances of <code>SpecialKey</code> given the
 	 * formal string representation of a special key.
 	 */
+	@Deprecated
 	static SortedMap<String, SpecialKey> specialKeysByName = new TreeMap<>();
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Arrow Down' key.
 	 */
+	@Deprecated
 	public static final SpecialKey ARROW_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Arrow Left' key.
 	 */
+	@Deprecated
 	public static final SpecialKey ARROW_LEFT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Arrow Right' key.
 	 */
+	@Deprecated
 	public static final SpecialKey ARROW_RIGHT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Arrow Up' key.
 	 */
+	@Deprecated
 	public static final SpecialKey ARROW_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Break' key.
 	 */
+	@Deprecated
 	public static final SpecialKey BREAK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Caps Lock' key.
 	 */
+	@Deprecated
 	public static final SpecialKey CAPS_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'End' key.
 	 */
+	@Deprecated
 	public static final SpecialKey END;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F1' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F10' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F10;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F11' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F11;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F12' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F12;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F13' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F13;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F14' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F14;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F15' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F15;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F2' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F3' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F4' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F5' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F6' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F7' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F8' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'F9' key.
 	 */
+	@Deprecated
 	public static final SpecialKey F9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Home' key.
 	 */
+	@Deprecated
 	public static final SpecialKey HOME;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Insert' key.
 	 */
+	@Deprecated
 	public static final SpecialKey INSERT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'NumLock' key.
 	 */
+	@Deprecated
 	public static final SpecialKey NUM_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '0' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_0;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '1' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '2' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '3' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '4' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '5' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '6' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '7' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '8' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '9' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Add' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_ADD;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Decimal' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_DECIMAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Divide' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_DIVIDE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Enter' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_ENTER;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * '=' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_EQUAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Multiply' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_MULTIPLY;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Subtract' key on the numpad.
 	 */
+	@Deprecated
 	public static final SpecialKey NUMPAD_SUBTRACT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Page Down' key.
 	 */
+	@Deprecated
 	public static final SpecialKey PAGE_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Page Up' key.
 	 */
+	@Deprecated
 	public static final SpecialKey PAGE_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Pause' key.
 	 */
+	@Deprecated
 	public static final SpecialKey PAUSE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Print Screen' key.
 	 */
+	@Deprecated
 	public static final SpecialKey PRINT_SCREEN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the
 	 * 'Scroll Lock' key.
 	 */
+	@Deprecated
 	public static final SpecialKey SCROLL_LOCK;
 
 	static {

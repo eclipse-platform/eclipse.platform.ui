@@ -42,6 +42,7 @@ public final class KeyFormatterFactory {
 	 *
 	 * @return The compact formatter; never <code>null</code>.
 	 */
+	@Deprecated
 	public static IKeyFormatter getCompactKeyFormatter() {
 		return COMPACT_KEY_FORMATTER;
 	}
@@ -51,6 +52,7 @@ public final class KeyFormatterFactory {
 	 *
 	 * @return The default formatter; never <code>null</code>.
 	 */
+	@Deprecated
 	public static IKeyFormatter getDefault() {
 		return defaultKeyFormatter;
 	}
@@ -60,6 +62,7 @@ public final class KeyFormatterFactory {
 	 *
 	 * @return The Xemacs formatter; never <code>null</code>.
 	 */
+	@Deprecated
 	public static IKeyFormatter getEmacsKeyFormatter() {
 		return EMACS_KEY_FORMATTER;
 	}
@@ -69,6 +72,7 @@ public final class KeyFormatterFactory {
 	 *
 	 * @return The formal formatter; never <code>null</code>.
 	 */
+	@Deprecated
 	public static IKeyFormatter getFormalKeyFormatter() {
 		return FORMAL_KEY_FORMATTER;
 	}
@@ -79,6 +83,7 @@ public final class KeyFormatterFactory {
 	 * @param defaultKeyFormatter the default key formatter. Must not be
 	 *                            <code>null</code>.
 	 */
+	@Deprecated
 	public static void setDefault(IKeyFormatter defaultKeyFormatter) {
 		if (defaultKeyFormatter == null) {
 			throw new NullPointerException();

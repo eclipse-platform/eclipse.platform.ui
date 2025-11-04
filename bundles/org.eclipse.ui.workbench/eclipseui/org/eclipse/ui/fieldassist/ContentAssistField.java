@@ -75,6 +75,7 @@ public class ContentAssistField extends DecoratedField {
 	 *                                 auto-activation of the proposal popup,
 	 *                                 regardless of the specified command id.
 	 */
+	@Deprecated
 	public ContentAssistField(Composite parent, int style, IControlCreator controlCreator,
 			IControlContentAdapter controlContentAdapter, IContentProposalProvider proposalProvider, String commandId,
 			char[] autoActivationCharacters) {
@@ -94,6 +95,7 @@ public class ContentAssistField extends DecoratedField {
 	 *                to user input, <code>false</code> if it is ignoring user
 	 *                input.
 	 */
+	@Deprecated
 	public void setEnabled(boolean enabled) {
 		adapter.setEnabled(enabled);
 		if (enabled) {
@@ -137,6 +139,7 @@ public class ContentAssistField extends DecoratedField {
 	 *
 	 * @return the ContentAssistCommandAdapter installed on the field.
 	 */
+	@Deprecated
 	public ContentAssistCommandAdapter getContentAssistCommandAdapter() {
 		return adapter;
 	}

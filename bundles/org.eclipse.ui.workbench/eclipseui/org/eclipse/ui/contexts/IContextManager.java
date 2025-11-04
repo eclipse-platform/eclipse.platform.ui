@@ -45,6 +45,7 @@ public interface IContextManager {
 	 *                               registered with this instance, no operation is
 	 *                               performed.
 	 */
+	@Deprecated
 	void addContextManagerListener(IContextManagerListener contextManagerListener);
 
 	/**
@@ -53,6 +54,7 @@ public interface IContextManager {
 	 * @param contextId an identifier. Must not be <code>null</code>
 	 * @return an instance of <code>IContext</code>.
 	 */
+	@Deprecated
 	IContext getContext(String contextId);
 
 	/**
@@ -68,6 +70,7 @@ public interface IContextManager {
 	 *         empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
 	 */
+	@Deprecated
 	SortedSet getDefinedContextIds();
 
 	/**
@@ -83,6 +86,7 @@ public interface IContextManager {
 	 *         empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
 	 */
+	@Deprecated
 	SortedSet getEnabledContextIds();
 
 	/**
@@ -95,5 +99,6 @@ public interface IContextManager {
 	 *                               registered with this instance, no operation is
 	 *                               performed.
 	 */
+	@Deprecated
 	void removeContextManagerListener(IContextManagerListener contextManagerListener);
 }

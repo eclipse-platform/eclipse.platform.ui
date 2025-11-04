@@ -56,6 +56,7 @@ public final class KeySequence implements Comparable {
 	 * expressed in the formal key stroke grammar. This is not to be displayed to
 	 * the user. It is only intended as an internal representation.
 	 */
+	@Deprecated
 	public static final String KEY_STROKE_DELIMITER = "\u0020"; //$NON-NLS-1$
 
 	/**
@@ -77,6 +78,7 @@ public final class KeySequence implements Comparable {
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
+	@Deprecated
 	public static final String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**
@@ -85,6 +87,7 @@ public final class KeySequence implements Comparable {
 	 * @return a key sequence. This key sequence will have no key strokes.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance() {
 		return EMPTY_KEY_SEQUENCE;
 	}
@@ -99,6 +102,7 @@ public final class KeySequence implements Comparable {
 	 *         key stroke appended to the end. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(KeySequence keySequence, KeyStroke keyStroke) {
 		if (keySequence == null || keyStroke == null) {
 			throw new NullPointerException();
@@ -115,6 +119,7 @@ public final class KeySequence implements Comparable {
 	 * @param keyStroke a single key stroke. Must not be <code>null</code>.
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(KeyStroke keyStroke) {
 		return new KeySequence(Collections.singletonList(keyStroke));
 	}
@@ -127,6 +132,7 @@ public final class KeySequence implements Comparable {
 	 *                   <code>null</code> elements.
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(KeyStroke[] keyStrokes) {
 		return new KeySequence(Arrays.asList(keyStrokes));
 	}
@@ -139,6 +145,7 @@ public final class KeySequence implements Comparable {
 	 *                   it must only contain instances of <code>KeyStroke</code>.
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
 	}
@@ -150,6 +157,7 @@ public final class KeySequence implements Comparable {
 	 *                       sequence; must not be <code>null</code>.
 	 * @return a key sequence; never <code>null</code>.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(final org.eclipse.jface.bindings.keys.KeySequence newKeySequence) {
 		final org.eclipse.jface.bindings.keys.KeyStroke[] newKeyStrokes = newKeySequence.getKeyStrokes();
 		final int newKeyStrokesCount = newKeyStrokes.length;
@@ -173,6 +181,7 @@ public final class KeySequence implements Comparable {
 	 * @throws ParseException if the given formal string representation could not be
 	 *                        parsed to a valid key sequence.
 	 */
+	@Deprecated
 	public static KeySequence getInstance(String string) throws ParseException {
 		if (string == null) {
 			throw new NullPointerException();
@@ -232,6 +241,7 @@ public final class KeySequence implements Comparable {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public int compareTo(Object object) {
 		KeySequence castedObject = (KeySequence) object;
@@ -247,6 +257,7 @@ public final class KeySequence implements Comparable {
 	 * @return <code>true</code>, iff the given key sequence ends with this key
 	 *         sequence.
 	 */
+	@Deprecated
 	public boolean endsWith(KeySequence keySequence, boolean equals) {
 		if (keySequence == null) {
 			throw new NullPointerException();
@@ -255,6 +266,7 @@ public final class KeySequence implements Comparable {
 		return Util.endsWith(keyStrokes, keySequence.keyStrokes, equals);
 	}
 
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof KeySequence)) {
@@ -270,6 +282,7 @@ public final class KeySequence implements Comparable {
 	 * @return A string representation for this key sequence using the default look;
 	 *         never <code>null</code>.
 	 */
+	@Deprecated
 	public String format() {
 		return KeyFormatterFactory.getDefault().format(this);
 	}
@@ -281,10 +294,12 @@ public final class KeySequence implements Comparable {
 	 *         guaranteed not to be <code>null</code>. If this list is not empty, it
 	 *         is guaranteed to only contain instances of <code>KeyStroke</code>.
 	 */
+	@Deprecated
 	public List getKeyStrokes() {
 		return keyStrokes;
 	}
 
+	@Deprecated
 	@Override
 	public int hashCode() {
 		if (!hashCodeComputed) {
@@ -302,6 +317,7 @@ public final class KeySequence implements Comparable {
 	 *
 	 * @return <code>true</code>, iff the key sequence is complete.
 	 */
+	@Deprecated
 	public boolean isComplete() {
 		return keyStrokes.isEmpty() || keyStrokes.get(keyStrokes.size() - 1).isComplete();
 	}
@@ -312,6 +328,7 @@ public final class KeySequence implements Comparable {
 	 *
 	 * @return <code>true</code>, iff the key sequence is empty.
 	 */
+	@Deprecated
 	public boolean isEmpty() {
 		return keyStrokes.isEmpty();
 	}
@@ -325,6 +342,7 @@ public final class KeySequence implements Comparable {
 	 * @return <code>true</code>, iff the given key sequence starts with this key
 	 *         sequence.
 	 */
+	@Deprecated
 	public boolean startsWith(KeySequence keySequence, boolean equals) {
 		if (keySequence == null) {
 			throw new NullPointerException();
@@ -339,6 +357,7 @@ public final class KeySequence implements Comparable {
 	 * @return The formal string representation for this key sequence. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
+	@Deprecated
 	@Override
 	public String toString() {
 		return KeyFormatterFactory.getFormalKeyFormatter().format(this);

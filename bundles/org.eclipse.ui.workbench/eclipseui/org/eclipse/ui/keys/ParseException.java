@@ -42,6 +42,7 @@ public final class ParseException extends Exception {
 	 *
 	 * @param s the detail message.
 	 */
+	@Deprecated
 	public ParseException(final String s) {
 		super(s);
 	}

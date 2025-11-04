@@ -52,6 +52,7 @@ public interface IContext extends Comparable {
 	 *                        an instance which is already registered with this
 	 *                        instance, no operation is performed.
 	 */
+	@Deprecated
 	void addContextListener(IContextListener contextListener);
 
 	/**
@@ -60,6 +61,7 @@ public interface IContext extends Comparable {
 	 * @return the identifier of this instance. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	String getId();
 
 	/**
@@ -71,6 +73,7 @@ public interface IContext extends Comparable {
 	 * @return the name of this instance. Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException if this instance is not defined.
 	 */
+	@Deprecated
 	String getName() throws NotDefinedException;
 
 	/**
@@ -83,6 +86,7 @@ public interface IContext extends Comparable {
 	 *         <code>null</code>.
 	 * @throws NotDefinedException if this instance is not defined.
 	 */
+	@Deprecated
 	String getParentId() throws NotDefinedException;
 
 	/**
@@ -93,6 +97,7 @@ public interface IContext extends Comparable {
 	 *
 	 * @return true, iff this instance is defined.
 	 */
+	@Deprecated
 	boolean isDefined();
 
 	/**
@@ -103,6 +108,7 @@ public interface IContext extends Comparable {
 	 *
 	 * @return true, iff this instance is enabled.
 	 */
+	@Deprecated
 	boolean isEnabled();
 
 	/**
@@ -114,5 +120,6 @@ public interface IContext extends Comparable {
 	 *                        an instance which is not already registered with this
 	 *                        instance, no operation is performed.
 	 */
+	@Deprecated
 	void removeContextListener(IContextListener contextListener);
 }

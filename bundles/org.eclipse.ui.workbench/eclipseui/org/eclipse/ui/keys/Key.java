@@ -50,6 +50,7 @@ public abstract class Key implements Comparable {
 	 * The key from which this key was constructed. This value is defined by
 	 * <code>KeyLookupFactory.getDefault()</code>.
 	 */
+	@Deprecated
 	protected final int key;
 
 	/**
@@ -59,6 +60,7 @@ public abstract class Key implements Comparable {
 	 * @param key the integer representation of this key, as defined by
 	 *            <code>KeyLookupFactory.getDefault()</code>.
 	 */
+	@Deprecated
 	Key(final int key) {
 		this.key = key;
 	}
@@ -66,11 +68,13 @@ public abstract class Key implements Comparable {
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public final int compareTo(final Object object) {
 		return Util.compare(key, ((Key) object).key);
 	}
 
+	@Deprecated
 	@Override
 	public final boolean equals(final Object object) {
 		if (!(object instanceof Key)) {
@@ -80,6 +84,7 @@ public abstract class Key implements Comparable {
 		return key == ((Key) object).key;
 	}
 
+	@Deprecated
 	@Override
 	public final int hashCode() {
 		return Objects.hashCode(key);
@@ -91,6 +96,7 @@ public abstract class Key implements Comparable {
 	 * @return The formal string representation for this key. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	@Override
 	public final String toString() {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
