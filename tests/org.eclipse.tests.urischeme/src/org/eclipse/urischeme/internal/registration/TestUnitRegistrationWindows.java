@@ -26,14 +26,9 @@ import org.eclipse.urischeme.ISchemeInformation;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 public class TestUnitRegistrationWindows {
-
-	@Rule
-	public TestName name = new TestName();
 
 	private static final String PATH_TO_OTHER_APPLICATION_EXE = "c:\\path\\to\\otherApplication.exe";
 	private static final String PATH_TO_ECLIPSE_EXE = "c:\\path\\with spaces\\to\\eclipse\\Eclipse.exe";
@@ -161,7 +156,6 @@ public class TestUnitRegistrationWindows {
 
 	@Test
 	public void getLauncherPathFromEclipseHomeProperty() throws Exception {
-		System.out.println("registrationWindows1: " + registrationWindows);
 		System.clearProperty("eclipse.launcher");
 		System.setProperty("eclipse.home.location", URL_TO_ECLIPSE_HOME);
 		fileProvider.fileExistsAnswers.put(PATH_TO_ECLIPSE_HOME, true);
@@ -169,7 +163,6 @@ public class TestUnitRegistrationWindows {
 		fileProvider.newDirectoryStreamAnswers.computeIfAbsent(PATH_TO_ECLIPSE_HOME, path -> new HashMap<>())
 				.put("*.exe", Arrays.asList(PATH_TO_ECLIPSE_HOME + "\\Eclipse.exe"));
 
-		System.out.println("registrationWindows2: " + registrationWindows);
 		assertEquals(PATH_TO_ECLIPSE_EXE, registrationWindows.getEclipseLauncher());
 	}
 

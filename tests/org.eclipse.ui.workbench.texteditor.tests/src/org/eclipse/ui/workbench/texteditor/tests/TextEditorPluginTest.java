@@ -21,9 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runners.MethodSorters;
 
 import org.eclipse.ui.internal.texteditor.HistoryTracker;
@@ -35,9 +33,6 @@ import org.eclipse.ui.internal.texteditor.HistoryTracker;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TextEditorPluginTest {
-
-	@Rule
-	public TestName testName = new TestName();
 
 	Random rand = new Random(55); //pseudo-random for repeatability
 
