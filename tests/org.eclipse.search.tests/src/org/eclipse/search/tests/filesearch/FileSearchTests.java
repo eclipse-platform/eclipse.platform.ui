@@ -601,13 +601,16 @@ public class FileSearchTests {
 						.forEach(extension -> registry.removeExtension(extension, masterToken));
 			}) {
 
-				IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+				// Use unique folder name to avoid conflicts with other tests running in parallel
+				String uniqueFolderName= "binaryContentTypeTest-" + java.util.UUID.randomUUID().toString();
+				IFolder folder= ResourceHelper.createFolder(fProject.getFolder(uniqueFolderName));
 				IFile textfile= ResourceHelper.createFile(folder, "textfile", "text hello");
 				IFile binaryfile= ResourceHelper.createFile(folder, "binaryfile", "binary hello");
 
 				Pattern searchPattern= PatternConstructor.createPattern("hello", true, false);
 
-				FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, (String[]) null, false);
+				// Search only in the unique folder to avoid interference from other tests
+				FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { folder }, (String[]) null, false);
 				TextSearchEngine.create().search(scope, collector, searchPattern, null);
 
 				TestResult[] results= collector.getResults();
