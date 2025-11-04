@@ -16,13 +16,13 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import jakarta.inject.Inject;
 import java.util.function.Consumer;
@@ -66,11 +66,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.test.Screenshots;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.osgi.service.log.LogLevel;
@@ -79,8 +79,8 @@ import org.osgi.service.log.LogReaderService;
 
 public class PartRenderingEngineTests {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+		@RegisterExtension
+	WorkbenchContextRule contextRule = new WorkbenchContextRule();
 
 	@Inject
 	private IEclipseContext appContext;
@@ -99,10 +99,10 @@ public class PartRenderingEngineTests {
 	private boolean logged = false;
 	private Consumer<RuntimeException> runtimeExceptionHandler;
 
-	@Rule
+		@RegisterExtension
 	public TestName testName = new TestName();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logged = false;
 
@@ -110,7 +110,7 @@ public class PartRenderingEngineTests {
 		logReaderService.addLogListener(listener);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		LogReaderService logReaderService = appContext.get(LogReaderService.class);
 		logReaderService.removeLogListener(listener);
@@ -1961,7 +1961,7 @@ public class PartRenderingEngineTests {
 		}
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestBug326175_True() {
 		testBug326175(true);
@@ -2975,7 +2975,7 @@ public class PartRenderingEngineTests {
 		assertFalse(logged);
 	}
 
-	@Rule
+		@RegisterExtension
 	public TestWatcher screenshotRule = Screenshots.onFailure(null);
 
 	@Test

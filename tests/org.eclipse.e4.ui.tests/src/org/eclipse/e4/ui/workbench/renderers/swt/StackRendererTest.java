@@ -16,13 +16,13 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import java.lang.reflect.InvocationHandler;
@@ -57,17 +57,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 
 public class StackRendererTest {
 
 	private static final String PART_DESC_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/pinned_ovr.svg";
 	private static final String PART_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg";
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+		@RegisterExtension
+	WorkbenchContextRule contextRule = new WorkbenchContextRule();
 
 	@Inject
 	private IEclipseContext context;
@@ -81,7 +81,7 @@ public class StackRendererTest {
 	private MWindow window;
 	private MPartStack partStack;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);

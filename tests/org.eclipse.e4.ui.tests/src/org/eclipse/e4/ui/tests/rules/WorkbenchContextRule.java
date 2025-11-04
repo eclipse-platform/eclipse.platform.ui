@@ -30,11 +30,12 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.swt.widgets.Display;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
-public class WorkbenchContextRule implements MethodRule {
+public class WorkbenchContextRule implements BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
 
 	private IEclipseContext context;
 	private E4Workbench wb;
@@ -52,19 +53,18 @@ public class WorkbenchContextRule implements MethodRule {
 	}
 
 	@Override
-	public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-		return new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				createContext();
-				ContextInjectionFactory.inject(target, context);
-				try {
-					base.evaluate();
-				} finally {
-					dispose();
-				}
-			}
-		};
+	public void beforeEach(ExtensionContext extensionContext) throws Exception {
+		createContext();
+	}
+
+	@Override
+	public void afterEach(ExtensionContext extensionContext) throws Exception {
+		dispose();
+	}
+
+	@Override
+	public void postProcessTestInstance(Object testInstance, ExtensionContext extensionContext) throws Exception {
+		ContextInjectionFactory.inject(testInstance, this.context);
 	}
 
 	protected void createContext() throws Throwable {

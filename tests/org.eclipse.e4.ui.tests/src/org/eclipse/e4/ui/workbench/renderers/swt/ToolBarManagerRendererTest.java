@@ -14,11 +14,11 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import java.util.ArrayList;
@@ -42,15 +42,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWTException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.EventHandler;
 
 public class ToolBarManagerRendererTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+		@RegisterExtension
+	WorkbenchContextRule contextRule = new WorkbenchContextRule();
 
 	@Inject
 	private EModelService ems;
@@ -65,7 +65,7 @@ public class ToolBarManagerRendererTest {
 	private MToolBar toolBar;
 	private MTrimmedWindow window;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		window = ems.createModelElement(MTrimmedWindow.class);
 		application.getChildren().add(window);
