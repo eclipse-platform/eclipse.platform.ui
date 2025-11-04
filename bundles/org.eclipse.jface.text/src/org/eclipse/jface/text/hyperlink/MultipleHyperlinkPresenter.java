@@ -153,14 +153,6 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			fForegroundColor= foregroundColor;
 			fBackgroundColor= backgroundColor;
 			create();
-			getShell().addListener(SWT.ZoomChanged, event -> {
-				final Shell shell= getShell();
-				shell.getDisplay().asyncExec(() -> {
-					if (!shell.isDisposed()) {
-						shell.setSize(computeSizeHint());
-					}
-				});
-			});
 		}
 
 		@Override
@@ -228,13 +220,6 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			int width;
 			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
-				if (Util.isWin32()) {
-					/*
-					 * compensate rounding issue in windows
-					 * +1 for preferedSize and +1 for scrollBarWidth
-					 */
-					width+= 2;
-				}
 				fTable.getVerticalBar().setVisible(false);
 			} else {
 				width= Math.min(preferedSize.x, constraints.x);
@@ -243,13 +228,6 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			int height;
 			if (preferedSize.x - scrollBarWidth <= constraints.x) {
 				height= preferedSize.y - scrollBarHeight;
-				if (Util.isWin32()) {
-					/*
-					 * compensate rounding issue in windows
-					 * +1 for preferedSize and +1 for scrollBarHeight
-					 */
-					height+= 2;
-				}
 				fTable.getHorizontalBar().setVisible(false);
 			} else {
 				height= Math.min(preferedSize.y, constraints.y);
