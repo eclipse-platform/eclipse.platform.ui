@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -43,6 +47,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	public static volatile Boolean asyncWithoutDisplayAccess = null;
 
 	private static boolean started = false;
+
+	// Use a Phaser to ensure async operations are scheduled before postStartup
+	// Each thread registers itself and arrives when the operation is scheduled
+	private static final Phaser asyncPhaser = new Phaser(1); // 1 for the main thread
 
 	public static boolean isSTARTED() {
 		synchronized (RCPTestWorkbenchAdvisor.class) {
@@ -122,12 +130,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void preStartup() {
 		super.preStartup();
 		final Display display = Display.getCurrent();
+
 		if (display != null) {
 			display.asyncExec(() -> {
-				if (isSTARTED())
-					asyncDuringStartup = Boolean.FALSE;
-				else
-					asyncDuringStartup = Boolean.TRUE;
+				asyncDuringStartup = !isSTARTED();
 			});
 		}
 
@@ -151,6 +157,8 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	private void setupSyncDisplayThread(final boolean callDisplayAccess, final Display display) {
+		// Register this thread with the phaser
+		asyncPhaser.register();
 		Thread syncThread = new Thread() {
 			@Override
 			public void run() {
@@ -158,17 +166,19 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 					DisplayAccess.accessDisplayDuringStartup();
 				try {
 					display.syncExec(() -> {
-						synchronized (RCPTestWorkbenchAdvisor.class) {
-							if (callDisplayAccess)
-								syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
-							else
-								syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+						if (callDisplayAccess) {
+							syncWithDisplayAccess = !isSTARTED();
+						} else {
+							syncWithoutDisplayAccess = !isSTARTED();
 						}
 					});
 				} catch (SWTException e) {
 					// this can happen because we shut down the workbench just
 					// as soon as we're initialized - ie: when we're trying to
 					// run this runnable in the deferred case.
+				} finally {
+					// Signal that this operation has completed
+					asyncPhaser.arriveAndDeregister();
 				}
 			}
 		};
@@ -177,19 +187,26 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	private void setupAsyncDisplayThread(final boolean callDisplayAccess, final Display display) {
+		// Register this thread with the phaser
+		asyncPhaser.register();
 		Thread asyncThread = new Thread() {
 			@Override
 			public void run() {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
-				display.asyncExec(() -> {
-					synchronized (RCPTestWorkbenchAdvisor.class) {
-						if (callDisplayAccess)
-							asyncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
-						else
-							asyncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
-					}
-				});
+				try {
+					display.asyncExec(() -> {
+						if (callDisplayAccess) {
+							asyncWithDisplayAccess = !isSTARTED();
+						} else {
+							asyncWithoutDisplayAccess = !isSTARTED();
+						}
+					});
+				} finally {
+					// Signal that this operation has been scheduled (not necessarily executed yet)
+					// This avoids deadlock since we're not waiting for execution on the UI thread
+					asyncPhaser.arriveAndDeregister();
+				}
 			}
 		};
 		asyncThread.setDaemon(true);
@@ -199,6 +216,29 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
+
+		// Wait for all async/sync operations to be scheduled (not blocking UI thread)
+		try {
+			// Wait up to 5 seconds for all operations to be scheduled
+			// The main thread arrives and deregisters, waiting for all other registered threads
+			asyncPhaser.awaitAdvanceInterruptibly(asyncPhaser.arrive(), 5, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			// Log warning but don't throw - we need to mark as started to avoid breaking subsequent tests
+			System.err.println("WARNING: Not all async/sync operations were scheduled within timeout");
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			System.err.println("WARNING: Interrupted while waiting for async/sync operations");
+		}
+
+		// Pump the event loop to ensure async runnables execute before marking as started
+		// This prevents the original race condition where async variables might not be set yet
+		// Wait until the variables that should be set during startup are actually set to TRUE
+		UITestUtil.processEventsUntil(() -> Boolean.TRUE.equals(syncWithDisplayAccess) && Boolean.TRUE.equals(asyncWithDisplayAccess), 5000);
+		// Process any remaining events to allow variables that should NOT be set during startup
+		// to accidentally execute (to detect regression)
+		UITestUtil.processEvents();
+
 		synchronized (RCPTestWorkbenchAdvisor.class) {
 			started = true;
 		}
