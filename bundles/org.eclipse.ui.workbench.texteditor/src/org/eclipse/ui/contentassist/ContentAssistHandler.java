@@ -82,6 +82,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
+	@Deprecated
 	public static ContentAssistHandler createHandlerForCombo(Combo combo, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(combo, new ComboContentAssistSubjectAdapter(combo), contentAssistant);
 	}
@@ -95,6 +96,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
+	@Deprecated
 	public static ContentAssistHandler createHandlerForText(Text text, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(text, new TextContentAssistSubjectAdapter(text), contentAssistant);
 	}
@@ -120,6 +122,7 @@ public class ContentAssistHandler {
 	/**
 	 * @return <code>true</code> iff content assist is enabled
 	 */
+	@Deprecated
 	public boolean isEnabled() {
 		return fFocusListener != null;
 	}
@@ -131,6 +134,7 @@ public class ContentAssistHandler {
 	 *
 	 * @param enable enable content assist iff true
 	 */
+	@Deprecated
 	public void setEnabled(boolean enable) {
 		if (enable == isEnabled()) {
 			return;

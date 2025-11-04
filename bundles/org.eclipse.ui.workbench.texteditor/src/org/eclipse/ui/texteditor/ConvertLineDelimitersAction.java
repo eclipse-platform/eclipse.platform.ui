@@ -57,6 +57,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * @param editor the editor
 	 * @param lineDelimiter the target line delimiter to convert the editor's document to
 	 */
+	@Deprecated
 	public ConvertLineDelimitersAction(ITextEditor editor, String lineDelimiter) {
 		this(EditorMessages.getBundleForConstructedKeys(), "dummy", editor, lineDelimiter); //$NON-NLS-1$
 	}
@@ -69,6 +70,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * @param editor the editor
 	 * @param lineDelimiter the target line delimiter to convert the editor's document to
 	 */
+	@Deprecated
 	public ConvertLineDelimitersAction(ResourceBundle bundle, String prefix, ITextEditor editor, String lineDelimiter) {
 		super(bundle, prefix, editor);
 		fLineDelimiter= lineDelimiter;
@@ -79,6 +81,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		update();
 	}
 
+	@Deprecated
 	@Override
 	public void run() {
 
@@ -276,6 +279,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void update() {
 		super.update();
