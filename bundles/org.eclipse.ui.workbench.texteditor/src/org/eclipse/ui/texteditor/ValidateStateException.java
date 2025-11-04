@@ -42,7 +42,8 @@ public class ValidateStateException extends CoreException {
 	/*
 	 * @see CoreException#CoreException(org.eclipse.core.runtime.IStatus)
 	 */
-	 public ValidateStateException(IStatus status) {
+	 @Deprecated
+	public ValidateStateException(IStatus status) {
 		super(status);
 	}
 

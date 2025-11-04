@@ -63,6 +63,7 @@ public class InfoForm {
 	 * Creates a new info form.
 	 * @param parent the parent composite
 	 */
+	@Deprecated
 	public InfoForm(Composite parent) {
 
 		Display display= parent.getDisplay();
@@ -113,6 +114,7 @@ public class InfoForm {
 	 * Hook method for creating an appropriate action control.
 	 * @param parent the action control's parent control
 	 */
+	@Deprecated
 	protected void createActionControls(Composite parent) {
 	}
 
@@ -120,6 +122,7 @@ public class InfoForm {
 	 * Returns the control of this form.
 	 * @return the root control of this form
 	 */
+	@Deprecated
 	public Control getControl() {
 		return fScrolledComposite;
 	}
@@ -128,6 +131,7 @@ public class InfoForm {
 	 * Sets the header text of this info form.
 	 * @param header the header text
 	 */
+	@Deprecated
 	public void setHeaderText(String header) {
 		fHeader.setText(header);
 	}
@@ -136,6 +140,7 @@ public class InfoForm {
 	 * Sets the banner text of this info form.
 	 * @param banner the banner text
 	 */
+	@Deprecated
 	public void setBannerText(String banner) {
 		fBanner.setText(banner);
 	}
@@ -144,6 +149,7 @@ public class InfoForm {
 	 * Sets the info of this info form
 	 * @param info the info text
 	 */
+	@Deprecated
 	public void setInfo(String info) {
 		fText.setText(info);
 	}
@@ -153,6 +159,7 @@ public class InfoForm {
 	 *
 	 * @param event the property change event object describing which property changed and how
 	 */
+	@Deprecated
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 
 		if (fHeader != null) {

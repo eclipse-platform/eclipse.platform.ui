@@ -998,8 +998,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (searchString.isEmpty())
+			if (searchString.isEmpty()) {
 				return true;
+			}
 			Template template = ((TemplatePersistenceData) element).getTemplate();
 			return template.getName().toLowerCase().contains(searchString)
 					|| template.getContextTypeId().toLowerCase().contains(searchString)

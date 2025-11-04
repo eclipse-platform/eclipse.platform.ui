@@ -52,6 +52,7 @@ public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEdi
 	 * @param labelText the text shown as editor description
 	 * @param parent the editor's parent widget
 	 */
+	@Deprecated
 	public WorkbenchChainedTextFontFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent, EditorMessages.WorkbenchChainedTextFontFieldEditor_defaultWorkbenchTextFont);
 	}
@@ -63,6 +64,7 @@ public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEdi
 	 * @param target the target preference store
 	 * @param targetKey the key to be used in the target preference store
 	 */
+	@Deprecated
 	public static void startPropagate(IPreferenceStore target, String targetKey) {
 		IPreferenceStore store= new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.ui.workbench"); //$NON-NLS-1$
 		PropagatingFontFieldEditor.startPropagate(store, JFaceResources.TEXT_FONT, target, targetKey);
