@@ -76,14 +76,15 @@ public class WizardsRegistryReader extends RegistryReader {
 
 		CategoryNode(Category cat) {
 			category = cat;
-			path = ""; //$NON-NLS-1$
 			String[] categoryPath = category.getParentPath();
+			StringBuilder pathBuilder = new StringBuilder();
 			if (categoryPath != null) {
 				for (String parentPath : categoryPath) {
-					path += parentPath + '/';
+					pathBuilder.append(parentPath).append('/');
 				}
 			}
-			path += cat.getId();
+			pathBuilder.append(cat.getId());
+			path = pathBuilder.toString();
 		}
 
 		String getPath() {

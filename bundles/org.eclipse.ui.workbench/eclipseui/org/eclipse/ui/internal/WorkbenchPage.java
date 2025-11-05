@@ -3423,16 +3423,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// Hide placeholders for parts that exist in the 'global' areas
 		modelService.hideLocalPlaceholders(window, dummyPerspective);
 
-		int dCount = dummyPerspective.getChildren().size();
-		while (!dummyPerspective.getChildren().isEmpty()) {
-			MPartSashContainerElement dChild = dummyPerspective.getChildren().remove(0);
-			persp.getChildren().add(dChild);
+		List<MPartSashContainerElement> dummyChildren = dummyPerspective.getChildren();
+		List<MPartSashContainerElement> perspChildren = persp.getChildren();
+		int dCount = dummyChildren.size();
+		while (!dummyChildren.isEmpty()) {
+			MPartSashContainerElement dChild = dummyChildren.remove(0);
+			perspChildren.add(dChild);
 		}
 
-		while (persp.getChildren().size() > dCount) {
-			MUIElement child = persp.getChildren().get(0);
+		while (perspChildren.size() > dCount) {
+			MUIElement child = perspChildren.get(0);
 			child.setToBeRendered(false);
-			persp.getChildren().remove(0);
+			perspChildren.remove(0);
 		}
 
 		List<MWindow> existingDetachedWindows = new ArrayList<>();

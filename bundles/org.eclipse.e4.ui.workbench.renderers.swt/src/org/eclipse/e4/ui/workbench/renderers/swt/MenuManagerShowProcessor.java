@@ -123,8 +123,8 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 	 * {@link MDynamicMenuContribution} application model elements
 	 */
 	private void processDynamicElements(MMenu menuModel, MenuManager menuManager) {
-		MMenuElement[] menuElements = menuModel.getChildren().toArray(
-				new MMenuElement[menuModel.getChildren().size()]);
+		List<MMenuElement> children = menuModel.getChildren();
+		MMenuElement[] menuElements = children.toArray(new MMenuElement[children.size()]);
 		for (MMenuElement currentMenuElement : menuElements) {
 
 			if (currentMenuElement instanceof MDynamicMenuContribution dmc) {
@@ -154,9 +154,9 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				if (mel.size() > 0) {
 
 					int position = 0;
-					while (position < menuModel.getChildren().size()) {
-						if (currentMenuElement == menuModel.getChildren().get(
-								position)) {
+					children = menuModel.getChildren();
+					while (position < children.size()) {
+						if (currentMenuElement == children.get(position)) {
 							position++;
 							break;
 						}
