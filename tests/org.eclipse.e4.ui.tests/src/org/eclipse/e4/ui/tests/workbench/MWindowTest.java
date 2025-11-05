@@ -15,14 +15,14 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import jakarta.inject.Inject;
 import org.eclipse.core.runtime.Platform;
@@ -51,14 +51,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class MWindowTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	WorkbenchContextRule contextRule = new WorkbenchContextRule();
 
 	@Inject
 	private IEclipseContext appContext;
@@ -250,7 +250,7 @@ public class MWindowTest {
 		assertEquals("windowName2", shell.getText());
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestWindow_X() {
 		final MWindow window = ems.createModelElement(MWindow.class);
@@ -283,7 +283,7 @@ public class MWindowTest {
 		assertEquals(300, bounds.x);
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestWindow_Y() {
 		final MWindow window = ems.createModelElement(MWindow.class);
