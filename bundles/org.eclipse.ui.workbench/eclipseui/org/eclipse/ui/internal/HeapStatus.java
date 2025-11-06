@@ -303,9 +303,6 @@ public class HeapStatus extends Composite {
 		menuMgr.add(new ClearMarkAction());
 		menuMgr.add(new ShowMaxAction());
 		menuMgr.add(new CloseHeapStatusAction());
-//        if (isKyrsoftViewAvailable()) {
-//        	menuMgr.add(new ShowKyrsoftViewAction());
-//        }
 	}
 
 	/**

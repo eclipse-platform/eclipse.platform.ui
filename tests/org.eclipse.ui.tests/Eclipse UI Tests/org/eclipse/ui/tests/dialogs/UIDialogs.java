@@ -95,25 +95,6 @@ public class UIDialogs {
 	@Test
 	@Ignore("CustomizePerspectiveDialog not implemented")
 	public void testEditActionSetsDialog() {
-//        Dialog dialog;
-//        Object persp = null;
-//        //Test perspective: use current perspective of test case
-//        try { /*
-//         * fixme: should try to get current perspective, or default;
-//         * currently only
-//         */
-//            WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
-//            persp = new Perspective((PerspectiveDescriptor) getWorkbench()
-//                    .getPerspectiveRegistry().getPerspectives()[0],
-//                    (WorkbenchPage) window.getActivePage());
-//            dialog = window.createCustomizePerspectiveDialog(persp);
-//        } catch (WorkbenchException e) {
-//            dialog = null;
-//        }
-//        DialogCheck.assertDialog(dialog);
-//        if (persp != null) {
-//            persp.dispose();
-//        }
 	}
 
 	@Test
@@ -184,14 +165,6 @@ public class UIDialogs {
 	@Test
 	@Ignore("PerspectiveRegistry.getCustomPersp not implemented")
 	public void testLoadNotExistingPerspective() {
-//    	final String fakePerspectivID = "fakeperspetive";
-//		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
-//				.getDefault().getPerspectiveRegistry();
-//		try {
-//			reg.getCustomPersp(fakePerspectivID);
-//		} catch (WorkbenchException e) {
-//			assertTrue(e.getStatus().getMessage().indexOf(fakePerspectivID) != -1);
-//		}
 	}
 
 	@Test

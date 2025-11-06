@@ -294,33 +294,6 @@ public final class SelectionProcessor {
 					TextEdit replace= new ReplaceEdit(region.getOffset(), region.getLength(), string);
 					root.addChild(replace);
 				}
-	//			while (lastDelim != -1) {
-	//				// more stuff to insert
-	//				String string;
-	//				Match m= delimiterMatcher.indexOf(replacement, lastDelim);
-	//				if (m == null) {
-	//					string= replacement.substring(lastDelim);
-	//					lastDelim= -1;
-	//				} else {
-	//					string= replacement.substring(lastDelim, m.getOffset());
-	//					lastDelim= m.getOffset() + m.getText().length();
-	//				}
-	//				endLine++;
-	//				TextEdit edit;
-	//				if (endLine < fDocument.getNumberOfLines()) {
-	//					edit= createReplaceEdit(endLine, visualStartColumn, visualEndColumn, string, delete);
-	//				} else {
-	//					// insertion reaches beyond the last line
-	//					int insertLocation= root.getExclusiveEnd();
-	//					int spaces= visualStartColumn;
-	//					char[] array= new char[spaces];
-	//					Arrays.fill(array, ' ');
-	//					string= TextUtilities.getDefaultLineDelimiter(fDocument) + String.valueOf(array) + string;
-	//					edit= new InsertEdit(insertLocation, string);
-	//					insertLocation+= string.length();
-	//				}
-	//				root.addChild(edit);
-	//			}
 				return root;
 			}
 		}
