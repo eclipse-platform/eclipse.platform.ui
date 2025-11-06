@@ -643,13 +643,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return false;
 	}
 
-//	private void loadFilePatternDefaults() {
-//		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
-//		String[] defaults= registry.getDefaultFilePatterns();
-//		fExtensions.setItems(defaults);
-//		fExtensions.setText(defaults[0]);
-//	}
-
 	private String insertEscapeChars(String text) {
 		if (text == null || text.equals("")) { //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
