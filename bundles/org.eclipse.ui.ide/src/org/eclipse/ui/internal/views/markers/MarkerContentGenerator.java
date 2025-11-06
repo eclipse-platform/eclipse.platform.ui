@@ -758,9 +758,7 @@ public class MarkerContentGenerator {
 		if (forceUpdate || updateNeededForSelection(newElements)) {
 			internalUpdateSelectedElements(newElements);
 			// See comments below and Bug 296695
-			// if (contentChanged()) {
 			requestMarkerUpdate();
-			// }
 		}
 	}
 

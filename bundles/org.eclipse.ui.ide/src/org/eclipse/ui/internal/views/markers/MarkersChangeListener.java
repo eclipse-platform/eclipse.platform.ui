@@ -40,8 +40,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	private String[] listeningTypes;
 	private boolean receiving;
 
-	//private static final int UPDATE_TEST_CHECK_LIMIT = 1500;
-
 	// The time the build started. A -1 indicates no build in progress.
 	private long preBuildTime;
 
@@ -130,9 +128,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 			if(!hasApplicableTypes(event)){
 				return;
 			}
-			// if (!needsUpdate(event)) {
-			// return;
-			// }
 
 			if (!builder.isIncremental()) {
 				builder.getUpdateScheduler().scheduleUpdate();
@@ -157,13 +152,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	void setReceivingChange(boolean receiving) {
 		this.receiving = receiving;
-	}
-
-	/**
-	 * Markers have not changed
-	 */
-	private void handleNoMarkerChange() {
-		//view.indicateUpdating(null, true, false);
 	}
 
 	/**
@@ -218,10 +206,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 			MarkerUpdate update = new MarkerUpdate(added, removed, changed);
 			builder.incrementalUpdate(update);
 			builder.getUpdateScheduler().scheduleUpdate();
-		} else {
-			handleNoMarkerChange();
 		}
-		return;
 	}
 
 	/**
@@ -253,155 +238,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 		}
 		return false;
 	}
-
-//	/**
-//	 * Note: This has been left commented out for further
-//	 * investigation(*),instead we we use the above for just checking types.
-//	 * This may invoke contributed code; as a field filter can be contributed.
-//	 * But again in such a case, the view would be a contributed as well.And, it
-//	 * is the responsibility of the field filter code to ensure the select
-//	 * method of filter remains fast.
-//	 *
-//	 */
-//	private boolean needsUpdate(IResourceChangeEvent event) {
-//		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
-//		MarkerEntry[] presentEntries = builder.getClonedMarkers().getClone()
-//				.getMarkerEntryArray();
-//		int deltaCount = markerDeltas.length;
-//		if (deltaCount == 0) {
-//			return false;
-//		}
-//		String[] types = listeningTypes;
-//		if (hasMarkerRemoval(presentEntries, null)) {
-//			return true;
-//		}
-//		int maxTestCount = deltaCount > UPDATE_TEST_CHECK_LIMIT ? UPDATE_TEST_CHECK_LIMIT
-//				: deltaCount;
-//
-//		for (int i = 0; i < markerDeltas.length; i++) {
-//			String typeId = markerDeltas[i].getType();
-//			if (!hasApplicableTypes(types, typeId)) {
-//				continue;
-//			}
-//			if (presentEntries == null || presentEntries.length == 0) {
-//				return true;
-//			}
-//			int kind = markerDeltas[i].getKind();
-//			IMarker marker = markerDeltas[i].getMarker();
-//			MarkerEntry markerEntry = new MarkerEntry(marker);
-//			if (affectsCurrentState(presentEntries, markerEntry, kind)) {
-//				return true;
-//			}
-//			if (i >= maxTestCount - 1) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Check if a marker change, removal, or addition is of interest to the
-//	 * view.
-//	 *
-//	 * <ul>
-//	 * <li>Set the MarkerEntry to be stale, if discovered at any point of time
-//	 * of its use.This will greatly speed up lot of parts of the view.</li>
-//	 * <li>Instead of testing all marker changes, test only upto a maximum limit
-//	 * beyond which we schedule an update anyway.</li>
-//	 *
-//	 * </ul>
-//	 *
-//	 * @param marker
-//	 * @param kind
-//	 */
-//	private boolean affectsCurrentState(MarkerEntry[] presentEntries,
-//			MarkerEntry marker, int kind) {
-//		switch (kind) {
-//		case IResourceDelta.REMOVED: {
-//			return hasMarkerRemoval(presentEntries, marker);
-//		}
-//		case IResourceDelta.ADDED: {
-//			return hasMarkerAdditionsofInterest(presentEntries, marker);
-//		}
-//		case IResourceDelta.CHANGED: {
-//			return hasMarkerChanges(presentEntries, marker);
-//		}
-//		default: {
-//			return false;
-//		}
-//		}
-//	}
-//
-//	/**
-//	 * Returns whether or not the given marker addition is of interest to the
-//	 * view.
-//	 *
-//	 * @param presentEntries
-//	 *            current marker entries
-//	 * @param marker
-//	 *            the marker entry
-//	 * @return <code>true</code> if build is needed <code>false</code> if no
-//	 *         update needed
-//	 */
-//	private boolean hasMarkerAdditionsofInterest(MarkerEntry[] presentEntries,
-//			MarkerEntry marker) {
-//		MarkerContentGenerator generator = builder.getGenerator();
-//		if (generator.select(marker)) {
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Returns whether or not markers were removed from the view.
-//	 *
-//	 * @param presentEntriest
-//	 *            current marker entries
-//	 * @param marker
-//	 *            the marker entry
-//	 * @return <code>true</code> if build is needed <code>false</code> if no
-//	 *         update needed
-//	 */
-//	private boolean hasMarkerRemoval(MarkerEntry[] presentEntriest,
-//			MarkerEntry marker) {
-//		for (int i = 0; i < presentEntriest.length; i++) {
-//			if (presentEntriest[i].getStaleState()
-//					|| presentEntriest[i].getMarker() == null) {
-//				return true;
-//			}
-//			if (marker != null) {
-//				if (presentEntriest[i].getMarker().equals(marker.getMarker())) {
-//					return false;
-//				}
-//			}
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Returns whether or not markers were removed from the view.
-//	 *
-//	 * @param presentEntriest
-//	 *            current marker entries
-//	 * @param marker
-//	 *            the marker entry
-//	 * @return <code>true</code> if build is needed <code>false</code> if no
-//	 *         update needed
-//	 */
-//	private boolean hasMarkerChanges(MarkerEntry[] presentEntriest,
-//			MarkerEntry marker) {
-//		MarkerContentGenerator generator = builder.getGenerator();
-//		if (generator.select(marker)) {
-//			return true;
-//		}
-//		for (int i = 0; i < presentEntriest.length; i++) {
-//			if (presentEntriest[i].getMarker().equals(marker.getMarker())) {
-//				return true;
-//			}
-//
-//		}
-//		return false;
-//	}
 
 	/**
 	 * We are in a pre-build state.
@@ -604,31 +440,6 @@ class MarkerUpdateScheduler {
 		view.cancelQueuedUpdates();
 	}
 
-	///**
-	// * Indicate the status message on UI.
-	// *
-	// * @param messsage
-	// *            the status to display
-	// */
-	//void indicateStatus(String messsage) {
-	//	indicateStatus(messsage, false);
-	//}
-	////See Bug 294303
-	///**
-	// * Indicate the status message on UI.
-	// *
-	// * @param messsage
-	// *            the status to display
-	// * @param updateUI
-	// *            <code>true</code> update label to show changing status
-	// */
-	//void indicateStatus(String messsage, boolean updateUI) {
-	// //See Bug 294303
-	//	view.indicateUpdating(messsage != null ? messsage
-	//			: MarkerMessages.MarkerView_queueing_updates, updateUI);
-	//}
-
-
 	/**
 	 * //Fix for Bug 294959.There is another patch(more exhaustive in terms
 	 * of possibilities to cover) on the bug in which we keep scheduling
@@ -709,12 +520,6 @@ class MarkerUpdateScheduler {
 						go(delay, cancelable);
 					}
 				} else {
-					//long diff =timeB4Update-currentTime;
-					//if (diff <= AFTER_MARGIN && diff >= 0) {
-					//	go(0L, false);
-					//} else {
-					//	go(LONG_DELAY, cancelable);
-					//}
 					go(LONG_DELAY, cancelable);
 				}
 			} else {
