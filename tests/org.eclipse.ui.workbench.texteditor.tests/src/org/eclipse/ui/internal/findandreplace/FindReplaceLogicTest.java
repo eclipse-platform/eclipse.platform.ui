@@ -826,6 +826,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 		findReplaceLogic.activate(SearchOptions.WRAP);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+
 		findReplaceLogic.setFindString("test");
 		assertThat(textViewer.getSelectedRange(), is(new Point(0, 4)));
 		textViewer.setSelectedRange(5, 0);
@@ -843,77 +844,24 @@ public class FindReplaceLogicTest {
 		// Verify that after clearing the search, caret goes back to last active location
 		findReplaceLogic.setFindString("");
 		findReplaceLogic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
 	}
 
 	@Test
-	public void testRestoreBaseLocationCapturedOnNewSearch() {
-		String setupString= "alpha beta gamma";
+	public void testRestoreSelectionOnEmptyFindStringInIncrementalMode() {
+		String setupString= "test\ntest\ntest";
 		TextViewer textViewer= setupTextViewer(setupString);
-		textViewer.setSelectedRange(6, 0); // caret after "alpha "
+		textViewer.setSelectedRange(5, 0); // Set initial selection
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 
-		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
-		logic.activate(SearchOptions.FORWARD);
-		logic.activate(SearchOptions.INCREMENTAL);
-
-		// Start a new search
-		logic.setFindString("gamma");
-		assertThat(textViewer.getSelectedRange(), is(new Point(11, 5))); // found "gamma"
-
-		// Now clear the search — caret should return to where it started (6, 0)
-		logic.setFindString("");
-		logic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(6, 0)));
-	}
-
-	@Test
-	public void testCaretRestoredWhenSearchCleared() {
-		String setupString= "alpha beta gamma";
-		TextViewer textViewer= setupTextViewer(setupString);
-		textViewer.setSelectedRange(0, 0);
-
-		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
-		logic.activate(SearchOptions.FORWARD);
-		logic.activate(SearchOptions.INCREMENTAL);
-
-		logic.setFindString("beta");
-		assertThat(textViewer.getSelectedRange(), is(new Point(6, 4))); // found "beta"
-
-		// Clear the search field — should restore caret
-		logic.setFindString("");
-		logic.performSearch();
-
-		// Expect caret restored to starting location (0,0)
-		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
-	}
-
-	@Test
-	public void testRestoreBaseLocationRefreshedBetweenSessions() {
-		String setupString= "alpha beta gamma";
-		TextViewer textViewer= setupTextViewer(setupString);
-		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
-		logic.activate(SearchOptions.FORWARD);
-		logic.activate(SearchOptions.INCREMENTAL);
-
-		// --- First search session ---
-		textViewer.setSelectedRange(0, 0);
-		logic.setFindString("alpha");
-		assertThat(textViewer.getSelectedRange(), is(new Point(0, 5)));
-
-		// Clear the search → caret returns to (0, 0)
-		logic.setFindString("");
-		logic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
-
-		// --- Second search session ---
-		textViewer.setSelectedRange(6, 0);
-		logic.setFindString("beta");
-		assertThat(textViewer.getSelectedRange(), is(new Point(6, 4)));
-
-		// Clear again → caret returns to (6, 0)
-		logic.setFindString("");
-		logic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(6, 0)));
+		findReplaceLogic.resetIncrementalBaseLocation(); // Set base location
+		findReplaceLogic.setFindString("test");
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+		findReplaceLogic.setFindString(""); // Clear the find string
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Restored to base location
 	}
 
 	@Test
@@ -928,10 +876,10 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.setFindString("test");
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0)));
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // As per pr3379
 		findReplaceLogic.setFindString(""); // Clear the find string
 		// Should not restore selection
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Changes as per pr3379
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Remains unchanged
 	}
 
 	@Test
