@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecorationResult;
@@ -44,6 +45,21 @@ public class DecoratorAdaptableTests {
 		return result.decorateWithText("Default label");
 	}
 
+	/**
+	 * Waits for all decorator-related jobs to complete.
+	 * This ensures that decorator enablement changes have been fully processed
+	 * before tests check decoration results.
+	 */
+	private void waitForDecoratorJobs() {
+		try {
+			Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		// Also process any pending UI events
+		UITestUtil.processEvents();
+	}
+
 	private void assertDecorated(String testSubName, String[] expectedSuffixes, Object[] elements,
 			boolean shouldHaveMatches) {
 		for (Object object : elements) {
@@ -65,9 +81,9 @@ public class DecoratorAdaptableTests {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, true);
 
-		// Process all pending UI events to ensure decorator enablement has completed
-		// This prevents race conditions where decorators may not be fully registered yet
-		UITestUtil.processEvents();
+		// Wait for all decorator jobs to complete after enabling decorators
+		// This prevents race conditions where decorators may not be fully initialized yet
+		waitForDecoratorJobs();
 	}
 
 	@After
@@ -77,8 +93,8 @@ public class DecoratorAdaptableTests {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, false);
 
-		// Process all pending UI events to ensure clean state for next test
-		UITestUtil.processEvents();
+		// Wait for all decorator jobs to complete to ensure clean state for next test
+		waitForDecoratorJobs();
 	}
 
 	/**
