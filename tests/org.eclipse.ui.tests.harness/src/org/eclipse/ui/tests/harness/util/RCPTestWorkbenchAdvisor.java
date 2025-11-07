@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import java.util.concurrent.Phaser;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWTException;
@@ -48,9 +47,9 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static boolean started = false;
 
-	// Use a Phaser to ensure async operations are scheduled before postStartup
-	// Each thread registers itself and arrives when the operation is scheduled
-	private static final Phaser asyncPhaser = new Phaser(1); // 1 for the main thread
+	// CountDownLatch to wait for async/sync operations with DisplayAccess to complete
+	// We need to wait for 2 operations: asyncWithDisplayAccess and syncWithDisplayAccess
+	private static CountDownLatch displayAccessLatch = null;
 
 	public static boolean isSTARTED() {
 		synchronized (RCPTestWorkbenchAdvisor.class) {
@@ -131,6 +130,9 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		super.preStartup();
 		final Display display = Display.getCurrent();
 
+		// Initialize the latch to wait for 2 operations with DisplayAccess
+		displayAccessLatch = new CountDownLatch(2);
+
 		if (display != null) {
 			display.asyncExec(() -> {
 				asyncDuringStartup = !isSTARTED();
@@ -157,8 +159,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	private void setupSyncDisplayThread(final boolean callDisplayAccess, final Display display) {
-		// Register this thread with the phaser
-		asyncPhaser.register();
 		Thread syncThread = new Thread() {
 			@Override
 			public void run() {
@@ -168,6 +168,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 					display.syncExec(() -> {
 						if (callDisplayAccess) {
 							syncWithDisplayAccess = !isSTARTED();
+							// Count down after the runnable executes
+							if (displayAccessLatch != null) {
+								displayAccessLatch.countDown();
+							}
 						} else {
 							syncWithoutDisplayAccess = !isSTARTED();
 						}
@@ -176,9 +180,9 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 					// this can happen because we shut down the workbench just
 					// as soon as we're initialized - ie: when we're trying to
 					// run this runnable in the deferred case.
-				} finally {
-					// Signal that this operation has completed
-					asyncPhaser.arriveAndDeregister();
+					if (callDisplayAccess && displayAccessLatch != null) {
+						displayAccessLatch.countDown();
+					}
 				}
 			}
 		};
@@ -187,26 +191,22 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	private void setupAsyncDisplayThread(final boolean callDisplayAccess, final Display display) {
-		// Register this thread with the phaser
-		asyncPhaser.register();
 		Thread asyncThread = new Thread() {
 			@Override
 			public void run() {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
-				try {
-					display.asyncExec(() -> {
-						if (callDisplayAccess) {
-							asyncWithDisplayAccess = !isSTARTED();
-						} else {
-							asyncWithoutDisplayAccess = !isSTARTED();
+				display.asyncExec(() -> {
+					if (callDisplayAccess) {
+						asyncWithDisplayAccess = !isSTARTED();
+						// Count down after the runnable executes
+						if (displayAccessLatch != null) {
+							displayAccessLatch.countDown();
 						}
-					});
-				} finally {
-					// Signal that this operation has been scheduled (not necessarily executed yet)
-					// This avoids deadlock since we're not waiting for execution on the UI thread
-					asyncPhaser.arriveAndDeregister();
-				}
+					} else {
+						asyncWithoutDisplayAccess = !isSTARTED();
+					}
+				});
 			}
 		};
 		asyncThread.setDaemon(true);
@@ -217,28 +217,33 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup() {
 		super.postStartup();
 
-		// Wait for all async/sync operations to be scheduled (not blocking UI thread)
-		try {
-			// Wait up to 5 seconds for all operations to be scheduled
-			// The main thread arrives and deregisters, waiting for all other registered threads
-			asyncPhaser.awaitAdvanceInterruptibly(asyncPhaser.arrive(), 5, TimeUnit.SECONDS);
-		} catch (TimeoutException e) {
-			// Log warning but don't throw - we need to mark as started to avoid breaking subsequent tests
-			System.err.println("WARNING: Not all async/sync operations were scheduled within timeout");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			System.err.println("WARNING: Interrupted while waiting for async/sync operations");
+		// Wait for async/sync operations with DisplayAccess to complete execution
+		if (displayAccessLatch != null) {
+			try {
+				// Wait up to 5 seconds for operations with DisplayAccess to complete
+				// This ensures they execute BEFORE we mark started = true
+				boolean completed = displayAccessLatch.await(5, TimeUnit.SECONDS);
+				if (!completed) {
+					System.err.println("WARNING: Timeout waiting for async/sync operations with DisplayAccess");
+				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				System.err.println("WARNING: Interrupted while waiting for async/sync operations");
+			}
 		}
 
-		// Pump the event loop to ensure async runnables execute before marking as started
-		// This prevents the original race condition where async variables might not be set yet
-		// Wait until the variables that should be set during startup are actually set to TRUE
-		UITestUtil.processEventsUntil(() -> Boolean.TRUE.equals(syncWithDisplayAccess) && Boolean.TRUE.equals(asyncWithDisplayAccess), 5000);
-		// Process any remaining events to allow variables that should NOT be set during startup
-		// to accidentally execute (to detect regression)
-		UITestUtil.processEvents();
+		// Process remaining events to allow any pending runnables to execute
+		// This gives operations WITHOUT DisplayAccess a chance to run if there are bugs
+		Display display = Display.getCurrent();
+		if (display != null) {
+			// Process all pending events
+			while (display.readAndDispatch()) {
+				// Keep processing
+			}
+		}
 
+		// Now mark as started - operations with DisplayAccess should have completed
+		// Operations without DisplayAccess should still be pending (deferred)
 		synchronized (RCPTestWorkbenchAdvisor.class) {
 			started = true;
 		}
