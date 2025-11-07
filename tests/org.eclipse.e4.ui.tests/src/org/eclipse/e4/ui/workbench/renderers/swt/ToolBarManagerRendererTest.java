@@ -21,13 +21,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.di.annotations.Evaluate;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
@@ -511,6 +515,60 @@ public class ToolBarManagerRendererTest {
 			super.dispose();
 		}
 
+	}
+
+	@Test
+	public void testDirectToolItemWithVisibleWhen() {
+		// Create toolbar items with visibleWhen expressions
+		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
+		toolItem1.setElementId("Item1");
+		
+		// Create an imperative expression that checks for a context variable
+		MImperativeExpression exp1 = ems.createModelElement(MImperativeExpression.class);
+		exp1.setTracking(true);
+		exp1.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRendererTest$TestVisibilityExpression");
+		toolItem1.setVisibleWhen(exp1);
+		toolBar.getChildren().add(toolItem1);
+
+		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
+		toolItem2.setElementId("Item2");
+		toolBar.getChildren().add(toolItem2);
+
+		contextRule.createAndRunWorkbench(window);
+		ToolBarManager tbm = getToolBarManager();
+
+		// Initially, item1 should be hidden (expression returns false when showItem1 is not set)
+		assertEquals(2, tbm.getSize());
+		assertFalse("Item1 should be hidden initially", toolItem1.isVisible());
+		assertTrue("Item2 should be visible", toolItem2.isVisible());
+
+		// Set context variable to show item1
+		window.getContext().set("showItem1", Boolean.TRUE);
+		
+		// Force context update by spinning the event loop
+		contextRule.spinEventLoop();
+
+		// Now item1 should be visible
+		assertTrue("Item1 should be visible after setting context variable", toolItem1.isVisible());
+		assertTrue("Item2 should still be visible", toolItem2.isVisible());
+
+		// Hide item1 again
+		window.getContext().set("showItem1", Boolean.FALSE);
+		contextRule.spinEventLoop();
+
+		// Item1 should be hidden again
+		assertFalse("Item1 should be hidden after removing context variable", toolItem1.isVisible());
+		assertTrue("Item2 should still be visible", toolItem2.isVisible());
+	}
+
+	/**
+	 * Test expression that checks for "showItem1" context variable
+	 */
+	public static class TestVisibilityExpression {
+		@Evaluate
+		public boolean evaluate(@Optional @Named("showItem1") Boolean showItem1) {
+			return Boolean.TRUE.equals(showItem1);
+		}
 	}
 
 }
