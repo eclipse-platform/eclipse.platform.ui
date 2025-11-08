@@ -26,14 +26,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class DecoratorTestPart extends ViewPart {
 
-	private static final int INITIAL_DELAY_TIME = 500;// Initial wait time in milliseconds
-	private static final int MAX_WAIT_TIME = 10000;// Maximum wait time (10 seconds)
-	private static final int IDLE_TIME = 200;// Time to wait after last update
-
 	public boolean waitingForDecoration = true;
-
-	private volatile long lastUpdateTime;
-	private long startTime;
 
 	private ILabelProviderListener listener;
 
@@ -57,55 +50,40 @@ public abstract class DecoratorTestPart extends ViewPart {
 	 * Get the listener for the suite.
 	 */
 	private ILabelProviderListener getDecoratorManagerListener() {
-		// Record the time each time we get an update
-		listener = event -> lastUpdateTime = System.currentTimeMillis();
+		// Listener for decorator manager events
+		listener = event -> {
+			// Decorator update occurred
+		};
 
 		return listener;
 	}
 
 	/**
-	 * Process events until decorations are applied. This waits for updates to settle
-	 * by ensuring no new updates occur for IDLE_TIME milliseconds, with a maximum
-	 * wait of MAX_WAIT_TIME.
+	 * Process events until decorations are applied. Uses a fixed delay
+	 * to allow time for decorator updates to be processed.
 	 */
 	public void readAndDispatchForUpdates() {
 		Display display = Display.getCurrent();
-		long elapsed = System.currentTimeMillis() - startTime;
-		
-		// Process events and wait for updates to settle
-		while (elapsed < MAX_WAIT_TIME) {
-			// Process any pending UI events
+		// Process events for 1 second with regular intervals
+		for (int i = 0; i < 20; i++) {
 			while (display.readAndDispatch()) {
-				// Keep processing
+				// Process all pending events
 			}
-			
-			long timeSinceLastUpdate = System.currentTimeMillis() - lastUpdateTime;
-			
-			// If we haven't received an update in IDLE_TIME, we're done
-			if (timeSinceLastUpdate >= IDLE_TIME && elapsed >= INITIAL_DELAY_TIME) {
-				break;
-			}
-			
-			// Small sleep to avoid busy waiting
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				break;
+				return;
 			}
-			
-			elapsed = System.currentTimeMillis() - startTime;
 		}
-		
-		// Final event processing pass
+		// Final pass to process any remaining events
 		while (display.readAndDispatch()) {
 			// Keep processing
 		}
 	}
 
 	public void setUpForDecorators() {
-		startTime = System.currentTimeMillis();
-		lastUpdateTime = System.currentTimeMillis();
+		// No initialization needed for simple fixed delay approach
 	}
 
 	@Override
