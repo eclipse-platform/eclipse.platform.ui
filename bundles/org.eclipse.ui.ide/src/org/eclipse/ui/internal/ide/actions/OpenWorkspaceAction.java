@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
@@ -24,6 +26,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -31,6 +34,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkspaceLock;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceWithSettingsDialog;
@@ -217,8 +222,34 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	public void restart(String workspacePath) {
 		Object result = Workbench.setRestartArguments(workspacePath);
 		if (result == IApplication.EXIT_RELAUNCH) {
-			window.getWorkbench().restart();
+			if (canRestartWithWorkspace(workspacePath)) {
+				window.getWorkbench().restart();
+			}
 		}
+	}
+
+	/**
+	 * Checks if the given workspace is locked by another instance of the workbench.
+	 * Shows error dialog if the workspace is locked or on any other error.
+	 *
+	 * @param workspacePath the path of the workspace to check
+	 * @return <code>true</code> if we can restart with given workspace,
+	 *         <code>false</code> if the workspace is locked or on any error
+	 *
+	 */
+	private boolean canRestartWithWorkspace(String workspacePath) throws IllegalStateException {
+		Path selectedWorkspace = Path.of(workspacePath);
+		try {
+			String workspaceLockDetails = WorkspaceLock.getWorkspaceLockDetails(selectedWorkspace.toUri().toURL());
+			if (workspaceLockDetails == null) {
+				return true;
+			}
+			WorkspaceLock.showWorkspaceLockedDialog(window.getShell(), workspacePath, workspaceLockDetails);
+		} catch (MalformedURLException e) {
+			MessageDialog.openError(window.getShell(), WorkbenchMessages.OpenWorkspaceAction_invalidWorkspacePath,
+					workspacePath);
+		}
+		return false;
 	}
 
 	/**

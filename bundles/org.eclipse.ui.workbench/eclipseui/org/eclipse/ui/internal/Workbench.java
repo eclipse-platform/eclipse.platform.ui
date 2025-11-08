@@ -2694,7 +2694,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * as the workspace location.
 	 *
 	 * @param workspacePath the new workspace location
-	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH}
+	 * @return <code>null</code> if application was started in development mode and
+	 *         the specified workspace path is different from the current one,
+	 *         otherwise {@link IApplication#EXIT_RELAUNCH}.
+	 *         <p>
+	 *         In case of <code>null</code> return, a message dialog will be shown,
+	 *         so the caller doesn't need to handle the error case via dialog.
+	 *         </p>
 	 */
 	@SuppressWarnings("restriction")
 	public static Object setRestartArguments(String workspacePath) {
@@ -2706,10 +2712,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		}
 
 		String command_line = Workbench.buildCommandLine(workspacePath);
-		if (command_line == null) {
-			return IApplication.EXIT_OK;
-		}
-
 		System.setProperty(Workbench.PROP_EXIT_CODE, IApplication.EXIT_RELAUNCH.toString());
 		System.setProperty(IApplicationContext.EXIT_DATA_PROPERTY, command_line);
 		return IApplication.EXIT_RELAUNCH;

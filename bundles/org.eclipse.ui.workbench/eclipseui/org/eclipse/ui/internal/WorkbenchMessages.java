@@ -1043,4 +1043,14 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_RestartButton;
 	public static String Workbench_DontRestartButton;
 
+	public static String IDEApplication_workspaceLockOwner;
+	public static String IDEApplication_workspaceLockHost;
+	public static String IDEApplication_workspaceLockDisplay;
+	public static String IDEApplication_workspaceLockPID;
+	public static String IDEApplication_workspaceLockMessage;
+	public static String IDEApplication_workspaceCannotLockMessage2;
+	public static String IDEApplication_workspaceCannotLockTitle;
+
+	public static String OpenWorkspaceAction_invalidWorkspacePath;
+
 }
