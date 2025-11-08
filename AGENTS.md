@@ -7,8 +7,8 @@ This file provides guidance to AI Agents (claude-code, codex, gemini cli, ...) w
 Eclipse Platform UI provides the UI building blocks for Eclipse IDE and Eclipse Rich Client Platform (RCP). This includes JFace, workbench, commands framework, data binding, dialogs, editors, views, perspectives, and more. Built on top of SWT (Eclipse Standard Widget Toolkit).
 
 **Key Facts:**
-- **Language:** Java 17
-- **Build System:** Maven 3.9.x with Tycho (OSGi/Eclipse plugin build)
+- **Language:** Java 21
+- **Build System:** Maven 3.9.11 with Tycho (OSGi/Eclipse plugin build)
 - **Architecture:** OSGi bundles, E4 application model
 
 ## Project Structure
@@ -63,10 +63,6 @@ Each bundle contains:
 ## Build System
 
 ### Critical Limitation
-
-**⚠️ IMPORTANT:** Standalone `mvn clean verify` at repository root **WILL FAIL** with "Non-resolvable parent POM" error. This repository requires a parent POM from `eclipse.platform.releng.aggregator`.
-
-### Building Individual Bundles
 
 Use the `-Pbuild-individual-bundles` profile:
 
