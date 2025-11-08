@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1050,8 +1050,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEApplication_workspaceInvalidMessage;
 	public static String IDEApplication_workspaceCannotBeSetTitle;
 	public static String IDEApplication_workspaceCannotBeSetMessage;
-	public static String IDEApplication_workspaceCannotLockTitle;
-	public static String IDEApplication_workspaceCannotLockMessage;
 	public static String IDEApplication_versionTitle_newerWorkspace;
 	public static String IDEApplication_versionTitle_olderWorkspace;
 	public static String IDEApplication_versionMessage_newerWorkspace;
@@ -1147,13 +1145,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String WorkbenchPreference_maxSimultaneousBuilds;
 	public static String WorkbenchPreference_maxSimultaneousBuildIntervalError;
-
-	public static String IDEApplication_Ws_Lock_Owner_User;
-	public static String IDEApplication_Ws_Lock_Owner_Host;
-	public static String IDEApplication_Ws_Lock_Owner_Disp;
-	public static String IDEApplication_Ws_Lock_Owner_P_Id;
 	public static String IDEApplication_Ws_Lock_Owner_Message;
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
