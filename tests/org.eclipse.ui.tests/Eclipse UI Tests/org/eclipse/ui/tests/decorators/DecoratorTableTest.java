@@ -18,12 +18,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.junit.Ignore;
 
 /**
  * The DecoratorTableTest is the test for decorating tables.
  */
-@Ignore("Disabled due to timing issues")
 public class DecoratorTableTest extends DecoratorViewerTest {
 
 	@Override

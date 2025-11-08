@@ -1011,12 +1011,12 @@ public class ESelectionServiceTest extends UITest {
 		selectionService.addSelectionListener(listener);
 
 		selectionService.setSelection(new Object());
-		Thread.sleep(1000);
+		waitForCondition(() -> listener.success, 5000, "Listener should be called after setSelection");
 		assertTrue(listener.success);
 
 		listener.reset();
 		selectionService.setSelection(new Object());
-		Thread.sleep(1000);
+		waitForCondition(() -> listener.success, 5000, "Listener should be called after second setSelection");
 		assertTrue(listener.success);
 	}
 
@@ -1062,6 +1062,40 @@ public class ESelectionServiceTest extends UITest {
 		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
 		((Notifier) application).eAdapters().add(ep);
 		applicationContext.set(UIEventPublisher.class, ep);
+	}
+
+	/**
+	 * Wait for a condition to become true, processing UI events while waiting.
+	 * 
+	 * @param condition     the condition to wait for
+	 * @param timeoutMillis maximum time to wait in milliseconds
+	 * @param message       error message if timeout occurs
+	 */
+	private void waitForCondition(java.util.function.BooleanSupplier condition, long timeoutMillis, String message) {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		
+		long startTime = System.currentTimeMillis();
+		while (!condition.getAsBoolean()) {
+			if (System.currentTimeMillis() - startTime > timeoutMillis) {
+				throw new AssertionError(message + " (timeout after " + timeoutMillis + "ms)");
+			}
+			
+			// Process pending UI events
+			if (display.readAndDispatch()) {
+				continue;
+			}
+			
+			// Small sleep to avoid busy waiting
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new AssertionError(message + " (interrupted)", e);
+			}
+		}
 	}
 
 	static class SelectionListener implements ISelectionListener {

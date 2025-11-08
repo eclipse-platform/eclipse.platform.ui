@@ -26,11 +26,14 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class DecoratorTestPart extends ViewPart {
 
-	private static final int DELAY_TIME = 2000;// Wait 2 seconds
+	private static final int INITIAL_DELAY_TIME = 500;// Initial wait time in milliseconds
+	private static final int MAX_WAIT_TIME = 10000;// Maximum wait time (10 seconds)
+	private static final int IDLE_TIME = 200;// Time to wait after last update
 
 	public boolean waitingForDecoration = true;
 
-	private long endTime;
+	private volatile long lastUpdateTime;
+	private long startTime;
 
 	private ILabelProviderListener listener;
 
@@ -54,22 +57,55 @@ public abstract class DecoratorTestPart extends ViewPart {
 	 * Get the listener for the suite.
 	 */
 	private ILabelProviderListener getDecoratorManagerListener() {
-		// Reset the end time each time we get an update
-		listener = event -> endTime = System.currentTimeMillis() + DELAY_TIME;
+		// Record the time each time we get an update
+		listener = event -> lastUpdateTime = System.currentTimeMillis();
 
 		return listener;
 	}
 
+	/**
+	 * Process events until decorations are applied. This waits for updates to settle
+	 * by ensuring no new updates occur for IDLE_TIME milliseconds, with a maximum
+	 * wait of MAX_WAIT_TIME.
+	 */
 	public void readAndDispatchForUpdates() {
-		while (System.currentTimeMillis() < endTime) {
-			Display.getCurrent().readAndDispatch();
+		Display display = Display.getCurrent();
+		long elapsed = System.currentTimeMillis() - startTime;
+		
+		// Process events and wait for updates to settle
+		while (elapsed < MAX_WAIT_TIME) {
+			// Process any pending UI events
+			while (display.readAndDispatch()) {
+				// Keep processing
+			}
+			
+			long timeSinceLastUpdate = System.currentTimeMillis() - lastUpdateTime;
+			
+			// If we haven't received an update in IDLE_TIME, we're done
+			if (timeSinceLastUpdate >= IDLE_TIME && elapsed >= INITIAL_DELAY_TIME) {
+				break;
+			}
+			
+			// Small sleep to avoid busy waiting
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+			
+			elapsed = System.currentTimeMillis() - startTime;
 		}
-
+		
+		// Final event processing pass
+		while (display.readAndDispatch()) {
+			// Keep processing
+		}
 	}
 
 	public void setUpForDecorators() {
-		endTime = System.currentTimeMillis() + DELAY_TIME;
-
+		startTime = System.currentTimeMillis();
+		lastUpdateTime = System.currentTimeMillis();
 	}
 
 	@Override
