@@ -229,21 +229,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			} catch (CoreException e) {
 			}
 		}
-		// Also refresh the source containers when moving resources
-		// to ensure they are properly removed from the UI
-		if (resources != null && resources.length > 0
-				&& aDropAdapter.getCurrentOperation() != DND.DROP_COPY
-				&& aDropAdapter.getCurrentOperation() != DND.DROP_LINK) {
-			for (IResource resource : resources) {
-				IContainer parent = resource.getParent();
-				if (parent != null && parent.isAccessible() && !parent.equals(target)) {
-					try {
-						parent.refreshLocal(IResource.DEPTH_ONE, null);
-					} catch (CoreException e) {
-					}
-				}
-			}
-		}
 		return status;
 	}
 
@@ -306,17 +291,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			try {
 				target.refreshLocal(IResource.DEPTH_ONE, null);
 			} catch (CoreException e) {
-			}
-		}
-		// Also refresh the source containers when moving resources
-		// to ensure they are properly removed from the UI
-		for (IResource resource : resources) {
-			IContainer parent = resource.getParent();
-			if (parent != null && parent.isAccessible() && !parent.equals(target)) {
-				try {
-					parent.refreshLocal(IResource.DEPTH_ONE, null);
-				} catch (CoreException e) {
-				}
 			}
 		}
 		return Status.OK_STATUS;

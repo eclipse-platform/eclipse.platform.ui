@@ -24,15 +24,11 @@ import java.util.TreeSet;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.navigator.resources.nested.PathComparator;
-import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -62,20 +58,11 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		try {
-			if (element instanceof IContainer c) {
-				if (!c.isAccessible()) {
-					return false;
-				}
-				return c.members().length > 0;
-			}
-		} catch (CoreException ex) {
-			WorkbenchNavigatorPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, 0, ex.getMessage(), ex));
-			return false;
-		}
-
-		return super.hasChildren(element);
+		// Use getChildren() to ensure consistency with what will actually be displayed.
+		// The viewer may apply filters that hide certain resources, so checking
+		// members() directly can lead to inconsistencies where hasChildren() returns true
+		// but no children are actually visible after filtering.
+		return getChildren(element).length > 0;
 	}
 
 	@Override
