@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.jst;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -65,8 +65,8 @@ public class JstPipelineTest extends NavigatorTestBase {
 
 		// Note this test will fail showing only one if the JDT stuff
 		// is not included in the executing bundles (which it normally is)
-		assertEquals("There should be 3 visible extensions for the pipeline viewer.", 3,
-				_contentService.getVisibleExtensionIds().length);
+		assertEquals(3, _contentService.getVisibleExtensionIds().length,
+				"There should be 3 visible extensions for the pipeline viewer.");
 
 		_contentService.getActivationService().activateExtensions(
 				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT, TEST_CONTENT_JST }, true);
@@ -78,10 +78,10 @@ public class JstPipelineTest extends NavigatorTestBase {
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be " + _projectCount + " item(s).", _projectCount, rootItems.length); //$NON-NLS-1$
+		assertEquals(_projectCount, rootItems.length, "There should be " + _projectCount + " item(s)."); //$NON-NLS-1$
 
-		assertTrue("The root object should be an IJavaProject, which is IAdaptable.", //$NON-NLS-1$
-				rootItems[0].getData() instanceof IAdaptable);
+		assertTrue(rootItems[0].getData() instanceof IAdaptable, //$NON-NLS-1$
+				"The root object should be an IJavaProject, which is IAdaptable.");
 
 		IProject adaptedProject = ((IAdaptable) rootItems[_projectInd].getData()).getAdapter(IProject.class);
 		assertEquals(_project, adaptedProject);

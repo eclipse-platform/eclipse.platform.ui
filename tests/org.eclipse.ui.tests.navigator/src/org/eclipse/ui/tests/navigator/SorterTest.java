@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -75,7 +75,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		// We should not get any notification because of the way that
 		// sorters are found
-		assertEquals("Status Count: " + _statusCount, 0, _statusCount);
+		assertEquals(0, _statusCount, "Status Count: " + _statusCount);
 	}
 
 	// bug 231855 [CommonNavigator] CommonViewerSorter does not support

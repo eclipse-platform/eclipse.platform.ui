@@ -13,8 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Comparator;
 
@@ -38,9 +38,9 @@ public class PathComparatorTest {
 
 	private static void assertLessThan(IPath p1, IPath p2) {
 		int compare = COMPARATOR.compare(p1, p2);
-		assertTrue(PathComparator.class.getName() + ".compare() returned " + compare
+		assertTrue(compare < 0, PathComparator.class.getName() + ".compare() returned " + compare
 				+ " expected less than zero for paths '" + p1 + "' and '"
-				+ p2 + "'", compare < 0);
+				+ p2 + "'");
 	}
 
 	@Test

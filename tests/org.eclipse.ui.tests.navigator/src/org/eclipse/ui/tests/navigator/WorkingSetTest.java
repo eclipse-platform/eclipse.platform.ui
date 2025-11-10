@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -76,7 +76,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		l.propertyChange(event);
 
 		TreeItem[] items = _viewer.getTree().getItems();
-		assertTrue("There should be some items.", items.length > 0);
+		assertTrue(items.length > 0, "There should be some items.");
 		assertEquals(null, _commonNavigator.getWorkingSetLabel());
 	}
 
@@ -107,7 +107,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
-		assertEquals("First item needs to be project", _p1, items[0].getData());
+		assertEquals(_p1, items[0].getData(), "First item needs to be project");
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 	}
 
@@ -138,7 +138,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
-		assertEquals("First item needs to be working set", workingSet, items[0].getData());
+		assertEquals(workingSet, items[0].getData(), "First item needs to be working set");
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 
 		// bug 268250 [CommonNavigator] Project labels missing in Project
@@ -181,19 +181,19 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		TreeItem[] items = _viewer.getTree().getItems();
 
-		assertEquals("First item needs to be working set", workingSet, items[0].getData());
+		assertEquals(workingSet, items[0].getData(), "First item needs to be working set");
 
 		extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
 		refreshViewer();
 
 		items = _viewer.getTree().getItems();
-		assertEquals("First item needs to be project", _p1, items[0].getData());
+		assertEquals(_p1, items[0].getData(), "First item needs to be project");
 
 		extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
 		refreshViewer();
 
 		items = _viewer.getTree().getItems();
-		assertEquals("First item needs to be working set", workingSet, items[0].getData());
+		assertEquals(workingSet, items[0].getData(), "First item needs to be working set");
 
 		// Restore active working sets
 		activePage.setWorkingSets(activeWorkingSets);
@@ -265,7 +265,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 				break;
 			}
 		}
-		assertTrue("Working set filter is gone, oh my!", found);
+		assertTrue(found, "Working set filter is gone, oh my!");
 	}
 
 	// Bug 224703 - Project explorer doesn't show recreated working set
@@ -343,14 +343,14 @@ public class WorkingSetTest extends NavigatorTestBase {
 		_viewer.expandAll();
 
 		TreeItem[] items = _viewer.getTree().getItems();
-		assertEquals("Missing working set or 'other projects'", 2, items.length);
+		assertEquals(2, items.length, "Missing working set or 'other projects'");
 
-		assertEquals("First item needs to be working set", workingSet, items[0].getData());
+		assertEquals(workingSet, items[0].getData(), "First item needs to be working set");
 		assertEquals(workingSet, items[0].getData());
 		assertEquals(_p1, items[0].getItem(0).getData());
 
-		assertEquals("Last item needs to be 'other project'", WorkingSetsContentProvider.OTHERS_WORKING_SET,
-				items[1].getData());
+		assertEquals(WorkingSetsContentProvider.OTHERS_WORKING_SET, items[1].getData(),
+				"Last item needs to be 'other project'");
 		assertEquals(_p1.getWorkspace().getRoot().getProjects().length - 1, items[1].getItemCount());
 
 		// Put all projects in same working set to disable "others"
@@ -361,7 +361,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		_viewer.expandAll();
 
 		items = _viewer.getTree().getItems();
-		assertEquals("Should be the single working set", 1, items.length);
+		assertEquals(1, items.length, "Should be the single working set");
 		assertEquals(workingSet, items[0].getData());
 
 		// Remove project from ws to make "other projects" reappear
@@ -372,14 +372,14 @@ public class WorkingSetTest extends NavigatorTestBase {
 		_viewer.expandAll();
 
 		items = _viewer.getTree().getItems();
-		assertEquals("Missing working set or 'other projects'", 2, items.length);
+		assertEquals(2, items.length, "Missing working set or 'other projects'");
 
-		assertEquals("First item needs to be working set", workingSet, items[0].getData());
+		assertEquals(workingSet, items[0].getData(), "First item needs to be working set");
 		assertEquals(workingSet, items[0].getData());
 		assertEquals(_p1, items[0].getItem(0).getData());
 
-		assertEquals("Last item needs to be 'other project'", WorkingSetsContentProvider.OTHERS_WORKING_SET,
-				items[1].getData());
+		assertEquals(WorkingSetsContentProvider.OTHERS_WORKING_SET, items[1].getData(),
+				"Last item needs to be 'other project'");
 		assertEquals(_p1.getWorkspace().getRoot().getProjects().length - 1, items[1].getItemCount());
 	}
 
