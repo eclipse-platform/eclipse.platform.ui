@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,10 @@
 package org.eclipse.jface.tests.viewers;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,4 +117,43 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		}
 	}
 
+	/**
+	 * Removing the same element twice should not produce a dummy tree-item.
+	 */
+	@Test
+	public void testIssue3525() {
+		TestElement modelRoot = TestElement.createModel(2, 1);
+		TestElement modelParent = modelRoot.getChildAt(0);
+		TestElement modelChild = modelParent.getChildAt(0);
+		fTreeViewer.setInput(modelRoot);
+		fTreeViewer.expandAll();
+
+		TreeItem widgetParent = (TreeItem) fTreeViewer.testFindItem(modelParent);
+		TreeItem widgetChild = (TreeItem) fTreeViewer.testFindItem(modelChild);
+		assertNotNull(widgetParent);
+		assertNotNull(widgetChild);
+		assertArrayEquals(widgetParent.getItems(), new TreeItem[] { widgetChild });
+
+		// This workaround is needed because of TreeViewerWithLimitCompatibilityTest
+		// When calling setDisplayIncrementally(...) with a positive number, you are
+		// no longer able to remove elements from the viewer without first removing
+		// them from the model
+		modelParent.fChildren.remove(modelChild);
+		fTreeViewer.remove(modelChild);
+		modelParent.fChildren.add(modelChild);
+
+		widgetParent = (TreeItem) fTreeViewer.testFindItem(modelParent);
+		widgetChild = (TreeItem) fTreeViewer.testFindItem(modelChild);
+		assertNotNull(widgetParent);
+		assertNull(widgetChild);
+		assertArrayEquals(widgetParent.getItems(), new TreeItem[0]);
+
+		fTreeViewer.remove(modelChild);
+
+		widgetParent = (TreeItem) fTreeViewer.testFindItem(modelParent);
+		widgetChild = (TreeItem) fTreeViewer.testFindItem(modelChild);
+		assertNotNull(widgetParent);
+		assertNull(widgetChild);
+		assertArrayEquals(widgetParent.getItems(), new TreeItem[0]);
+	}
 }
