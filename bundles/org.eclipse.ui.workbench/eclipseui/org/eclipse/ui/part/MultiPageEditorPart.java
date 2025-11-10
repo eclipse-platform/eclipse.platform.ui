@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -648,11 +648,8 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	protected IEditorPart getEditor(int pageIndex) {
 		Item item = getItem(pageIndex);
-		if (item != null) {
-			Object data = item.getData();
-			if (data instanceof IEditorPart) {
-				return (IEditorPart) data;
-			}
+		if (item != null && !item.isDisposed() && item.getData() instanceof IEditorPart ep) {
+			return ep;
 		}
 		return null;
 	}
