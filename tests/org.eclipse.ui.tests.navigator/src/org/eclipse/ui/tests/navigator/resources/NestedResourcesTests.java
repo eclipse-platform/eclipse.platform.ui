@@ -13,8 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.navigator.resources.nested.NestedProjectManager;
 import org.eclipse.ui.internal.navigator.resources.nested.NestedProjectsLabelProvider;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.5
@@ -82,28 +82,28 @@ public class NestedResourcesTests {
 		testProjects.add(projectABB);
 
 		// Wait for NestedProjectManager to process all resource changes
-		assertTrue("NestedProjectManager did not update children for projectA",
-				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
-						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectA).length == 1));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectA).length == 1),
+				"NestedProjectManager did not update children for projectA");
 
 		IProject[] childrenOfProjectA = NestedProjectManager.getInstance().getDirectChildrenProjects(projectA);
-		Assert.assertEquals(projectAB, childrenOfProjectA[0]);
-		Assert.assertNull(NestedProjectManager.getInstance().getMostDirectOpenContainer(projectA));
+		Assertions.assertEquals(projectAB, childrenOfProjectA[0]);
+		Assertions.assertNull(NestedProjectManager.getInstance().getMostDirectOpenContainer(projectA));
 
 		// Wait for NestedProjectManager to process projectAAA
-		assertTrue("NestedProjectManager did not update children for folderAA",
-				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
-						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(folderAA).length == 1));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(folderAA).length == 1),
+				"NestedProjectManager did not update children for folderAA");
 
 		IProject[] childrenOfFolderAA = NestedProjectManager.getInstance().getDirectChildrenProjects(folderAA);
-		Assert.assertEquals("aaa", childrenOfFolderAA[0].getName());
-		Assert.assertEquals(folderAA,
+		Assertions.assertEquals("aaa", childrenOfFolderAA[0].getName());
+		Assertions.assertEquals(folderAA,
 				NestedProjectManager.getInstance().getMostDirectOpenContainer(childrenOfFolderAA[0]));
 
 		// Wait for NestedProjectManager to process both projectABA and projectABB
-		assertTrue("NestedProjectManager did not update children for projectAB",
-				DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
-						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectAB).length == 2));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+						() -> NestedProjectManager.getInstance().getDirectChildrenProjects(projectAB).length == 2),
+				"NestedProjectManager did not update children for projectAB");
 	}
 
 	@Test
@@ -129,8 +129,8 @@ public class NestedResourcesTests {
 		testProjects.add(projectAChild);
 		testProjects.add(projectA_A);
 
-		Assert.assertTrue(NestedProjectManager.getInstance().hasDirectChildrenProjects(projectA));
-		Assert.assertEquals(projectAChild, NestedProjectManager.getInstance().getDirectChildrenProjects(projectA)[0]);
+		assertTrue(NestedProjectManager.getInstance().hasDirectChildrenProjects(projectA));
+		assertEquals(projectAChild, NestedProjectManager.getInstance().getDirectChildrenProjects(projectA)[0]);
 	}
 
 	private class NestedProjectsLabelProviderAccessor extends NestedProjectsLabelProvider {
@@ -206,7 +206,7 @@ public class NestedResourcesTests {
 				() -> IMarker.SEVERITY_ERROR == labelProvider.getHighestProblemSeverity(parentProject)));
 	}
 
-	@After
+	@AfterEach
 	public void deleteProjects() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		for (IProject testProject : testProjects) {

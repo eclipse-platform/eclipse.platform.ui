@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -60,14 +60,14 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 				.findRootContentProviders(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
-		assertEquals("Ensure there is only one root content provider.", 1,
-				rootContentProviders.length);
+		assertEquals(1, rootContentProviders.length,
+				"Ensure there is only one root content provider.");
 
 		Set projectContentExtensions = _contentService
 				.findContentExtensionsByTriggerPoint(_project);
 
-		assertEquals("Ensure there are two content providers for an IProject.",
-				2, projectContentExtensions.size());
+		assertEquals(2, projectContentExtensions.size(),
+				"Ensure there are two content providers for an IProject.");
 
 		boolean found = false;
 		INavigatorContentExtension ext;
@@ -79,21 +79,19 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 						.getContentProvider();
 				Object[] projectChildren = testContentProvider
 						.getChildren(_project);
-				assertEquals(
-						"There should be one test-type child of the project.",
-						1, projectChildren.length);
+				assertEquals(1, projectChildren.length,
+						"There should be one test-type child of the project.");
 				assertEquals("BlueParent", contentServiceLabelProvider
 						.getText(projectChildren[0]));
 				Object[] testRootChildren = contentServiceContentProvider
 						.getChildren(projectChildren[0]);
-				assertEquals(
-						"There should be one test-type child of the root test-type item.",
-						3, testRootChildren.length);
+				assertEquals(3, testRootChildren.length,
+						"There should be one test-type child of the root test-type item.");
 				found = true;
 			}
 		}
 
-		assertTrue("The test content provider was not found.", found);
+		assertTrue(found, "The test content provider was not found.");
 
 	}
 
@@ -111,14 +109,14 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 				.findRootContentExtensions(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
-		assertEquals("Ensure there is only one root content provider.", 1,
-				rootContentProviders.size());
+		assertEquals(1, rootContentProviders.size(),
+				"Ensure there is only one root content provider.");
 
 		Set projectContentExtensions = _contentService
 				.findContentExtensionsByTriggerPoint(_project);
 
-		assertEquals("Ensure there is one content provider for an IProject.",
-				1, projectContentExtensions.size());
+		assertEquals(1, projectContentExtensions.size(),
+				"Ensure there is one content provider for an IProject.");
 
 	}
 
@@ -135,13 +133,12 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 						new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
 								TEST_CONTENT, TEST_CONTENT2 }, false);
 
-		assertEquals("One descriptor should have been returned.", 1,
-				boundDescriptors.length);
+		assertEquals(1, boundDescriptors.length,
+				"One descriptor should have been returned.");
 
-		assertEquals(
-				"The declarative content service should have one fewer visible extension ids than the one created programmatically.",
-				_contentService.getVisibleExtensionIds().length + 1,
-				contentServiceWithProgrammaticBindings.getVisibleExtensionIds().length);
+		assertEquals(_contentService.getVisibleExtensionIds().length + 1,
+				contentServiceWithProgrammaticBindings.getVisibleExtensionIds().length,
+				"The declarative content service should have one fewer visible extension ids than the one created programmatically.");
 
 		INavigatorContentDescriptor[] visibleDescriptors = contentServiceWithProgrammaticBindings
 				.getVisibleExtensions();
@@ -151,37 +148,35 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 				found = true;
 			}
 		}
-		assertTrue("The programmatically bound extension should be bound.",
-				found);
+		assertTrue(found,
+				"The programmatically bound extension should be bound.");
 
 		Set enabledDescriptors = contentServiceWithProgrammaticBindings
 				.findContentExtensionsByTriggerPoint(_project);
 
-		assertEquals("There should be a three extensions.", 3,
-				enabledDescriptors.size());
+		assertEquals(3, enabledDescriptors.size(),
+				"There should be a three extensions.");
 
 	}
 
 	@Test
 	public void testTestExtensionVisibility() {
-		assertTrue("The test extension should be visible.", _contentService
-				.getViewerDescriptor().isVisibleContentExtension(
-						TEST_CONTENT));
+		assertTrue(_contentService.getViewerDescriptor().isVisibleContentExtension(TEST_CONTENT),
+				"The test extension should be visible.");
 	}
 
 	@Test
 	public void testResourceExtensionVisibility() {
-		assertTrue("The test extension should be visible.", _contentService
-				.getViewerDescriptor().isVisibleContentExtension(
-						COMMON_NAVIGATOR_RESOURCE_EXT));
+		assertTrue(_contentService.getViewerDescriptor().isVisibleContentExtension(COMMON_NAVIGATOR_RESOURCE_EXT),
+				"The test extension should be visible.");
 	}
 
 	@Test
 	public void testVisibleExtensionIds() {
 		String[] visibleIds = _contentService.getVisibleExtensionIds();
 
-		assertEquals("There should be three visible extensions.", 3,
-				visibleIds.length);
+		assertEquals(3, visibleIds.length,
+				"There should be three visible extensions.");
 
 		for (String visibleId : visibleIds) {
 			if (!TEST_CONTENT.equals(visibleId) && !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleId)

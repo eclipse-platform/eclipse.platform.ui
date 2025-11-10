@@ -13,8 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,10 +62,10 @@ public final class FoldersAsProjectsContributionTest {
 		String notAFolder = "Some string";
 		IMenuManager manager = menuManager();
 		provider(new StructuredSelection(notAFolder)).fillContextMenu(manager);
-		assertFalse("SelectProjectForFolderAction contributions were added on not an adaptable-to-IFolder selection",
-				contributionAdded(manager, SelectProjectForFolderAction.class));
-		assertFalse("OpenFolderAsProjectAction contributions were added on not an adaptable-to-IFolder selection",
-				contributionAdded(manager, OpenFolderAsProjectAction.class));
+		assertFalse(contributionAdded(manager, SelectProjectForFolderAction.class),
+				"SelectProjectForFolderAction contributions were added on not an adaptable-to-IFolder selection");
+		assertFalse(contributionAdded(manager, OpenFolderAsProjectAction.class),
+				"OpenFolderAsProjectAction contributions were added on not an adaptable-to-IFolder selection");
 	}
 
 	@Test
@@ -73,10 +73,10 @@ public final class FoldersAsProjectsContributionTest {
 		IFolder justAFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path("some/folder"));
 		IMenuManager manager = menuManager();
 		provider(new StructuredSelection(justAFolder)).fillContextMenu(manager);
-		assertFalse("SelectProjectForFolderAction contributions were added on an IFolder without project description",
-				contributionAdded(manager, SelectProjectForFolderAction.class));
-		assertFalse("OpenFolderAsProjectAction contributions were added on an IFolder without project description",
-				contributionAdded(manager, OpenFolderAsProjectAction.class));
+		assertFalse(contributionAdded(manager, SelectProjectForFolderAction.class),
+				"SelectProjectForFolderAction contributions were added on an IFolder without project description");
+		assertFalse(contributionAdded(manager, OpenFolderAsProjectAction.class),
+				"OpenFolderAsProjectAction contributions were added on an IFolder without project description");
 	}
 
 	@Test
@@ -103,10 +103,9 @@ public final class FoldersAsProjectsContributionTest {
 			provider(new StructuredSelection(
 					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
 							.fillContextMenu(manager);
-			assertTrue(
+			assertTrue(contributionAdded(manager, SelectProjectForFolderAction.class),
 					NLS.bind("A SelectProjectForFolderAction contribution was not added. Contribution List is: {0}",
-							contributionsList(manager)),
-					contributionAdded(manager, SelectProjectForFolderAction.class));
+							contributionsList(manager)));
 		} finally {
 			clear(projects);
 		}
@@ -139,8 +138,9 @@ public final class FoldersAsProjectsContributionTest {
 			provider(new StructuredSelection(
 					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
 							.fillContextMenu(manager);
-			assertTrue(NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
-					contributionsList(manager)), contributionAdded(manager, OpenFolderAsProjectAction.class));
+			assertTrue(contributionAdded(manager, OpenFolderAsProjectAction.class),
+					NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
+							contributionsList(manager)));
 		} finally {
 			clear(projects);
 		}
@@ -168,12 +168,10 @@ public final class FoldersAsProjectsContributionTest {
 			provider(new StructuredSelection(
 					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
 							.fillContextMenu(manager);
-			assertFalse(
-					"There were both imported and not-imported projects in selection, but SelectProjectForFolderAction contributions were added",
-					contributionAdded(manager, SelectProjectForFolderAction.class));
-			assertFalse(
-					"There were both imported and not-imported projects in selection, but OpenFolderAsProjectAction contributions were added",
-					contributionAdded(manager, OpenFolderAsProjectAction.class));
+			assertFalse(contributionAdded(manager, SelectProjectForFolderAction.class),
+					"There were both imported and not-imported projects in selection, but SelectProjectForFolderAction contributions were added");
+			assertFalse(contributionAdded(manager, OpenFolderAsProjectAction.class),
+					"There were both imported and not-imported projects in selection, but OpenFolderAsProjectAction contributions were added");
 		} finally {
 			clear(projects);
 		}
@@ -239,7 +237,7 @@ public final class FoldersAsProjectsContributionTest {
 		// If project description does not exist after creation (for whatever reason),
 		// create it explicitly with empty content
 		Files.createFile(Paths.get(description.getLocationURI()));
-		assertTrue(String.format("Project description for %s does not exist", name), description.exists());
+		assertTrue(description.exists(), String.format("Project description for %s does not exist", name));
 	}
 
 }

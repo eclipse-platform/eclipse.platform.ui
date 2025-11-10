@@ -15,20 +15,26 @@ package org.eclipse.ui.tests.navigator;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.INavigationLocation;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -36,16 +42,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestUtil.Condition;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.TextSelectionNavigationLocation;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3
@@ -64,19 +68,84 @@ public class GoBackForwardsTest {
 
 	private IProject project;
 	private IFile file;
+	private final List<IWorkbenchWindow> testWindows = new ArrayList<>();
+	private IWindowListener windowListener;
+	private Set<Shell> initialShells;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException, IOException {
+		addWindowListener();
+		storeInitialShells();
+
 		project = FileUtil.createProject(PROJECT_NAME);
 		file = FileUtil.createFile(FILE_NAME, project);
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(FILE_CONTENTS);
 		Files.writeString(Paths.get(file.getLocation().toOSString()), stringBuilder);
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+	}
 
+	@AfterEach
+	public void tearDown() {
+		removeWindowListener();
+		processEvents();
+		closeAllTestWindows();
+		processEvents();
+		checkForLeakedShells();
+	}
+
+	private void addWindowListener() {
+		windowListener = new IWindowListener() {
+			@Override
+			public void windowActivated(IWorkbenchWindow window) {
+			}
+
+			@Override
+			public void windowDeactivated(IWorkbenchWindow window) {
+			}
+
+			@Override
+			public void windowClosed(IWorkbenchWindow window) {
+				testWindows.remove(window);
+			}
+
+			@Override
+			public void windowOpened(IWorkbenchWindow window) {
+				testWindows.add(window);
+			}
+		};
+		PlatformUI.getWorkbench().addWindowListener(windowListener);
+	}
+
+	private void removeWindowListener() {
+		if (windowListener != null) {
+			PlatformUI.getWorkbench().removeWindowListener(windowListener);
+		}
+	}
+
+	private void closeAllTestWindows() {
+		List<IWorkbenchWindow> testWindowsCopy = new ArrayList<>(testWindows);
+		for (IWorkbenchWindow testWindow : testWindowsCopy) {
+			testWindow.close();
+		}
+		testWindows.clear();
+	}
+
+	private void storeInitialShells() {
+		this.initialShells = Set.of(PlatformUI.getWorkbench().getDisplay().getShells());
+	}
+
+	private void checkForLeakedShells() {
+		List<String> leakedModalShellTitles = new ArrayList<>();
+		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
+		for (Shell shell : shells) {
+			if (!shell.isDisposed() && !initialShells.contains(shell)) {
+				leakedModalShellTitles.add(shell.getText());
+				shell.close();
+			}
+		}
+		assertEquals(0, leakedModalShellTitles.size(),
+				"Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]");
 	}
 
 	@Test
@@ -95,79 +164,75 @@ public class GoBackForwardsTest {
 
 		openGenericEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(genericEditorNoSelection, 1000));
+		assertTrue(processEventsUntil(genericEditorNoSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		selectInGenericEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(genericEditorSelection, 1000));
+		assertTrue(processEventsUntil(genericEditorSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		openTextEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(textEditorNoSelection, 1000));
+		assertTrue(processEventsUntil(textEditorNoSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		selectInTextEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(textEditorSelection, 1000));
+		assertTrue(processEventsUntil(textEditorSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		openGenericEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(genericEditorSelection, 1000));
+		assertTrue(processEventsUntil(genericEditorSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		openTextEditor(editorInput);
 
-		assertTrue("Timeout during navigation." + getStateDetails(),
-				processEventsUntil(textEditorSelection, 1000));
+		assertTrue(processEventsUntil(textEditorSelection, 1000),
+				"Timeout during navigation." + getStateDetails());
 
 		// Navigate backward from text editor to editor
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
-		Assert.assertEquals(
-				"Failed to correctly navigate backward from text editor to java editor." + getStateDetails(),
-				GENERIC_EDITOR_ID, getActiveEditorId());
+		assertEquals(GENERIC_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate backward from text editor to java editor." + getStateDetails());
 
 		// Navigate backward from java editor to text editor
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorSelection);
-		Assert.assertEquals(
-				"Failed to correctly navigate backward from java editor to test editor." + getStateDetails(),
-				TEXT_EDITOR_ID, getActiveEditorId());
+		assertEquals(TEXT_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate backward from java editor to test editor." + getStateDetails());
 
 		// Navigate backward from text editor to text editor
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorNoSelection);
-		Assert.assertEquals(
-				"Failed to correctly navigate backward from text editor to text editor." + getStateDetails(),
-				TEXT_EDITOR_ID, getActiveEditorId());
+		assertEquals(TEXT_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate backward from text editor to text editor." + getStateDetails());
 
 		// Navigate backward from java editor to java editor
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorNoSelection);
-		Assert.assertEquals(
-				"Failed to correctly navigate backward from java editor to java editor." + getStateDetails(),
-				GENERIC_EDITOR_ID, getActiveEditorId());
+		assertEquals(GENERIC_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate backward from java editor to java editor." + getStateDetails());
 
 		// Navigate forward from java editor to java editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
-		Assert.assertEquals("Failed to correctly navigate forward from java editor to java editor." + getStateDetails(),
-				GENERIC_EDITOR_ID, getActiveEditorId());
+		assertEquals(GENERIC_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate forward from java editor to java editor." + getStateDetails());
 
 		// Navigate forward from text editor to text editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorNoSelection);
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorSelection);
-		Assert.assertEquals("Failed to correctly navigate forward from java editor to java editor." + getStateDetails(),
-				TEXT_EDITOR_ID, getActiveEditorId());
+		assertEquals(TEXT_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate forward from java editor to java editor." + getStateDetails());
 
 		// Navigate forward from text editor to java editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
-		Assert.assertEquals("Failed to correctly navigate forward from text editor to java editor." + getStateDetails(),
-				GENERIC_EDITOR_ID, getActiveEditorId());
+		assertEquals(GENERIC_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate forward from text editor to java editor." + getStateDetails());
 
 		// Navigate forward from java editor to text editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorSelection);
-		Assert.assertEquals("Failed to correctly navigate forward from java editor to text editor." + getStateDetails(),
-				TEXT_EDITOR_ID, getActiveEditorId());
+		assertEquals(TEXT_EDITOR_ID, getActiveEditorId(),
+				"Failed to correctly navigate forward from java editor to text editor." + getStateDetails());
 	}
 
 	private Condition currentNavigationHistoryLocationCondition(String editorId, boolean selection) {
@@ -207,13 +272,13 @@ public class GoBackForwardsTest {
 	private void goForward(IWorkbenchWindow window, Condition condition) {
 		NavigationHistoryAction action = new NavigationHistoryAction(window, true);
 		action.run();
-		assertTrue("Timeout during navigation.", processEventsUntil(condition, 1000));
+		assertTrue(processEventsUntil(condition, 1000), "Timeout during navigation.");
 	}
 
 	private void goBackward(IWorkbenchWindow window, Condition condition) {
 		NavigationHistoryAction action = new NavigationHistoryAction(window, false);
 		action.run();
-		assertTrue("Timeout during navigation.", processEventsUntil(condition, 1000));
+		assertTrue(processEventsUntil(condition, 1000), "Timeout during navigation.");
 	}
 
 	private String getActiveEditorId() {
