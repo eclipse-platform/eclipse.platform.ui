@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -80,7 +81,13 @@ public class HoverTest extends AbstratGenericEditorTest {
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 
+		// Capture the first shell and its display to wait for disposal
+		Shell firstShell = shell;
+		Display display = firstShell.getDisplay();
 		cleanFileAndEditor();
+		// Wait for the hover shell to be disposed after editor cleanup
+		DisplayHelper.waitForCondition(display, 3000, () -> firstShell.isDisposed());
+
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
