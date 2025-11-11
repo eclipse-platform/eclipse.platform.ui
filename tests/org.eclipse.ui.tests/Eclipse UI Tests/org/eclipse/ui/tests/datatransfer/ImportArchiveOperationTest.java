@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -39,13 +39,13 @@ import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ImportArchiveOperationTest implements IOverwriteQuery {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 
@@ -66,8 +66,7 @@ public class ImportArchiveOperationTest implements IOverwriteQuery {
 
 	private URL tarFileURL;
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Override
 	public String queryOverwrite(String pathString) {
@@ -80,7 +79,7 @@ public class ImportArchiveOperationTest implements IOverwriteQuery {
 	 * Tear down. Delete the project we created and all of the
 	 * files on the file system.
 	 */
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		try {
 			project.delete(true, true, null);
@@ -329,6 +328,7 @@ public class ImportArchiveOperationTest implements IOverwriteQuery {
 				}
 			}
 			assertTrue("Import failed to import file " + fileName, k < fileNames.length);
+import org.junit.jupiter.api.extension.ExtendWith;
 		}
 	}
 

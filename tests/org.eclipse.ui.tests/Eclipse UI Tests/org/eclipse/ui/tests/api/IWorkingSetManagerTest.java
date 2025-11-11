@@ -16,14 +16,14 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
@@ -41,11 +41,12 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IWorkingSetManagerTest {
 	static final String WORKING_SET_NAME_1 = "ws1";
 
@@ -53,8 +54,7 @@ public class IWorkingSetManagerTest {
 
 	static final String WORKING_SET_NAME_3 = "ws3";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkingSetManager fWorkingSetManager;
 
@@ -77,7 +77,7 @@ public class IWorkingSetManagerTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWorkingSetManager = getWorkbench().getWorkingSetManager();
 		fWorkspace = ResourcesPlugin.getWorkspace();

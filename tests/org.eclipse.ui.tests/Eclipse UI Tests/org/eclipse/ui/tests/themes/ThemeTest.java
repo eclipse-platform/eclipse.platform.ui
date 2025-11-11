@@ -15,22 +15,22 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class ThemeTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static final String MOCK_CSS_THEME = "org.eclipse.e4.ui.css.theme.mock";
 
@@ -40,7 +40,7 @@ public abstract class ThemeTest {
 
 	protected IThemeManager fManager;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fManager = getWorkbench().getThemeManager();
 		fManager.setCurrentTheme(IThemeManager.DEFAULT_THEME);

@@ -20,11 +20,11 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -67,24 +67,21 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Assume;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class EvaluationServiceTest {
 	private static final String CHECK_HANDLER_ID = "org.eclipse.ui.tests.services.checkHandler";
 	private static final String CONTEXT_ID1 = "org.eclipse.ui.command.contexts.evaluationService1";
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static class MyEval implements IPropertyChangeListener {
 		public volatile int count = 0;
@@ -141,7 +138,7 @@ public class EvaluationServiceTest {
 		waitForJobs(500, 5000);
 
 		boolean activeShell = forceActive(window.getShell());
-		Assume.assumeTrue(activeShell);
+		Assumptions.assumeTrue(activeShell);
 
 		IEvaluationService service = window
 				.getService(IEvaluationService.class);
@@ -213,7 +210,7 @@ public class EvaluationServiceTest {
 		waitForJobs(500, 5000);
 
 		final AtomicBoolean shellIsActive = new AtomicBoolean(activeShell);
-		Assume.assumeTrue(shellIsActive.get());
+		Assumptions.assumeTrue(shellIsActive.get());
 
 		IEvaluationService service = window
 				.getService(IEvaluationService.class);
@@ -289,7 +286,7 @@ public class EvaluationServiceTest {
 	}
 
 	@Test
-	@Ignore // TODO fix testRestriction
+	@Disabled // TODO fix testRestriction
 	public void testRestriction() {
 		IWorkbenchWindow window = openTestWindow();
 		IEvaluationService evaluationService = window
@@ -362,7 +359,7 @@ public class EvaluationServiceTest {
 	}
 
 	@Test
-	@Ignore // TODO fix testScopedService
+	@Disabled // TODO fix testScopedService
 	public void testScopedService() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IEvaluationService service = window
@@ -562,7 +559,7 @@ public class EvaluationServiceTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testSystemProperty() throws Exception {
 		// this is not added, as the ability to test system properties with
 		// no '.' seems unhelpful

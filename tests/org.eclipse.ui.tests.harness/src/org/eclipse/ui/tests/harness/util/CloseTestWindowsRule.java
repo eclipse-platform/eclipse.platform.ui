@@ -37,7 +37,11 @@ import org.junit.runners.model.Statement;
  * <li>closes windows opened during the test case
  * <li>checks for shells unintentionally leaked from the test case
  * </ul>
+ *
+ * @deprecated Use {@link CloseTestWindowsExtension} with JUnit 5 instead.
+ *             This class is kept for backward compatibility with JUnit 4 tests.
  */
+@Deprecated
 public class CloseTestWindowsRule extends ExternalResource {
 
 	private String testName;

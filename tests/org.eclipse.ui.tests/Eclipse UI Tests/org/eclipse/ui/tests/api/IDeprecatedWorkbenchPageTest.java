@@ -16,11 +16,11 @@ package org.eclipse.ui.tests.api;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -39,19 +39,19 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IDeprecatedWorkbenchPageTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbench fWorkbench;
 
@@ -61,14 +61,14 @@ public class IDeprecatedWorkbenchPageTest {
 
 	private IProject proj;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		if (proj != null) {
 			FileUtil.deleteProject(proj);
@@ -606,7 +606,7 @@ public class IDeprecatedWorkbenchPageTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestClose() throws Throwable {
 		IWorkbenchPage page = openTestPage(fWin);
 
@@ -768,7 +768,7 @@ public class IDeprecatedWorkbenchPageTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestSaveAllEditors() throws Throwable {
 		int total = 3;
 
@@ -848,7 +848,7 @@ public class IDeprecatedWorkbenchPageTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
 
@@ -870,7 +870,7 @@ public class IDeprecatedWorkbenchPageTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestHideActionSet() {
 //		int totalBefore = facade.getActionSetCount(fActivePage);
 		// FIXME: No implementation for facade.getActionSetCount()

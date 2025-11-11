@@ -20,10 +20,10 @@ import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAuto
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
@@ -75,30 +75,29 @@ import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.12
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class SmartImportTests {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private WizardDialog dialog;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		ImportMeProjectConfigurator.configuredProjects.clear();
 		clearAll();
 		setWorkspaceAutoBuild(true);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		ImportMeProjectConfigurator.configuredProjects.clear();
 		clearAll();
@@ -344,6 +343,7 @@ public class SmartImportTests {
 		// The Windows test machine returns A:\ as first root which is not suitable for
 		// this test.
 		File importRoot = new File(Util.isWindows() ? "C:\\" : "/");
+import org.junit.jupiter.api.extension.ExtendWith;
 		if (!importRoot.isDirectory()) {
 			importRoot = File.listRoots()[0];
 		}

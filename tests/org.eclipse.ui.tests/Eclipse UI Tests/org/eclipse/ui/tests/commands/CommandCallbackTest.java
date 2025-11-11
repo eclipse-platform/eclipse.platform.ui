@@ -16,8 +16,8 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,19 +41,19 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class CommandCallbackTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private static final String HOST_PARAM_ID = "host";
 	private static final String PROT_PARAM_ID = "protocol";
@@ -71,7 +71,7 @@ public class CommandCallbackTest {
 	private CallbackHandler cmd1Handler;
 	private CallbackHandler cmd2Handler;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		workbench = PlatformUI.getWorkbench();
 		commandService = workbench.getService(ICommandService.class);
@@ -84,7 +84,7 @@ public class CommandCallbackTest {
 		cmd2Activation = handlerService.activateHandler(CMD2_ID, cmd2Handler);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		if (cmd1Activation != null) {
 			handlerService.deactivateHandler(cmd1Activation);

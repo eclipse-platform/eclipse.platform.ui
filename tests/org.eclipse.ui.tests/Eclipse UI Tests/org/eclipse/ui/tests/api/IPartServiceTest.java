@@ -14,11 +14,11 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,21 +38,21 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the IPartService, IPartListener and IPartListener2 interfaces.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IPartServiceTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow fWindow;
 
@@ -163,7 +163,7 @@ public class IPartServiceTest {
 		history2.clear();
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
@@ -369,7 +369,7 @@ public class IPartServiceTest {
 	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestPartHiddenWhenClosedAndShared() throws Throwable {
 		IPartListener2 listener = new TestPartListener2() {
 			@Override
@@ -560,7 +560,7 @@ public class IPartServiceTest {
 	 * @since 3.1
 	 */
 	@Test
-	@Ignore("This does not work as expected.  See bug 93784.")
+	@Disabled("This does not work as expected.  See bug 93784.")
 	public void testViewFoundWhenOpened() throws Throwable {
 		final String viewId = MockViewPart.ID;
 		final boolean[] eventReceived = { false, false };

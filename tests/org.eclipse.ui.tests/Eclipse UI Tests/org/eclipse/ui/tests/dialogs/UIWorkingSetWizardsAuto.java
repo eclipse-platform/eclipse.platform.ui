@@ -45,16 +45,17 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Abstract test class for the working set wizard tests.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class UIWorkingSetWizardsAuto<W extends IWizard> {
 	protected static final String WORKING_SET_NAME_1 = "ws1";
 
@@ -64,8 +65,7 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> {
 
 	private static final int SIZING_WIZARD_HEIGHT_2 = 500;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private WizardDialog wizardDialog;
 
@@ -97,7 +97,7 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> {
 		return fileInProject2;
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		wizardToTest = createWizardToTest();
 		wizardDialog = createWizardDialog();
@@ -123,7 +123,7 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> {
 		fileInProject2 = FileUtil.createFile("f2.txt", project2);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		removeAllWorkingSets();
 		cleanupWorkspace();

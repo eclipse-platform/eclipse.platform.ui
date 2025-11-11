@@ -21,10 +21,10 @@ import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.restoreWorkspaceConfiguration;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAutoBuild;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -61,17 +61,14 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.ImportTestUtils.TestBuilder;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ImportExistingProjectsWizardTest {
 
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
@@ -94,14 +91,13 @@ public class ImportExistingProjectsWizardTest {
 
 	private boolean originalRefreshSetting;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private Shell getShell() {
 		return getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		originalRefreshSetting = ResourcesPlugin.getPlugin()
 				.getPluginPreferences().getBoolean(
@@ -111,7 +107,7 @@ public class ImportExistingProjectsWizardTest {
 		setWorkspaceAutoBuild(true);
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
@@ -1124,6 +1120,7 @@ public class ImportExistingProjectsWizardTest {
 
 		assertTrue("Expected import wizard to find projects: " + projects + ", instead it detects: " + projectNames,
 				projectNames.containsAll(projects));
+import org.junit.jupiter.api.extension.ExtendWith;
 
 		CheckboxTreeViewer projectsList = wpip.getProjectsList();
 		projectsList.setCheckedElements(selectedProjects);

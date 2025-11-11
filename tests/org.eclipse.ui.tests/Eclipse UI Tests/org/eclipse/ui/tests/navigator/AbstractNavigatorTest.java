@@ -27,18 +27,18 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Rule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * The AbstractNavigatorTest is the abstract superclass
  * of tests that use a populated Resource Navigator.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class AbstractNavigatorTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	protected IProject testProject;
 
@@ -81,7 +81,7 @@ public abstract class AbstractNavigatorTest {
 		navigator = window.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
 	}
 
-	@After
+	@AfterEach
 	public final void cleanupWorkspace() throws Exception {
 		if (testProject != null) {
 			testProject.delete(true, null);

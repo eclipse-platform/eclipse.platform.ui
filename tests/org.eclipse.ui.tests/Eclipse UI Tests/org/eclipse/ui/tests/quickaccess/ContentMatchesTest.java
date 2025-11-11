@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.quickaccess;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,28 +25,28 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the content of quick access for given requests
  *
  * @since 3.14
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ContentMatchesTest {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private static final int TIMEOUT = 3000;
 	private QuickAccessDialog dialog;
 	private QuickAccessContents quickAccessContents;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		dialog = new QuickAccessDialog(window, null);
@@ -54,7 +54,7 @@ public class ContentMatchesTest {
 		dialog.open();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		dialog.close();
 	}

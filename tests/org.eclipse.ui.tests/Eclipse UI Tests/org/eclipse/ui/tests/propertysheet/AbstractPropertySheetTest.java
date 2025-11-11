@@ -25,23 +25,23 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.views.properties.PropertySheet;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.4
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class AbstractPropertySheetTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private static final String PIN_PROPERTY_SHEET_ACTION_ID_PREFIX = "org.eclipse.ui.views.properties.PinPropertySheetAction";
 	protected IWorkbenchPage activePage;
 
-	@Before
+	@BeforeEach
 	public final void initializeActivePage() throws Exception {
 		IWorkbenchWindow workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();

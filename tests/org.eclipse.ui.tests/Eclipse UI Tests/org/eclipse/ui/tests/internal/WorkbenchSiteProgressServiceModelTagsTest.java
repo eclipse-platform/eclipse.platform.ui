@@ -15,11 +15,11 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -32,20 +32,20 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class WorkbenchSiteProgressServiceModelTagsTest {
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow window;
 
@@ -63,7 +63,7 @@ public class WorkbenchSiteProgressServiceModelTagsTest {
 
 	private WorkbenchSiteProgressServiceTestable progressService;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
@@ -84,7 +84,7 @@ public class WorkbenchSiteProgressServiceModelTagsTest {
 	}
 
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		eventBroker.unsubscribe(eventHandler);
 		eventBroker = null;

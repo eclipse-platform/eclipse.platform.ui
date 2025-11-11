@@ -14,9 +14,9 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.Predicate;
 
@@ -35,15 +35,16 @@ import org.eclipse.ui.SelectionListenerFactory;
 import org.eclipse.ui.SelectionListenerFactory.ISelectionModel;
 import org.eclipse.ui.SelectionListenerFactory.Predicates;
 import org.eclipse.ui.tests.SelectionProviderView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the ISelectionService class.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class SelectionListenerFactoryTest implements ISelectionListener {
 	private static final String KNOCK_KNOCK = "KnockKnock";
 
@@ -54,10 +55,9 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	private boolean fEventReceived;
 
 	private int fCounter;
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
@@ -602,7 +602,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	 * visible.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testNullListener() throws Throwable {
 		INullSelectionListener nullSelectionListener = (pPart, pSelection) -> fEventReceived = true;
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);

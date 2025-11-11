@@ -16,9 +16,9 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,22 +37,22 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.eclipse.ui.views.IStickyViewDescriptor;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class StickyViewTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
@@ -121,7 +121,7 @@ public class StickyViewTest {
 	 * @throws PartInitException
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestClosableFlag() throws PartInitException {
 		//explicit closeable = true
 		testCloseable("org.eclipse.ui.tests.api.StickyViewRight1", true);
@@ -132,7 +132,7 @@ public class StickyViewTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestMoveableFlag() throws PartInitException {
 		//explicit closeable = true
 		testMoveable("org.eclipse.ui.tests.api.StickyViewRight1", true);
@@ -278,7 +278,7 @@ public class StickyViewTest {
 	 * @since 3.2
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestPerspectiveViewToolBarVisible() throws Throwable {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
@@ -359,7 +359,7 @@ public class StickyViewTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();

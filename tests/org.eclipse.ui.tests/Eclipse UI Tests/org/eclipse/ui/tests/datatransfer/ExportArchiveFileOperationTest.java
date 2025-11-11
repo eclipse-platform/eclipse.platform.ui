@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -44,18 +44,18 @@ import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileExportOperation;
 import org.eclipse.ui.internal.wizards.datatransfer.TarEntry;
 import org.eclipse.ui.internal.wizards.datatransfer.TarException;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TestName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ExportArchiveFileOperationTest implements IOverwriteQuery {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	@Rule
 	public final TestName testName = new TestName();
@@ -325,7 +325,7 @@ public class ExportArchiveFileOperationTest implements IOverwriteQuery {
 
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		project = FileUtil.createProject("Export" + testName.getMethodName());
 		File destination =
@@ -338,7 +338,7 @@ public class ExportArchiveFileOperationTest implements IOverwriteQuery {
 		excludeProjectPath = false;
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		// delete exported data
 		File root = new File(localDirectory);

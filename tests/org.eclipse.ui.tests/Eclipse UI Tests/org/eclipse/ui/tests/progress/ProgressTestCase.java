@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.progress;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -29,20 +29,20 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.ProgressView;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public abstract class ProgressTestCase {
 
 	protected ProgressView progressView;
 	protected IWorkbenchWindow window;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		window = openTestWindow("org.eclipse.ui.resourcePerspective");
 
@@ -51,7 +51,7 @@ public abstract class ProgressTestCase {
 		FinishedJobs.getInstance().clearAll();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		// Remove progress info items
 		FinishedJobs.getInstance().clearAll();

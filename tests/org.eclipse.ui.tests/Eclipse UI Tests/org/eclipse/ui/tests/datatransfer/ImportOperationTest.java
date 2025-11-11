@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,19 +32,18 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ImportOperationTest implements IOverwriteQuery {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private static final String[] directoryNames = { "dir1", "dir2" };
 
@@ -78,7 +77,7 @@ public class ImportOperationTest implements IOverwriteQuery {
 		return "";
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		Class<?> testClass = Class
 				.forName("org.eclipse.ui.tests.datatransfer.ImportOperationTest");
@@ -106,7 +105,7 @@ public class ImportOperationTest implements IOverwriteQuery {
 	 * Tear down. Delete the project we created and all of the
 	 * files on the file system.
 	 */
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		try {
 			project.delete(true, true, null);
@@ -271,6 +270,7 @@ public class ImportOperationTest implements IOverwriteQuery {
 				}
 			}
 			assertTrue("Import failed to import file " + fileName, k < fileNames.length);
+import org.junit.jupiter.api.extension.ExtendWith;
 		}
 	}
 }

@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.adaptable;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -32,19 +32,19 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @version 1.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class AdaptableDecoratorTestCase implements ILabelProviderListener {
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private DecoratorDefinition fullDefinition;
 
@@ -60,7 +60,7 @@ public class AdaptableDecoratorTestCase implements ILabelProviderListener {
 
 	protected IFile testFile;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		createTestFile();
 		showAdaptedNav();
@@ -85,7 +85,7 @@ public class AdaptableDecoratorTestCase implements ILabelProviderListener {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (testProject != null) {
 			testProject.delete(true, null);

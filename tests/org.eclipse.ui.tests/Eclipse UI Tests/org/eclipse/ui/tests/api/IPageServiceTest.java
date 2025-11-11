@@ -15,9 +15,9 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,20 +28,20 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests the IPageService class.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspectiveListener {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IWorkbenchWindow fWindow;
 
@@ -51,7 +51,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 
 	private boolean perspEventReceived;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
@@ -88,7 +88,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 	 * Tests the addPageListener method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testAddPageListener() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -115,7 +115,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 	 * Tests the removePageListener method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestRemovePageListener() throws Throwable {
 		// From Javadoc: "Removes the given page listener.
 		// Has no affect if an identical listener is not registered."
@@ -136,7 +136,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 	 * Tests getActivePage.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetActivePage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -168,7 +168,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 	 * Tests the addPerspectiveListener method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testAddPerspectiveListener() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -197,7 +197,7 @@ public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspect
 	 * Tests the removePerspectiveListener method.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void XXXtestRemovePerspectiveListener() throws Throwable {
 		// From Javadoc: "Removes the given page's perspective listener.
 		// Has no affect if an identical listener is not registered."

@@ -14,10 +14,10 @@
 package org.eclipse.ui.tests.intro;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPageLayout;
@@ -36,22 +36,22 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IntroTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
@@ -119,7 +119,7 @@ public class IntroTest {
 	}
 
 	@Test
-	@Ignore("disabled during E4 transition")
+	@Disabled("disabled during E4 transition")
 	public void testActivateProblemsView() throws Exception {
 		IIntroManager introManager= window.getWorkbench().getIntroManager();
 		IIntroPart part= introManager.showIntro(window, false);
@@ -155,7 +155,7 @@ public class IntroTest {
 	 * that it no longer exists.
 	 */
 	@Test
-	@Ignore("disabled during E4 transition")
+	@Disabled("disabled during E4 transition")
 	public void testPerspectiveChange() {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
@@ -186,7 +186,7 @@ public class IntroTest {
 	 * See IntroTest2.java
 	 */
 	@Test
-	@Ignore("disabled during E4 transition")
+	@Disabled("disabled during E4 transition")
 	public void testPerspectiveChangeWith32StickyBehavior() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
@@ -247,7 +247,7 @@ public class IntroTest {
 		assertNull(workbench.getIntroManager().getIntro());
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		// these tests rely on the 3.2 behavior for sticky views
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -261,7 +261,7 @@ public class IntroTest {
 		window = openTestWindow();
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}

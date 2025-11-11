@@ -24,13 +24,13 @@ import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Performance tests for showing views.
@@ -39,13 +39,13 @@ import org.junit.runners.Parameterized.Parameters;
  * The views are shown in an empty perspective.
  */
 @RunWith(Parameterized.class)
+@ExtendWith(CloseTestWindowsExtension.class)
 public class OpenCloseViewTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {

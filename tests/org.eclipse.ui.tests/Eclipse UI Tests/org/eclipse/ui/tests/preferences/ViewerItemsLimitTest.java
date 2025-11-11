@@ -17,8 +17,8 @@ import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -60,18 +60,18 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.views.markers.MarkersTreeViewer;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ViewerItemsLimitTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private IPreferenceStore preferenceStore;
 
@@ -89,7 +89,7 @@ public class ViewerItemsLimitTest {
 
 	private IWorkbenchPage activePage;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		cleanUp();
 		preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -102,7 +102,7 @@ public class ViewerItemsLimitTest {
 		getWorkbench().showPerspective(EmptyPerspective.PERSP_ID, window);
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		cleanUp();
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, DEFAULT_VIEW_LIMIT);
@@ -366,7 +366,7 @@ public class ViewerItemsLimitTest {
 	 * search. Check limited search results. Add new search data onto workspace and
 	 * refresh search to see if search results updated properly.
 	 */
-	@Ignore
+	@Disabled
 	@Test
 	public void testLimitedSearchResult() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

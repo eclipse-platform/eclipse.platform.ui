@@ -22,9 +22,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Measures the time required to layout the widget 10 times. Does not include
@@ -32,10 +32,10 @@ import org.junit.Test;
  *
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class LayoutTest extends PerformanceTestCaseJunit4 {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	private final TestWidgetFactory widgetFactory;
 

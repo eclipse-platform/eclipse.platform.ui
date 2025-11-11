@@ -14,9 +14,9 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -40,22 +40,22 @@ import org.eclipse.ui.tests.api.MockAction;
 import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.api.MockViewPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * This class contains tests for the editor action bars
  * implementation.
  */
-@Ignore
+@Disabled
+@ExtendWith(CloseTestWindowsExtension.class)
 public class EditorActionBarsTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	protected IWorkbenchWindow fWindow;
 
@@ -63,7 +63,7 @@ public class EditorActionBarsTest {
 
 	private final String EDITOR_ID = "org.eclipse.ui.tests.internal.EditorActionBarsTest";
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();

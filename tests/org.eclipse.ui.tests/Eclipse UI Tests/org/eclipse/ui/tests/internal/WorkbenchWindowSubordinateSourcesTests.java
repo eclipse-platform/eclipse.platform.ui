@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -31,26 +31,26 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests various sources keyed off the workbench window.
  *
  * @since 3.3
  */
-@Ignore("Disabled due 544032, see also 485167")
+@Disabled("Disabled due 544032, see also 485167")
+@ExtendWith(CloseTestWindowsExtension.class)
 public class WorkbenchWindowSubordinateSourcesTests {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+	
 
 	private WorkbenchWindow window;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = (WorkbenchWindow) openTestWindow();
 		processEvents();

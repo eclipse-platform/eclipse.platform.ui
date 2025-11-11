@@ -28,24 +28,24 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Verifies the performance of progress reporting APIs in various contexts which
  * offer progress monitoring.
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Number of iterations to run for the inner loop in these tests. This
@@ -84,7 +84,7 @@ public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 	private volatile boolean isDone;
 	private Display display;
 
-	@Before
+	@BeforeEach
 	public final void storeDisplay() throws Exception {
 		this.display = Display.getCurrent();
 	}

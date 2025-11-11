@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.intro;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -30,19 +30,19 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.0
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class IntroTest2 {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	IWorkbenchWindow window = null;
 
@@ -81,7 +81,7 @@ public class IntroTest2 {
 
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		// these tests rely on the 3.3 behavior for sticky views
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -95,7 +95,7 @@ public class IntroTest2 {
 		window = openTestWindow();
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}

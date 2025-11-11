@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.api.workbenchpart;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -28,11 +28,12 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ArbitraryPropertyTest {
 	private static final String EDITOR_ID = "org.eclipse.ui.tests.TitleTestEditor";
 
@@ -44,10 +45,9 @@ public class ArbitraryPropertyTest {
 
 	IWorkbenchPage page;
 
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();

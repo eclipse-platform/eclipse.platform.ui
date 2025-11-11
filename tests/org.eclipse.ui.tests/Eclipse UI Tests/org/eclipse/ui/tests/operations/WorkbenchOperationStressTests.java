@@ -23,9 +23,9 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Stress tests the Operations Framework API to find any interaction problems
@@ -33,14 +33,14 @@ import org.junit.Test;
  *
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class WorkbenchOperationStressTests {
 
 	static int STRESS_TEST_REPETITIONS = 2000;
 
 	static int OPEN_WINDOW_REPETITIONS = 2;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 
 	/*

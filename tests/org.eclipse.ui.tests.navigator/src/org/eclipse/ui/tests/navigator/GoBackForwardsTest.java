@@ -15,7 +15,7 @@ package org.eclipse.ui.tests.navigator;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,26 +36,28 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestUtil.Condition;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.TextSelectionNavigationLocation;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  *
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class GoBackForwardsTest {
 
 	private static final String PROJECT_NAME = "GoBackForwardsTestProject";
 	private static final String FILE_NAME = "GoBackForwardsTestFile.java";
-	private static final String FILE_CONTENTS = "public class GoBackForwardsTestFile {\n"
+	private static final String FILE_CONTENTS = "@ExtendWith(CloseTestWindowsExtension.class)
+public class GoBackForwardsTestFile {\n"
 			+ "    public static void main(String[] args) {\n" + "        System.out.println(\"Hello world!\");\n"
 			+ "    }\n" + "}";
 	private static final String GENERIC_EDITOR_ID = "org.eclipse.ui.genericeditor.GenericEditor";
@@ -65,10 +67,9 @@ public class GoBackForwardsTest {
 	private IProject project;
 	private IFile file;
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException, IOException {
 		project = FileUtil.createProject(PROJECT_NAME);
 		file = FileUtil.createFile(FILE_NAME, project);

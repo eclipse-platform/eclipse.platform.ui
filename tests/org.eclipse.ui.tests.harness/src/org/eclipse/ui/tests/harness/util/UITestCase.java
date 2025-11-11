@@ -16,15 +16,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * <code>UITestCase</code> is a useful super class for most
@@ -32,55 +26,16 @@ import junit.framework.TestCase;
  * and pages.  It will also automatically close the test
  * windows when the tearDown method is called.
  */
-public abstract class UITestCase extends TestCase {
-
-	/**
-	 * Rule to close windows opened during the test case, manually called to remain
-	 * compatible with JUnit3
-	 */
-	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	/**
-	 * Required to preserve the existing logging output when running tests with
-	 * {@link BlockJUnit4ClassRunner}.
-	 */
-	@Rule
-	public TestWatcher testWatcher = new TestWatcher() {
-		@Override
-		protected void starting(Description description) {
-			runningTest = description.getMethodName();
-		}
-		@Override
-		protected void finished(Description description) {
-			runningTest = null;
-		}
-	};
-	/**
-	 * Name of the currently executed test method. Only valid if test is executed
-	 * with {@link BlockJUnit4ClassRunner}.
-	 */
-	private String runningTest = null;
-
-	public UITestCase(String testName) {
-		super(testName);
-	}
+@ExtendWith(CloseTestWindowsExtension.class)
+public abstract class UITestCase {
 
 	/**
 	 * Simple implementation of setUp. Subclasses are prevented from overriding this
 	 * method to maintain logging consistency. doSetUp() should be overridden
 	 * instead.
-	 * <p>
-	 * This method is public and annotated with {@literal @}{@link Before} to setup
-	 * tests which are configured to {@link RunWith} JUnit4 runner.
-	 * </p>
 	 */
-	@Before
-	@Override
+	@BeforeEach
 	public final void setUp() throws Exception {
-		super.setUp();
-		String name = runningTest != null ? runningTest : this.getName();
-		closeTestWindows.setTestName(name);
-		closeTestWindows.before();
 		doSetUp();
 	}
 
@@ -98,16 +53,10 @@ public abstract class UITestCase extends TestCase {
 	 * Simple implementation of tearDown. Subclasses are prevented from overriding
 	 * this method to maintain logging consistency. doTearDown() should be
 	 * overridden instead.
-	 * <p>
-	 * This method is public and annotated with {@literal @}{@link After} to setup
-	 * tests which are configured to {@link RunWith} JUnit4 runner.
-	 * </p>
 	 */
-	@After
-	@Override
+	@AfterEach
 	public final void tearDown() throws Exception {
 		doTearDown();
-		closeTestWindows.after();
 	}
 
 	/**

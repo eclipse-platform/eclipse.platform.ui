@@ -29,10 +29,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests that key bindings are treated correctly in a multi-page editor. This
@@ -42,11 +42,11 @@ import org.junit.Test;
  * @since 3.0
  */
 @SuppressWarnings("removal")
-@Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
+@Disabled("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
+@ExtendWith(CloseTestWindowsExtension.class)
 public class MultiPageKeyBindingTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	
 
 	/**
 	 * Tests that the key bindings are updated when the page is switched in a
