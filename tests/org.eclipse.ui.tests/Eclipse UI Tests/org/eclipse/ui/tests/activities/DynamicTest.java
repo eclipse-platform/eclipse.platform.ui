@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
@@ -412,14 +413,15 @@ public class DynamicTest {
 		assertFalse(category.isDefined());
 		// set to true when the activity/category in question have had an event
 		// fired
-		final boolean[] registryChanged = new boolean[] { false, false };
+		final AtomicBoolean activityChanged = new AtomicBoolean(false);
+		final AtomicBoolean categoryChanged = new AtomicBoolean(false);
 		activity.addActivityListener(activityEvent -> {
 			System.err.println("activityChanged");
-			registryChanged[0] = true;
+			activityChanged.set(true);
 		});
 		category.addCategoryListener(categoryEvent -> {
 			System.err.println("categoryChanged");
-			registryChanged[1] = true;
+			categoryChanged.set(true);
 
 		});
 
@@ -442,10 +444,10 @@ public class DynamicTest {
 		// spin the event loop and ensure that the changes come down the pipe.
 		// 20 seconds should be more than enough
 		DisplayHelper.waitForCondition(PlatformUI.getWorkbench().getDisplay(), 20000,
-				() -> registryChanged[0] && registryChanged[1]);
+				() -> activityChanged.get() && categoryChanged.get());
 
-		assertTrue("Activity Listener not called", registryChanged[0]);
-		assertTrue("Category Listener not called", registryChanged[1]);
+		assertTrue("Activity Listener not called", activityChanged.get());
+		assertTrue("Category Listener not called", categoryChanged.get());
 
 		assertTrue(activity.isDefined());
 		Set<IActivityPatternBinding> patternBindings = activity.getActivityPatternBindings();
