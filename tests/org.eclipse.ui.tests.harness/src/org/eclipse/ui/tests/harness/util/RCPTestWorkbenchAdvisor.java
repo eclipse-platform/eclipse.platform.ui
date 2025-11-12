@@ -232,16 +232,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		}
 
-		// Process remaining events to allow any pending runnables to execute
-		// This gives operations WITHOUT DisplayAccess a chance to run if there are bugs
-		Display display = Display.getCurrent();
-		if (display != null) {
-			// Process all pending events
-			while (display.readAndDispatch()) {
-				// Keep processing
-			}
-		}
-
 		// Now mark as started - operations with DisplayAccess should have completed
 		// Operations without DisplayAccess should still be pending (deferred)
 		synchronized (RCPTestWorkbenchAdvisor.class) {
