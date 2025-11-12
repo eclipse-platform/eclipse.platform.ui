@@ -313,7 +313,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 			String[] commandAndText = commands[i].split("\\$\\$\\$"); //$NON-NLS-1$
 
-			WidgetFactory.label(SWT.NONE).text(commandAndText[0]).foreground(color)
+			WidgetFactory.label(SWT.NONE).text(commandAndText[0]).foreground(color).align(SWT.RIGHT)
 					.supplyLayoutData(labelGridDataFactory::create).create(onboardingComposite);
 			WidgetFactory.label(SWT.NONE).text(commandAndText[1]).foreground(color)
 					.supplyLayoutData(commandGridDataFactory::create).create(onboardingComposite);
