@@ -2466,12 +2466,11 @@ public class PartRenderingEngineTests {
 		assertTrue(" PartStack with children should be rendered", partStackForPartBPartC.isToBeRendered());
 		partService.hidePart(partB);
 		partService.hidePart(partC);
-		DisplayHelper.waitForCondition(Display.getDefault(), 5_000,
-				() -> partStackForPartBPartC.isToBeRendered() == false);
-		assertFalse(
+		contextRule.spinEventLoop();
+		assertTrue(
 				"CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed",
-				partStackForPartBPartC.isToBeRendered());
-		assertFalse("Part stack should be removed", partStackForPartBPartC.isToBeRendered());
+				DisplayHelper.waitForCondition(Display.getDefault(), 5_000,
+						() -> partStackForPartBPartC.isToBeRendered() == false));
 		// PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be removed
 		// even if children are removed
 		partService.hidePart(editor, true);
