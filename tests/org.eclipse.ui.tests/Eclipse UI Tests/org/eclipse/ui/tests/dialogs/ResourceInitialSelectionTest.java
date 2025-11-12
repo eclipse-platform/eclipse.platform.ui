@@ -452,9 +452,29 @@ public class ResourceInitialSelectionTest {
 	 * This ensures background jobs finish before assertions are made.
 	 */
 	private void waitForDialogRefresh() {
-		// Process UI events multiple times to allow background jobs to complete
-		// Similar to the fix in DecoratorAdaptableTests
-		for (int i = 0; i < 3; i++) {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+
+		// The dialog performs async operations (FilterHistoryJob → FilterJob →
+		// RefreshCacheJob → RefreshJob) to filter and populate the table after refresh()
+		// We need to wait for the table to be populated before checking selection state
+
+		// First wait for table to have items (up to 2 seconds)
+		DisplayHelper.waitForCondition(display, 2000, () -> {
+			processUIEvents();
+			try {
+				Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+						.getChildren()[0]).getChildren()[0]).getChildren()[3];
+				return table.getItemCount() > 0;
+			} catch (Exception e) {
+				return false;
+			}
+		});
+
+		// Then wait additional time for selection to be applied
+		// The selection is set asynchronously after table population completes
+		// Previous fix used only 3 × 50ms = 150ms which was insufficient on slow systems
+		// Increased to handle slower machines while minimizing delay on fast ones
+		for (int i = 0; i < 5; i++) {
 			processUIEvents();
 			try {
 				Thread.sleep(50);
@@ -463,6 +483,7 @@ public class ResourceInitialSelectionTest {
 				break;
 			}
 		}
+
 		// Final event loop processing
 		processUIEvents();
 	}
