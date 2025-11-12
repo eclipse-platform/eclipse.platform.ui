@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -601,11 +603,30 @@ public class FileSearchTests {
 						.forEach(extension -> registry.removeExtension(extension, masterToken));
 			}) {
 
+				// Wait for content type to be registered and available
+				// This prevents race conditions where the content type might not be immediately available
+				IContentTypeManager contentTypeManager= Platform.getContentTypeManager();
+				IContentType binaryContentType= null;
+				for (int i= 0; i < 50 && binaryContentType == null; i++) {
+					binaryContentType= contentTypeManager.getContentType("org.eclipse.search.tests.binaryFile");
+					if (binaryContentType == null) {
+						Thread.sleep(10); // Wait 10ms before retrying
+					}
+				}
+				if (binaryContentType == null) {
+					throw new AssertionError("Content type 'org.eclipse.search.tests.binaryFile' was not registered");
+				}
+
 				// Use unique folder name to avoid conflicts with other tests running in parallel
 				String uniqueFolderName= "binaryContentTypeTest-" + java.util.UUID.randomUUID().toString();
 				IFolder folder= ResourceHelper.createFolder(fProject.getFolder(uniqueFolderName));
 				IFile textfile= ResourceHelper.createFile(folder, "textfile", "text hello");
 				IFile binaryfile= ResourceHelper.createFile(folder, "binaryfile", "binary hello");
+
+				// Force content type detection on files to ensure the newly registered content type is applied
+				// This helps avoid race conditions where the content type might not be immediately available
+				textfile.getContentDescription();
+				binaryfile.getContentDescription();
 
 				Pattern searchPattern= PatternConstructor.createPattern("hello", true, false);
 
