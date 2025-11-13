@@ -626,11 +626,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			if (onBottom) {
 				highlightOnTop = !highlightOnTop;
 			}
-			int highlightHeight = 2;
-			int verticalOffset = highlightOnTop ? 0 : bounds.height - (highlightHeight - 1);
+			int highlightHeight = 2 + (superimposeKeylineOutline && highlightOnTop ? OUTER_KEYLINE_WIDTH : 0);
+			int verticalOffset = highlightOnTop ? 0 : outlineBoundsForOutline.height - (highlightHeight - 1);
 			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
 			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
-			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
+			gc.fillRectangle(outlineBoundsForOutline.x + horizontalOffset, outlineBoundsForOutline.y + verticalOffset, outlineBoundsForOutline.width - widthAdjustment,
 					highlightHeight);
 		}
 
