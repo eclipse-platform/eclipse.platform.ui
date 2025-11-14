@@ -416,7 +416,7 @@ public abstract class AbstractPairMatcherTest {
 			pos2= pos1;
 		}
 
-		final String stripped= str.replaceAll("%", "").replaceAll("#", "");
+		final String stripped= str.replace("%", "").replace("#", "");
 
 		if (enclosingTest) {
 			return new TestCase(stripped, pos1, pos2, match1, match2);
