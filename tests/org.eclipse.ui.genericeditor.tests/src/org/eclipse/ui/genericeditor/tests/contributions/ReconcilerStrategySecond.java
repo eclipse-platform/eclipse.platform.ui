@@ -54,7 +54,7 @@ public class ReconcilerStrategySecond implements IReconcilingStrategy, IReconcil
 		String doc = document.get();
 		if(doc.contains(SEARCH_TERM)) {
 			Display.getDefault().asyncExec(() -> {
-				document.set(document.get().replaceAll(SEARCH_TERM, REPLACEMENT));
+				document.set(document.get().replace(SEARCH_TERM, REPLACEMENT));
 			});
 		}
 	}
