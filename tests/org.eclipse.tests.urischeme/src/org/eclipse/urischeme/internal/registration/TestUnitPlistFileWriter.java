@@ -234,7 +234,7 @@ public class TestUnitPlistFileWriter {
 	private void assertXml(String xml, PlistFileWriter writer) {
 		StringWriter stringWriters[] = new StringWriter[1];
 		writer.writeTo(() -> (stringWriters[0] = new StringWriter()));
-		assertEquals(xml, stringWriters[0].toString().replaceAll("\r\n", "\n"));
+		assertEquals(xml, stringWriters[0].toString().replace("\r\n", "\n"));
 	}
 
 	private PlistFileWriter getWriter() {
