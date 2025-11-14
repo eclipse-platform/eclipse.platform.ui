@@ -184,21 +184,14 @@ public class SaveableHelper {
 		IRunnableWithProgress progressOp = monitor -> {
 			IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 			SubMonitor subMonitor = SubMonitor.convert(monitorWrap, WorkbenchMessages.Save, dirtyModels.size());
-			try {
-				for (Saveable model : dirtyModels) {
-					// handle case where this model got saved as a result of
-					// saving another
-					if (!model.isDirty()) {
-						subMonitor.worked(1);
-						continue;
-					}
-					doSaveModel(model, subMonitor.split(1), window, confirm);
-					if (subMonitor.isCanceled()) {
-						break;
-					}
+			for (Saveable model : dirtyModels) {
+				// handle case where this model got saved as a result of
+				// saving another
+				if (!model.isDirty()) {
+					subMonitor.worked(1);
+					continue;
 				}
-			} finally {
-				monitorWrap.done();
+				doSaveModel(model, subMonitor.split(1), window, confirm);
 			}
 		};
 
