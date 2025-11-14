@@ -135,7 +135,6 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 				fUndo= perform.getUndoChange();
 			}
 		} finally {
-			subMon.done();
 			if (fRefactoringContext != null) {
 				fRefactoringContext.dispose();
 			}

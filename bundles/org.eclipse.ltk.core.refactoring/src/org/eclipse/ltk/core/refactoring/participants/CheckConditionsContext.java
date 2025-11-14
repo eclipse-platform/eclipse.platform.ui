@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
@@ -123,11 +122,7 @@ public class CheckConditionsContext {
 		SubMonitor sm= SubMonitor.convert(pm, "", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
 			result.merge(checker.check(sm.split(1)));
-			if (pm.isCanceled()) {
-				throw new OperationCanceledException();
-			}
 		}
-		pm.done();
 		return result;
 	}
 

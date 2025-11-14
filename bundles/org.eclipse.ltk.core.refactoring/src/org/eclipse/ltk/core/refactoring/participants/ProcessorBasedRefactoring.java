@@ -232,9 +232,6 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			if (result.hasFatalError()) {
 				return result;
 			}
-			if (sm.isCanceled()) {
-				throw new OperationCanceledException();
-			}
 
 			SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
 			RefactoringParticipant[] loadedParticipants= getProcessor().loadParticipants(result, sharableParticipants);
@@ -270,9 +267,6 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 				stats.endRun();
 
-				if (sm2.isCanceled()) {
-					throw new OperationCanceledException();
-				}
 			}
 			if (result.hasFatalError()) {
 				return result;
@@ -292,9 +286,6 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		try {
 			SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.ProcessorBasedRefactoring_create_change, fParticipants.size() * 2 + 1);
 			Change processorChange= getProcessor().createChange(sm.split(1));
-			if (sm.isCanceled()) {
-				throw new OperationCanceledException();
-			}
 
 			fTextChangeMap= new HashMap<>();
 			addToTextChangeMap(processorChange);
@@ -333,9 +324,6 @@ public class ProcessorBasedRefactoring extends Refactoring {
 				} catch (CoreException | RuntimeException e) {
 					disableParticipant(participant, e);
 					throw e;
-				}
-				if (sm.isCanceled()) {
-					throw new OperationCanceledException();
 				}
 			}
 
