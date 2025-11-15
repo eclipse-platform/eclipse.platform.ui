@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2095,12 +2095,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				Object parent = getParentElement(element);
 				if (parent != null && !equals(parent, getRoot())
 						&& !(parent instanceof TreePath tp && tp.getSegmentCount() == 0)) {
-					Widget[] parentItems = internalFindItems(parent);
-					for (Widget parentItem : parentItems) {
-						if (parentItem instanceof Item it) {
-							updatePlus(it, parent);
-						}
-					}
+					internalRemove(parent, new Object[] { element });
 				}
 			}
 		}
