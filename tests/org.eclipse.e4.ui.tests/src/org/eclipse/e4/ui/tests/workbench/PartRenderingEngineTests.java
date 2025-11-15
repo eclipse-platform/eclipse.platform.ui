@@ -113,12 +113,33 @@ public class PartRenderingEngineTests {
 	}
 
 	private void checkLog() {
-		try {
-			// sleep a bit because notifications are done on another thread
-			Thread.sleep(100);
-		} catch (Exception e) {
-			// ignored
+		// Wait a bit because notifications are done on another thread
+		// Use a short timeout to allow log events to be processed
+		long startTime = System.currentTimeMillis();
+		long timeout = 1000; // 1 second max wait
+		
+		while (System.currentTimeMillis() - startTime < timeout) {
+			// Process any pending display events if we're on the UI thread
+			Display display = Display.getCurrent();
+			if (display != null) {
+				while (display.readAndDispatch()) {
+					// Keep processing
+				}
+			}
+			
+			// If already logged, no need to wait longer
+			if (logged) {
+				break;
+			}
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
 		}
+		
 		assertFalse(logged);
 	}
 

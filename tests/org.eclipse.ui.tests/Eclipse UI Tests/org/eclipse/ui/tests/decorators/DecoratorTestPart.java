@@ -26,11 +26,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class DecoratorTestPart extends ViewPart {
 
-	private static final int DELAY_TIME = 2000;// Wait 2 seconds
-
 	public boolean waitingForDecoration = true;
-
-	private long endTime;
 
 	private ILabelProviderListener listener;
 
@@ -54,22 +50,40 @@ public abstract class DecoratorTestPart extends ViewPart {
 	 * Get the listener for the suite.
 	 */
 	private ILabelProviderListener getDecoratorManagerListener() {
-		// Reset the end time each time we get an update
-		listener = event -> endTime = System.currentTimeMillis() + DELAY_TIME;
+		// Listener for decorator manager events
+		listener = event -> {
+			// Decorator update occurred
+		};
 
 		return listener;
 	}
 
+	/**
+	 * Process events until decorations are applied. Uses a fixed delay
+	 * to allow time for decorator updates to be processed.
+	 */
 	public void readAndDispatchForUpdates() {
-		while (System.currentTimeMillis() < endTime) {
-			Display.getCurrent().readAndDispatch();
+		Display display = Display.getCurrent();
+		// Process events for 1 second with regular intervals
+		for (int i = 0; i < 20; i++) {
+			while (display.readAndDispatch()) {
+				// Process all pending events
+			}
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
 		}
-
+		// Final pass to process any remaining events
+		while (display.readAndDispatch()) {
+			// Keep processing
+		}
 	}
 
 	public void setUpForDecorators() {
-		endTime = System.currentTimeMillis() + DELAY_TIME;
-
+		// No initialization needed for simple fixed delay approach
 	}
 
 	@Override
