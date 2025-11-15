@@ -309,6 +309,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	public void showOnly(String[] filteredIds) {
 		if (!hasAtMostOnePage()) {
 			filteredTree.addFilter(new PreferenceNodeFilter(filteredIds));
+
+			// expand the tree to level 2 if there is only one parent node
+			if (getTreeViewer().getTree().getItems().length == 1) {
+				getTreeViewer().expandToLevel(2);
+			}
 		}
 	}
 
