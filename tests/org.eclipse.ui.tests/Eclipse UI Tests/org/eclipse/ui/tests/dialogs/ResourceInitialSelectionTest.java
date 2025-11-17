@@ -471,9 +471,8 @@ public class ResourceInitialSelectionTest {
 		});
 
 		// Then wait additional time for selection to be applied
-		// The selection is set asynchronously after table population completes
-		// Previous fix used only 3 × 50ms = 150ms which was insufficient on slow systems
-		// Increased to handle slower machines while minimizing delay on fast ones
+		// FilteredItemsSelectionDialog.refresh() now uses Display.asyncExec() to apply
+		// selection after table refresh completes, so we need to process those async events
 		for (int i = 0; i < 5; i++) {
 			processUIEvents();
 			try {
