@@ -52,6 +52,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -729,9 +730,18 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * @return Composite
 	 */
 	private Composite createPageContainer(Composite parent) {
-		Composite result = new Composite(parent, SWT.NULL);
-		result.setLayout(pageContainerLayout);
-		return result;
+		ScrolledComposite scrolled = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+		scrolled.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		scrolled.setExpandHorizontal(true);
+		scrolled.setExpandVertical(true);
+		Composite content = new Composite(scrolled, SWT.NULL);
+		content.setLayout(pageContainerLayout);
+		scrolled.setContent(content);
+		content.addListener(SWT.Resize, e -> {
+			scrolled.setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		});
+
+		return content;
 	}
 
 	/**
