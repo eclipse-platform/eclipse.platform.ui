@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.viewers.BoldStylerProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -61,11 +62,6 @@ import org.eclipse.ui.themes.ITheme;
  * @since 3.4
  */
 public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
-
-	/**
-	 * Preference node for the workbench SWT renderer
-	 */
-	private static final String ORG_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 
 	/**
 	 * Id for the command that opens the editor drop down
@@ -98,7 +94,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * @return Returns the enableMRU.
 	 */
 	private static boolean isMruEnabled() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
 		boolean initialMRUValue = preferences.getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT);
 		return preferences.getBoolean(StackRenderer.MRU_KEY, initialMRUValue);
 	}

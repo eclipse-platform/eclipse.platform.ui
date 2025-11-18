@@ -161,7 +161,7 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String TAB_FONT_KEY = "org.eclipse.ui.workbench.TAB_TEXT_FONT"; //$NON-NLS-1$
 
 	@Inject
-	@Preference(nodePath = "org.eclipse.e4.ui.workbench.renderers.swt")
+	@Preference(nodePath = CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT)
 	private IEclipsePreferences preferences;
 
 	@Inject
