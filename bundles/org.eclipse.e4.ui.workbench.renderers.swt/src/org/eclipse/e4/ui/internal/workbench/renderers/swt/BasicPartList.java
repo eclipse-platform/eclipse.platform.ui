@@ -229,9 +229,8 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 
 		// Get the preference value for hiding icons in view tabs
-		// Note: The preference qualifier is hardcoded here as it's private in CTabRendering
 		return Platform.getPreferencesService().getBoolean(
-				"org.eclipse.e4.ui.workbench.renderers.swt", //$NON-NLS-1$
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
 				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
 				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT,
 				null);

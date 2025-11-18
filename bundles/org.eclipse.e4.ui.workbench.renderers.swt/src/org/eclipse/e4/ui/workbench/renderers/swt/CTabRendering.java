@@ -47,7 +47,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	/**
 	 * The preference qualifier.
 	 */
-	private static final String PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
+	public static final String PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 
 	/**
 	 * A named preference for setting CTabFolder's to be rendered with rounded
