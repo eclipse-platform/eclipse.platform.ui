@@ -109,10 +109,14 @@
 
    <!-- The 3.x theme definition -->
    <extension point="org.eclipse.ui.themes">
-      <themeElementCategory
-            id="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
-            label="%org.eclipse.e4.demo.cssbridge.ui.views.Theme"/>
-
+   <themeElementCategory
+         id="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+         label="%org.eclipse.e4.demo.cssbridge.ui.views.Theme">
+      <description>
+         %org.eclipse.e4.demo.cssbridge.ui.views.Theme.description
+      </description>
+   </themeElementCategory>
+   
       <!-- for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Shell -->
       <colorDefinition
         	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.selection.foreground"
