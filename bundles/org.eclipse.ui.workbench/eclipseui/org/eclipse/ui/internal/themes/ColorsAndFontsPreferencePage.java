@@ -1959,6 +1959,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		}
 	}
 
+	private ThemeElementCategory getCategory() {
+		IStructuredSelection item = (IStructuredSelection) tree.getViewer().getSelection();
+		if (item != null && !item.isEmpty()) {
+			Object object = item.getFirstElement();
+			if (object instanceof ThemeElementCategory) {
+				return (ThemeElementCategory) object;
+			}
+		}
+		return null;
+	}
+
 	protected void updateControls() {
 		FontDefinition fontDefinition = getSelectedFontDefinition();
 		if (fontDefinition != null) {
@@ -1982,6 +1993,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			editDefaultButton.setEnabled(hasEditableDefault && isSetToDefault);
 			goToDefaultButton.setEnabled(hasEditableDefault);
 			setCurrentColor(colorDefinition);
+			return;
+		}
+		ThemeElementCategory category = getCategory();
+		if (category != null) {
+			fontChangeButton.setEnabled(false);
+			fontSystemButton.setEnabled(false);
+			fontResetButton.setEnabled(false);
+			editDefaultButton.setEnabled(false);
+			goToDefaultButton.setEnabled(false);
+
+			String desc = category.getDescription() != null ? category.getDescription() : ""; //$NON-NLS-1$
+			descriptionText.setText(desc);
 			return;
 		}
 		// not a font or a color?
