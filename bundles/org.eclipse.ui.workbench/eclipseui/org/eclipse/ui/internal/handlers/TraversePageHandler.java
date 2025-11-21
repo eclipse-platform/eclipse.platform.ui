@@ -41,6 +41,15 @@ public class TraversePageHandler extends WidgetMethodHandler {
 			int traversalDirection = translateToTraversalDirection(forward);
 			Control control = focusControl;
 			do {
+				if (control instanceof CTabFolder folder && !isRootCTabFolder(folder)) {
+					// For multi-page editors, we want to skip inner CTabFolders
+					// If not skipped there are two issues:
+					// 1. loopToFirstOrLastItem would change the selection of the inner CTabFolder
+					// 2. control.traverse itself would navigate up to the outer CTabFolder and
+					// navigate there
+					control = control.getParent();
+					continue;
+				}
 				if (control instanceof CTabFolder folder && isFinalItemInCTabFolder(folder, forward)
 						&& !hasHiddenItem(folder)) {
 					loopToFirstOrLastItem(folder, forward);
@@ -57,6 +66,15 @@ public class TraversePageHandler extends WidgetMethodHandler {
 			} while (control != null);
 		}
 		return null;
+	}
+
+	private boolean isRootCTabFolder(CTabFolder folder) {
+		for (var current = folder.getParent(); current != null; current = current.getParent()) {
+			if (current instanceof CTabFolder) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean hasHiddenItem(CTabFolder folder) {
