@@ -15,12 +15,12 @@
 package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
 
 /**
@@ -29,18 +29,16 @@ import org.w3c.dom.css.CSSStyleSheet;
 public class MediaRulesTest {
 
 	@Test
-	@Disabled("//THIS TEST KNOWN TO FAIL Dec 16/08")
 	void testMediaRule() throws Exception {
 		String css = """
-			@media screen, print {
-			BODY { line-height: 1.2 }
-			}
-			Label { background-color: #FF0000 }""";
+				@media screen, print {
+				BODY { line-height: 1.2 }
+				}
+				Label { background-color: #FF0000 }""";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
-		CSSRuleList rules = styleSheet.getCssRules();
-
-
-		assertEquals(1, rules.getLength());
+		assertEquals(2, styleSheet.getCssRules().getLength());
+		assertFalse(styleSheet.getCssRules().item(0).getCssText().contains("line-height"));
+		assertTrue(styleSheet.getCssRules().item(1).getCssText().contains("background-color"));
 	}
 }
