@@ -833,6 +833,53 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
 		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+		textViewer.setSelectedRange(7, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		textViewer.setSelectedRange(10, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		// Verify that after clearing the search, caret goes back to last active location
+		findReplaceLogic.setFindString("");
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+	}
+
+	@Test
+	public void testRestoreSelectionOnEmptyFindStringInIncrementalMode() {
+		String setupString= "test\ntest\ntest";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(5, 0); // Set initial selection
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+
+		findReplaceLogic.resetIncrementalBaseLocation(); // Set base location
+		findReplaceLogic.setFindString("test");
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+		findReplaceLogic.setFindString(""); // Clear the find string
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Restored to base location
+	}
+
+	@Test
+	public void testNoRestoreOnEmptyFindStringWhenNotIncremental() {
+		String setupString= "test\ntest\ntest";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(5, 0); // Set initial selection
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		// Do NOT activate incremental mode
+
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.setFindString("test");
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0)));
+		findReplaceLogic.setFindString(""); // Clear the find string
+		// Will not restore selection since incremental mode is not active
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Remains unchanged
 	}
 
 	@Test
@@ -866,8 +913,8 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.setFindString("Te");
 		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
 
-		findReplaceLogic.setFindString(""); // this clears the incremental search, but the "old search" still remains active
-		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
+		findReplaceLogic.setFindString(""); // clears the incremental search input, restoring the caret to the base location
+		assertEquals(new Point(0, 0), findReplaceLogic.getTarget().getSelection());
 	}
 
 	@Test
