@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench.renderers.swt" version="2">
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/CSSEngineHelper.java" type="org.eclipse.e4.ui.workbench.renderers.swt.CSSEngineHelper">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="CSSEngineHelper"/>
+                <message_argument value="getStyle(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/ContributionRecord.java" type="org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MApplicationElement"/>
+                <message_argument value="ContributionRecord"/>
+                <message_argument value="getTransientData()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MElementContainer&lt;T&gt;"/>
+                <message_argument value="ContributionRecord"/>
+                <message_argument value="getChildren()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MMenuContribution"/>
+                <message_argument value="ContributionRecord"/>
+                <message_argument value="getPositionInParent()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MUIElement"/>
+                <message_argument value="ContributionRecord"/>
+                <message_argument value="getVisibleWhen()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/HandledContributionItem.java" type="org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MHandledItem"/>
+                <message_argument value="HandledContributionItem"/>
+                <message_argument value="getWbCommand()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MHandledItem"/>
+                <message_argument value="HandledContributionItem"/>
+                <message_argument value="setWbCommand(ParameterizedCommand)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/PerspectiveRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="PerspectiveRenderer"/>
+                <message_argument value="setClassname(Object, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/PerspectiveStackRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveStackRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="PerspectiveStackRenderer"/>
+                <message_argument value="setClassname(Object, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/SWTPartRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="SWTPartRenderer"/>
+                <message_argument value="setClassnameAndId(Object, String, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/StackRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="ISaveHandler"/>
+                <message_argument value="StackRenderer"/>
+                <message_argument value="save(MPart, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="ISaveHandler"/>
+                <message_argument value="StackRenderer"/>
+                <message_argument value="saveParts(Collection&lt;MPart&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/ToolBarContributionRecord.java" type="org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MApplicationElement"/>
+                <message_argument value="ToolBarContributionRecord"/>
+                <message_argument value="getTransientData()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MElementContainer&lt;T&gt;"/>
+                <message_argument value="ToolBarContributionRecord"/>
+                <message_argument value="getChildren()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MToolBarContribution"/>
+                <message_argument value="ToolBarContributionRecord"/>
+                <message_argument value="getPositionInParent()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MUIElement"/>
+                <message_argument value="ToolBarContributionRecord"/>
+                <message_argument value="getVisibleWhen()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/ToolBarManagerRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="ToolBarManagerRenderer"/>
+                <message_argument value="setClassname(Object, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/TrimBarRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.TrimBarRenderer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MTrimBar"/>
+                <message_argument value="TrimBarRenderer"/>
+                <message_argument value="getPendingCleanup()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="MUIElement"/>
+                <message_argument value="TrimBarRenderer"/>
+                <message_argument value="getVisibleWhen()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/WBWRenderer.java" type="org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer">
+        <filter id="623939596">
+            <message_arguments>
+                <message_argument value="Save"/>
+                <message_argument value="WBWRenderer"/>
+                <message_argument value="CANCEL"/>
+            </message_arguments>
+        </filter>
+        <filter id="623939596">
+            <message_arguments>
+                <message_argument value="Save"/>
+                <message_argument value="WBWRenderer"/>
+                <message_argument value="NO"/>
+            </message_arguments>
+        </filter>
+        <filter id="623939596">
+            <message_arguments>
+                <message_argument value="Save"/>
+                <message_argument value="WBWRenderer"/>
+                <message_argument value="YES"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="WBWRenderer"/>
+                <message_argument value="style(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IWindowCloseHandler"/>
+                <message_argument value="WBWRenderer"/>
+                <message_argument value="close(MWindow)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
