@@ -48,10 +48,13 @@ public class AnnotationCodeMining extends LineHeaderCodeMining {
 		super(lineNumber, document, provider, action);
 		this.annotationAccess= annotationAccess;
 
-		setLabel(sanitizeLabel(annotation.getText()));
-
+		String text = annotation.getText();
+		if (text != null) {
+			setLabel(sanitizeLabel(text));
+		}
 		this.annotation= annotation;
 	}
+
 
 	private static String sanitizeLabel(String label) {
 		return label.replace('\r', ' ').replace('\n', ' ');
