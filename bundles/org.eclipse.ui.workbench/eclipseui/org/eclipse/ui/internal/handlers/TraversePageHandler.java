@@ -41,11 +41,12 @@ public class TraversePageHandler extends WidgetMethodHandler {
 			int traversalDirection = translateToTraversalDirection(forward);
 			Control control = focusControl;
 			do {
-				if (control instanceof CTabFolder folder && isFinalItemInCTabFolder(folder, forward)
-						&& !hasHiddenItem(folder)) {
-					loopToFirstOrLastItem(folder, forward);
-					traversalDirection = translateToTraversalDirection(!forward); // we are in the second-to-last item in the given
-					// direction. Now, use the Traverse-event to move back by one
+				if (control instanceof CTabFolder) {
+					CTabFolder folder = getTopLevelCTabFolderInParentHierarchy(control);
+					if (isFinalItemInCTabFolder(folder, forward) && !hasHiddenItem(folder)) {
+						loopToFirstOrLastItem(folder, forward);
+						traversalDirection = translateToTraversalDirection(!forward);
+					}
 				}
 				if (control.traverse(traversalDirection)) {
 					return null;
@@ -57,6 +58,22 @@ public class TraversePageHandler extends WidgetMethodHandler {
 			} while (control != null);
 		}
 		return null;
+	}
+
+	/**
+	 * @param c a {@code Control}.
+	 * @return the top-level {@code CTabFolder} in the parent hierarchy.
+	 */
+	private CTabFolder getTopLevelCTabFolderInParentHierarchy(Control c) {
+		Control current = c;
+		CTabFolder ret = null;
+		do {
+			if (current instanceof CTabFolder folder) {
+				ret = folder;
+			}
+			current = current.getParent();
+		} while (current != null);
+		return ret;
 	}
 
 	private boolean hasHiddenItem(CTabFolder folder) {
