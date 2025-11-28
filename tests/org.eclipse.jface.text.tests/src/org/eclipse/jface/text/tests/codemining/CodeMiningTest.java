@@ -40,6 +40,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -564,14 +565,17 @@ public class CodeMiningTest {
 			starty= lineBounds.y;
 		}
 
-		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
+		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {
+		}, (widget.getSize().x), (widget.getSize().y));
 		try {
 			GC gc= new GC(widget);
 			gc.copyArea(image, 0, 0);
 			gc.dispose();
-			ImageData imageData= image.getImageData();
-			for (int x= startx + 1; x < image.getBounds().width && x < imageData.width; x++) {
-				for (int y= starty; y < imageData.height - 10 /*do not include the border*/; y++) {
+			int zoom= DPIUtil.getDeviceZoom();
+			ImageData imageData= image.getImageData(zoom);
+			double zoomFactor= zoom / 100.0;
+			for (int x= (int) (zoomFactor * startx + 1); x < image.getBounds().width && x < imageData.width; x++) {
+				for (int y= (int) (zoomFactor * starty); y < imageData.height - 10 /*do not include the border*/; y++) {
 					if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 						// code mining printed
 						return true;
@@ -604,14 +608,20 @@ public class CodeMiningTest {
 		} else {
 			secondLineBounds= widget.getTextBounds(lineOffset, lineOffset + lineLength);
 		}
-		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
+
+		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {
+		}, (widget.getSize().x), (widget.getSize().y));
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
-		ImageData imageData = image.getImageData();
+		int zoom= DPIUtil.getDeviceZoom();
+		ImageData imageData= image.getImageData(zoom);
+
 		secondLineBounds.x += secondLineBounds.width; // look only area after text
-		for (int x = secondLineBounds.x + 1; x < image.getBounds().width && x < imageData.width; x++) {
-			for (int y = secondLineBounds.y; y < secondLineBounds.y + secondLineBounds.height && y < imageData.height; y++) {
+
+		double zoomFactor= zoom / 100.0;
+		for (int x= (int) (zoomFactor * (secondLineBounds.x + 1)); x < image.getBounds().width && x < imageData.width; x++) {
+			for (int y= (int) (zoomFactor * (secondLineBounds.y)); y < zoomFactor * (secondLineBounds.y + secondLineBounds.height) && y < imageData.height; y++) {
 				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 					// code mining printed
 					image.dispose();
