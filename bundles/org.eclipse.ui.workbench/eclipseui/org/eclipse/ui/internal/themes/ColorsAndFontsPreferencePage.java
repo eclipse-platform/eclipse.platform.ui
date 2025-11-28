@@ -1352,12 +1352,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			return valueFromExtension;
 		}
 		String storeDefault = store.getDefaultString(id);
-		if (storeDefault == null) {
+		if (storeDefault == null || storeDefault.isBlank()) {
 			return valueFromExtension;
 		}
 		try {
 			RGB defaultRGB = ColorUtil.getColorValue(storeDefault);
 			if (defaultRGB != null && !defaultRGB.equals(valueFromExtension)) {
+				if (getActiveTheme() != null
+						&& LightColorFactory.isColorDefinitionIdPartOfLightColorFactory(id)) {
+					return valueFromExtension;
+				}
 				return defaultRGB;
 			}
 		} catch (DataFormatException e) { // silently ignored
