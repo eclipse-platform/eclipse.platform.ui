@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
@@ -134,20 +135,25 @@ public class LineContentBoundsDrawingTest {
 		}.waitForCondition(textWidget.getDisplay(), 2000));
 		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
 		Rectangle textBounds= textWidget.getTextBounds(0, textWidget.getText().length() - 1);
-		int supposedMostRightPaintedPixel = textBounds.x + textBounds.width - 1;
+		int zoom= DPIUtil.getDeviceZoom();
+		double zoomFactor= zoom / 100.0;
+		int supposedMostRightPaintedPixel= (int) (zoomFactor * (textBounds.x + textBounds.width - 1));
 		int mostRightPaintedPixel= getMostRightPaintedPixel(textWidget);
 		Assertions.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {
-		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
+		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {
+		}, (widget.getSize().x), (widget.getSize().y));
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
 		RGB backgroundRgb = widget.getBackground().getRGB();
-		ImageData imageData = image.getImageData();
+		int zoom= DPIUtil.getDeviceZoom();
+		ImageData imageData= image.getImageData(zoom);
+		double zoomFactor= zoom / 100.0;
 		for (int x = imageData.width - 50 /* magic number to avoid rulers and other */; x >= 0; x--) {
-			for (int y = 3 /* magic number as well to avoid title bar */; y < imageData.height - 3; y++) {
+			for (int y= (int) (3 * zoomFactor) /* magic number as well to avoid title bar */; y < imageData.height - (3 * zoomFactor); y++) {
 				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(backgroundRgb)) {
 					image.dispose();
 					return x;
