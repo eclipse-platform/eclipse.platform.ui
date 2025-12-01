@@ -72,7 +72,7 @@ public class WizardsRegistryReader extends RegistryReader {
 	private static class CategoryNode {
 		private final Category category;
 
-		private String path;
+		private final String path;
 
 		CategoryNode(Category cat) {
 			category = cat;
