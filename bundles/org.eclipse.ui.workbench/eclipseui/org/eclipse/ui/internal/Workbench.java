@@ -39,7 +39,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +51,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -84,7 +82,6 @@ import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -119,7 +116,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
-import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -2701,7 +2697,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *
 	 * @param workspacePath the new workspace location
 	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH} or
-	 *         <code>null</code>
+	 *         <code>null</code> if workspace is locked
 	 */
 	@SuppressWarnings("restriction")
 	public static Object setRestartArguments(String workspacePath) {
@@ -2718,9 +2714,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		}
 		Path selectedWorkspace = Path.of(workspacePath);
 		try {
-			String workspaceLock = getWorkspaceLockDetails(selectedWorkspace.toUri().toURL());
-			if (workspaceLock != null && !workspaceLock.isEmpty()) {
-				showWorkspaceLockedDialog(workspacePath, workspaceLock);
+			String workspaceLock = WorkspaceLock.getWorkspaceLockDetails(selectedWorkspace.toUri().toURL());
+			if (workspaceLock != null) {
+				WorkspaceLock.showWorkspaceLockedDialog(null, workspacePath, workspaceLock);
 				return null;
 			}
 		} catch (MalformedURLException e) {
@@ -3718,73 +3714,5 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			return incompatibleMonitorSpecificScalingDisabled;
 		}
 
-	}
-
-	/**
-	 * Extract the lock details of the selected workspace if it is locked by another
-	 * Eclipse application
-	 *
-	 * @param workspaceUrl the <code>URL</code> of selected workspace
-	 * @return <code>String</code> details of lock owned workspace,
-	 *         <code>null or Empty</code> if not locked
-	 */
-	@SuppressWarnings("restriction")
-	public static String getWorkspaceLockDetails(URL workspaceUrl) {
-		Path lockFile = getLockInfoFile(workspaceUrl);
-		if (lockFile != null && Files.exists(lockFile)) {
-			StringBuilder lockDetails = new StringBuilder();
-			Properties properties = new Properties();
-			try (InputStream is = Files.newInputStream(lockFile)) {
-				properties.load(is);
-				String prop = properties.getProperty("user"); //$NON-NLS-1$
-				if (prop != null) {
-					lockDetails.append(NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceLockOwner, prop));
-				}
-				prop = properties.getProperty("host"); //$NON-NLS-1$
-				if (prop != null) {
-					lockDetails.append(NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceLockHost, prop));
-				}
-				prop = properties.getProperty("display"); //$NON-NLS-1$
-				if (prop != null) {
-					lockDetails.append(NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceLockDisplay, prop));
-				}
-				prop = properties.getProperty("process-id"); //$NON-NLS-1$
-				if (prop != null) {
-					lockDetails.append(NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceLockPID, prop));
-				}
-
-			} catch (IOException e) {
-				WorkbenchPlugin.log(e);
-			}
-			return lockDetails.toString();
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the lock file.
-	 *
-	 * @param workspaceUrl the <code>URL</code> of selected workspace
-	 * @return the path to the <code>.lock_info</code> file within the specified
-	 *         workspace, or <code> null</code> if the workspace URL cannot be
-	 *         converted to a valid URI
-	 */
-	public static Path getLockInfoFile(URL workspaceUrl) {
-		Path lockFile = Path.of(".metadata", ".lock_info"); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			return Path.of(URIUtil.toURI(workspaceUrl)).resolve(lockFile);
-		} catch (URISyntaxException e) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("restriction")
-	public static void showWorkspaceLockedDialog(String workspacePath, String workspaceLock) {
-		String lockMessage = NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceCannotLockMessage2, workspacePath);
-		String wsLockedError = lockMessage + System.lineSeparator() + System.lineSeparator()
-				+ NLS.bind(WorkbenchSWTMessages.IDEApplication_workspaceLockMessage, workspaceLock);
-
-		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				WorkbenchSWTMessages.IDEApplication_workspaceCannotLockTitle, wsLockedError);
 	}
 }

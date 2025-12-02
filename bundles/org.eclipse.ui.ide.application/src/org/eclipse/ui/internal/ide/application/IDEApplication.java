@@ -62,6 +62,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkspaceLock;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -90,13 +91,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 	private static final String HOST_NAME_VAR = "HOSTNAME"; //$NON-NLS-1$
 
-	private static final String PROCESS_ID = "process-id"; //$NON-NLS-1$
-
-	private static final String DISPLAY = "display"; //$NON-NLS-1$
-
-	private static final String HOST = "host"; //$NON-NLS-1$
-
-	private static final String USER = "user"; //$NON-NLS-1$
 
 	private static final String USER_NAME = "user.name"; //$NON-NLS-1$
 
@@ -270,9 +264,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 						}
 
 						// check if there is a lock info then append it to error message.
-						String lockInfo = Workbench.getWorkspaceLockDetails(instanceLoc.getURL());
+						String lockInfo = WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL());
 						if (lockInfo != null) {
-							Workbench.showWorkspaceLockedDialog(workspaceDirectory.getAbsolutePath(), lockInfo);
+							WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(),
+									lockInfo);
 						}
 					} else {
 						MessageDialog.openError(
@@ -367,7 +362,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// by this point it has been determined that the workspace is
 			// already in use -- force the user to choose again
 
-			String lockInfo = Workbench.getWorkspaceLockDetails(workspaceUrl);
+			String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
 
 			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
 					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
@@ -410,19 +405,19 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 		String user = System.getProperty(USER_NAME);
 		if (user != null) {
-			props.setProperty(USER, user);
+			props.setProperty(WorkspaceLock.USER, user);
 		}
 		String host = getHostName();
 		if (host != null) {
-			props.setProperty(HOST, host);
+			props.setProperty(WorkspaceLock.HOST, host);
 		}
 		String display = getDisplay();
 		if (display != null) {
-			props.setProperty(DISPLAY, display);
+			props.setProperty(WorkspaceLock.DISPLAY, display);
 		}
 		String pid = getProcessId();
 		if (pid != null) {
-			props.setProperty(PROCESS_ID, pid);
+			props.setProperty(WorkspaceLock.PROCESS_ID, pid);
 		}
 
 		if (props.isEmpty()) {
@@ -485,7 +480,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 * @return .lock_info file.
 	 */
 	private static Path createLockInfoFile(URL workspaceUrl) throws Exception {
-		Path lockInfoFile = Workbench.getLockInfoFile(workspaceUrl);
+		Path lockInfoFile = WorkspaceLock.getLockInfoFile(workspaceUrl);
 		if (!Files.exists(lockInfoFile)) {
 			Files.createFile(lockInfoFile);
 		}
