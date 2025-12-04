@@ -960,7 +960,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				try {
 					String pattern= ((String)clipboard.getContents(TextTransfer.getInstance()));
 					if (pattern != null) {
-						final Template template= new Template(createTemplateName(), TemplatesMessages.TemplatesPage_paste_description, getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
+						final Template template= new Template(createTemplateName(), TemplatesMessages.TemplatesPage_paste_description, getContextTypeId(), pattern.replace("$", "$$"), true); //$NON-NLS-1$//$NON-NLS-2$
 						getShell().getDisplay().asyncExec(() -> addTemplate(template));
 						return;
 					}
@@ -1556,7 +1556,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					contextId= ((TemplatePersistenceData) object).getTemplate().getContextTypeId();
 				}
 				if (textTransfer.isSupportedType(event.currentDataType)) {
-					String text= ((String) event.data).replaceAll("\\$", "\\$\\$"); //$NON-NLS-1$ //$NON-NLS-2$
+					String text= ((String) event.data).replace("$", "$$"); //$NON-NLS-1$ //$NON-NLS-2$
 					final Template template= new Template(createTemplateName(),
 							TemplatesMessages.TemplatesPage_paste_description, contextId, text,
 							true);
