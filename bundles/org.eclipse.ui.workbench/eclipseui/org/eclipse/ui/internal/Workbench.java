@@ -694,7 +694,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return returnCode[0];
 	}
 
-	private static void setRescaleAtRuntimePropertyFromPreference() {
+	private static boolean setRescaleAtRuntimePropertyFromPreference() {
 		if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
 			WorkbenchPlugin.log(Status.warning(SWT_RESCALE_AT_RUNTIME_PROPERTY
 					+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
@@ -707,10 +707,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 		if (DPIUtil.isMonitorSpecificScalingActive() && !DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
 			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(false));
-			MessageDialog.openError(new Shell(Display.getDefault()),
-					WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle,
-					NLS.bind(WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription));
+			return true;
 		}
+		return false;
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {
@@ -778,7 +777,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			Display.setAppName(applicationName);
 		}
 
-		setRescaleAtRuntimePropertyFromPreference();
+		boolean isIncompatibleAutoScaleValue = setRescaleAtRuntimePropertyFromPreference();
 
 		// create the display
 		Display newDisplay = Display.getCurrent();
@@ -797,6 +796,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		}
 
+		if (isIncompatibleAutoScaleValue) {
+			newDisplay.asyncExec(() -> {
+				MessageDialog.openError(null,
+						WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle,
+						NLS.bind(WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription));
+			});
+		}
 		// workaround for 1GEZ9UR and 1GF07HN
 		newDisplay.setWarnings(false);
 
