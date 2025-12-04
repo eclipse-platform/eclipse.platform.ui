@@ -383,7 +383,6 @@ public class SmartImportJob extends Job {
 		for (CrawlFolderJob job : jobs) {
 			job.join(0, subMonitor.split(1));
 		}
-		subMonitor.done();
 		return res;
 	}
 
@@ -512,7 +511,6 @@ public class SmartImportJob extends Job {
 			// make sure this folder isn't going to be processed again
 			excludedPaths.add(project.getLocation());
 		}
-		subMonitor.done();
 		return projectFromCurrentContainer;
 	}
 
