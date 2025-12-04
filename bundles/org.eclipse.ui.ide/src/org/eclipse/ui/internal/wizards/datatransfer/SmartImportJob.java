@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -570,20 +571,27 @@ public class SmartImportJob extends Job {
 		return null;
 	}
 
-	private IProject createOrImportProject(File directory, IProgressMonitor progressMonitor) throws Exception {
-		IProjectDescription desc = null;
+	static Optional<IProjectDescription> getOptionalProjectDescription(File directory) throws CoreException {
 		File expectedProjectDescriptionFile = new File(directory, IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (expectedProjectDescriptionFile.exists()) {
-			desc = ResourcesPlugin.getWorkspace().loadProjectDescription(IPath.fromOSString(expectedProjectDescriptionFile.getAbsolutePath()));
-			String expectedName = desc.getName();
-			IProject projectWithSameName = this.workspaceRoot.getProject(expectedName);
+			return Optional.ofNullable(ResourcesPlugin.getWorkspace()
+					.loadProjectDescription(IPath.fromOSString(expectedProjectDescriptionFile.getAbsolutePath())));
+		}
+		return Optional.empty();
+	}
+
+	private IProject createOrImportProject(File directory, IProgressMonitor progressMonitor) throws Exception {
+		IProjectDescription desc = getOptionalProjectDescription(directory).orElse(null);
+		if (desc != null) {
+			IProject projectWithSameName = this.workspaceRoot.getProject(desc.getName());
 			if (projectWithSameName.exists()) {
 				if (directory.equals(SmartImportWizard.toFile(projectWithSameName))) {
 					// project seems already there
 					return projectWithSameName;
 				}
 				throw new CouldNotImportProjectException(directory,
-						NLS.bind(DataTransferMessages.SmartImportProposals_anotherProjectWithSameNameExists_description, expectedName));
+						NLS.bind(DataTransferMessages.SmartImportProposals_anotherProjectWithSameNameExists_description,
+								desc.getName()));
 			}
 		} else {
 			String projectName = generateNewProjectName(directory, this.workspaceRoot);
