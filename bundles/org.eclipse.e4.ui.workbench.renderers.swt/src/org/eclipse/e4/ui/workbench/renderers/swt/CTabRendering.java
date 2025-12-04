@@ -18,6 +18,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -621,17 +622,29 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 
 		if (selectedTabHighlightColor != null) {
+			Color oldBackground = gc.getBackground();
 			gc.setBackground(selectedTabHighlightColor);
 			boolean highlightOnTop = drawTabHighlightOnTop;
 			if (onBottom) {
 				highlightOnTop = !highlightOnTop;
 			}
-			int highlightHeight = 2 + (superimposeKeylineOutline && highlightOnTop ? OUTER_KEYLINE_WIDTH : 0);
-			int verticalOffset = highlightOnTop ? 0 : outlineBoundsForOutline.height - (highlightHeight - 1);
-			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
-			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
-			gc.fillRectangle(outlineBoundsForOutline.x + horizontalOffset, outlineBoundsForOutline.y + verticalOffset, outlineBoundsForOutline.width - widthAdjustment,
-					highlightHeight);
+			if (cornerSize == SQUARE_CORNER) {
+				int highlightHeight = 2 + (superimposeKeylineOutline && highlightOnTop ? OUTER_KEYLINE_WIDTH : 0);
+				int verticalOffset = highlightOnTop ? 0 : outlineBoundsForOutline.height - (highlightHeight - 1);
+				int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
+				int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
+				gc.fillRectangle(outlineBoundsForOutline.x + horizontalOffset,
+						outlineBoundsForOutline.y + verticalOffset, outlineBoundsForOutline.width - widthAdjustment,
+						highlightHeight);
+			} else {
+				int[] highlightShape = Arrays.copyOf(tabOutlinePoints, tabOutlinePoints.length);
+				// Update Y coordinates in shape to apply highlight thickness
+				int thickness = 2;
+				int highlightY = onBottom ? bottomY - thickness : thickness + 1;
+				highlightShape[1] = highlightShape[3] = highlightShape[highlightShape.length - 1] = highlightShape[highlightShape.length - 3] = highlightY;
+				gc.fillPolygon(highlightShape);
+			}
+			gc.setBackground(oldBackground);
 		}
 
 		if (backgroundPattern != null) {
