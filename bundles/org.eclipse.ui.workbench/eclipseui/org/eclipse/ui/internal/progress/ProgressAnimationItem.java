@@ -260,11 +260,21 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolbar.setVisible(false);
 	}
 
+	boolean isImageSizeChanged(Image oldImage, Image image) {
+		boolean changed = true;
+		// check if image size really changed for old and new images
+		if (oldImage != null && !oldImage.isDisposed() && image != null && !image.isDisposed()) {
+			changed = !oldImage.getBounds().equals(image.getBounds());
+		}
+		return changed;
+	}
+
 	private void initButton(Image im, final String tt) {
+		boolean isLayoutRequired = isImageSizeChanged(im, toolButton.getImage());
 		toolButton.setImage(im);
 		toolButton.setToolTipText(tt);
 		toolbar.setVisible(true);
-		toolbar.getParent().requestLayout(); // must layout
+		toolbar.getParent().layout(isLayoutRequired);
 
 		if (currentAccessibleListener != null) {
 			toolbar.getAccessible().removeAccessibleListener(currentAccessibleListener);
