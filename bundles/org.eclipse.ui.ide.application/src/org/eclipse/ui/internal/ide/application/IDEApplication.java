@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2020 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,11 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +40,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.equinox.app.IApplication;
@@ -65,6 +62,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkspaceLock;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -89,19 +87,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 	private static final String VERSION_FILENAME = "version.ini"; //$NON-NLS-1$
 
-	private static final Path LOCK_INFO_FILE = Path.of(METADATA_FOLDER, ".lock_info"); //$NON-NLS-1$
-
 	private static final String DISPLAY_VAR = "DISPLAY"; //$NON-NLS-1$
 
 	private static final String HOST_NAME_VAR = "HOSTNAME"; //$NON-NLS-1$
 
-	private static final String PROCESS_ID = "process-id"; //$NON-NLS-1$
-
-	private static final String DISPLAY = "display"; //$NON-NLS-1$
-
-	private static final String HOST = "host"; //$NON-NLS-1$
-
-	private static final String USER = "user"; //$NON-NLS-1$
 
 	private static final String USER_NAME = "user.name"; //$NON-NLS-1$
 
@@ -223,12 +212,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Return <code>null</code> if a valid workspace path has been set and an exit code otherwise.
-	 * Prompt for and set the path if possible and required.
+	 * Returns <code>null</code> if a valid workspace has been selected or locked
+	 * successfully, and an exit code otherwise. Prompts for and sets the workspace
+	 * path if required.
 	 *
 	 * @param applicationArguments the command line arguments
-	 * @return <code>null</code> if a valid instance location has been set and an exit code
-	 *         otherwise
+	 * @return <code>null</code> if a valid instance location has been set and an
+	 *         exit code otherwise
 	 */
 	@SuppressWarnings("rawtypes")
 	protected Object checkInstanceLocation(Shell shell, Map applicationArguments) {
@@ -273,18 +263,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 							return EXIT_WORKSPACE_LOCKED;
 						}
 
-						String wsLockedError = NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage,
-								workspaceDirectory.getAbsolutePath());
 						// check if there is a lock info then append it to error message.
-						String lockInfo = getWorkspaceLockInfo(instanceLoc.getURL());
-						if (lockInfo != null && !lockInfo.isBlank()) {
-							wsLockedError = wsLockedError + System.lineSeparator() + System.lineSeparator()
-									+ NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Message, lockInfo);
+						String lockInfo = WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL());
+						if (lockInfo != null) {
+							WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(),
+									lockInfo);
 						}
-						MessageDialog.openError(
-								shell,
-								IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
-								wsLockedError);
 					} else {
 						MessageDialog.openError(
 								shell,
@@ -378,7 +362,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// by this point it has been determined that the workspace is
 			// already in use -- force the user to choose again
 
-			String lockInfo = getWorkspaceLockInfo(workspaceUrl);
+			String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
 
 			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
 					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
@@ -413,49 +397,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Read workspace lock file and parse all the properties present. Based on the
-	 * eclipse version and operating system some or all the properties may not
-	 * present. In such scenario it will return empty string.
-	 *
-	 * @return Previous lock owner details.
-	 */
-	protected String getWorkspaceLockInfo(URL workspaceUrl) {
-		try {
-			Path lockFile = getLockInfoFile(workspaceUrl);
-			if (!Files.exists(lockFile)) {
-				return null;
-			}
-
-			StringBuilder sb = new StringBuilder();
-			Properties props = new Properties();
-			try (InputStream is = Files.newInputStream(lockFile)) {
-				props.load(is);
-				String prop = props.getProperty(USER);
-				if (prop != null) {
-					sb.append(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_User, prop));
-				}
-				prop = props.getProperty(HOST);
-				if (prop != null) {
-					sb.append(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Host, prop));
-				}
-				prop = props.getProperty(DISPLAY);
-				if (prop != null) {
-					sb.append(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Disp, prop));
-				}
-				prop = props.getProperty(PROCESS_ID);
-				if (prop != null) {
-					sb.append(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_P_Id, prop));
-				}
-				return sb.toString();
-			}
-		} catch (Exception e) {
-			IDEWorkbenchPlugin.log("Could not read lock info file: ", e); //$NON-NLS-1$
-
-		}
-		return null;
-	}
-
-	/**
 	 * Write lock owner details onto workspace lock file. Data includes user, host,
 	 * display and current java process id.
 	 */
@@ -464,19 +405,19 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 		String user = System.getProperty(USER_NAME);
 		if (user != null) {
-			props.setProperty(USER, user);
+			props.setProperty(WorkspaceLock.USER, user);
 		}
 		String host = getHostName();
 		if (host != null) {
-			props.setProperty(HOST, host);
+			props.setProperty(WorkspaceLock.HOST, host);
 		}
 		String display = getDisplay();
 		if (display != null) {
-			props.setProperty(DISPLAY, display);
+			props.setProperty(WorkspaceLock.DISPLAY, display);
 		}
 		String pid = getProcessId();
 		if (pid != null) {
-			props.setProperty(PROCESS_ID, pid);
+			props.setProperty(WorkspaceLock.PROCESS_ID, pid);
 		}
 
 		if (props.isEmpty()) {
@@ -533,27 +474,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Returns the .lock_info file. Does not check if it exists.
-	 *
-	 * @param workspaceUrl
-	 * @return .lock_info file.
-	 */
-	private static Path getLockInfoFile(URL workspaceUrl) {
-		try {
-			return Path.of(URIUtil.toURI(workspaceUrl)).resolve(LOCK_INFO_FILE);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
-
-	/**
 	 * Creates the .lock_info file if it does not exist.
 	 *
 	 * @param workspaceUrl
 	 * @return .lock_info file.
 	 */
 	private static Path createLockInfoFile(URL workspaceUrl) throws Exception {
-		Path lockInfoFile = getLockInfoFile(workspaceUrl);
+		Path lockInfoFile = WorkspaceLock.getLockInfoFile(workspaceUrl);
 		if (!Files.exists(lockInfoFile)) {
 			Files.createFile(lockInfoFile);
 		}

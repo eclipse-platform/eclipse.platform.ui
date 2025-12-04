@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,17 @@ public class WorkbenchSWTMessages extends NLS {
 	public static String InternalError;
 	public static String IDEApplication_versionTitle;
 	public static String IDEApplication_versionMessage;
+	public static String IDEApplication_workspaceLockMessage;
+
+	public static String IDEApplication_workspaceLockOwner;
+
+	public static String IDEApplication_workspaceLockHost;
+
+	public static String IDEApplication_workspaceLockDisplay;
+
+	public static String IDEApplication_workspaceLockPID;
+
+	public static String IDEApplication_workspaceCannotLockMessage2;
 
 	static {
 		// load message values from bundle file
