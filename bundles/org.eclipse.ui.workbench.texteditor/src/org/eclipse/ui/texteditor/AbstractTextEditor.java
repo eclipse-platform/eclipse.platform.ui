@@ -67,6 +67,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -6961,32 +6962,28 @@ public abstract class AbstractTextEditor extends EditorPart
 	}
 
 	private Image createRawInsertModeCaretImage(StyledText styledText) {
-
-		PaletteData caretPalette = new PaletteData(new RGB(0, 0, 0), new RGB(255, 255, 255));
+		PaletteData caretPalette = new PaletteData(new RGB(0,0,0), new RGB(255,255,255));
 		int width = getCaretWidthPreference();
-		int widthOffset = width - 1;
-
-		// XXX: Filed request to get a caret with auto-height:
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
-		ImageData imageData = new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
-
-		Display display = styledText.getDisplay();
-		Image bracketImage = new Image(display, imageData);
-		GC gc = new GC(bracketImage);
-		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
-		int height = imageData.height / 3;
-		// gap between two bars of one third of the height
-		// draw boxes using lines as drawing a line of a certain width produces
-		// rounded corners.
-		for (int i = 0; i < width; i++) {
-			gc.drawLine(i, 0, i, height - 1);
-			gc.drawLine(i, imageData.height - height, i, imageData.height - 1);
-		}
-
-		gc.dispose();
-
-		return bracketImage;
+		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
+		int height = styledText.getLineHeight();
+		return new Image(styledText.getDisplay(), new ImageDataProvider() {
+			@Override
+			public ImageData getImageData(int zoom) {
+				double scaleFactor = zoom / 100.0;
+				int w = (int)(width * scaleFactor + 0.5);
+				int h = (int)(height * scaleFactor + 0.5);
+				ImageData imageData = new ImageData(w, h, 1, caretPalette);
+				// gap between two bars of one third of the height
+				int h3= h / 3;
+				for (int x = 0; x < w; x++) {
+					for (int y = 0; y < h3; y++) {
+						imageData.setPixel(x, y, 1);
+						imageData.setPixel(x, h - y - 1, 1);
+					}
+				}
+				return imageData;
+			}
+		});
 	}
 
 	private Caret createRawInsertModeCaret(StyledText styledText) {
