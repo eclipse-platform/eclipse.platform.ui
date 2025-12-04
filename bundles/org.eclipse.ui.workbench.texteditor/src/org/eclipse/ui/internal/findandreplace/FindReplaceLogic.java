@@ -370,7 +370,17 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		executeInForwardMode(() -> {
 			executeWithReplaceAllEnabled(() -> {
 				Point currentSelection = new Point(0, 0);
+				int lastFoundPosition = -1;
+
 				while (findAndSelect(currentSelection.x + currentSelection.y) != -1) {
+					Point foundMatch = target.getSelection();
+
+					if (foundMatch.x == lastFoundPosition) {
+						currentSelection = new Point(foundMatch.x + Math.max(1, foundMatch.y), 0);
+						continue;
+					}
+
+					lastFoundPosition = foundMatch.x;
 					currentSelection = replaceSelection();
 					replacements.add(currentSelection);
 				}
