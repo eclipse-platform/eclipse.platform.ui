@@ -114,7 +114,22 @@ public class Bug78470Test {
 				});
 		workbench.showPerspective(MyPerspective.ID, activeWorkbenchWindow);
 		processEvents();
-		Thread.sleep(2000);
+		
+		// Wait for the part to become visible, processing events
+		long startTime = System.currentTimeMillis();
+		long timeout = 5000; // 5 second max wait
+		while (!partVisibleExecuted && (System.currentTimeMillis() - startTime < timeout)) {
+			processEvents();
+			if (!partVisibleExecuted) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+		}
+		
 		assertTrue("view was not made visible", partVisibleExecuted);
 		assertNotNull(activePage.findView(MyViewPart.ID2));
 		assertNotNull(activePage.findView(MyViewPart.ID3));
