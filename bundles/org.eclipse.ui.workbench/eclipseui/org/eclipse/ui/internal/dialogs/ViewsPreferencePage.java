@@ -53,6 +53,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -65,7 +66,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -222,7 +225,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 		rescaleAtRuntime = createCheckButton(parent, WorkbenchMessages.RescaleAtRuntimeEnabled,
 				initialStateRescaleAtRuntime);
-		rescaleAtRuntime.setToolTipText(WorkbenchMessages.RescaleAtRuntimeDescription);
+		if (!DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
+			rescaleAtRuntime.setEnabled(false);
+			Font font = parent.getFont();
+			Composite note = createNoteComposite(font, parent, WorkbenchMessages.Preference_note,
+					WorkbenchMessages.RescaleAtRuntimeDisabledDescription);
+			note.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+		} else {
+			rescaleAtRuntime.setToolTipText(WorkbenchMessages.RescaleAtRuntimeDescription);
+		}
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
