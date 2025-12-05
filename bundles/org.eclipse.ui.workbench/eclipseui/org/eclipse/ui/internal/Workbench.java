@@ -669,6 +669,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				// run the legacy workbench once
 				returnCode[0] = workbench.runUI();
 
+				if (AUTOSCALE_ADAPTATION.isMonitorSpecificScalingDisabledForIncompatibility()) {
+					display.asyncExec(() -> {
+						MessageDialog.openError(null, WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle,
+								NLS.bind(WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription));
+					});
+				}
+
 				if (returnCode[0] == PlatformUI.RETURN_OK) {
 					// run the e4 event loop and instantiate ... well, stuff
 					if (serviceListener.get() != null) {
@@ -692,24 +699,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		});
 		return returnCode[0];
-	}
-
-	private static boolean setRescaleAtRuntimePropertyFromPreference() {
-		if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
-			WorkbenchPlugin.log(Status.warning(SWT_RESCALE_AT_RUNTIME_PROPERTY
-					+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
-			));
-		} else {
-			boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
-			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
-		}
-
-		if (DPIUtil.isMonitorSpecificScalingActive() && !DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
-			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(false));
-			return true;
-		}
-		return false;
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {
@@ -777,7 +766,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			Display.setAppName(applicationName);
 		}
 
-		boolean isIncompatibleAutoScaleValue = setRescaleAtRuntimePropertyFromPreference();
+		AUTOSCALE_ADAPTATION.setRescaleAtRuntimePropertyFromPreference();
 
 		// create the display
 		Display newDisplay = Display.getCurrent();
@@ -796,13 +785,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		}
 
-		if (isIncompatibleAutoScaleValue) {
-			newDisplay.asyncExec(() -> {
-				MessageDialog.openError(null,
-						WorkbenchMessages.RescaleAtRuntimeIncompatibilityTitle,
-						NLS.bind(WorkbenchMessages.RescaleAtRuntimeIncompatibilityDescription));
-			});
-		}
 		// workaround for 1GEZ9UR and 1GF07HN
 		newDisplay.setWarnings(false);
 
@@ -3686,6 +3668,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	private static class AutoscaleAdaptation {
 		private static final String SWT_AUTOSCALE = "swt.autoScale"; //$NON-NLS-1$
 
+		private boolean incompatibleMonitorSpecificScalingDisabled;
+
 		private final String initialAutoScaleValue;
 
 		public AutoscaleAdaptation() {
@@ -3694,6 +3678,27 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 		public void runWithInitialAutoScaleValue(Runnable runnable) {
 			DPIUtil.runWithAutoScaleValue(initialAutoScaleValue, runnable);
+		}
+
+		public void setRescaleAtRuntimePropertyFromPreference() {
+			if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
+				WorkbenchPlugin.log(Status.warning(SWT_RESCALE_AT_RUNTIME_PROPERTY
+						+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
+				));
+			} else {
+				boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
+						.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
+				System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
+			}
+
+			if (DPIUtil.isMonitorSpecificScalingActive() && !DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
+				incompatibleMonitorSpecificScalingDisabled = true;
+				System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(false));
+			}
+		}
+
+		public boolean isMonitorSpecificScalingDisabledForIncompatibility() {
+			return incompatibleMonitorSpecificScalingDisabled;
 		}
 
 	}
