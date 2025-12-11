@@ -389,7 +389,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			int y = textBounds.y
 					+ Math.max(0, (textBounds.height - layoutBounds.height) / 2);
 
-			if (gc.isClipped()) {
+			if (gc.isClipped() && ((style & SWT.RIGHT) != 0 || (style & SWT.CENTER) != 0)) {
 				Rectangle saveClipping = gc.getClipping();
 				gc.setClipping(textBounds);
 				textLayout.draw(gc, x, y);
