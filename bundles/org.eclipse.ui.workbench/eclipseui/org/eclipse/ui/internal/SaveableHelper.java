@@ -193,9 +193,6 @@ public class SaveableHelper {
 						continue;
 					}
 					doSaveModel(model, subMonitor.split(1), window, confirm);
-					if (subMonitor.isCanceled()) {
-						break;
-					}
 				}
 			} finally {
 				monitorWrap.done();
