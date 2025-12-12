@@ -18,14 +18,14 @@ package org.eclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -49,6 +49,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
@@ -217,39 +218,108 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
-		ISchedulingRule rule = null;
-		IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
-
 		List<? extends IResource> actionResources = new ArrayList<>(getActionResources());
 		if (shouldPerformResourcePruning()) {
 			actionResources = pruneResources(actionResources);
 		}
 		final List<? extends IResource> resources = actionResources;
 
-		Iterator<? extends IResource> res = resources.iterator();
-		while (res.hasNext()) {
-			rule = MultiRule.combine(rule, factory.refreshRule(res.next()));
+		ISchedulingRule rule = null;
+		for (IResource resource : resources) {
+			ISchedulingRule newRule = (resource.getType() == IResource.ROOT) ? resource : resource.getProject();
+			rule = MultiRule.combine(rule, newRule);
 		}
+
 		return new WorkspaceModifyOperation(rule) {
 			@Override
 			public void execute(IProgressMonitor mon) {
 				SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
-				MultiStatus errors = null;
 				subMonitor.setTaskName(getOperationMessage());
-				Iterator<? extends IResource> resourcesEnum = resources.iterator();
-				while (resourcesEnum.hasNext()) {
+				List<IStatus> errors = new ArrayList<>();
+				for (IResource resource : resources) {
 					try {
-						IResource resource = resourcesEnum.next();
 						refreshResource(resource, subMonitor.split(1));
 					} catch (CoreException e) {
-						errors = recordError(errors, e);
+						errors.add(e.getStatus());
 					}
 				}
-				if (errors != null) {
-					errorStatus[0] = errors;
+				if (!errors.isEmpty()) {
+					MultiStatus multiStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
+							getProblemsMessage(), null);
+					for (IStatus s : errors) {
+						multiStatus.merge(s);
+					}
+					errorStatus[0] = multiStatus;
 				}
 			}
 		};
+	}
+
+	/**
+	 * Creates a {@link WorkspaceJob} that refreshes the given resources under the
+	 * given scheduling rule. The job is not yet scheduled when returned, allowing
+	 * callers to attach listeners before scheduling.
+	 *
+	 * @param resources resources to refresh; must not be <code>null</code>
+	 * @param rule      scheduling rule for the job (a project or workspace root)
+	 * @return the created but unscheduled job
+	 * @since 3.23
+	 */
+	protected WorkspaceJob createRefreshJob(List<? extends IResource> resources, ISchedulingRule rule) {
+		final IStatus[] errorStatus = { Status.OK_STATUS };
+		WorkspaceModifyOperation op = new WorkspaceModifyOperation(rule) {
+			@Override
+			public void execute(IProgressMonitor mon) {
+				SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
+				subMonitor.setTaskName(getOperationMessage());
+				List<IStatus> errors = new ArrayList<>();
+				for (IResource resource : resources) {
+					try {
+						refreshResource(resource, subMonitor.split(1));
+					} catch (CoreException e) {
+						errors.add(e.getStatus());
+					}
+				}
+				if (!errors.isEmpty()) {
+					MultiStatus multiStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
+							getProblemsMessage(), null);
+					for (IStatus s : errors) {
+						multiStatus.merge(s);
+					}
+					errorStatus[0] = multiStatus;
+				}
+			}
+		};
+		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				try {
+					op.run(monitor);
+				} catch (InvocationTargetException e) {
+					String msg = NLS.bind(IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass().getName(),
+							e.getTargetException());
+					return StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException());
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+				return errorStatus[0];
+			}
+		};
+		job.setRule(op.getRule());
+		job.setUser(true);
+		return job;
+	}
+
+	/**
+	 * Creates and schedules a {@link WorkspaceJob} for the given resources.
+	 * Subclasses may override to attach listeners before the job is scheduled.
+	 *
+	 * @param resources resources to refresh; must not be <code>null</code>
+	 * @param rule      scheduling rule for the job (a project or workspace root)
+	 * @since 3.23
+	 */
+	protected void scheduleRefreshJob(List<? extends IResource> resources, ISchedulingRule rule) {
+		createRefreshJob(resources, rule).schedule();
 	}
 
 	/**
@@ -285,32 +355,19 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	public void run() {
-		final IStatus[] errorStatus = new IStatus[1];
-		errorStatus[0] = Status.OK_STATUS;
-		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
-		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
-
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				try {
-					op.run(monitor);
-				} catch (InvocationTargetException e) {
-					String msg = NLS.bind(
-							IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
-									.getName(), e.getTargetException());
-					throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException()));
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
-				return errorStatus[0];
-			}
-
-		};
-		ISchedulingRule rule = op.getRule();
-		if (rule != null) {
-			job.setRule(rule);
+		List<? extends IResource> actionResources = new ArrayList<>(getActionResources());
+		if (shouldPerformResourcePruning()) {
+			actionResources = pruneResources(actionResources);
 		}
-		job.setUser(true);
-		job.schedule();
+		// Group resources by scheduling rule so each project can be refreshed in
+		// parallel while still holding a project-level rule during its refresh.
+		Map<ISchedulingRule, List<IResource>> byRule = new LinkedHashMap<>();
+		for (IResource resource : actionResources) {
+			ISchedulingRule rule = (resource.getType() == IResource.ROOT) ? resource : resource.getProject();
+			byRule.computeIfAbsent(rule, r -> new ArrayList<>()).add(resource);
+		}
+		for (Map.Entry<ISchedulingRule, List<IResource>> entry : byRule.entrySet()) {
+			scheduleRefreshJob(entry.getValue(), entry.getKey());
+		}
 	}
 }
