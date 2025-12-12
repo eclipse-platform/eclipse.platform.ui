@@ -199,22 +199,18 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		SubMonitor subMon= SubMonitor.convert(pm, 4);
-		try {
-			fChangeExecuted= false;
-			if (createChange()) {
-				// Check for cancellation before executing the change, since canceling
-				// during change execution is not supported
-				// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=187265 ):
-				fCreateChangeOperation.run(subMon.split(3));
-				fChange= fCreateChangeOperation.getChange();
-				if (fChange != null) {
-					executeChange(subMon.newChild(1));
-				}
-			} else {
-				executeChange(subMon.newChild(4));
+		fChangeExecuted= false;
+		if (createChange()) {
+			// Check for cancellation before executing the change, since canceling
+			// during change execution is not supported
+			// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=187265 ):
+			fCreateChangeOperation.run(subMon.split(3));
+			fChange= fCreateChangeOperation.getChange();
+			if (fChange != null) {
+				executeChange(subMon.newChild(1));
 			}
-		} finally {
-			subMon.done();
+		} else {
+			executeChange(subMon.newChild(4));
 		}
 	}
 

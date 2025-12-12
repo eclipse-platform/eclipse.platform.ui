@@ -247,7 +247,6 @@ public abstract class TextChange extends TextEditBasedChange {
 			throw Changes.asCoreException(e);
 		} finally {
 			releaseDocument(document, subMon.newChild(1));
-			subMon.done();
 		}
 	}
 

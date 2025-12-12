@@ -435,7 +435,6 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				releaseDocument(result, subMon.newChild(1));
 			}
 		}
-		subMon.done();
 		if (result == null) {
 			result= new Document();
 		}
