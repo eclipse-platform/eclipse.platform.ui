@@ -216,4 +216,8 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	public final boolean isAfterPosition() {
 		return afterPosition;
 	}
+
+	public List<ICodeMining> getMinings() {
+		return fMinings;
+	}
 }

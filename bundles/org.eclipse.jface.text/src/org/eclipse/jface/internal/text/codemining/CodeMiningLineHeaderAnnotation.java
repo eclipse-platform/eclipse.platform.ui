@@ -290,4 +290,8 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	public boolean isInVisibleLines() {
 		return super.isInVisibleLines();
 	}
+
+	public List<ICodeMining> getMinings() {
+		return fMinings;
+	}
 }

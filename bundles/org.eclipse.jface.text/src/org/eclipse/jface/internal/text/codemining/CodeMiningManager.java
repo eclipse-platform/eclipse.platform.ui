@@ -297,7 +297,7 @@ public class CodeMiningManager implements Runnable {
 			CodeMiningMode mode= CodeMiningMode.createFor(minings);
 
 			// Try to find existing annotation
-			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
+			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos, minings);
 			if (ann == null || !mode.annotationType.isInstance(ann)) {
 				// The annotation doesn't exists or has wrong type => create a new one.
 				boolean afterPosition= false;
