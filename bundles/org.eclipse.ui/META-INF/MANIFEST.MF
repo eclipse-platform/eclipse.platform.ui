@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui; singleton:=true
-Bundle-Version: 3.207.400.qualifier
+Bundle-Version: 3.208.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.UIPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.internal;x-friends:="org.eclipse.ui.workbench.texteditor,org.eclipse.search"
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
- org.eclipse.swt;bundle-version="[3.128.0,4.0.0)";visibility:=reexport,
+ org.eclipse.swt;bundle-version="[3.133.0,4.0.0)";visibility:=reexport,
  org.eclipse.jface;bundle-version="[3.34.0,4.0.0)";visibility:=reexport,
  org.eclipse.ui.workbench;bundle-version="[3.130.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.ui
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"
