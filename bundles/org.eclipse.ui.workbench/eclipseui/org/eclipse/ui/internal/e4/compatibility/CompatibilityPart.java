@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -418,9 +419,13 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	}
 
 	@PreDestroy
-	void destroy() {
+	void destroy(UISynchronize sync) {
 		if (!alreadyDisposed) {
-			invalidate();
+			sync.syncExec(() -> {
+				if (!alreadyDisposed) {
+					invalidate();
+				}
+			});
 		}
 
 		eventBroker.unsubscribe(widgetSetHandler);
