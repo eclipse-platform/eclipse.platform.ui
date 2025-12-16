@@ -18,6 +18,7 @@ package org.eclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -217,36 +219,33 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
-		ISchedulingRule rule = null;
-		IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
-
 		List<? extends IResource> actionResources = new ArrayList<>(getActionResources());
 		if (shouldPerformResourcePruning()) {
 			actionResources = pruneResources(actionResources);
 		}
 		final List<? extends IResource> resources = actionResources;
 
-		Iterator<? extends IResource> res = resources.iterator();
-		while (res.hasNext()) {
-			rule = MultiRule.combine(rule, factory.refreshRule(res.next()));
-		}
-		return new WorkspaceModifyOperation(rule) {
+		return new IRunnableWithProgress() {
 			@Override
-			public void execute(IProgressMonitor mon) {
-				SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
-				MultiStatus errors = null;
+			public void run(IProgressMonitor mon) {
+				SubMonitor subMonitor = SubMonitor.convert(mon);
 				subMonitor.setTaskName(getOperationMessage());
-				Iterator<? extends IResource> resourcesEnum = resources.iterator();
-				while (resourcesEnum.hasNext()) {
+				List<IStatus> errors = Collections.synchronizedList(new ArrayList<>());
+				resources.parallelStream().forEach(resource -> {
 					try {
-						IResource resource = resourcesEnum.next();
-						refreshResource(resource, subMonitor.split(1));
+						refreshResource(resource, null);
 					} catch (CoreException e) {
-						errors = recordError(errors, e);
+						errors.add(e.getStatus());
 					}
-				}
-				if (errors != null) {
-					errorStatus[0] = errors;
+				});
+
+				if (!errors.isEmpty()) {
+					MultiStatus multiStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
+							getProblemsMessage(), null);
+					for (IStatus s : errors) {
+						multiStatus.merge(s);
+					}
+					errorStatus[0] = multiStatus;
 				}
 			}
 		};
@@ -287,18 +286,17 @@ public class RefreshAction extends WorkspaceAction {
 	public void run() {
 		final IStatus[] errorStatus = new IStatus[1];
 		errorStatus[0] = Status.OK_STATUS;
-		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
-		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+		final IRunnableWithProgress op = createOperation(errorStatus);
+		Job job = new Job("refresh") { //$NON-NLS-1$
 
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			public IStatus run(IProgressMonitor monitor) {
 				try {
 					op.run(monitor);
 				} catch (InvocationTargetException e) {
-					String msg = NLS.bind(
-							IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
-									.getName(), e.getTargetException());
-					throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException()));
+					String msg = NLS.bind(IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass().getName(),
+							e.getTargetException());
+					return StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException());
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
@@ -306,10 +304,6 @@ public class RefreshAction extends WorkspaceAction {
 			}
 
 		};
-		ISchedulingRule rule = op.getRule();
-		if (rule != null) {
-			job.setRule(rule);
-		}
 		job.setUser(true);
 		job.schedule();
 	}

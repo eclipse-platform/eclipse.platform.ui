@@ -31,8 +31,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -218,11 +220,11 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			public void run() {
 				final IStatus[] errorStatus = new IStatus[1];
 				errorStatus[0] = Status.OK_STATUS;
-				final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
-				WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+				final IRunnableWithProgress op = createOperation(errorStatus);
+				Job job = new Job("refresh") { //$NON-NLS-1$
 
 					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					public IStatus run(IProgressMonitor monitor) {
 						try {
 							op.run(monitor);
 							if (shell != null && !shell.isDisposed()) {
@@ -236,7 +238,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 							}
 						} catch (InvocationTargetException e) {
 							String msg = NLS.bind(WorkbenchNavigatorMessages.ResourceMgmtActionProvider_logTitle, getClass().getName(), e.getTargetException());
-							throw new CoreException(new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, IStatus.ERROR, msg, e.getTargetException()));
+							return new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, IStatus.ERROR, msg, e.getTargetException());
 						} catch (InterruptedException e) {
 							return Status.CANCEL_STATUS;
 						}
@@ -244,10 +246,6 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 					}
 
 				};
-				ISchedulingRule rule = op.getRule();
-				if (rule != null) {
-					job.setRule(rule);
-				}
 				job.setUser(true);
 				job.schedule();
 			}
