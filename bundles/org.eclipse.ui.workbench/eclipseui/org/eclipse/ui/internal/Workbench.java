@@ -35,9 +35,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2694,7 +2696,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * as the workspace location.
 	 *
 	 * @param workspacePath the new workspace location
-	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH}
+	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH} or
+	 *         <code>null</code> if workspace is locked
 	 */
 	@SuppressWarnings("restriction")
 	public static Object setRestartArguments(String workspacePath) {
@@ -2708,6 +2711,16 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		String command_line = Workbench.buildCommandLine(workspacePath);
 		if (command_line == null) {
 			return IApplication.EXIT_OK;
+		}
+		Path selectedWorkspace = Path.of(workspacePath);
+		try {
+			String workspaceLock = WorkspaceLock.getWorkspaceLockDetails(selectedWorkspace.toUri().toURL());
+			if (workspaceLock != null) {
+				WorkspaceLock.showWorkspaceLockedDialog(null, workspacePath, workspaceLock);
+				return null;
+			}
+		} catch (MalformedURLException e) {
+			return null;
 		}
 
 		System.setProperty(Workbench.PROP_EXIT_CODE, IApplication.EXIT_RELAUNCH.toString());
