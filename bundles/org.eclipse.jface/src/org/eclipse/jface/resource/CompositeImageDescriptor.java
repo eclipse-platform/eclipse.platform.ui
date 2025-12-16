@@ -434,7 +434,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 * @deprecated This method doesn't make sense and should never have been
 	 *             made API.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	protected void setImageData(ImageData imageData) {
 		this.imageData = imageData;
 	}
