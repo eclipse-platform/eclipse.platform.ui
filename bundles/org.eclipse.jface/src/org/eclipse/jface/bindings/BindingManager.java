@@ -1182,12 +1182,11 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 
 	/**
 	 * A variation on {@link BindingManager#getActiveBindingsFor(String)} that
-	 * returns an array of bindings, rather than trigger sequences. This method
-	 * is needed for doing "best" calculations on the active bindings.
+	 * returns an array of bindings, rather than trigger sequences. This method is
+	 * needed for doing "best" calculations on the active bindings.
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which the active bindings
-	 *            should be retrieved; must not be <code>null</code>.
+	 * @param command The command for which the active bindings should be retrieved;
+	 *                must not be <code>null</code>.
 	 * @return The active bindings for the given command; this value may be
 	 *         <code>null</code> if there are no active bindings.
 	 * @since 3.2
