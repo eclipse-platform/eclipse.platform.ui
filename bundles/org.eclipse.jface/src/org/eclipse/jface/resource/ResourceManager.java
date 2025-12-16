@@ -305,7 +305,7 @@ public abstract class ResourceManager {
 	 * @param descriptor description of the font to destroy
 	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
-	@Deprecated(since = "3.31")
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public final void destroyFont(FontDescriptor descriptor) {
 		destroy(descriptor);
 	}
