@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.views.properties.tabbed;singleton:=true
-Bundle-Version: 3.8.600.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.runtime,
  org.junit,
  org.eclipse.ui.ide,
@@ -14,7 +14,7 @@ Bundle-Vendor: %Plugin.providerName
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
  org.eclipse.ui.tests.views.properties.tabbed.decorations,
  org.eclipse.ui.tests.views.properties.tabbed.decorations.views,
