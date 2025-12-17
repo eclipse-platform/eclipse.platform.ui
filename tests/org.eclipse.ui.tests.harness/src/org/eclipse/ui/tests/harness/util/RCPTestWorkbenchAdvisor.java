@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.harness.util;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWTException;
@@ -36,25 +35,23 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  */
 public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
-	public static Boolean asyncDuringStartup = null;
+	public Boolean asyncDuringStartup = null;
 
 	// the following fields are set by the threads that attempt sync/asyncs
 	// during startup.
-	public static volatile Boolean syncWithDisplayAccess = null;
-	public static volatile Boolean asyncWithDisplayAccess = null;
-	public static volatile Boolean syncWithoutDisplayAccess = null;
-	public static volatile Boolean asyncWithoutDisplayAccess = null;
+	public volatile Boolean syncWithDisplayAccess = null;
+	public volatile Boolean asyncWithDisplayAccess = null;
+	public volatile Boolean syncWithoutDisplayAccess = null;
+	public volatile Boolean asyncWithoutDisplayAccess = null;
 
-	private static boolean started = false;
+	private boolean started = false;
 
 	// CountDownLatch to wait for async/sync operations with DisplayAccess to complete
 	// We need to wait for 2 operations: asyncWithDisplayAccess and syncWithDisplayAccess
-	private static CountDownLatch displayAccessLatch = null;
+	private CountDownLatch displayAccessLatch = null;
 
-	public static boolean isSTARTED() {
-		synchronized (RCPTestWorkbenchAdvisor.class) {
-			return started;
-		}
+	public synchronized boolean isStarted() {
+		return started;
 	}
 
 	/** Default value of -1 causes the option to be ignored. */
@@ -66,7 +63,7 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Traps whether or not calls to displayAccess in the UI thread resulted in
 	 * an exception. Should be false.
 	 */
-	public static boolean displayAccessInUIThreadAllowed;
+	public boolean displayAccessInUIThreadAllowed;
 
 	public RCPTestWorkbenchAdvisor() {
 		// default value means the advisor will not trigger the workbench to
@@ -135,14 +132,14 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		if (display != null) {
 			display.asyncExec(() -> {
-				asyncDuringStartup = !isSTARTED();
+				asyncDuringStartup = !isStarted();
 			});
 		}
 
 		// start a bunch of threads that are going to do a/sync execs. For some
 		// of them, call DisplayAccess.accessDisplayDuringStartup. For others,
 		// dont. Those that call this method should have their runnables invoked
-		// prior to the method isSTARTED returning true.
+		// prior to the method isStarted returning true.
 
 		setupAsyncDisplayThread(true, display);
 		setupSyncDisplayThread(true, display);
@@ -167,13 +164,13 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 				try {
 					display.syncExec(() -> {
 						if (callDisplayAccess) {
-							syncWithDisplayAccess = !isSTARTED();
+							syncWithDisplayAccess = !isStarted();
 							// Count down after the runnable executes
 							if (displayAccessLatch != null) {
 								displayAccessLatch.countDown();
 							}
 						} else {
-							syncWithoutDisplayAccess = !isSTARTED();
+							syncWithoutDisplayAccess = !isStarted();
 						}
 					});
 				} catch (SWTException e) {
@@ -198,13 +195,13 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 					DisplayAccess.accessDisplayDuringStartup();
 				display.asyncExec(() -> {
 					if (callDisplayAccess) {
-						asyncWithDisplayAccess = !isSTARTED();
+						asyncWithDisplayAccess = !isStarted();
 						// Count down after the runnable executes
 						if (displayAccessLatch != null) {
 							displayAccessLatch.countDown();
 						}
 					} else {
-						asyncWithoutDisplayAccess = !isSTARTED();
+						asyncWithoutDisplayAccess = !isStarted();
 					}
 				});
 			}
@@ -219,22 +216,20 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// Wait for async/sync operations with DisplayAccess to complete execution
 		if (displayAccessLatch != null) {
-			try {
-				// Wait up to 5 seconds for operations with DisplayAccess to complete
-				// This ensures they execute BEFORE we mark started = true
-				boolean completed = displayAccessLatch.await(5, TimeUnit.SECONDS);
-				if (!completed) {
-					System.err.println("WARNING: Timeout waiting for async/sync operations with DisplayAccess");
+			long limit = System.currentTimeMillis() + 10000;
+			while (displayAccessLatch.getCount() > 0 && System.currentTimeMillis() < limit) {
+				if (!Display.getCurrent().readAndDispatch()) {
+					Display.getCurrent().sleep();
 				}
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				System.err.println("WARNING: Interrupted while waiting for async/sync operations");
+			}
+			if (displayAccessLatch.getCount() > 0) {
+				System.err.println("WARNING: Timeout waiting for async/sync operations with DisplayAccess");
 			}
 		}
 
 		// Now mark as started - operations with DisplayAccess should have completed
 		// Operations without DisplayAccess should still be pending (deferred)
-		synchronized (RCPTestWorkbenchAdvisor.class) {
+		synchronized (this) {
 			started = true;
 		}
 	}
