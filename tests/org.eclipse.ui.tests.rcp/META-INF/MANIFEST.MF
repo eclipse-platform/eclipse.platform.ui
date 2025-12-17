@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.tests.rcp; singleton:=true
-Bundle-Version: 3.6.700.qualifier
+Bundle-Version: 3.7.0.qualifier
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
+ org.eclipse.ui;bundle-version="3.208.0",
  org.junit,
  org.mockito.mockito-core,
  org.eclipse.test.performance,
@@ -15,7 +15,7 @@ Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
  org.opentest4j
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.eclipse.ui.tests.rcp,
  org.eclipse.ui.tests.rcp.performance,
  org.eclipse.ui.tests.rcp.util
