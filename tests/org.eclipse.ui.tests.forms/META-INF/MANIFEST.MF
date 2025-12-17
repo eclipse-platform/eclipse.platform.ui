@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Forms Test
 Bundle-SymbolicName: org.eclipse.ui.tests.forms;singleton:=true
-Bundle-Version: 3.10.600.qualifier
-Require-Bundle: org.eclipse.ui,
+Bundle-Version: 3.11.0.qualifier
+Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.runtime,
  org.eclipse.test.performance,
  org.eclipse.ui.forms
@@ -11,6 +11,6 @@ Bundle-Vendor: Eclipse.org
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.jupiter.api.function;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.tests.forms

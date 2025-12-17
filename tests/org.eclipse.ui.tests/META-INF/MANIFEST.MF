@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse UI Tests
 Bundle-SymbolicName: org.eclipse.ui.tests; singleton:=true
-Bundle-Version: 3.15.2200.qualifier
+Bundle-Version: 3.16.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: org.eclipse.ui.tests.TestPlugin
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.core.resources;bundle-version="3.14.0",
  org.eclipse.core.expressions;bundle-version="3.7.0",
- org.eclipse.ui,
+ org.eclipse.ui;bundle-version="3.208.0",
  org.junit,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
@@ -53,7 +53,7 @@ Import-Package: jakarta.annotation,
 Eclipse-AutoStart: true
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
  osgi.service;
