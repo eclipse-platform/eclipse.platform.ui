@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.browser.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -38,10 +38,10 @@ public class InternalBrowserEditorTestCase {
 		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
 
-		wb.openURL(new URL("http://www.ibm.com"));
+		wb.openURL(new URI("http://www.ibm.com").toURL());
 		runLoopTimer(2);
 
-		wb.openURL(new URL("http://www.eclipse.org"));
+		wb.openURL(new URI("http://www.eclipse.org").toURL());
 		runLoopTimer(2);
 
 		wb.close();
@@ -55,7 +55,7 @@ public class InternalBrowserEditorTestCase {
 		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
 
-		wb.openURL(new URL("http://www.ibm.com"));
+		wb.openURL(new URI("http://www.ibm.com").toURL());
 		runLoopTimer(2);
 
 		IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
