@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -252,7 +252,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 */
 	private BreakIterator getPOSIXWordBreakIterator() {
 		if (fPOSIXWordBreakIterator == null) {
-			fPOSIXWordBreakIterator= BreakIterator.getWordInstance(new Locale("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			fPOSIXWordBreakIterator= BreakIterator.getWordInstance(Locale.of("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return fPOSIXWordBreakIterator;
 	}

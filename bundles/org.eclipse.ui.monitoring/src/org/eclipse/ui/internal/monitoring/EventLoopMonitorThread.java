@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2025 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -384,7 +384,7 @@ public class EventLoopMonitorThread extends Thread {
 		setDaemon(true);
 		setPriority(NORM_PRIORITY + 1);
 		display = getDisplay();
-		uiThreadId = this.display.getThread().getId();
+		uiThreadId = this.display.getThread().threadId();
 		longEventWarningThreshold = Math.max(args.longEventWarningThreshold, 3);
 		longEventErrorThreshold = Math.max(args.longEventErrorThreshold, longEventWarningThreshold);
 		maxLoggedStackSamples = Math.max(args.maxStackSamples, 0);
@@ -458,7 +458,7 @@ public class EventLoopMonitorThread extends Thread {
 			MonitoringPlugin.logWarning(Messages.EventLoopMonitorThread_logging_disabled_error);
 		}
 
-		monitoringThreadId = Thread.currentThread().getId();
+		monitoringThreadId = Thread.currentThread().threadId();
 		threadMXBean = ManagementFactory.getThreadMXBean();
 		dumpLockedMonitors = threadMXBean.isObjectMonitorUsageSupported();
 		dumpLockedSynchronizers = threadMXBean.isSynchronizerUsageSupported();

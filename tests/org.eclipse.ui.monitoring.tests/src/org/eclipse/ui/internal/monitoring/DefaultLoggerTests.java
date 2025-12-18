@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2025 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,7 +61,7 @@ public class DefaultLoggerTests {
 
 	private UiFreezeEvent createFreezeEvent() {
 		ThreadMXBean jvmThreadManager = ManagementFactory.getThreadMXBean();
-		thread = jvmThreadManager.getThreadInfo(Thread.currentThread().getId(), Integer.MAX_VALUE);
+		thread = jvmThreadManager.getThreadInfo(Thread.currentThread().threadId(), Integer.MAX_VALUE);
 
 		StackSample[] samples = { new StackSample(TIME, new ThreadInfo[] { thread }) };
 		return new UiFreezeEvent(TIME, DURATION, samples, false, false, false);
