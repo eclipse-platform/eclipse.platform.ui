@@ -37,7 +37,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -584,26 +583,23 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	protected void updateTreeSelection(boolean setFocus) {
 		Tree tree = getViewer().getTree();
 		if (tree.getItemCount() == 0) {
-			if (setFocus) {
-				Display.getCurrent().beep();
+			return;
+		}
+		// if the initial filter text hasn't changed, do not try
+		// to match
+		boolean hasFocus = setFocus ? tree.setFocus() : true;
+		boolean textChanged = !getInitialText().equals(filterText.getText().trim());
+		if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
+			TreeItem item;
+			if (tree.getSelectionCount() > 0) {
+				item = getFirstMatchingItem(tree.getSelection());
+			} else {
+				item = getFirstMatchingItem(tree.getItems());
 			}
-		} else {
-			// if the initial filter text hasn't changed, do not try
-			// to match
-			boolean hasFocus = setFocus ? tree.setFocus() : true;
-			boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-			if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
-				TreeItem item;
-				if (tree.getSelectionCount() > 0) {
-					item = getFirstMatchingItem(tree.getSelection());
-				} else {
-					item = getFirstMatchingItem(tree.getItems());
-				}
-				if (item != null) {
-					tree.setSelection(new TreeItem[] { item });
-					ISelection sel = getViewer().getSelection();
-					getViewer().setSelection(sel, true);
-				}
+			if (item != null) {
+				tree.setSelection(new TreeItem[] { item });
+				ISelection sel = getViewer().getSelection();
+				getViewer().setSelection(sel, true);
 			}
 		}
 	}
