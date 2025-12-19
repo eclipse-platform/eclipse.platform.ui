@@ -49,6 +49,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -454,6 +455,9 @@ public class PerspectiveSwitcher {
 				// We're only interested if the button went down over a
 				// perspective item
 				if (downItem != null && downItem.getData() instanceof MPerspective) {
+					if (perspSwitcherToolControl.getTags().contains(IPresentationEngine.NO_MOVE)) {
+						return;
+					}
 					dragItem = downItem;
 				}
 			}
