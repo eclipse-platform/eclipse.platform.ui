@@ -36,7 +36,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -391,25 +390,24 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 			if (e.detail == SWT.TRAVERSE_RETURN) {
 				e.doit = false;
 				if (getViewer().getTree().getItemCount() == 0) {
-					Display.getCurrent().beep();
-				} else {
-					// if the initial filter text hasn't changed, do not try
-					// to match
-					boolean hasFocus = getViewer().getTree().setFocus();
-					boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-					if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
-						Tree tree = getViewer().getTree();
-						TreeItem item;
-						if (tree.getSelectionCount() > 0) {
-							item = getFirstMatchingItem(tree.getSelection());
-						} else {
-							item = getFirstMatchingItem(tree.getItems());
-						}
-						if (item != null) {
-							tree.setSelection(new TreeItem[] { item });
-							ISelection sel = getViewer().getSelection();
-							getViewer().setSelection(sel, true);
-						}
+					return;
+				}
+				// if the initial filter text hasn't changed, do not try
+				// to match
+				boolean hasFocus = getViewer().getTree().setFocus();
+				boolean textChanged = !getInitialText().equals(filterText.getText().trim());
+				if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
+					Tree tree = getViewer().getTree();
+					TreeItem item;
+					if (tree.getSelectionCount() > 0) {
+						item = getFirstMatchingItem(tree.getSelection());
+					} else {
+						item = getFirstMatchingItem(tree.getItems());
+					}
+					if (item != null) {
+						tree.setSelection(new TreeItem[] { item });
+						ISelection sel = getViewer().getSelection();
+						getViewer().setSelection(sel, true);
 					}
 				}
 			}
