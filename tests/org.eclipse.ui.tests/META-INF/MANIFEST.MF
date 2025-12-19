@@ -47,9 +47,10 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.14.0",
  org.eclipse.emf.ecore
 Import-Package: jakarta.annotation,
  jakarta.inject,
- org.osgi.service.event,
  org.junit.jupiter.api;version="[5.14.0,6.0.0)",
- org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
+ org.junit.jupiter.api.extension;version="[5.14.0,6.0.0)",
+ org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
+ org.osgi.service.event
 Eclipse-AutoStart: true
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
