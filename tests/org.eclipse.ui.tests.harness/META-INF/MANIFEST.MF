@@ -9,6 +9,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.junit,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
+Import-Package: org.junit.jupiter.api;version="[5.0.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.0.0,6.0.0)"
 Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
