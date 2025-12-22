@@ -88,6 +88,20 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="eclipseui/org/eclipse/ui/IPageLayout.java" type="org.eclipse.ui.IPageLayout">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3606" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IPageLayout"/>
+                <message_argument value="addFastView(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3606" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IPageLayout"/>
+                <message_argument value="addFastView(String, float)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="eclipseui/org/eclipse/ui/dialogs/YesNoCancelListSelectionDialog.java" type="org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog">
         <filter id="576778288">
             <message_arguments>
