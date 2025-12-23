@@ -151,12 +151,6 @@ public class PartRenderingEngineTests {
 		try {
 			advisor.eventLoopException(ex);
 		} catch (Throwable t) {
-			// The type ThreadDeath has been deprecated since version 20
-			// and marked for removal
-			if ("ThreadDeath".equals(t.getClass().getSimpleName())) {
-				// don't catch ThreadDeath by accident
-				throw t;
-			}
 			// couldn't handle the exception, print to console
 			t.printStackTrace();
 		} finally {
