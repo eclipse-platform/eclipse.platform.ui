@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1151,8 +1151,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 							}
 							advisor.eventLoopIdle(display);
 						}
-					} catch (ThreadDeath th) {
-						throw th;
 					} catch (Exception | Error err) {
 						handle(err, advisor);
 					}
@@ -1166,10 +1164,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				try {
 					advisor.eventLoopException(ex);
 				} catch (Throwable t) {
-					if (t instanceof ThreadDeath) {
-						throw (ThreadDeath) t;
-					}
-
 					// couldn't handle the exception, print to console
 					t.printStackTrace();
 				}

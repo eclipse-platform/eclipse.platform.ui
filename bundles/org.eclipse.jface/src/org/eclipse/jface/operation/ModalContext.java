@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -122,10 +122,6 @@ public class ModalContext {
 				if (runnable != null) {
 					runnable.run(progressMonitor);
 				}
-			} catch (ThreadDeath e) {
-				// Make sure to propagate ThreadDeath, or threads will never
-				// fully terminate.
-				throw e;
 			} catch (InvocationTargetException | InterruptedException | RuntimeException | Error e) {
 				throwable = e;
 			} finally {
@@ -169,12 +165,6 @@ public class ModalContext {
 							display.sleep();
 						}
 						exceptionCount = 0;
-					}
-					// ThreadDeath is a normal error when the thread is dying.
-					// We must propagate it in order for it to properly
-					// terminate.
-					catch (ThreadDeath e) {
-						throw (e);
 					}
 					// For all other exceptions, log the problem.
 					catch (Throwable t) {
@@ -414,10 +404,6 @@ public class ModalContext {
 	static Throwable invokeThreadListener(IThreadListener listener, Thread switchingThread) {
 		try {
 			listener.threadChange(switchingThread);
-		} catch (ThreadDeath e) {
-			// Make sure to propagate ThreadDeath, or threads will never
-			// fully terminate
-			throw e;
 		} catch (RuntimeException | Error e) {
 			return e;
 		}
@@ -438,9 +424,7 @@ public class ModalContext {
 			InterruptedException interruptedException = new InterruptedException(e.getLocalizedMessage());
 			interruptedException.initCause(e);
 			throw interruptedException;
-		} catch (InvocationTargetException | InterruptedException | ThreadDeath e) {
-			// Make sure to propagate ThreadDeath, or threads will never fully
-			// terminate.
+		} catch (InvocationTargetException | InterruptedException e) {
 			throw e;
 		} catch (RuntimeException | Error e) {
 			throw new InvocationTargetException(e);
