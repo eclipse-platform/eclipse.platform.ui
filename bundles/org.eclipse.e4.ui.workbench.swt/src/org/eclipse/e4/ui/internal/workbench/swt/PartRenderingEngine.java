@@ -99,8 +99,10 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
@@ -581,6 +583,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 						control.setParent((Composite) parentWidget);
 					}
 				}
+			}
+
+			if (currentWidget instanceof Menu menu) {
+				if (parentWidget instanceof Decorations) {
+					Decorations currentParent = menu.getParent();
+					if (currentParent != parentWidget) {
+						menu.dispose();
+						return safeCreateGui(element, parentWidget, parentContext);
+					}
+				}
+
 			}
 
 			// Reparent the context (or the kid's context)
