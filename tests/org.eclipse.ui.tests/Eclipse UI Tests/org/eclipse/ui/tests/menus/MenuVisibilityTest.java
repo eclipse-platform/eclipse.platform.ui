@@ -58,23 +58,21 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class MenuVisibilityTest {
 
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
 	private static final String LOCATION = "menu:foo";
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandEnabledVisibility";
-
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IContextService contextService;
 	private IMenuService menuService;
@@ -417,7 +415,7 @@ public class MenuVisibilityTest {
 		parentMenuManager.dispose();
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		window = openTestWindow();
 		menuService = window.getService(IMenuService.class);
@@ -431,7 +429,7 @@ public class MenuVisibilityTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		if (activeContext != null) {
 			contextService.deactivateContext(activeContext);
