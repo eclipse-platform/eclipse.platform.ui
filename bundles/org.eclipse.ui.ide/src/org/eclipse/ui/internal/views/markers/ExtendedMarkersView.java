@@ -113,7 +113,6 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.WorkbenchViewerSetup;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
@@ -261,7 +260,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
 				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
-		WorkbenchViewerSetup.setupViewer(viewer);
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 		createColumns(new TreeColumn[0], new int[0]);
