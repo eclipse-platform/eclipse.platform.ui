@@ -27,12 +27,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
-import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.Rule;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.6
@@ -41,8 +41,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(CloseTestWindowsExtension.class)
 public class StickyViewManagerTest {
 
-	@Rule
-	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
+	@RegisterExtension
+	public final PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
 
 
 	@BeforeEach

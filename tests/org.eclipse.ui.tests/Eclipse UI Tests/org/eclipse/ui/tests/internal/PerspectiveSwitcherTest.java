@@ -23,16 +23,16 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
-import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.Rule;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @ExtendWith(CloseTestWindowsExtension.class)
 public class PerspectiveSwitcherTest {
 
-	@Rule
-	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
+	@RegisterExtension
+	public final PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
 
 	/**
 	 * This test ensures that our workbench window's perspective bar can opened if
