@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests that pressing delete in a styled text widget does not cause a double
@@ -41,12 +41,10 @@ import org.junit.Test;
  *
  * @since 3.0
  */
-@Ignore("disabled as it fails on the Mac.")
+@Disabled("disabled as it fails on the Mac.")
 // Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug53489Test {
-
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests that pressing delete in a styled text widget (in a running Eclipse)
@@ -84,7 +82,7 @@ public class Bug53489Test {
 		// Test the text is only one character different.
 		LineNumberReader reader = new LineNumberReader(new InputStreamReader(textFile.getContents()));
 		String currentContents = reader.readLine();
-		assertTrue("'DEL' deleted more than one key.", (originalContents //$NON-NLS-1$
-				.length() == (currentContents.length() + 1)));
+		assertTrue((originalContents
+				.length() == (currentContents.length() + 1)), "'DEL' deleted more than one key."); //$NON-NLS-1$
 	}
 }
