@@ -15,10 +15,10 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,22 +48,20 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests various aspects of command state.
  *
  * @since 3.2
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class HandlerActivationTest {
-
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	static class ActTestHandler extends AbstractHandler {
 		public String contextId;
@@ -174,8 +172,7 @@ public class HandlerActivationTest {
 		ActTestHandler handler = (ActTestHandler) testHandlers.get(handlerId);
 		int count = handler.executionCount;
 		cmd.executeWithChecks(handlerService.createExecutionEvent(cmd, null));
-		assertEquals("The handler count should be incremented", count + 1,
-				handler.executionCount);
+		assertEquals(count + 1, handler.executionCount, "The handler count should be incremented");
 	}
 
 	private void createHandlerActivation(String contextId, String handlerId,
@@ -185,7 +182,7 @@ public class HandlerActivationTest {
 		makeHandler(handlerId, contextId, expression);
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		for (final String[] contextInfo : CREATE_CONTEXTS) {
 			final Context context = contextService.getContext(contextInfo[0]);
@@ -203,7 +200,7 @@ public class HandlerActivationTest {
 
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		handlerService.deactivateHandlers(testHandlerActivations.values());
 		testHandlerActivations.clear();
@@ -214,15 +211,15 @@ public class HandlerActivationTest {
 	private void doTestForBreak() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		Command cmd = commandService.getCommand(CMD_ID);
-		assertTrue("Command should be defined", cmd.isDefined());
+		assertTrue(cmd.isDefined(), "Command should be defined");
 
-		assertFalse("Should not be handled yet", cmd.isHandled());
+		assertFalse(cmd.isHandled(), "Should not be handled yet");
 
 		IContextActivation c1 = activateContext(C1_ID);
 		IContextActivation c2 = activateContext(C2_ID);
 		IContextActivation c3 = activateContext(C3_ID);
 
-		assertTrue("Should still be handled", cmd.isHandled());
+		assertTrue(cmd.isHandled(), "Should still be handled");
 
 		assertHandlerIsExecuted(cmd, H3);
 
@@ -260,22 +257,21 @@ public class HandlerActivationTest {
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
 
 		Command cmd = commandService.getCommand(CMD_ID);
-		assertTrue("Command should be defined", cmd.isDefined());
+		assertTrue(cmd.isDefined(), "Command should be defined");
 
-		assertFalse("Should not be handled yet", cmd.isHandled());
+		assertFalse(cmd.isHandled(), "Should not be handled yet");
 
 		IContextActivation activationC1 = activateContext(C1_ID);
-		assertTrue("Should definitely be handled", cmd.isHandled());
+		assertTrue(cmd.isHandled(), "Should definitely be handled");
 
 		ActTestHandler handler1 = (ActTestHandler) testHandlers.get(H1);
 		int count = handler1.executionCount;
 		cmd.executeWithChecks(handlerService.createExecutionEvent(cmd, null));
-		assertEquals("The handler count should be correct", count + 1,
-				handler1.executionCount);
+		assertEquals(count + 1, handler1.executionCount, "The handler count should be correct");
 
 		contextService.deactivateContext(activationC1);
 
-		assertFalse("Should not be handled", cmd.isHandled());
+		assertFalse(cmd.isHandled(), "Should not be handled");
 	}
 
 	@Test
@@ -382,32 +378,29 @@ public class HandlerActivationTest {
 						ISources.ACTIVE_ACTION_SETS_NAME });
 
 		Command cmd = commandService.getCommand(CMD_ID);
-		assertTrue("Command should be defined", cmd.isDefined());
+		assertTrue(cmd.isDefined(), "Command should be defined");
 
-		assertFalse("Should not be handled yet", cmd.isHandled());
+		assertFalse(cmd.isHandled(), "Should not be handled yet");
 		IContextActivation activationC1 = activateContext(C1_ID);
-		assertTrue("Should definitely be handled", cmd.isHandled());
+		assertTrue(cmd.isHandled(), "Should definitely be handled");
 
 		ActTestHandler handler1 = (ActTestHandler) testHandlers.get(H1);
 		int count1 = handler1.executionCount;
 		cmd.executeWithChecks(new ExecutionEvent());
-		assertEquals("The handler count should be incremented", count1 + 1,
-				handler1.executionCount);
+		assertEquals(count1 + 1, handler1.executionCount, "The handler count should be incremented");
 
 		activateContext(C2_ID);
-		assertTrue("Should still be handled", cmd.isHandled());
+		assertTrue(cmd.isHandled(), "Should still be handled");
 
 		ActTestHandler handler2 = (ActTestHandler) testHandlers.get(H2);
 		int count2 = handler2.executionCount;
 		count1 = handler1.executionCount;
 		cmd.executeWithChecks(new ExecutionEvent());
-		assertEquals("The handler1 count should not be incremented", count1,
-				handler1.executionCount);
-		assertEquals("The handler2 count should be incremented", count2 + 1,
-				handler2.executionCount);
+		assertEquals(count1, handler1.executionCount, "The handler1 count should not be incremented");
+		assertEquals(count2 + 1, handler2.executionCount, "The handler2 count should be incremented");
 
 		contextService.deactivateContext(activationC1);
-		assertTrue("Will still be handled", cmd.isHandled());
+		assertTrue(cmd.isHandled(), "Will still be handled");
 	}
 
 	@Test
