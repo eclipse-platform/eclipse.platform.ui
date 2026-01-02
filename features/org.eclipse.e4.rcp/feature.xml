@@ -19,6 +19,26 @@
       %license
    </license>
 
+   <requires>
+      <import plugin="org.apache.felix.gogo.command" version="1.1.2" match="compatible"/>
+      <import plugin="org.apache.felix.gogo.runtime" version="1.1.6" match="compatible"/>
+      <import plugin="org.apache.felix.gogo.shell" version="1.1.4" match="compatible"/>
+      <import plugin="org.osgi.service.cm" version="1.6.1" match="compatible"/>
+      <import plugin="org.osgi.service.component" version="1.5.1" match="compatible"/>
+      <import plugin="org.osgi.service.device" version="1.1.1" match="compatible"/>
+      <import plugin="org.osgi.service.event" version="1.4.1" match="compatible"/>
+      <import plugin="org.osgi.service.metatype" version="1.4.1" match="compatible"/>
+      <import plugin="org.osgi.service.provisioning" version="1.2.0" match="compatible"/>
+      <import plugin="org.osgi.service.upnp" version="1.2.1" match="compatible"/>
+      <import plugin="org.osgi.service.useradmin" version="1.1.1" match="compatible"/>
+      <import plugin="org.osgi.service.wireadmin" version="1.0.2" match="compatible"/>
+      <import plugin="org.osgi.util.function" version="1.2.0" match="compatible"/>
+      <import plugin="org.osgi.util.measurement" version="1.0.2" match="compatible"/>
+      <import plugin="org.osgi.util.position" version="1.0.1" match="compatible"/>
+      <import plugin="org.osgi.util.promise" version="1.3.0" match="compatible"/>
+      <import plugin="org.osgi.util.xml" version="1.0.2" match="compatible"/>
+   </requires>
+
    <plugin
          id="org.eclipse.e4.core.services"
          version="0.0.0"/>
@@ -306,18 +326,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.felix.gogo.command"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.apache.felix.gogo.runtime"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.apache.felix.gogo.shell"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.equinox.console"
          version="0.0.0"/>
 
@@ -365,62 +373,6 @@
 
    <plugin
          id="org.eclipse.jface.notifications"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.util.function"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.util.promise"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.util.measurement"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.util.position"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.util.xml"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.cm"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.component"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.device"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.event"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.metatype"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.provisioning"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.upnp"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.useradmin"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.osgi.service.wireadmin"
          version="0.0.0"/>
 
 </feature>
