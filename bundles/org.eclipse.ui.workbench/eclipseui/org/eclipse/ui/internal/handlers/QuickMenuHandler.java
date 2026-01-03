@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -65,7 +65,6 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 	@Override
 	public void dispose() {
 		if (creator != null) {
-			creator.dispose();
 			creator = null;
 		}
 	}
