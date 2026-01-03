@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -110,12 +110,14 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 	}
 
 	@Override
+	@Deprecated
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		super.preWindowOpen(configurer);
 		addOperation(PRE_WINDOW_OPEN);
 	}
 
 	@Override
+	@Deprecated
 	public void fillActionBars(IWorkbenchWindow window,
 			IActionBarConfigurer configurer, int flags) {
 		super.fillActionBars(window, configurer, flags);
@@ -123,6 +125,7 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
 			throws WorkbenchException {
 		super.postWindowRestore(configurer);
@@ -130,6 +133,7 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		super.postWindowOpen(configurer);
 		addOperation(POST_WINDOW_OPEN);
@@ -142,6 +146,7 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 	}
 
 	@Override
+	@Deprecated
 	public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
 		if (!super.preWindowShellClose(configurer)) {
 			return false;

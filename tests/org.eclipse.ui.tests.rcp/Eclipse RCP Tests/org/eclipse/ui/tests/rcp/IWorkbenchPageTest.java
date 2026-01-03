@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,6 +66,7 @@ public class IWorkbenchPageTest {
 		WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
 			@Override
+			@Deprecated
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				super.preWindowOpen(configurer);
 				configurer.setShowPerspectiveBar(false);
