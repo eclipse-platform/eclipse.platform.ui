@@ -380,9 +380,10 @@ public interface INavigatorContentService {
 
 	/**
 	 * The sorter service provides the appropriate sorter based on the current items
-	 * being sorted. By default, the CommonViewer uses {@link CommonViewerSorter}
-	 * which delegates to this service. Clients do not need to provide their own
-	 * {@link ViewerComparator} unless they wish to override this functionality.
+	 * being sorted. By default, the CommonViewer uses
+	 * {@link CommonViewerComparator} which delegates to this service. Clients do
+	 * not need to provide their own {@link ViewerComparator} unless they wish to
+	 * override this functionality.
 	 *
 	 * @return An {@link INavigatorSorterService} that can provide
 	 *         {@link ViewerComparator} based on the context of the parent.

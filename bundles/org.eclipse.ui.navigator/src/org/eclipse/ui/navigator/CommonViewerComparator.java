@@ -17,7 +17,7 @@ package org.eclipse.ui.navigator;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreePathViewerSorter;
+import org.eclipse.jface.viewers.TreePathViewerComparator;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
@@ -29,26 +29,23 @@ import org.eclipse.ui.internal.navigator.Policy;
 
 /**
  *
- * Provides an implementation of TreeViewerSorter that uses the given parent to determine the
- * correct sort order based on the defined
- * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent/commonSorter</b> elements
- * available in the set of <i>visible</i> content extensions.
+ * Provides an implementation of TreeViewerSorter that uses the given parent to
+ * determine the correct sort order based on the defined
+ * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent/commonSorter</b>
+ * elements available in the set of <i>visible</i> content extensions.
  *
  * <p>
- * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to drive its sorting
- * algorithm. Without a valid content service, the sorter will return the default ordering.
+ * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to
+ * drive its sorting algorithm. Without a valid content service, the sorter will
+ * return the default ordering.
  * </p>
  * <p>
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
  * </p>
  *
- * @since 3.2
- *
- * @deprecated Use {@link CommonViewerComparator} instead.
+ * @since 3.14
  */
-@SuppressWarnings("removal")
-@Deprecated(forRemoval = true, since="2026-03")
-public final class CommonViewerSorter extends TreePathViewerSorter {
+public final class CommonViewerComparator extends TreePathViewerComparator {
 
 	private NavigatorContentService contentService;
 
@@ -61,13 +58,11 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 *            The content service used by the viewer that will use this sorter service.
 	 * @since 3.3
 	 */
-	@Deprecated(forRemoval = true, since="2026-03")
 	public void setContentService(INavigatorContentService aContentService) {
 		contentService = (NavigatorContentService) aContentService;
 		sorterService = contentService.getSorterService();
 	}
 
-	@Deprecated(forRemoval = true, since="2026-03")
 	@Override
 	public int category(Object element) {
 		if (contentService == null) {
@@ -83,7 +78,6 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 				object != null ? object.toString() : "<null>", parent != null ? parent.toString() : "<null>"), null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	@Deprecated(forRemoval = true, since="2026-03")
 	@Override
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		if (contentService == null) {
@@ -147,7 +141,6 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return sorter;
 	}
 
-	@Deprecated(forRemoval=true, since="2026-03")
 	@Override
 	public boolean isSorterProperty(Object element, String property) {
 		// Have to get the parent path from the content provider
@@ -161,7 +154,6 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return false;
 	}
 
-	@Deprecated(forRemoval=true, since="2026-03")
 	@Override
 	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
 		INavigatorContentDescriptor contentDesc = getSource(element);
