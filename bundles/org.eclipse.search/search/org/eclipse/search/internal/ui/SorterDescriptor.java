@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
@@ -53,9 +53,9 @@ class SorterDescriptor {
 	 * Creates a new sorter from this node.
 	 * @return new sorter
 	 */
-	public ViewerSorter createObject() {
+	public ViewerComparator createObject() {
 		try {
-			return (ViewerSorter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
+			return (ViewerComparator) fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message);
 			return null;
