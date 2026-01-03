@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
@@ -30,9 +30,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabContents;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the text tests view.
@@ -45,7 +45,7 @@ public class TabbedPropertySheetPageTextTest {
 
 	private TextTestsView textTestsView;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws WorkbenchException {
 
 		/**
@@ -74,7 +74,7 @@ public class TabbedPropertySheetPageTextTest {
 		textTestsView = (TextTestsView) view;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
@@ -164,7 +164,7 @@ public class TabbedPropertySheetPageTextTest {
 			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
 			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		} while (tabDescriptors.length == 0 && System.currentTimeMillis() < threshold);
-		assertTrue("No tab got activated", tabDescriptors.length > 0);
+		assertTrue(tabDescriptors.length > 0, "No tab got activated");
 		return tabDescriptors;
 	}
 
