@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2023 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -39,7 +40,6 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.junit.Assert;
 
 public class UITestHelper {
 	private static class PreferenceDialogWrapper extends PreferenceDialog {
@@ -126,7 +126,7 @@ public class UITestHelper {
 	 * @param dialog the test dialog to be verified.
 	 */
 	public static void assertDialog(Dialog dialog) {
-		Assert.assertNotNull(dialog);
+		assertNotNull(dialog);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		Shell shell = dialog.getShell();
