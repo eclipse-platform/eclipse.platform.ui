@@ -18,6 +18,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -620,18 +621,33 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			gc.drawLine(startX, 0, endX, 0);
 		}
 
+		if (TAB_OUTLINE_WIDTH > 0) {
+			gc.drawPolyline(tabOutlinePoints);
+		}
+
 		if (selectedTabHighlightColor != null) {
 			gc.setBackground(selectedTabHighlightColor);
 			boolean highlightOnTop = drawTabHighlightOnTop;
 			if (onBottom) {
 				highlightOnTop = !highlightOnTop;
 			}
-			int highlightHeight = 2;
-			int verticalOffset = highlightOnTop ? 0 : bounds.height - (highlightHeight - 1);
-			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
-			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
-			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
-					highlightHeight);
+			final int highlightHeight = 2;
+			if (cornerSize == SQUARE_CORNER || highlightOnTop == onBottom) {
+				int verticalOffset = highlightOnTop ? 0 : outlineBoundsForOutline.height - (highlightHeight - 1);
+				gc.fillRectangle(outlineBoundsForOutline.x,
+						outlineBoundsForOutline.y + verticalOffset, outlineBoundsForOutline.width, highlightHeight);
+			} else {
+				boolean gcAdvanced = gc.getAdvanced();
+				gc.setAdvanced(false);
+				int[] highlightShape = Arrays.copyOfRange(tabOutlinePoints, 12, tabOutlinePoints.length - 12);
+				int highlightY = highlightOnTop ? highlightHeight
+						: outlineBoundsForOutline.height - highlightHeight;
+				highlightShape[1] = highlightShape[3] = highlightShape[highlightShape.length
+						- 1] = highlightShape[highlightShape.length - 3] = highlightY;
+				gc.fillPolygon(highlightShape);
+				gc.setForeground(tabOutlineColor);
+				gc.setAdvanced(gcAdvanced);
+			}
 		}
 
 		if (backgroundPattern != null) {
@@ -639,11 +655,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 		if (foregroundPattern != null) {
 			foregroundPattern.dispose();
-		}
-
-		gc.setForeground(tabOutlineColor);
-		if (TAB_OUTLINE_WIDTH > 0) {
-			gc.drawPolyline(tabOutlinePoints);
 		}
 	}
 
