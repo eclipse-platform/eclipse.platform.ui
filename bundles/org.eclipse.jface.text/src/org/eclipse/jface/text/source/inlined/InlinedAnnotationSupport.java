@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -58,6 +59,7 @@ import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -483,13 +485,36 @@ public class InlinedAnnotationSupport {
 	 * @return the existing codemining annotation with the given position information and null
 	 *         otherwise.
 	 */
-	@SuppressWarnings("unchecked")
 	public <T extends AbstractInlinedAnnotation> T findExistingAnnotation(Position pos) {
+		return findExistingAnnotation(pos, null);
+	}
+
+	/**
+	 * @since 3.30
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends AbstractInlinedAnnotation> T findExistingAnnotation(Position pos, List<ICodeMining> minings) {
 		if (fInlinedAnnotations == null) {
 			return null;
 		}
 		for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
 			if (pos.equals(ann.getPosition()) && !ann.getPosition().isDeleted()) {
+				try {
+					return (T) ann;
+				} catch (ClassCastException e) {
+					// Do nothing
+				}
+			}
+			if (minings == null) {
+				continue;
+			}
+			List<ICodeMining> existingMinings= null;
+			if (ann instanceof CodeMiningLineHeaderAnnotation lineHeader) {
+				existingMinings= lineHeader.getMinings();
+			} else if (ann instanceof CodeMiningLineContentAnnotation lineContent) {
+				existingMinings= lineContent.getMinings();
+			}
+			if (existingMinings != null && existingMinings.equals(minings) && ann.getPosition() != null && !ann.getPosition().isDeleted()) {
 				try {
 					return (T) ann;
 				} catch (ClassCastException e) {
