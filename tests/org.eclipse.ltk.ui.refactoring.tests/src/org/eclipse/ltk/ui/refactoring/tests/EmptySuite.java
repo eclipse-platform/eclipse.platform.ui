@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.tests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EmptySuite {
 
