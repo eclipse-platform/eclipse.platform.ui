@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2018, 2021 SAP SE and others.
+* Copyright (c) 2018, 2026 SAP SE and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
 *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.dialogs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,8 +42,8 @@ import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 import org.eclipse.urischeme.IUriSchemeExtensionReader;
 import org.eclipse.urischeme.IUriSchemeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UriSchemeHandlerPreferencePageTest {
 	private static final String NO_APPLICATION = IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Text_No_Application;
@@ -64,7 +65,7 @@ public class UriSchemeHandlerPreferencePageTest {
 	private OperatingSystemRegistrationMock operatingSystemRegistration;
 	private MessageDialogWrapperSpy messageDialogSpy;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.page = createStandalonePreferencePage();
 	}
@@ -232,16 +233,16 @@ public class UriSchemeHandlerPreferencePageTest {
 		waitForJob();
 		// tableItem[1] (hello1 scheme) is true (refer to members), but page is still
 		// loading
-		assertNotNull("Page is null", page);
+		assertNotNull(page, "Page is null");
 		page.performOk();
 
 		OperatingSystemRegistrationMock mock = (OperatingSystemRegistrationMock) page.operatingSystemRegistration;
-		assertNotNull("mock is null", mock);
+		assertNotNull(mock, "mock is null");
 
-		assertNotNull("addedSchemes is null", mock.addedSchemes);
+		assertNotNull(mock.addedSchemes, "addedSchemes is null");
 		assertEquals(0, mock.addedSchemes.size());
 
-		assertNotNull("removedSchemes is null", mock.removedSchemes);
+		assertNotNull(mock.removedSchemes, "removedSchemes is null");
 		assertEquals(0, mock.removedSchemes.size());
 		waitForJob();
 	}
