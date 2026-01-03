@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,9 +33,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.decorations.views.Decoration
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TabbedPropertySheetPageDecorationsTest {
 
@@ -43,7 +43,7 @@ public class TabbedPropertySheetPageDecorationsTest {
 
 	private TreeNode[] treeNodes;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws WorkbenchException {
 		/**
 		 * Close the existing perspectives.
@@ -93,7 +93,7 @@ public class TabbedPropertySheetPageDecorationsTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 
 		/**
