@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -23,8 +23,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Bug 43597
@@ -66,14 +66,14 @@ public class Bug43597Test {
 		Font fontAfter = text.getFont();
 
 		// Test.
-		assertEquals("Clearing text resets font.", fontBefore, fontAfter); //$NON-NLS-1$
+		assertEquals(fontBefore, fontAfter, "Clearing text resets font."); //$NON-NLS-1$
 
 		// Clean up after myself.
 		shell.close();
 		shell.dispose();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (textFont != null) {
 			textFont.dispose();
