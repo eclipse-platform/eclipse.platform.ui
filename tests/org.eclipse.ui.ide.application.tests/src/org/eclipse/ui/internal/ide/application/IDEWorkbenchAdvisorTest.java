@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 InterSystems Corporation and others.
+ * Copyright (c) 2016, 2026 InterSystems Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,10 +33,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IDEWorkbenchAdvisorTest {
 	private static final String PLUGIN_ID = "org.eclipse.ui.ide.application.tests";
@@ -79,7 +79,7 @@ public class IDEWorkbenchAdvisorTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		assertNull(display);
 		display = PlatformUI.createDisplay();
@@ -87,7 +87,7 @@ public class IDEWorkbenchAdvisorTest {
 		rule = ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		try {
 			Job.getJobManager().endRule(rule);
@@ -127,14 +127,14 @@ public class IDEWorkbenchAdvisorTest {
 			};
 
 			int returnCode = PlatformUI.createAndRunWorkbench(display, advisor);
-			Assert.assertEquals(PlatformUI.RETURN_OK, returnCode);
+			assertEquals(PlatformUI.RETURN_OK, returnCode);
 			dispatchDisplay();
 
-			Assert.assertNotNull(saveHook.prepareToSave);
-			Assert.assertNotNull(saveHook.saving);
-			Assert.assertNotNull(saveHook.prepareToSave);
-			Assert.assertNotNull(saveHook.doneSaving);
-			Assert.assertNull(saveHook.rollback);
+			assertNotNull(saveHook.prepareToSave);
+			assertNotNull(saveHook.saving);
+			assertNotNull(saveHook.prepareToSave);
+			assertNotNull(saveHook.doneSaving);
+			assertNull(saveHook.rollback);
 		}
 	}
 
@@ -185,16 +185,16 @@ public class IDEWorkbenchAdvisorTest {
 			};
 
 			int returnCode = PlatformUI.createAndRunWorkbench(display, advisor);
-			Assert.assertEquals(PlatformUI.RETURN_OK, returnCode);
+			assertEquals(PlatformUI.RETURN_OK, returnCode);
 			dispatchDisplay();
 
-			Assert.assertNull(saveHook.prepareToSave);
-			Assert.assertNull(saveHook.saving);
-			Assert.assertNull(saveHook.prepareToSave);
-			Assert.assertNull(saveHook.doneSaving);
-			Assert.assertNull(saveHook.rollback);
+			assertNull(saveHook.prepareToSave);
+			assertNull(saveHook.saving);
+			assertNull(saveHook.prepareToSave);
+			assertNull(saveHook.doneSaving);
+			assertNull(saveHook.rollback);
 			String message = "IDEWorkbenchAdvisor did not properly reported failed disconnect";
-			Assert.assertEquals(message, expectedLogs, logs.get());
+			assertEquals(expectedLogs, logs.get(), message);
 		} finally {
 			IDEWorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
 		}
@@ -219,14 +219,14 @@ public class IDEWorkbenchAdvisorTest {
 				}
 			};
 			int returnCode = PlatformUI.createAndRunWorkbench(display, advisor);
-			Assert.assertEquals(PlatformUI.RETURN_OK, returnCode);
+			assertEquals(PlatformUI.RETURN_OK, returnCode);
 			dispatchDisplay();
 
-			Assert.assertNotNull(saveHook.prepareToSave);
-			Assert.assertNotNull(saveHook.saving);
-			Assert.assertNotNull(saveHook.prepareToSave);
-			Assert.assertNotNull(saveHook.doneSaving);
-			Assert.assertNull(saveHook.rollback);
+			assertNotNull(saveHook.prepareToSave);
+			assertNotNull(saveHook.saving);
+			assertNotNull(saveHook.prepareToSave);
+			assertNotNull(saveHook.doneSaving);
+			assertNull(saveHook.rollback);
 		}
 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Manumitting Technologies Inc and others
+ * Copyright (c) 2016, 2026 Manumitting Technologies Inc and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link FileLocationDetails}, used to parse file names from
@@ -33,13 +33,13 @@ public class FileLocationDetailsTest {
 	File tempFile;
 	String path;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		tempFile = File.createTempFile(getClass().getSimpleName(), "java");
 		path = tempFile.getAbsolutePath().replace('\\', '/');
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		tempFile.delete();
 	}
