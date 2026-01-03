@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,6 +46,7 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
 	}
 
 	@Override
+	@Deprecated
 	public void preWindowOpen() {
 		wbAdvisor.preWindowOpen(getWindowConfigurer());
 	}
@@ -56,35 +57,42 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowRestore() throws WorkbenchException {
 		wbAdvisor.postWindowRestore(getWindowConfigurer());
 	}
 
 	@Override
+	@Deprecated
 	public void openIntro() {
 		wbAdvisor.openIntro(getWindowConfigurer());
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowCreate() {
 		wbAdvisor.postWindowCreate(getWindowConfigurer());
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowOpen() {
 		wbAdvisor.postWindowOpen(getWindowConfigurer());
 	}
 
 	@Override
+	@Deprecated
 	public boolean preWindowShellClose() {
 		return wbAdvisor.preWindowShellClose(getWindowConfigurer());
 	}
 
 	@Override
+	@Deprecated
 	public void postWindowClose() {
 		wbAdvisor.postWindowClose(getWindowConfigurer());
 	}
 
+	@Deprecated
 	public boolean isApplicationMenu(String menuId) {
 		return wbAdvisor.isApplicationMenu(getWindowConfigurer(), menuId);
 	}
@@ -94,6 +102,7 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
 	}
 
 	@Override
+	@Deprecated
 	public void createWindowContents(Shell shell) {
 		wbAdvisor.createWindowContents(getWindowConfigurer(), shell);
 	}

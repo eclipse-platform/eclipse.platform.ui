@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -143,6 +143,7 @@ public class WorkbenchConfigurerTest {
 		WorkbenchAdvisor advisor = new RCPTestWorkbenchAdvisor(1) {
 
 			@Override
+			@Deprecated
 			public void createWindowContents(
 					IWorkbenchWindowConfigurer configurer, Shell shell) {
 				ensureThread();
@@ -179,6 +180,7 @@ public class WorkbenchConfigurerTest {
 			}
 
 			@Override
+			@Deprecated
 			public void fillActionBars(IWorkbenchWindow window,
 					IActionBarConfigurer configurer, int flags) {
 				ensureThread();
@@ -210,6 +212,7 @@ public class WorkbenchConfigurerTest {
 			}
 
 			@Override
+			@Deprecated
 			public boolean isApplicationMenu(
 					IWorkbenchWindowConfigurer configurer, String menuId) {
 				ensureThread();
@@ -217,6 +220,7 @@ public class WorkbenchConfigurerTest {
 			}
 
 			@Override
+			@Deprecated
 			public void openIntro(IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
 				super.openIntro(configurer);
@@ -241,24 +245,28 @@ public class WorkbenchConfigurerTest {
 			}
 
 			@Override
+			@Deprecated
 			public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
 				super.postWindowClose(configurer);
 			}
 
 			@Override
+			@Deprecated
 			public void postWindowCreate(IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
 				super.postWindowCreate(configurer);
 			}
 
 			@Override
+			@Deprecated
 			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
 				super.postWindowOpen(configurer);
 			}
 
 			@Override
+			@Deprecated
 			public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
 					throws WorkbenchException {
 				ensureThread();
@@ -278,12 +286,14 @@ public class WorkbenchConfigurerTest {
 			}
 
 			@Override
+			@Deprecated
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
 				super.preWindowOpen(configurer);
 			}
 
 			@Override
+			@Deprecated
 			public boolean preWindowShellClose(
 					IWorkbenchWindowConfigurer configurer) {
 				ensureThread();
