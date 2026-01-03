@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,21 +33,19 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests Bug 40023
  *
  * @since 3.0
  */
-@Ignore("Intermittent failure.  SWT Bug 44344.  XGrabPointer?")
+@Disabled("Intermittent failure.  SWT Bug 44344.  XGrabPointer?")
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug40023Test {
-
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Retrieves a menu item matching or starting with the given name from an
@@ -112,7 +110,7 @@ public class Bug40023Test {
 				"&Window"); //$NON-NLS-1$
 		MenuItem lockToolBarsMenuItem = getMenuItem(windowMenu.getMenu()
 				.getItems(), "Lock the &Toolbars"); //$NON-NLS-1$
-		assertTrue("Checkbox menu item is not checked.", lockToolBarsMenuItem //$NON-NLS-1$
-				.getSelection());
+		assertTrue(lockToolBarsMenuItem //$NON-NLS-1$
+				.getSelection(), "Checkbox menu item is not checked.");
 	}
 }

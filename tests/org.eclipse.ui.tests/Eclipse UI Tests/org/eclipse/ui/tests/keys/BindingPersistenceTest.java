@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 
@@ -40,10 +40,10 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -62,7 +62,7 @@ public final class BindingPersistenceTest {
 	 * Creates a new workbench and retrieves its context manager and a binding
 	 * manager for use in the test cases.
 	 */
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		commandService = workbench.getAdapter(ICommandService.class);
@@ -84,8 +84,8 @@ public final class BindingPersistenceTest {
 
 		// Check the pre-conditions.
 		final String emacsSchemeId = EMACS_SCHEME_ID;
-		assertFalse("The active scheme should be Emacs yet", emacsSchemeId
-				.equals(bindingService.getActiveScheme().getId()));
+		assertFalse(emacsSchemeId
+				.equals(bindingService.getActiveScheme().getId()), "The active scheme should be Emacs yet");
 		final KeySequence formalKeySequence = KeySequence
 				.getInstance("ALT+SHIFT+Q A");
 		final String commandId = "org.eclipse.ui.views.showView";
@@ -99,13 +99,12 @@ public final class BindingPersistenceTest {
 						.getParameterizedCommand();
 				final String actualCommandId = (command == null) ? null
 						: command.getCommand().getId();
-				assertFalse("The command should not yet be bound", commandId
-						.equals(actualCommandId));
+				assertFalse(commandId
+						.equals(actualCommandId), "The command should not yet be bound");
 				break;
 			}
 		}
-		assertEquals("There shouldn't be a matching command yet",
-				bindings.length, i);
+		assertEquals(bindings.length, i, "There shouldn't be a matching command yet");
 
 		// Modify the preference store.
 		final IPreferenceStore store = WorkbenchPlugin.getDefault()
@@ -122,8 +121,8 @@ public final class BindingPersistenceTest {
 								+ "\"/></org.eclipse.ui.commands>");
 
 		// Check that the values have changed.
-		assertEquals("The active scheme should now be Emacs", emacsSchemeId,
-				bindingService.getActiveScheme().getId());
+		assertEquals(emacsSchemeId,
+				bindingService.getActiveScheme().getId(), "The active scheme should now be Emacs");
 		bindings = bindingService.getBindings();
 		for (i = 0; i < bindings.length; i++) {
 			final Binding binding = bindings[i];
@@ -133,13 +132,11 @@ public final class BindingPersistenceTest {
 						.getParameterizedCommand();
 				final String actualCommandId = (command == null) ? null
 						: command.getCommand().getId();
-				assertEquals("The command should be bound to 'ALT+SHIFT+Q A'",
-						commandId, actualCommandId);
+				assertEquals(commandId, actualCommandId, "The command should be bound to 'ALT+SHIFT+Q A'");
 				break;
 			}
 		}
-		assertFalse("There should be a matching command now",
-				(bindings.length == i));
+		assertFalse((bindings.length == i), "There should be a matching command now");
 	}
 
 	@Test
@@ -156,19 +153,19 @@ public final class BindingPersistenceTest {
 			if (binding.getType() == Binding.SYSTEM) {
 				String platform = binding.getPlatform();
 				int idx = (platform == null ? -1 : platform.indexOf(','));
-				assertEquals(binding.toString(), -1, idx);
+				assertEquals(-1, idx, binding.toString());
 				if (about.equals(binding.getParameterizedCommand())) {
 					if (m18A.equals(binding.getTriggerSequence())) {
 						numAboutBindings++;
-						assertNull("M+8 A", binding.getPlatform());
+						assertNull(binding.getPlatform(), "M+8 A");
 					} else if (m18B.equals(binding.getTriggerSequence())) {
 						numAboutBindings++;
 						// assertEquals(Util.WS_CARBON, binding.getPlatform());
 						// temp work around for honouring carbon bindings
-						assertTrue("failure for platform: "
-								+ binding.getPlatform(), Util.WS_CARBON
+						assertTrue(Util.WS_CARBON
 								.equals(binding.getPlatform())
-								|| Util.WS_COCOA.equals(binding.getPlatform()));
+								|| Util.WS_COCOA.equals(binding.getPlatform()), "failure for platform: "
+								+ binding.getPlatform());
 					}
 				}
 			}
@@ -181,7 +178,7 @@ public final class BindingPersistenceTest {
 		}
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	@SuppressWarnings("removal")
 	public final void TODOtestBindingTransform() throws Exception {
@@ -196,31 +193,31 @@ public final class BindingPersistenceTest {
 			if (binding.getType() == Binding.SYSTEM) {
 				String platform = binding.getPlatform();
 				int idx = (platform == null ? -1 : platform.indexOf(','));
-				assertEquals(binding.toString(), -1, idx);
+				assertEquals(-1, idx, binding.toString());
 				if (addWS.equals(binding.getParameterizedCommand())) {
 					if (m18w.equals(binding.getTriggerSequence())) {
 						numOfMarkers++;
-						assertNull(m18w.format(), binding.getPlatform());
+						assertNull(binding.getPlatform(), m18w.format());
 					} else if (m28w.equals(binding.getTriggerSequence())) {
 						numOfMarkers++;
-						assertTrue(platform, Util.WS_CARBON.equals(platform)
+						assertTrue(Util.WS_CARBON.equals(platform)
 								|| Util.WS_COCOA.equals(platform)
 								|| Util.WS_GTK.equals(platform)
-								|| Util.WS_WIN32.equals(platform));
+								|| Util.WS_WIN32.equals(platform), platform);
 					}
 				} else if (binding.getParameterizedCommand() == null
 						&& m18w.equals(binding.getTriggerSequence())) {
-					assertTrue(platform, Util.WS_CARBON.equals(platform)
+					assertTrue(Util.WS_CARBON.equals(platform)
 							|| Util.WS_COCOA.equals(platform)
 							|| Util.WS_GTK.equals(platform)
-							|| Util.WS_WIN32.equals(platform));
+							|| Util.WS_WIN32.equals(platform), platform);
 					numOfMarkers++;
 					foundDeleteMarker = true;
 				}
 			}
 		}
 		assertEquals(3, numOfMarkers);
-		assertTrue("Unable to find delete marker", foundDeleteMarker);
+		assertTrue(foundDeleteMarker, "Unable to find delete marker");
 
 		// make sure that the proper contexts are currently active
 		IContextService contextService = PlatformUI.getWorkbench()
@@ -570,7 +567,7 @@ public final class BindingPersistenceTest {
 		assertEquals(EMACS_SCHEME_ID, pasteBinding.getSchemeId());
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
 						"org.eclipse.ui.commands",

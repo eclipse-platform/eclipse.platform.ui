@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for Bug 43538.
@@ -51,8 +51,8 @@ public class Bug43538Test {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.stateMask == SWT.CTRL) {
-					assertEquals(
-							"Multiple key down events for 'Ctrl+Space'", 0, count++); //$NON-NLS-1$
+					assertEquals(0, count++,
+							"Multiple key down events for 'Ctrl+Space'"); //$NON-NLS-1$
 				}
 			}
 		};

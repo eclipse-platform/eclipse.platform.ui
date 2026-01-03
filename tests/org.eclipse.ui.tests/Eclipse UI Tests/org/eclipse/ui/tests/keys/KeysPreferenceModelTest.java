@@ -14,12 +14,12 @@
 
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,8 +44,8 @@ import org.eclipse.ui.internal.keys.model.ModelElement;
 import org.eclipse.ui.internal.keys.model.SchemeElement;
 import org.eclipse.ui.internal.keys.model.SchemeModel;
 import org.eclipse.ui.keys.IBindingService;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.4
@@ -78,8 +78,8 @@ public class KeysPreferenceModelTest {
 				foundDialog = true;
 			}
 		}
-		assertTrue("No window context", foundWindow);
-		assertTrue("No dialog context", foundDialog);
+		assertTrue(foundWindow, "No window context");
+		assertTrue(foundDialog, "No dialog context");
 		assertNull(cm.getSelectedElement());
 		assertNotNull(cm.getContextIdToElement().get(
 				IContextService.CONTEXT_ID_DIALOG_AND_WINDOW));
@@ -92,12 +92,12 @@ public class KeysPreferenceModelTest {
 				foundDefault = true;
 			}
 		}
-		assertTrue("No default scheme", foundDefault);
+		assertTrue(foundDefault, "No default scheme");
 		assertEquals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID, sm
 				.getSelectedElement().getId());
 
 		ConflictModel cf = controller.getConflictModel();
-		assertNull("There should not be any conflicts", cf.getConflicts());
+		assertNull(cf.getConflicts(), "There should not be any conflicts");
 		assertNull(cf.getSelectedElement());
 
 		BindingModel bm = controller.getBindingModel();
@@ -287,7 +287,7 @@ public class KeysPreferenceModelTest {
 		assertChanges(expected, events);
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void failsOnCocoatestCreateConflict() throws Exception {
 		final KeyController controller = new KeyController();
@@ -324,7 +324,7 @@ public class KeysPreferenceModelTest {
 		assertNull(cf.getConflicts());
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void failsOnMacCocoatestConflictRemove() throws Exception {
 		final KeyController controller = new KeyController();
@@ -355,7 +355,7 @@ public class KeysPreferenceModelTest {
 		assertNull(cf.getConflicts());
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void failsOnMacCocoatestConflictRestore() throws Exception {
 		final KeyController controller = new KeyController();
@@ -435,7 +435,7 @@ public class KeysPreferenceModelTest {
 		assertChanges(expected, events);
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void failsOnWinAndLinuxWith16VMtestUpdateKeySequence() throws Exception {
 		final KeyController controller = new KeyController();
@@ -882,18 +882,14 @@ public class KeysPreferenceModelTest {
 
 	private void assertChangeEvent(int eventNum, PropertyChangeEvent expected,
 			PropertyChangeEvent event) {
-		assertEquals("source: " + eventNum, expected.getSource(), event
-				.getSource());
-		assertEquals("property: " + eventNum, expected.getProperty(), event
-				.getProperty());
-		assertEquals("old: " + eventNum, expected.getOldValue(), event
-				.getOldValue());
-		assertEquals("new: " + eventNum, expected.getNewValue(), event
-				.getNewValue());
+		assertEquals(expected.getSource(), event.getSource(), "source: " + eventNum);
+		assertEquals(expected.getProperty(), event.getProperty(), "property: " + eventNum);
+		assertEquals(expected.getOldValue(), event.getOldValue(), "old: " + eventNum);
+		assertEquals(expected.getNewValue(), event.getNewValue(), "new: " + eventNum);
 	}
 
 	private void assertChanges(PropertyChangeEvent[] expected, List<PropertyChangeEvent> events) {
-		assertEquals("events length", expected.length, events.size());
+		assertEquals(expected.length, events.size(), "events length");
 		for (int i = 0; i < expected.length; i++) {
 			assertChangeEvent(i, expected[i], events
 					.get(i));
