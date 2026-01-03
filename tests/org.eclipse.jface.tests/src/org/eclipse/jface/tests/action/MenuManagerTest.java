@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -26,8 +26,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests for the MenuManager API.
@@ -35,8 +35,8 @@ import org.junit.Test;
  * @since 3.1
  */
 public class MenuManagerTest {
-	@Rule
-	public JFaceActionRule rule = new JFaceActionRule();
+	@RegisterExtension
+	public JFaceActionExtension rule = new JFaceActionExtension();
 
 	private int groupMarkerCount = 0;
 	private int separatorCount = 0;

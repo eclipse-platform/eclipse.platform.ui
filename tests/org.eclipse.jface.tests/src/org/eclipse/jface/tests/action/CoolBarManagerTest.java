@@ -14,8 +14,8 @@
 
 package org.eclipse.jface.tests.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.CoolBarManager;
@@ -25,9 +25,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.6
@@ -38,10 +38,10 @@ public class CoolBarManagerTest {
 
 	private CoolBar coolBar;
 
-	@Rule
-	public JFaceActionRule rule = new JFaceActionRule();
+	@RegisterExtension
+	public JFaceActionExtension rule = new JFaceActionExtension();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		coolBarManager = new CoolBarManager(SWT.FLAT);
 		coolBar = coolBarManager.createControl(rule.getShell());
