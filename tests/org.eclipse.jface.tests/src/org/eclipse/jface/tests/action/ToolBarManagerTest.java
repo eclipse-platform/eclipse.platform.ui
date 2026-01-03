@@ -15,14 +15,14 @@
 
 package org.eclipse.jface.tests.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
@@ -42,15 +42,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ToolBarManagerTest {
 
 	private static final int DEFAULT_STYLE = SWT.WRAP | SWT.FLAT | SWT.RIGHT;
 
-	@Rule
-	public JFaceActionRule rule = new JFaceActionRule();
+	@RegisterExtension
+	public JFaceActionExtension rule = new JFaceActionExtension();
 
 	public void testSetStyleWhenToolBarDoesNotExist() {
 		Composite parent = createComposite();
@@ -107,15 +107,15 @@ public class ToolBarManagerTest {
 		ObservableControlContribution item = new ObservableControlContribution("i want to be updated!");
 		manager.add(item);
 		manager.createControl(createComposite());
-		assertFalse("Update was called already", item.updateCalled);
-		assertTrue("computeWidth was not called", item.computeWidthCalled);
+		assertFalse(item.updateCalled, "Update was called already");
+		assertTrue(item.computeWidthCalled, "computeWidth was not called");
 		item.computeWidthCalled = false;
 		manager.update(false);
-		assertFalse("Item update should only be called when manager update is forced", item.updateCalled);
-		assertFalse("computeWidth should only be called when manager update is forced", item.computeWidthCalled);
+		assertFalse(item.updateCalled, "Item update should only be called when manager update is forced");
+		assertFalse(item.computeWidthCalled, "computeWidth should only be called when manager update is forced");
 		manager.update(true);
-		assertTrue("Update was not called", item.updateCalled);
-		assertTrue("computeWidth was not called", item.computeWidthCalled);
+		assertTrue(item.updateCalled, "Update was not called");
+		assertTrue(item.computeWidthCalled, "computeWidth was not called");
 	}
 
 	@Test
@@ -207,13 +207,13 @@ public class ToolBarManagerTest {
 	}
 
 	private static void assertImageDataEquals(ImageData im1, ImageData im2) {
-		assertNotNull("ImageData 1 is null", im1);
-		assertNotNull("ImageData 2 is null", im2);
-		assertEquals("ImageData width missmatch", im1.width, im2.width);
-		assertEquals("ImageData height missmatch", im1.height, im2.height);
+		assertNotNull(im1, "ImageData 1 is null");
+		assertNotNull(im2, "ImageData 2 is null");
+		assertEquals(im1.width, im2.width, "ImageData width missmatch");
+		assertEquals(im1.height, im2.height, "ImageData height missmatch");
 		for (int x = 0; x < im1.width; x++) {
 			for (int y = 0; y < im1.height; y++) {
-				assertEquals("pixel (" + x + "," + y + ") are not equal", im1.getPixel(x, y), im2.getPixel(x, y));
+				assertEquals(im1.getPixel(x, y), im2.getPixel(x, y), "pixel (" + x + "," + y + ") are not equal");
 			}
 		}
 	}
