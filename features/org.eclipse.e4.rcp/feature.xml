@@ -170,10 +170,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.osgi.service.prefs"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.equinox.registry"
          version="0.0.0"/>
 
