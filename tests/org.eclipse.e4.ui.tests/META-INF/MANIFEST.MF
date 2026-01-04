@@ -40,6 +40,7 @@ Import-Package: jakarta.annotation,
  jakarta.inject,
  org.osgi.service.event,
  org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.ui.tests
