@@ -48,7 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
@@ -60,14 +60,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class MMenuItemTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private EModelService ems;
@@ -78,7 +78,7 @@ public class MMenuItemTest {
 	@Inject
 	private MApplication application;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);

@@ -29,25 +29,25 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 public class ModelServiceImplTest {
 	private static final String DUMMY_EDITOR_ID = "dummyEditor";
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private EModelService modelService;
 
 	private MPart editor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		editor = modelService.createModelElement(MPart.class);
 		editor.setElementId(DUMMY_EDITOR_ID);
