@@ -15,25 +15,24 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+@ExtendWith(CloseTestWindowsExtension.class)
 public class PerspectiveSwitcherTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
-
-	@Rule
-	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
+	@RegisterExtension
+	public final PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
 
 	/**
 	 * This test ensures that our workbench window's perspective bar can opened if
@@ -44,14 +43,14 @@ public class PerspectiveSwitcherTest {
 		IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
 		WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
-		assertNotNull("We should have a perspective bar in the beginning", getPerspectiveSwitcher(window)); //$NON-NLS-1$
+		assertNotNull(getPerspectiveSwitcher(window), "We should have a perspective bar in the beginning"); //$NON-NLS-1$
 
 		// turn off the 'Open Perspective' item
 		preferenceMemento.setPreference(apiPreferenceStore, IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR,
 				false);
 
 		// check that we still have a perspective bar
-		assertNotNull("The perspective bar should have been created successfully", getPerspectiveSwitcher(window)); //$NON-NLS-1$
+		assertNotNull(getPerspectiveSwitcher(window), "The perspective bar should have been created successfully"); //$NON-NLS-1$
 
 	}
 

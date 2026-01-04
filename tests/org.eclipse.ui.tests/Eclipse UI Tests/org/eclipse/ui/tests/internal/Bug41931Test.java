@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,21 +30,19 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test for Bug 41931.
  *
  * @since 3.0
  */
-@Ignore
+@Disabled
+@ExtendWith(CloseTestWindowsExtension.class)
 public class Bug41931Test {
-
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests that the <code>bringToTop(IWorkbenchPart)</code> correctly
@@ -83,8 +81,8 @@ public class Bug41931Test {
 		IEditorPart[] expectedResults = { editorA, editorB, editorC };
 		IWorkbenchPartReference[] actualResults = page.getSortedParts();
 		for (int i = 0; i < expectedResults.length; i++) {
-			assertEquals(
-					"Pre-test order is not correct.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
+			assertEquals(expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle(),
+					"Pre-test order is not correct."); //$NON-NLS-1$
 		}
 
 		// Bring editor B to the top.
@@ -94,8 +92,8 @@ public class Bug41931Test {
 		expectedResults = new IEditorPart[] { editorA, editorC, editorB };
 		actualResults = page.getSortedParts();
 		for (int i = 0; i < expectedResults.length; i++) {
-			assertEquals(
-					"bringToTop() does not change sorted part order.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
+			assertEquals(expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle(),
+					"bringToTop() does not change sorted part order."); //$NON-NLS-1$
 		}
 	}
 }
