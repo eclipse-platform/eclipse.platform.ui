@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -29,10 +29,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import junit.framework.AssertionFailedError;
 
@@ -59,8 +58,8 @@ import junit.framework.AssertionFailedError;
  */
 public class TestBug269121 {
 
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
 	@Test
 	public void testBug() throws InterruptedException,
@@ -110,7 +109,7 @@ public class TestBug269121 {
 			Display.getCurrent().readAndDispatch();
 		}
 		job.join();
-		assertTrue("Timeout occurred - possible Deadlock. See logging!", statusJob.getResult().isOK());
+		assertTrue(statusJob.getResult().isOK(), "Timeout occurred - possible Deadlock. See logging!");
 		shell.close();
 	}
 }

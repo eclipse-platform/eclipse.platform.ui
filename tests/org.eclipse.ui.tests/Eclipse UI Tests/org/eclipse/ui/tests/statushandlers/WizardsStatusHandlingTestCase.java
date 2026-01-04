@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.statushandlers;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.internal.registry.RegistryMessages;
 import org.eclipse.core.runtime.CoreException;
@@ -36,11 +36,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests whether the errors in wizards are handled properly
@@ -48,8 +47,8 @@ import org.junit.rules.TestWatcher;
  * @since 3.3
  */
 public class WizardsStatusHandlingTestCase {
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
 	private static int SEVERITY = IStatus.ERROR;
 
@@ -73,7 +72,7 @@ public class WizardsStatusHandlingTestCase {
 
 	private static String FAULTY_WIZARD_NAME = "FaultyExportWizard";
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		TestStatusHandler.uninstall();
 	}
@@ -153,11 +152,9 @@ public class WizardsStatusHandlingTestCase {
 		assertEquals(PLUGIN_ID, status.getPlugin());
 		assertEquals(MESSAGE, status.getMessage());
 		assertEquals(EXCEPTION_CLASS, status.getException().getClass());
-		assertTrue(createIncorrectExceptionMessage(status.getException()
-				.getMessage()), EXCEPTION_MESSAGE.equals(status.getException()
-				.getMessage())
-				|| EXCEPTION_MESSAGE2
-						.equals(status.getException().getMessage()));
+		assertTrue(EXCEPTION_MESSAGE.equals(status.getException().getMessage())
+				|| EXCEPTION_MESSAGE2.equals(status.getException().getMessage()),
+				createIncorrectExceptionMessage(status.getException().getMessage()));
 	}
 
 	private String createIncorrectExceptionMessage(String exceptionMessage) {
