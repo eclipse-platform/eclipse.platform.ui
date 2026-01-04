@@ -14,7 +14,7 @@
  **********************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,12 +29,11 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * This is a regression test for a case where a recursive attempt to syncExec
@@ -42,8 +41,8 @@ import org.junit.rules.TestWatcher;
  */
 public class NestedSyncExecDeadlockTest {
 
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
 	private static class ResourceListener implements IResourceChangeListener {
 		@Override
@@ -87,7 +86,7 @@ public class NestedSyncExecDeadlockTest {
 		shell.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		project = workspace.getRoot().getProject("test-deadlock");
 
@@ -100,7 +99,7 @@ public class NestedSyncExecDeadlockTest {
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (listener != null) {
 			workspace.removeResourceChangeListener(listener);

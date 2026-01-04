@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -28,10 +28,9 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests the following sequence of events:
@@ -51,8 +50,8 @@ import org.junit.rules.TestWatcher;
  */
 public class TestBug98621 {
 
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
 	class TransferTestOperation extends WorkspaceModifyOperation {
 		@Override

@@ -14,10 +14,10 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,18 +37,17 @@ import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.internal.statushandlers.SupportTray;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SupportTrayTest {
 
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		Policy.setErrorSupportProvider(null);
 	}

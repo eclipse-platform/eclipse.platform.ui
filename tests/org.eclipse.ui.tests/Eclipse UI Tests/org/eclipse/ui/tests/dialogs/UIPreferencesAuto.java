@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -23,16 +23,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class UIPreferencesAuto {
 
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 	protected Shell getShell() {
 		return DialogCheck.getShell();
 	}
@@ -133,7 +132,7 @@ public class UIPreferencesAuto {
 	public void testFieldEditorEnablePref() {
 		PreferenceManager manager = WorkbenchPlugin.getDefault()
 				.getPreferenceManager();
-		assumeNotNull(manager);
+		assumeTrue(manager != null);
 		PreferenceDialogWrapper dialog = new PreferenceDialogWrapper(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), manager);
 		dialog.create();

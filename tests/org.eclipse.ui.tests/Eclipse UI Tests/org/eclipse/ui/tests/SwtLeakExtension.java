@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,39 +20,36 @@ import java.util.Set;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.junit.Assert;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class SwtLeakTestWatcher extends TestWatcher {
+public class SwtLeakExtension implements BeforeEachCallback, AfterEachCallback {
 
-	IWorkbench workbench;
-	Set<Shell> preExistingShells;
+	private Set<Shell> preExistingShells;
 
 	@Override
-	protected void starting(Description description) {
-		workbench = PlatformUI.getWorkbench();
+	public void beforeEach(ExtensionContext context) throws Exception {
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		preExistingShells = Set.of(workbench.getDisplay().getShells());
-		super.starting(description);
 	}
 
 	@Override
-	protected void finished(Description description) {
+	public void afterEach(ExtensionContext context) throws Exception {
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		// Check for shell leak.
 		List<String> leakedModalShellTitles = new ArrayList<>();
 		Shell[] shells = workbench.getDisplay().getShells();
 		for (Shell shell : shells) {
 			if (!shell.isDisposed() && !preExistingShells.contains(shell)) {
 				leakedModalShellTitles.add(shell.getText());
-				// closing shell may introduce "not disposed" errors in next tests :
-				// shell.close();
 			}
 		}
 		if (!leakedModalShellTitles.isEmpty()) {
-			Assert.fail(description.getClassName() + "." + description.getDisplayName()
+			Assertions.fail(context.getRequiredTestClass().getName() + "." + context.getDisplayName()
 					+ " Test leaked modal shell(s): [" + String.join(", ", leakedModalShellTitles) + "]");
 		}
-		super.finished(description);
 	}
 
 }
