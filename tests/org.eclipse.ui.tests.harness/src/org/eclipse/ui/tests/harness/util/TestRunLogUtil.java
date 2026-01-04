@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Paul Pazderski and others.
+ * Copyright (c) 2019, 2026 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,7 +25,7 @@ public final class TestRunLogUtil {
 
 	/**
 	 * A {@link TestWatcher} to log test start and end. Should be added as @Rule in
-	 * every JUnit4 test class (which not already extends {@link UITestCase}) as
+	 * every JUnit4 test class as
 	 *
 	 * <pre>
 	 * &#64;Rule

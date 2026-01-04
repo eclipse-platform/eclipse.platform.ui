@@ -47,9 +47,6 @@ in the window you should create a new window as part of the setUp for the
 test case.&nbsp; Run the test code within that window and then close the
 test window in the tearDown method.&nbsp; The modified state will be discarded
 when the window is closed.
-<p>Additional Tips: The UITestCase class in org.eclipse.ui.tests.util can
-be used as a superclass for your test case.&nbsp; It provides useful methods
-for the creation of new windows, pages, etc, and their disposal.
 <p><b>Piercing the Encapsulation</b>
 <p>Scenario: To test the behavior of commands which modify the state of
 the object when there are no public interfaces to query that state.
