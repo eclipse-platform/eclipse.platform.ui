@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.Ignore;
@@ -41,7 +40,6 @@ import org.junit.Test;
  *
  * @since 3.0
  */
-@SuppressWarnings("removal")
 @Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
 public class MultiPageKeyBindingTest {
 
@@ -54,11 +52,9 @@ public class MultiPageKeyBindingTest {
 	 *
 	 * @throws CoreException
 	 *             If the project or file cannot be created.
-	 * @throws ParseException
-	 *             The expected key sequence cannot be parsed.
 	 */
 	@Test
-	public void testSwitch() throws CoreException, ParseException {
+	public void testSwitch() throws CoreException {
 		final String extension = "multi"; //$NON-NLS-1$
 		final String fileName = "A." + extension; //$NON-NLS-1$
 

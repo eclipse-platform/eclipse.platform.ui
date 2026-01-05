@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
  * @deprecated As of 3.3, clients should use {@link ControlDecoration} instead
  *             of {@link DecoratedField}.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2026-03")
 public class TextControlCreator implements IControlCreator {
 
 	@Deprecated

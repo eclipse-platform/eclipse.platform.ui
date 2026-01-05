@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeNodeContentProvider;
-import org.eclipse.jface.viewers.TreePathViewerSorter;
+import org.eclipse.jface.viewers.TreePathViewerComparator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -51,10 +51,9 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testSetTreePathViewerSorterOnNullInput() {
 		treeViewer.setInput(null);
-		treeViewer.setSorter(new TreePathViewerSorter());
+		treeViewer.setComparator(new TreePathViewerComparator());
 	}
 
 	@Test

@@ -16,13 +16,13 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import jakarta.inject.Inject;
 import java.util.function.Consumer;
@@ -48,7 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -64,22 +64,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.test.Screenshots;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 
 public class PartRenderingEngineTests {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private IEclipseContext appContext;
@@ -98,7 +96,7 @@ public class PartRenderingEngineTests {
 	private boolean logged = false;
 	private Consumer<RuntimeException> runtimeExceptionHandler;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logged = false;
 
@@ -106,7 +104,7 @@ public class PartRenderingEngineTests {
 		logReaderService.addLogListener(listener);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		LogReaderService logReaderService = appContext.get(LogReaderService.class);
 		logReaderService.removeLogListener(listener);
@@ -151,12 +149,6 @@ public class PartRenderingEngineTests {
 		try {
 			advisor.eventLoopException(ex);
 		} catch (Throwable t) {
-			// The type ThreadDeath has been deprecated since version 20
-			// and marked for removal
-			if ("ThreadDeath".equals(t.getClass().getSimpleName())) {
-				// don't catch ThreadDeath by accident
-				throw t;
-			}
 			// couldn't handle the exception, print to console
 			t.printStackTrace();
 		} finally {
@@ -228,8 +220,7 @@ public class PartRenderingEngineTests {
 				EPartService.class);
 		service.activate(partB);
 		assertEquals(
-				"Activating another part should've altered the tab folder's selection",
-				1, tabFolder.getSelectionIndex());
+				1, tabFolder.getSelectionIndex(), "Activating another part should've altered the tab folder's selection");
 	}
 
 	@Test
@@ -260,8 +251,8 @@ public class PartRenderingEngineTests {
 		EPartService service = window.getContext().get(
 				EPartService.class);
 		service.showPart(partB.getElementId(), PartState.ACTIVATE);
-		assertEquals("Showing a part should alter the tab folder's selection",
-				1, tabFolder.getSelectionIndex());
+		assertEquals(
+				1, tabFolder.getSelectionIndex(), "Showing a part should alter the tab folder's selection");
 	}
 
 	@Test
@@ -291,8 +282,8 @@ public class PartRenderingEngineTests {
 
 		assertEquals(1, tabFolder.getItemCount());
 		assertEquals(0, tabFolder.getSelectionIndex());
-		assertEquals("The shown part should be the active part", shownPart,
-				stack.getSelectedElement());
+		assertEquals(shownPart,
+				stack.getSelectedElement(), "The shown part should be the active part");
 	}
 
 	@Test
@@ -321,8 +312,7 @@ public class PartRenderingEngineTests {
 
 		stack.setSelectedElement(partB);
 		assertEquals(
-				"Switching the active child should've changed the folder's selection",
-				1, tabFolder.getSelectionIndex());
+				1, tabFolder.getSelectionIndex(), "Switching the active child should've changed the folder's selection");
 	}
 
 	@Test
@@ -346,10 +336,9 @@ public class PartRenderingEngineTests {
 		stack.getChildren().add(partB);
 
 		assertEquals(
-				"Adding a part to a stack should not cause the stack's active child to change",
-				partA, stack.getSelectedElement());
-		assertNull("The object should not have been instantiated",
-				partB.getObject());
+				partA, stack.getSelectedElement(), "Adding a part to a stack should not cause the stack's active child to change");
+		assertNull(
+				partB.getObject(), "The object should not have been instantiated");
 	}
 
 	@Test
@@ -580,8 +569,7 @@ public class PartRenderingEngineTests {
 
 		partB.setToBeRendered(true);
 		assertEquals(
-				"Rendering another part in the stack should not change the selection",
-				0, tabFolder.getSelectionIndex());
+				0, tabFolder.getSelectionIndex(), "Rendering another part in the stack should not change the selection");
 		assertEquals(partA, stack.getSelectedElement());
 		assertEquals(2, tabFolder.getItemCount());
 		assertNotNull(partB.getObject());
@@ -634,8 +622,7 @@ public class PartRenderingEngineTests {
 		CTabFolder folder = (CTabFolder) stack.getWidget();
 		CTabItem itemA = folder.getItem(0);
 		assertEquals(
-				"The presentation engine should have created the part and set it",
-				partA.getWidget(), itemA.getControl());
+				partA.getWidget(), itemA.getControl(), "The presentation engine should have created the part and set it");
 
 		MPart partB = ems.createModelElement(MPart.class);
 		partB.setElementId("partB");
@@ -646,21 +633,19 @@ public class PartRenderingEngineTests {
 
 		CTabItem item2 = folder.getItem(1);
 		assertNull(
-				"For a stack, the object will not be rendered unless explicitly required",
-				item2.getControl());
+				item2.getControl(), "For a stack, the object will not be rendered unless explicitly required");
 
 		// ask the engine to render the part
 		engine.createGui(partB);
 
 		assertEquals(
-				"The presentation engine should have created the part and set it",
-				partB.getWidget(), item2.getControl());
+				partB.getWidget(), item2.getControl(), "The presentation engine should have created the part and set it");
 
 		// select the new part to display it to the user
 		stack.setSelectedElement(partB);
 
-		assertEquals("Selecting the element should not have changed anything",
-				partB.getWidget(), item2.getControl());
+		assertEquals(
+				partB.getWidget(), item2.getControl(), "Selecting the element should not have changed anything");
 	}
 
 	@Test
@@ -726,7 +711,7 @@ public class PartRenderingEngineTests {
 		} catch (IllegalArgumentException e) {
 			causedException = true;
 		}
-		assertFalse("Exception should not have been thrown", causedException);
+		assertFalse(causedException, "Exception should not have been thrown");
 
 		// You can *not* set the selected element to a non-child
 		causedException = false;
@@ -735,7 +720,7 @@ public class PartRenderingEngineTests {
 		} catch (IllegalArgumentException e) {
 			causedException = true;
 		}
-		assertTrue("Exception should have been thrown", causedException);
+		assertTrue(causedException, "Exception should have been thrown");
 	}
 
 	@Test
@@ -769,30 +754,28 @@ public class PartRenderingEngineTests {
 		container.setSelectedElement(partA);
 		partB.setToBeRendered(false);
 		assertEquals(
-				"Changing the TBR of a non-selected element should not change the value of the container's seletedElement",
-				partA, container.getSelectedElement());
+				partA, container.getSelectedElement(), "Changing the TBR of a non-selected element should not change the value of the container's seletedElement");
 
 
 		// Ensure that changing the TBR state of the selected element to false
 		// results in selecting moving to a TBR=true element
 		container.setSelectedElement(partA);
 		partA.setToBeRendered(false);
-		assertNotEquals("Changing the TBR of the selected element should have moved selection to a TBR item", partA,
-				container.getSelectedElement());
+		assertNotEquals(partA,
+				container.getSelectedElement(), "Changing the TBR of the selected element should have moved selection to a TBR item");
 
 		if ("gtk".equals(SWT.getPlatform())) {
 			assertTrue(
-					"Changing the TBR of the selected element should have moved selection to a TBR item",
-					container.getSelectedElement().isToBeRendered());
+					container.getSelectedElement().isToBeRendered(), "Changing the TBR of the selected element should have moved selection to a TBR item");
 
 			// Ensure that when all elements are TBR=false, selection is null
 			partC.setToBeRendered(false);
 			// Then there should be TBR item
-			assertNull("Changing the TBR of all elements to false should have set the field to null",
-					container.getSelectedElement());
+			assertNull(
+					container.getSelectedElement(), "Changing the TBR of all elements to false should have set the field to null");
 		} else {
-			assertNull("Changing the TBR of the selected element should have set the field to null",
-					container.getSelectedElement());
+			assertNull(
+					container.getSelectedElement(), "Changing the TBR of the selected element should have set the field to null");
 		}
 	}
 
@@ -827,15 +810,14 @@ public class PartRenderingEngineTests {
 		container.setSelectedElement(partA);
 		container.getChildren().remove(partB);
 		assertEquals(
-				"Changing the parent of a non-selected element should not change the value of the container's seletedElement",
-				partA, container.getSelectedElement());
+				partA, container.getSelectedElement(), "Changing the parent of a non-selected element should not change the value of the container's seletedElement");
 
 		// Ensure that changing the parent of the selected element
 		// results in it going null
 		container.setSelectedElement(partA);
 		container.getChildren().remove(partA);
-		assertNull("Changing the parent of the selected element should have set the field to null",
-				container.getSelectedElement());
+		assertNull(
+				container.getSelectedElement(), "Changing the parent of the selected element should have set the field to null");
 	}
 
 	@Test
@@ -974,7 +956,7 @@ public class PartRenderingEngineTests {
 		// if (checkMacBug466636())
 		// return;
 
-		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 537639");
 
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
@@ -1540,7 +1522,7 @@ public class PartRenderingEngineTests {
 		view.errorOnWidgetDisposal = true;
 
 		part.setToBeRendered(false);
-		assertTrue("The view should have been destroyed", view.isDestroyed());
+		assertTrue(view.isDestroyed(), "The view should have been destroyed");
 		assertNull(part.getObject());
 		assertNull(part.getContext());
 	}
@@ -1566,7 +1548,7 @@ public class PartRenderingEngineTests {
 		view.errorOnPreDestroy = true;
 
 		part.setToBeRendered(false);
-		assertTrue("The view should have been destroyed", view.isDestroyed());
+		assertTrue(view.isDestroyed(), "The view should have been destroyed");
 		assertNull(part.getObject());
 		assertNull(part.getContext());
 	}
@@ -1637,8 +1619,7 @@ public class PartRenderingEngineTests {
 		assertEquals(perspectiveContext1, partContext.getParent());
 		assertEquals(partContext, perspectiveContext1.getActiveChild());
 		assertNull(
-				"perspective2 doesn't have any parts, it should not have an active child context",
-				perspectiveContext2.getActiveChild());
+				perspectiveContext2.getActiveChild(), "perspective2 doesn't have any parts, it should not have an active child context");
 	}
 
 	@Test
@@ -1651,15 +1632,15 @@ public class PartRenderingEngineTests {
 
 		contextRule.createAndRunWorkbench(window);
 
-		assertNull("No widget for an unrendered window", window.getWidget());
-		assertNull("No context for an unrendered window", window.getContext());
+		assertNull(window.getWidget(), "No widget for an unrendered window");
+		assertNull(window.getContext(), "No context for an unrendered window");
 
 		window.setToBeRendered(true);
 
-		assertNotNull("Rendered window should have a widget",
-				window.getWidget());
-		assertNotNull("Rendered window should have a context",
-				window.getContext());
+		assertNotNull(
+				window.getWidget(), "Rendered window should have a widget");
+		assertNotNull(
+				window.getContext(), "Rendered window should have a context");
 	}
 
 	@Test
@@ -1672,15 +1653,15 @@ public class PartRenderingEngineTests {
 
 		contextRule.createAndRunWorkbench(window);
 
-		assertNotNull("Rendered window should have a widget",
-				window.getWidget());
-		assertNotNull("Rendered window should have a context",
-				window.getContext());
+		assertNotNull(
+				window.getWidget(), "Rendered window should have a widget");
+		assertNotNull(
+				window.getContext(), "Rendered window should have a context");
 
 		window.setToBeRendered(false);
 
-		assertNull("No widget for an unrendered window", window.getWidget());
-		assertNull("No context for an unrendered window", window.getContext());
+		assertNull(window.getWidget(), "No widget for an unrendered window");
+		assertNull(window.getContext(), "No context for an unrendered window");
 	}
 
 	@Test
@@ -1768,8 +1749,8 @@ public class PartRenderingEngineTests {
 		SampleToolControl impl = (SampleToolControl) toolControl.getObject();
 
 		appContext.get(IPresentationEngine.class).removeGui(window);
-		assertFalse("The shell should not have been disposed first",
-				impl.shellEagerlyDestroyed);
+		assertFalse(
+				impl.shellEagerlyDestroyed, "The shell should not have been disposed first");
 	}
 
 	@Test
@@ -1957,7 +1938,7 @@ public class PartRenderingEngineTests {
 		}
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestBug326175_True() {
 		testBug326175(true);
@@ -1967,7 +1948,7 @@ public class PartRenderingEngineTests {
 	public void testBug326175_False() {
 		// if (checkMacBug466636())
 		// return;
-		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 537639");
 
 		testBug326175(false);
 	}
@@ -2463,22 +2444,20 @@ public class PartRenderingEngineTests {
 		partService.hidePart(partA);
 		contextRule.spinEventLoop();
 
-		assertTrue(" PartStack with children should be rendered", partStackForPartBPartC.isToBeRendered());
+		assertTrue(partStackForPartBPartC.isToBeRendered(), " PartStack with children should be rendered");
 		partService.hidePart(partB);
 		partService.hidePart(partC);
 		// DisplayHelper.waitForCondition() handles event processing via Display.sleep()
 		// and retries. Calling spinEventLoop() here creates a race condition where
 		// events may be processed before CleanupAddon's asyncExec() is queued (line 352).
 		assertTrue(
-				"CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed",
 				DisplayHelper.waitForCondition(Display.getDefault(), 5_000,
-						() -> !partStackForPartBPartC.isToBeRendered()));
+						() -> !partStackForPartBPartC.isToBeRendered()), "CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed");
 		// PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be removed
 		// even if children are removed
 		partService.hidePart(editor, true);
 		contextRule.spinEventLoop();
-		assertTrue("PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be closed if children are removed",
-				partStackForEditor.isToBeRendered());
+		assertTrue(partStackForEditor.isToBeRendered(), "PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be closed if children are removed");
 
 	}
 
@@ -2972,12 +2951,12 @@ public class PartRenderingEngineTests {
 		assertFalse(logged);
 	}
 
-	@Rule
-	public TestWatcher screenshotRule = Screenshots.onFailure(null);
+	// @Rule
+	// public TestWatcher screenshotRule = Screenshots.onFailure(null);
 
 	@Test
 	public void testBug372226() {
-		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 537639");
 
 		MWindow window = ems.createModelElement(MWindow.class);
 
@@ -3132,8 +3111,7 @@ public class PartRenderingEngineTests {
 		view.errorOnWidgetDisposal = true;
 
 		part.setToBeRendered(false);
-		assertTrue("The view should have been destroyed",
-				view.isStatePersisted());
+		assertTrue(view.isStatePersisted(), "The view should have been destroyed");
 		assertNull(part.getObject());
 		assertNull(part.getContext());
 	}
@@ -3159,8 +3137,7 @@ public class PartRenderingEngineTests {
 		view.errorOnWidgetDisposal = true;
 
 		window.setToBeRendered(false);
-		assertTrue("The view should have been destroyed",
-				view.isStatePersisted());
+		assertTrue(view.isStatePersisted(), "The view should have been destroyed");
 		assertNull(part.getObject());
 		assertNull(part.getContext());
 	}

@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -39,21 +39,20 @@ import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
-import org.eclipse.ui.tests.SwtLeakTestWatcher;
+import org.eclipse.ui.tests.SwtLeakExtension;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class UIWizardsAuto {
-	@Rule
-	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+	@RegisterExtension
+	public SwtLeakExtension swtLeakExtension = new SwtLeakExtension();
 
 	private static final int SIZING_WIZARD_WIDTH = 470;
 
@@ -128,10 +127,7 @@ public class UIWizardsAuto {
 		return dialog;
 	}
 
-	/**
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (project != null) {
 			project.delete(true, true, null);
@@ -149,14 +145,14 @@ public class UIWizardsAuto {
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */
 	@Test
-	@Ignore("1GJWD2E: ITPUI:ALL")
+	@Disabled("1GJWD2E: ITPUI:ALL")
 	public void testFileSystemExport() {
 //		Dialog dialog = exportWizard(DataTransferTestStub.newFileSystemResourceExportPage1(null));
 //		DialogCheck.assertDialogTexts(dialog);
 	}
 
 	@Test
-	@Ignore("1GJWD2E: ITPUI:ALL")
+	@Disabled("1GJWD2E: ITPUI:ALL")
 	public void testZipFileExport() {
 //		Dialog dialog = exportWizard(DataTransferTestStub.newZipFileResourceExportPage1(null));
 //		DialogCheck.assertDialogTexts(dialog);
@@ -172,7 +168,7 @@ public class UIWizardsAuto {
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */
 	@Test
-	@Ignore("1GJWD2E: ITPUI:ALL")
+	@Disabled("1GJWD2E: ITPUI:ALL")
 	public void testFileSystemImport() {
 //		Dialog dialog = importWizard(DataTransferTestStub.newFileSystemResourceImportPage1(
 //				WorkbenchPlugin.getDefault().getWorkbench(), StructuredSelection.EMPTY));
@@ -180,7 +176,7 @@ public class UIWizardsAuto {
 	}
 
 	@Test
-	@Ignore("1GJWD2E: ITPUI:ALL")
+	@Disabled("1GJWD2E: ITPUI:ALL")
 	public void testZipFileImport() {
 //		Dialog dialog = importWizard(DataTransferTestStub.newZipFileResourceImportPage1(null));
 //		DialogCheck.assertDialogTexts(dialog);
@@ -209,8 +205,7 @@ public class UIWizardsAuto {
 			public void addPages() {
 				super.addPages();
 				IWizardPage page = getPage("newFilePage1");
-				assertTrue("Expected newFilePage1",
-						page instanceof WizardNewFileCreationPage);
+				assertTrue(page instanceof WizardNewFileCreationPage, "Expected newFilePage1");
 				WizardNewFileCreationPage fileCreationPage = (WizardNewFileCreationPage) page;
 
 				try {

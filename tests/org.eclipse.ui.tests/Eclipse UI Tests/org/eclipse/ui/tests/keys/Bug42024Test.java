@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
@@ -24,9 +24,9 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Bug 42024
@@ -41,7 +41,7 @@ public class Bug42024Test {
 	/** The instance of <code>KeySequenceText</code> we should tinker with. */
 	private KeySequenceText text = null;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		// Create a window with a KeySequenceText
 		Display display = Display.getCurrent();
@@ -54,7 +54,7 @@ public class Bug42024Test {
 		shell.open();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		// Close and destroy the window
 		shell.close();
@@ -79,8 +79,8 @@ public class Bug42024Test {
 		KeySequence keySequence = KeySequence.getInstance(keySequenceText);
 		text.setKeyStrokeLimit(KeySequenceText.INFINITE);
 		text.setKeySequence(keySequence);
-		assertEquals(
-				"Infinite limit but sequence changed.", keySequence, text.getKeySequence()); //$NON-NLS-1$
+		assertEquals(keySequence, text.getKeySequence(),
+				"Infinite limit but sequence changed."); //$NON-NLS-1$
 	}
 
 	/**
@@ -101,16 +101,16 @@ public class Bug42024Test {
 		KeySequence matchingKeySequence = KeySequence
 				.getInstance(matchingKeySequenceText);
 		text.setKeySequence(matchingKeySequence);
-		assertEquals(
-				"Limit of four change four stroke sequence.", matchingKeySequence, text.getKeySequence()); //$NON-NLS-1$
+		assertEquals(matchingKeySequence, text.getKeySequence(),
+				"Limit of four change four stroke sequence."); //$NON-NLS-1$
 
 		// Test one greater than length.
 		String longerKeySequenceText = "1 2 3 4 5"; //$NON-NLS-1$
 		KeySequence longerKeySequence = KeySequence
 				.getInstance(longerKeySequenceText);
 		text.setKeySequence(longerKeySequence);
-		assertEquals(
-				"Limit of four did not truncate to four.", length, text.getKeySequence().getKeyStrokes().length); //$NON-NLS-1$
+		assertEquals(length, text.getKeySequence().getKeyStrokes().length,
+				"Limit of four did not truncate to four."); //$NON-NLS-1$
 	}
 
 	/**
@@ -125,13 +125,13 @@ public class Bug42024Test {
 		// Test with a limit of four.
 		text.setKeyStrokeLimit(4);
 		text.setKeySequence(zeroStrokeSequence);
-		assertEquals(
-				"Limit of four changed zero stroke sequence.", zeroStrokeSequence, text.getKeySequence()); //$NON-NLS-1$
+		assertEquals(zeroStrokeSequence, text.getKeySequence(),
+				"Limit of four changed zero stroke sequence."); //$NON-NLS-1$
 
 		// Test with an infinite limit.
 		text.setKeyStrokeLimit(KeySequenceText.INFINITE);
 		text.setKeySequence(zeroStrokeSequence);
-		assertEquals(
-				"Infinite limit changed zero stroke sequence.", zeroStrokeSequence, text.getKeySequence()); //$NON-NLS-1$
+		assertEquals(zeroStrokeSequence, text.getKeySequence(),
+				"Infinite limit changed zero stroke sequence."); //$NON-NLS-1$
 	}
 }

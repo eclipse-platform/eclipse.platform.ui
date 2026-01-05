@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for Bug 43610.
@@ -45,7 +45,7 @@ public class Bug43610Test {
 		Display display = Display.getCurrent();
 		Listener listener = event -> {
 			if (event.stateMask == SWT.SHIFT) {
-				assertEquals("Incorrect key code for 'Shift+Alt+'", SWT.ALT, event.keyCode); //$NON-NLS-1$
+				assertEquals(SWT.ALT, event.keyCode, "Incorrect key code for 'Shift+Alt+'"); //$NON-NLS-1$
 			}
 		};
 		display.addFilter(SWT.KeyDown, listener);

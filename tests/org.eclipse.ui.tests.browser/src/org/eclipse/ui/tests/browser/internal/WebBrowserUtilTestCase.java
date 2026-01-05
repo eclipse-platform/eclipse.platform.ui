@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 Tasktop Technologies and others.
+ * Copyright (c) 2015, 2026 Tasktop Technologies and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,11 +15,11 @@ package org.eclipse.ui.tests.browser.internal;
 
 import static org.eclipse.ui.internal.browser.IBrowserDescriptor.URL_PARAMETER;
 import static org.eclipse.ui.internal.browser.WebBrowserUtil.createParameterArray;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.ui.internal.browser.WebBrowserUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class WebBrowserUtilTestCase {
 

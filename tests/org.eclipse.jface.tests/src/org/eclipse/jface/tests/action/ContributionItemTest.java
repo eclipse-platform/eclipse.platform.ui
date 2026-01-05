@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -23,8 +23,8 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests for the [I]ContributionItem API.
@@ -33,8 +33,8 @@ import org.junit.Test;
  */
 public class ContributionItemTest {
 
-	@Rule
-	public JFaceActionRule rule = new JFaceActionRule();
+	@RegisterExtension
+	public JFaceActionExtension rule = new JFaceActionExtension();
 
 	/**
 	 * Tests that a contribution item's parent link is set when added to a

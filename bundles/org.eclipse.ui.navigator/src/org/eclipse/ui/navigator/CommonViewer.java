@@ -268,6 +268,7 @@ public class CommonViewer extends TreeViewer {
 	 * @param sorter a viewer sorter, or <code>null</code> if none
 	 * @deprecated Use {@link #setComparator(ViewerComparator)} instead.
 	 */
+	@SuppressWarnings("removal")
 	@Override
 	@Deprecated(forRemoval = true, since = "2025-03")
 	public void setSorter(ViewerSorter sorter) {
@@ -284,10 +285,15 @@ public class CommonViewer extends TreeViewer {
 	 *
 	 * @param comparator a viewer sorter, or <code>null</code> if none
 	 */
+	@SuppressWarnings("removal")
 	@Override
 	public void setComparator(ViewerComparator comparator) {
-		if (comparator != null && comparator instanceof CommonViewerSorter commonSorter) {
-			commonSorter.setContentService(contentService);
+		if (comparator != null) {
+			if (comparator instanceof CommonViewerSorter commonSorter) {
+				commonSorter.setContentService(contentService);
+			} else if (comparator instanceof CommonViewerComparator commonComparator) {
+				commonComparator.setContentService(contentService);
+			}
 		}
 
 		super.setComparator(comparator);

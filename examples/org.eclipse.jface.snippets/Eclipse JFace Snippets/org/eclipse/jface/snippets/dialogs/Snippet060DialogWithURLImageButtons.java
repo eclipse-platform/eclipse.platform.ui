@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Tom Schindl and others.
+ * Copyright (c) 2006, 2025 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,8 @@
 package org.eclipse.jface.snippets.dialogs;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -62,9 +64,9 @@ public class Snippet060DialogWithURLImageButtons {
 
 					URL url;
 					try {
-						url = new URL("http://www.eclipse.org/home/images/enterprise.gif");
+						url = new URI("http://www.eclipse.org/home/images/enterprise.gif").toURL();
 						b.setImage(ImageDescriptor.createFromURL(url).createImage());
-					} catch (MalformedURLException e) {
+					} catch (MalformedURLException | URISyntaxException e) {
 						e.printStackTrace();
 					}
 

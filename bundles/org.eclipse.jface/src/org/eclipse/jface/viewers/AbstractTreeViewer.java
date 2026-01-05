@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -261,6 +261,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the child elements to add
 	 * @since 3.1
 	 */
+	@SuppressWarnings("removal")
 	protected void internalAdd(Widget widget, Object parentElementOrTreePath,
 			Object[] childElements) {
 		Object parent;
@@ -305,6 +306,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			ViewerComparator comparator = getComparator();
 			if (comparator != null) {
 				if (comparator instanceof TreePathViewerSorter tpvs) {
+					if (path == null) {
+						path = internalGetSorterParentPath(widget, comparator);
+					}
+					tpvs.sort(this, path, filtered);
+				} else if (comparator instanceof TreePathViewerComparator tpvs) {
 					if (path == null) {
 						path = internalGetSorterParentPath(widget, comparator);
 					}
@@ -500,23 +506,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the index where the item should be inserted. It uses sorter to
-	 * determine the correct position, if sorter is not assigned, returns the
-	 * index of the element after the last.
+	 * determine the correct position, if sorter is not assigned, returns the index
+	 * of the element after the last.
 	 *
-	 * @param items
-	 *            the items to search
-	 * @param comparator
-	 *            The comparator to use.
-	 * @param lastInsertion
-	 *            the start index to start search for position from this allows
-	 *            optimizing search for multiple elements that are sorted
-	 *            themselves.
-	 * @param element
-	 *            element to find position for.
-	 * @param parentPath
-	 *            the tree path for the element's parent or <code>null</code>
-	 *            if the element is a root element or the sorter is not a
-	 *            {@link TreePathViewerSorter}
+	 * @param items         the items to search
+	 * @param comparator    The comparator to use.
+	 * @param lastInsertion the start index to start search for position from this
+	 *                      allows optimizing search for multiple elements that are
+	 *                      sorted themselves.
+	 * @param element       element to find position for.
+	 * @param parentPath    the tree path for the element's parent or
+	 *                      <code>null</code> if the element is a root element or
+	 *                      the sorter is not a {@link TreePathViewerComparator}
 	 * @return the index to use when inserting the element.
 	 */
 
@@ -615,22 +616,22 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Return the tree path that should be used as the parent path for the given
-	 * widget and sorter. A <code>null</code> is returned if either the sorter
-	 * is not a {@link TreePathViewerSorter} or if the parent widget is not an
+	 * widget and sorter. A <code>null</code> is returned if either the sorter is
+	 * not a {@link TreePathViewerComparator} or if the parent widget is not an
 	 * {@link Item} (i.e. is the root of the tree).
 	 *
-	 * @param parent
-	 *            the parent widget
-	 * @param comparator
-	 *            the sorter
-	 * @return the tree path that should be used as the parent path for the
-	 *         given widget and sorter
+	 * @param parent     the parent widget
+	 * @param comparator the sorter
+	 * @return the tree path that should be used as the parent path for the given
+	 *         widget and sorter
 	 */
+	@SuppressWarnings("removal")
 	private TreePath internalGetSorterParentPath(Widget parent,
 			ViewerComparator comparator) {
 		TreePath path;
-		if (comparator instanceof TreePathViewerSorter
-				&& parent instanceof Item item) {
+		if (comparator instanceof TreePathViewerSorter && parent instanceof Item item) {
+			path = getTreePathFromItem(item);
+		} else if (comparator instanceof TreePathViewerComparator && parent instanceof Item item) {
 			path = getTreePathFromItem(item);
 		} else {
 			path = null;
@@ -640,23 +641,22 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Compare the two elements using the given sorter. If the sorter is a
-	 * {@link TreePathViewerSorter}, the provided tree path will be used. If
-	 * the tree path is null and the sorter is a tree path sorter, then the
-	 * elements are root elements
+	 * {@link TreePathViewerComparator}, the provided tree path will be used. If the
+	 * tree path is null and the sorter is a tree path sorter, then the elements are
+	 * root elements
 	 *
-	 * @param comparator
-	 *            the sorter
-	 * @param parentPath
-	 *            the path of the elements' parent
-	 * @param e1
-	 *            the first element
-	 * @param e2
-	 *            the second element
+	 * @param comparator the sorter
+	 * @param parentPath the path of the elements' parent
+	 * @param e1         the first element
+	 * @param e2         the second element
 	 * @return the result of comparing the two elements
 	 */
+	@SuppressWarnings("removal")
 	private int internalCompare(ViewerComparator comparator,
 			TreePath parentPath, Object e1, Object e2) {
 		if (comparator instanceof TreePathViewerSorter tpvs) {
+			return tpvs.compare(this, parentPath, e1, e2);
+		} else if (comparator instanceof TreePathViewerComparator tpvs) {
 			return tpvs.compare(this, parentPath, e1, e2);
 		}
 		return comparator.compare(this, e1, e2);
@@ -667,7 +667,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		Object[] result = null;
 		ViewerComparator comparator = getComparator();
 		if (parentElementOrTreePath != null
-				&& comparator instanceof TreePathViewerSorter tpvs) {
+				&& comparator instanceof TreePathViewerComparator tpvs) {
 			result = getFilteredChildren(parentElementOrTreePath);
 			// be sure we're not modifying the original array from the model
 			result = result.clone();
@@ -2095,12 +2095,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				Object parent = getParentElement(element);
 				if (parent != null && !equals(parent, getRoot())
 						&& !(parent instanceof TreePath tp && tp.getSegmentCount() == 0)) {
-					Widget[] parentItems = internalFindItems(parent);
-					for (Widget parentItem : parentItems) {
-						if (parentItem instanceof Item it) {
-							updatePlus(it, parent);
-						}
-					}
+					internalRemove(parent, new Object[] { element });
 				}
 			}
 		}

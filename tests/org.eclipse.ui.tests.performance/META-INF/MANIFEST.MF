@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Performance Plug-in
 Bundle-SymbolicName: org.eclipse.ui.tests.performance;singleton:=true
-Bundle-Version: 1.6.600.qualifier
-Require-Bundle: org.eclipse.ui,
+Bundle-Version: 1.7.0.qualifier
+Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.runtime,
  org.eclipse.core.tests.harness,
  org.junit,
@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.ui,
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.tests.performance

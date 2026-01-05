@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2022 Google Inc and others.
+ * Copyright (C) 2014, 2025 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,12 +35,12 @@ public class FilterHandlerTests {
 			"org.eclipse.ui.internal.monitoring.FilterHandlerTests.createFilteredStackSamples"
 			+ ",org.eclipse.ui.internal.monitoring.SomeClass.someMethod"
 			+ ",org.eclipse.ui.internal.monitoring.OtherClass.otherMethod";
-	private static final long THREAD_ID = Thread.currentThread().getId();
+	private static final long THREAD_ID = Thread.currentThread().threadId();
 
 	private StackSample[] createStackSamples() throws Exception {
 		ThreadMXBean jvmThreadManager = ManagementFactory.getThreadMXBean();
 		ThreadInfo threadInfo =
-				jvmThreadManager.getThreadInfo(Thread.currentThread().getId(), Integer.MAX_VALUE);
+				jvmThreadManager.getThreadInfo(Thread.currentThread().threadId(), Integer.MAX_VALUE);
 		return new StackSample[] { new StackSample(0, new ThreadInfo[] { threadInfo }) };
 	}
 
@@ -77,7 +77,7 @@ public class FilterHandlerTests {
 		FilterHandler filterHandler = new FilterHandler("*.FilterHandlerTests.testW?ld*Filter");
 		ThreadMXBean jvmThreadManager = ManagementFactory.getThreadMXBean();
 		ThreadInfo threadInfo =
-				jvmThreadManager.getThreadInfo(Thread.currentThread().getId(), Integer.MAX_VALUE);
+				jvmThreadManager.getThreadInfo(Thread.currentThread().threadId(), Integer.MAX_VALUE);
 		boolean matched = false;
 		for (StackTraceElement element : threadInfo.getStackTrace()) {
 			if (filterHandler.matchesFilter(element)) {

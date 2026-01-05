@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  * @deprecated As of 3.3, this class is no longer necessary.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2026-03")
 public class FieldAssistColors {
 
 	private static boolean DEBUG = false;
@@ -77,7 +77,7 @@ public class FieldAssistColors {
 	 * @return the RGB value indicating a background color appropriate for
 	 *         indicating an error in the control.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static RGB computeErrorFieldBackgroundRGB(Control control) {
 		/*
 		 * Use a 10% alpha of the error color applied on top of the widget
@@ -110,7 +110,7 @@ public class FieldAssistColors {
 	 *            the control on which the background color will be used.
 	 * @return the color used to indicate that a field is required.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static Color getRequiredFieldBackgroundColor(Control control) {
 		final Display display = control.getDisplay();
 

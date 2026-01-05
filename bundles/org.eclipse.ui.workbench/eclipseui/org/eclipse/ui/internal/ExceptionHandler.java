@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,7 @@ import org.eclipse.jface.window.Window;
 
 /**
  * This handler will pass along to the workbench advisor exceptions and errors
- * thrown while running the event loop. However, the <code>ThreadDeath</code>
- * error is simply thrown again, and is not passed along.
+ * thrown while running the event loop.
  */
 public final class ExceptionHandler implements Window.IExceptionHandler {
 
@@ -42,11 +41,6 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
 	@Override
 	public void handleException(Throwable t) {
 		try {
-			// Ignore ThreadDeath error as its normal to get this when thread dies
-			if (t instanceof ThreadDeath) {
-				throw (ThreadDeath) t;
-			}
-
 			// Check to avoid recursive errors
 			exceptionCount++;
 			if (exceptionCount > 2) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -130,18 +130,21 @@ public class WorkbenchAdvisorTest {
 			}
 
 			@Override
+			@Deprecated
 			public void preWindowOpen(IWorkbenchWindowConfigurer c) {
 				assertFalse(windowOpenCalled);
 				super.preWindowOpen(c);
 			}
 
 			@Override
+			@Deprecated
 			public void postWindowOpen(IWorkbenchWindowConfigurer c) {
 				assertTrue(windowOpenCalled);
 				super.postWindowOpen(c);
 			}
 
 			@Override
+			@Deprecated
 			public boolean preWindowShellClose(IWorkbenchWindowConfigurer c) {
 				assertFalse(windowCloseCalled);
 				return super.preWindowShellClose(c);
@@ -265,6 +268,7 @@ public class WorkbenchAdvisorTest {
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
 			@Override
+			@Deprecated
 			public void fillActionBars(IWorkbenchWindow window,
 					IActionBarConfigurer configurer, int flags) {
 				super.fillActionBars(window, configurer, flags);
@@ -284,6 +288,7 @@ public class WorkbenchAdvisorTest {
 	public void testEmptyProgressRegion() {
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 			@Override
+			@Deprecated
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				super.preWindowOpen(configurer);
 				configurer.setShowProgressIndicator(false);

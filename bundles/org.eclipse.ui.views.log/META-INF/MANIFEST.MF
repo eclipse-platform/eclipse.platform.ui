@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.ui.views.log;singleton:=true
-Bundle-Version: 1.4.1000.qualifier
+Bundle-Version: 1.5.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.views.log.Activator
 Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
- org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.208.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
  org.eclipse.e4.ui.dialogs;bundle-version="1.1.600"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.internal.views.log;x-friends:="org.eclipse.pde.ui"
 Bundle-ActivationPolicy: lazy

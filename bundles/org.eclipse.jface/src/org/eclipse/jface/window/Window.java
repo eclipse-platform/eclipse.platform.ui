@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -129,11 +129,6 @@ public abstract class Window implements IShellProvider {
 	private static class DefaultExceptionHandler implements IExceptionHandler {
 		@Override
 		public void handleException(Throwable t) {
-			if (t instanceof ThreadDeath) {
-				// Don't catch ThreadDeath as this is a normal occurrence when
-				// the thread dies
-				throw (ThreadDeath) t;
-			}
 			// Try to keep running.
 			t.printStackTrace();
 		}

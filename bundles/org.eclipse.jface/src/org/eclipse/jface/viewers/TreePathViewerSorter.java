@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,9 @@ import java.util.Arrays;
  * parent element of the elements being sorted.
  *
  * @since 3.2
+ * @deprecated Use {@link TreePathViewerComparator} instead.
  */
+@Deprecated(forRemoval = true, since = "2026-03")
 public class TreePathViewerSorter extends ViewerSorter {
 
 	/**
@@ -39,6 +41,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 *            the element
 	 * @return the category of the element
 	 */
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public int category(TreePath parentPath, Object element) {
 		return category(element);
 	}
@@ -59,6 +62,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 *  second element; the value <code>0</code> if the first element is
 	 *  equal to the second element; and a positive
 	 */
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		return compare(viewer, e1, e2);
 	}
@@ -79,6 +83,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 * @return <code>true</code> if the sorting would be affected,
 	 *    and <code>false</code> if it would be unaffected
 	 */
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
 		return isSorterProperty(element, property);
 	}
@@ -101,6 +106,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 * @param parentPath the parent path of the given elements
 	 * @param elements the elements to sort
 	 */
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public void sort(final Viewer viewer, final TreePath parentPath, Object[] elements) {
 		Arrays.sort(elements, (a, b) -> TreePathViewerSorter.this.compare(viewer, parentPath, a, b));
 	}

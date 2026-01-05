@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.jface.text.tests
-Bundle-Version: 3.13.1100.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -16,14 +16,14 @@ Export-Package:
  org.eclipse.jface.text.tests.templates.persistence
 Require-Bundle: 
  org.eclipse.jface.text;bundle-version="[3.20.0,4.0.0)",
- org.eclipse.jface;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.39.0,4.0.0)",
  org.junit;bundle-version="4.12.0",
  org.eclipse.text.tests;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.tests.harness,
  org.eclipse.test;bundle-version="3.6.200"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jface.text.tests
 Import-Package: org.mockito,

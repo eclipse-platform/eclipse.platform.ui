@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.text
-Bundle-Version: 3.29.100.qualifier
+Bundle-Version: 3.30.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -35,10 +35,10 @@ Export-Package:
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.8.0,4.0.0)";visibility:=reexport,
- org.eclipse.swt;bundle-version="[3.126.0,4.0.0)",
- org.eclipse.jface;bundle-version="[3.19.0,4.0.0)"
+ org.eclipse.swt;bundle-version="[3.133.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.39.0,4.0.0)"
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.jface.text
 Bundle-Activator: org.eclipse.jface.text.Activator
 Bundle-ActivationPolicy: lazy

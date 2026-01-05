@@ -29,17 +29,17 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.commands.CheckInvokedHandler;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DispatcherTest {
 
 	private KeyBindingDispatcher dispatcher;
 	private IProject p;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws CoreException {
 		this.dispatcher = PlatformUI.getWorkbench().getService(KeyBindingDispatcher.class);
 		CheckInvokedHandler.invoked = false;
@@ -48,7 +48,7 @@ public class DispatcherTest {
 		p.open(new NullProgressMonitor());
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		p.delete(true, new NullProgressMonitor());
 	}
@@ -63,8 +63,8 @@ public class DispatcherTest {
 		try {
 			int shellCount = Display.getCurrent().getShells().length;
 			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'O')), null);
-			Assert.assertFalse("No handler should have been invoked", CheckInvokedHandler.invoked);
-			Assert.assertEquals("No Shell should have been added", shellCount, Display.getCurrent().getShells().length);
+			Assertions.assertFalse(CheckInvokedHandler.invoked, "No handler should have been invoked");
+			Assertions.assertEquals(shellCount, Display.getCurrent().getShells().length, "No Shell should have been added");
 		} finally {
 			if (part != null) {
 				part.getEditorSite().getPage().closeEditor(part, false);
@@ -82,8 +82,8 @@ public class DispatcherTest {
 		try {
 			int shellCount = Display.getCurrent().getShells().length;
 			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'O')), null);
-			Assert.assertTrue("Handler should have been invoked", CheckInvokedHandler.invoked);
-			Assert.assertEquals("No Shell should have been added", shellCount, Display.getCurrent().getShells().length);
+			Assertions.assertTrue(CheckInvokedHandler.invoked, "Handler should have been invoked");
+			Assertions.assertEquals(shellCount, Display.getCurrent().getShells().length, "No Shell should have been added");
 		} finally {
 			if (part != null) {
 				part.getEditorSite().getPage().closeEditor(part, false);

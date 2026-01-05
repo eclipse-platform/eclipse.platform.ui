@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.browser.internal;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.browser.BrowserDescriptorDialog;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DialogsTestCase {
 	private Shell getShell() {

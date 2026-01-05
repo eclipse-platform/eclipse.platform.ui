@@ -19,22 +19,20 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ShowViewMenu;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.5
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class ShowViewMenuTest {
-
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IWorkbenchWindow workbenchWindow;
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		// open a workbench window with the empty perspective, since it defines
 		// no show view shortcuts, it is suitable for the two single show view

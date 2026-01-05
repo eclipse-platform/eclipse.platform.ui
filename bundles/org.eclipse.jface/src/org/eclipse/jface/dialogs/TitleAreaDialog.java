@@ -69,7 +69,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @since 2.0
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final String INFO_MESSAGE = "INFO_MESSAGE"; //$NON-NLS-1$
 
 	/**
@@ -78,7 +78,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @since 2.0
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
 
 	// Space between an image and a label
@@ -382,7 +382,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @return Composite
 	 * @deprecated
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	protected Composite getTitleArea() {
 		return getShell();
 	}

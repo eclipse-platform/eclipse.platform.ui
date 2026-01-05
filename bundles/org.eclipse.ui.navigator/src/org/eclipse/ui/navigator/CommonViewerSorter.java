@@ -43,7 +43,11 @@ import org.eclipse.ui.internal.navigator.Policy;
  * </p>
  *
  * @since 3.2
+ *
+ * @deprecated Use {@link CommonViewerComparator} instead.
  */
+@SuppressWarnings("removal")
+@Deprecated(forRemoval = true, since="2026-03")
 public final class CommonViewerSorter extends TreePathViewerSorter {
 
 	private NavigatorContentService contentService;
@@ -57,11 +61,13 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 *            The content service used by the viewer that will use this sorter service.
 	 * @since 3.3
 	 */
+	@Deprecated(forRemoval = true, since="2026-03")
 	public void setContentService(INavigatorContentService aContentService) {
 		contentService = (NavigatorContentService) aContentService;
 		sorterService = contentService.getSorterService();
 	}
 
+	@Deprecated(forRemoval = true, since="2026-03")
 	@Override
 	public int category(Object element) {
 		if (contentService == null) {
@@ -77,6 +83,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 				object != null ? object.toString() : "<null>", parent != null ? parent.toString() : "<null>"), null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Deprecated(forRemoval = true, since="2026-03")
 	@Override
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		if (contentService == null) {
@@ -140,6 +147,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return sorter;
 	}
 
+	@Deprecated(forRemoval=true, since="2026-03")
 	@Override
 	public boolean isSorterProperty(Object element, String property) {
 		// Have to get the parent path from the content provider
@@ -153,6 +161,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return false;
 	}
 
+	@Deprecated(forRemoval=true, since="2026-03")
 	@Override
 	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
 		INavigatorContentDescriptor contentDesc = getSource(element);

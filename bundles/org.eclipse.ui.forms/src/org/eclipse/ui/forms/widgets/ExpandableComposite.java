@@ -22,7 +22,6 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -289,13 +288,7 @@ public class ExpandableComposite extends Canvas {
 			Point labelDefault = this.textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 			int tcWidthBeforeSplit = Math.min(width, tcDefault.x);
-
-			int additionalLabelWidthPadding = 0;
-			if (OS.isWindows()) {
-				/* compensate rounding issue in windows */
-				additionalLabelWidthPadding = 1;
-			}
-			int labelWidthBeforeSplit = Math.min(width, labelDefault.x + additionalLabelWidthPadding);
+			int labelWidthBeforeSplit = Math.min(width, labelDefault.x);
 
 			int tcWidthAfterSplit = tcWidthBeforeSplit;
 			int labelWidthAfterSplit = labelWidthBeforeSplit;

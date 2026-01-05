@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,9 +27,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContext2;
-import org.eclipse.help.IHelp;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.IToc;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -173,7 +171,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 				if (object == pluggableHelpUI) {
 					isInitialized = false;
 					pluggableHelpUI = null;
-					helpCompatibilityWrapper = null;
 					// remove ourselves - we'll be added again in initalize if
 					// needed
 					PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(handler);
@@ -181,121 +178,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			}
 		}
 	};
-
-	/**
-	 * Compatibility implementation of old IHelp interface.
-	 * WorkbenchHelp.getHelpSupport and IHelp were deprecated in 3.0.
-	 */
-	private class CompatibilityIHelpImplementation implements IHelp {
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelp() {
-			// real method - forward to help UI if available
-			AbstractHelpUI helpUI = getHelpUI();
-			if (helpUI != null) {
-				helpUI.displayHelp();
-			}
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayContext(IContext context, int x, int y) {
-			// real method - forward to help UI if available
-			AbstractHelpUI helpUI = getHelpUI();
-			if (helpUI != null) {
-				helpUI.displayContext(context, x, y);
-			}
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayContext(String contextId, int x, int y) {
-			// convenience method - funnel through the real method
-			IContext context = HelpSystem.getContext(contextId);
-			if (context != null) {
-				displayContext(context, x, y);
-			}
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelpResource(String href) {
-			// real method - forward to help UI if available
-			AbstractHelpUI helpUI = getHelpUI();
-			if (helpUI != null) {
-				helpUI.displayHelpResource(href);
-			}
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelpResource(IHelpResource helpResource) {
-			// convenience method - funnel through the real method
-			displayHelpResource(helpResource.getHref());
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelp(String toc) {
-			// deprecated method - funnel through the real method
-			displayHelpResource(toc);
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelp(String toc, String selectedTopic) {
-			// deprecated method - funnel through the real method
-			displayHelpResource(selectedTopic);
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelp(String contextId, int x, int y) {
-			// deprecated method - funnel through the real method
-			displayContext(contextId, x, y);
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public void displayHelp(IContext context, int x, int y) {
-			// deprecated method - funnel through the real method
-			displayContext(context, x, y);
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public IContext getContext(String contextId) {
-			// non-UI method - forward to HelpSystem
-			return HelpSystem.getContext(contextId);
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public IToc[] getTocs() {
-			// non-UI method - forward to HelpSystem
-			return HelpSystem.getTocs();
-		}
-
-		/** @deprecated */
-		@Deprecated
-		@Override
-		public boolean isContextHelpDisplayed() {
-			// real method - forward to pluggedhelp UI
-			return WorkbenchHelpSystem.this.isContextHelpDisplayed();
-		}
-	}
 
 	/**
 	 * A wrapper for action help context that passes the action text to be used as a
@@ -349,12 +231,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			return context.getText();
 		}
 	}
-
-	/**
-	 * Compatibility wrapper, or <code>null</code> if none. Do not access directly;
-	 * see getHelpSupport().
-	 */
-	private IHelp helpCompatibilityWrapper = null;
 
 	/**
 	 * The listener to attach to various widgets.
@@ -414,7 +290,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 */
 	public void dispose() {
 		pluggableHelpUI = null;
-		helpCompatibilityWrapper = null;
 		isInitialized = false;
 		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(handler);
 	}
@@ -539,25 +414,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			helpListener = new WorkbenchHelpListener();
 		}
 		return helpListener;
-	}
-
-	/**
-	 * Returns the help support system for the platform, if available.
-	 *
-	 * @return the help support system, or <code>null</code> if none
-	 * @deprecated Use the static methods on this class and on
-	 *             {@link org.eclipse.help.HelpSystem HelpSystem}instead of the
-	 *             IHelp methods on the object returned by this method.
-	 */
-	@Deprecated(forRemoval = true, since = "2023-12")
-	public IHelp getHelpSupport() {
-		AbstractHelpUI helpUI = getHelpUI();
-		if (helpUI != null && helpCompatibilityWrapper == null) {
-			// create instance only once, and only if needed
-			helpCompatibilityWrapper = new CompatibilityIHelpImplementation();
-		}
-		return helpCompatibilityWrapper;
-
 	}
 
 	/**

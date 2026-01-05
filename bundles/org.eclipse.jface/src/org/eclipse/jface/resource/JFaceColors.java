@@ -176,7 +176,7 @@ public class JFaceColors {
 	 * @deprecated JFaceColors no longer maintains a cache of colors.  This job
 	 * is now handled by the ColorRegistry.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static void clearColor(String colorName) {
 		//no-op
 	}
@@ -188,7 +188,7 @@ public class JFaceColors {
 	 * @deprecated JFaceColors no longer maintains a cache of colors.  This job
 	 * is now handled by the ColorRegistry.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static void disposeColors() {
 		//no-op
 	}

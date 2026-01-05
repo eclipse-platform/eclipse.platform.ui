@@ -1,10 +1,11 @@
 # AGENTS.md
 
-This file provides guidance to AI Agents (claude-code, codex, gemini cli, ...) when working with code in this repository.
+This file provides guidance to AI Agents.
 
 ## Repository Overview
 
-Eclipse Platform UI provides the UI building blocks for Eclipse IDE and Eclipse Rich Client Platform (RCP). This includes JFace, workbench, commands framework, data binding, dialogs, editors, views, perspectives, and more. Built on top of SWT (Eclipse Standard Widget Toolkit).
+Eclipse Platform UI provides the building blocks for Eclipse IDE and Eclipse Rich Client Platform (RCP). 
+This includes JFace, workbench, commands framework, data binding, dialogs, editors, views, perspectives, and more. Built on top of SWT (Eclipse Standard Widget Toolkit).
 
 **Key Facts:**
 - **Language:** Java 21
@@ -64,27 +65,15 @@ Each bundle contains:
 
 ### Critical Limitation
 
+
 Use the `-Pbuild-individual-bundles` profile:
 
 ```bash
-# Compile a single bundle
-cd bundles/org.eclipse.jface
-mvn clean compile -Pbuild-individual-bundles
+# Compile single bundle
+mvn clean compile -pl :bundle-artifact-id -Pbuild-individual-bundles -q
 
-# Run tests for a single bundle
-cd tests/org.eclipse.jface.tests
-mvn clean verify -Pbuild-individual-bundles
-
-# Run specific test class
-mvn test -Pbuild-individual-bundles -Dtest=ViewerTestClass
-```
-
-### Maven Configuration
-
-Default config in `.mvn/maven.config`:
-- `-Pbuild-individual-bundles` - Enable individual bundle builds
-- `-Dtycho.target.eager=true` - Eager target resolution
-- `-Dtycho.localArtifacts=ignore` - Ignore local artifacts
+# Example for building a single bundle
+mvn clean verify -Pbuild-individual-bundles mvn clean verify -pl bundles/org.eclipse.ui -DskipTests
 
 ### Test Properties
 
@@ -97,22 +86,15 @@ From `pom.xml`:
 
 ### Running Tests
 
-**⚠️ IMPORTANT:** Use `mvn verify` (NOT `mvn test`) for Tycho projects. Due to Maven Tycho lifecycle binding, tests run in the `integration-test` phase, not the `test` phase. Running `mvn test` will NOT execute tests.
+**⚠️ IMPORTANT:** Use `mvn verify` (NOT `mvn test`) for Tycho projects. 
+Due to Maven Tycho lifecycle binding, tests run in the `integration-test` phase, not the `test` phase. Running `mvn test` will NOT execute tests.
 
 ```bash
-# Run all tests in a specific test bundle
-cd tests/org.eclipse.jface.tests
-mvn clean verify -Pbuild-individual-bundles
-
-# Run without clean (faster if no changes to dependencies)
-mvn verify -Pbuild-individual-bundles
-
 # Run tests for a specific test bundle from repository root
-mvn clean verify -pl :org.eclipse.jface.tests -Pbuild-individual-bundles
+mvn clean verify -pl :org.eclipse.ui.tests -Pbuild-individual-bundles
 
 # Run specific test class within a bundle
-cd tests/org.eclipse.jface.tests
-mvn clean verify -Pbuild-individual-bundles -Dtest=StructuredViewerTest
+mvn clean verify -pl :org.eclipse.ui.tests -Pbuild-individual-bundles -Dtest=StructuredViewerTest
 
 # Skip tests during compilation
 mvn clean compile -Pbuild-individual-bundles -DskipTests
@@ -125,40 +107,11 @@ mvn clean compile -Pbuild-individual-bundles -DskipTests
 ### JUnit Guidelines
 
 - Prefer JUnit 5 (`org.junit.jupiter.api.*`) for new tests
-- Use `@BeforeEach`/`@AfterEach` instead of `@Before`/`@After`
-- Use `@Disabled` instead of `@Ignore`
-- Use `Assertions.*` instead of `Assert.*`
-- JUnit 3 usage is limited to compatibility helpers (e.g., `org.eclipse.ui.tests.harness`)
-
-**Common test pattern:**
-```java
-@BeforeEach
-public void setUp() {
-    fDisplay = Display.getDefault();
-    fShell = new Shell(fDisplay);
-}
-
-@AfterEach
-public void tearDown() {
-    if (fShell != null) {
-        fShell.dispose();
-    }
-}
-
-@Test
-public void testSomething() {
-    // Test implementation
-    Assertions.assertEquals(expected, actual);
-}
-```
 
 ## Common Development Commands
 
 ### Compilation
 
-```bash
-# Compile single bundle
-mvn clean compile -pl :bundle-artifact-id -Pbuild-individual-bundles -q
 
 # Compile and run tests
 mvn clean test -pl :bundle-artifact-id -Pbuild-individual-bundles
@@ -192,29 +145,7 @@ Import-Package: org.osgi.service.event
 
 ### 2. SWT Resource Disposal
 
-**Must dispose SWT resources** (except system colors/fonts):
-
-```java
-// CORRECT - dispose in finally
-Shell shell = new Shell();
-try {
-    // use shell
-} finally {
-    shell.dispose();
-}
-
-// CORRECT - dispose custom colors/fonts/images
-Color color = new Color(display, 255, 0, 0);
-try {
-    // use color
-} finally {
-    color.dispose();
-}
-
-// INCORRECT - system resources don't need disposal
-Color systemColor = display.getSystemColor(SWT.COLOR_RED);
-// No dispose needed
-```
+**Must dispose SWT resources** (except colors and system fonts):
 
 ### 3. UI Thread Requirements
 
@@ -224,11 +155,6 @@ Color systemColor = display.getSystemColor(SWT.COLOR_RED);
 // Run asynchronously on UI thread
 Display.getDefault().asyncExec(() -> {
     label.setText("Updated");
-});
-
-// Run synchronously (blocks until complete)
-Display.getDefault().syncExec(() -> {
-    button.setEnabled(false);
 });
 
 // Check if on UI thread
@@ -266,47 +192,6 @@ source.. = src/
 output.. = bin/
 ```
 
-## Common Patterns
-
-### Data Binding
-
-```java
-DataBindingContext ctx = new DataBindingContext();
-
-// Bind widget to model
-ctx.bindValue(
-    WidgetProperties.text(SWT.Modify).observe(textWidget),
-    BeanProperties.value("propertyName").observe(model)
-);
-
-// Dispose when done
-ctx.dispose();
-```
-
-### JFace Viewers
-
-```java
-TableViewer viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-viewer.setContentProvider(ArrayContentProvider.getInstance());
-viewer.setLabelProvider(new LabelProvider() {
-    @Override
-    public String getText(Object element) {
-        return element.toString();
-    }
-});
-viewer.setInput(myList);
-```
-
-### Eclipse Commands
-
-Commands are defined in `plugin.xml` and handled via handlers:
-
-```java
-@Execute
-public void execute(IEclipseContext context) {
-    // Command implementation
-}
-```
 
 ## CI/GitHub Workflows
 

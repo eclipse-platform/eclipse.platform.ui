@@ -25,16 +25,16 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CompositePartClosingTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private EModelService ems;

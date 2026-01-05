@@ -14,15 +14,15 @@
 
 package org.eclipse.ui.tests.keys;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Bug 42627
  *
  * @since 3.0
  */
-@Ignore("Logging piece of fix did not go in M4.") // See commit 74a677140dd3fc6a09fa1c769c0af2cac3c1c08b
+@Disabled("Logging piece of fix did not go in M4.") // See commit 74a677140dd3fc6a09fa1c769c0af2cac3c1c08b
 public class Bug42627Test {
 
 	// TODO See if this is needed for anything.

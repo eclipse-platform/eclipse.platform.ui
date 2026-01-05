@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
@@ -31,9 +31,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the override tabs support.
@@ -45,7 +45,7 @@ public class TabbedPropertySheetPageOverrideTest {
 
 	private OverrideTestsView overrideTestsView;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws WorkbenchException {
 		/**
 		 * Close the existing perspectives.
@@ -73,7 +73,7 @@ public class TabbedPropertySheetPageOverrideTest {
 		overrideTestsView = (OverrideTestsView) view;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		/**
 		 * Bug 175070: Make sure the views have finished painting.

@@ -15,11 +15,11 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -68,21 +68,19 @@ import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @since 3.3
  */
-@Ignore("broke during e4 transition and still need adjustments")
+@Disabled("broke during e4 transition and still need adjustments")
+@ExtendWith(CloseTestWindowsExtension.class)
 public class CommandEnablementTest {
-
-	@Rule
-	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static final String CONTEXT_TEST2 = "org.eclipse.ui.command.contexts.enablement_test2";
 	private static final String CONTEXT_TEST1 = "org.eclipse.ui.command.contexts.enablement_test1";
@@ -110,7 +108,7 @@ public class CommandEnablementTest {
 	private IContextActivation contextActivation2;
 	private IWorkbench fWorkbench;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		fWorkbench = PlatformUI.getWorkbench();
 		commandService = fWorkbench.getService(ICommandService.class);
@@ -128,7 +126,7 @@ public class CommandEnablementTest {
 		contextHandler = new CheckContextHandler();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (activation1 != null) {
 			handlerService.deactivateHandler(activation1);

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.databinding
-Bundle-Version: 1.15.400.qualifier
+Bundle-Version: 1.16.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.databinding.dialog,
@@ -19,11 +19,11 @@ Export-Package: org.eclipse.jface.databinding.dialog,
  org.eclipse.jface.internal.databinding.swt;x-internal:=true,
  org.eclipse.jface.internal.databinding.util;x-internal:=true,
  org.eclipse.jface.internal.databinding.viewers;x-internal:=true
-Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+Require-Bundle: org.eclipse.swt;bundle-version="[3.133.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.databinding.observable;bundle-version="[1.3.0,2.0.0)",
  org.eclipse.core.databinding.property;bundle-version="[1.3.0,2.0.0)",
  org.eclipse.core.databinding;bundle-version="[1.2.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.jface.databinding

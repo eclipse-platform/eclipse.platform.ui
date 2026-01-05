@@ -274,7 +274,7 @@ public abstract class QuickMenuCreator {
 	 *             {@link #createMenu()} will be disposed shortly after the SWT.Hide
 	 *             event.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public void dispose() {
 	}
 }

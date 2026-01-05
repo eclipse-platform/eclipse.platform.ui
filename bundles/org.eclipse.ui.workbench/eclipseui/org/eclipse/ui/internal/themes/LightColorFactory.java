@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
@@ -31,6 +30,10 @@ import org.eclipse.ui.themes.IColorFactory;
  */
 public class LightColorFactory implements IColorFactory, IExecutableExtension {
 
+	private static final String ACTIVE_NOFOCUS_TAB_BG_START = "org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START"; //$NON-NLS-1$
+	private static final String ACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
+	private static final String ACTIVE_TAB_BG_END = "org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"; //$NON-NLS-1$
+	private static final String ACTIVE_TAB_BG_START = "org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"; //$NON-NLS-1$
 	protected static final RGB white = ColorUtil.getColorValue("COLOR_WHITE"); //$NON-NLS-1$
 	protected static final RGB black = ColorUtil.getColorValue("COLOR_BLACK"); //$NON-NLS-1$
 
@@ -157,23 +160,30 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 		return ColorUtil.blend(white, base, 40);
 	}
 
+	static boolean isColorDefinitionIdPartOfLightColorFactory(String id) {
+		if (ACTIVE_TAB_BG_START.equals(id) || ACTIVE_TAB_BG_END.equals(id) || ACTIVE_TAB_TEXT_COLOR.equals(id)
+				|| ACTIVE_NOFOCUS_TAB_BG_START.equals(id)) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public RGB createColor() {
 		// should have base, otherwise error in the xml
 		if (baseColorName == null || definitionId == null) {
 			return white;
 		}
-
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START")) { //$NON-NLS-1$
+		if (definitionId.equals(ACTIVE_TAB_BG_START)) {
 			return getActiveFocusStartColor();
 		}
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END")) { //$NON-NLS-1$
+		if (definitionId.equals(ACTIVE_TAB_BG_END)) {
 			return getActiveFocusEndColor();
 		}
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")) { //$NON-NLS-1$
+		if (definitionId.equals(ACTIVE_TAB_TEXT_COLOR)) {
 			return getActiveFocusTextColor();
 		}
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START")) { //$NON-NLS-1$
+		if (definitionId.equals(ACTIVE_NOFOCUS_TAB_BG_START)) {
 			return getActiveNofocusStartColor();
 		}
 

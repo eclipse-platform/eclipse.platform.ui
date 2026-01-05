@@ -15,14 +15,14 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import jakarta.inject.Inject;
 import org.eclipse.core.runtime.Platform;
@@ -37,7 +37,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -51,14 +51,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class MWindowTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private IEclipseContext appContext;
@@ -71,7 +71,7 @@ public class MWindowTest {
 
 	@Test
 	public void testCreateWindow() {
-		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 537639");
 
 		final MWindow window = ems.createModelElement(MWindow.class);
 		window.setLabel("MyWindow");
@@ -147,7 +147,7 @@ public class MWindowTest {
 
 	@Test
 	public void testContextChildren() {
-		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 537639");
 
 		final MWindow window = createWindowWithOneView();
 
@@ -250,7 +250,7 @@ public class MWindowTest {
 		assertEquals("windowName2", shell.getText());
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestWindow_X() {
 		final MWindow window = ems.createModelElement(MWindow.class);
@@ -283,7 +283,7 @@ public class MWindowTest {
 		assertEquals(300, bounds.x);
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void TODOtestWindow_Y() {
 		final MWindow window = ems.createModelElement(MWindow.class);
@@ -387,22 +387,22 @@ public class MWindowTest {
 		Shell topShell = (Shell) window.getWidget();
 		Shell detachedShell = (Shell) detachedWindow.getWidget();
 		assertEquals(window, ems.getContainer(detachedWindow));
-		assertNull("Should have no shell image", topShell.getImage());
-		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+		assertNull(topShell.getImage(), "Should have no shell image");
+		assertEquals(topShell.getImage(), detachedShell.getImage(), "Detached should have same image");
 
 		// now set icon on top-level window; detached window should inherit it
 		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg");
 		while (topShell.getDisplay().readAndDispatch()) {
 		}
-		assertNotNull("Should have shell image", topShell.getImage());
-		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+		assertNotNull(topShell.getImage(), "Should have shell image");
+		assertEquals(topShell.getImage(), detachedShell.getImage(), "Detached should have same image");
 
 		// change top-level icon; detached window should inherit it
 		window.setIconURI(null);
 		while (topShell.getDisplay().readAndDispatch()) {
 		}
-		assertNull("Should have no shell image", topShell.getImage());
-		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+		assertNull(topShell.getImage(), "Should have no shell image");
+		assertEquals(topShell.getImage(), detachedShell.getImage(), "Detached should have same image");
 
 		// turn detached into top-level window; inherited icon should be removed
 		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg");

@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -30,9 +30,9 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.util.Util;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -59,7 +59,7 @@ public final class BindingInteractionsTest {
 	 * Creates a new context manager and a binding manager for use in the test
 	 * cases.
 	 */
-	@Before
+	@BeforeEach
 	public void doSetUp() {
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager,
@@ -69,7 +69,7 @@ public final class BindingInteractionsTest {
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
-	@After
+	@AfterEach
 	public void doTearDown() {
 		contextManager = null;
 		bindingManager = null;
@@ -106,12 +106,10 @@ public final class BindingInteractionsTest {
 		TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding1.getParameterizedCommand());
 		assertFalse(binding1.equals(binding2));
-		assertTrue("Neither binding should be active",
-				activeBindings.length == 0);
+		assertTrue(activeBindings.length == 0, "Neither binding should be active");
 		activeBindings = bindingManager.getActiveBindingsFor(binding2
 				.getParameterizedCommand());
-		assertTrue("Neither binding should be active",
-				activeBindings.length == 0);
+		assertTrue(activeBindings.length == 0, "Neither binding should be active");
 	}
 
 	/**
@@ -147,27 +145,24 @@ public final class BindingInteractionsTest {
 		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("parent");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals(
-				"When only the parent context is active, only the parent binding is active.",
-				binding1, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding1,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"When only the parent context is active, only the parent binding is active.");
 
 		// Only "child"
 		activeContextIds.clear();
 		activeContextIds.add("child");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals(
-				"When only the child context is active, only the child binding is active.",
-				binding2, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding2,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"When only the child context is active, only the child binding is active.");
 
 		// Both "parent" and "child"
 		activeContextIds.add("parent");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals(
-				"When both contexts are active, only the child binding is active.",
-				binding2, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding2,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"When both contexts are active, only the child binding is active.");
 	}
 
 	/**
@@ -197,8 +192,8 @@ public final class BindingInteractionsTest {
 		final Binding binding2 = new TestBinding("system", "na", "na", null,
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
-		assertEquals("The user should be able to remove bindings", null,
-				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(null,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The user should be able to remove bindings");
 	}
 
 	/**
@@ -235,11 +230,9 @@ public final class BindingInteractionsTest {
 		final Binding parentBinding = new TestBinding("parentCommand", "na",
 				"parent", null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(parentBinding);
-		assertEquals(
-				"The user should be able to remove bindings to allow a parent binding",
-				"parentCommand", bindingManager.getPerfectMatch(
-						TestBinding.TRIGGER_SEQUENCE).getParameterizedCommand()
-						.getId());
+		assertEquals("parentCommand",
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE).getParameterizedCommand().getId(),
+				"The user should be able to remove bindings to allow a parent binding");
 	}
 
 	/**
@@ -276,10 +269,9 @@ public final class BindingInteractionsTest {
 		final Binding platformSpecific = new TestBinding("platformSpecific",
 				na, na, null, Util.getWS(), Binding.SYSTEM, null);
 		bindingManager.addBinding(platformSpecific);
-		assertEquals(
-				"We should be able to change a binding on a particular platform",
-				platformSpecific, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(platformSpecific,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"We should be able to change a binding on a particular platform");
 	}
 
 	/**
@@ -316,10 +308,9 @@ public final class BindingInteractionsTest {
 		bindings[1] = binding2;
 		bindings[2] = binding3;
 		bindingManager.setBindings(bindings);
-		assertEquals(
-				"A binding should not cause a deletion if its locale or platform doesn't match",
-				binding2, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding2,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"A binding should not cause a deletion if its locale or platform doesn't match");
 	}
 
 	/**
@@ -353,8 +344,8 @@ public final class BindingInteractionsTest {
 		final Binding binding3 = new TestBinding("user", "na", "na", null,
 				null, Binding.USER, null);
 		bindingManager.addBinding(binding3);
-		assertEquals("The user redefine a particular binding", binding3,
-				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding3,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The user redefine a particular binding");
 	}
 
 	/**
@@ -388,9 +379,8 @@ public final class BindingInteractionsTest {
 				context.getId(), null, bindingManager.getPlatform(),
 				Binding.USER, null);
 		bindingManager.addBinding(userOverride);
-		assertEquals("The user redefine a binding deleted in the system",
-				userOverride, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(userOverride,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The user redefine a binding deleted in the system");
 
 	}
 
@@ -435,8 +425,8 @@ public final class BindingInteractionsTest {
 		bindingManager.addBinding(wrongDeletion);
 
 		// Test that the deletion worked.
-		assertEquals("The parent should not be active", null, bindingManager
-				.getPerfectMatch(binding.getTriggerSequence()));
+		assertEquals(null, bindingManager
+				.getPerfectMatch(binding.getTriggerSequence()), "The parent should not be active");
 	}
 
 	/**
@@ -478,12 +468,10 @@ public final class BindingInteractionsTest {
 		bindingManager.addBinding(childBinding);
 
 		// Test to see that only the child is active.
-		assertTrue("The parent should not be active",
-				bindingManager.getActiveBindingsFor(parentBinding
-						.getParameterizedCommand()).length == 0);
-		assertTrue("The child should be active",
-				bindingManager.getActiveBindingsFor(childBinding
-						.getParameterizedCommand()).length != 0);
+		assertTrue(bindingManager.getActiveBindingsFor(parentBinding
+						.getParameterizedCommand()).length == 0, "The parent should not be active");
+		assertTrue(bindingManager.getActiveBindingsFor(childBinding
+						.getParameterizedCommand()).length != 0, "The child should be active");
 	}
 
 	/**
@@ -517,10 +505,9 @@ public final class BindingInteractionsTest {
 		final Binding binding3 = new TestBinding("locale-specific", "na", "na",
 				Locale.getDefault().toString(), null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding3);
-		assertEquals(
-				"A plug-in developer should be able to change a binding for a locale",
-				binding3, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding3,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"A plug-in developer should be able to change a binding for a locale");
 	}
 
 	/**
@@ -554,10 +541,9 @@ public final class BindingInteractionsTest {
 		final Binding binding3 = new TestBinding("platform-specific", "na",
 				"na", null, Util.getWS(), Binding.SYSTEM, null);
 		bindingManager.addBinding(binding3);
-		assertEquals(
-				"A plug-in developer should be able to change a binding for a platform",
-				binding3, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding3,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"A plug-in developer should be able to change a binding for a platform");
 	}
 
 	/**
@@ -598,9 +584,8 @@ public final class BindingInteractionsTest {
 		final Binding binding2 = new TestBinding("parent", "parent", "na",
 				null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
-		assertEquals("The binding from the child scheme should be active",
-				binding1, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding1,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The binding from the child scheme should be active");
 	}
 
 	/**
@@ -641,9 +626,8 @@ public final class BindingInteractionsTest {
 		final Binding binding2 = new TestBinding("child", childScheme.getId(),
 				parentContext.getId(), null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
-		assertEquals("The binding from the child scheme should be active",
-				binding2, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding2,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The binding from the child scheme should be active");
 	}
 
 	/**
@@ -684,9 +668,8 @@ public final class BindingInteractionsTest {
 		final Binding binding2 = new TestBinding("parent", "parent", "na",
 				null, null, Binding.USER, null);
 		bindingManager.addBinding(binding2);
-		assertEquals("The binding from the child scheme should be active",
-				binding1, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding1,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The binding from the child scheme should be active");
 	}
 
 	/**
@@ -722,26 +705,23 @@ public final class BindingInteractionsTest {
 		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("sibling1");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals(
-				"When only the first sibling is active, only the first binding is active",
-				binding1, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding1,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"When only the first sibling is active, only the first binding is active");
 
 		// Other sibling active
 		activeContextIds.clear();
 		activeContextIds.add("sibling2");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals(
-				"When only the second sibling is active, only the second binding is active",
-				binding2, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding2,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE),
+				"When only the second sibling is active, only the second binding is active");
 
 		// Both siblings are active
 		activeContextIds.add("sibling1");
 		contextManager.setActiveContextIds(activeContextIds);
-		assertEquals("When both contexts are active, a conflict should occur",
-				null, bindingManager
-						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(null,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "When both contexts are active, a conflict should occur");
 	}
 
 	/**
@@ -779,7 +759,7 @@ public final class BindingInteractionsTest {
 		final Binding binding2 = new TestBinding("system", "na", "na", null,
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
-		assertEquals("The user-defined binding should be active", binding1,
-				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertEquals(binding1,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The user-defined binding should be active");
 	}
 }

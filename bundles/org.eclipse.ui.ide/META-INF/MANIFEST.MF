@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide; singleton:=true
-Bundle-Version: 3.22.800.qualifier
+Bundle-Version: 3.23.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.ide.IDEWorkbenchPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
@@ -49,7 +49,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.20.0,4.0.0)";resol
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.10.0,2.0.0)",
  org.eclipse.help;bundle-version="[3.10.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.204.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.208.0,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.12.0,4.0.0)";resolution:=optional,
  org.eclipse.jface.text;bundle-version="[3.24.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.13.0,4.0.0)";resolution:=optional,
@@ -67,6 +67,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.20.0,4.0.0)";resol
 Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
  org.osgi.service.event;version="[1.4.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.ui.ide
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"

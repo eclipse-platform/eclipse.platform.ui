@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2018 IBM Corporation and others.
+ * Copyright (c) 2013, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,8 +51,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String VAL_BOTTOM = "bottom";//$NON-NLS-1$
 
 	private static final String VAL_STACK = "stack";//$NON-NLS-1$
-
-	private static final String VAL_FAST = "fast";//$NON-NLS-1$
 
 	private static final String VAL_TRUE = "true";//$NON-NLS-1$
 
@@ -252,7 +250,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIONSHIP);
 			return false;
 		}
-		if (!VAL_FAST.equals(relationship) && relative == null) {
+		if (relative == null) {
 			logError(element, "Attribute '" + IWorkbenchRegistryConstants.ATT_RELATIVE //$NON-NLS-1$
 					+ "' not defined.  This attribute is required when " //$NON-NLS-1$
 					+ IWorkbenchRegistryConstants.ATT_RELATIONSHIP + "=\"" + relationship + "\"."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -277,7 +275,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 		// Get relationship details.
 		boolean stack = false;
 		int intRelation = 0;
-		boolean fast = false;
 		switch (relationship) {
 		case VAL_LEFT:
 			intRelation = IPageLayout.LEFT;
@@ -293,9 +290,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			break;
 		case VAL_STACK:
 			stack = true;
-			break;
-		case VAL_FAST:
-			fast = true;
 			break;
 		default:
 			return false;
@@ -314,15 +308,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 				pageLayout.stackView(id, relative, true);
 			} else {
 				pageLayout.stackView(id, relative, false);
-			}
-		}
-		// If the view is a fast view...
-		else if (fast) {
-			if (ratio == IPageLayout.NULL_RATIO) {
-				// The ratio has not been specified.
-				pageLayout.addFastView(id);
-			} else {
-				pageLayout.addFastView(id, ratio);
 			}
 		} else {
 

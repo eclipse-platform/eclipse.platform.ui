@@ -129,7 +129,7 @@ public class JFaceResources {
 	 *
 	 * @deprecated This font is not in use
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final String VIEWER_FONT = "org.eclipse.jface.viewerfont"; //$NON-NLS-1$
 
 	/**
@@ -138,7 +138,7 @@ public class JFaceResources {
 	 *
 	 * @deprecated This font is not in use
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static final String WINDOW_FONT = "org.eclipse.jface.windowfont"; //$NON-NLS-1$
 
 	/**
@@ -564,7 +564,7 @@ public class JFaceResources {
 	 * @return the font
 	 * @deprecated This font is not in use
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public static Font getViewerFont() {
 		return getFontRegistry().get(VIEWER_FONT);
 	}

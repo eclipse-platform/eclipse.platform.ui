@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsVi
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsViewContentProvider;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the dynamic tab and section support.
@@ -52,7 +52,7 @@ public class TabbedPropertySheetPageDynamicTest {
 
 	private DynamicTestsTreeNode[] treeNodes;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws WorkbenchException {
 
 		/**
@@ -92,7 +92,7 @@ public class TabbedPropertySheetPageDynamicTest {
 		assertEquals(11, treeNodes.length);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 
 		/**

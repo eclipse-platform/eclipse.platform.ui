@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.tests.databinding.conformance
-Bundle-Version: 1.5.500.qualifier
+Bundle-Version: 1.6.0.qualifier
 Eclipse-BundleShape: dir
 Require-Bundle: org.junit,
  org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
- org.eclipse.swt,
+ org.eclipse.swt;bundle-version="3.133.0",
  org.eclipse.core.runtime
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.core.databinding.observable,org.eclipse.jface.databinding.conformance.delegate",
  org.eclipse.jface.databinding.conformance.delegate,

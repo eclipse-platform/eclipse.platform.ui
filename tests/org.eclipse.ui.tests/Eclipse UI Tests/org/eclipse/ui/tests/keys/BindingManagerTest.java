@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,9 +44,9 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * <p>
@@ -87,7 +87,7 @@ public final class BindingManagerTest {
 	 * Creates a new context manager and a binding manager for use in the test
 	 * cases.
 	 */
-	@Before
+	@BeforeEach
 	public void doSetUp() {
 		commandManager = new CommandManager();
 		contextManager = new ContextManager();
@@ -97,7 +97,7 @@ public final class BindingManagerTest {
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
-	@After
+	@AfterEach
 	public void doTearDown() {
 		bindingManager = null;
 		contextManager = null;
@@ -107,9 +107,9 @@ public final class BindingManagerTest {
 	/**
 	 * Tests that the constructor disallows a null context manager.
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testConstructor() {
-		new BindingManager(null, null);
+		assertThrows(NullPointerException.class, () -> new BindingManager(null, null));
 	}
 
 	/**
@@ -138,8 +138,8 @@ public final class BindingManagerTest {
 		final Binding binding = new TestBinding("conflict1", "na", "na", null,
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertSame("The binding should be active", binding,
-				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertSame(binding,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE), "The binding should be active");
 	}
 
 	/**
@@ -153,10 +153,8 @@ public final class BindingManagerTest {
 	public void testGetActiveBindingsDisregardingContext() {
 		final Map<?, ?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContext();
-		assertNotNull("The active bindings should never be null",
-				activeBindings);
-		assertTrue("The active bindings should start empty",
-				activeBindings.isEmpty());
+		assertNotNull(activeBindings, "The active bindings should never be null");
+		assertTrue(activeBindings.isEmpty(), "The active bindings should start empty");
 	}
 
 	/**
@@ -170,10 +168,8 @@ public final class BindingManagerTest {
 	public void testGetActiveBindingsDisregardingContextFlat() {
 		final Collection<?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContextFlat();
-		assertNotNull("The active bindings should never be null",
-				activeBindings);
-		assertTrue("The active bindings should start empty",
-				activeBindings.isEmpty());
+		assertNotNull(activeBindings, "The active bindings should never be null");
+		assertTrue(activeBindings.isEmpty(), "The active bindings should start empty");
 	}
 
 	/**
@@ -188,11 +184,9 @@ public final class BindingManagerTest {
 		// Test with a null argument.
 		final TriggerSequence[] activeBindingsForNull = bindingManager
 				.getActiveBindingsFor((ParameterizedCommand) null);
-		assertNotNull("The active bindings for a command should never be null",
-				activeBindingsForNull);
+		assertNotNull(activeBindingsForNull, "The active bindings for a command should never be null");
 		assertTrue(
-				"The active binding for a null command should always be empty",
-				activeBindingsForNull.length == 0);
+				activeBindingsForNull.length == 0, "The active binding for a null command should always be empty");
 
 		// Test a simple case.
 		final Context context = contextManager.getContext("na");
@@ -213,9 +207,9 @@ public final class BindingManagerTest {
 
 		final TriggerSequence[] bindings = bindingManager
 				.getActiveBindingsFor(binding.getParameterizedCommand());
-		assertEquals("There should be one binding", 1, bindings.length);
-		assertSame("The binding should match", TestBinding.TRIGGER_SEQUENCE,
-				bindings[0]);
+		assertEquals(1, bindings.length, "There should be one binding");
+		assertSame(TestBinding.TRIGGER_SEQUENCE,
+				bindings[0], "The binding should match");
 	}
 
 	/**
@@ -226,8 +220,7 @@ public final class BindingManagerTest {
 	 */
 	@Test
 	public void testGetActiveScheme() {
-		assertNull("The active scheme should start null",
-				bindingManager.getActiveScheme());
+		assertNull(bindingManager.getActiveScheme(), "The active scheme should start null");
 	}
 
 	/**
@@ -237,24 +230,22 @@ public final class BindingManagerTest {
 	@Test
 	public void testGetBindings() {
 		// Check the starting condition.
-		assertNull("The bindings should start off null",
-				bindingManager.getBindings());
+		assertNull(bindingManager.getBindings(), "The bindings should start off null");
 
 		// Check that an added binding is included.
 		final Binding binding = new TestBinding(null, "schemeId", "contextId",
 				null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
 		final Binding[] bindings = bindingManager.getBindings();
-		assertEquals("There should be one binding", 1, bindings.length);
-		assertSame("The binding should be the same", binding, bindings[0]);
+		assertEquals(1, bindings.length, "There should be one binding");
+		assertSame(binding, bindings[0], "The binding should be the same");
 
 		/*
 		 * Check that modifying this set does not modify the internal data
 		 * structures.
 		 */
 		bindings[0] = null;
-		assertNotNull("There should be no change",
-				bindingManager.getBindings()[0]);
+		assertNotNull(bindingManager.getBindings()[0], "There should be no change");
 	}
 
 	/**
@@ -263,33 +254,30 @@ public final class BindingManagerTest {
 	@Test
 	public void testGetDefinedSchemeIds() {
 		// Starting condition.
-		assertTrue("The set of defined schemes should start empty",
-				bindingManager.getDefinedSchemes().length == 0);
+		assertTrue(bindingManager.getDefinedSchemes().length == 0, "The set of defined schemes should start empty");
 
 		// Retrieving a scheme shouldn't change anything.
 		final Scheme scheme = bindingManager.getScheme("schemeId");
 		assertTrue(
-				"The set of defined schemes should still be empty after a get",
-				bindingManager.getDefinedSchemes().length == 0);
+				bindingManager.getDefinedSchemes().length == 0, "The set of defined schemes should still be empty after a get");
 
 		// Defining the scheme should change things.
 		scheme.define("name", "description", null);
 		Scheme[] definedSchemes = bindingManager.getDefinedSchemes();
-		assertEquals("There should be one defined scheme id", 1,
-				definedSchemes.length);
-		assertSame("The defined scheme id should match", scheme,
-				definedSchemes[0]);
+		assertEquals(1,
+				definedSchemes.length, "There should be one defined scheme id");
+		assertSame(scheme,
+				definedSchemes[0], "The defined scheme id should match");
 
 		definedSchemes[0] = null;
 		definedSchemes = bindingManager.getDefinedSchemes();
-		assertSame("The API should not expose internal collections", scheme,
-				definedSchemes[0]);
+		assertSame(scheme,
+				definedSchemes[0], "The API should not expose internal collections");
 
 		// Undefining the scheme should also change things.
 		scheme.undefine();
 		assertTrue(
-				"The set of defined schemes should be empty after an undefine",
-				bindingManager.getDefinedSchemes().length == 0);
+				bindingManager.getDefinedSchemes().length == 0, "The set of defined schemes should be empty after an undefine");
 	}
 
 	/**
@@ -297,8 +285,7 @@ public final class BindingManagerTest {
 	 */
 	@Test
 	public void testGetLocale() {
-		assertNotNull("The locale should never be null",
-				bindingManager.getLocale());
+		assertNotNull(bindingManager.getLocale(), "The locale should never be null");
 	}
 
 	/**
@@ -347,10 +334,8 @@ public final class BindingManagerTest {
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		Map<?, ?> partialMatches = bindingManager.getPartialMatches(perfectMatch);
-		assertTrue("A partial match should override a perfect match",
-				!partialMatches.isEmpty());
-		assertTrue("A partial match should override a perfect match",
-				partialMatches.containsKey(partialMatch1));
+		assertTrue(!partialMatches.isEmpty(), "A partial match should override a perfect match");
+		assertTrue(partialMatches.containsKey(partialMatch1), "A partial match should override a perfect match");
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -365,25 +350,20 @@ public final class BindingManagerTest {
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		partialMatches = bindingManager.getPartialMatches(perfectMatch);
-		assertEquals("There should be two partial matches", 2,
-				partialMatches.size());
-		assertSame("The partial match should be the one defined",
-				partialMatchBinding1, partialMatches.get(partialMatch1));
-		assertSame("The partial match should be the one defined",
-				partialMatchBinding2, partialMatches.get(partialMatch2));
+		assertEquals(2,
+				partialMatches.size(), "There should be two partial matches");
+		assertSame(partialMatchBinding1, partialMatches.get(partialMatch1), "The partial match should be the one defined");
+		assertSame(partialMatchBinding2, partialMatches.get(partialMatch2), "The partial match should be the one defined");
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
 		partialMatches = bindingManager.getPartialMatches(KeySequence
 				.getInstance());
-		assertEquals("There should be three partial matches", 3,
-				partialMatches.size());
-		assertSame("The partial match should be the one defined",
-				perfectMatchBinding, partialMatches.get(perfectMatch));
-		assertSame("The partial match should be the one defined",
-				partialMatchBinding1, partialMatches.get(partialMatch1));
-		assertSame("The partial match should be the one defined",
-				partialMatchBinding2, partialMatches.get(partialMatch2));
+		assertEquals(3,
+				partialMatches.size(), "There should be three partial matches");
+		assertSame(perfectMatchBinding, partialMatches.get(perfectMatch), "The partial match should be the one defined");
+		assertSame(partialMatchBinding1, partialMatches.get(partialMatch1), "The partial match should be the one defined");
+		assertSame(partialMatchBinding2, partialMatches.get(partialMatch2), "The partial match should be the one defined");
 	}
 
 	/**
@@ -432,8 +412,8 @@ public final class BindingManagerTest {
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		Binding actualBinding = bindingManager.getPerfectMatch(perfectMatch);
-		assertSame("This should be a perfect match", perfectMatchBinding,
-				actualBinding);
+		assertSame(perfectMatchBinding,
+				actualBinding, "This should be a perfect match");
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -448,14 +428,13 @@ public final class BindingManagerTest {
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		actualBinding = bindingManager.getPerfectMatch(perfectMatch);
-		assertNull("There should be no perfect matches", actualBinding);
+		assertNull(actualBinding, "There should be no perfect matches");
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
 		actualBinding = bindingManager.getPerfectMatch(KeySequence
 				.getInstance());
-		assertNull("This should be no perfect matches for an empty sequence",
-				actualBinding);
+		assertNull(actualBinding, "This should be no perfect matches for an empty sequence");
 	}
 
 	/**
@@ -463,8 +442,7 @@ public final class BindingManagerTest {
 	 */
 	@Test
 	public void testGetPlatform() {
-		assertNotNull("The platform can never be null",
-				bindingManager.getPlatform());
+		assertNotNull(bindingManager.getPlatform(), "The platform can never be null");
 	}
 
 	/**
@@ -475,10 +453,10 @@ public final class BindingManagerTest {
 	public void testGetScheme() {
 		final String schemeId = "schemeId";
 		final Scheme firstScheme = bindingManager.getScheme(schemeId);
-		assertTrue("A scheme should start undefined", !firstScheme.isDefined());
+		assertTrue(!firstScheme.isDefined(), "A scheme should start undefined");
 		final Scheme secondScheme = bindingManager.getScheme(schemeId);
-		assertSame("The two scheme should be the same", firstScheme,
-				secondScheme);
+		assertSame(firstScheme,
+				secondScheme, "The two scheme should be the same");
 	}
 
 	/**
@@ -526,8 +504,7 @@ public final class BindingManagerTest {
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
-		assertTrue("A perfect match should be overridden by a partial",
-				bindingManager.isPartialMatch(perfectMatch));
+		assertTrue(bindingManager.isPartialMatch(perfectMatch), "A perfect match should be overridden by a partial");
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -541,14 +518,12 @@ public final class BindingManagerTest {
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
-		assertTrue("Two partial matches should count as a partial",
-				bindingManager.isPartialMatch(perfectMatch));
+		assertTrue(bindingManager.isPartialMatch(perfectMatch), "Two partial matches should count as a partial");
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
 		bindingManager.setBindings(bindings);
-		assertTrue("An empty sequence matches everything partially",
-				bindingManager.isPartialMatch(KeySequence.getInstance()));
+		assertTrue(bindingManager.isPartialMatch(KeySequence.getInstance()), "An empty sequence matches everything partially");
 	}
 
 	/**
@@ -596,8 +571,7 @@ public final class BindingManagerTest {
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be a perfect match",
-				bindingManager.isPerfectMatch(perfectMatch));
+		assertTrue(bindingManager.isPerfectMatch(perfectMatch), "This should be a perfect match");
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -611,13 +585,11 @@ public final class BindingManagerTest {
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be no perfect matches",
-				!bindingManager.isPerfectMatch(perfectMatch));
+		assertTrue(!bindingManager.isPerfectMatch(perfectMatch), "This should be no perfect matches");
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
-		assertTrue("This should be no perfect matches",
-				!bindingManager.isPerfectMatch(KeySequence.getInstance()));
+		assertTrue(!bindingManager.isPerfectMatch(KeySequence.getInstance()), "This should be no perfect matches");
 	}
 
 	/**
@@ -655,33 +627,26 @@ public final class BindingManagerTest {
 		final Binding binding5 = new TestBinding("command5", "na", "na", "zh",
 				"gtk", Binding.USER, null);
 		bindingManager.addBinding(binding5);
-		assertNotNull("There should be three active bindings",
-				bindingManager.getActiveBindingsFor(binding1
-						.getParameterizedCommand()));
-		assertNotNull("There should be three active bindings",
-				bindingManager.getActiveBindingsFor(binding2
-						.getParameterizedCommand()));
-		assertNotNull("There should be three active bindings",
-				bindingManager.getActiveBindingsFor(binding4
-						.getParameterizedCommand()));
+		assertNotNull(bindingManager.getActiveBindingsFor(binding1
+						.getParameterizedCommand()), "There should be three active bindings");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding2
+						.getParameterizedCommand()), "There should be three active bindings");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding4
+						.getParameterizedCommand()), "There should be three active bindings");
 
 		// REMOVE SOME BINDINGS
 		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
 				"zh", "gtk", null, Binding.USER);
-		assertEquals("There should be four bindings left", 4,
-				bindingManager.getBindings().length);
-		assertNotNull("There should be four active bindings",
-				bindingManager.getActiveBindingsFor(binding1
-						.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings",
-				bindingManager.getActiveBindingsFor(binding2
-						.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings",
-				bindingManager.getActiveBindingsFor(binding3
-						.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings",
-				bindingManager.getActiveBindingsFor(binding4
-						.getParameterizedCommand()));
+		assertEquals(4,
+				bindingManager.getBindings().length, "There should be four bindings left");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding1
+						.getParameterizedCommand()), "There should be four active bindings");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding2
+						.getParameterizedCommand()), "There should be four active bindings");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding3
+						.getParameterizedCommand()), "There should be four active bindings");
+		assertNotNull(bindingManager.getActiveBindingsFor(binding4
+						.getParameterizedCommand()), "There should be four active bindings");
 	}
 
 	/**
@@ -701,13 +666,12 @@ public final class BindingManagerTest {
 		// SELECT DEFINED
 		scheme.define("name", "description", null);
 		bindingManager.setActiveScheme(scheme);
-		assertSame("The schemes should match", scheme,
-					bindingManager.getActiveScheme());
+		assertSame(scheme,
+					bindingManager.getActiveScheme(), "The schemes should match");
 
 		// UNDEFINE SELECTED
 		scheme.undefine();
-		assertNull("The scheme should have become unselected",
-				bindingManager.getActiveScheme());
+		assertNull(bindingManager.getActiveScheme(), "The scheme should have become unselected");
 	}
 
 	@Test
@@ -785,9 +749,8 @@ public final class BindingManagerTest {
 		// SET NULL
 		bindingManager.setBindings(null);
 		assertTrue(
-				"There should be no active bindings",
 				bindingManager
-						.getActiveBindingsFor((ParameterizedCommand) null).length == 0);
+						.getActiveBindingsFor((ParameterizedCommand) null).length == 0, "There should be no active bindings");
 
 		// ADD BINDING
 		final String commandId = "commandId";
@@ -798,10 +761,9 @@ public final class BindingManagerTest {
 		bindingManager.setBindings(bindings);
 		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding.getParameterizedCommand());
-		assertEquals("There should be one active binding", 1,
-				activeBindings.length);
-		assertSame("The binding should be the one we set",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
+		assertEquals(1,
+				activeBindings.length, "There should be one active binding");
+		assertSame(TestBinding.TRIGGER_SEQUENCE, activeBindings[0], "The binding should be the one we set");
 	}
 
 	/**
@@ -831,16 +793,14 @@ public final class BindingManagerTest {
 		final Binding binding = new TestBinding(commandId, "na", "na", "xx",
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertTrue("The binding shouldn't be active",
-				bindingManager.getActiveBindingsFor(binding
-						.getParameterizedCommand()).length == 0);
+		assertTrue(bindingManager.getActiveBindingsFor(binding
+						.getParameterizedCommand()).length == 0, "The binding shouldn't be active");
 		bindingManager.setLocale("xx_XX");
 		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding.getParameterizedCommand());
-		assertEquals("The binding should become active", 1,
-				activeBindings.length);
-		assertSame("The binding should be the same",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
+		assertEquals(1,
+				activeBindings.length, "The binding should become active");
+		assertSame(TestBinding.TRIGGER_SEQUENCE, activeBindings[0], "The binding should be the same");
 	}
 
 	/**
@@ -870,16 +830,14 @@ public final class BindingManagerTest {
 		final Binding binding = new TestBinding(commandId, "na", "na", null,
 				"atari", Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertTrue("The binding shouldn't be active",
-				bindingManager.getActiveBindingsFor(binding
-						.getParameterizedCommand()).length == 0);
+		assertTrue(bindingManager.getActiveBindingsFor(binding
+						.getParameterizedCommand()).length == 0, "The binding shouldn't be active");
 		bindingManager.setPlatform("atari");
 		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding.getParameterizedCommand());
-		assertEquals("The binding should become active", 1,
-				activeBindings.length);
-		assertSame("The binding should be the same",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
+		assertEquals(1,
+				activeBindings.length, "The binding should become active");
+		assertSame(TestBinding.TRIGGER_SEQUENCE, activeBindings[0], "The binding should be the same");
 	}
 
 	/**
@@ -894,11 +852,9 @@ public final class BindingManagerTest {
 		// Test with a null argument.
 		final TriggerSequence[] activeBindingsForNull = bindingManager
 				.getActiveBindingsFor((ParameterizedCommand) null);
-		assertNotNull("The active bindings for a command should never be null",
-				activeBindingsForNull);
+		assertNotNull(activeBindingsForNull, "The active bindings for a command should never be null");
 		assertTrue(
-				"The active binding for a null command should always be empty",
-				activeBindingsForNull.length == 0);
+				activeBindingsForNull.length == 0, "The active binding for a null command should always be empty");
 
 		// Test a simple case.
 		final Context context = contextManager.getContext("na");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InternalBrowserViewTestCase {
 	protected Shell shell;
@@ -33,10 +33,10 @@ public class InternalBrowserViewTestCase {
 		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_VIEW, "test3", "MyBrowser", "A tooltip");
 
-		wb.openURL(new URL("http://www.ibm.com"));
+		wb.openURL(new URI("http://www.ibm.com").toURL());
 		runLoopTimer(2);
 
-		wb.openURL(new URL("http://www.eclipse.org"));
+		wb.openURL(new URI("http://www.eclipse.org").toURL());
 		runLoopTimer(2);
 
 		wb.close();

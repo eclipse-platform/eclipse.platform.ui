@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.forms.examples; singleton:=true
-Bundle-Version: 3.4.100.qualifier
+Bundle-Version: 3.5.0.qualifier
 Bundle-Activator: org.eclipse.ui.forms.examples.internal.ExamplesPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
- org.eclipse.ui.ide
+ org.eclipse.ui.ide;bundle-version="3.23.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.ui.forms.examples

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.browser; singleton:=true
-Bundle-Version: 3.8.700.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.browser.WebBrowserUIPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
@@ -11,9 +11,9 @@ Export-Package: org.eclipse.ui.browser,
  org.eclipse.ui.internal.browser.browsers;x-internal:=true,
  org.eclipse.ui.internal.browser.macosx;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.208.0,4.0.0)",
  org.eclipse.urischeme;bundle-version="1.1.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.browser
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"

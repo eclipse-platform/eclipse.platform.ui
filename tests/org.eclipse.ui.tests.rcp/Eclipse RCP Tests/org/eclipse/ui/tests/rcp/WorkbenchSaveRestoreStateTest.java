@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -380,11 +380,6 @@ public class WorkbenchSaveRestoreStateTest {
 				return true;
 			}
 
-			@Override
-			public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
-				// TODO Auto-generated method stub
-				super.postWindowRestore(configurer);
-			}
 		};
 
 		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);

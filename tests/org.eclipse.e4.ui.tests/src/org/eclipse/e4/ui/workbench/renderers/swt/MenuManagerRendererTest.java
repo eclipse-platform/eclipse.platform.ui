@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -24,18 +24,18 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.MenuManager;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class MenuManagerRendererTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private EModelService ems;
@@ -46,7 +46,7 @@ public class MenuManagerRendererTest {
 	private MMenu menu;
 	private MTrimmedWindow window;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		window = ems.createModelElement(MTrimmedWindow.class);
 		application.getChildren().add(window);
@@ -110,7 +110,7 @@ public class MenuManagerRendererTest {
 	}
 
 	@Test
-	@Ignore("Bug 560200")
+	@Disabled("Bug 560200")
 	public void testMMenu_ToBeRendered() {
 		MMenu submenu1 = ems.createModelElement(MMenu.class);
 		menu.getChildren().add(submenu1);

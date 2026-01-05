@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.search.tests;singleton:=true
-Bundle-Version: 3.11.900.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.search.core.tests;x-internal:=true,
  org.eclipse.search.tests;x-internal:=true,
  org.eclipse.search.tests.filesearch;x-internal:=true
 Require-Bundle: 
- org.eclipse.ui;bundle-version="[3.204.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.208.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.21.200,4.0.0)",
  org.eclipse.search;bundle-version="[3.16.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.29.100,4.0.0)",
@@ -25,6 +25,6 @@ Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
  org.opentest4j
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.search.tests

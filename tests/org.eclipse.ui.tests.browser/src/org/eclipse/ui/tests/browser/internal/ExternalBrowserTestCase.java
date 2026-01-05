@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExternalBrowserTestCase {
 	@Test
@@ -28,7 +28,7 @@ public class ExternalBrowserTestCase {
 		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser("test2");
 
-		wb.openURL(new URL("http://www.ibm.com"));
+		wb.openURL(new URI("http://www.ibm.com").toURL());
 
 		try {
 			Thread.sleep(2000);
@@ -36,7 +36,7 @@ public class ExternalBrowserTestCase {
 			// ignore
 		}
 
-		wb.openURL(new URL("http://www.eclipse.org"));
+		wb.openURL(new URI("http://www.eclipse.org").toURL());
 
 		try {
 			Thread.sleep(2000);

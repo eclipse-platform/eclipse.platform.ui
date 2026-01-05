@@ -411,7 +411,7 @@ public interface IDialogConstants {
 	 * @deprecated This constant is no longer in use.
 	 * The button heights are now determined by the layout.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	int BUTTON_HEIGHT = 14;
 
 	/**
@@ -425,7 +425,7 @@ public interface IDialogConstants {
 	 * @deprecated As of 3.9, this is deprecated as it is too big as DLU and got accidentally used
 	 *             when setting pixel values
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	int INDENT = 21;
 
 	/**
@@ -434,7 +434,7 @@ public interface IDialogConstants {
 	 * @deprecated As of 3.9, this is deprecated as it is not clear what the meaning of a
 	 *             "small indent" would be
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	int SMALL_INDENT = 7;
 
 	/**

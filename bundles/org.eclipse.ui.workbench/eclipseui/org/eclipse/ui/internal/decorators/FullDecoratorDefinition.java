@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@ package org.eclipse.ui.internal.decorators;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -53,10 +53,10 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 			return null;
 		}
 
-		final CoreException[] exceptions = new CoreException[1];
+		CoreException[] exceptions = new CoreException[1];
 
 		if (decorator == null) {
-			Platform.run(
+			SafeRunner.run(
 					new SafeRunnable(NLS.bind(WorkbenchMessages.DecoratorManager_ErrorActivatingDecorator, getName())) {
 						@Override
 						public void run() {

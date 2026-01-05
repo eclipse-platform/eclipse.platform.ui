@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -205,11 +205,11 @@ public class UILockListener extends LockListener {
 		MultiStatus main = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg, null);
 
 		ThreadInfo[] threads = ManagementFactory.getThreadMXBean()
-				.getThreadInfo(new long[] { nonUiThread.getId(), display.getThread().getId() }, true, true);
+				.getThreadInfo(new long[] { nonUiThread.threadId(), display.getThread().threadId() }, true, true);
 
 		for (ThreadInfo info : threads) {
 			String childMsg;
-			if (info.getThreadId() == nonUiThread.getId()) {
+			if (info.getThreadId() == nonUiThread.threadId()) {
 				// see org.eclipse.core.internal.jobs.LockManager.isLockOwner()
 				childMsg = nonUiThread.getName() + " thread is an instance of Worker or owns an ILock"; //$NON-NLS-1$
 			} else {

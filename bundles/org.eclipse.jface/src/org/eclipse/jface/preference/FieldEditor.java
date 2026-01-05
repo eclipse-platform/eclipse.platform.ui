@@ -426,7 +426,7 @@ public abstract class FieldEditor {
 	 * @return the preference page, or <code>null</code> if none
 	 * @deprecated use #getPage()
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	protected PreferencePage getPreferencePage() {
 		if(page != null && page instanceof PreferencePage) {
 			return (PreferencePage) page;
@@ -591,7 +591,7 @@ public abstract class FieldEditor {
 	 * @param preferencePage the preference page, or <code>null</code> if none
 	 * @deprecated use #setPage(DialogPage)
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-03")
 	public void setPreferencePage(PreferencePage preferencePage) {
 		setPage(preferencePage);
 	}
