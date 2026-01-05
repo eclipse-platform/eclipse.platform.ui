@@ -14,11 +14,11 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -38,7 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.ECollections;
@@ -46,15 +46,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWTException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.service.event.EventHandler;
 
 public class ToolBarManagerRendererTest {
 
-	@Rule
-	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+	@RegisterExtension
+	public WorkbenchContextExtension contextRule = new WorkbenchContextExtension();
 
 	@Inject
 	private EModelService ems;
@@ -69,7 +69,7 @@ public class ToolBarManagerRendererTest {
 	private MToolBar toolBar;
 	private MTrimmedWindow window;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		window = ems.createModelElement(MTrimmedWindow.class);
 		application.getChildren().add(window);
@@ -166,7 +166,7 @@ public class ToolBarManagerRendererTest {
 			contextRule.createAndRunWorkbench(window);
 
 			assertNull(toolBar.getRenderer());
-			assertTrue("Error(s) occurred while rendering toolbar: " + errors, errors.isEmpty());
+			assertTrue(errors.isEmpty(), "Error(s) occurred while rendering toolbar: " + errors);
 		} finally {
 			eventBroker.unsubscribe(eventHandler);
 			Platform.removeLogListener(logListener);
@@ -522,7 +522,7 @@ public class ToolBarManagerRendererTest {
 		// Create toolbar items with visibleWhen expressions
 		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
 		toolItem1.setElementId("Item1");
-		
+
 		// Create an imperative expression that checks for a context variable
 		MImperativeExpression exp1 = ems.createModelElement(MImperativeExpression.class);
 		exp1.setTracking(true);
@@ -539,26 +539,26 @@ public class ToolBarManagerRendererTest {
 
 		// Initially, item1 should be hidden (expression returns false when showItem1 is not set)
 		assertEquals(2, tbm.getSize());
-		assertFalse("Item1 should be hidden initially", toolItem1.isVisible());
-		assertTrue("Item2 should be visible", toolItem2.isVisible());
+		assertFalse(toolItem1.isVisible(), "Item1 should be hidden initially");
+		assertTrue(toolItem2.isVisible(), "Item2 should be visible");
 
 		// Set context variable to show item1
 		window.getContext().set("showItem1", Boolean.TRUE);
-		
+
 		// Force context update by spinning the event loop
 		contextRule.spinEventLoop();
 
 		// Now item1 should be visible
-		assertTrue("Item1 should be visible after setting context variable", toolItem1.isVisible());
-		assertTrue("Item2 should still be visible", toolItem2.isVisible());
+		assertTrue(toolItem1.isVisible(), "Item1 should be visible after setting context variable");
+		assertTrue(toolItem2.isVisible(), "Item2 should still be visible");
 
 		// Hide item1 again
 		window.getContext().set("showItem1", Boolean.FALSE);
 		contextRule.spinEventLoop();
 
 		// Item1 should be hidden again
-		assertFalse("Item1 should be hidden after removing context variable", toolItem1.isVisible());
-		assertTrue("Item2 should still be visible", toolItem2.isVisible());
+		assertFalse(toolItem1.isVisible(), "Item1 should be hidden after removing context variable");
+		assertTrue(toolItem2.isVisible(), "Item2 should still be visible");
 	}
 
 	/**
