@@ -17,23 +17,23 @@ package org.eclipse.e4.ui.tests.application;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.tests.rules.HeadlessApplicationRule;
+import org.eclipse.e4.ui.tests.rules.HeadlessApplicationExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.notify.Notifier;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class HeadlessApplicationElementTest {
 
 	protected MApplicationElement applicationElement;
 	protected EModelService ems;
 
-	@Rule
-	public HeadlessApplicationRule rule = new HeadlessApplicationRule();
+	@RegisterExtension
+	public HeadlessApplicationExtension extension = new HeadlessApplicationExtension();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		IEclipseContext applicationContext = rule.getApplicationContext();
+		IEclipseContext applicationContext = extension.getApplicationContext();
 		applicationElement = createApplicationElement(applicationContext);
 		ems = applicationContext.get(EModelService.class);
 

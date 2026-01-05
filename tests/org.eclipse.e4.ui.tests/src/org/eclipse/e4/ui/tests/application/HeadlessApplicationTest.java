@@ -14,10 +14,10 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -49,9 +49,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class HeadlessApplicationTest extends HeadlessApplicationElementTest {
 
@@ -59,7 +59,7 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 
 	protected IPresentationEngine renderer;
 
-	@Before
+	@BeforeEach
 	@Override
 
 	public void setUp() throws Exception {
@@ -76,7 +76,7 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 		}
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		for (MWindow window : application.getChildren()) {
 			renderer.removeGui(window);
@@ -233,10 +233,10 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 	protected abstract String getURI();
 
 	protected IPresentationEngine createPresentationEngine(String renderingEngineURI) throws Exception {
-		IContributionFactory contributionFactory = rule.getApplicationContext()
+		IContributionFactory contributionFactory = extension.getApplicationContext()
 				.get(IContributionFactory.class);
 		Object newEngine = contributionFactory.create(renderingEngineURI,
-				rule.getApplicationContext());
+				extension.getApplicationContext());
 		return (IPresentationEngine) newEngine;
 	}
 

@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -25,8 +25,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.common.util.EList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.Event;
 
 /**
@@ -42,11 +42,11 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		return MApplicationFactory.INSTANCE.createApplication();
 	}
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		IEventBroker appEB = rule.getApplicationContext().get(IEventBroker.class);
+		IEventBroker appEB = extension.getApplicationContext().get(IEventBroker.class);
 
 		eventCount = 0;
 		appEB.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, event -> {
@@ -174,8 +174,8 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals(UIEvents.ApplicationElement.TAGS, event.getProperty(UIEvents.EventTags.ATTNAME));
 		assertEquals(UIEvents.EventTypes.MOVE, event.getProperty(UIEvents.EventTags.TYPE));
 		assertEquals("2", event.getProperty(UIEvents.EventTags.NEW_VALUE));
-		assertEquals("former position", 2, event.getProperty(UIEvents.EventTags.OLD_VALUE));
-		assertEquals("new position", 0, event.getProperty(UIEvents.EventTags.POSITION));
+		assertEquals(2, event.getProperty(UIEvents.EventTags.OLD_VALUE), "former position");
+		assertEquals(0, event.getProperty(UIEvents.EventTags.POSITION), "new position");
 	}
 
 	@Test
