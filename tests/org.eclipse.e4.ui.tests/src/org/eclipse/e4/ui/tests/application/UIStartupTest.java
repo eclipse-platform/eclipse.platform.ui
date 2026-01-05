@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -30,16 +30,16 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	protected Display display;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() throws Exception {
 		display = Display.getDefault();
@@ -48,7 +48,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
@@ -158,7 +158,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	protected IEclipseContext createApplicationContext() {
 		final IEclipseContext[] contexts = new IEclipseContext[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			contexts[0] = rule.getApplicationContext();
+			contexts[0] = extension.getApplicationContext();
 			contexts[0].set(IResourceUtilities.class.getName(), new ResourceUtility());
 			contexts[0].set(IStylingEngine.class, new IStylingEngine() {
 				@Override
@@ -195,5 +195,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	protected void createGUI(final MUIElement uiRoot) {
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.createGUI(uiRoot));
 	}
+
 
 }

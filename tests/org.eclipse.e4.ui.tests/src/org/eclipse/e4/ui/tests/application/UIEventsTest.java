@@ -14,11 +14,11 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import org.eclipse.e4.ui.workbench.UIEvents.UIElement;
 import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
 import org.eclipse.e4.ui.workbench.UIEvents.Window;
 import org.eclipse.emf.common.notify.Notifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.EventHandler;
 
 public class UIEventsTest extends HeadlessApplicationElementTest {
@@ -62,14 +62,14 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		EventHandler attListener = event -> {
 			// In case of * topic check that that event topic starts with the same prefix
 			if (topic.endsWith("*")) {
-				assertTrue("Incorrect Topic.", event.getTopic().startsWith(topic.substring(0, topic.length() - 2)));
+				assertTrue(event.getTopic().startsWith(topic.substring(0, topic.length() - 2)), "Incorrect Topic.");
 			} else {
-				assertEquals("Incorrect Topic.", topic, event.getTopic());
+				assertEquals(topic, event.getTopic(), "Incorrect Topic.");
 			}
 
 			String attId = (String) event.getProperty(EventTags.ATTNAME);
 			int attIndex = getAttIndex(attId);
-			assertTrue("Unknown Attribite: " + attId, attIndex >= 0); //$NON-NLS-1$
+			assertTrue(attIndex >= 0, "Unknown Attribite: " + attId); //$NON-NLS-1$
 			hasFired[attIndex] = true;
 		};
 
@@ -201,7 +201,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	@Test
 	public void testAllTopics() {
-		IEventBroker eventBroker = rule.getApplicationContext().get(IEventBroker.class);
+		IEventBroker eventBroker = extension.getApplicationContext().get(IEventBroker.class);
 
 		// Create a tester for each topic
 		AppElementTester appTester = new AppElementTester(eventBroker);
@@ -225,9 +225,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Create the test harness and hook up the event publisher
 		MTestHarness allData = MTestFactory.eINSTANCE.createTestHarness();
-		final UIEventPublisher ep = new UIEventPublisher(rule.getApplicationContext());
+		final UIEventPublisher ep = new UIEventPublisher(extension.getApplicationContext());
 		((Notifier) allData).eAdapters().add(ep);
-		rule.getApplicationContext().set(UIEventPublisher.class, ep);
+		extension.getApplicationContext().set(UIEventPublisher.class, ep);
 
 		// AppElement
 		reset(allTesters);
@@ -241,8 +241,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		// Test that no-ops don't throw events
 		appTester.reset();
 		allData.setElementId(newId);
-		assertTrue("event thrown on No-Op",
-				appTester.getAttIds(true).length == 0);
+		assertTrue(appTester.getAttIds(true).length == 0, "event thrown on No-Op");
 
 		// Command
 		reset(allTesters);
@@ -318,11 +317,11 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	@Test
 	public void testBrokerCleanup() {
 		final String testTopic = "test/374534";
-		IEventBroker appEB = rule.getApplicationContext().get(IEventBroker.class);
+		IEventBroker appEB = extension.getApplicationContext().get(IEventBroker.class);
 
-		IEclipseContext childContext = rule.getApplicationContext().createChild();
+		IEclipseContext childContext = extension.getApplicationContext().createChild();
 		IEventBroker childEB = childContext.get(IEventBroker.class);
-		assertNotEquals("child context has same IEventBroker", appEB, childEB);
+		assertNotEquals(appEB, childEB, "child context has same IEventBroker");
 
 		final boolean[] seen = { false };
 		childEB.subscribe(testTopic, event -> seen[0] = true);
