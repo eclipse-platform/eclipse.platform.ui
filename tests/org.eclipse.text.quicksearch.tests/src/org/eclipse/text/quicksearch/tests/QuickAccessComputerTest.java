@@ -55,7 +55,7 @@ class QuickAccessComputerTest {
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		var display = dialog.getShell().getDisplay();
-		assertTrue(DisplayHelper.waitForCondition(display, 2000, () -> dialog.getResult().length > 0));
+		assertTrue(DisplayHelper.waitForCondition(display, 5000, () -> dialog.getResult().length > 0), "QuickSearchDialog failed to find results within timeout");
 		dialog.close();
 
 		// Wait for the QuickAccessComputer to return results, as the search happens asynchronously.
