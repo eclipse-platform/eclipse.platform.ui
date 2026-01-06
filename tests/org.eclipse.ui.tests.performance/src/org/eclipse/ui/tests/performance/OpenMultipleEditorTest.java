@@ -52,8 +52,8 @@ public class OpenMultipleEditorTest extends PerformanceTestCaseJunit4 {
 
 	@Parameters(name = "{index}: closeAll: {0} - closeEach: {1}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { "perf_basic", true }, { "perf_outline", true }, { "java", true },
-				{ "perf_basic", false }, { "perf_outline", false }, { "java", false } });
+		return Arrays.asList(new Object[][] { { "perf_basic", true }, { "perf_outline", true }, { "perf_text", true },
+				{ "perf_basic", false }, { "perf_outline", false }, { "perf_text", false } });
 	}
 
 	public OpenMultipleEditorTest(String extension, boolean closeAll) {

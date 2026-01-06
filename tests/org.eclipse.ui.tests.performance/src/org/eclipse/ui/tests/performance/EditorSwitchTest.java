@@ -54,7 +54,7 @@ public class EditorSwitchTest extends PerformanceTestCaseJunit4 {
 
 	@Parameters(name = "{index}: {0} - {1}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { "perf_outline", "java" }, { "perf_basic", "perf_outline" } });
+		return Arrays.asList(new Object[][] { { "perf_outline", "perf_text" }, { "perf_basic", "perf_outline" } });
 	}
 
 	/**

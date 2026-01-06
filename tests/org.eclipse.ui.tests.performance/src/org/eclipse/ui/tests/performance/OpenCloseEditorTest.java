@@ -52,7 +52,7 @@ public class OpenCloseEditorTest extends PerformanceTestCaseJunit4 {
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { "perf_basic" }, { "perf_outline" }, { "java" } });
+		return Arrays.asList(new Object[][] { { "perf_basic" }, { "perf_outline" }, { "perf_text" } });
 	}
 
 
@@ -85,7 +85,7 @@ public class OpenCloseEditorTest extends PerformanceTestCaseJunit4 {
 			stopMeasuring();
 		});
 
-		if (extension.equals("java")) {
+		if (extension.equals("perf_text")) {
 			tagAsSummary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
 		}
 		commitMeasurements();
