@@ -32,7 +32,7 @@ public class UIPerformanceTestRule extends ExternalResource {
 	public static final String PROJECT_NAME = "Performance Project";
 
 	private static final String INTRO_VIEW = "org.eclipse.ui.internal.introview";
-	public static final String[] EDITOR_FILE_EXTENSIONS = { "perf_basic", "perf_outline", "java" };
+	public static final String[] EDITOR_FILE_EXTENSIONS = { "perf_basic", "perf_outline", "perf_text" };
 
 	@Override
 	protected void before() throws Throwable {
@@ -67,7 +67,7 @@ public class UIPerformanceTestRule extends ExternalResource {
 	}
 
 	private static void setUpProject() throws CoreException {
-		// Create a java project.
+		// Create a performance project.
 		IProject testProject = getTestProject();
 		testProject.create(null);
 		testProject.open(null);

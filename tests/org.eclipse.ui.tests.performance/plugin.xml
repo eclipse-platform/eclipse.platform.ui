@@ -19,6 +19,13 @@
             name="Editor w/Outline"
             id="org.eclipse.ui.tests.perf_outline"
             extensions="perf_outline"/>
+      <editor
+            icon="icons/anything.gif"
+            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart"
+            default="true"
+            name="Basic Performance Editor 2"
+            id="org.eclipse.ui.tests.perf_basic2"
+            extensions="perf_text"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
