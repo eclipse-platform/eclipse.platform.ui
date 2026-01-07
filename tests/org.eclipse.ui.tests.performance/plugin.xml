@@ -6,7 +6,7 @@
          point="org.eclipse.ui.editors">
       <editor
             icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart"
+            class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
             default="true"
             name="Basic Performance Editor"
             id="org.eclipse.ui.tests.perf_basic"
@@ -14,14 +14,14 @@
             
       <editor
             icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart:outline"
+            class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
             default="true"
             name="Editor w/Outline"
             id="org.eclipse.ui.tests.perf_outline"
             extensions="perf_outline"/>
       <editor
             icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart"
+            class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
             default="true"
             name="Basic Performance Editor 2"
             id="org.eclipse.ui.tests.perf_basic2"
