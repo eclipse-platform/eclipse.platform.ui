@@ -79,16 +79,13 @@ public class ComputeSizeTest {
 							int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
 							int ySize = maxSize.y * yIteration / yIterations;
 
-							// Alternate between flushing and not flushing the cache
-							boolean flush = (count % 2) != 0;
-
 							// Alternate between width, height, and fixed, and default size queries
 							// (note: we need to alternate in order to make the result hard to cache)
 							switch(count % 4) {
-								case 0: widget.computeSize(xSize, SWT.DEFAULT, flush); break;
-								case 1: widget.computeSize(SWT.DEFAULT, ySize, flush); break;
-								case 2: widget.computeSize(xSize, ySize, flush); break;
-								case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush); break;
+								case 0: widget.computeSize(xSize, SWT.DEFAULT, flushState); break;
+								case 1: widget.computeSize(SWT.DEFAULT, ySize, flushState); break;
+								case 2: widget.computeSize(xSize, ySize, flushState); break;
+								case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushState); break;
 							}
 
 							count++;
