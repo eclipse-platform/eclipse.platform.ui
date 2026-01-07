@@ -19,18 +19,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.jface.util.Policy;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.5
  */
-public class CollatorPerformanceTest extends PerformanceTestCaseJunit4 {
+public class CollatorPerformanceTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	private static final int ARRAYSIZE=100000;
 	private static String[] fArray;
@@ -43,16 +45,24 @@ public class CollatorPerformanceTest extends PerformanceTestCaseJunit4 {
 	 *  test Collator by sorting the array
 	 */
 	@Test
-	public void testCollator(){
+	public void testCollator(TestInfo testInfo) {
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+
 		Comparator<Object> comparator=Policy.getComparator();
-		for (int i = 0; i < 15; i++) {
-			String[] array=fArray.clone();
-			startMeasuring();
-			Arrays.sort(array, comparator);
-			stopMeasuring();
+		try {
+			for (int i = 0; i < 15; i++) {
+				String[] array=fArray.clone();
+				meter.start();
+				Arrays.sort(array, comparator);
+				meter.stop();
+			}
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
 		}
-		commitMeasurements();
-		assertPerformance();
 	}
 
 	/**

@@ -20,29 +20,30 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.3
  */
-public class ProgressMonitorDialogPerformanceTest extends PerformanceTestCaseJunit4 {
+public class ProgressMonitorDialogPerformanceTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	/**
 	 * Test the time for doing a refresh.
 	 */
 	@Test
-	public void testLongNames() throws Throwable {
+	public void testLongNames(TestInfo testInfo) throws Throwable {
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = new Display();
@@ -50,6 +51,10 @@ public class ProgressMonitorDialogPerformanceTest extends PerformanceTestCaseJun
 
 		Shell shell = new Shell(display);
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
 		IRunnableWithProgress runnable = monitor -> {
 
@@ -65,22 +70,25 @@ public class ProgressMonitorDialogPerformanceTest extends PerformanceTestCaseJun
 
 			// test
 			for (int testCounter = 0; testCounter < 20; testCounter++) {
-				startMeasuring();
+				meter.start();
 				for (int counter = 0; counter < 30; counter++) {
 				monitor.setTaskName(taskName);
 				processEvents();
 			}
 				processEvents();
-				stopMeasuring();
+				meter.stop();
 			}
 		};
 
-		dialog.run(false, true, runnable);
+		try {
+			dialog.run(false, true, runnable);
 
-		commitMeasurements();
-		assertPerformance();
-
-		shell.dispose();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			shell.dispose();
+		}
 	}
 
 }

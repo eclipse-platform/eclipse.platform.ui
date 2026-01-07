@@ -23,15 +23,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class SWTTreeTest extends PerformanceTestCaseJunit4 {
+public class SWTTreeTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	Shell browserShell;
 
@@ -64,22 +66,30 @@ public class SWTTreeTest extends PerformanceTestCaseJunit4 {
 	 * Test the getItems API.
 	 */
 	@Test
-	public void testGetItems() throws CoreException {
+	public void testGetItems(TestInfo testInfo) throws CoreException {
 		openBrowser();
 
-		exercise(() -> {
-			processEvents();
-			startMeasuring();
-			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-				tree.getItems();
-				processEvents();
-			}
-			stopMeasuring();
-		});
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-		commitMeasurements();
-		assertPerformance();
-		browserShell.close();
+		try {
+			exercise(() -> {
+				processEvents();
+				meter.start();
+				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+					tree.getItems();
+					processEvents();
+				}
+				meter.stop();
+			});
+
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			browserShell.close();
+		}
 	}
 
 	/**
@@ -87,22 +97,30 @@ public class SWTTreeTest extends PerformanceTestCaseJunit4 {
 	 * Test the getItem API.
 	 */
 	@Test
-	public void testGetItemAt() throws CoreException {
+	public void testGetItemAt(TestInfo testInfo) throws CoreException {
 		openBrowser();
 
-		exercise(() -> {
-			processEvents();
-			startMeasuring();
-			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-				tree.getItem(j);
-				processEvents();
-			}
-			stopMeasuring();
-		});
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-		commitMeasurements();
-		assertPerformance();
-		browserShell.close();
+		try {
+			exercise(() -> {
+				processEvents();
+				meter.start();
+				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+					tree.getItem(j);
+					processEvents();
+				}
+				meter.stop();
+			});
+
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			browserShell.close();
+		}
 	}
 
 }

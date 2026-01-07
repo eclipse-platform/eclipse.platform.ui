@@ -21,28 +21,73 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
-import org.junit.After;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * The LinearViewerTest is a test that tests viewers.
  */
-public abstract class ViewerTest extends PerformanceTestCaseJunit4 {
+public abstract class ViewerTest implements BeforeEachCallback, AfterEachCallback {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	Shell browserShell;
 
 	public static int ITERATIONS = 100;
 	public static int MIN_ITERATIONS = 20;
+
+	private PerformanceMeter performanceMeter;
+
+	@Override
+	public void beforeEach(ExtensionContext context) throws Exception {
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + context.getDisplayName();
+		performanceMeter = perf.createPerformanceMeter(scenarioId);
+	}
+
+	@Override
+	public void afterEach(ExtensionContext context) throws Exception {
+		if (performanceMeter != null) {
+			performanceMeter.dispose();
+			performanceMeter = null;
+		}
+	}
+
+	protected void startMeasuring() {
+		if (performanceMeter != null) {
+			performanceMeter.start();
+		}
+	}
+
+	protected void stopMeasuring() {
+		if (performanceMeter != null) {
+			performanceMeter.stop();
+		}
+	}
+
+	protected void commitMeasurements() {
+		if (performanceMeter != null) {
+			performanceMeter.commit();
+		}
+	}
+
+	protected void assertPerformance() {
+		if (performanceMeter != null) {
+			Performance.getDefault().assertPerformance(performanceMeter);
+		}
+	}
 
 	protected void openBrowser() {
 		Display display = Display.getCurrent();
@@ -81,7 +126,7 @@ public abstract class ViewerTest extends PerformanceTestCaseJunit4 {
 		};
 	}
 
-	@After
+	@AfterEach
 	public final void closeBrowserShell() throws Exception {
 		if(browserShell!= null){
 			browserShell.close();
@@ -108,6 +153,14 @@ public abstract class ViewerTest extends PerformanceTestCaseJunit4 {
 		if(Util.isWindows())
 			return ITERATIONS / 5;
 		return ITERATIONS;
+	}
+
+	public void tagAsSummary(String shortName, Dimension dimension) {
+		Performance.getDefault().tagAsSummary(performanceMeter, shortName, new Dimension[] { dimension });
+	}
+
+	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
+		Performance.getDefault().tagAsGlobalSummary(performanceMeter, shortName, new Dimension[] { dimension });
 	}
 
 }
