@@ -26,10 +26,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -37,10 +39,10 @@ import org.osgi.framework.FrameworkUtil;
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
  * viewer.
  */
-public class FileImageDescriptorTest extends PerformanceTestCaseJunit4 {
+public class FileImageDescriptorTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	protected static final String IMAGES_DIRECTORY = "/icons/imagetests";
 
@@ -48,49 +50,57 @@ public class FileImageDescriptorTest extends PerformanceTestCaseJunit4 {
 	 * Test the time for doing a refresh.
 	 */
 	@Test
-	public void testRefresh() throws Throwable {
+	public void testRefresh(TestInfo testInfo) throws Throwable {
 
-		exercise(() -> {
-			Class<?> missing = null;
-			ArrayList<Image> images = new ArrayList<>();
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-			Bundle bundle = FrameworkUtil.getBundle(getClass());
-			Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
+		try {
+			exercise(() -> {
+				Class<?> missing = null;
+				ArrayList<Image> images = new ArrayList<>();
+
+				Bundle bundle = FrameworkUtil.getBundle(getClass());
+				Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 
-			while (bundleEntries.hasMoreElements()) {
-				ImageDescriptor descriptor;
-				String localImagePath = bundleEntries.nextElement();
+				while (bundleEntries.hasMoreElements()) {
+					ImageDescriptor descriptor;
+					String localImagePath = bundleEntries.nextElement();
 
-				if (localImagePath.indexOf('.') < 0)
-					continue;
+					if (localImagePath.indexOf('.') < 0)
+						continue;
 
-				URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
+					URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
 
-				for (URL file : files) {
-					startMeasuring();
-					descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
+					for (URL file : files) {
+						meter.start();
+						descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
 
-					for (int j = 0; j < 10; j++) {
-						Image image = descriptor.createImage();
-						images.add(image);
+						for (int j = 0; j < 10; j++) {
+							Image image = descriptor.createImage();
+							images.add(image);
+						}
+
+						processEvents();
+						meter.stop();
+
 					}
-
-					processEvents();
-					stopMeasuring();
 
 				}
 
-			}
 
+				Iterator<Image> imageIterator = images.iterator();
+				while (imageIterator.hasNext()) {
+					imageIterator.next().dispose();
+				}
+			}, 20, 100, JFacePerformanceSuite.MAX_TIME);
 
-			Iterator<Image> imageIterator = images.iterator();
-			while (imageIterator.hasNext()) {
-				imageIterator.next().dispose();
-			}
-		}, 20, 100, JFacePerformanceSuite.MAX_TIME);
-
-		commitMeasurements();
-		assertPerformance();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 }
