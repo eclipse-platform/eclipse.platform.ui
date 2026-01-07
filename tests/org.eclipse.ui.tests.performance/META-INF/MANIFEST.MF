@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.ui.views,
  org.eclipse.e4.core.contexts,
  org.eclipse.ui.navigator,
- org.eclipse.ui.navigator.resources
+ org.eclipse.ui.navigator.resources,
+ org.eclipse.ui.genericeditor
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
