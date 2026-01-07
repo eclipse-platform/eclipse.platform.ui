@@ -34,7 +34,7 @@ public class UIPerformanceTestRule extends ExternalResource implements BeforeAll
 
 	public static final String PROJECT_NAME = "Performance Project";
 
-	private static final String INTRO_VIEW = "org.eclipse.ui.internal.introview";
+	public static final String INTRO_VIEW = "org.eclipse.ui.internal.introview";
 	public static final String[] EDITOR_FILE_EXTENSIONS = { "perf_basic", "perf_outline", "perf_text" };
 
 	@Override
