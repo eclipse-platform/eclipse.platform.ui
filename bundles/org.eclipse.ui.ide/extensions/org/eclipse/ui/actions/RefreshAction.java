@@ -18,15 +18,12 @@ package org.eclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -37,7 +34,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -51,6 +47,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
@@ -225,19 +222,30 @@ public class RefreshAction extends WorkspaceAction {
 		}
 		final List<? extends IResource> resources = actionResources;
 
-		return new IRunnableWithProgress() {
+		ISchedulingRule rule = null;
+		for (IResource resource : resources) {
+			ISchedulingRule newRule = null;
+			if (resource.getType() == IResource.ROOT) {
+				newRule = resource;
+			} else {
+				newRule = resource.getProject();
+			}
+			rule = MultiRule.combine(rule, newRule);
+		}
+
+		return new WorkspaceModifyOperation(rule) {
 			@Override
-			public void run(IProgressMonitor mon) {
-				SubMonitor subMonitor = SubMonitor.convert(mon);
+			public void execute(IProgressMonitor mon) {
+				SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
 				subMonitor.setTaskName(getOperationMessage());
-				List<IStatus> errors = Collections.synchronizedList(new ArrayList<>());
-				resources.parallelStream().forEach(resource -> {
+				List<IStatus> errors = new ArrayList<>();
+				for (IResource resource : resources) {
 					try {
-						refreshResource(resource, null);
+						refreshResource(resource, subMonitor.split(1));
 					} catch (CoreException e) {
 						errors.add(e.getStatus());
 					}
-				});
+				}
 
 				if (!errors.isEmpty()) {
 					MultiStatus multiStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
@@ -287,10 +295,10 @@ public class RefreshAction extends WorkspaceAction {
 		final IStatus[] errorStatus = new IStatus[1];
 		errorStatus[0] = Status.OK_STATUS;
 		final IRunnableWithProgress op = createOperation(errorStatus);
-		Job job = new Job("refresh") { //$NON-NLS-1$
+		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
 
 			@Override
-			public IStatus run(IProgressMonitor monitor) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {
 					op.run(monitor);
 				} catch (InvocationTargetException e) {
@@ -304,6 +312,9 @@ public class RefreshAction extends WorkspaceAction {
 			}
 
 		};
+		if (op instanceof WorkspaceModifyOperation) {
+			job.setRule(((WorkspaceModifyOperation) op).getRule());
+		}
 		job.setUser(true);
 		job.schedule();
 	}

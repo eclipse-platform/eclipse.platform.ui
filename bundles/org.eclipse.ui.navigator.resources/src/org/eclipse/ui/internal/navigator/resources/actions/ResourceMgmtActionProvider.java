@@ -30,8 +30,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -221,10 +219,10 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 				final IStatus[] errorStatus = new IStatus[1];
 				errorStatus[0] = Status.OK_STATUS;
 				final IRunnableWithProgress op = createOperation(errorStatus);
-				Job job = new Job("refresh") { //$NON-NLS-1$
+				WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
 
 					@Override
-					public IStatus run(IProgressMonitor monitor) {
+					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						try {
 							op.run(monitor);
 							if (shell != null && !shell.isDisposed()) {
@@ -246,6 +244,9 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 					}
 
 				};
+				if (op instanceof WorkspaceModifyOperation) {
+					job.setRule(((WorkspaceModifyOperation) op).getRule());
+				}
 				job.setUser(true);
 				job.schedule();
 			}
