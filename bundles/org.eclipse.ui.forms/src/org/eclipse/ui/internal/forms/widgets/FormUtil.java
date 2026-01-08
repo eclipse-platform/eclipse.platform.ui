@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -485,25 +486,29 @@ public class FormUtil {
 	}
 
 	public static Image createAlphaMashImage(Device device, Image srcImage) {
-		Rectangle bounds = srcImage.getBounds();
-		int alpha = 0;
-		int calpha = 0;
-		ImageData data = srcImage.getImageData();
-		// Create a new image with alpha values alternating
-		// between fully transparent (0) and fully opaque (255).
-		// This image will show the background through the
-		// transparent pixels.
-		for (int i = 0; i < bounds.height; i++) {
-			// scan line
-			alpha = calpha;
-			for (int j = 0; j < bounds.width; j++) {
-				// column
-				data.setAlpha(j, i, alpha);
-				alpha = alpha == 255 ? 0 : 255;
+
+		ImageDataProvider imageDataProvider = zoom -> {
+			int alpha = 0;
+			int calpha = 0;
+			ImageData data = srcImage.getImageData(zoom);
+			// Create a new image with alpha values alternating
+			// between fully transparent (0) and fully opaque (255).
+			// This image will show the background through the
+			// transparent pixels.
+			for (int i = 0; i < data.height; i++) {
+				// scan line
+				alpha = calpha;
+				for (int j = 0; j < data.width; j++) {
+					// column
+					data.setAlpha(j, i, alpha);
+					alpha = alpha == 255 ? 0 : 255;
+				}
+				calpha = calpha == 255 ? 0 : 255;
 			}
-			calpha = calpha == 255 ? 0 : 255;
-		}
-		return new Image(device, data);
+
+			return data;
+		};
+		return new Image(device, imageDataProvider);
 	}
 
 	public static boolean mnemonicMatch(String text, char key) {
