@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -39,6 +40,13 @@ public class ListPopulationTest {
 	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	List list;
+
+	@AfterEach
+	public void tearDown() {
+		if (list != null && !list.isDisposed()) {
+			list.getShell().dispose();
+		}
+	}
 
 	protected void openBrowser() {
 		Display fDisplay = Display.getCurrent();
