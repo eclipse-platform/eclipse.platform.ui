@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -70,6 +73,37 @@ public class CodeMiningLineHeaderAnnotationTest {
 	@AfterEach
 	public void tearDown() {
 		fViewer= null;
+	}
+
+	@Test
+	public void testDrawTakesLineSpacingForSingleLineIntoAccount() throws Exception {
+		assertDrawTakesLineSpacingIntoAccount("line1\nline2\nline3", "code mining single line");
+	}
+
+	@Test
+	public void testDrawTakesLineSpacingForMultiLineIntoAccount() throws Exception {
+		assertDrawTakesLineSpacingIntoAccount("line1\nline2\nline3", "code mining line1\ncode mining line2");
+	}
+
+	private void assertDrawTakesLineSpacingIntoAccount(String source, String codeMiningLabel) throws Exception {
+		var doc= fViewer.getDocument();
+		doc.set(source);
+		var textWidget= fViewer.getTextWidget();
+		textWidget.setLineSpacing(10);
+		var mining= new LineHeaderCodeMining(0, doc, null, null) {
+			@Override
+			public String getLabel() {
+				return codeMiningLabel;
+			}
+		};
+		var gc= new GC(textWidget);
+		try {
+			Point result= mining.draw(gc, textWidget, null, 0, 0);
+			String[] codeMiningLabelsByLine= codeMiningLabel.split("\n");
+			assertEquals(codeMiningLabelsByLine.length * (gc.stringExtent(codeMiningLabelsByLine[0]).y + textWidget.getLineSpacing()), result.y);
+		} finally {
+			gc.dispose();
+		}
 	}
 
 	@Test
