@@ -18,6 +18,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -621,17 +622,41 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 
 		if (selectedTabHighlightColor != null) {
+			gc.setForeground(selectedTabHighlightColor);
 			gc.setBackground(selectedTabHighlightColor);
-			boolean highlightOnTop = drawTabHighlightOnTop;
-			if (onBottom) {
-				highlightOnTop = !highlightOnTop;
-			}
 			int highlightHeight = 2;
-			int verticalOffset = highlightOnTop ? 0 : bounds.height - (highlightHeight - 1);
-			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
-			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
-			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
-					highlightHeight);
+			int originalLineWidth = gc.getLineWidth();
+			if (drawTabHighlightOnTop && cornerSize != SQUARE_CORNER) {
+				// When using round tabs, extract the part of the outline that covers the
+				// highlight and draw it with adapted height
+				int[] highlightShape = Arrays.copyOfRange(tabOutlinePoints, 14, tabOutlinePoints.length - 14);
+				int yEnd = onBottom ? outlineBoundsForOutline.y + outlineBoundsForOutline.height - highlightHeight + 1
+						: highlightHeight;
+				highlightShape[1] = highlightShape[highlightShape.length - 1] = yEnd;
+				boolean gcAdvanced = gc.getAdvanced();
+				gc.setAdvanced(false);
+				gc.fillPolygon(highlightShape);
+				gc.setAdvanced(gcAdvanced);
+			} else {
+				// When using square tab or drawing the highlight at the bottom, simply draw
+				// a line
+				int xStart = tabOutlinePoints[2];
+				int xEnd = tabOutlinePoints[tabOutlinePoints.length - 4];
+				int yTop = drawTabHighlightOnTop ? tabOutlinePoints[5] : tabOutlinePoints[3];
+				if (onBottom == drawTabHighlightOnTop) {
+					yTop -= highlightHeight;
+				}
+				gc.setLineWidth(highlightHeight);
+				gc.drawLine(xStart, yTop + highlightHeight / 2, xEnd, yTop + highlightHeight / 2);
+				if (drawTabHighlightOnTop) {
+					// Compensate for the outline being draw on top of the filled region by
+					// extending the highlight with an equally wide line next to the filled region
+					gc.setLineWidth(0);
+					int yAdditionalLine = onBottom ? yTop : yTop + highlightHeight;
+					gc.drawLine(xStart, yAdditionalLine, xEnd, yAdditionalLine);
+				}
+			}
+			gc.setLineWidth(originalLineWidth);
 		}
 
 		if (backgroundPattern != null) {
