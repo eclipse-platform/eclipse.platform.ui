@@ -263,7 +263,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			// will also include any in-line annotations (e.g. codemining annotations) in the width
 			final String matchingCharacter= fTextWidget.getText(offset, offset);
 			Point sizePoints= gc.textExtent(matchingCharacter);
-			sizePoints.y= sizePoints.y - 1;
 			final int height= fTextWidget.getCaret().getSize().y;
 			Rectangle rectangleOfFloat= Rectangle.of(new Point(bounds.x, bounds.y + bounds.height - height), sizePoints);
 
