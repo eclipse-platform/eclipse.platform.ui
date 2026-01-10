@@ -95,8 +95,6 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private static final String PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
-
 	private static final String E4_THEME_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.theme"; //$NON-NLS-1$
 
 	/** The workbench theme engine; may be {@code null} if no engine */
@@ -259,7 +257,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private boolean getSwtRendererPreference(String prefName, boolean defaultValue) {
-		return Platform.getPreferencesService().getBoolean(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+		return Platform.getPreferencesService().getBoolean(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
 				prefName, defaultValue, null);
 	}
 
@@ -343,7 +341,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	public boolean performOk() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
-				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
 		if (isThemingPossible()) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
@@ -452,7 +450,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	protected void performDefaults() {
 		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
-				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
 		if (isThemingPossible()) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
