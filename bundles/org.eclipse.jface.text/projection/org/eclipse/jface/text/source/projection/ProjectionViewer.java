@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -767,6 +767,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (document == null) {
 			return;
 		}
+		int topIndex= redraws() ? getTopIndex() : -1;
+		setRedraw(false);
 		try {
 			// If the visible region changes, make sure collapsed regions outside of the old visible regions are expanded
 			// and collapse everything outside the new visible region
@@ -782,6 +784,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} catch (BadLocationException e) {
 			ILog log= ILog.of(getClass());
 			log.log(new Status(IStatus.WARNING, getClass(), IStatus.OK, null, e));
+		} finally {
+			setRedraw(true, topIndex);
 		}
 	}
 
