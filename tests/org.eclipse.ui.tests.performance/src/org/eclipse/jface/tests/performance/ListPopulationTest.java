@@ -22,19 +22,21 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * The ListPopulationTest is the test for simple
  * SWT lists.
  */
-public class ListPopulationTest extends PerformanceTestCaseJunit4 {
+public class ListPopulationTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	List list;
 
@@ -52,72 +54,89 @@ public class ListPopulationTest extends PerformanceTestCaseJunit4 {
 	}
 
 	@Test
-	public void testSmallAdd() throws Throwable {
-		addBench(100);
+	public void testSmallAdd(TestInfo testInfo) throws Throwable {
+		addBench(100, testInfo);
 	}
 
 	@Test
-	public void testSmallSetItems() throws Throwable {
-		setItemsBench(100);
+	public void testSmallSetItems(TestInfo testInfo) throws Throwable {
+		setItemsBench(100, testInfo);
 	}
 
 	@Test
-	public void testMediumAdd() throws Throwable {
-		addBench(5000);
+	public void testMediumAdd(TestInfo testInfo) throws Throwable {
+		addBench(5000, testInfo);
 	}
 
 	@Test
-	public void testMediumSetItems() throws Throwable {
-		setItemsBench(5000);
+	public void testMediumSetItems(TestInfo testInfo) throws Throwable {
+		setItemsBench(5000, testInfo);
 	}
 
 	@Test
-	public void testLargeAdd() throws Throwable {
-		addBench(50000);
+	public void testLargeAdd(TestInfo testInfo) throws Throwable {
+		addBench(50000, testInfo);
 	}
 
 	@Test
-	public void testLargeSetItems() throws Throwable {
-		setItemsBench(50000);
+	public void testLargeSetItems(TestInfo testInfo) throws Throwable {
+		setItemsBench(50000, testInfo);
 	}
 
 	/**
 	 * Test the time for adding elements using add.
 	 */
-	public void addBench(int count) throws Throwable {
+	public void addBench(int count, TestInfo testInfo) throws Throwable {
 		openBrowser();
 		final String [] items = getItems(count);
 
-		exercise(() -> {
-			list.removeAll();
-			startMeasuring();
-			for (String item : items) {
-				list.add(item);
-			}
-			processEvents();
-			stopMeasuring();
-		});
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-		commitMeasurements();
-		assertPerformance();
+		try {
+			exercise(() -> {
+				list.removeAll();
+				meter.start();
+				for (String item : items) {
+					list.add(item);
+				}
+				processEvents();
+				meter.stop();
+			});
+
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 	/**
 	 * Test the time for adding elements using setItem.
 	 */
-	public void setItemsBench(int count) throws Throwable {
+	public void setItemsBench(int count, TestInfo testInfo) throws Throwable {
 		openBrowser();
 		final String [] items = getItems(count);
-		exercise(() -> {
-			list.removeAll();
-			startMeasuring();
-			list.setItems(items);
-			processEvents();
-			stopMeasuring();
-		});
 
-		commitMeasurements();
-		assertPerformance();
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+
+		try {
+			exercise(() -> {
+				list.removeAll();
+				meter.start();
+				list.setItems(items);
+				processEvents();
+				meter.stop();
+			});
+
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 	/**
