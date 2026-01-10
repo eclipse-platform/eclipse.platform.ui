@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022, 2025 Red Hat, Inc. and others.
+ * Copyright (c) 2022, 2026 Red Hat, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -515,5 +517,70 @@ public class ProjectionViewerTest {
 		ProjectionAnnotation annotation= new ProjectionAnnotation();
 		viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(projectionStart, projectionEnd - projectionStart));
 		return annotation;
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "true", "false" })
+	void testDifferentLineEndings(boolean crlf) {
+		Shell shell= new Shell(Display.getCurrent());
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, true, SWT.ALL);
+		String documentContent= """
+				// before
+				{
+					// within
+				}
+				// after
+				""";
+		if (crlf) {
+			documentContent= documentContent.replace("\n", "\r\n");
+		}
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		int start= documentContent.indexOf('{');
+		int end= documentContent.indexOf('}') + 1;
+		viewer.enableProjection();
+		viewer.setVisibleRegion(start, end - start);
+		assertEquals(documentContent.substring(start, documentContent.indexOf("// after")), viewer.getVisibleDocument().get());
+	}
+
+	@Test
+	void testIncludesLastLineIfAdditionalTextPresent() {
+		Shell shell= new Shell(Display.getCurrent());
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, true, SWT.ALL);
+		String documentContent= """
+				// before
+				{
+					// within
+				}// ...
+				// should be hidden
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		int start= documentContent.indexOf('{');
+		int end= documentContent.indexOf('}') + 1;
+		viewer.enableProjection();
+		viewer.setVisibleRegion(start, end - start);
+		assertEquals(documentContent.substring(start, documentContent.indexOf("// should be hidden")), viewer.getVisibleDocument().get());
+	}
+
+	@Test
+	void testSetVisibleRegionUntilEOF() {
+		Shell shell= new Shell(Display.getCurrent());
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, true, SWT.ALL);
+		String documentContent= """
+				// before
+				{
+					// within
+				}""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		int start= documentContent.indexOf('{');
+		int end= documentContent.indexOf('}') + 1;
+		viewer.enableProjection();
+		viewer.setVisibleRegion(start, end - start);
+		assertEquals(documentContent.substring(start), viewer.getVisibleDocument().get());
 	}
 }
