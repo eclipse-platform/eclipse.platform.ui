@@ -9,7 +9,7 @@ This includes JFace, workbench, commands framework, data binding, dialogs, edito
 
 **Key Facts:**
 - **Language:** Java 21
-- **Build System:** Maven 3.9.11 with Tycho (OSGi/Eclipse plugin build)
+- **Build System:** Maven 3.9.12 with Tycho (OSGi/Eclipse plugin build)
 - **Architecture:** OSGi bundles, E4 application model
 
 ## Project Structure
