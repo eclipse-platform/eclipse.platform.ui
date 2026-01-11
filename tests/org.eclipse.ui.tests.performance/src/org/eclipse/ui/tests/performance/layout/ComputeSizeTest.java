@@ -19,86 +19,90 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Measures the performance of a widget's computeSize method
  *
  * @since 3.1
  */
-public class ComputeSizeTest extends PerformanceTestCaseJunit4 {
+public class ComputeSizeTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
-	private final TestWidgetFactory widgetFactory;
 	private final int xIterations = 10;
 	private final int yIterations = 10;
 
-	public ComputeSizeTest(TestWidgetFactory widgetFactory) {
-		this.widgetFactory = widgetFactory;
-	}
-
-	@Test
-	public void test() throws CoreException, WorkbenchException {
+	@ParameterizedTest
+	@MethodSource("org.eclipse.ui.tests.performance.layout.LayoutPerformanceTestSuite#data")
+	public void test(TestWidgetFactory widgetFactory, boolean flushState, TestInfo testInfo) throws CoreException, WorkbenchException {
 
 		widgetFactory.init();
 		final Composite widget = widgetFactory.getControl();
 		//Rectangle initialBounds = widget.getBounds();
 		final Point maxSize = widgetFactory.getMaxSize();
 
-		// Iteration counter. We increment this each pass through the loop in order to
-		// generate slightly different test data each time
-		final int[] counter = new int[] {0};
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-		for (int j = 0; j < 100; j++) {
-			// This counter determines whether we're computing a width,
-			// height, or fixed
-			// size and whether or not we flush the cache.
+		try {
+			// Iteration counter. We increment this each pass through the loop in order to
+			// generate slightly different test data each time
+			final int[] counter = new int[] {0};
 
-			// We do things this way to avoid calling computeSize with the same (or
-			// similar) values
-			// twice in a row, which would be too easy to cache.
-			int count = counter[0];
+			for (int j = 0; j < 100; j++) {
+				// This counter determines whether we're computing a width,
+				// height, or fixed
+				// size and whether or not we flush the cache.
 
-			startMeasuring();
-			for (int i = 0; i < 200; i++) {
+				// We do things this way to avoid calling computeSize with the same (or
+				// similar) values
+				// twice in a row, which would be too easy to cache.
+				int count = counter[0];
 
-				for (int xIteration = 0; xIteration < xIterations; xIteration++) {
+				meter.start();
+				for (int i = 0; i < 200; i++) {
 
-					for (int yIteration = 0; yIteration < yIterations; yIteration++) {
-						// Avoid giving the same x value twice in a row in order to make it hard to cache
-						int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
-						int ySize = maxSize.y * yIteration / yIterations;
+					for (int xIteration = 0; xIteration < xIterations; xIteration++) {
 
-						// Alternate between flushing and not flushing the cache
-						boolean flushState = (count % 2) != 0;
+						for (int yIteration = 0; yIteration < yIterations; yIteration++) {
+							// Avoid giving the same x value twice in a row in order to make it hard to cache
+							int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
+							int ySize = maxSize.y * yIteration / yIterations;
 
-						// Alternate between width, height, and fixed, and default size queries
-						// (note: we need to alternate in order to make the result hard to cache)
-						switch(count % 4) {
-							case 0: widget.computeSize(xSize, SWT.DEFAULT, flushState); break;
-							case 1: widget.computeSize(SWT.DEFAULT, ySize, flushState); break;
-							case 2: widget.computeSize(xSize, ySize, flushState); break;
-							case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushState); break;
+							// Alternate between width, height, and fixed, and default size queries
+							// (note: we need to alternate in order to make the result hard to cache)
+							switch(count % 4) {
+								case 0: widget.computeSize(xSize, SWT.DEFAULT, flushState); break;
+								case 1: widget.computeSize(SWT.DEFAULT, ySize, flushState); break;
+								case 2: widget.computeSize(xSize, ySize, flushState); break;
+								case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushState); break;
+							}
+
+							count++;
 						}
-
-						count++;
 					}
+
 				}
-
+				meter.stop();
+				processEvents();
+				counter[0]++;
 			}
-			stopMeasuring();
-			processEvents();
-			counter[0]++;
-		}
 
-		commitMeasurements();
-		assertPerformance();
-		widgetFactory.done();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			widgetFactory.done();
+		}
 	}
 }

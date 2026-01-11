@@ -17,45 +17,53 @@ package org.eclipse.ui.tests.performance;
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.1
  */
-public class GenerateIdentifiersTest extends PerformanceTestCaseJunit4 {
+public class GenerateIdentifiersTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	private static final int count = 10000;
 
 	@Test
-	public void test() throws Throwable {
+	public void test(TestInfo testInfo) throws Throwable {
 		final IActivityManager activityManager = getWorkbench().getActivitySupport().getActivityManager();
 
-		exercise(() -> {
-			// construct the Identifiers to test
-			final String[] ids = new String[count];
-			for (int i = 0; i < ids.length; i++) {
-				long timestamp = System.currentTimeMillis();
-				ids[i] = "org.eclipse.jdt.ui/" + i + timestamp;
-			}
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		try {
+			exercise(() -> {
+				// construct the Identifiers to test
+				final String[] ids = new String[count];
+				for (int i = 0; i < ids.length; i++) {
+					long timestamp = System.currentTimeMillis();
+					ids[i] = "org.eclipse.jdt.ui/" + i + timestamp;
+				}
 
-			startMeasuring();
-			for (String id : ids) {
-				activityManager.getIdentifier(id);
-			}
-			stopMeasuring();
-		});
-		commitMeasurements();
-		assertPerformance();
+				meter.start();
+				for (String id : ids) {
+					activityManager.getIdentifier(id);
+				}
+				meter.stop();
+			});
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 }
