@@ -16,7 +16,7 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
@@ -24,8 +24,8 @@ import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Mutability tests for IObservableValue.
@@ -51,7 +51,7 @@ public class MutableObservableValueContractTest extends ObservableValueContractT
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		this.observable = (IObservableValue) getObservable();
@@ -62,9 +62,8 @@ public class MutableObservableValueContractTest extends ObservableValueContractT
 		Object value = delegate.createValue(observable);
 
 		observable.setValue(value);
-		assertEquals(
-				formatFail("IObservableValue.setValue(Object) should set the value of the observable."),
-				value, observable.getValue());
+		assertEquals(value, observable.getValue(),
+				formatFail("IObservableValue.setValue(Object) should set the value of the observable."));
 	}
 
 	@Test
@@ -73,14 +72,11 @@ public class MutableObservableValueContractTest extends ObservableValueContractT
 
 		observable.setValue(delegate.createValue(observable));
 
-		assertEquals(formatFail("Change event listeners were not notified"), 1,
-				listener.count);
-		assertEquals(
-				formatFail("IObservableValue.setValue(Object) should fire one ChangeEvent."),
-				1, listener.count);
-		assertEquals(
-				formatFail("IObservableValue.setValue(Object)'s change event observable should be the created observable."),
-				observable, listener.event.getObservable());
+		assertEquals(1, listener.count, formatFail("Change event listeners were not notified"));
+		assertEquals(1, listener.count,
+				formatFail("IObservableValue.setValue(Object) should fire one ChangeEvent."));
+		assertEquals(observable, listener.event.getObservable(),
+				formatFail("IObservableValue.setValue(Object)'s change event observable should be the created observable."));
 	}
 
 	@Test
@@ -95,12 +91,10 @@ public class MutableObservableValueContractTest extends ObservableValueContractT
 		Object value = observable.getValue();
 		observable.setValue(value);
 
-		assertEquals(
-				formatFail("IObservableValue.setValue() should not fire a value change event when the value has not change."),
-				0, valueChangeListener.count);
-		assertEquals(
-				formatFail("IObservableValue.setValue() should not fire a change event when the value has not change."),
-				0, changeListener.count);
+		assertEquals(0, valueChangeListener.count,
+				formatFail("IObservableValue.setValue() should not fire a value change event when the value has not change."));
+		assertEquals(0, changeListener.count,
+				formatFail("IObservableValue.setValue() should not fire a change event when the value has not change."));
 	}
 
 	@Test
