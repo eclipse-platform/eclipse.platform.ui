@@ -10,16 +10,16 @@
  ********************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -51,16 +51,16 @@ public class TextMultiCaretNavigationTest {
 	private static AbstractTextEditor editor;
 	private static StyledText widget;
 
-	@Before
-	public void setUpBeforeClass() throws IOException, PartInitException, CoreException {
+	@BeforeEach
+	void setUpBeforeClass() throws IOException, PartInitException, CoreException {
 		file = File.createTempFile(TextMultiCaretNavigationTest.class.getName(), ".txt");
 		Files.write(file.toPath(), "  abc\n    1234\nxyz".getBytes());
 		editor = (AbstractTextEditor)IDE.openEditorOnFileStore(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), EFS.getStore(file.toURI()));
 		widget = (StyledText) editor.getAdapter(Control.class);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterEach
+	void tearDown() {
 		editor.close(false);
 		file.delete();
 		TestUtil.cleanUp();
@@ -68,7 +68,7 @@ public class TextMultiCaretNavigationTest {
 
 
 	@Test
-	public void testShiftHome() {
+	void testShiftHome() {
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		editor.getSelectionProvider().setSelection(new MultiTextSelection(document,
 				new IRegion[] { new Region(5, 0), new Region(14, 0), new Region(18, 0), }));
@@ -88,7 +88,7 @@ public class TextMultiCaretNavigationTest {
 	}
 
 	@Test
-	public void testShiftEnd() {
+	void testShiftEnd() {
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		editor.getSelectionProvider().setSelection(new MultiTextSelection(document,
 				new IRegion[] { new Region(0, 0), new Region(6, 0), new Region(15, 0), }));
@@ -102,7 +102,7 @@ public class TextMultiCaretNavigationTest {
 	}
 
 	@Test
-	public void testShiftEndHomeHome() {
+	void testShiftEndHomeHome() {
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		editor.getSelectionProvider().setSelection(new MultiTextSelection(document,
 				new IRegion[] { new Region(0, 0), new Region(6, 0), new Region(15, 0), }));

@@ -13,15 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -54,8 +55,8 @@ public class ZoomTest {
 	private AbstractTextEditor editor;
 	private int initialFontSize;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("test");
 		project.create(new NullProgressMonitor());
 		project.open(new NullProgressMonitor());
@@ -63,15 +64,15 @@ public class ZoomTest {
 		file.create(new ByteArrayInputStream("bar".getBytes()), true, new NullProgressMonitor());
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	@AfterAll
+	static void tearDownAfterClass() throws Exception {
 		file.delete(true, new NullProgressMonitor());
 		project.delete(true, new NullProgressMonitor());
 		TestUtil.cleanUp();
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
@@ -86,27 +87,27 @@ public class ZoomTest {
 		initialFontSize = text.getFont().getFontData()[0].getHeight();
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		editor.close(false);
 		editor= null;
 	}
 
 	@Test
-	public void testZoomCommand() throws Exception {
+	void testZoomCommand() throws Exception {
 		int times = 6;
 		Command zoomInCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
 				.getCommand("org.eclipse.ui.edit.text.zoomIn");
 		for (int i = 0; i < times; i++) {
 			zoomInCommand.executeWithChecks(new ExecutionEvent(zoomInCommand, Collections.EMPTY_MAP, null, null));
 		}
-		Assert.assertEquals(this.initialFontSize + 12, text.getFont().getFontData()[0].getHeight());
+		assertEquals(this.initialFontSize + 12, text.getFont().getFontData()[0].getHeight());
 		Command zoomOutCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
 				.getCommand("org.eclipse.ui.edit.text.zoomOut");
 		for (int i = 0; i < times; i++) {
 			zoomOutCommand.executeWithChecks(new ExecutionEvent(zoomOutCommand, Collections.EMPTY_MAP, null, null));
 		}
-		Assert.assertEquals(this.initialFontSize, text.getFont().getFontData()[0].getHeight());
+		assertEquals(this.initialFontSize, text.getFont().getFontData()[0].getHeight());
 	}
 
 }
