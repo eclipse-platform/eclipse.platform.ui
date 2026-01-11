@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,6 +38,13 @@ public class ListPopulationTest extends PerformanceTestCaseJunit4 {
 	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	List list;
+
+	@After
+	public void tearDown() {
+		if (list != null && !list.isDisposed()) {
+			list.getShell().dispose();
+		}
+	}
 
 	protected void openBrowser() {
 		Display fDisplay = Display.getCurrent();

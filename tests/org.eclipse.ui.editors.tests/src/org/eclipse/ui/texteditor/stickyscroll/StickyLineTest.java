@@ -10,15 +10,15 @@
  *
  * Contributors:
  *     SAP SE - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.ui.texteditor.stickyscroll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -41,8 +41,8 @@ public class StickyLineTest {
 	private Color color;
 	private ISourceViewer sourceViewer;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		shell = new Shell();
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
 		sourceViewer.setDocument(new Document());
@@ -50,21 +50,21 @@ public class StickyLineTest {
 		color = new Color(0, 0, 0);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterEach
+	void tearDown() {
 		shell.dispose();
 		color.dispose();
 	}
 
 	@Test
-	public void testGetLineNumber() {
+	void testGetLineNumber() {
 		StickyLine stickyLine = new StickyLine(1, sourceViewer);
 
 		assertEquals(1, stickyLine.getLineNumber());
 	}
 
 	@Test
-	public void testGetText() {
+	void testGetText() {
 		textWidget.setText("line1\nline2\nline3");
 		StickyLine stickyLine = new StickyLine(1, sourceViewer);
 
@@ -72,7 +72,7 @@ public class StickyLineTest {
 	}
 
 	@Test
-	public void testGetStyleRanges() {
+	void testGetStyleRanges() {
 		textWidget.setText("line1\nline2\nline3");
 
 		// line1
@@ -96,7 +96,7 @@ public class StickyLineTest {
 	}
 
 	@Test
-	public void testGetStyleRangesIgnoresOutOfBoundLines() {
+	void testGetStyleRangesIgnoresOutOfBoundLines() {
 		textWidget.setText("line1\nline2\nline3");
 
 		StickyLine stickyLineOutOfBound = new StickyLine(10, sourceViewer);
@@ -107,7 +107,7 @@ public class StickyLineTest {
 	}
 
 	@Test
-	public void WithSourceViewerLineMapping() {
+	void WithSourceViewerLineMapping() {
 		sourceViewer = new SourceViewerWithLineMapping(shell, null, SWT.None);
 		sourceViewer.setDocument(new Document());
 		textWidget = sourceViewer.getTextWidget();

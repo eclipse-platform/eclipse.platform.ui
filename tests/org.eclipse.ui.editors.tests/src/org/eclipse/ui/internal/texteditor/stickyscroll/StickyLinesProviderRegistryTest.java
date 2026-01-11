@@ -8,9 +8,9 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,8 +29,8 @@ public class StickyLinesProviderRegistryTest {
 	private ISourceViewer viewer;
 	private ITextEditor editor;
 
-	@Before
-	public void setup() {
+	@BeforeEach
+	void setup() {
 		IConfigurationElement[] configurationElement = { mock(IConfigurationElement.class) };
 		stickyLinesProviderDescriptor = mock(StickyLinesProviderDescriptor.class);
 		viewer = mock(ISourceViewer.class);
@@ -43,13 +43,13 @@ public class StickyLinesProviderRegistryTest {
 		cut = new StickyLinesProviderRegistry(extensionRegistry, e -> stickyLinesProviderDescriptor);
 	}
 
-	@After
-	public void teardown() {
+	@AfterEach
+	void teardown() {
 		TestUtil.cleanUp();
 	}
 
 	@Test
-	public void testGetDefaultProviderIfNoMatch() {
+	void testGetDefaultProviderIfNoMatch() {
 		when(stickyLinesProviderDescriptor.matches(viewer, editor)).thenReturn(false);
 
 		IStickyLinesProvider provider = cut.getProvider(viewer, editor);
@@ -58,7 +58,7 @@ public class StickyLinesProviderRegistryTest {
 	}
 
 	@Test
-	public void testGetProviderForMatch() {
+	void testGetProviderForMatch() {
 		IStickyLinesProvider expProvider = mock(IStickyLinesProvider.class);
 		when(stickyLinesProviderDescriptor.matches(viewer, editor)).thenReturn(true);
 		when(stickyLinesProviderDescriptor.createStickyLinesProvider()).thenReturn(expProvider);
