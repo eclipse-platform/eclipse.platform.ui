@@ -16,7 +16,7 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -24,8 +24,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * TestCase that provides the standard behavior expected for delegating test
@@ -45,7 +45,7 @@ public class ObservableDelegateTest {
 		this.delegate = delegate;
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		previousRealm = Realm.getDefault();
 
@@ -53,7 +53,7 @@ public class ObservableDelegateTest {
 		observable = doCreateObservable();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		delegate.tearDown();
 		observable.dispose();
@@ -130,8 +130,8 @@ public class ObservableDelegateTest {
 			}
 		}
 
-		assertEquals(formatFail(methodName
-				+ " should invoke ObservableTracker.getterCalled() once."), 1,
-				count);
+		assertEquals(1,
+				count, formatFail(methodName
+				+ " should invoke ObservableTracker.getterCalled() once."));
 	}
 }

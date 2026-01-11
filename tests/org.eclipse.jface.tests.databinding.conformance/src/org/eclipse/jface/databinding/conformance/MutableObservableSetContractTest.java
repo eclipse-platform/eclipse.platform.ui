@@ -16,8 +16,8 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MutableObservableSetContractTest extends
 		MutableObservableCollectionContractTest {
@@ -46,7 +46,7 @@ public class MutableObservableSetContractTest extends
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		set = (IObservableSet) getObservable();
@@ -206,22 +206,20 @@ public class MutableObservableSetContractTest extends
 
 		runnable.run();
 
-		assertEquals(
-				formatFail(methodName + " should fire one SetChangeEvent."), 1,
-				setListener.count);
-		assertEquals(formatFail(methodName
-				+ "'s change event observable should be the created Set."),
-				set, setListener.event.getObservable());
+		assertEquals(1, setListener.count,
+				formatFail(methodName + " should fire one SetChangeEvent."));
+		assertEquals(set, setListener.event.getObservable(),
+				formatFail(methodName
+				+ "'s change event observable should be the created Set."));
 
-		assertEquals(
-				formatFail("Two notifications should have been received."), 2,
-				queue.size());
-		assertEquals(formatFail("ChangeEvent of " + methodName
-				+ " should have fired before the SetChangeEvent."),
-				changeListener, queue.get(0));
-		assertEquals(formatFail("SetChangeEvent of " + methodName
-				+ " should have fired after the ChangeEvent."), setListener,
-				queue.get(1));
+		assertEquals(2, queue.size(),
+				formatFail("Two notifications should have been received."));
+		assertEquals(changeListener, queue.get(0),
+				formatFail("ChangeEvent of " + methodName
+				+ " should have fired before the SetChangeEvent."));
+		assertEquals(setListener, queue.get(1),
+				formatFail("SetChangeEvent of " + methodName
+				+ " should have fired after the ChangeEvent."));
 	}
 
 	/**
@@ -235,12 +233,12 @@ public class MutableObservableSetContractTest extends
 		runnable.run();
 
 		Set entries = listener.event.diff.getAdditions();
-		assertEquals(formatFail(methodName
-				+ " should result in one diff entry."), 1, entries.size());
+		assertEquals(1, entries.size(), formatFail(methodName
+				+ " should result in one diff entry."));
 
-		assertTrue(formatFail(methodName
-				+ " should result in a diff entry that is an addition."),
-				entries.contains(element));
+		assertTrue(entries.contains(element),
+				formatFail(methodName
+				+ " should result in a diff entry that is an addition."));
 	}
 
 	/**
@@ -254,11 +252,11 @@ public class MutableObservableSetContractTest extends
 		runnable.run();
 
 		Set entries = listener.event.diff.getRemovals();
-		assertEquals(formatFail(methodName
-				+ " should result in one diff entry."), 1, entries.size());
+		assertEquals(1, entries.size(), formatFail(methodName
+				+ " should result in one diff entry."));
 
-		assertTrue(formatFail(methodName
-				+ " should result in a diff entry that is a removal."),
-				entries.contains(element));
+		assertTrue(entries.contains(element),
+				formatFail(methodName
+				+ " should result in a diff entry that is a removal."));
 	}
 }

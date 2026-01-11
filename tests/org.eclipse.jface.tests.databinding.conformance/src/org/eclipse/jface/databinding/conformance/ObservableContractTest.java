@@ -16,11 +16,11 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -31,8 +31,8 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDel
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -57,7 +57,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		observable = getObservable();
@@ -81,8 +81,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 	@Test
 	public void testGetRealm_NotNull() throws Exception {
-		assertNotNull(formatFail("The observable's realm should not be null."),
-				observable.getRealm());
+		assertNotNull(observable.getRealm(),
+				formatFail("The observable's realm should not be null."));
 	}
 
 	@Test
@@ -92,9 +92,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		observable.addChangeListener(listener);
 		delegate.change(observable);
 
-		assertEquals(
-				formatFail("A change in the observable should notify change listeners."),
-				1, listener.count);
+		assertEquals(1, listener.count,
+				formatFail("A change in the observable should notify change listeners."));
 	}
 
 	@Test
@@ -105,11 +104,10 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		delegate.change(observable);
 
 		ChangeEvent event = listener.event;
-		assertNotNull(formatFail("change event was null"), event);
+		assertNotNull(event, formatFail("change event was null"));
 
-		assertSame(
-				formatFail("In the change event the source of the change should be the observable."),
-				observable, event.getObservable());
+		assertSame(observable, event.getObservable(),
+				formatFail("In the change event the source of the change should be the observable."));
 	}
 
 	@Test
@@ -123,9 +121,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		observable.addChangeListener(listener);
 
 		delegate.change(observable);
-		assertTrue(
-				formatFail("On change the current realm should be the realm of the observable."),
-				listener.isCurrentRealm);
+		assertTrue(listener.isCurrentRealm,
+				formatFail("On change the current realm should be the realm of the observable."));
 	}
 
 	@Test
@@ -136,23 +133,20 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		delegate.change(observable);
 
 		// precondition check
-		assertEquals(formatFail("change did not notify listeners"), 1,
-				listener.count);
+		assertEquals(1, listener.count, formatFail("change did not notify listeners"));
 
 		observable.removeChangeListener(listener);
 		delegate.change(observable);
 
-		assertEquals(
-				formatFail("When a change listener is removed it should not still receive change events."),
-				1, listener.count);
+		assertEquals(1, listener.count,
+				formatFail("When a change listener is removed it should not still receive change events."));
 	}
 
 	@Test
 	public void testIsStale_NotStale() throws Exception {
 		delegate.setStale(observable, false);
-		assertFalse(
-				formatFail("When an observable is not stale isStale() should return false."),
-				observable.isStale());
+		assertFalse(observable.isStale(),
+				formatFail("When an observable is not stale isStale() should return false."));
 	}
 
 	@Test
@@ -201,9 +195,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		observable = delegate.createObservable(realm);
 		delegate.change(observable);
 
-		assertEquals(
-				formatFail("After being disposed listeners should not receive change events."),
-				0, disposedObservableListener.count);
+		assertEquals(0, disposedObservableListener.count,
+				formatFail("After being disposed listeners should not receive change events."));
 	}
 
 	@Test

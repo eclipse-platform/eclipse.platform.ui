@@ -16,8 +16,8 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContra
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.2
@@ -48,7 +48,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		observable = (IObservableValue) getObservable();
@@ -60,16 +60,14 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				.observe(observable);
 
 		delegate.change(observable);
-		assertEquals(
-				formatFail("On change value change listeners should be notified."),
-				1, listener.count);
+		assertEquals(1, listener.count,
+				formatFail("On change value change listeners should be notified."));
 	}
 
 	@Test
 	public void testGetValueType_ExpectedType() throws Exception {
-		assertEquals(
-				formatFail("Type of the value should be returned from getType()."),
-				delegate.getValueType(observable), observable.getValueType());
+		assertEquals(delegate.getValueType(observable), observable.getValueType(),
+				formatFail("Type of the value should be returned from getType()."));
 	}
 
 	@Test
@@ -94,17 +92,15 @@ public class ObservableValueContractTest extends ObservableContractTest {
 
 		delegate.change(observable);
 
-		assertTrue(formatFail("Change Listeners were not notified on change."),
-				listeners.size() > 0);
+		assertTrue(listeners.size() > 0,
+				formatFail("Change Listeners were not notified on change."));
 
 		// not asserting the fact that both are notified as this is asserted in
 		// other tests
-		assertEquals(
-				formatFail("Change listeners should be notified before value change listeners."),
-				changeListener, listeners.get(0));
-		assertEquals(
-				formatFail("Value change listeners should be notified after change listeners."),
-				valueChangeListener, listeners.get(1));
+		assertEquals(changeListener, listeners.get(0),
+				formatFail("Change listeners should be notified before value change listeners."));
+		assertEquals(valueChangeListener, listeners.get(1),
+				formatFail("Value change listeners should be notified after change listeners."));
 	}
 
 	@Test
@@ -117,15 +113,13 @@ public class ObservableValueContractTest extends ObservableContractTest {
 
 		ValueChangeEvent event = listener.event;
 
-		assertTrue(formatFail("Change Listeners were not notified on change."),
-				listener.count > 0);
+		assertTrue(listener.count > 0,
+				formatFail("Change Listeners were not notified on change."));
 
-		assertEquals(
-				formatFail("When a value change event is fired the old value should be the previous value of the observable value."),
-				oldValue, event.diff.getOldValue());
-		assertEquals(
-				formatFail("When a value change event is fired the new value should be the same as the current value of the observable value."),
-				observable.getValue(), event.diff.getNewValue());
+		assertEquals(oldValue, event.diff.getOldValue(),
+				formatFail("When a value change event is fired the old value should be the previous value of the observable value."));
+		assertEquals(observable.getValue(), event.diff.getNewValue(),
+				formatFail("When a value change event is fired the new value should be the same as the current value of the observable value."));
 	}
 
 	@Test
@@ -143,9 +137,8 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		ValueChangeListener listener = new ValueChangeListener();
 		observable.addValueChangeListener(listener);
 		delegate.change(observable);
-		assertEquals(
-				formatFail("When a value change event is fired the new value should be applied before firing the change event."),
-				listener.value, observable.getValue());
+		assertEquals(listener.value, observable.getValue(),
+				formatFail("When a value change event is fired the new value should be applied before firing the change event."));
 	}
 
 	@Test
@@ -156,16 +149,14 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		delegate.change(observable);
 
 		// precondition
-		assertEquals(
-				formatFail("Value change listeners should be notified on change."),
-				1, listener.count);
+		assertEquals(1, listener.count,
+				formatFail("Value change listeners should be notified on change."));
 
 		observable.removeValueChangeListener(listener);
 		delegate.change(observable);
 
-		assertEquals(
-				formatFail("Value change listeners should not be notified after they've been removed from the observable."),
-				1, listener.count);
+		assertEquals(1, listener.count,
+				formatFail("Value change listeners should not be notified after they've been removed from the observable."));
 	}
 
 	@Test
