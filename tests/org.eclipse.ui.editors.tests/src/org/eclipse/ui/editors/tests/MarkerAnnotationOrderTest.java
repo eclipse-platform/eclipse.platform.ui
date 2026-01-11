@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.ContributorFactorySimple;
@@ -50,8 +50,8 @@ public class MarkerAnnotationOrderTest {
 
 	Object masterToken= null;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		//add the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		pointContributor= ContributorFactorySimple.createContributor(this);
@@ -71,8 +71,8 @@ public class MarkerAnnotationOrderTest {
 		}
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		// remove the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IExtension[] extensions = registry.getExtensions(pointContributor);
@@ -85,7 +85,7 @@ public class MarkerAnnotationOrderTest {
 	}
 
 	@Test
-	public void testDirectDependency() {
+	void testDirectDependency() {
 		final ArrayList<IStatus> list= new ArrayList<>(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
 		ILog log= ILog.of(bundle);
@@ -102,15 +102,13 @@ public class MarkerAnnotationOrderTest {
 			log(e);
 		}
 
-		assertEquals("Wrong number of messages", 2, list.size());
+		assertEquals(2, list.size(), "Wrong number of messages");
 		assertEquals(
-				"Wrong Message for first status",
 				"Marker Updater 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2' and 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1' depend on each other, 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2' will run before 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1'",
-				((Status)list.get(0)).getMessage());
+				((Status)list.get(0)).getMessage(), "Wrong Message for first status");
 		assertEquals(
-				"Wrong Message for second status",
 				"Marker Updater 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4' and 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1' depend on each other, 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4' will run before 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1'",
-				((Status)list.get(1)).getMessage());
+				((Status)list.get(1)).getMessage(), "Wrong Message for second status");
 
 	}
 

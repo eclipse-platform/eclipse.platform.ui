@@ -20,11 +20,14 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Measures the time required to layout the widget 10 times. Does not include
@@ -32,29 +35,21 @@ import org.junit.Test;
  *
  * @since 3.1
  */
-public class LayoutTest extends PerformanceTestCaseJunit4 {
+public class LayoutTest {
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	private final TestWidgetFactory widgetFactory;
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	private final int xIterations = 100;
 
 	private final int yIterations = 10;
 
-	private final boolean flushState;
-
-	public LayoutTest(TestWidgetFactory widgetFactory, boolean flushState) {
-		this.widgetFactory = widgetFactory;
-		this.flushState = flushState;
-	}
-
 	/**
 	 * Run the test
 	 */
-	@Test
-	public void test() throws CoreException, WorkbenchException {
+	@ParameterizedTest
+	@MethodSource("org.eclipse.ui.tests.performance.layout.LayoutPerformanceTestSuite#data")
+	public void test(TestWidgetFactory widgetFactory, boolean flushState, TestInfo testInfo) throws CoreException, WorkbenchException {
 
 		widgetFactory.init();
 		final Composite widget = widgetFactory.getControl();
@@ -62,35 +57,42 @@ public class LayoutTest extends PerformanceTestCaseJunit4 {
 		Rectangle initialBounds = widget.getBounds();
 		final Rectangle newBounds = Geometry.copy(initialBounds);
 
-		for (int xIteration = 0; xIteration < xIterations; xIteration++) {
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-			processEvents();
+		try {
+			for (int xIteration = 0; xIteration < xIterations; xIteration++) {
 
-			startMeasuring();
+				processEvents();
 
-			for (int yIteration = 0; yIteration < yIterations; yIteration++) {
-				// Avoid giving the same x value twice in a row in order to make
-				// it hard to cache
-				int xSize = maxSize.x
-						* ((xIteration + yIteration) % xIterations)
-						/ xIterations;
-				int ySize = maxSize.y * yIteration / yIterations;
+				meter.start();
 
-				newBounds.width = xSize;
-				newBounds.height = ySize;
+				for (int yIteration = 0; yIteration < yIterations; yIteration++) {
+					// Avoid giving the same x value twice in a row in order to make
+					// it hard to cache
+					int xSize = maxSize.x
+							* ((xIteration + yIteration) % xIterations)
+							/ xIterations;
+					int ySize = maxSize.y * yIteration / yIterations;
 
-				widget.setBounds(newBounds);
-				widget.layout(flushState);
+					newBounds.width = xSize;
+					newBounds.height = ySize;
+
+					widget.setBounds(newBounds);
+					widget.layout(flushState);
+				}
+
+				meter.stop();
 			}
 
-			stopMeasuring();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			widget.setBounds(initialBounds);
+			widgetFactory.done();
 		}
-
-		commitMeasurements();
-		assertPerformance();
-
-		widget.setBounds(initialBounds);
-		widgetFactory.done();
 	}
 }
 

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -57,8 +57,8 @@ public class LargeFileTest {
 
 	boolean initialWordWrap;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
@@ -78,8 +78,8 @@ public class LargeFileTest {
 		initialWordWrap = preferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		fLargeFile.deleteMarkers(IMarker.BOOKMARK, true, IResource.DEPTH_INFINITE);
 		ResourceHelper.deleteProject("LargeFileTestProject");
 		fLargeFile= null;
@@ -88,7 +88,7 @@ public class LargeFileTest {
 	}
 
 	@Test
-	public void openLargeFileWithAnnotation() throws Exception {
+	void openLargeFileWithAnnotation() throws Exception {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		Display display = workbench.getDisplay();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
@@ -104,7 +104,7 @@ public class LargeFileTest {
 				baseline[0] = System.nanoTime() - baseline[0];
 			});
 			TestUtil.runEventLoop();
-			assertTrue("Expected a text editor", part instanceof ITextEditor);
+			assertTrue(part instanceof ITextEditor, "Expected a text editor");
 			page.closeEditor(part, false);
 			TestUtil.runEventLoop();
 		}
@@ -126,14 +126,13 @@ public class LargeFileTest {
 			withMarker[0] = System.nanoTime() - withMarker[0];
 		});
 		TestUtil.runEventLoop();
-		assertTrue("Expected a text editor", part instanceof ITextEditor);
+		assertTrue(part instanceof ITextEditor, "Expected a text editor");
 		page.closeEditor(part, false);
 		TestUtil.runEventLoop();
 		// Be generous here; all this timing is approximate. Fail if the attempt
 		// with the marker takes more than twice as long. If the OverviewRuler
 		// is badly implemented, opening with the marker will take much longer.
-		assertTrue("Opening large file took too long: " + (withMarker[0] / 1000000.0f) + "ms with marker vs. "
-				+ (baseline[0] / 1000000.0f) + "ms without",
-				withMarker[0] / 2 <= baseline[0]);
+		assertTrue(withMarker[0] / 2 <= baseline[0], "Opening large file took too long: " + (withMarker[0] / 1000000.0f) + "ms with marker vs. "
+				+ (baseline[0] / 1000000.0f) + "ms without");
 	}
 }

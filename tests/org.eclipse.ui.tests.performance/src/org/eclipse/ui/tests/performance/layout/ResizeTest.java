@@ -17,26 +17,26 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.waitForBackgroundJobs;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.eclipse.ui.tests.performance.ViewPerformanceUtil;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Measures the time to resize the widget 10 times, including the time required
@@ -44,14 +44,13 @@ import org.junit.runners.Parameterized.Parameters;
  *
  * @since 3.1
  */
-@RunWith(Parameterized.class)
-public class ResizeTest extends PerformanceTestCaseJunit4 {
+public class ResizeTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
 	// Note: to test perspective switching properly, we need perspectives with lots
@@ -74,36 +73,28 @@ public class ResizeTest extends PerformanceTestCaseJunit4 {
 
 	private static final String tagString = "UI - Workbench Window Resize";
 
-	private final TestWidgetFactory widgetFactory;
-
-	private final boolean tagLocal;
-
-	@Parameters(name = "{index}: {0}")
-	public static Collection<Object[]> data() {
-		var configs = new ArrayList<Object[]>();
+	public static Stream<Arguments> data() {
+		var configs = new ArrayList<Arguments>();
 		configs.addAll(PERSPECTIVE_IDS.stream()
-				.map(id -> new Object[] { new PerspectiveWidgetFactory(id), id.equals(resizeFingerprintTest) })
+				.map(id -> Arguments.of(new PerspectiveWidgetFactory(id), id.equals(resizeFingerprintTest)))
 				.toList());
 		configs.addAll(ViewPerformanceUtil.getAllTestableViewIds().stream()
-				.map(id -> new Object[] { new ViewWidgetFactory(id), false }).toList());
-		return configs;
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public ResizeTest(TestWidgetFactory testWidgetFactory, boolean tagLocal) {
-		this.widgetFactory = testWidgetFactory;
-		this.tagLocal = tagLocal;
+				.map(id -> Arguments.of(new ViewWidgetFactory(id), false)).toList());
+		return configs.stream();
 	}
 
 	/**
 	 * Run the test
 	 */
-	@Test
-	public void test() throws CoreException, WorkbenchException {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void test(TestWidgetFactory widgetFactory, boolean tagLocal, TestInfo testInfo) throws CoreException, WorkbenchException {
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+
 		if (tagLocal) {
-			tagAsSummary(tagString, Dimension.ELAPSED_PROCESS);
+			perf.tagAsSummary(meter, tagString, Dimension.ELAPSED_PROCESS);
 		}
 
 		widgetFactory.init();
@@ -111,38 +102,41 @@ public class ResizeTest extends PerformanceTestCaseJunit4 {
 		Rectangle initialBounds = widget.getBounds();
 		final Point maxSize = widgetFactory.getMaxSize();
 
-		waitForBackgroundJobs();
-		processEvents();
-		for (int j = 0; j < 50; j++) {
+		try {
+			waitForBackgroundJobs();
+			processEvents();
+			for (int j = 0; j < 50; j++) {
 
-			startMeasuring();
-			for (int i = 0; i < 2; i++) {
+				meter.start();
+				for (int i = 0; i < 2; i++) {
 
-				for (int xIteration = 0; xIteration < xIterations; xIteration += 5) {
+					for (int xIteration = 0; xIteration < xIterations; xIteration += 5) {
 
-					for (int yIteration = 0; yIteration < yIterations; yIteration++) {
-						// Avoid giving the same x value twice in a row in order
-						// to make it hard to cache
-						int xSize = maxSize.x
-								* ((xIteration + yIteration) % xIterations)
-								/ xIterations;
-						int ySize = maxSize.y * yIteration / yIterations;
+						for (int yIteration = 0; yIteration < yIterations; yIteration++) {
+							// Avoid giving the same x value twice in a row in order
+							// to make it hard to cache
+							int xSize = maxSize.x
+									* ((xIteration + yIteration) % xIterations)
+									/ xIterations;
+							int ySize = maxSize.y * yIteration / yIterations;
 
-						widget.setSize(xSize, ySize);
+							widget.setSize(xSize, ySize);
 
-						processEvents();
+							processEvents();
+						}
+
 					}
 
 				}
-
+				meter.stop();
 			}
-			stopMeasuring();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+			widget.setBounds(initialBounds);
+			widgetFactory.done();
 		}
-		commitMeasurements();
-		assertPerformance();
-
-		widget.setBounds(initialBounds);
-		widgetFactory.done();
 	}
 
 }

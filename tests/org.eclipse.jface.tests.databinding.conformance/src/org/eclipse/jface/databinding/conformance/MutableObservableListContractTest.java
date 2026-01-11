@@ -16,8 +16,8 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +30,8 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Mutability tests for IObservableList.
@@ -60,7 +59,7 @@ public class MutableObservableListContractTest extends
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		list = (IObservableList) getObservable();
@@ -186,7 +185,7 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(() -> assertSame(element0, list.set(0, element1)), "List.set(int, Object)", list,
+		assertListChangeEventFired(() -> assertSame(element0, list.set(0, element1), "List.set(int, Object)"), "List.set(int, Object)", list,
 				Arrays.asList(new Object[] { element1 }));
 	}
 
@@ -196,7 +195,7 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 		final Object element2 = delegate.createElement(list);
 
-		assertContainsDuringChangeEvent(() -> assertSame(element1, list.set(0, element2)), "List.set(int, Object)",
+		assertContainsDuringChangeEvent(() -> assertSame(element1, list.set(0, element2), "List.set(int, Object)"), "List.set(int, Object)",
 				list, element2);
 	}
 
@@ -229,13 +228,11 @@ public class MutableObservableListContractTest extends
 
 		final Object movedElement = list.move(0, 0);
 
-		assertEquals(
-				formatFail("IObservableList.move(int,int) should return the moved element"),
-				element, movedElement);
-		assertEquals(
+		assertEquals(element, movedElement,
+				formatFail("IObservableList.move(int,int) should return the moved element"));
+		assertEquals(0, tracker.count,
 				formatFail("IObservableLIst.move(int,int) should not fire a change event"
-						+ "when the old and new indices are the same"), 0,
-				tracker.count);
+						+ "when the old and new indices are the same"));
 	}
 
 	@Test
@@ -245,7 +242,7 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(() -> assertSame(element0, list.move(0, 1)), "IObservableList.move(int, int)", list,
+		assertListChangeEventFired(() -> assertSame(element0, list.move(0, 1), "IObservableList.move(int, int)"), "IObservableList.move(int, int)", list,
 				Arrays.asList(new Object[] { element1, element0 }));
 	}
 
@@ -398,9 +395,9 @@ public class MutableObservableListContractTest extends
 	public void testClear_ClearsList() {
 		Object element = delegate.createElement(list);
 		list.add(element);
-		Assert.assertEquals(Collections.singletonList(element), list);
+		assertEquals(Collections.singletonList(element), list);
 		list.clear();
-		Assert.assertEquals(Collections.EMPTY_LIST, list);
+		assertEquals(Collections.EMPTY_LIST, list);
 	}
 
 	private void assertListChangeEventFired(Runnable runnable,
@@ -416,32 +413,30 @@ public class MutableObservableListContractTest extends
 
 		runnable.run();
 
-		assertEquals(formatFail(methodName
-				+ " should fire one ListChangeEvent."), 1, listListener.count);
-		assertEquals(formatFail(methodName
-				+ "'s change event observable should be the created List."),
-				list, listListener.event.getObservable());
+		assertEquals(1, listListener.count, formatFail(methodName
+				+ " should fire one ListChangeEvent."));
+		assertEquals(list, listListener.event.getObservable(),
+				formatFail(methodName
+				+ "'s change event observable should be the created List."));
 
-		assertEquals(
-				formatFail("Two notifications should have been received."), 2,
-				queue.size());
-		assertEquals("ChangeEvent of " + methodName
-				+ " should have fired before the ListChangeEvent.",
-				changeListener, queue.get(0));
-		assertEquals("ListChangeEvent of " + methodName
-				+ " should have fired after the ChangeEvent.", listListener,
-				queue.get(1));
+		assertEquals(2, queue.size(),
+				formatFail("Two notifications should have been received."));
+		assertEquals(changeListener, queue.get(0),
+				"ChangeEvent of " + methodName
+				+ " should have fired before the ListChangeEvent.");
+		assertEquals(listListener, queue.get(1),
+				"ListChangeEvent of " + methodName
+				+ " should have fired after the ChangeEvent.");
 
-		assertEquals(formatFail(methodName
-				+ " did not leave observable list with the expected contents"),
-				newList, list);
+		assertEquals(newList, list,
+				formatFail(methodName
+				+ " did not leave observable list with the expected contents"));
 
 		ListDiff diff = listListener.event.diff;
 		diff.applyTo(oldList);
-		assertEquals(
+		assertEquals(newList, oldList,
 				formatFail(methodName
-						+ " fired a diff which does not represent the expected list change"),
-				newList, oldList);
+						+ " fired a diff which does not represent the expected list change"));
 
 	}
 }

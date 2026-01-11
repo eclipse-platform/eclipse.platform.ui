@@ -17,8 +17,7 @@ package org.eclipse.ui.tests.performance;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -47,30 +46,29 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test scrolling performance with various label styles
  *
  * @since 3.5
  */
-@RunWith(Parameterized.class)
-public class LabelProviderTest extends PerformanceTestCaseJunit4 {
+public class LabelProviderTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	private static class CountryEntry {
 		private final String name;
@@ -173,25 +171,14 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 	private Shell fShell;
 	private StructuredViewer fViewer;
 
-	private final boolean styled;
-	private final boolean colors;
-
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { true, true }, { true, false }, { false, true }, { false, false } });
+	public static Stream<Arguments> data() {
+		return Stream.of(Arguments.of(true, true), Arguments.of(true, false), Arguments.of(false, true),
+				Arguments.of(false, false));
 	}
 
-	/**
-	 * @param styled <code>true</code> to use DecoratingStyledCellLabelProvider
-	 * @param colors Run test with color on or off
-	 */
-	public LabelProviderTest(boolean styled, boolean colors) {
-		this.styled = styled;
-		this.colors = colors;
-	}
-
-	@Test
-	public void test() throws Throwable {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void test(boolean styled, boolean colors, TestInfo testInfo) throws Throwable {
 		if (styled)
 			fViewer.setLabelProvider(getDecoratingStyledCellLabelProvider(colors));
 		else
@@ -200,17 +187,25 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 		final Tree tree = ((TreeViewer) fViewer).getTree();
 		fShell.setFocus();
 
-		exercise(() -> {
-			startMeasuring();
-			for (int i = 0; i < ITEM_COUNT / 5; i++) {
-				tree.setTopItem(tree.getItem(i * 5));
-				processEvents();
-			}
-			stopMeasuring();
-		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-		commitMeasurements();
-		assertPerformance();
+		try {
+			exercise(() -> {
+				meter.start();
+				for (int i = 0; i < ITEM_COUNT / 5; i++) {
+					tree.setTopItem(tree.getItem(i * 5));
+					processEvents();
+				}
+				meter.stop();
+			}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
+
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 	protected StructuredViewer createViewer(Shell parent) {
@@ -253,7 +248,7 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 		return viewer;
 	}
 
-	@Before
+	@BeforeEach
 	public final void prepareShellUp() throws Exception {
 		Display display = Display.getCurrent();
 		if (display == null)
@@ -273,7 +268,7 @@ public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 		fShell.open();
 	}
 
-	@After
+	@AfterEach
 	public final void closeShell() throws Exception {
 		if (fShell != null) {
 			fShell.close();
