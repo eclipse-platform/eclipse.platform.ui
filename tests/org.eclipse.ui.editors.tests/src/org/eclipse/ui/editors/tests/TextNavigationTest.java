@@ -10,8 +10,8 @@
  ********************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import java.nio.file.Files;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -57,8 +57,8 @@ public class TextNavigationTest {
 	private StyledText widget;
 	private IDocument fDocument;
 
-	@Before
-	public void setUp() throws IOException, PartInitException, CoreException {
+	@BeforeEach
+	void setUp() throws IOException, PartInitException, CoreException {
 		file = File.createTempFile(TextNavigationTest.class.getName(), ".txt");
 		Files.write(file.toPath(), "  abc".getBytes());
 		editor = (AbstractTextEditor)IDE.openEditorOnFileStore(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), EFS.getStore(file.toURI()));
@@ -66,15 +66,15 @@ public class TextNavigationTest {
 		widget = (StyledText) editor.getAdapter(Control.class);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterEach
+	void tearDown() {
 		editor.close(false);
 		file.delete();
 		TestUtil.cleanUp();
 	}
 
 	@Test
-	public void testHome() {
+	void testHome() {
 		IPreferenceStore preferenceStore = EditorsPlugin.getDefault().getPreferenceStore();
 		boolean previousPrefValue = preferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 		preferenceStore.setValue(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, false);
@@ -91,7 +91,7 @@ public class TextNavigationTest {
 	}
 
 	@Test
-	public void testShiftHome() {
+	void testShiftHome() {
 		editor.selectAndReveal(5, 0);
 		IAction action= editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_START);
 		action.run();
@@ -107,7 +107,7 @@ public class TextNavigationTest {
 	}
 
 	@Test
-	public void testShiftEnd() {
+	void testShiftEnd() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
 		IAction action= editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_END);
 		action.run();
@@ -118,7 +118,7 @@ public class TextNavigationTest {
 	}
 
 	@Test
-	public void testShiftEndMultipleLines() {
+	void testShiftEndMultipleLines() {
 		fDocument.set("LINE 1\nLINE 2\n");
 		editor.selectAndReveal(12, -7);
 		editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_END).run();
@@ -129,7 +129,7 @@ public class TextNavigationTest {
 	}
 
 	@Test
-	public void testShiftEndHomeHome() {
+	void testShiftEndHomeHome() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
 		assertEquals(0, widget.getCaretOffset());
 
@@ -153,7 +153,7 @@ public class TextNavigationTest {
 	}
 
 	@Test
-	public void testEndHomeRevealCaret() {
+	void testEndHomeRevealCaret() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
 		fDocument.set(IntStream.range(0, 2000).mapToObj(i -> "a").collect(Collectors.joining()));
 		PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());

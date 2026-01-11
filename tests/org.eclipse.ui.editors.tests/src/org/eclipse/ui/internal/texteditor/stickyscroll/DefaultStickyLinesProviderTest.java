@@ -16,14 +16,14 @@ package org.eclipse.ui.internal.texteditor.stickyscroll;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -53,8 +53,8 @@ public class DefaultStickyLinesProviderTest {
 	private StickyLinesProperties stickyLinesProperties;
 	private IEditorPart editorPart;
 
-	@Before
-	public void setup() {
+	@BeforeEach
+	void setup() {
 		shell = new Shell(Display.getDefault());
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
 		sourceViewer.setDocument(new Document());
@@ -64,20 +64,20 @@ public class DefaultStickyLinesProviderTest {
 		stickyLinesProperties = new StickyLinesProperties(4, editorPart);
 	}
 
-	@After
-	public void teardown() {
+	@AfterEach
+	void teardown() {
 		TestUtil.cleanUp();
 	}
 
 	@Test
-	public void testEmptySourceCode() {
+	void testEmptySourceCode() {
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 0, stickyLinesProperties);
 
 		assertThat(stickyLines, is(empty()));
 	}
 
 	@Test
-	public void testSingleStickyLine() {
+	void testSingleStickyLine() {
 		String text = """
 				line 1
 				 line 2<""";
@@ -91,7 +91,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testLineUnderStickyLine() {
+	void testLineUnderStickyLine() {
 		String text = """
 				line 1
 				 line 2<
@@ -106,7 +106,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testNewStickyRoot() {
+	void testNewStickyRoot() {
 		String text = """
 				line 1
 				 line 2
@@ -121,7 +121,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testIgnoreEmptyLines() {
+	void testIgnoreEmptyLines() {
 		String text = """
 				line 1
 
@@ -138,7 +138,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testIgnoreOtherBlankLines() {
+	void testIgnoreOtherBlankLines() {
 		String text = """
 				line 1
 				    \t
@@ -155,7 +155,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testLinesWithTabs() {
+	void testLinesWithTabs() {
 		stickyLinesProperties = new StickyLinesProperties(2, editorPart);
 		String text = """
 				line 1
@@ -171,7 +171,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testLinesWithTabsAndSpaces() {
+	void testLinesWithTabsAndSpaces() {
 		// tab witdh 4
 		String text = """
 				line 1
@@ -189,7 +189,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testStartAtEmptyLineWithNext() {
+	void testStartAtEmptyLineWithNext() {
 		String text = """
 				line 1
 
@@ -207,7 +207,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testStartAtEmptyLineWithPrevious() {
+	void testStartAtEmptyLineWithPrevious() {
 		String text = """
 				line 1
 				 line 2
@@ -224,7 +224,7 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
-	public void testStickyLineWithSourceViewerLineMapping() {
+	void testStickyLineWithSourceViewerLineMapping() {
 		sourceViewer = new SourceViewerWithLineMapping(shell, null, SWT.None);
 		sourceViewer.setDocument(new Document());
 		textWidget = sourceViewer.getTextWidget();

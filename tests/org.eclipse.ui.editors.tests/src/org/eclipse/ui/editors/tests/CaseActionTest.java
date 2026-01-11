@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -44,14 +44,14 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-public class CaseActionTest {
+class CaseActionTest {
 
 	private static IProject project;
 	private static IFile file;
 	private AbstractTextEditor editor;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("test");
 		project.create(new NullProgressMonitor());
 		project.open(new NullProgressMonitor());
@@ -59,15 +59,15 @@ public class CaseActionTest {
 		file.create(new ByteArrayInputStream("bar".getBytes()), true, new NullProgressMonitor());
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	@AfterAll
+	static void tearDownAfterClass() throws Exception {
 		file.delete(true, new NullProgressMonitor());
 		project.delete(true, new NullProgressMonitor());
 		TestUtil.cleanUp();
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
@@ -80,14 +80,14 @@ public class CaseActionTest {
 		// make sure we start from a clean state
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		editor.close(false);
 		editor= null;
 	}
 
 	@Test
-	public void testMultiSelectionCase() {
+	void testMultiSelectionCase() {
 		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		doc.set("foo bar foo");
 		IRegion[] initialSelection = { new Region(0,3), new Region(8, 3) };

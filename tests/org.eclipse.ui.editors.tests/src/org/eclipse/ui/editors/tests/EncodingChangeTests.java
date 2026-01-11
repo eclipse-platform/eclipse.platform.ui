@@ -14,13 +14,13 @@
 
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
@@ -80,16 +80,16 @@ public class EncodingChangeTests {
 		return ORIGINAL_CONTENT;
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("EncodingChangeTestProject/EncodingChangeTests/");
 		fFile= ResourceHelper.createFile(folder, "file" + fCount + ".txt", getOriginalContent());
 		fFile.setCharset(null, null);
 		fCount++;
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		closeEditor(fEditor);
 		fEditor= null;
 		fFile= null;
@@ -98,7 +98,7 @@ public class EncodingChangeTests {
 	}
 
 	@Test
-	public void testChangeEncodingViaFile() {
+	void testChangeEncodingViaFile() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -126,7 +126,7 @@ public class EncodingChangeTests {
 	}
 
 	@Test
-	public void testChangeEncodingViaEncodingSupport() {
+	void testChangeEncodingViaEncodingSupport() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -157,7 +157,7 @@ public class EncodingChangeTests {
 	}
 
 	@Test
-	public void testAInvalidEncoding() {
+	void testAInvalidEncoding() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {

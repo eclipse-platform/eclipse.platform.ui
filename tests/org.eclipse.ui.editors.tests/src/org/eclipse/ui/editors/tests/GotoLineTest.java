@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -61,31 +61,31 @@ public class GotoLineTest {
 		return ORIGINAL_CONTENT;
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("GoToLineTestProject/goToLineTests/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
 		TestUtil.cleanUp();
 	}
 
 	@Test
-	public void testGoToFirstLine() {
+	void testGoToFirstLine() {
 		goToLine(0, 0);
 	}
 
 	@Test
-	public void testGoToLastLine() {
+	void testGoToLastLine() {
 		goToLine(2, 2);
 	}
 
 	@Test
-	public void testGoToInvalidLine() {
+	void testGoToInvalidLine() {
 		goToLine(1, 1);
 		goToLine(-1, 1);
 		goToLine(3, 1);
