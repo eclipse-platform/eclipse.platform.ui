@@ -14,15 +14,16 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
@@ -55,16 +56,16 @@ public class StatusEditorTest {
 	private Display display;
 	private IWorkbenchPage page;
 
-	@Before
-	public void before() throws WorkbenchException {
+	@BeforeEach
+	void before() throws WorkbenchException {
 		window = PlatformUI.getWorkbench().openWorkbenchWindow(null);
 		display = window.getShell().getDisplay();
 		page = window.getActivePage();
 		processEvents();
 	}
 
-	@After
-	public void after() {
+	@AfterEach
+	void after() {
 		window.close();
 		page = null;
 		processEvents();
@@ -77,7 +78,7 @@ public class StatusEditorTest {
 	 * No exceptions are thrown when a status editor displaying an erroneous status is activated with a mouse click.
 	 */
 	@Test
-	public void doNotThrowOnActivationInStale() throws Exception {
+	void doNotThrowOnActivationInStale() throws Exception {
 		IEditorPart editor1 = openNonExistentFile(page, new URI("file:/1.txt"));
 		openNonExistentFile(page, new URI("file:/2.txt"));
 		ILog log = ILog.of(Platform.getBundle("org.eclipse.e4.ui.workbench"));
@@ -96,7 +97,7 @@ public class StatusEditorTest {
 			log.removeLogListener(listener);
 		}
 		if(!logEvents.isEmpty()) {
-			Assert.assertEquals("Unexpected errors logged", "", logEvents.toString());
+			assertEquals("", logEvents.toString(), "Unexpected errors logged");
 		}
 	}
 

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.nio.file.Path;
 
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -41,13 +41,13 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 public class DocumentProviderRegistryTest {
 
-	@Rule
-	public TemporaryFolder tmp = new TemporaryFolder();
+	@TempDir
+	Path tmp;
 
 	private IFile file;
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		if (file != null) {
 			ResourceHelper.delete(file.getProject());
 		}
@@ -55,24 +55,24 @@ public class DocumentProviderRegistryTest {
 	}
 
 	@Test
-	public void testFindByExtensionInWorkspace() throws Exception {
+	void testFindByExtensionInWorkspace() throws Exception {
 		IFolder folder = ResourceHelper.createFolder("DocumentProviderRegistryTestProject/test");
 		file = ResourceHelper.createFile(folder, "file.testfile", "");
-		assertTrue("File should exist: " + file.toString(), file.exists());
+		assertTrue(file.exists(), "File should exist: " + file.toString());
 		IEditorInput editorInput = new FileEditorInput(file);
 		IDocumentProvider provider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
-		assertEquals("Unexpected document provider found : " + provider.getClass().getName(),
-				TestDocumentProvider.class, provider.getClass());
+		assertEquals(TestDocumentProvider.class, provider.getClass(),
+				"Unexpected document provider found : " + provider.getClass().getName());
 	}
 
 	@Test
-	public void testFindByExtensionNonWorkspace() throws Exception {
-		File external = tmp.newFile("external.testfile");
+	void testFindByExtensionNonWorkspace() throws Exception {
+		File external = tmp.resolve("external.testfile").toFile();
 		IFileStore store = EFS.getLocalFileSystem().getStore(IPath.fromOSString(external.getCanonicalPath()));
 		IEditorInput editorInput = new FileStoreEditorInput(store);
 		IDocumentProvider provider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
-		assertEquals("Unexpected document provider found : " + provider.getClass().getName(),
-				TestDocumentProvider.class, provider.getClass());
+		assertEquals(TestDocumentProvider.class, provider.getClass(),
+				"Unexpected document provider found : " + provider.getClass().getName());
 	}
 
 	public static class TestDocumentProvider extends TextFileDocumentProvider {

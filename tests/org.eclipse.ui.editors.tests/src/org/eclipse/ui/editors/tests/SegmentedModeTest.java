@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -52,14 +52,14 @@ public class SegmentedModeTest {
 		return ORIGINAL_CONTENT;
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 		TestUtil.cleanUp();
 	}
@@ -68,7 +68,7 @@ public class SegmentedModeTest {
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=70934
 	 */
 	@Test
-	public void testSegmentation() {
+	void testSegmentation() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -98,7 +98,7 @@ public class SegmentedModeTest {
 			}
 
 		} catch (PartInitException e) {
-			assertTrue(false);
+			fail(e);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class SegmentedModeTest {
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=465684
 	 */
 	@Test
-	public void testShowNothing() {
+	void testShowNothing() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -133,7 +133,7 @@ public class SegmentedModeTest {
 			}
 
 		} catch (PartInitException e) {
-			assertTrue(false);
+			fail(e);
 		}
 	}
 }
