@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -83,8 +83,8 @@ public class FileDocumentProviderTest {
 	private IEditorPart editor;
 	private IWorkbenchPage page;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		closeIntro(PlatformUI.getWorkbench());
 		IFolder folder = ResourceHelper.createFolder("FileDocumentProviderTestProject/test");
 		file = (File) ResourceHelper.createFile(folder, "file.txt", "");
@@ -127,8 +127,8 @@ public class FileDocumentProviderTest {
 		}
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() throws Exception {
 		stopLockingFlag.set(true);
 		lockJob.cancel();
 		lockJob2.cancel();
@@ -141,9 +141,9 @@ public class FileDocumentProviderTest {
 	}
 
 	@Test
-	public void testRefreshFileWhileWorkspaceIsLocked1() throws Exception {
+	void testRefreshFileWhileWorkspaceIsLocked1() throws Exception {
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=482354
-		assertNotNull("Test must run in UI thread", Display.getCurrent());
+		assertNotNull(Display.getCurrent(), "Test must run in UI thread");
 
 		// Start workspace job which will lock workspace operations on file via
 		// rule
@@ -165,14 +165,14 @@ public class FileDocumentProviderTest {
 		fileProvider.refreshFile(file);
 
 		System.out.println("Busy wait terminated, UI thread is operable again!");
-		assertFalse("Test deadlocked while waiting on resource lock", stoppedByTest.get());
+		assertFalse(stoppedByTest.get(), "Test deadlocked while waiting on resource lock");
 		assertTrue(stopLockingFlag.get());
 	}
 
 	@Test
-	public void testRefreshFileWhileWorkspaceIsLocked2() throws Exception {
+	void testRefreshFileWhileWorkspaceIsLocked2() throws Exception {
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=482354
-		assertNotNull("Test must run in UI thread", Display.getCurrent());
+		assertNotNull(Display.getCurrent(), "Test must run in UI thread");
 
 		// Start workspace job which will lock workspace operations on file via
 		// rule
@@ -195,13 +195,13 @@ public class FileDocumentProviderTest {
 
 		System.out.println("Busy wait terminated, UI thread is operable again!");
 
-		assertFalse("Test deadlocked while waiting on resource lock", stoppedByTest.get());
+		assertFalse(stoppedByTest.get(), "Test deadlocked while waiting on resource lock");
 		assertTrue(stopLockingFlag.get());
 	}
 
 	@Test
-	public void testValidateStateForFileWhileWorkspaceIsLocked() throws Exception {
-		assertNotNull("Test must run in UI thread", Display.getCurrent());
+	void testValidateStateForFileWhileWorkspaceIsLocked() throws Exception {
+		assertNotNull(Display.getCurrent(), "Test must run in UI thread");
 
 		// Start workspace job which will lock workspace operations on file
 		lockJob2.schedule();
@@ -220,7 +220,7 @@ public class FileDocumentProviderTest {
 		fileProvider.validateState(editor.getEditorInput(), editor.getSite().getShell());
 
 		System.out.println("Busy wait terminated, UI thread is operable again!");
-		assertFalse("Test deadlocked while waiting on resource lock", stoppedByTest.get());
+		assertFalse(stoppedByTest.get(), "Test deadlocked while waiting on resource lock");
 		assertTrue(stopLockingFlag.get());
 	}
 

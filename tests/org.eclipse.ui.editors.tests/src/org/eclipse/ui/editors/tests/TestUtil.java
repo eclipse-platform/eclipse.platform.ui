@@ -15,7 +15,7 @@ package org.eclipse.ui.editors.tests;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -28,15 +28,15 @@ public class TestUtil {
 	 */
 	public static void cleanUp() {
 		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+		Assertions.assertFalse(Thread.interrupted(), "The main thread should not be interrupted at the end of a test");
 		// Wait for any outstanding jobs to finish. Protect against deadlock by
 		// terminating the wait after a timeout.
 		boolean timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(3));
-		Assert.assertFalse("Some Job did not terminate at the end of the test", timedOut);
+		Assertions.assertFalse(timedOut, "Some Job did not terminate at the end of the test");
 		// Wait for any pending *syncExec calls to finish
 		runEventLoop();
 		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+		Assertions.assertFalse(Thread.interrupted(), "The main thread should not be interrupted at the end of a test");
 	}
 
 	/**

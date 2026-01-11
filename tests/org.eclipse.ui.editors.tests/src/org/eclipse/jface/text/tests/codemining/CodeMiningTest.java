@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
@@ -18,11 +18,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -65,20 +65,20 @@ public class CodeMiningTest {
 
 	private static IProject project;
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
+	@BeforeAll
+	static void beforeClass() throws Exception {
 		hideWelcomePage();
 		createProject(PROJECT_NAME);
 	}
 
-	@AfterClass
-	public static void afterClass() throws Exception {
+	@AfterAll
+	static void afterClass() throws Exception {
 		if (project != null)
 			project.delete(true, new NullProgressMonitor());
 	}
 
-	@After
-	public void after() {
+	@AfterEach
+	void after() {
 		closeAllEditors();
 		drainEventQueue();
 		CodeMiningTestProvider.provideContentMiningAtOffset = -1;
@@ -112,7 +112,7 @@ public class CodeMiningTest {
 	}
 
 	@Test
-	public void testClearCodeMiningTextEditorDecorationIfInInvisibleArea() throws Exception {
+	void testClearCodeMiningTextEditorDecorationIfInInvisibleArea() throws Exception {
 		IFile file = project.getFile("test.testprojectionviewer");
 		if (file.exists()) {
 			file.delete(true, new NullProgressMonitor());
@@ -144,7 +144,7 @@ public class CodeMiningTest {
 			}
 		});
 		StyleRange style = styledText.getStyleRangeAtOffset(offsetAtLine95 - 1);
-		assertTrue(style.metrics.width > 0);
+		assertTrue(style != null && style.metrics != null && style.metrics.width > 0);
 		// scroll to top so that code minings are not in visible area
 		viewer.setSelectedRange(0, 0);
 		viewer.revealRange(0, 1);
@@ -156,14 +156,14 @@ public class CodeMiningTest {
 		// assert that line vertical height and styleRange was removed after
 		// deleting the codeminings
 		for (int i = 0; i < 100; i++) {
-			assertTrue("line vertical indent not zeri at line index " + i, styledText.getLineVerticalIndent(i) == 0);
+			assertTrue(styledText.getLineVerticalIndent(i) == 0, "line vertical indent not zeri at line index " + i);
 		}
 		style = styledText.getStyleRangeAtOffset(offsetAtLine95 - 1);
 		assertTrue(style == null);
 	}
 
 	@Test
-	public void testInlinedAnnotationSupportIsInLinesReturnsValidResultAfterDocumentChange() throws Exception {
+	void testInlinedAnnotationSupportIsInLinesReturnsValidResultAfterDocumentChange() throws Exception {
 		IFile file = project.getFile("test.testprojectionviewer");
 		if (file.exists()) {
 			file.delete(true, new NullProgressMonitor());
@@ -185,8 +185,7 @@ public class CodeMiningTest {
 		additions.put(annot, new Position(0, source.length()));
 		annotationModel.modifyAnnotations(deletionsArray, additions, null);
 
-		Assert.assertTrue("Line header code mining above 3rd line not drawn",
-				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						try {
@@ -196,14 +195,13 @@ public class CodeMiningTest {
 							return false;
 						}
 					}
-				}));
+				}), "Line header code mining above 3rd line not drawn");
 
 		IDocument doc = viewer.getDocument();
 		widget.setCaretOffset(offset);
 		doc.replace(offset, 0, "\n        insert text");
 		drainEventQueue();
-		Assert.assertTrue("Line header code mining above 4th line after inserting text not drawn",
-				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						try {
@@ -213,11 +211,11 @@ public class CodeMiningTest {
 							return false;
 						}
 					}
-				}));
+				}), "Line header code mining above 4th line after inserting text not drawn");
 	}
 
 	@Test
-	public void testCodeMiningOnEmptyLine() throws Exception {
+	void testCodeMiningOnEmptyLine() throws Exception {
 		IFile file = project.getFile("test.txt");
 		if (file.exists()) {
 			file.delete(true, new NullProgressMonitor());
@@ -230,21 +228,19 @@ public class CodeMiningTest {
 		drainEventQueue();
 		ISourceViewer viewer = (ISourceViewer) editor.getAdapter(ITextViewer.class);
 		StyledText widget = viewer.getTextWidget();
-		Assert.assertTrue("line content mining not available",
-				waitForCondition(widget.getDisplay(), 1000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 1000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						return widget.getStyleRangeAtOffset(0) != null
 								&& widget.getStyleRangeAtOffset(0).metrics != null;
 					}
-				}));
+				}), "line content mining not available");
 		drainEventQueue();
 
 		CodeMiningTestProvider.provideHeaderMiningAtLine = 1;
 		((ISourceViewerExtension5) viewer).updateCodeMinings();
 
-		Assert.assertTrue("Code mining not drawn at empty line after calling updateCodeMinings",
-				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						try {
@@ -254,11 +250,11 @@ public class CodeMiningTest {
 							return false;
 						}
 					}
-				}));
+				}), "Code mining not drawn at empty line after calling updateCodeMinings");
 	}
 
 	@Test
-	public void testCodeMiningAtEndOfLine() throws Exception {
+	void testCodeMiningAtEndOfLine() throws Exception {
 		IFile file = project.getFile("test.txt");
 		if (file.exists()) {
 			file.delete(true, new NullProgressMonitor());
@@ -273,21 +269,19 @@ public class CodeMiningTest {
 		drainEventQueue();
 		ISourceViewer viewer = (ISourceViewer) editor.getAdapter(ITextViewer.class);
 		StyledText widget = viewer.getTextWidget();
-		Assert.assertTrue("line content mining not available",
-				waitForCondition(widget.getDisplay(), 1000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 1000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						return widget.getStyleRangeAtOffset(0) != null
 								&& widget.getStyleRangeAtOffset(0).metrics != null;
 					}
-				}));
+				}), "line content mining not available");
 		drainEventQueue();
 
 		CodeMiningTestProvider.provideContentMiningAtOffset = firstPart.length();
 		((ISourceViewerExtension5) viewer).updateCodeMinings();
 
-		Assert.assertTrue("Code mining not drawn at the end of second line after calling updateCodeMinings",
-				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+		Assertions.assertTrue(waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
 						try {
@@ -297,7 +291,7 @@ public class CodeMiningTest {
 							return false;
 						}
 					}
-				}));
+				}), "Code mining not drawn at the end of second line after calling updateCodeMinings");
 	}
 
 	private void drainEventQueue() {
