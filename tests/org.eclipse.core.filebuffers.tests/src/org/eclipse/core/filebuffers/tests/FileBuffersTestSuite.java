@@ -37,7 +37,8 @@ import org.junit.platform.suite.api.SelectClasses;
 		FileStoreFileBuffersForNonExistingExternalFiles.class,
 		FileStoreFileBuffersForNonExistingWorkspaceFiles.class,
 		TextFileManagerDocCreationTests.class,
-		ResourceTextFileManagerDocCreationTests.class
+		ResourceTextFileManagerDocCreationTests.class,
+		ConvertLineDelemiterTest.class
 })
 public class FileBuffersTestSuite {
 	// see @SelectClasses
