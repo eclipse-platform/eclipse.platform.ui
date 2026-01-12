@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.SafeRunner;
@@ -31,25 +29,18 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -169,8 +160,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private LinkHelperService linkService;
 
-	private IPartListener2 partListener;
-
 	public CommonNavigator() {
 		super();
 	}
@@ -266,47 +255,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			ColumnViewerToolTipSupport.enableFor(commonViewer);
 		}
 
-		// Immediate fallback: handle Ctrl+A at the Tree level
-		commonViewer.getTree().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// MOD1 = Ctrl on Win/Linux, Command on macOS
-				if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'a' || e.keyCode == 'A')) {
-					commonViewer.getTree().selectAll();
-					e.doit = false;
-				}
-			}
-		});
-
-		// Activate the 'Select All' command handler when the view is active
-		partListener = new IPartListener2() {
-			private IHandlerActivation activation;
-
-			@Override
-			public void partActivated(IWorkbenchPartReference ref) {
-				if (ref.getPart(false) == CommonNavigator.this) {
-					IHandlerService hs = getSite().getService(IHandlerService.class);
-					activation = hs.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL, new AbstractHandler() {
-						@Override
-						public Object execute(ExecutionEvent event) {
-							commonViewer.getTree().selectAll();
-							return null;
-						}
-					});
-				}
-			}
-
-			@Override
-			public void partDeactivated(IWorkbenchPartReference ref) {
-				if (ref.getPart(false) == CommonNavigator.this && activation != null) {
-					IHandlerService hs = getSite().getService(IHandlerService.class);
-					hs.deactivateHandler(activation);
-					activation = null;
-				}
-			}
-		};
-		getSite().getPage().addPartListener(partListener);
-
 		stats.endRun();
 	}
 
@@ -360,17 +308,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	@Override
 	public void dispose() {
-		try {
-			getSite().getPage().removePartListener(partListener);
-			if (commonManager != null) {
-				commonManager.dispose();
-			}
-			if (commonActionGroup != null) {
-				commonActionGroup.dispose();
-			}
-		} finally {
-			super.dispose();
+		if (commonManager != null) {
+			commonManager.dispose();
 		}
+		if (commonActionGroup != null) {
+			commonActionGroup.dispose();
+		}
+		super.dispose();
 	}
 
 	/**
