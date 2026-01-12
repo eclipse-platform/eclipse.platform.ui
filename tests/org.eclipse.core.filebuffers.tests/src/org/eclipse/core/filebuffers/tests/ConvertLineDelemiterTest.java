@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 import org.eclipse.core.runtime.IPath;

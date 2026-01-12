@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.eclipse.core.internal.filebuffers.TextFileBufferManager;
 
@@ -25,7 +25,7 @@ import org.eclipse.core.filebuffers.LocationKind;
  */
 public class TextFileManagerDocCreationTests extends AbstractFileBufferDocCreationTests {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fManager= new TextFileBufferManager();
 	}

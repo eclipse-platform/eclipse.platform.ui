@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -43,7 +43,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions {
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() {
 		FileTool.delete(getPath());
 		super.tearDown();

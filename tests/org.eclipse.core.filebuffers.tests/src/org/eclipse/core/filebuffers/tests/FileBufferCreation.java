@@ -13,19 +13,18 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -59,12 +58,12 @@ public class FileBufferCreation {
 	private IProject fProject;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("project");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 	}
@@ -195,11 +194,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.NORMALIZE, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue(CONTENT2.equals(document.get()));
+		assertNotNull(document);
+		assertTrue(CONTENT2.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -218,11 +217,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.NORMALIZE, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue(CONTENT4.equals(document.get()));
+		assertNotNull(document);
+		assertTrue(CONTENT4.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -263,7 +262,7 @@ public class FileBufferCreation {
 		try {
 			document1.replace(0, document1.getLength(), CONTENT1);
 		} catch (BadLocationException x) {
-			Assert.assertFalse(false);
+			assertFalse(false);
 		}
 
 		assertFalse(document1.get().equals(document2.get()));
@@ -334,7 +333,7 @@ public class FileBufferCreation {
 		try {
 			document1.replace(0, document1.getLength(), CONTENT1);
 		} catch (BadLocationException x) {
-			Assert.assertFalse(false);
+			assertFalse(false);
 		}
 
 		assertFalse(document1.get().equals(document2.get()));
@@ -356,11 +355,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.NORMALIZE, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue("".equals(document.get()));
+		assertNotNull(document);
+		assertTrue("".equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -457,11 +456,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.IFILE, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue(CONTENT2.equals(document.get()));
+		assertNotNull(document);
+		assertTrue(CONTENT2.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.IFILE, null);
@@ -480,11 +479,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.IFILE, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue(CONTENT4.equals(document.get()));
+		assertNotNull(document);
+		assertTrue(CONTENT4.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.IFILE, null);
@@ -525,7 +524,7 @@ public class FileBufferCreation {
 		try {
 			document1.replace(0, document1.getLength(), CONTENT1);
 		} catch (BadLocationException x) {
-			Assert.assertFalse(false);
+			assertFalse(false);
 		}
 
 		assertFalse(document1.get().equals(document2.get()));
@@ -571,11 +570,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.LOCATION, null);
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.LOCATION);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue("".equals(document.get()));
+		assertNotNull(document);
+		assertTrue("".equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.LOCATION, null);
@@ -594,11 +593,11 @@ public class FileBufferCreation {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connectFileStore(fileStore, null);
 		ITextFileBuffer buffer= manager.getFileStoreTextFileBuffer(fileStore);
-		Assert.assertNotNull(buffer);
+		assertNotNull(buffer);
 
 		IDocument document= buffer.getDocument();
-		Assert.assertNotNull(document);
-		Assert.assertTrue("".equals(document.get()));
+		assertNotNull(document);
+		assertTrue("".equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnectFileStore(fileStore, null);
