@@ -68,17 +68,17 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.getFindCombo().setFocus();
 		dialog.setFindText("line");
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertTrue(dialog.getFindCombo().isFocusControl());
+		waitForFocus(dialog.getFindCombo()::isFocusControl, testName.getMethodName());
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		Button globalRadioButton= dialog.getButtonForSearchOption(SearchOptions.GLOBAL);
 		wrapCheckBox.setFocus();
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertTrue(wrapCheckBox.isFocusControl());
+		waitForFocus(wrapCheckBox::isFocusControl, testName.getMethodName());
 
 		globalRadioButton.setFocus();
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertTrue(globalRadioButton.isFocusControl());
+		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
 	}
 
 	@Test
@@ -97,23 +97,20 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		event.character= 'n';
 		event.doit= false;
 		wrapCheckBox.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		runEventQueue();
-		assertTrue(wrapCheckBox.isFocusControl());
+		waitForFocus(wrapCheckBox::isFocusControl, testName.getMethodName());
 
 		Button globalRadioButton= dialog.getButtonForSearchOption(SearchOptions.GLOBAL);
 		globalRadioButton.setFocus();
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.doit= false;
 		globalRadioButton.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		runEventQueue();
-		assertTrue(globalRadioButton.isFocusControl());
+		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
 
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.character= 'r';
 		event.doit= false;
 		globalRadioButton.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		runEventQueue();
-		assertTrue(globalRadioButton.isFocusControl());
+		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
 	}
 
 	@Test
