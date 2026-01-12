@@ -13,5 +13,16 @@
             id="org.eclipse.ui.navigator.PluginDropAction">
       </action>
    </extension> 
-   
+   <extension
+         point="org.eclipse.ui.handlers">
+	  <handler
+	        commandId="org.eclipse.ui.edit.selectAll"
+	        class="org.eclipse.ui.navigator.CommonNavigatorSelectAllHandler">
+	     <activeWhen>
+	         <with variable="activePart">
+                <instanceof value="org.eclipse.ui.navigator.CommonNavigator"/>
+	         </with>
+	     </activeWhen>
+	  </handler>
+   </extension>   
 </plugin>
