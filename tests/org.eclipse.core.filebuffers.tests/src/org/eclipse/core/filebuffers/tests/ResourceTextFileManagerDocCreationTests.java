@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.eclipse.core.internal.filebuffers.ResourceTextFileBufferManager;
 
@@ -32,7 +32,7 @@ import org.eclipse.core.filebuffers.LocationKind;
  */
 public class ResourceTextFileManagerDocCreationTests extends AbstractFileBufferDocCreationTests {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fManager= new ResourceTextFileBufferManager();
 	}

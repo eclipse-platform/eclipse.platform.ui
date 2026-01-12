@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -69,7 +69,7 @@ public abstract class FileStoreFileBufferFunctions {
 
 	protected abstract Class<IAnnotationModel> getAnnotationModelClass() throws Exception;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fManager= FileBuffers.getTextFileBufferManager();
 		fProject= ResourceHelper.createProject("project");
@@ -82,7 +82,7 @@ public abstract class FileStoreFileBufferFunctions {
 		return fProject;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 		assertTrue(buffer == null);

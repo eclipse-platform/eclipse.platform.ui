@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -38,7 +38,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctions {
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		getProject().close(null);
@@ -53,7 +53,7 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() {
 		FileTool.delete(getPath());
 		super.tearDown();
