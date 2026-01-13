@@ -17,7 +17,7 @@ package org.eclipse.jface.text.tests.contentassist;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,7 +134,7 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testCompleteActivationChar() {
-		assumeFalse("test fails on Windows, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/890", Util.isWindows());
+		assumeFalse(Util.isWindows(), "test fails on Windows, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/890");
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);

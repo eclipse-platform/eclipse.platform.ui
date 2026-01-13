@@ -14,16 +14,15 @@
 
 package org.eclipse.jface.text.tests.contentassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
@@ -60,7 +59,7 @@ public class AbstractContentAssistTest {
 	public AbstractContentAssistTest() {
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Shell[] shells= Display.getDefault().getShells();
 		for (Shell s : shells) {
@@ -69,7 +68,7 @@ public class AbstractContentAssistTest {
 		DisplayHelper.runEventLoop(Display.getDefault(), 0);
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		if (shell != null && !shell.isDisposed()) {
 			shell.close();
@@ -102,7 +101,7 @@ public class AbstractContentAssistTest {
 
 		shell.open();
 		processEvents();
-		Assert.assertTrue(new DisplayHelper() {
+		assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return viewer.getTextWidget().isVisible();
@@ -234,7 +233,7 @@ public class AbstractContentAssistTest {
 			DisplayHelper.sleep(getDisplay(), 100);
 			afterShells= findNewShells(beforeShells);
 		}
-		assertEquals("Not unique new shell found", 1, afterShells.size());
+		assertEquals(1, afterShells.size(), "Not unique new shell found");
 		return afterShells.get(0);
 	}
 

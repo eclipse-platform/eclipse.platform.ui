@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -115,9 +115,9 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 		getButton().setFocus();
 		// hides and disposes Shell (by org.eclipse.jface.text.contentassist.ContentAssistant.hide()):
 		processEvents();
-		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
-		assumeFalse("Test fails on CentOS 8: See https://github.com/eclipse-platform/eclipse.platform.text/pull/162", Platform.OS_LINUX.equals(Platform.getOS()));
-		assertTrue("Shell not disposed:" + this.infoShell, this.infoShell.isDisposed());
+		assumeFalse(Platform.OS_MACOSX.equals(Platform.getOS()), "Test fails on Mac: Bug 558989");
+		assumeFalse(Platform.OS_LINUX.equals(Platform.getOS()), "Test fails on CentOS 8: See https://github.com/eclipse-platform/eclipse.platform.text/pull/162");
+		assertTrue(this.infoShell.isDisposed(), "Shell not disposed:" + this.infoShell);
 	}
 
 	@Test

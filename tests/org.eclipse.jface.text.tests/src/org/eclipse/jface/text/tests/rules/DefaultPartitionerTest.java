@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.rules;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
