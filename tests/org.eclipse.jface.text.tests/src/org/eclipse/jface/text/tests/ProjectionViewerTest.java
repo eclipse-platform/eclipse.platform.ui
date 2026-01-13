@@ -437,6 +437,33 @@ public class ProjectionViewerTest {
 		}
 	}
 
+	@ParameterizedTest
+	@CsvSource({ "true", "false" })
+	void testRegionEndingWithStartOfLine(boolean enableProjections) {
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				Hello
+				World
+				123
+				456
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		if (enableProjections) {
+			viewer.enableProjection();
+		}
+
+		viewer.setVisibleRegion(documentContent.indexOf("World"), documentContent.indexOf("123") - documentContent.indexOf("World"));
+		shell.setVisible(true);
+		try {
+			assertEquals("World\n", viewer.getVisibleDocument().get());
+		} finally {
+			shell.dispose();
+		}
+	}
+
 	@Test
 	public void testImageLineStateAfterSettingVisibleRegionsWithProjectionsSetMethodAndClass() throws BadLocationException {
 		// https://github.com/eclipse-platform/eclipse.platform.ui/pull/3456
