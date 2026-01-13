@@ -846,6 +846,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private static int computeEndOfVisibleRegion(int start, int length, IDocument document) throws BadLocationException {
 		int documentLength= document.getLength();
 		int end= start + length;
+		if (length == 0) {
+			return end + 1;
+		}
 		// ensure that the last line is fully included because projections cannot include partial lines
 		while (end < documentLength && !isLineBreak(document.getChar(end))) {
 			end++;
