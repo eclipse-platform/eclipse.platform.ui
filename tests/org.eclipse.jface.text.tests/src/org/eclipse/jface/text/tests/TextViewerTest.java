@@ -16,20 +16,21 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.TestWatcher;
 
 import org.eclipse.test.Screenshots;
 
@@ -81,13 +82,18 @@ public class TextViewerTest {
 
 	private Shell fShell;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		fShell= new Shell();
 	}
 
-	@Rule
-	public TestWatcher screenshotRule= Screenshots.onFailure(() -> fShell);
+	@RegisterExtension
+	public TestWatcher screenshotRule = new TestWatcher() {
+		@Override
+		public void testFailed(ExtensionContext context, Throwable cause) {
+			Screenshots.takeScreenshot(TextViewerTest.class, context.getDisplayName());
+		}
+	};
 
 	@Test
 	public void testSetRedraw_Bug441827() throws Exception {
@@ -185,7 +191,7 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlHomeViewportListener() {
-		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
+		assumeFalse(Util.isMac(), "See bug 541415. For whatever reason, this shortcut doesn't work on Mac");
 		fShell.setLayout(new FillLayout());
 		fShell.setSize(500, 200);
 		SourceViewer textViewer= new SourceViewer(fShell, null, SWT.NONE);
@@ -207,7 +213,7 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlEndViewportListener() {
-		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
+		assumeFalse(Util.isMac(), "See bug 541415. For whatever reason, this shortcut doesn't work on Mac");
 		fShell.setLayout(new FillLayout());
 		fShell.setSize(500, 200);
 		SourceViewer textViewer= new SourceViewer(fShell, null, SWT.NONE);
@@ -240,43 +246,43 @@ public class TextViewerTest {
 			fail("Failed to obtain default instance of TextViewers document adapter. " + ex.getMessage());
 			return;
 		}
-		assumeNotNull(content);
+		assertNotNull(content);
 
 		final String line0= "Hello ";
 		final String line1= "";
 		final String line2= "World!";
 		final String text= line0 + "\n" + line1 + "\r\n" + line2;
 		content.setText(text);
-		assertEquals("Get text range failed.", "H", content.getTextRange(0, 1));
-		assertEquals("Get text range failed.", "ll", content.getTextRange(2, 2));
-		assertEquals("Adapter content length wrong.", text.length(), content.getCharCount());
-		assertEquals("Adapter returned wrong content.", line0, content.getLine(0));
-		assertEquals("Adapter returned wrong content.", line1, content.getLine(1));
-		assertEquals("Adapter returned wrong content.", line2, content.getLine(2));
+		assertEquals("H", content.getTextRange(0, 1), "Get text range failed.");
+		assertEquals("ll", content.getTextRange(2, 2), "Get text range failed.");
+		assertEquals(text.length(), content.getCharCount(), "Adapter content length wrong.");
+		assertEquals(line0, content.getLine(0), "Adapter returned wrong content.");
+		assertEquals(line1, content.getLine(1), "Adapter returned wrong content.");
+		assertEquals(line2, content.getLine(2), "Adapter returned wrong content.");
 
 		content.setText("\r\n\r\n");
-		assertEquals("Wrong line for offset.", 0, content.getLineAtOffset(0));
-		assertEquals("Wrong line for offset.", 0, content.getLineAtOffset(1));
-		assertEquals("Wrong line for offset.", 1, content.getLineAtOffset(2));
-		assertEquals("Wrong line for offset.", 1, content.getLineAtOffset(3));
-		assertEquals("Wrong line for offset.", 2, content.getLineAtOffset(4));
-		assertEquals("Wrong line for offset.", content.getLineCount() - 1, content.getLineAtOffset(content.getCharCount()));
+		assertEquals(0, content.getLineAtOffset(0), "Wrong line for offset.");
+		assertEquals(0, content.getLineAtOffset(1), "Wrong line for offset.");
+		assertEquals(1, content.getLineAtOffset(2), "Wrong line for offset.");
+		assertEquals(1, content.getLineAtOffset(3), "Wrong line for offset.");
+		assertEquals(2, content.getLineAtOffset(4), "Wrong line for offset.");
+		assertEquals(content.getLineCount() - 1, content.getLineAtOffset(content.getCharCount()), "Wrong line for offset.");
 
 		content.setText(null);
-		assertEquals("Adapter returned wrong line count.", 1, content.getLineCount());
+		assertEquals(1, content.getLineCount(), "Adapter returned wrong line count.");
 		content.setText("");
-		assertEquals("Adapter returned wrong line count.", 1, content.getLineCount());
+		assertEquals(1, content.getLineCount(), "Adapter returned wrong line count.");
 		content.setText("a\n");
-		assertEquals("Adapter returned wrong line count.", 2, content.getLineCount());
+		assertEquals(2, content.getLineCount(), "Adapter returned wrong line count.");
 		content.setText("\n\n");
-		assertEquals("Adapter returned wrong line count.", 3, content.getLineCount());
+		assertEquals(3, content.getLineCount(), "Adapter returned wrong line count.");
 
 		content.setText("\r\ntest\r\n");
-		assertEquals("Wrong offset for line.", 0, content.getOffsetAtLine(0));
-		assertEquals("Wrong offset for line.", 2, content.getOffsetAtLine(1));
-		assertEquals("Wrong offset for line.", 8, content.getOffsetAtLine(2));
+		assertEquals(0, content.getOffsetAtLine(0), "Wrong offset for line.");
+		assertEquals(2, content.getOffsetAtLine(1), "Wrong offset for line.");
+		assertEquals(8, content.getOffsetAtLine(2), "Wrong offset for line.");
 		content.setText("");
-		assertEquals("Wrong offset for line.", 0, content.getOffsetAtLine(0));
+		assertEquals(0, content.getOffsetAtLine(0), "Wrong offset for line.");
 	}
 
 	public static void ctrlEnd(ITextViewer viewer) {

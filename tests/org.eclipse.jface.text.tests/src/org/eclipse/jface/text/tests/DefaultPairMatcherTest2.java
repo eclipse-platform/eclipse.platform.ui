@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
