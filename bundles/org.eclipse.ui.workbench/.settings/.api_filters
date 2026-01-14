@@ -102,6 +102,68 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="eclipseui/org/eclipse/ui/ISharedImages.java" type="org.eclipse.ui.ISharedImages">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_BACK_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_COPY_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_CUT_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_DELETE_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_FORWARD_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_NEW_WIZARD_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_PASTE_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_REDO_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_UNDO_HOVER"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/3672" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ISharedImages"/>
+                <message_argument value="IMG_TOOL_UP_HOVER"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="eclipseui/org/eclipse/ui/dialogs/YesNoCancelListSelectionDialog.java" type="org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog">
         <filter id="576778288">
             <message_arguments>
