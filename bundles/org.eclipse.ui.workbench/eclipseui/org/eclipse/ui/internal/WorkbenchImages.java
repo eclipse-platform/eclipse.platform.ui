@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -296,30 +296,6 @@ public/* final */class WorkbenchImages {
 		declareImage(IWorkbenchGraphicConstants.IMG_PREF_IMPORT, PATH_PREF + "import_wiz.svg", false); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_PREF_EXPORT, PATH_PREF + "export_wiz.svg", false); //$NON-NLS-1$
 
-		declareHoverImages();
-
-
-	}
-
-	/**
-	 * Declares all the workbench's deprecated hover images, including both "shared"
-	 * ones and internal ones.
-	 *
-	 * @deprecated As of 3.0, since the workbench itself no longer uses the hover
-	 *             image variants
-	 */
-	@Deprecated
-	private static final void declareHoverImages() {
-		declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL + "undo_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL + "redo_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_ETOOL + "cut_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_ETOOL + "copy_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_ETOOL + "paste_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL + "forward_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_ETOOL + "delete_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL + "new_wiz.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_ELOCALTOOL + "backward_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_ELOCALTOOL + "up_nav.svg", true); //$NON-NLS-1$
 	}
 
 	/**
