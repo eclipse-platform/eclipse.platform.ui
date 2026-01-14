@@ -764,7 +764,14 @@ public class MMenuItemTest {
 		inactivePart.getContext().set("key", "inactive");
 
 		// Ensure all pending UI events are processed before triggering the menu item
-		contextRule.spinEventLoop();
+		for (int i = 0; i < 10; i++) {
+			contextRule.spinEventLoop();
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
 
 		assertFalse(executed[0]);
 
@@ -841,7 +848,17 @@ public class MMenuItemTest {
 
 		// Ensure all pending UI events are processed before triggering the menu item
 		// This prevents race conditions where the handler may not be fully registered yet
-		contextRule.spinEventLoop();
+		for (int i = 0; i < 50; i++) {
+			contextRule.spinEventLoop();
+			if (((MenuItem) menuItem.getWidget()).getEnabled()) {
+				break;
+			}
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
 
 		assertFalse(executed[0]);
 		assertEquals(activePart, window.getContext().get(EPartService.class)
