@@ -1028,7 +1028,8 @@ public class PartServiceImpl implements EPartService {
 					activeStack.getChildren().add(providedPart);
 				} else {
 					// Find the first visible stack in the area
-					List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class);
+					List<MPartStack> sharedStacks = area == null ? Collections.emptyList()
+							: modelService.findElements(area, null, MPartStack.class);
 					if (!sharedStacks.isEmpty()) {
 						for (MPartStack stack : sharedStacks) {
 							if (stack.isToBeRendered()) {
