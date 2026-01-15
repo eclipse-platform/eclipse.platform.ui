@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TableColumn;
 public class TableResizeHelper {
 
 	private final TableViewer tableViewer;
+	boolean resizeInProgress;
 
 	public TableResizeHelper(TableViewer tableViewer) {
 		this.tableViewer = tableViewer;
@@ -37,7 +38,9 @@ public class TableResizeHelper {
 		ControlListener resizeListener = new ControlListener() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				resizeTable();
+				if (!resizeInProgress) {
+					resizeTable();
+				}
 			}
 			@Override
 			public void controlMoved(ControlEvent e) {
@@ -57,14 +60,19 @@ public class TableResizeHelper {
 	}
 
 	protected void resizeTable() {
-		Composite tableComposite = tableViewer.getTable();//.getParent();
-		Rectangle tableCompositeArea = tableComposite.getClientArea();
-		int width = tableCompositeArea.width;
+		try {
+			resizeInProgress = true;
+			Composite tableComposite = tableViewer.getTable();//.getParent();
+			Rectangle tableCompositeArea = tableComposite.getClientArea();
+			int width = tableCompositeArea.width;
 //		ScrollBar sb = tableViewer.getTable().getVerticalBar();
 //		if (sb!=null && sb.isVisible()) {
 //			width = width - sb.getSize().x;
 //		}
-		resizeTableColumns(width, tableViewer.getTable());
+			resizeTableColumns(width, tableViewer.getTable());
+		} finally {
+			resizeInProgress = false;
+		}
 	}
 
 	protected void resizeTableColumns(int tableWidth, Table table) {
