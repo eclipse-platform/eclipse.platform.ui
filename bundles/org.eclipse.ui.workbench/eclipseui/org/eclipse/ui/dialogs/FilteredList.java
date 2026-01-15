@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -246,7 +246,7 @@ public class FilteredList extends Composite {
 	 *
 	 * @param elements the elements to be shown in the list.
 	 */
-	public void setElements(Object[] elements) {
+	public void setElements(Object... elements) {
 		if (elements == null) {
 			fElements = new Object[0];
 		} else {
@@ -326,7 +326,7 @@ public class FilteredList extends Composite {
 	 *
 	 * @param selection an array of indices specifying the selection.
 	 */
-	public void setSelection(int[] selection) {
+	public void setSelection(int... selection) {
 		if (selection == null || selection.length == 0) {
 			fList.deselectAll();
 		} else // If there is no working update job, or the update job is ready to
@@ -365,7 +365,7 @@ public class FilteredList extends Composite {
 	 *
 	 * @param elements the array of elements to be selected.
 	 */
-	public void setSelection(Object[] elements) {
+	public void setSelection(Object... elements) {
 		if (elements == null || elements.length == 0) {
 			fList.deselectAll();
 			return;
