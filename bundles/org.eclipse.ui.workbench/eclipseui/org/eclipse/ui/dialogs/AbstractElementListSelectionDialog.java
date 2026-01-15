@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -186,7 +186,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 *
 	 * @param elements the elements of the list.
 	 */
-	protected void setListElements(Object[] elements) {
+	protected void setListElements(Object... elements) {
 		Assert.isNotNull(fFilteredList);
 		fFilteredList.setElements(elements);
 		handleElementsChanged();
@@ -263,7 +263,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 *
 	 * @param selection the indices of the selection.
 	 */
-	protected void setSelection(Object[] selection) {
+	protected void setSelection(Object... selection) {
 		Assert.isNotNull(fFilteredList);
 		fFilteredList.setSelection(selection);
 	}
