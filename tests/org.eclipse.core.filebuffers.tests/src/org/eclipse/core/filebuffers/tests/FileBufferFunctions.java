@@ -28,19 +28,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestWatcher;
 
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IProject;
 
@@ -104,26 +98,7 @@ public abstract class FileBufferFunctions {
 	}
 
 	@RegisterExtension
-	public TestFailReporter failReporter= new TestFailReporter();
-
-	public static class TestFailReporter implements TestWatcher {
-
-		private static final String BUNDLE_ID= "org.eclipse.core.filebuffers.tests";
-
-		ILog log= ILog.of(Platform.getBundle(BUNDLE_ID));
-
-		@Override
-		public void testFailed(ExtensionContext context, Throwable e) {
-			IStatus status= new Status(IStatus.ERROR, BUNDLE_ID, "FAIL in " + context.getDisplayName(), e);
-			log.log(status);
-		}
-
-		@Override
-		public void testSuccessful(ExtensionContext context) {
-			IStatus status= new Status(IStatus.INFO, BUNDLE_ID, "PASS in " + context.getDisplayName());
-			log.log(status);
-		}
-	}
+	public TestFailExtension failReporter= new TestFailExtension();
 
 	/*
 	 * Tests getLocation.
