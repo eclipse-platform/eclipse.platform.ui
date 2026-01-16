@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -29,12 +28,10 @@ import java.util.Scanner;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.hamcrest.core.IsNot;
-import org.hamcrest.core.StringContains;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitRegistrationMacOsX {
 
@@ -59,7 +56,7 @@ public class TestUnitRegistrationMacOsX {
 	private String lsregisterDumpForOwnAppPlus;
 	private String lsregisterDumpMacOS10_15_3;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		fileProvider = new FileProviderMock();
 		fileProvider.writer = new StringWriter();
@@ -84,14 +81,14 @@ public class TestUnitRegistrationMacOsX {
 
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		originalEclipseHomeLocation = System.getProperty("eclipse.home.location", "");
 		originalEclipseLauncher = System.getProperty("eclipse.launcher", "");
 
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTearDown() {
 		System.setProperty("eclipse.home.location", originalEclipseHomeLocation);
 		System.setProperty("eclipse.launcher", originalEclipseLauncher);
@@ -287,12 +284,12 @@ public class TestUnitRegistrationMacOsX {
 	}
 
 	private void assertSchemeInFile(String scheme) {
-		assertThat(fileProvider.writer.toString(), new StringContains("<string>" + scheme + "</string>"));
+		assertTrue(fileProvider.writer.toString().contains("<string>" + scheme + "</string>"));
 
 	}
 
 	private void assertSchemeNotInFile(String scheme) {
-		assertThat(fileProvider.writer.toString(), new IsNot<>(new StringContains("<string>" + scheme + "</string>")));
+		assertFalse(fileProvider.writer.toString().contains("<string>" + scheme + "</string>"));
 
 	}
 

@@ -1,20 +1,19 @@
 package org.eclipse.urischeme.internal.registration;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.UUID;
 
 import org.eclipse.core.runtime.Platform;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitWinRegistry {
 
 	@Test
 	public void testWinRegistry() throws Exception {
-		Assume.assumeThat("Requires Windows OS", Platform.getOS(), is(Platform.OS_WIN32));
+		Assumptions.assumeTrue(Platform.OS_WIN32.equals(Platform.getOS()), "Requires Windows OS");
 
 		WinRegistry winRegistry = new WinRegistry();
 		String randomKeyMain = UUID.randomUUID().toString();
@@ -24,13 +23,13 @@ public class TestUnitWinRegistry {
 
 		String actualVal = winRegistry.getValueForKey(randomKeyMain + "\\" + randomKeySub, "dummykey");
 
-		assertThat(actualVal, is("dummyval"));
+		assertEquals("dummyval", actualVal);
 
 		winRegistry.deleteKey(randomKeyMain + "\\" + randomKeySub);
 		winRegistry.deleteKey(randomKeyMain);
 
 		actualVal = winRegistry.getValueForKey(randomKeyMain + "\\" + randomKeySub, "dummykey");
 
-		assertThat(actualVal, is(nullValue()));
+		assertNull(actualVal);
 	}
 }

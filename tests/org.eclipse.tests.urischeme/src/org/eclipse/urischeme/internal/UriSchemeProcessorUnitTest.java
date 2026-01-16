@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,8 +26,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.IUriSchemeExtensionReader;
 import org.eclipse.urischeme.IUriSchemeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UriSchemeProcessorUnitTest {
 
@@ -34,7 +35,7 @@ public class UriSchemeProcessorUnitTest {
 	private UriSchemeProcessor schemeProcessor;
 	private UriSchemeExtensionReaderMock extensionReader;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		abcHandler = new UriSchemeHandlerSpy();
 		extensionReader = new UriSchemeExtensionReaderMock();
@@ -49,7 +50,7 @@ public class UriSchemeProcessorUnitTest {
 		schemeProcessor.handleUri("abc", "abc://test");
 
 		String errorMsg = "Registered handler was not called for '" + "abc://test" + "'";
-		assertTrue(errorMsg, abcHandler.uris.contains("abc://test"));
+		assertTrue(abcHandler.uris.contains("abc://test"), errorMsg);
 	}
 
 	@Test
@@ -65,13 +66,13 @@ public class UriSchemeProcessorUnitTest {
 		schemeProcessor.handleUri("abc", "abc://test");
 
 		assertEquals(2, abcHandler.uris.size());
-		assertEquals("Extension created more than once", 1, (int) extensionReader.readCount.get("abc"));
+		assertEquals(1, (int) extensionReader.readCount.get("abc"), "Extension created more than once");
 	}
 
-	@Test(expected = CoreException.class)
+	@Test
 	public void passesException() throws Exception {
 		extensionReader.exception = new CoreException(Status.CANCEL_STATUS);
-		schemeProcessor.handleUri("abc", "abc://test");
+		assertThrows(CoreException.class, () -> schemeProcessor.handleUri("abc", "abc://test"));
 	}
 
 	private static class UriSchemeExtensionReaderMock implements IUriSchemeExtensionReader {
