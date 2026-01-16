@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,12 +24,10 @@ import java.util.stream.Collectors;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.hamcrest.core.IsNot;
-import org.hamcrest.core.StringContains;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitRegistrationLinux {
 
@@ -60,7 +57,7 @@ public class TestUnitRegistrationLinux {
 	private FileProviderMock fileProvider;
 	private ProcessSpy processStub;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		fileProvider = new FileProviderMock();
 		processStub = new ProcessSpy();
@@ -71,13 +68,13 @@ public class TestUnitRegistrationLinux {
 		registration = new RegistrationLinux(fileProvider, processStub, PRODUCT_NAME);
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		originalEclipseHomeLocation = System.getProperty(ECLIPSE_HOME_LOCATION, "");
 		originalEclipseLauncher = System.getProperty(ECLIPSE_LAUNCHER, "");
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTearDown() {
 		System.setProperty(ECLIPSE_HOME_LOCATION, originalEclipseHomeLocation);
 		System.setProperty(ECLIPSE_LAUNCHER, originalEclipseLauncher);
@@ -174,7 +171,7 @@ public class TestUnitRegistrationLinux {
 
 		assertEquals(1, registeredSchemes.size());
 		assertEquals("adt", registeredSchemes.get(0).getName());
-		assertTrue("Scheme should be handled", registeredSchemes.get(0).isHandled());
+		assertTrue(registeredSchemes.get(0).isHandled(), "Scheme should be handled");
 	}
 
 	@Test
@@ -294,20 +291,19 @@ public class TestUnitRegistrationLinux {
 	}
 
 	private void assertAppNameInFileIs(String name) {
-		assertThat(new String(fileProvider.writtenBytes), new StringContains("Name=" + name));
+		assertTrue(new String(fileProvider.writtenBytes).contains("Name=" + name));
 	}
 
 	private void assertMimeTypeInFileIs(String mimeType) {
-		assertThat(new String(fileProvider.writtenBytes), new StringContains("MimeType=" + mimeType));
+		assertTrue(new String(fileProvider.writtenBytes).contains("MimeType=" + mimeType));
 	}
 
 	private void assertExecInFileIs(String exec) {
-		assertThat(new String(fileProvider.writtenBytes), new StringContains("Exec=" + exec));
+		assertTrue(new String(fileProvider.writtenBytes).contains("Exec=" + exec));
 	}
 
 	private void assertNoMimeTypeInFile() {
-		assertThat(new String(fileProvider.writtenBytes),
-				new IsNot<>(new StringContains("MimeType=x-scheme-handler/adt;")));
+		assertFalse(new String(fileProvider.writtenBytes).contains("MimeType=x-scheme-handler/adt;"));
 	}
 
 	private void assertXdgMimeCalledFor(String... schemeHandler) {

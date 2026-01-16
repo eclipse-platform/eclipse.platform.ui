@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.urischeme.internal.registration.WinRegistryMock.Entry;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitRegistryWriter {
 	private final static String QUOTE = "\"";
@@ -32,7 +33,7 @@ public class TestUnitRegistryWriter {
 	private WinRegistryMock registryMock;
 	private FileProviderMock fileProviderMock;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		registryMock = new WinRegistryMock();
 		launcher = "/path/to/eclipse/Eclips.exe";
@@ -48,13 +49,13 @@ public class TestUnitRegistryWriter {
 		writer = new RegistryWriter(registryMock, fileProviderMock);
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		originalEclipseLauncher = System.getProperty("eclipse.launcher", "");
 		originalEclipseHomeLocation = System.getProperty("eclipse.home.location", "");
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTearDown() {
 		System.setProperty("eclipse.launcher", originalEclipseLauncher);
 		System.setProperty("eclipse.home.location", originalEclipseHomeLocation);
@@ -72,15 +73,15 @@ public class TestUnitRegistryWriter {
 				launcherWithArgs);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void throwsExceptionOnAddingInvalidScheme() throws Exception {
-		writer.addScheme("%&$", launcher);
+		assertThrows(IllegalArgumentException.class, () -> writer.addScheme("%&$", launcher));
 	}
 
-	@Test(expected = WinRegistryException.class)
+	@Test
 	public void throwsIllegalStateExceptionOnAddScheme() throws Exception {
 		registryMock.setValueForKeyException = new WinRegistryException("failed");
-		writer.addScheme("adt", launcher);
+		assertThrows(WinRegistryException.class, () -> writer.addScheme("adt", launcher));
 	}
 
 	@Test
@@ -100,12 +101,12 @@ public class TestUnitRegistryWriter {
 		assertEquals("Software\\Classes\\adt", registryMock.deletedKeys.get(3));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void throwsExceptionOnRemovingInvalidScheme() throws Exception {
-		writer.removeScheme("%&$");
+		assertThrows(IllegalArgumentException.class, () -> writer.removeScheme("%&$"));
 	}
 
-	@Test(expected = WinRegistryException.class)
+	@Test
 	public void throwsWinRegistryExceptionOnRemoveScheme() throws Exception {
 		registryMock.valuesForKeys.put("Software\\Classes\\adt-URL Protocol", "");
 		registryMock.valuesForKeys.put("Software\\Classes\\adt-null", "URL:adt");
@@ -115,7 +116,7 @@ public class TestUnitRegistryWriter {
 		fileProviderMock.fileExistsAnswers.put(launcher, true);
 
 		registryMock.deleteKeyException = new WinRegistryException("failed");
-		writer.removeScheme("adt");
+		assertThrows(WinRegistryException.class, () -> writer.removeScheme("adt"));
 	}
 
 	private void assertEntry(Entry entry, String key, String attribute, String value) {
@@ -203,10 +204,10 @@ public class TestUnitRegistryWriter {
 		assertEquals(null, writer.getRegisteredHandlerPath("adt"));
 	}
 
-	@Test(expected = WinRegistryException.class)
+	@Test
 	public void throwsWinRegistryExceptionOnGetRegisteredHandlerPath() throws Exception {
 		registryMock.getValueForKeyException = new WinRegistryException("failed");
-		writer.getRegisteredHandlerPath("adt");
+		assertThrows(WinRegistryException.class, () -> writer.getRegisteredHandlerPath("adt"));
 	}
 
 	@Test

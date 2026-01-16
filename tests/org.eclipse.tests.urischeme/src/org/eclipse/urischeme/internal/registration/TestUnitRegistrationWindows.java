@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitRegistrationWindows {
 
@@ -46,13 +46,13 @@ public class TestUnitRegistrationWindows {
 	private static String originalEclipseHome;
 	private RegistrationWindows registrationWindows;
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() throws MalformedURLException {
 		originalEclipseLauncher = System.getProperty("eclipse.launcher", null);
 		originalEclipseHome = System.getProperty("eclipse.home.location", null);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		System.setProperty("eclipse.launcher", PATH_TO_ECLIPSE_EXE);
 		registryWriter = new RegistryWriterMock();
@@ -63,7 +63,7 @@ public class TestUnitRegistrationWindows {
 		registrationWindows = new RegistrationWindows(registryWriter, fileProvider);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() throws Exception {
 		if (originalEclipseLauncher != null) {
 			System.setProperty("eclipse.launcher", originalEclipseLauncher);
@@ -81,22 +81,22 @@ public class TestUnitRegistrationWindows {
 	public void handlesAdd() throws Exception {
 		registrationWindows.handleSchemes(Arrays.asList(OTHER_SCHEME_INFO, ADT_SCHEME_INFO), Collections.emptyList());
 
-		assertEquals("Too many schemes added", 2, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()));
+		assertEquals(2, registryWriter.addedSchemes.size(), "Too many schemes added");
+		assertTrue(registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()), "Scheme not added");
+		assertTrue(registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()), "Scheme not added");
 
-		assertEquals("Too many schemes removed", 0, registryWriter.removedSchemes.size());
+		assertEquals(0, registryWriter.removedSchemes.size(), "Too many schemes removed");
 	}
 
 	@Test
 	public void handlesAddAndRemoveOfSameScheme() throws Exception {
 		registrationWindows.handleSchemes(Arrays.asList(OTHER_SCHEME_INFO), Arrays.asList(OTHER_SCHEME_INFO));
 
-		assertEquals("Too many schemes added", 1, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
+		assertEquals(1, registryWriter.addedSchemes.size(), "Too many schemes added");
+		assertTrue(registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()), "Scheme not added");
 
-		assertEquals("Too many schemes removed", 1, registryWriter.removedSchemes.size());
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()));
+		assertEquals(1, registryWriter.removedSchemes.size(), "Too many schemes removed");
+		assertTrue(registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()), "Scheme not removed");
 	}
 
 	@Test
@@ -104,13 +104,13 @@ public class TestUnitRegistrationWindows {
 		registrationWindows.handleSchemes(Arrays.asList(OTHER_SCHEME_INFO, ADT_SCHEME_INFO),
 				Arrays.asList(ADT_SCHEME_INFO, OTHER_SCHEME_INFO));
 
-		assertEquals("Too many schemes added", 2, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()));
+		assertEquals(2, registryWriter.addedSchemes.size(), "Too many schemes added");
+		assertTrue(registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()), "Scheme not added");
+		assertTrue(registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()), "Scheme not added");
 
-		assertEquals("Too many schemes removed", 2, registryWriter.removedSchemes.size());
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()));
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(ADT_SCHEME_INFO.getName()));
+		assertEquals(2, registryWriter.removedSchemes.size(), "Too many schemes removed");
+		assertTrue(registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()), "Scheme not removed");
+		assertTrue(registryWriter.removedSchemes.contains(ADT_SCHEME_INFO.getName()), "Scheme not removed");
 	}
 
 	@Test
@@ -197,11 +197,9 @@ public class TestUnitRegistrationWindows {
 
 	private void assertSchemeInformation(ISchemeInformation schemeInformation, IScheme scheme, String handlerlocation,
 			boolean isHandled) {
-		assertEquals("Scheme not set correctly", scheme.getName(), schemeInformation.getName());
-		assertEquals("Scheme description not set correctly", scheme.getDescription(),
-				schemeInformation.getDescription());
-		assertEquals("Handler location not set correctly", handlerlocation,
-				schemeInformation.getHandlerInstanceLocation());
-		assertEquals("isHandled not set correctly", isHandled, schemeInformation.isHandled());
+		assertEquals(scheme.getName(), schemeInformation.getName(), "Scheme not set correctly");
+		assertEquals(scheme.getDescription(), schemeInformation.getDescription(), "Scheme description not set correctly");
+		assertEquals(handlerlocation, schemeInformation.getHandlerInstanceLocation(), "Handler location not set correctly");
+		assertEquals(isHandled, schemeInformation.isHandled(), "isHandled not set correctly");
 	}
 }

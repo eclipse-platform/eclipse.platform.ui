@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collection;
 
@@ -21,8 +22,8 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.urischeme.IScheme;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UriSchemeExtensionReaderUnitTest {
 
@@ -30,7 +31,7 @@ public class UriSchemeExtensionReaderUnitTest {
 	private ConfigurationElementMock configElementForAbc;
 	private UriSchemeExtensionReader extensionReader;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		abcHandler = new UriSchemeHandlerSpy();
 		configElementForAbc = new ConfigurationElementMock("abc", "abc Scheme", abcHandler);
@@ -58,12 +59,12 @@ public class UriSchemeExtensionReaderUnitTest {
 		assertEquals(abcHandler, extensionReader.getHandlerFromExtensionPoint("abc"));
 	}
 
-	@Test(expected = CoreException.class)
+	@Test
 	public void throwExceptionOnWrongRegisteredType() throws Exception {
 		ConfigurationElementMock element = new ConfigurationElementMock("abc", "abc Scheme", new Object());
 		setExtensionsInReader(element);
 
-		extensionReader.getHandlerFromExtensionPoint("abc");
+		assertThrows(CoreException.class, () -> extensionReader.getHandlerFromExtensionPoint("abc"));
 	}
 
 	@Test

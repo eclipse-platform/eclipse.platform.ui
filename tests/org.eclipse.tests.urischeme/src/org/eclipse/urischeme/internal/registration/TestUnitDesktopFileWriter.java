@@ -13,23 +13,17 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNot;
-import org.hamcrest.core.StringContains;
-import org.hamcrest.core.StringEndsWith;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitDesktopFileWriter {
 
@@ -42,7 +36,7 @@ public class TestUnitDesktopFileWriter {
 
 		writer.addScheme("adt");
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/adt;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/adt;");
 	}
 
 	@Test
@@ -52,8 +46,8 @@ public class TestUnitDesktopFileWriter {
 		writer.addScheme("adt");
 		writer.addScheme("other");
 
-		assertThat(new String(writer.getResult()),
-				containsLine("MimeType=x-scheme-handler/adt;x-scheme-handler/other;"));
+		assertContainsLine(new String(writer.getResult()),
+				"MimeType=x-scheme-handler/adt;x-scheme-handler/other;");
 	}
 
 	@Test
@@ -63,8 +57,8 @@ public class TestUnitDesktopFileWriter {
 
 		writer.addScheme("other");
 
-		assertThat(new String(writer.getResult()),
-				containsLine("MimeType=x-scheme-handler/adt;x-scheme-handler/other;"));
+		assertContainsLine(new String(writer.getResult()),
+				"MimeType=x-scheme-handler/adt;x-scheme-handler/other;");
 	}
 
 	@Test
@@ -74,15 +68,15 @@ public class TestUnitDesktopFileWriter {
 
 		writer.addScheme("adt");
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/adt;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/adt;");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void addFailsOnIllegalScheme() {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		writer.addScheme("&/%");
+		assertThrows(IllegalArgumentException.class, () -> writer.addScheme("&/%"));
 	}
 
 	@Test
@@ -92,7 +86,7 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("adt");
 
-		assertThat(new String(writer.getResult()), not(contains("MimeType")));
+		assertFalse(new String(writer.getResult()).contains("MimeType"));
 	}
 
 	@Test
@@ -102,7 +96,7 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("adt");
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/other;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/other;");
 	}
 
 	@Test
@@ -112,7 +106,7 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("other");
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/adt;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/adt;");
 	}
 
 	@Test
@@ -122,8 +116,8 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("other");
 
-		assertThat(new String(writer.getResult()),
-				containsLine("MimeType=x-scheme-handler/adt;x-scheme-handler/yetAnother;"));
+		assertContainsLine(new String(writer.getResult()),
+				"MimeType=x-scheme-handler/adt;x-scheme-handler/yetAnother;");
 	}
 
 	@Test
@@ -133,15 +127,15 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("other");
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/adt;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/adt;");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void removeFailsOnIllegalScheme() {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		writer.removeScheme("&/%");
+		assertThrows(IllegalArgumentException.class, () -> writer.removeScheme("&/%"));
 	}
 
 	@Test
@@ -149,7 +143,7 @@ public class TestUnitDesktopFileWriter {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		assertThat(new String(writer.getResult()), containsLine("MimeType=x-scheme-handler/adt;"));
+		assertContainsLine(new String(writer.getResult()), "MimeType=x-scheme-handler/adt;");
 	}
 
 	@Test
@@ -159,12 +153,12 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("adt");
 
-		assertThat(new String(writer.getResult()), not(contains("MimeType")));
+		assertFalse(new String(writer.getResult()).contains("MimeType"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void throwsExceptionOnEmptyDocument() {
-		getWriterFor(Collections.emptyList());
+		assertThrows(IllegalStateException.class, () -> getWriterFor(Collections.emptyList()));
 	}
 
 	@Test
@@ -175,12 +169,12 @@ public class TestUnitDesktopFileWriter {
 
 		DesktopFileWriter writer = getWriterFor(fileContent);
 
-		assertThat(new String(writer.getResult()), new StringEndsWith(comment));
+		assertTrue(new String(writer.getResult()).endsWith(comment));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void throwsExceptionOnNonPropertiesFile() {
-		getWriterFor(Arrays.asList("foo=bar"));
+		assertThrows(IllegalStateException.class, () -> getWriterFor(Arrays.asList("foo=bar")));
 	}
 
 	@Test
@@ -189,14 +183,14 @@ public class TestUnitDesktopFileWriter {
 
 		writer.addScheme("adt");
 
-		assertThat(new String(writer.getResult()), containsLine("Exec=/usr/bin/eclipse %u"));
+		assertContainsLine(new String(writer.getResult()), "Exec=/usr/bin/eclipse %u");
 	}
 
 	@Test
 	public void addsAddUriPlaceholderToExecLineWhenJustGettingResult() {
 		DesktopFileWriter writer = getWriterFor(fileContentWith("Exec=/usr/bin/eclipse", NO_MIME));
 
-		assertThat(new String(writer.getResult()), containsLine("Exec=/usr/bin/eclipse %u"));
+		assertContainsLine(new String(writer.getResult()), "Exec=/usr/bin/eclipse %u");
 	}
 
 	@Test
@@ -206,7 +200,7 @@ public class TestUnitDesktopFileWriter {
 
 		writer.removeScheme("adt");
 
-		assertThat(new String(writer.getResult()), containsLine("Exec=/usr/bin/eclipse %u"));
+		assertContainsLine(new String(writer.getResult()), "Exec=/usr/bin/eclipse %u");
 	}
 
 	@Test
@@ -226,12 +220,12 @@ public class TestUnitDesktopFileWriter {
 		assertFalse(writer.isRegistered("other"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void isRegisteredFailsOnIllegalScheme() {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		writer.isRegistered("&/%");
+		assertThrows(IllegalArgumentException.class, () -> writer.isRegistered("&/%"));
 	}
 
 	@Test
@@ -241,7 +235,7 @@ public class TestUnitDesktopFileWriter {
 		DesktopFileWriter writer = getWriterFor(fileContent);
 
 		String expected = String.join(LINE_SEPARATOR, fileContent);
-		assertThat(new String(writer.getResult()), new IsEqual<>(expected));
+		assertEquals(expected, new String(writer.getResult()));
 	}
 
 	@Test
@@ -307,19 +301,9 @@ public class TestUnitDesktopFileWriter {
 		assertEquals("/usr/bin/eclipse  (copy)", writer.getExecutableLocation());
 	}
 
-	private Matcher<String> containsLine(String line) {
-		return AnyOf.anyOf( //
-				new StringContains(LINE_SEPARATOR + line + LINE_SEPARATOR), //
-				new StringContains(LINE_SEPARATOR + line) //
-		);
-	}
-
-	private Matcher<String> contains(String line) {
-		return new StringContains(line);
-	}
-
-	private Matcher<String> not(Matcher<String> not) {
-		return new IsNot<>(not);
+	private void assertContainsLine(String text, String line) {
+		assertTrue(text.contains(LINE_SEPARATOR + line),
+				"Text should contain line: " + line);
 	}
 
 	private DesktopFileWriter getWriterFor(List<String> fileContent) {

@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.urischeme;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.urischeme.internal.registration.Scheme;
 import org.eclipse.urischeme.internal.registration.SchemeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 @SuppressWarnings("restriction")
@@ -50,10 +50,10 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertNull("Nothing should be written to preferences", preferenceNode.writtenValue);
-		assertFalse("Flush on preferences should not be called", preferenceNode.flushed);
-		assertNull("No schemes should be registered", osRegistration.addedSchemes);
-		assertNull("No schemes should be un-registered", osRegistration.removedSchemes);
+		assertNull(preferenceNode.writtenValue, "Nothing should be written to preferences");
+		assertFalse(preferenceNode.flushed, "Flush on preferences should not be called");
+		assertNull(osRegistration.addedSchemes, "No schemes should be registered");
+		assertNull(osRegistration.removedSchemes, "No schemes should be un-registered");
 
 	}
 
@@ -64,10 +64,10 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertNull("Nothing should be written to preferences", preferenceNode.writtenValue);
-		assertFalse("Flush on preferences should not be called", preferenceNode.flushed);
-		assertNull("No schemes should be registered", osRegistration.addedSchemes);
-		assertNull("No schemes should be un-registered", osRegistration.removedSchemes);
+		assertNull(preferenceNode.writtenValue, "Nothing should be written to preferences");
+		assertFalse(preferenceNode.flushed, "Flush on preferences should not be called");
+		assertNull(osRegistration.addedSchemes, "No schemes should be registered");
+		assertNull(osRegistration.removedSchemes, "No schemes should be un-registered");
 
 	}
 
@@ -85,12 +85,12 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertEquals("Wrong values written to preferences", helloScheme.getName() + "," + hello1Scheme.getName(),
-				preferenceNode.writtenValue);
-		assertTrue("Preferences not flushed", preferenceNode.flushed);
-		assertEquals("Wrong schemes have been registered", hello1SchemeInfo,
-				osRegistration.addedSchemes.iterator().next());
-		assertTrue("No schemes should be un-registered", osRegistration.removedSchemes.isEmpty());
+		assertEquals(helloScheme.getName() + "," + hello1Scheme.getName(),
+				preferenceNode.writtenValue, "Wrong values written to preferences");
+		assertTrue(preferenceNode.flushed, "Preferences not flushed");
+		assertEquals(hello1SchemeInfo,
+				osRegistration.addedSchemes.iterator().next(), "Wrong schemes have been registered");
+		assertTrue(osRegistration.removedSchemes.isEmpty(), "No schemes should be un-registered");
 	}
 
 	@Test
@@ -107,10 +107,10 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertNull("Nothing should be written to preferences", preferenceNode.writtenValue);
-		assertFalse("Flush on preferences should not be called", preferenceNode.flushed);
-		assertNull("No schemes should be registered", osRegistration.addedSchemes);
-		assertNull("No schemes should be un-registered", osRegistration.removedSchemes);
+		assertNull(preferenceNode.writtenValue, "Nothing should be written to preferences");
+		assertFalse(preferenceNode.flushed, "Flush on preferences should not be called");
+		assertNull(osRegistration.addedSchemes, "No schemes should be registered");
+		assertNull(osRegistration.removedSchemes, "No schemes should be un-registered");
 	}
 
 	@Test
@@ -127,17 +127,17 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertNull("Nothing should be written to preferences", preferenceNode.writtenValue);
-		assertFalse("Flush on preferences should not be called", preferenceNode.flushed);
-		assertNull("No schemes should be registered", osRegistration.addedSchemes);
-		assertNull("No schemes should be un-registered", osRegistration.removedSchemes);
+		assertNull(preferenceNode.writtenValue, "Nothing should be written to preferences");
+		assertFalse(preferenceNode.flushed, "Flush on preferences should not be called");
+		assertNull(osRegistration.addedSchemes, "No schemes should be registered");
+		assertNull(osRegistration.removedSchemes, "No schemes should be un-registered");
 	}
 
 	@Test
 	public void registrationOnUnsupportedRegistrationDoesNothing() throws Exception {
 		AutoRegisterSchemeHandlersJob job = createJob(new ArrayList<>(), "dontCare", new ArrayList<>(),
 				DOESNT_SUPPORT_REGISTRATION);
-		assertFalse("Job should not run on OSes that don't support registration", job.shouldSchedule());
+		assertFalse(job.shouldSchedule(), "Job should not run on OSes that don't support registration");
 	}
 
 	private AutoRegisterSchemeHandlersJob createJob(Collection<IScheme> installedSchemes,

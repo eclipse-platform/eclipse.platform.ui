@@ -13,14 +13,15 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitPlistFileWriter {
 
@@ -70,11 +71,11 @@ public class TestUnitPlistFileWriter {
 		assertSchemesInOrder(writer, "adt");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void addFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		writer.addScheme("&/%", "thisIsIllegal");
+		assertThrows(IllegalArgumentException.class, () -> writer.addScheme("&/%", "thisIsIllegal"));
 	}
 
 	@Test
@@ -155,11 +156,11 @@ public class TestUnitPlistFileWriter {
 		assertSchemesInOrder(writer, "adt");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void removeFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		writer.removeScheme("&/%");
+		assertThrows(IllegalArgumentException.class, () -> writer.removeScheme("&/%"));
 	}
 
 	@Test
@@ -181,27 +182,27 @@ public class TestUnitPlistFileWriter {
 		assertXml(expectedXml, writer);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void throwsExceptionOnEmptyDocument() {
-		new PlistFileWriter(() -> new StringReader(""));
+		assertThrows(IllegalArgumentException.class, () -> new PlistFileWriter(() -> new StringReader("")));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void throwsExceptionOnWrongPlistFile() {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<plist version=\"1.0\"/>";
-		new PlistFileWriter(() -> new StringReader(xml));
+		assertThrows(IllegalStateException.class, () -> new PlistFileWriter(() -> new StringReader(xml)));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void throwsExceptionOnWrongXmlFile() {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<foo/>";
-		new PlistFileWriter(() -> new StringReader(xml));
+		assertThrows(IllegalStateException.class, () -> new PlistFileWriter(() -> new StringReader(xml)));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void throwsExceptionOnNonXmlFile() {
 		String xml = "foo bar";
-		new PlistFileWriter(() -> new StringReader(xml));
+		assertThrows(IllegalArgumentException.class, () -> new PlistFileWriter(() -> new StringReader(xml)));
 	}
 
 	@Test
@@ -220,11 +221,11 @@ public class TestUnitPlistFileWriter {
 		assertFalse(writer.isRegisteredScheme("other"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getRegisteredFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		writer.isRegisteredScheme("&/%");
+		assertThrows(IllegalArgumentException.class, () -> writer.isRegisteredScheme("&/%"));
 	}
 
 	private void assertSchemesInOrder(PlistFileWriter writer, String... schemes) {
