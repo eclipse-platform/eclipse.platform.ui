@@ -132,7 +132,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		List initialSelections = getInitialElementSelections();
 		if (!initialSelections.isEmpty()) {
 			Object element = initialSelections.get(0);
-			setSelection(new Object[] { element });
+			setSelection(element);
 			setLowerSelectedElement(element);
 		}
 		return contents;
