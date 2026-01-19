@@ -262,12 +262,13 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			// determine the character width separately, because the getTextBounds above
 			// will also include any in-line annotations (e.g. codemining annotations) in the width
 			final String matchingCharacter= fTextWidget.getText(offset, offset);
-			final int width= gc.textExtent(matchingCharacter).x;
-
+			Point characterBounds= gc.textExtent(matchingCharacter);
 			final int height= fTextWidget.getCaret().getSize().y;
+			characterBounds.y= height - 1;
+			Rectangle hightlightingArea= Rectangle.of(new Point(bounds.x, bounds.y + bounds.height - height), characterBounds);
 
 			// draw box around line segment
-			gc.drawRectangle(bounds.x, bounds.y + bounds.height - height, width, height - 1);
+			gc.drawRectangle(hightlightingArea);
 		} else {
 			fTextWidget.redrawRange(offset, 1, true);
 		}
