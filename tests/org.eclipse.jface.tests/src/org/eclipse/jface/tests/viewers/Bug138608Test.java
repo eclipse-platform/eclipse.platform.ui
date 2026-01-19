@@ -15,7 +15,7 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -89,12 +89,12 @@ public class Bug138608Test extends ViewerTestCase {
 		getTreeViewer().add(contentProvider.root.getChildren()[1],
 				contentProvider.root.getChildren()[1].getChildren()[1]);
 
-		assertEquals("expected two children of node b", 2, getTreeViewer().getTree().getItem(1).getItemCount());
+		assertEquals(2, getTreeViewer().getTree().getItem(1).getItemCount(), "expected two children of node b");
 
 		getTreeViewer().add(contentProvider.root.getChildren()[1],
 				contentProvider.root.getChildren()[1].getChildren()[1]);
 
-		assertEquals("expected two children of node b", 2, getTreeViewer().getTree().getItem(1).getItemCount());
+		assertEquals(2, getTreeViewer().getTree().getItem(1).getItemCount(), "expected two children of node b");
 
 	}
 

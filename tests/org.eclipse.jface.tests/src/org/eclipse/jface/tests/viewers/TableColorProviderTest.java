@@ -15,7 +15,7 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -58,8 +58,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 		// refresh so that the colors are set
 		fViewer.refresh();
 
-		assertEquals("foreground 1 green", viewer.getTable().getItem(0).getForeground(0), green);//$NON-NLS-1$
-		assertEquals("foreground 2 green", viewer.getTable().getItem(0).getForeground(1), green);//$NON-NLS-1$
+		assertEquals(green, viewer.getTable().getItem(0).getForeground(0), "foreground 1 green");//$NON-NLS-1$
+		assertEquals(green, viewer.getTable().getItem(0).getForeground(1), "foreground 2 green");//$NON-NLS-1$
 
 		provider.fExtended = false;
 
@@ -77,8 +77,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 		fViewer.refresh();
 
-		assertEquals("background 1 red", viewer.getTable().getItem(0).getBackground(0), red);//$NON-NLS-1$
-		assertEquals("background 2 red", viewer.getTable().getItem(1).getBackground(1), red);//$NON-NLS-1$
+		assertEquals(red, viewer.getTable().getItem(0).getBackground(0), "background 1 red");//$NON-NLS-1$
+		assertEquals(red, viewer.getTable().getItem(1).getBackground(1), "background 2 red");//$NON-NLS-1$
 
 		provider.fExtended = false;
 
@@ -97,8 +97,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 		fViewer.refresh();
 
-		assertEquals("table item 1 green", table.getItem(0).getForeground(0), green);//$NON-NLS-1$
-		assertEquals("table item 2 red", table.getItem(0).getForeground(1), red);//$NON-NLS-1$
+		assertEquals(green, table.getItem(0).getForeground(0), "table item 1 green");//$NON-NLS-1$
+		assertEquals(red, table.getItem(0).getForeground(1), "table item 2 red");//$NON-NLS-1$
 		provider.fExtended = false;
 
 	}
@@ -116,8 +116,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 		Table table = viewer.getTable();
 		fViewer.refresh();
 
-		assertEquals("table item 1 background red", table.getItem(0).getBackground(0), red);//$NON-NLS-1$
-		assertEquals("table item 2 background green", table.getItem(0).getBackground(1), green);//$NON-NLS-1$
+		assertEquals(red, table.getItem(0).getBackground(0), "table item 1 background red");//$NON-NLS-1$
+		assertEquals(green, table.getItem(0).getBackground(1), "table item 2 background green");//$NON-NLS-1$
 		provider.fExtended = false;
 
 	}

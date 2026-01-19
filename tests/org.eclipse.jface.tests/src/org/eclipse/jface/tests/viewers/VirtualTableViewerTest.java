@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -99,7 +99,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			fShell.forceActive();
 			processEvents();
 		}
-		assertTrue("waiting for setting table data timed out", setDataCalled);
+		assertTrue(setDataCalled, "waiting for setting table data timed out");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 		for (int i = 0; i < items.length; i++) {
 			TableItem item = items[i];
-			assertTrue("Missing data in item " + i + " of " + items.length, item.getData() instanceof TestElement);
+			assertTrue(item.getData() instanceof TestElement, "Missing data in item " + i + " of " + items.length);
 		}
 	}
 
@@ -134,12 +134,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		visibleItems = new HashSet<>();
 		fViewer.addFilter(filter);
 		updateTable();
-		assertEquals("filtered count", 5, getItemCount());
+		assertEquals(5, getItemCount(), "filtered count");
 
 		visibleItems = new HashSet<>();
 		fViewer.removeFilter(filter);
 		updateTable();
-		assertEquals("unfiltered count", 10, getItemCount());
+		assertEquals(10, getItemCount(), "unfiltered count");
 	}
 
 	@Test
@@ -149,17 +149,17 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter, new TestLabelFilter2());
 		updateTable();
-		assertEquals("2 filters count", 1, getItemCount());
+		assertEquals(1, getItemCount(), "2 filters count");
 
 		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter);
 		updateTable();
-		assertEquals("1 filtered count", 5, getItemCount());
+		assertEquals(5, getItemCount(), "1 filtered count");
 
 		visibleItems = new HashSet<>();
 		fViewer.setFilters();
 		updateTable();
-		assertEquals("unfiltered count", 10, getItemCount());
+		assertEquals(10, getItemCount(), "unfiltered count");
 	}
 
 	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
@@ -199,10 +199,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-1111"); // should disappear
 		updateTable();
-		assertNull("changed sibling is still visible", fViewer.testFindItem(first));
+		assertNull(fViewer.testFindItem(first), "changed sibling is still visible");
 		first.setLabel("name-2222"); // should reappear
 		updateTable();
-		assertNotNull("changed sibling is not visible", fViewer.testFindItem(first));
+		assertNotNull(fViewer.testFindItem(first), "changed sibling is not visible");
 	}
 
 	@Disabled("This test us based on findItem assuming all items are created so it is not valid.")
@@ -217,7 +217,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-9999");
 		String newElementLabel = first.toString();
-		assertEquals("sorted first", newElementLabel, getItemText(0));
+		assertEquals(newElementLabel, getItemText(0), "sorted first");
 	}
 
 	@Override
@@ -228,13 +228,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		String firstLabel = first.toString();
 		String lastLabel = last.toString();
 
-		assertEquals("unsorted", firstLabel, getItemText(0));
+		assertEquals(firstLabel, getItemText(0), "unsorted");
 		fViewer.setComparator(new TestLabelComparator());
 
-		assertEquals("reverse sorted", lastLabel, getItemText(0));
+		assertEquals(lastLabel, getItemText(0), "reverse sorted");
 
 		fViewer.setComparator(null);
-		assertEquals("unsorted", firstLabel, getItemText(0));
+		assertEquals(firstLabel, getItemText(0), "unsorted");
 	}
 
 	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
@@ -277,10 +277,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		StructuredSelection selection = new StructuredSelection(children);
 		fViewer.setSelection(selection);
 		IStructuredSelection result = fViewer.getStructuredSelection();
-		assertEquals("Size was " + result.size() + " expected " + children.length, result.size(), children.length);
+		assertEquals(children.length, result.size(), "Size was " + result.size() + " expected " + children.length);
 		Set<TestElement> childrenSet = new HashSet<>(Arrays.asList(children));
 		@SuppressWarnings("unchecked")
 		Set<?> selectedSet = new HashSet<Object>(result.toList());
-		assertTrue("Elements do not match ", childrenSet.equals(selectedSet));
+		assertTrue(childrenSet.equals(selectedSet), "Elements do not match ");
 	}
 }

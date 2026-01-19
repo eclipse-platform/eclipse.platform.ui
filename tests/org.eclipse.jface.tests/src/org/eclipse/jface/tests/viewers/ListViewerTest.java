@@ -17,11 +17,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ListViewer;
@@ -62,8 +62,8 @@ public class ListViewerTest extends StructuredViewerTest {
 		ListViewer v = ((ListViewer)fViewer);
 		TestElement element = new TestElement(fModel, fRootElement);
 		v.insert(element, 1);
-		assertSame("test insert", element, v.getElementAt(1));
-		assertEquals("test insert", element.toString(), v.getList().getItem(1));
+		assertSame(element, v.getElementAt(1), "test insert");
+		assertEquals(element.toString(), v.getList().getItem(1), "test insert");
 
 		v.addFilter(new ViewerFilter() {
 
@@ -75,7 +75,7 @@ public class ListViewerTest extends StructuredViewerTest {
 
 		TestElement element1 = new TestElement(fModel, fRootElement);
 		v.insert(element1, 1);
-		assertNotSame("test insert", element1, v.getElementAt(1));
+		assertNotSame(element1, v.getElementAt(1), "test insert");
 
 		v.setFilters();
 		v.remove(element);
@@ -84,7 +84,7 @@ public class ListViewerTest extends StructuredViewerTest {
 
 	@Test
 	public void testRevealBug69076() {
-		assumeFalse("See bug 116105", Util.isLinux());
+		assumeFalse(Util.isLinux(), "See bug 116105");
 
 		fViewer = null;
 		if (fShell != null) {
@@ -105,11 +105,11 @@ public class ListViewerTest extends StructuredViewerTest {
 				int topIndex = list.getTopIndex();
 				// even though we pass in reveal=false, SWT still scrolls to show the selection (since 20020815)
 				fViewer.setSelection(new StructuredSelection(child), false);
-				assertEquals("topIndex should not change on setSelection", topIndex, list
-						.getTopIndex());
+				assertEquals(topIndex, list
+						.getTopIndex(), "topIndex should not change on setSelection");
 				list.showSelection();
-				assertEquals("topIndex should not change on showSelection", topIndex, list
-						.getTopIndex());
+				assertEquals(topIndex, list
+						.getTopIndex(), "topIndex should not change on showSelection");
 			}
 		}
 	}
@@ -137,11 +137,11 @@ public class ListViewerTest extends StructuredViewerTest {
 		try {
 			Device.DEBUG = true;
 			int topIndex = list.getTopIndex();
-			assertNotEquals("Top item should not be the first item.", 0, topIndex);
+			assertNotEquals(0, topIndex, "Top item should not be the first item.");
 			fViewer.refresh();
 
 			DisplayHelper.waitAndAssertCondition(fShell.getDisplay(), () -> {
-				assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
+				assertEquals(topIndex, list.getTopIndex(), "Top index was not preserved after refresh.");
 			});
 
 			// Assert that when the previous top index after refresh is invalid no

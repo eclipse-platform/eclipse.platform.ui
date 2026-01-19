@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.BooleanSupplier;
 
@@ -293,7 +293,7 @@ public abstract class DisplayHelper {
 
 		if (!completed) {
 			assertion.run();
-			assertTrue("Timed out waiting for condition ", completed);
+			assertTrue(completed, "Timed out waiting for condition ");
 		}
 	}
 }

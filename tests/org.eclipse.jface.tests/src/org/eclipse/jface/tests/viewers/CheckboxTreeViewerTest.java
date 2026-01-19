@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -140,13 +140,13 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
 
 		ctv.setCheckStateProvider(provider);
-		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
-		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
+		assertFalse(provider.isCheckedInvokedOn.isEmpty(), "isChecked should be invoked on a refresh");
+		assertFalse(provider.isGrayedInvokedOn.isEmpty(), "isGrayed should be invoked on a refresh");
 
 		provider.reset();
 		ctv.refresh();
-		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
-		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
+		assertFalse(provider.isCheckedInvokedOn.isEmpty(), "isChecked should be invoked on a refresh");
+		assertFalse(provider.isGrayedInvokedOn.isEmpty(), "isGrayed should be invoked on a refresh");
 
 	}
 
@@ -169,7 +169,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 			for (int j = 0; j < expected.length && !firstLevelElement; j++) {
 				firstLevelElement = element.equals(expected[j]);
 			}
-			assertTrue("The check provider should only be invoked with visible elements", firstLevelElement);
+			assertTrue(firstLevelElement, "The check provider should only be invoked with visible elements");
 		}
 
 		for (TestElement testElement : provider.isGrayedInvokedOn) {
@@ -178,7 +178,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 			for (int j = 0; j < expected.length && !firstLevelElement; j++) {
 				firstLevelElement = element.equals(expected[j]);
 			}
-			assertTrue("The check provider should only be invoked with visible elements", firstLevelElement);
+			assertTrue(firstLevelElement, "The check provider should only be invoked with visible elements");
 		}
 	}
 
@@ -280,13 +280,11 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
 		// Check that the provider is only invoked on elements which pass the filter
 		for (TestElement element : checkStateProvider.isCheckedInvokedOn) {
-			assertTrue("The check provider should not be invoked on elements which did not get through the filter",
-					filter.select(ctv, null, element));
+			assertTrue(filter.select(ctv, null, element), "The check provider should not be invoked on elements which did not get through the filter");
 		}
 
 		for (TestElement element : checkStateProvider.isGrayedInvokedOn) {
-			assertTrue("The check provider should not be invoked on elements which did not get through the filter",
-					filter.select(ctv, null, element));
+			assertTrue(filter.select(ctv, null, element), "The check provider should not be invoked on elements which did not get through the filter");
 		}
 	}
 
@@ -342,8 +340,8 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	 * @param shift  the shift parameter being used
 	 */
 	private static void checkState(String comment, TestElement te, CheckboxTreeViewer viewer, int shift) {
-		assertEquals(comment, CheckStateProviderTestsUtil.shouldBeChecked(te, shift), viewer.getChecked(te));
-		assertEquals(comment, CheckStateProviderTestsUtil.shouldBeGrayed(te, shift), viewer.getGrayed(te));
+		assertEquals(CheckStateProviderTestsUtil.shouldBeChecked(te, shift), viewer.getChecked(te), comment);
+		assertEquals(CheckStateProviderTestsUtil.shouldBeGrayed(te, shift), viewer.getGrayed(te), comment);
 	}
 
 	/**
@@ -354,10 +352,10 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	 * @param shift the shift parameter being used
 	 */
 	private static void checkState(String comment, TestElement te, TreeItem item, int shift) {
-		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeChecked(te, shift),
-				item.getChecked());
-		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeGrayed(te, shift),
-				item.getGrayed());
+		assertEquals(CheckStateProviderTestsUtil.shouldBeChecked(te, shift),
+				item.getChecked(), "Wrong checkstate: " + comment);
+		assertEquals(CheckStateProviderTestsUtil.shouldBeGrayed(te, shift),
+				item.getGrayed(), "Wrong checkstate: " + comment);
 	}
 
 	@Test
@@ -376,10 +374,10 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		Object[] actuallyChecked = ctv.getCheckedElements();
 
 		for (Object element : actuallyChecked) {
-			assertTrue("getCheckedElements should include all checked elements", checked.remove(element));
+			assertTrue(checked.remove(element), "getCheckedElements should include all checked elements");
 		}
 
-		assertTrue("getCheckedElements should not include any unchecked elements", checked.isEmpty());
+		assertTrue(checked.isEmpty(), "getCheckedElements should not include any unchecked elements");
 	}
 
 	@Test
@@ -398,11 +396,9 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
 		for (int i = 0; i < children.length; i++) {
 			if (i % 2 == 0) {
-				assertTrue("an element passed through setCheckedElements should be checked",
-						ctv.getChecked(children[i]));
+				assertTrue(ctv.getChecked(children[i]), "an element passed through setCheckedElements should be checked");
 			} else {
-				assertFalse("an element not passed through setCheckedElements should be unchecked",
-						ctv.getChecked(children[i]));
+				assertFalse(ctv.getChecked(children[i]), "an element not passed through setCheckedElements should be unchecked");
 			}
 		}
 	}
@@ -423,10 +419,9 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
 		for (int i = 0; i < children.length; i++) {
 			if (i % 2 == 0) {
-				assertTrue("an element passed through setGrayedElements should be grayed", ctv.getGrayed(children[i]));
+				assertTrue(ctv.getGrayed(children[i]), "an element passed through setGrayedElements should be grayed");
 			} else {
-				assertFalse("an element not passed through setGrayedElements should not be grayed",
-						ctv.getGrayed(children[i]));
+				assertFalse(ctv.getGrayed(children[i]), "an element not passed through setGrayedElements should not be grayed");
 			}
 		}
 	}
@@ -442,13 +437,13 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		Object[] expandedElements = ctv.getExpandedElements();
 
 		for (Object expandedElement : expandedElements) {
-			assertTrue("all expanded items should be checked", ctv.getChecked(expandedElement));
+			assertTrue(ctv.getChecked(expandedElement), "all expanded items should be checked");
 		}
 
 		ctv.setAllChecked(false);
 
 		for (Object expandedElement : expandedElements) {
-			assertFalse("all expanded items should be unchecked", ctv.getChecked(expandedElement));
+			assertFalse(ctv.getChecked(expandedElement), "all expanded items should be unchecked");
 		}
 	}
 
@@ -461,10 +456,10 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		ctv.setGrayChecked(children[0], true);
 		ctv.setGrayChecked(children[1], false);
 
-		assertTrue("an item invoked with setGrayChecked(true) should be checked", ctv.getChecked(children[0]));
-		assertTrue("an item invoked with setGrayChecked(true) should be grayed", ctv.getGrayed(children[0]));
+		assertTrue(ctv.getChecked(children[0]), "an item invoked with setGrayChecked(true) should be checked");
+		assertTrue(ctv.getGrayed(children[0]), "an item invoked with setGrayChecked(true) should be grayed");
 
-		assertFalse("an item invoked with setGrayChecked(false) should be unchecked", ctv.getChecked(children[1]));
-		assertFalse("an item invoked with setGrayChecked(false) should not be grayed", ctv.getGrayed(children[1]));
+		assertFalse(ctv.getChecked(children[1]), "an item invoked with setGrayChecked(false) should be unchecked");
+		assertFalse(ctv.getGrayed(children[1]), "an item invoked with setGrayChecked(false) should not be grayed");
 	}
 }

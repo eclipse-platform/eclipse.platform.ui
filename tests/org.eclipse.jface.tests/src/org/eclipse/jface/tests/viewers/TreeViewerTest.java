@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,11 +81,9 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		event.item = itemToExpand;
 		tree.notifyListeners(SWT.Expand, event);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
-		assertTrue("The first child of the trivial path was not auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
-		assertFalse("Trivial path is expanded further than specified depth ",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was not auto-expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()), "Trivial path is expanded further than specified depth ");
 	}
 
 	@Test
@@ -111,8 +109,7 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		Queue<TestElement> elements = new ConcurrentLinkedQueue<>(Arrays.asList(rootElement.getChildren()));
 		while (!elements.isEmpty()) {
 			TestElement currentElement = elements.poll();
-			assertTrue("expansion for child was not processed: " + currentElement,
-					recursiveExpandedElements.contains(currentElement));
+			assertTrue(recursiveExpandedElements.contains(currentElement), "expansion for child was not processed: " + currentElement);
 			elements.addAll(Arrays.asList(currentElement.getChildren()));
 		}
 	}
@@ -132,30 +129,30 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		 */
 		fTreeViewer.expandToLevel(rootElement, AbstractTreeViewer.ALL_LEVELS);
 		processEvents();
-		assertTrue("1st should be expanded", fTreeViewer.getExpandedState(firstChild));
-		assertTrue("2nd should be expanded", fTreeViewer.getExpandedState(secondChild));
-		assertFalse("3rd should be always collapsed", fTreeViewer.getExpandedState(lastChild));
+		assertTrue(fTreeViewer.getExpandedState(firstChild), "1st should be expanded");
+		assertTrue(fTreeViewer.getExpandedState(secondChild), "2nd should be expanded");
+		assertFalse(fTreeViewer.getExpandedState(lastChild), "3rd should be always collapsed");
 
 		fTreeViewer.collapseToLevel(firstChild, AbstractTreeViewer.ALL_LEVELS);
 		processEvents();
-		assertFalse("1st should be collapsed", fTreeViewer.getExpandedState(firstChild));
-		assertFalse("2nd should be collapsed", fTreeViewer.getExpandedState(secondChild));
-		assertFalse("3rd should be always collapsed", fTreeViewer.getExpandedState(lastChild));
+		assertFalse(fTreeViewer.getExpandedState(firstChild), "1st should be collapsed");
+		assertFalse(fTreeViewer.getExpandedState(secondChild), "2nd should be collapsed");
+		assertFalse(fTreeViewer.getExpandedState(lastChild), "3rd should be always collapsed");
 
 		/*
 		 * Main block shows regression with collapseToLevel(number);
 		 */
 		fTreeViewer.expandToLevel(rootElement, AbstractTreeViewer.ALL_LEVELS);
 		processEvents();
-		assertTrue("1st should be expanded", fTreeViewer.getExpandedState(firstChild));
-		assertTrue("2nd should be expanded", fTreeViewer.getExpandedState(secondChild));
-		assertFalse("3rd should be always collapsed", fTreeViewer.getExpandedState(lastChild));
+		assertTrue(fTreeViewer.getExpandedState(firstChild), "1st should be expanded");
+		assertTrue(fTreeViewer.getExpandedState(secondChild), "2nd should be expanded");
+		assertFalse(fTreeViewer.getExpandedState(lastChild), "3rd should be always collapsed");
 
 		fTreeViewer.collapseToLevel(firstChild, 2);
 		processEvents();
-		assertFalse("1st should be collapsed", fTreeViewer.getExpandedState(firstChild));
-		assertFalse("2nd should be collapsed", fTreeViewer.getExpandedState(secondChild));
-		assertFalse("3rd should be always collapsed", fTreeViewer.getExpandedState(lastChild));
+		assertFalse(fTreeViewer.getExpandedState(firstChild), "1st should be collapsed");
+		assertFalse(fTreeViewer.getExpandedState(secondChild), "2nd should be collapsed");
+		assertFalse(fTreeViewer.getExpandedState(lastChild), "3rd should be always collapsed");
 	}
 
 	/**

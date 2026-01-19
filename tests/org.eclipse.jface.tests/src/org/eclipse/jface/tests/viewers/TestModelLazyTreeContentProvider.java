@@ -14,10 +14,11 @@
 package org.eclipse.jface.tests.viewers;
 
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.junit.Assert;
 
 public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 		implements ILazyTreeContentProvider {
@@ -40,19 +41,19 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 
 	@Override
 	public Object[] getChildren(Object element) {
-		Assert.fail("should not be called on a LazyTreeContentProvider");
+		fail("should not be called on a LazyTreeContentProvider");
 		return null;
 	}
 
 	@Override
 	public Object[] getElements(Object element) {
-		Assert.fail("should not be called on a LazyTreeContentProvider");
+		fail("should not be called on a LazyTreeContentProvider");
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		Assert.fail("should not be called on a LazyTreeContentProvider");
+		fail("should not be called on a LazyTreeContentProvider");
 		return false;
 	}
 
