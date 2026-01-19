@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
@@ -483,7 +483,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
 	}
 
-	@After
+	@AfterEach
 	@Override
 	public void tearDown() {
 		super.tearDown();

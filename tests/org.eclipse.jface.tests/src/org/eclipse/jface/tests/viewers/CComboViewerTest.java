@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Composite;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * @since 3.0
@@ -47,7 +47,7 @@ public class CComboViewerTest extends StructuredViewerTest {
 	}
 
 	@Override
-	@Ignore("TODO: Determine if this test is applicable to ComboViewer")
+	@Disabled("TODO: Determine if this test is applicable to ComboViewer")
 	public void testInsertChild() {
 
 	}

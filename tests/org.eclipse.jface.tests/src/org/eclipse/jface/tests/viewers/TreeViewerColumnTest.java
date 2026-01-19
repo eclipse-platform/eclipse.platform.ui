@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 

@@ -33,7 +33,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ListViewerTest extends StructuredViewerTest {
 

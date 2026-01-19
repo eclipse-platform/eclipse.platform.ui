@@ -53,8 +53,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Most of the setup has been taken from
@@ -141,7 +141,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 	protected String changeMe = "OLD";
 	private static int COLUMN_COUNT = 3;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() {
 		entries = new CountryEntry[3];

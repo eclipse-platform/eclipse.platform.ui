@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
 

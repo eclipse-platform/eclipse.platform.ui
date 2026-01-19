@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class ViewerTestCase {
 
@@ -48,6 +50,7 @@ public abstract class ViewerTestCase {
 	private ISafeRunnableRunner oldRunner;
 
 	@Before
+	@BeforeEach
 	public void initializeOsDependentStates() {
 		disableTestsBug347491 = Util.isCocoa();
 		eventLoopAdjustmentBug531048 = Util.isGtk();
@@ -109,7 +112,9 @@ public abstract class ViewerTestCase {
 	}
 
 	@Before
+	@BeforeEach
 	public void setUp() {
+		StructuredViewerTest.TestLabelProvider.fgSuffix = "";
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
 		Policy.setLog(status -> fail(status.getMessage()));
@@ -141,6 +146,7 @@ public abstract class ViewerTestCase {
 	}
 
 	@After
+	@AfterEach
 	public void tearDown() {
 		Policy.setLog(oldLogger);
 		SafeRunnable.setRunner(oldRunner);

@@ -27,7 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3

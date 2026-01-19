@@ -24,8 +24,8 @@ import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Description of the bug: Initially tree is populated by way shown below and is
@@ -98,7 +98,7 @@ public class Bug138608Test extends ViewerTestCase {
 
 	}
 
-	@After
+	@AfterEach
 	@Override
 	public void tearDown() {
 		contentProvider = null;

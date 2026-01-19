@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3

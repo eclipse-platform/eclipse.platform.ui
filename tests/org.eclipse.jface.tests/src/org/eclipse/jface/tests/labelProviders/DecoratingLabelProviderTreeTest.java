@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3

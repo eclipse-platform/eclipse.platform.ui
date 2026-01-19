@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class StructuredItemViewerTest extends StructuredViewerTest {
 

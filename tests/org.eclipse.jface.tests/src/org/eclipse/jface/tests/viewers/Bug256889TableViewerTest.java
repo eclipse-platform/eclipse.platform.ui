@@ -24,8 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class Bug256889TableViewerTest extends ViewerTestCase {
 
@@ -111,7 +111,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 		fShell.setSize(300, 1000);
 	}
 
-	@Before
+	@BeforeEach
 	public void initModel() {
 		this.rowcounter = 0;
 		getModel().clear();

@@ -25,8 +25,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 
@@ -41,6 +42,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		return fTreeViewer;
 	}
 
+	@BeforeEach
 	@Override
 	public void setUp() {
 		super.setUp();
@@ -76,67 +78,67 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		assertTrue(fTreeViewer.isExpandable(nodeElement));
 	}
 
-	@Ignore("Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.")
+	@Disabled("Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.")
 	@Override
 	public void testRefreshWithDuplicateChild() {
 	}
 
-	@Ignore("Test leads to infinite loop. Cycles are a bad idea in virtual trees.")
+	@Disabled("Test leads to infinite loop. Cycles are a bad idea in virtual trees.")
 	@Override
 	public void testSetExpandedWithCycle() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testFilterExpanded() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testFilter() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testSetFilters() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testInsertSiblingWithFilterFiltered() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testInsertSiblingWithFilterNotFiltered() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support sorting")
+	@Disabled("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testInsertSiblingWithSorter() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support filtering")
+	@Disabled("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testRenameWithFilter() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support sorting")
+	@Disabled("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testRenameWithSorter() {
 	}
 
-	@Ignore("no need to test since virtual trees do not support sorting")
+	@Disabled("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testSorter() {
 	}
 
-	@Ignore("test is not relevant for lazy tree viewer")
+	@Disabled("test is not relevant for lazy tree viewer")
 	@Override
 	public void testChildIsNotDuplicatedWhenCompareEquals() {
 	}
 
-	@Ignore("test is not relevant for lazy tree viewer")
+	@Disabled("test is not relevant for lazy tree viewer")
 	@Override
 	public void testExpandCollapseToLevel() {
 	}

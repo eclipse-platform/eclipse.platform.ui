@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TableViewerTest extends StructuredItemViewerTest {
 	public static class TableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {
