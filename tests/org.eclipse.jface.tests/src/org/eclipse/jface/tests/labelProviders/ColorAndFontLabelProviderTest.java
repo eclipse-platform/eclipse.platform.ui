@@ -14,8 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -83,9 +83,9 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);
 
-		assertEquals("Background was not set", item.getBackground(0), background);
-		assertEquals("Foreground was not set", item.getForeground(0), foreground);
-		assertEquals("Font was not set", item.getFont(0), font);
+		assertEquals(background, item.getBackground(0), "Background was not set");
+		assertEquals(foreground, item.getForeground(0), "Foreground was not set");
+		assertEquals(font, item.getFont(0), "Font was not set");
 
 		Font oldFont = font;
 
@@ -93,11 +93,11 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 		fViewer.refresh(item.getData());
 
 		Display display = table.getDisplay();
-		assertEquals("Background was not cleared", item.getBackground(0),
-				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		assertEquals("Foreground was not cleared", item.getForeground(0),
-				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-		assertNotEquals("Font was not cleared", item.getFont(0).getFontData()[0], oldFont.getFontData()[0]);
+		assertEquals(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND), item.getBackground(0),
+				"Background was not cleared");
+		assertEquals(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND), item.getForeground(0),
+				"Foreground was not cleared");
+		assertNotEquals(oldFont.getFontData()[0], item.getFont(0).getFontData()[0], "Font was not cleared");
 
 	}
 
