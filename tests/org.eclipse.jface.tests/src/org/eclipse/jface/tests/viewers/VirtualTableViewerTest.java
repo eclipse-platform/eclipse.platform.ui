@@ -33,9 +33,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * The TableViewerTest is a test of the SWT#VIRTUAL support in TableViewers,
@@ -57,7 +57,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 */
 	protected volatile boolean setDataCalled = false;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() {
 		super.setUp();
@@ -162,32 +162,32 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSibling() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblingReveal() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblings() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblingWithFilterFiltered() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblingWithFilterNotFiltered() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblingWithSorter() {
 	}
@@ -205,7 +205,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertNotNull("changed sibling is not visible", fViewer.testFindItem(first));
 	}
 
-	@Ignore("This test us based on findItem assuming all items are created so it is not valid.")
+	@Disabled("This test us based on findItem assuming all items are created so it is not valid.")
 	@Override
 	public void testSetInput() {
 	}
@@ -237,17 +237,17 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertEquals("unsorted", firstLabel, getItemText(0));
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testInsertSiblingSelectExpanded() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testSomeChildrenChanged() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testWorldChanged() {
 	}

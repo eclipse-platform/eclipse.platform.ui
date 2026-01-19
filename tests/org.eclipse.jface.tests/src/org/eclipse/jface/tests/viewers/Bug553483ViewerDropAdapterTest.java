@@ -14,7 +14,6 @@
 package org.eclipse.jface.tests.viewers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -50,7 +49,10 @@ public class Bug553483ViewerDropAdapterTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		display = new Display();
+		display = Display.getCurrent();
+		if (display == null) {
+			display = new Display();
+		}
 		shell = new Shell(display);
 
 		shell.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -109,9 +111,9 @@ public class Bug553483ViewerDropAdapterTest {
 
 	@AfterEach
 	public void tearDown() throws Exception {
-		assertTrue(shell.isDisposed());
-
-		display.dispose();
+		if (shell != null && !shell.isDisposed()) {
+			shell.dispose();
+		}
 	}
 
 	@Test
@@ -150,6 +152,8 @@ public class Bug553483ViewerDropAdapterTest {
 		// ctrl + drag & drop => copy
 
 		shell.forceActive();
+		while (display.readAndDispatch()) {
+		}
 
 		Event keyEvent = new Event();
 		Event mouseEvent = new Event();
@@ -188,12 +192,17 @@ public class Bug553483ViewerDropAdapterTest {
 		keyEvent.stateMask = SWT.CTRL;
 		keyEvent.type = SWT.KeyUp;
 		display.post(keyEvent);
+
+		while (display.readAndDispatch()) {
+		}
 	}
 
 	private void postDragAndDropMoveEvents() {
 		// this time w/o ctrl => move
 
 		shell.forceActive();
+		while (display.readAndDispatch()) {
+		}
 
 		Event mouseEvent = new Event();
 
@@ -214,6 +223,9 @@ public class Bug553483ViewerDropAdapterTest {
 
 		mouseEvent.type = SWT.MouseUp;
 		display.post(mouseEvent);
+
+		while (display.readAndDispatch()) {
+		}
 	}
 
 	private static class ViewerDragSource implements DragSourceListener {

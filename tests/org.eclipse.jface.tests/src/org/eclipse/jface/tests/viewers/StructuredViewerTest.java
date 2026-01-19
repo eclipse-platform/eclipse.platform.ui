@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
 	public static class TestLabelFilter extends ViewerFilter {

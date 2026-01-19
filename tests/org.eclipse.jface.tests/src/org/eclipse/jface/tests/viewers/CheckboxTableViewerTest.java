@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckboxTableViewerTest extends TableViewerTest {
 	public static class CheckboxTableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {

@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The TableFontProviderTest is a test suite designed to test
@@ -85,7 +85,7 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	}
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() {
 		super.setUp();

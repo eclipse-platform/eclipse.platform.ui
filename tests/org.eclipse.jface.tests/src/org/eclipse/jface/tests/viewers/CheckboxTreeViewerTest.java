@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckboxTreeViewerTest extends TreeViewerTest {
 	public static class CheckboxTableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {
@@ -41,7 +41,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		@Override
 		public String getText(Object element) {
 			if (fExtended) {
-				return providedString((String) element);
+				return providedString((TestElement) element);
 			}
 			return element.toString();
 		}

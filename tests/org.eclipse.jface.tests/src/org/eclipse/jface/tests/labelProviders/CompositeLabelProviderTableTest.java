@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * CompositeLabelProviderTableTest tests a table that is a

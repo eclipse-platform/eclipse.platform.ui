@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.2

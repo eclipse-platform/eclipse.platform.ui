@@ -27,9 +27,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * The VirtualLazyTableViewerTest is a test of table viewers with lazy
@@ -46,6 +47,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		return new TestLazyModelContentProvider(this);
 	}
 
+	@BeforeEach
 	@Override
 	public void setUp() {
 		updatedElements = new ArrayList<>();
@@ -58,7 +60,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		fModel = fRootElement.getModel();
 	}
 
-	@After
+	@AfterEach
 	@Override
 	public void tearDown() {
 		super.tearDown();
@@ -134,32 +136,32 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		assertNull("last Child should no longer be in the map", fViewer.testFindItem(lastChild));
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testSorter() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testRenameWithSorter() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testSetFilters() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testFilter() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testRenameWithFilter() {
 	}
 
-	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
+	@Disabled("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testContains() {
 	}

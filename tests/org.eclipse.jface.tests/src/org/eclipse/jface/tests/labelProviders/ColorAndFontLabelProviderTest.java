@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * ColorAndFontProviderTest is a test of a color and font provider but not an

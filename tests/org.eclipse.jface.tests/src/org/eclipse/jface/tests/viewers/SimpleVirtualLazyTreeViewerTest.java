@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests TreeViewer's VIRTUAL support with a lazy content provider.
@@ -108,7 +108,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	 */
 	protected boolean setDataCalled = false;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() {
 		super.setUp();
