@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -80,9 +80,9 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);
 
-		assertEquals("Background was not set", item.getBackground(0), background);
-		assertEquals("Foreground was not set", item.getForeground(0), foreground);
-		assertEquals("Font was not set", item.getFont(0), font);
+		assertEquals(background, item.getBackground(0), "Background was not set");
+		assertEquals(foreground, item.getForeground(0), "Foreground was not set");
+		assertEquals(font, item.getFont(0), "Font was not set");
 
 	}
 

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.labelProviders;
 
-import org.junit.runner.JUnitCore;
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -24,9 +22,5 @@ import org.junit.platform.suite.api.Suite;
 		ColorAndFontViewerLabelProviderTest.class, DecoratingStyledCellLabelProviderTest.class,
 		IDecorationContextTest.class })
 public class DecoratingLabelProviderTests {
-
-	public static void main(String[] args) {
-		JUnitCore.main(DecoratingLabelProviderTests.class.getName());
-	}
 
 }
