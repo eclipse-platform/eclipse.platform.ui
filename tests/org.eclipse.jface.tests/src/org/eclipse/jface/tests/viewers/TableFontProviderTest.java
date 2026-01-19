@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
@@ -138,9 +138,9 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		FontData[] font1Data = font1.getFontData();
 		FontData[] font2Data = font2.getFontData();
 
-		assertEquals("Mismatched sizes", font1Data.length, font2Data.length);
+		assertEquals(font1Data.length, font2Data.length, "Mismatched sizes");
 		for (int a = 0; a < font2Data.length; a++) {
-			assertEquals("Mismatched fontData", font1Data[a], font2Data[a]);
+			assertEquals(font1Data[a], font2Data[a], "Mismatched fontData");
 		}
 
 	}

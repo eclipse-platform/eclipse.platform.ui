@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,31 +133,31 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 
 	private void assertSortedResult(String[][] resultArrays) {
 		TreeItem[] rootItems = getTreeViewer().getTree().getItems();
-		assertEquals("Number of root items in tree not correct (actual=" + rootItems.length + ")", 3, rootItems.length);
+		assertEquals(3, rootItems.length, "Number of root items in tree not correct (actual=" + rootItems.length + ")");
 		TreeItem item = rootItems[0];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + CORE, CORE, item.getText());
+		assertEquals(CORE, item.getText(), "Item not expected.  actual=" + item.getText() + " expected=" + CORE);
 		item = rootItems[1];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + RUNTIME, RUNTIME, item.getText());
+		assertEquals(RUNTIME, item.getText(), "Item not expected.  actual=" + item.getText() + " expected=" + RUNTIME);
 		item = rootItems[2];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + UI, UI, item.getText());
+		assertEquals(UI, item.getText(), "Item not expected.  actual=" + item.getText() + " expected=" + UI);
 
 		TreeItem[] childItems = rootItems[0].getItems();
 		for (int i = 0; i < childItems.length; i++) {
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[0][i], result);
+			assertEquals(resultArrays[0][i], result, "");
 		}
 		childItems = rootItems[1].getItems();
 		for (int i = 0; i < childItems.length; i++) {
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[1][i], result);
+			assertEquals(resultArrays[1][i], result, "");
 		}
 		childItems = rootItems[2].getItems();
 		for (int i = 0; i < childItems.length; i++) {
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[2][i], result);
+			assertEquals(resultArrays[2][i], result, "");
 		}
 	}
 

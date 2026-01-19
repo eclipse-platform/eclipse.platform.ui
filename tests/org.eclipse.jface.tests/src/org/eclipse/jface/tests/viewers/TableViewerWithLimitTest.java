@@ -14,9 +14,9 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		Table table = tableViewer.getTable();
 		assertLimitedItems(table.getItems());
 		DataModel data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(4), data.id);
+		assertEquals(Integer.valueOf(4), data.id, "wrong item is found at given location");
 
 		// this element must be visible
 		DataModel newEle = new DataModel(Integer.valueOf(3));
@@ -67,7 +67,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		// check items and label after addition.
 		assertLimitedItems(table.getItems());
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(3), data.id);
+		assertEquals(Integer.valueOf(3), data.id, "wrong item is found at given location");
 
 		// this element must not be visible only expandable node label must be updated.
 		DataModel newEle1 = new DataModel(Integer.valueOf(9));
@@ -77,7 +77,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		// check items and label after addition.
 		assertLimitedItems(table.getItems());
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(3), data.id);
+		assertEquals(Integer.valueOf(3), data.id, "wrong item is found at given location");
 
 		// Add elements one by one
 		rootModel = createModel(1);
@@ -91,7 +91,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 			processEvents();
 			TableItem[] items = table.getItems();
 			Object last = items[items.length - 1].getData();
-			assertFalse("Last item shouln't be expandable: " + last, tableViewer.isExpandableNode(last));
+			assertFalse(tableViewer.isExpandableNode(last), "Last item shouln't be expandable: " + last);
 		}
 
 		DataModel element = new DataModel(Integer.valueOf(rootModel.size() + 1));
@@ -107,7 +107,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		Table table = tableViewer.getTable();
 		assertLimitedItems(table.getItems());
 		DataModel data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(4), data.id);
+		assertEquals(Integer.valueOf(4), data.id, "wrong item is found at given location");
 
 		// this element must be visible
 		DataModel removed = rootModel.remove(2);
@@ -116,7 +116,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		// check items and label after removal.
 		assertLimitedItems(table.getItems());
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(6), data.id);
+		assertEquals(Integer.valueOf(6), data.id, "wrong item is found at given location");
 
 		// this element must not be visible only expandable node label must be updated.
 		removed = rootModel.remove(7);
@@ -125,7 +125,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		// check items and label after removal.
 		assertLimitedItems(table.getItems());
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(6), data.id);
+		assertEquals(Integer.valueOf(6), data.id, "wrong item is found at given location");
 
 		while (rootModel.size() > VIEWER_LIMIT + 1) {
 			removed = rootModel.remove(rootModel.size() - 1);
@@ -138,7 +138,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 				assertLimitedItems(items);
 			} else {
 				Object last = items[items.length - 1].getData();
-				assertFalse("Last item shouln't be expandable: " + last, tableViewer.isExpandableNode(last));
+				assertFalse(tableViewer.isExpandableNode(last), "Last item shouln't be expandable: " + last);
 			}
 		}
 
@@ -152,22 +152,22 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		clickTableItem(table, lastItem);
 		processEvents();
 		Item[] itemsBefore = table.getItems();
-		assertEquals("There are more/less items rendered than viewer limit", VIEWER_LIMIT * 2 + 1, itemsBefore.length);
+		assertEquals(VIEWER_LIMIT * 2 + 1, itemsBefore.length, "There are more/less items rendered than viewer limit");
 		Item item = itemsBefore[itemsBefore.length - 1];
 		Object data = item.getData();
-		assertTrue("Last node must be an Expandable Node", tableViewer.isExpandableNode(data));
+		assertTrue(tableViewer.isExpandableNode(data), "Last node must be an Expandable Node");
 
 		String expected = calculateExpandableLabel(data);
-		assertEquals("Expandable node has an incorrect text", expected, item.getText());
+		assertEquals(expected, item.getText(), "Expandable node has an incorrect text");
 
 		// click until all expandable nodes are expanded.
 		clickUntilAllExpandableNodes(table);
 
 		// all the elements of the model should be visible
 		Item[] itemsAfterExp = table.getItems();
-		assertEquals("There are more/less items rendered than viewer limit", rootModel.size(), itemsAfterExp.length);
-		assertEquals("Last node must be an DataModel after all the elements expanded",
-				itemsAfterExp[itemsAfterExp.length - 1].getData().getClass(), DataModel.class);
+		assertEquals(rootModel.size(), itemsAfterExp.length, "There are more/less items rendered than viewer limit");
+		assertEquals(
+				DataModel.class, itemsAfterExp[itemsAfterExp.length - 1].getData().getClass(), "Last node must be an DataModel after all the elements expanded");
 	}
 
 	@Test
@@ -176,9 +176,9 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		clickUntilAllExpandableNodes(table);
 
 		// all the elements of the model should be visible
-		assertEquals("There are more/less items rendered than viewer limit", rootModel.size(), table.getItems().length);
+		assertEquals(rootModel.size(), table.getItems().length, "There are more/less items rendered than viewer limit");
 		DataModel data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(4), data.id);
+		assertEquals(Integer.valueOf(4), data.id, "wrong item is found at given location");
 
 		tableViewer.setFilters(new TestViewerFilter());
 		processEvents();
@@ -186,9 +186,9 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		clickUntilAllExpandableNodes(table);
 
 		// only filtered items are visible
-		assertEquals("There are more/less items rendered than viewer limit", 14, table.getItems().length);
+		assertEquals(14, table.getItems().length, "There are more/less items rendered than viewer limit");
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(16), data.id);
+		assertEquals(Integer.valueOf(16), data.id, "wrong item is found at given location");
 	}
 
 	private void clickUntilAllExpandableNodes(Table table) {
@@ -212,12 +212,12 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		tableViewer.add(newEle1);
 		processEvents();
 		DataModel data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(3), data.id);
+		assertEquals(Integer.valueOf(3), data.id, "wrong item is found at given location");
 		// reset comparator
 		tableViewer.setComparator(null);
 		processEvents();
 		data = (DataModel) table.getItems()[2].getData();
-		assertEquals("wrong item is found at given location", Integer.valueOf(4), data.id);
+		assertEquals(Integer.valueOf(4), data.id, "wrong item is found at given location");
 	}
 
 	@Test
@@ -227,53 +227,53 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		tableViewer.setSelection(new StructuredSelection(toSelect));
 		processEvents();
 		ISelection selection = tableViewer.getSelection();
-		assertTrue("Selection must not be empty", selection instanceof IStructuredSelection);
+		assertTrue(selection instanceof IStructuredSelection, "Selection must not be empty");
 		Object selEle = ((IStructuredSelection) selection).getFirstElement();
-		assertTrue("Selection must be ExpandableNode", tableViewer.isExpandableNode(selEle));
+		assertTrue(tableViewer.isExpandableNode(selEle), "Selection must be ExpandableNode");
 
 		// select an element which is visible
 		toSelect = rootModel.get(VIEWER_LIMIT / 2);
 		tableViewer.setSelection(new StructuredSelection(toSelect));
 		processEvents();
 		selection = tableViewer.getSelection();
-		assertTrue("Selection must not be empty", selection instanceof IStructuredSelection);
+		assertTrue(selection instanceof IStructuredSelection, "Selection must not be empty");
 		selEle = ((IStructuredSelection) selection).getFirstElement();
-		assertEquals("selection must be desired element which is visible", toSelect, selEle);
+		assertEquals(toSelect, selEle, "selection must be desired element which is visible");
 
 		// select something not present in model.
 		tableViewer.setSelection(new StructuredSelection("dummy"));
 		processEvents();
 		selection = tableViewer.getSelection();
-		assertTrue("Selection must not be empty", selection.isEmpty());
+		assertTrue(selection.isEmpty(), "Selection must not be empty");
 	}
 
 	@Test
 	public void testRefresh() {
 		Table table = tableViewer.getTable();
 		assertLimitedItems(table.getItems());
-		assertEquals("third element must be third element of the input", rootModel.get(2), table.getItem(2).getData());
+		assertEquals(rootModel.get(2), table.getItem(2).getData(), "third element must be third element of the input");
 		DataModel ele1 = new DataModel(Integer.valueOf(100));
 		rootModel.add(ele1);
 		tableViewer.add(ele1);
 		processEvents();
 		assertLimitedItems(table.getItems());
-		assertEquals("third element must be third element of the input", rootModel.get(2), table.getItem(2).getData());
+		assertEquals(rootModel.get(2), table.getItem(2).getData(), "third element must be third element of the input");
 		DataModel newEle = new DataModel(Integer.valueOf(3));
 		rootModel.add(newEle);
 		tableViewer.add(newEle);
 		processEvents();
 		assertLimitedItems(table.getItems());
-		assertEquals("third element must be newly added element", newEle, table.getItem(2).getData());
+		assertEquals(newEle, table.getItem(2).getData(), "third element must be newly added element");
 	}
 
 	private void assertLimitedItems(TableItem[] itemsBefore) {
-		assertEquals("There are more/less items rendered than viewer limit", VIEWER_LIMIT + 1, itemsBefore.length);
+		assertEquals(VIEWER_LIMIT + 1, itemsBefore.length, "There are more/less items rendered than viewer limit");
 		TableItem tableItem = itemsBefore[itemsBefore.length - 1];
 		Object data = tableItem.getData();
-		assertTrue("Last node must be an Expandable Node", tableViewer.isExpandableNode(data));
+		assertTrue(tableViewer.isExpandableNode(data), "Last node must be an Expandable Node");
 
 		String expectedLabel = calculateExpandableLabel(data);
-		assertEquals("Expandable node has an incorrect text", expectedLabel, tableItem.getText());
+		assertEquals(expectedLabel, tableItem.getText(), "Expandable node has an incorrect text");
 	}
 
 	private String calculateExpandableLabel(Object data) {
@@ -301,7 +301,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		rootModel.add(rootLevel);
 		tableViewer.setInput(rootModel);
 		processEvents();
-		assertEquals("there must be only one item", 1, tableViewer.getTable().getItems().length);
+		assertEquals(1, tableViewer.getTable().getItems().length, "there must be only one item");
 		tableViewer.setInput(createModel(DEFAULT_ELEMENTS_COUNT));
 		processEvents();
 		assertLimitedItems(tableViewer.getTable().getItems());
@@ -323,40 +323,39 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		}
 		tableViewer.setInput(newInput);
 		processEvents();
-		assertEquals("visible items length should be " + (limit + 1), limit + 1,
-				tableViewer.getTable().getItems().length);
+		assertEquals(limit + 1,
+				tableViewer.getTable().getItems().length, "visible items length should be " + (limit + 1));
 
 		tableViewer.setDisplayIncrementally(limit = 4);
 		tableViewer.refresh();
 		processEvents();
-		assertEquals("visible items length should be " + (limit + 1), limit + 1,
-				tableViewer.getTable().getItems().length);
+		assertEquals(limit + 1,
+				tableViewer.getTable().getItems().length, "visible items length should be " + (limit + 1));
 
 		tableViewer.setDisplayIncrementally(limit = 6);
 		tableViewer.refresh();
 		processEvents();
-		assertEquals("visible items length should be " + (limit + 1), limit + 1,
-				tableViewer.getTable().getItems().length);
+		assertEquals(limit + 1,
+				tableViewer.getTable().getItems().length, "visible items length should be " + (limit + 1));
 
 		tableViewer.setDisplayIncrementally(limit = 8);
 		tableViewer.refresh();
 		processEvents();
-		assertEquals("visible items length should be " + newInput.size(), newInput.size(),
-				tableViewer.getTable().getItems().length);
+		assertEquals(newInput.size(),
+				tableViewer.getTable().getItems().length, "visible items length should be " + newInput.size());
 
 	}
 
 	@Test
 	public void testContains() {
 		// some random element.
-		assertFalse("element must not be available on the viewer", tableViewer.contains(""));
+		assertFalse(tableViewer.contains(""), "element must not be available on the viewer");
 
 		// first child of root.
-		assertTrue("element must be available on the viewer", tableViewer.contains(rootModel.get(0)));
+		assertTrue(tableViewer.contains(rootModel.get(0)), "element must be available on the viewer");
 
 		// last child of the root. It should be true even if it shows limited items.
-		assertTrue("element must be available on the viewer",
-				tableViewer.contains(rootModel.get(rootModel.size() - 1)));
+		assertTrue(tableViewer.contains(rootModel.get(rootModel.size() - 1)), "element must be available on the viewer");
 
 	}
 

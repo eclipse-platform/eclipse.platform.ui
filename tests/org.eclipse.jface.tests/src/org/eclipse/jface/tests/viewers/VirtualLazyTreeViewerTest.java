@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -147,72 +147,72 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Test
 	@Override
 	public void testRefreshWithAddedChildren() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testRefreshWithAddedChildren();
 	}
 
 	@Test
 	@Override
 	public void testDeleteSibling() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testDeleteSibling();
 	}
 
 	@Test
 	@Override
 	public void testInsertSibling() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testInsertSibling();
 	}
 
 	@Test
 	@Override
 	public void testInsertSiblings() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testInsertSiblings();
 	}
 
 	@Test
 	@Override
 	public void testSetInput() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testSetInput();
 	}
 
 	@Test
 	@Override
 	public void testSomeChildrenChanged() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testSomeChildrenChanged();
 	}
 
 	@Test
 	@Override
 	public void testWorldChanged() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testWorldChanged();
 	}
 
 	@Test
 	@Override
 	public void testContains() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testContains();
 	}
 
 	@Test
 	@Override
 	public void testAutoExpandOnSingleChildThroughEvent() {
-		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
-		assertTrue("data must have been set", setDataCalls > 0);
+		assumeFalse(disableTestsBug347491, "test disabled because of bug 347491");
+		assertTrue(setDataCalls > 0, "data must have been set");
 		super.testAutoExpandOnSingleChildThroughEvent();
 	}
 

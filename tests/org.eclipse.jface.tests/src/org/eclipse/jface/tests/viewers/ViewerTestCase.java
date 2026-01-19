@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ILogger;
@@ -31,8 +31,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -49,7 +47,6 @@ public abstract class ViewerTestCase {
 	private ILogger oldLogger;
 	private ISafeRunnableRunner oldRunner;
 
-	@Before
 	@BeforeEach
 	public void initializeOsDependentStates() {
 		disableTestsBug347491 = Util.isCocoa();
@@ -59,7 +56,7 @@ public abstract class ViewerTestCase {
 	protected void assertSelectionEquals(String message, TestElement expected) {
 		IStructuredSelection structuredSelection = fViewer.getStructuredSelection();
 		IStructuredSelection expectedSelection = new StructuredSelection(expected);
-		assertEquals("selectionEquals - " + message, structuredSelection, expectedSelection);
+		assertEquals(expectedSelection, structuredSelection, "selectionEquals - " + message);
 	}
 
 	protected abstract StructuredViewer createViewer(Composite parent);
@@ -111,7 +108,6 @@ public abstract class ViewerTestCase {
 		}
 	}
 
-	@Before
 	@BeforeEach
 	public void setUp() {
 		StructuredViewerTest.TestLabelProvider.fgSuffix = "";
@@ -145,7 +141,6 @@ public abstract class ViewerTestCase {
 		}
 	}
 
-	@After
 	@AfterEach
 	public void tearDown() {
 		Policy.setLog(oldLogger);

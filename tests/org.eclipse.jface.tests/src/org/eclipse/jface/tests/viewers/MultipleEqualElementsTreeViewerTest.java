@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -149,15 +149,15 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 	@Test
 	public void testExpansion() {
 		getTreeViewer().expandToLevel(treePath_1_21_212, 1);
-		assertArrayEquals("element expansion", new Object[] { element_1, element_2_1 },
-				getTreeViewer().getExpandedElements());
-		assertArrayEquals("path expansion", new Object[] { treePath_1, treePath_1_21 },
-				getTreeViewer().getExpandedTreePaths());
+		assertArrayEquals(new Object[] { element_1, element_2_1 },
+				getTreeViewer().getExpandedElements(), "element expansion");
+		assertArrayEquals(new Object[] { treePath_1, treePath_1_21 },
+				getTreeViewer().getExpandedTreePaths(), "path expansion");
 		getTreeViewer().setExpandedTreePaths(
 				new TreePath[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 });
-		assertArrayEquals("path expansion",
+		assertArrayEquals(
 				new Object[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 },
-				getTreeViewer().getExpandedTreePaths());
+				getTreeViewer().getExpandedTreePaths(), "path expansion");
 	}
 
 	private static void assertMatchingPath(TreePath expectedPath, TreeItem item) {

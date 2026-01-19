@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 
@@ -157,7 +157,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		fViewer.refresh();
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = providedString(first);
-		assertEquals("rendered label", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "rendered label");
 		provider.fExtended = false;
 		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
 		// LabelProvider changes
@@ -176,7 +176,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		tableviewer.refresh();
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = providedString(first);
-		assertEquals("rendered label", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "rendered label");
 		provider.fExtended = false;
 		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
 		// LabelProvider changes
@@ -189,7 +189,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		((TestElement) fViewer.getInput()).deleteChild(first);
 		tableviewer.remove(first);
-		assertNull("Removed item still exists", fViewer.testFindItem(first));
+		assertNull(fViewer.testFindItem(first), "Removed item still exists");
 
 	}
 
@@ -197,13 +197,13 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	public void testContains() {
 		TableViewer tViewer = (TableViewer) fViewer;
 		// some random element.
-		assertFalse("element must not be available on the viewer", tViewer.contains(""));
+		assertFalse(tViewer.contains(""), "element must not be available on the viewer");
 
 		// first child of root.
-		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getFirstChild()));
+		assertTrue(tViewer.contains(fRootElement.getFirstChild()), "element must be available on the viewer");
 
 		// last child of the root
-		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getLastChild()));
+		assertTrue(tViewer.contains(fRootElement.getLastChild()), "element must be available on the viewer");
 	}
 
 }

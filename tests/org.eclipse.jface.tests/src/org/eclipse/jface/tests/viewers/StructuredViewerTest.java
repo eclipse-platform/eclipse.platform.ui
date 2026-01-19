@@ -16,10 +16,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -124,9 +124,9 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				return fViewer.testFindItem(newElement) != null;
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertNotNull("new sibling is visible", fViewer
-				.testFindItem(newElement));
-		assertNull("first child is not visible", fViewer.testFindItem(first));
+		assertNotNull(fViewer
+				.testFindItem(newElement), "new sibling is visible");
+		assertNull(fViewer.testFindItem(first), "first child is not visible");
 	}
 
 	protected abstract int getItemCount();
@@ -157,7 +157,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
 		first.deleteChild(first2);
-		assertNull("first child is not visible", fViewer.testFindItem(first2));
+		assertNull(fViewer.testFindItem(first2), "first child is not visible");
 	}
 
 	@Test
@@ -167,16 +167,16 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fRootElement = first;
 		setInput();
 		fRootElement.deleteChild(first);
-		assertNull("first child is not visible", fViewer
-				.testFindItem(firstfirst));
+		assertNull(fViewer
+				.testFindItem(firstfirst), "first child is not visible");
 	}
 
 	@Test
 	public void testDeleteSibling() {
 		TestElement first = fRootElement.getFirstChild();
-		assertNotNull("first child is visible", fViewer.testFindItem(first));
+		assertNotNull(fViewer.testFindItem(first), "first child is visible");
 		fRootElement.deleteChild(first);
-		assertNull("first child is not visible", fViewer.testFindItem(first));
+		assertNull(fViewer.testFindItem(first), "first child is not visible");
 	}
 
 	/**
@@ -202,9 +202,9 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 	public void testFilter() {
 		ViewerFilter filter = new TestLabelFilter();
 		fViewer.addFilter(filter);
-		assertEquals("filtered count", 5, getItemCount());
+		assertEquals(5, getItemCount(), "filtered count");
 		fViewer.removeFilter(filter);
-		assertEquals("unfiltered count", 10, getItemCount());
+		assertEquals(10, getItemCount(), "unfiltered count");
 
 	}
 
@@ -212,26 +212,26 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 	public void testSetFilters() {
 		ViewerFilter filter = new TestLabelFilter();
 		fViewer.setFilters(filter, new TestLabelFilter2());
-		assertEquals("2 filters count", 1, getItemCount());
+		assertEquals(1, getItemCount(), "2 filters count");
 
 		fViewer.setFilters(filter);
-		assertEquals("1 filtered count", 5, getItemCount());
+		assertEquals(5, getItemCount(), "1 filtered count");
 
 		fViewer.setFilters();
-		assertEquals("unfiltered count", 10, getItemCount());
+		assertEquals(10, getItemCount(), "unfiltered count");
 	}
 
 	@Test
 	public void testSetAndGetData() {
 
 		//get with no data
-		assertNull("get with no data", fViewer.getData("foo"));
+		assertNull(fViewer.getData("foo"), "get with no data");
 
 		//remove with no data
 		fViewer.setData("foo", null);
 
 		//get with no data after remove
-		assertNull("get with no data after remove", fViewer.getData("foo"));
+		assertNull(fViewer.getData("foo"), "get with no data after remove");
 
 		//set
 		fViewer.setData("foo", "bar");
@@ -240,19 +240,19 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.setData("baz", null);
 
 		//get key which does not exist
-		assertNull("get key which does not exist", fViewer.getData("baz"));
+		assertNull(fViewer.getData("baz"), "get key which does not exist");
 
 		//get value instead of key
-		assertNull("get value instead of key", fViewer.getData("bar"));
+		assertNull(fViewer.getData("bar"), "get value instead of key");
 
 		//get single value
-		assertEquals("get single value", "bar", fViewer.getData("foo"));
+		assertEquals("bar", fViewer.getData("foo"), "get single value");
 
 		//set new value
 		fViewer.setData("foo", "baz");
 
 		//get overridden value
-		assertEquals("get overridden value", "baz", fViewer.getData("foo"));
+		assertEquals("baz", fViewer.getData("foo"), "get overridden value");
 
 		//add more values
 		fViewer.setData("alpha", "1");
@@ -260,16 +260,16 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.setData("delta", "3");
 
 		//get multiple values
-		assertEquals("get multiple values", "baz", fViewer.getData("foo"));
-		assertEquals("get multiple values", "1", fViewer.getData("alpha"));
-		assertEquals("get multiple values", "2", fViewer.getData("beta"));
-		assertEquals("get multiple values", "3", fViewer.getData("delta"));
+		assertEquals("baz", fViewer.getData("foo"), "get multiple values");
+		assertEquals("1", fViewer.getData("alpha"), "get multiple values");
+		assertEquals("2", fViewer.getData("beta"), "get multiple values");
+		assertEquals("3", fViewer.getData("delta"), "get multiple values");
 
 		//override with multiple values
 		fViewer.setData("alpha", "10");
 
 		//get overridden value
-		assertEquals("get overridden value", "10", fViewer.getData("alpha"));
+		assertEquals("10", fViewer.getData("alpha"), "get overridden value");
 
 		//add more values
 		fViewer.setData("gamma", "4");
@@ -279,34 +279,34 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.setData("foo", null);
 
 		//check remaining values
-		assertEquals("get after remove", null, fViewer.getData("foo"));
-		assertEquals("get after remove", "10", fViewer.getData("alpha"));
-		assertEquals("get after remove", "2", fViewer.getData("beta"));
-		assertEquals("get after remove", "3", fViewer.getData("delta"));
-		assertEquals("get after remove", "4", fViewer.getData("gamma"));
-		assertEquals("get after remove", "5", fViewer.getData("epsilon"));
+		assertEquals(null, fViewer.getData("foo"), "get after remove");
+		assertEquals("10", fViewer.getData("alpha"), "get after remove");
+		assertEquals("2", fViewer.getData("beta"), "get after remove");
+		assertEquals("3", fViewer.getData("delta"), "get after remove");
+		assertEquals("4", fViewer.getData("gamma"), "get after remove");
+		assertEquals("5", fViewer.getData("epsilon"), "get after remove");
 
 		//remove middle value
 		fViewer.setData("delta", null);
 
 		//check remaining values
-		assertEquals("get after remove", null, fViewer.getData("foo"));
-		assertEquals("get after remove", "10", fViewer.getData("alpha"));
-		assertEquals("get after remove", "2", fViewer.getData("beta"));
-		assertEquals("get after remove", null, fViewer.getData("delta"));
-		assertEquals("get after remove", "4", fViewer.getData("gamma"));
-		assertEquals("get after remove", "5", fViewer.getData("epsilon"));
+		assertEquals(null, fViewer.getData("foo"), "get after remove");
+		assertEquals("10", fViewer.getData("alpha"), "get after remove");
+		assertEquals("2", fViewer.getData("beta"), "get after remove");
+		assertEquals(null, fViewer.getData("delta"), "get after remove");
+		assertEquals("4", fViewer.getData("gamma"), "get after remove");
+		assertEquals("5", fViewer.getData("epsilon"), "get after remove");
 
 		//remove last value
 		fViewer.setData("epsilon", null);
 
 		//check remaining values
-		assertEquals("get after remove", null, fViewer.getData("foo"));
-		assertEquals("get after remove", "10", fViewer.getData("alpha"));
-		assertEquals("get after remove", "2", fViewer.getData("beta"));
-		assertEquals("get after remove", null, fViewer.getData("delta"));
-		assertEquals("get after remove", "4", fViewer.getData("gamma"));
-		assertEquals("get after remove", null, fViewer.getData("epsilon"));
+		assertEquals(null, fViewer.getData("foo"), "get after remove");
+		assertEquals("10", fViewer.getData("alpha"), "get after remove");
+		assertEquals("2", fViewer.getData("beta"), "get after remove");
+		assertEquals(null, fViewer.getData("delta"), "get after remove");
+		assertEquals("4", fViewer.getData("gamma"), "get after remove");
+		assertEquals(null, fViewer.getData("epsilon"), "get after remove");
 
 		//remove remaining values
 		fViewer.setData("alpha", null);
@@ -314,20 +314,20 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.setData("gamma", null);
 
 		//check final values
-		assertEquals("get after remove", null, fViewer.getData("foo"));
-		assertEquals("get after remove", null, fViewer.getData("alpha"));
-		assertEquals("get after remove", null, fViewer.getData("beta"));
-		assertEquals("get after remove", null, fViewer.getData("delta"));
-		assertEquals("get after remove", null, fViewer.getData("gamma"));
-		assertEquals("get after remove", null, fViewer.getData("epsilon"));
+		assertEquals(null, fViewer.getData("foo"), "get after remove");
+		assertEquals(null, fViewer.getData("alpha"), "get after remove");
+		assertEquals(null, fViewer.getData("beta"), "get after remove");
+		assertEquals(null, fViewer.getData("delta"), "get after remove");
+		assertEquals(null, fViewer.getData("gamma"), "get after remove");
+		assertEquals(null, fViewer.getData("epsilon"), "get after remove");
 	}
 
 	@Test
 	public void testInsertChild() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first.addChild(TestModelChange.INSERT);
-		assertNull("new sibling is not visible", fViewer
-				.testFindItem(newElement));
+		assertNull(fViewer
+				.testFindItem(newElement), "new sibling is not visible");
 	}
 
 	@Test
@@ -341,16 +341,16 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				return fViewer.testFindItem(newElement) != null;
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertNotNull("new sibling is visible", fViewer
-				.testFindItem(newElement));
+		assertNotNull(fViewer
+				.testFindItem(newElement), "new sibling is visible");
 	}
 
 	@Test
 	public void testInsertSiblingReveal() {
 		TestElement newElement = fRootElement.addChild(TestModelChange.INSERT
 				| TestModelChange.REVEAL);
-		assertNotNull("new sibling is visible", fViewer
-				.testFindItem(newElement));
+		assertNotNull(fViewer
+				.testFindItem(newElement), "new sibling is visible");
 	}
 
 	@Test
@@ -366,8 +366,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
 		for (TestElement newElement : newElements) {
-			assertNotNull("new siblings are visible", fViewer
-					.testFindItem(newElement));
+			assertNotNull(fViewer
+					.testFindItem(newElement), "new siblings are visible");
 		}
 	}
 
@@ -383,8 +383,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				return fViewer.testFindItem(newElement) != null;
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertNotNull("new sibling is visible", fViewer
-				.testFindItem(newElement));
+		assertNotNull(fViewer
+				.testFindItem(newElement), "new sibling is visible");
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
@@ -396,8 +396,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fRootElement.addChild(newElement, new TestModelChange(
 				TestModelChange.INSERT | TestModelChange.REVEAL
 						| TestModelChange.SELECT, fRootElement, newElement));
-		assertNull("new sibling is not visible", fViewer
-				.testFindItem(newElement));
+		assertNull(fViewer
+				.testFindItem(newElement), "new sibling is not visible");
 		assertEquals(5, getItemCount());
 	}
 
@@ -409,8 +409,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fRootElement.addChild(newElement, new TestModelChange(
 				TestModelChange.INSERT | TestModelChange.REVEAL
 						| TestModelChange.SELECT, fRootElement, newElement));
-		assertNotNull("new sibling is visible", fViewer
-				.testFindItem(newElement));
+		assertNotNull(fViewer
+				.testFindItem(newElement), "new sibling is visible");
 		assertEquals(6, getItemCount());
 	}
 
@@ -423,7 +423,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				TestModelChange.INSERT | TestModelChange.REVEAL
 						| TestModelChange.SELECT, fRootElement, newElement));
 		String newLabel = newElement.toString();
-		assertEquals("sorted first", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "sorted first");
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
@@ -432,7 +432,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.setLabelProvider(getTestLabelProvider());
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = providedString(first);
-		assertEquals("rendered label", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "rendered label");
 	}
 
 	/**
@@ -449,7 +449,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		provider.setSuffix("added suffix");
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = providedString(first);
-		assertEquals("rendered label", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "rendered label");
 	}
 
 	@Test
@@ -457,8 +457,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = first.getLabel() + " changed";
 		first.setLabel(newLabel);
-		assertEquals("changed label", first.getID() + " " + newLabel,
-				getItemText(0));
+		assertEquals(first.getID() + " " + newLabel,
+				getItemText(0), "changed label");
 	}
 
 	@Test
@@ -466,12 +466,12 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		fViewer.addFilter(new TestLabelFilter());
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-1111"); // should disappear
-		assertNull("changed sibling is not visible", fViewer
-				.testFindItem(first));
+		assertNull(fViewer
+				.testFindItem(first), "changed sibling is not visible");
 		first.setLabel("name-2222"); // should reappear
 		fViewer.refresh();
-		assertNotNull("changed sibling is not visible", fViewer
-				.testFindItem(first));
+		assertNotNull(fViewer
+				.testFindItem(first), "changed sibling is not visible");
 	}
 
 	@Test
@@ -483,7 +483,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("changed name");
 		String newLabel = providedString(first);
-		assertEquals("rendered label", newLabel, getItemText(0));
+		assertEquals(newLabel, getItemText(0), "rendered label");
 	}
 
 	@Test
@@ -492,7 +492,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-9999");
 		String newElementLabel = first.toString();
-		assertEquals("sorted first", newElementLabel, getItemText(0));
+		assertEquals(newElementLabel, getItemText(0), "sorted first");
 	}
 
 	@Test
@@ -510,8 +510,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				return fViewer.testFindItem(firstfirst) != null;
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertNotNull("first child is visible", fViewer
-				.testFindItem(firstfirst));
+		assertNotNull(fViewer
+				.testFindItem(firstfirst), "first child is visible");
 	}
 
 	@Test
@@ -538,15 +538,15 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
 		String firstLabel = first.toString();
 		String lastLabel = last.toString();
-		assertEquals("unsorted", firstLabel, getItemText(0));
-		assertEquals("unsorted", lastLabel, getItemText(size - 1));
+		assertEquals(firstLabel, getItemText(0), "unsorted");
+		assertEquals(lastLabel, getItemText(size - 1), "unsorted");
 		fViewer.setComparator(new TestLabelComparator());
-		assertEquals("reverse sorted", firstLabel, getItemText(size - 1));
-		assertEquals("reverse sorted", lastLabel, getItemText(0));
+		assertEquals(firstLabel, getItemText(size - 1), "reverse sorted");
+		assertEquals(lastLabel, getItemText(0), "reverse sorted");
 
 		fViewer.setComparator(null);
-		assertEquals("unsorted", firstLabel, getItemText(0));
-		assertEquals("unsorted", lastLabel, getItemText(size - 1));
+		assertEquals(firstLabel, getItemText(0), "unsorted");
+		assertEquals(lastLabel, getItemText(size - 1), "unsorted");
 	}
 
 	@Test

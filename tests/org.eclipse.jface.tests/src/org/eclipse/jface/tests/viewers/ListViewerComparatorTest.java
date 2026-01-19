@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -68,7 +68,7 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 		String[] items = getListViewer().getList().getItems();
 		for (int i = 0; i < items.length; i++) {
 			String item = items[i];
-			assertEquals("Item not expected.  actual=" + item + " expected=", expected[i], item);
+			assertEquals(expected[i], item, "Item not expected.  actual=" + item + " expected=");
 		}
 	}
 

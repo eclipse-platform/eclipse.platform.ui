@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,15 +93,15 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		// we are virtual, so not all indices we requested to select will be selected.
 		indices = table.getSelectionIndices();
 		selectionSize = indices.length;
-		assertTrue("Expected at least one selected element", selectionSize > 0);
+		assertTrue(selectionSize > 0, "Expected at least one selected element");
 
 		table.showSelection();
 
 		IStructuredSelection result = fViewer.getStructuredSelection();
 		assertEquals(selectionSize, result.size());
-		assertEquals("First elements do not match ", result.getFirstElement(), children[indices[0]]);
+		assertEquals(children[indices[0]], result.getFirstElement(), "First elements do not match ");
 		int lastIndex = indices[indices.length - 1];
-		assertEquals("Last elements do not match ", result.toArray()[result.size() - 1], children[lastIndex]);
+		assertEquals(children[lastIndex], result.toArray()[result.size() - 1], "Last elements do not match ");
 
 	}
 
@@ -114,8 +114,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		fViewer.setInput(fRootElement);
 
 		int materializedSize = updatedElements.size();
-		assertTrue("Expected less than " + fRootElement.getChildCount() + ", actual " + materializedSize,
-				materializedSize < fRootElement.getChildCount());
+		assertTrue(materializedSize < fRootElement.getChildCount(), "Expected less than " + fRootElement.getChildCount() + ", actual " + materializedSize);
 		// create a new model and check if we get an equal number of calls to
 		// updateElement
 		setUpModel();
@@ -131,9 +130,9 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		// materialize last child
 		fViewer.setSelection(new StructuredSelection(lastChild));
 		processEvents();
-		assertNotNull("last Child should be in the map", fViewer.testFindItem(lastChild));
+		assertNotNull(fViewer.testFindItem(lastChild), "last Child should be in the map");
 		((TableViewer) fViewer).setItemCount(childCount - 1);
-		assertNull("last Child should no longer be in the map", fViewer.testFindItem(lastChild));
+		assertNull(fViewer.testFindItem(lastChild), "last Child should no longer be in the map");
 	}
 
 	@Disabled("This test is no use here as it is based on the assumption that all items are created.")

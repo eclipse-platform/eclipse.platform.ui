@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		IStructuredSelection selection = fViewer.getStructuredSelection();
 		List<TestElement> expectedList = new ArrayList<>();
 		expectedList.add(expected);
-		assertEquals("selectionEquals - " + message, expectedList, selection.toList());
+		assertEquals(expectedList, selection.toList(), "selectionEquals - " + message);
 	}
 
 	protected abstract int getItemCount(TestElement element); // was IElement
@@ -71,7 +71,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 		Object[] list2 = fTreeViewer.getExpandedElements();
 
-		assertArrayEquals("old and new expand state are the same", list1, list2);
+		assertArrayEquals(list1, list2, "old and new expand state are the same");
 	}
 
 	@Test
@@ -80,16 +80,16 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first2 = first.getFirstChild();
 		fTreeViewer.expandToLevel(first2, 0);
 
-		assertNotNull("first child is visible", fViewer.testFindItem(first2));
+		assertNotNull(fViewer.testFindItem(first2), "first child is visible");
 		first.deleteChild(first2);
-		assertNull("first child is not visible", fViewer.testFindItem(first2));
+		assertNull(fViewer.testFindItem(first2), "first child is not visible");
 	}
 
 	@Test
 	public void testDeleteChildren() {
 		TestElement first = fRootElement.getFirstChild();
 		first.deleteChildren();
-		assertEquals("no children", 0, getItemCount(first));
+		assertEquals(0, getItemCount(first), "no children");
 	}
 
 	@Test
@@ -97,19 +97,19 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
 		fTreeViewer.expandToLevel(first2, 0);
-		assertNotNull("first child is visible", fViewer.testFindItem(first2));
+		assertNotNull(fViewer.testFindItem(first2), "first child is visible");
 
 		first.deleteChildren();
-		assertEquals("no children", 0, getItemCount(first));
+		assertEquals(0, getItemCount(first), "no children");
 	}
 
 	@Test
 	public void testExpand() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
-		assertNull("first child is not visible", fViewer.testFindItem(first2));
+		assertNull(fViewer.testFindItem(first2), "first child is not visible");
 		fTreeViewer.expandToLevel(first2, 0);
-		assertNotNull("first child is visible", fViewer.testFindItem(first2));
+		assertNotNull(fViewer.testFindItem(first2), "first child is visible");
 	}
 
 	@Test
@@ -118,8 +118,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first2 = first.getFirstChild();
 		TestElement first3 = first2.getFirstChild();
 		fTreeViewer.expandToLevel(first3, 0);
-		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
-		assertNotNull("first2 is visible", fViewer.testFindItem(first2));
+		assertNotNull(fViewer.testFindItem(first3), "first3 is visible");
+		assertNotNull(fViewer.testFindItem(first2), "first2 is visible");
 	}
 
 	@Test
@@ -128,15 +128,15 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first2 = first.getFirstChild();
 		TestElement first3 = first2.getFirstChild();
 		fTreeViewer.expandToLevel(first3, 0);
-		assertTrue("first is expanded", fTreeViewer.getExpandedState(first));
-		assertTrue("first2 is expanded", fTreeViewer.getExpandedState(first2));
-		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
+		assertTrue(fTreeViewer.getExpandedState(first), "first is expanded");
+		assertTrue(fTreeViewer.getExpandedState(first2), "first2 is expanded");
+		assertNotNull(fViewer.testFindItem(first3), "first3 is visible");
 
 		fTreeViewer.setExpandedState(first, false);
 		fTreeViewer.expandToLevel(first3, 0);
-		assertTrue("first is expanded", fTreeViewer.getExpandedState(first)); // bug 54116
-		assertTrue("first2 is expanded", fTreeViewer.getExpandedState(first2));
-		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
+		assertTrue(fTreeViewer.getExpandedState(first), "first is expanded"); // bug 54116
+		assertTrue(fTreeViewer.getExpandedState(first2), "first2 is expanded");
+		assertNotNull(fViewer.testFindItem(first3), "first3 is visible");
 	}
 
 	@Test
@@ -151,8 +151,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 			assertNotNull(fViewer.testFindItem(first3));
 		});
 
-		assertNotNull("first2 is visible", fViewer.testFindItem(first2));
-		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
+		assertNotNull(fViewer.testFindItem(first2), "first2 is visible");
+		assertNotNull(fViewer.testFindItem(first3), "first3 is visible");
 	}
 
 	@Test
@@ -164,11 +164,9 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
-		assertTrue("The first child of the trivial path was not auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
-		assertFalse("Trivial path is expanded further than specified depth ",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was not auto-expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()), "Trivial path is expanded further than specified depth ");
 	}
 
 	@Test
@@ -182,12 +180,9 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot.getFirstChild(), true);
 
-		assertTrue("The first child of the trivial path was not auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
-		assertTrue("The second child of the trivial path was not auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
-		assertFalse("Trivial path is expanded further than specified depth ",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild().getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was not auto-expanded");
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()), "The second child of the trivial path was not auto-expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild().getFirstChild()), "Trivial path is expanded further than specified depth ");
 	}
 
 	@Test
@@ -199,8 +194,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertFalse("The first child of the trivial path was auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was auto-expanded");
 	}
 
 	@Test
@@ -212,8 +206,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The first child of the trivial path was auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was auto-expanded");
 	}
 
 	@Test
@@ -225,24 +218,22 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(10);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
-		assertFalse("The first child of the trivial path was auto-expanded although it contains zero children",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was auto-expanded although it contains zero children");
 	}
 
 	@Test
 	public void testSetAutoExpandOnSingleChildLevels() {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
-		assertEquals("Setting an auto-expansion level of NO_EXPAND works",
-				fTreeViewer.getAutoExpandOnSingleChildLevels(), AbstractTreeViewer.NO_EXPAND);
+		assertEquals(AbstractTreeViewer.NO_EXPAND,
+				fTreeViewer.getAutoExpandOnSingleChildLevels(), "Setting an auto-expansion level of NO_EXPAND works");
 
 		fTreeViewer.setAutoExpandOnSingleChildLevels(4);
-		assertEquals("Setting a non-trivial auto-expansion level works", fTreeViewer.getAutoExpandOnSingleChildLevels(),
-				4);
+		assertEquals(4, fTreeViewer.getAutoExpandOnSingleChildLevels(), "Setting a non-trivial auto-expansion level works");
 
 		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
-		assertEquals("Setting an auto-expansion level of NO_EXPAND works",
-				fTreeViewer.getAutoExpandOnSingleChildLevels(), AbstractTreeViewer.NO_EXPAND);
+		assertEquals(AbstractTreeViewer.NO_EXPAND,
+				fTreeViewer.getAutoExpandOnSingleChildLevels(), "Setting an auto-expansion level of NO_EXPAND works");
 	}
 
 	@Test
@@ -256,9 +247,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
-		assertFalse("The first child of the trivial path was auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was auto-expanded");
 	}
 
 	public void testAutoExpandOnSingleChildManualEnableAndThenDisable() {
@@ -270,9 +260,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
-		assertFalse("The first child of the trivial path was auto-expanded",
-				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
+		assertFalse(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The first child of the trivial path was auto-expanded");
 	}
 
 	@Test
@@ -284,11 +273,10 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
 
-		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertTrue(fTreeViewer.getExpandedState(trivialPathRoot), "The expanded widget child is not expanded");
 		TestElement child = trivialPathRoot.getFirstChild();
 		for (int depth = 1; child != null; depth++) {
-			assertTrue("The " + depth + ". child of the trivial path was not auto-expanded",
-					fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+			assertTrue(fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()), "The " + depth + ". child of the trivial path was not auto-expanded");
 			child = child.getFirstChild();
 		}
 	}
@@ -299,14 +287,14 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.expandToLevel(first2, 0);
 
 		fTreeViewer.addFilter(new TestLabelFilter());
-		assertEquals("filtered count", 5, getItemCount());
+		assertEquals(5, getItemCount(), "filtered count");
 	}
 
 	@Test
 	public void testInsertChildReveal() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first.addChild(TestModelChange.INSERT | TestModelChange.REVEAL);
-		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
+		assertNotNull(fViewer.testFindItem(newElement), "new sibling is visible");
 	}
 
 	@Test
@@ -314,7 +302,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement last = fRootElement.getLastChild();
 		TestElement newElement = last
 				.addChild(TestModelChange.INSERT | TestModelChange.REVEAL | TestModelChange.SELECT);
-		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
+		assertNotNull(fViewer.testFindItem(newElement), "new sibling is visible");
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
@@ -323,7 +311,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first
 				.addChild(TestModelChange.INSERT | TestModelChange.REVEAL | TestModelChange.SELECT);
-		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
+		assertNotNull(fViewer.testFindItem(newElement), "new sibling is visible");
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
@@ -352,7 +340,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		waitForJobs(300, 1000);
 		processEvents();
 		if (((AbstractTreeViewer) fViewer).getExpandedState(parent)) {
-			assertNotNull("new child is visible", fViewer.testFindItem(child));
+			assertNotNull(fViewer.testFindItem(child), "new child is visible");
 		}
 	}
 
@@ -367,7 +355,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = (TestElement) first.clone();
 		fRootElement.addChild(newElement, new TestModelChange(TestModelChange.STRUCTURE_CHANGE, fRootElement));
-		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
+		assertNotNull(fViewer.testFindItem(newElement), "new sibling is visible");
 	}
 
 	/**
@@ -396,13 +384,13 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
 		fTreeViewer.expandToLevel(first2, 0);
-		assertNotNull("first child is visible", fViewer.testFindItem(first2));
+		assertNotNull(fViewer.testFindItem(first2), "first child is visible");
 
 		String newLabel = first2.getLabel() + " changed";
 		first2.setLabel(newLabel);
 		Widget widget = fViewer.testFindItem(first2);
 		assertTrue(widget instanceof Item);
-		assertEquals("changed label", first2.getID() + " " + newLabel, ((Item) widget).getText());
+		assertEquals(((Item) widget).getText(), first2.getID() + " " + newLabel, "changed label");
 	}
 
 	/**
@@ -431,7 +419,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		int initialCount = getItemCount(parent);
 		fRootElement.addChild(child, new TestModelChange(TestModelChange.INSERT, fRootElement, child));
 		int postCount = getItemCount(parent);
-		assertEquals("Same element added to a parent twice.", initialCount, postCount);
+		assertEquals(initialCount, postCount, "Same element added to a parent twice.");
 	}
 
 	/**
@@ -459,28 +447,24 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fRootElement.addChild(child3, new TestModelChange(TestModelChange.INSERT, fRootElement, child3));
 
 		Tree tree = (Tree) fTreeViewer.getControl();
-		assertEquals("Same element added to parent twice.", 3, tree.getItems().length);
+		assertEquals(3, tree.getItems().length, "Same element added to parent twice.");
 	}
 
 	@Test
 	public void testContains() {
 		// some random element.
-		assertFalse("element must not be available on the viewer", fTreeViewer.contains(fRootElement, ""));
+		assertFalse(fTreeViewer.contains(fRootElement, ""), "element must not be available on the viewer");
 
 		// first child of root.
-		assertTrue("element must be available on the viewer",
-				fTreeViewer.contains(fRootElement, fRootElement.getFirstChild()));
+		assertTrue(fTreeViewer.contains(fRootElement, fRootElement.getFirstChild()), "element must be available on the viewer");
 
 		// last child of the root
-		assertTrue("element must be available on the viewer",
-				fTreeViewer.contains(fRootElement, fRootElement.getLastChild()));
+		assertTrue(fTreeViewer.contains(fRootElement, fRootElement.getLastChild()), "element must be available on the viewer");
 		// child of first element is not expanded
-		assertFalse("element must not be available on the viewer",
-				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
+		assertFalse(fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()), "element must not be available on the viewer");
 		fTreeViewer.expandAll();
 		// child of first element when expanded.
-		assertTrue("element must be available on the viewer",
-				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
+		assertTrue(fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()), "element must be available on the viewer");
 	}
 
 	@AfterEach
