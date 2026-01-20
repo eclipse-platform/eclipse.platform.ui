@@ -145,12 +145,16 @@ public class CodeMiningManager implements Runnable {
 		IProgressMonitor monitor= fMonitor;
 		// Collect the code minings for the viewer
 		getCodeMinings(fViewer, fCodeMiningProviders, monitor).thenAccept(symbols -> {
-			// check if request was canceled.
-			monitor.isCanceled();
-			// then group code minings by lines position
-			Map<Position, List<ICodeMining>> groups= groupByLines(symbols, fCodeMiningProviders);
-			// resolve and render code minings
-			renderCodeMinings(groups, fViewer, monitor);
+			try {
+				// check if request was canceled.
+				monitor.isCanceled();
+				// then group code minings by lines position
+				Map<Position, List<ICodeMining>> groups= groupByLines(symbols, fCodeMiningProviders);
+				// resolve and render code minings
+				renderCodeMinings(groups, fViewer, monitor);
+			} catch (Throwable e) {
+				logCodeMiningProviderException(e);
+			}
 		});
 	}
 

@@ -125,8 +125,8 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		if (gc != null) {
 			return sumLineHeight;
 		} else {
-			int lineHeight= styledText.getLineHeight();
-			int result= numLinesOfAllMinings * (lineHeight + styledText.getLineSpacing());
+			int lineHeight= styledText != null ? styledText.getLineHeight() : 0;
+			int result= numLinesOfAllMinings * (lineHeight + (styledText != null ? styledText.getLineSpacing() : 0));
 			return result;
 		}
 	}
@@ -145,7 +145,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				}
 			}
 			Point ext= gc.textExtent(line);
-			sumLineHeight+= ext.y + styledText.getLineSpacing();
+			sumLineHeight+= ext.y + (styledText != null ? styledText.getLineSpacing() : 0);
 		}
 		return sumLineHeight;
 	}

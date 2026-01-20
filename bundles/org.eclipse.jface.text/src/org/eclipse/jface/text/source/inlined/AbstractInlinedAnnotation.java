@@ -93,6 +93,7 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	protected AbstractInlinedAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove) {
 		super(TYPE, false, ""); //$NON-NLS-1$
 		this.position= position;
+		this.fViewer= viewer;
 		this.onMouseHover= onMouseHover;
 		this.onMouseOut= onMouseOut;
 		this.onMouseMove= onMouseMove;
@@ -122,18 +123,25 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	}
 
 	/**
-	 * Returns the {@link StyledText} widget where the annotation must be drawn.
+	 * Returns the {@link StyledText} widget where the annotation must be drawn or null if not
+	 * available.
 	 *
-	 * @return the {@link StyledText} widget where the annotation must be drawn.
+	 * @return the {@link StyledText} widget where the annotation must be drawn or null if not
+	 *         available.
 	 */
 	public StyledText getTextWidget() {
+		if (fViewer == null) {
+			return null;
+		}
 		return fViewer.getTextWidget();
 	}
 
 	/**
-	 * Returns the {@link ISourceViewer} where the annotation must be drawn.
+	 * Returns the {@link ISourceViewer} where the annotation must be drawn or null if not
+	 * available.
 	 *
-	 * @return the {@link ISourceViewer} where the annotation must be drawn.
+	 * @return the {@link ISourceViewer} where the annotation must be drawn or null if not
+	 *         available.
 	 */
 	public ISourceViewer getViewer() {
 		return fViewer;
@@ -155,9 +163,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 				Position pos= getPosition();
 				int offset= pos.getOffset();
 				ISourceViewer viewer= getViewer();
-				if (viewer instanceof ITextViewerExtension5) {
+				if (viewer instanceof ITextViewerExtension5 extViewer) {
 					// adjust offset according folded content
-					offset= ((ITextViewerExtension5) viewer).modelOffset2WidgetOffset(offset);
+					offset= extViewer.modelOffset2WidgetOffset(offset);
 				}
 				InlinedAnnotationDrawingStrategy.draw(this, null, text, offset, pos.getLength(), null);
 			} catch (RuntimeException e) {
@@ -248,6 +256,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 *         otherwise.
 	 */
 	protected boolean isInVisibleLines() {
+		if (support == null) {
+			return true; // support not yet available, we have to be optimistic
+		}
 		return support.isInVisibleLines(getPosition().getOffset());
 	}
 
@@ -272,6 +283,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 *         otherwise.
 	 */
 	protected boolean isInVisibleLines(int offset) {
+		if (support == null) {
+			return true; // support not yet available, we have to be optimistic
+		}
 		return support.isInVisibleLines(offset);
 	}
 
@@ -297,6 +311,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	boolean contains(int x, int y) {
 		StyledText styledText= getTextWidget();
+		if (styledText == null) {
+			return false;
+		}
 		GC gc= null;
 		try {
 			gc= new GC(styledText);

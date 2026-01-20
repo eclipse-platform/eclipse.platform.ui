@@ -78,7 +78,7 @@ public interface ICodeMining {
 	 * {@link CompletableFuture#completedFuture(Object)} if no such resolution is necessary (in
 	 * which case {#isResolved()} is expected to return <code>true</code>).
 	 *
-	 * @param viewer the viewer.
+	 * @param viewer the viewer, can be null
 	 * @param monitor the monitor.
 	 * @return the future to resolve the content of mining, or
 	 *         {@link CompletableFuture#completedFuture(Object)} if no such resolution is necessary
