@@ -192,7 +192,6 @@ public class ColorSelector extends EventManager {
 		}
 		gc.setLineWidth(2);
 		gc.drawRectangle(image.getBounds());
-		gc.dispose();
 
 		ImageData data = image.getImageData(zoom);
 		image.dispose();
