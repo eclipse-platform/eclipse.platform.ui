@@ -1032,11 +1032,13 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 *
 	 * @param element model object representing a special "expandable" node
 	 * @return return if it is an instance of ExpandableNode
-	 * @since 3.31
+	 * @since 3.32
 	 */
-	public final boolean isExpandableNode(Object element) {
-		return element instanceof ExpandableNode;
-
+	public final boolean isExpandableNode(Item element) {
+		if (element == null) {
+			return false;
+		}
+		return element.getData() instanceof ExpandableNode;
 	}
 
 	@Override
