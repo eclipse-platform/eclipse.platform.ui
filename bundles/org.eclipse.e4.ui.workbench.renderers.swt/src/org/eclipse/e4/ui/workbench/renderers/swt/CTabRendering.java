@@ -18,6 +18,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -621,17 +622,47 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 
 		if (selectedTabHighlightColor != null) {
+			gc.setForeground(selectedTabHighlightColor);
 			gc.setBackground(selectedTabHighlightColor);
+			int originalLineWidth = gc.getLineWidth();
+			int highlightHeight = 2;
 			boolean highlightOnTop = drawTabHighlightOnTop;
 			if (onBottom) {
 				highlightOnTop = !highlightOnTop;
 			}
-			int highlightHeight = 2;
-			int verticalOffset = highlightOnTop ? 0 : bounds.height - (highlightHeight - 1);
-			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
-			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
-			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
-					highlightHeight);
+
+			if (highlightOnTop != onBottom && cornerSize != SQUARE_CORNER) {
+				// When using round tabs, extract the part of the outline that covers the
+				// highlight and draw it with adapted height
+				int[] highlightShape = Arrays.copyOfRange(tabOutlinePoints, 14, tabOutlinePoints.length - 14);
+				int yEnd = !highlightOnTop
+						? outlineBoundsForOutline.y + outlineBoundsForOutline.height - highlightHeight + 1
+						: highlightHeight;
+				highlightShape[1] = highlightShape[highlightShape.length - 1] = yEnd;
+				boolean gcAdvanced = gc.getAdvanced();
+				gc.setAdvanced(false);
+				gc.fillPolygon(highlightShape);
+				gc.setAdvanced(gcAdvanced);
+			} else {
+				// When using square tab or drawing the highlight at the bottom, simply draw a
+				// line
+				int highlightY = highlightOnTop ? outlineBoundsForOutline.y
+						: bounds.y + bounds.height - highlightHeight + (!onBottom ? 1 : 0);
+				// When the rectangle is drawn at the bottom, the outline may not fully cover
+				// the left pixel such that we should start one point to the right (even though
+				// we produce a slight gap then)
+				int xOffset = highlightOnTop ? 0 : 1;
+				gc.fillRectangle(outlineBoundsForOutline.x + xOffset, highlightY,
+						outlineBoundsForOutline.width - xOffset, highlightHeight);
+				if (highlightOnTop && !onBottom) {
+					// Compensate for the outline being draw on top of the filled region by
+					// extending the highlight with an equally wide line next to the filled region
+					gc.setLineWidth(1);
+					gc.drawLine(outlineBoundsForOutline.x, highlightY + highlightHeight,
+							outlineBoundsForOutline.x + outlineBoundsForOutline.width, highlightY + highlightHeight);
+				}
+			}
+			gc.setLineWidth(originalLineWidth);
 		}
 
 		if (backgroundPattern != null) {
