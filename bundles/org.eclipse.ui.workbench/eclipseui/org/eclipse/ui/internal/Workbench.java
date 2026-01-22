@@ -3666,14 +3666,12 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	}
 
 	private static class AutoscaleAdaptation {
-		private static final String SWT_AUTOSCALE = "swt.autoScale"; //$NON-NLS-1$
-
 		private boolean incompatibleMonitorSpecificScalingDisabled;
 
 		private final String initialAutoScaleValue;
 
 		public AutoscaleAdaptation() {
-			initialAutoScaleValue = System.getProperty(SWT_AUTOSCALE);
+			initialAutoScaleValue = DPIUtil.getEffectiveAutoScaleValue();
 		}
 
 		public void runWithInitialAutoScaleValue(Runnable runnable) {
