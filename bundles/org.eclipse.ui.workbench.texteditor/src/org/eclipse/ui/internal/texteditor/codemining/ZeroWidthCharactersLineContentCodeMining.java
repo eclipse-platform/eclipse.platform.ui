@@ -14,15 +14,19 @@
 package org.eclipse.ui.internal.texteditor.codemining;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
+
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A code mining that draws zero-width characters (like zero-width spaces) as
@@ -33,9 +37,13 @@ import org.eclipse.jface.text.codemining.LineContentCodeMining;
 class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
 	private static final String ZW_CHARACTERS_MINING = "ZWSP"; //$NON-NLS-1$
+	private final IPreferenceStore store;
+	private final int offset;
 
-	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider) {
+	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider, IPreferenceStore store) {
 		super(new Position(offset, 1), true, provider);
+		this.store = store;
+		this.offset = offset;
 	}
 
 	@Override
@@ -50,14 +58,43 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		gc.setForeground(getColor(color));
-		Point point = super.draw(gc, textWidget, color, x, y);
-		gc.setForeground(color);
-		return point;
+		int oldAlpha = -1;
+		boolean isAdvancedGraphicsPresent = gc.getAdvanced();
+		if (isAdvancedGraphicsPresent) {
+			int alpha = store.getInt(AbstractTextEditor.PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE);
+			oldAlpha = gc.getAlpha();
+			gc.setAlpha(alpha);
+		}
+		try {
+			gc.setForeground(getColor(textWidget));
+			Point point = super.draw(gc, textWidget, color, x, y);
+			gc.setForeground(color);
+			return point;
+		} finally {
+			if (oldAlpha != -1) {
+				gc.setAlpha(oldAlpha);
+			}
+		}
 	}
 
-	private Color getColor(Color predefinedColor) {
-		return Display.getCurrent() != null ? Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND)
-				: predefinedColor;
+	private Color getColor(StyledText textWidget) {
+		Color fg;
+		boolean isFullSelectionStyle = (textWidget.getStyle() & SWT.FULL_SELECTION) != SWT.NONE;
+		if (!textWidget.getBlockSelection() && isFullSelectionStyle && isOffsetSelected(textWidget, offset)) {
+			fg = textWidget.getSelectionForeground();
+		} else {
+			StyleRange styleRange = textWidget.getStyleRangeAtOffset(offset);
+			if (styleRange == null || styleRange.foreground == null) {
+				fg = textWidget.getForeground();
+			} else {
+				fg = styleRange.foreground;
+			}
+		}
+		return fg;
+	}
+
+	private static final boolean isOffsetSelected(StyledText widget, int offset) {
+		Point selection = widget.getSelection();
+		return offset >= selection.x && offset < selection.y;
 	}
 }

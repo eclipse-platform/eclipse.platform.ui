@@ -91,7 +91,6 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 		}
 	}
 
-
 	@Override
 	public void dispose() {
 		store.removePropertyChangeListener(this);
@@ -105,7 +104,7 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 	}
 
 	private ICodeMining createCodeMining(int offset) {
-		return new ZeroWidthCharactersLineContentCodeMining(offset, this);
+		return new ZeroWidthCharactersLineContentCodeMining(offset, this, store);
 	}
 
 	private void readShowZwspFromStore() {
