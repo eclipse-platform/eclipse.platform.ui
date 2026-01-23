@@ -13,12 +13,12 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.common.notify.Notifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EPartServiceTest extends UITest {
 
@@ -386,7 +386,7 @@ public class EPartServiceTest extends UITest {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.bringToTop(partBack);
-		assertTrue("Bringing a part to the top should cause it to be rendered", partBack.isToBeRendered());
+		assertTrue(partBack.isToBeRendered(), "Bringing a part to the top should cause it to be rendered");
 	}
 
 	@Test
@@ -414,9 +414,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(partA, partService.getActivePart());
 
 		partService.bringToTop(partB);
-		assertEquals(
-				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "Bringing a part to top that's not in the same container as the active part shouldn't change the active part");
 	}
 
 	@Test
@@ -449,9 +447,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(partA, partService.getActivePart());
 
 		partService.bringToTop(partB);
-		assertEquals(
-				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "Bringing a part to top that's not in the same container as the active part shouldn't change the active part");
 	}
 
 	@Test
@@ -485,9 +481,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(partC, partService.getActivePart());
 
 		partService.bringToTop(partB);
-		assertEquals(
-				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
-				partC, partService.getActivePart());
+		assertEquals(partC, partService.getActivePart(), "Bringing a part to top that's not in the same container as the active part shouldn't change the active part");
 	}
 
 	@Test
@@ -534,9 +528,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(partC, partService.getActivePart());
 
 		partService.bringToTop(partB);
-		assertEquals(
-				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
-				partC, partService.getActivePart());
+		assertEquals(partC, partService.getActivePart(), "Bringing a part to top that's not in the same container as the active part shouldn't change the active part");
 	}
 
 	@Test
@@ -1098,7 +1090,7 @@ public class EPartServiceTest extends UITest {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.activate(partBack);
-		assertTrue("Activating a part should cause it to be rendered", partBack.isToBeRendered());
+		assertTrue(partBack.isToBeRendered(), "Activating a part should cause it to be rendered");
 	}
 
 	@Test
@@ -1381,7 +1373,7 @@ public class EPartServiceTest extends UITest {
 		assertNotNull(part);
 		assertEquals("partId", part.getElementId());
 		assertEquals(part, partService.getActivePart());
-		assertTrue("Shown part should be visible", part.isVisible());
+		assertTrue(part.isVisible(), "Shown part should be visible");
 	}
 
 	@Test
@@ -1506,16 +1498,16 @@ public class EPartServiceTest extends UITest {
 		assertTrue(partService.isPartVisible(partB1));
 		assertEquals(partA1, partService.getActivePart());
 		assertEquals(shownPart, partA2);
-		assertNotNull("The part should have been created so it should have a context", partA2.getContext());
-		assertEquals("This part has not been instantiated yet, it should have no context", null, partB2.getContext());
+		assertNotNull(partA2.getContext(), "The part should have been created so it should have a context");
+		assertEquals(null, partB2.getContext(), "This part has not been instantiated yet, it should have no context");
 
 		shownPart = partService.showPart("partB2", EPartService.PartState.CREATE);
 		assertTrue(partService.isPartVisible(partA1));
 		assertTrue(partService.isPartVisible(partB1));
 		assertEquals(partA1, partService.getActivePart());
 		assertEquals(shownPart, partB2);
-		assertNotNull("The part should have been created so it should have a context", partA2.getContext());
-		assertNotNull("The part should have been created so it should have a context", partB2.getContext());
+		assertNotNull(partA2.getContext(), "The part should have been created so it should have a context");
+		assertNotNull(partB2.getContext(), "The part should have been created so it should have a context");
 	}
 
 	@Test
@@ -1551,9 +1543,8 @@ public class EPartServiceTest extends UITest {
 		MPart partB = partService.showPart("partB", EPartService.PartState.CREATE);
 
 		assertEquals(2, partStack.getChildren().size());
-		assertEquals("Only creating the part, the active part should not have changed", partA,
-				partService.getActivePart());
-		assertNotNull("The shown part should have a context", partB.getContext());
+		assertEquals(partA, partService.getActivePart(), "Only creating the part, the active part should not have changed");
+		assertNotNull(partB.getContext(), "The shown part should have a context");
 		assertFalse(partService.isPartVisible(partB));
 	}
 
@@ -1592,10 +1583,9 @@ public class EPartServiceTest extends UITest {
 		MPart partB = partService.showPart("partB", EPartService.PartState.CREATE);
 
 		assertEquals(1, partStackA.getChildren().size());
-		assertEquals("Only creating the part, the active part should not have changed", partA,
-				partService.getActivePart());
-		assertNotNull("The shown part should have a context", partB.getContext());
-		assertTrue("The part is the only one in the stack, it should be visible", partService.isPartVisible(partB));
+		assertEquals(partA, partService.getActivePart(), "Only creating the part, the active part should not have changed");
+		assertNotNull(partB.getContext(), "The shown part should have a context");
+		assertTrue(partService.isPartVisible(partB), "The part is the only one in the stack, it should be visible");
 	}
 
 	@Test
@@ -1707,9 +1697,8 @@ public class EPartServiceTest extends UITest {
 		MPart partB = partService.showPart("partB", EPartService.PartState.VISIBLE);
 
 		assertEquals(2, partStack.getChildren().size());
-		assertEquals("The part is in the same stack as the active part, so the active part should have changed", partB,
-				partService.getActivePart());
-		assertNotNull("The shown part should have a context", partB.getContext());
+		assertEquals(partB, partService.getActivePart(), "The part is in the same stack as the active part, so the active part should have changed");
+		assertNotNull(partB.getContext(), "The shown part should have a context");
 		assertFalse(partService.isPartVisible(partA));
 		assertTrue(partService.isPartVisible(partB));
 	}
@@ -1749,10 +1738,9 @@ public class EPartServiceTest extends UITest {
 		MPart partB = partService.showPart("partB", EPartService.PartState.VISIBLE);
 
 		assertEquals(1, partStackA.getChildren().size());
-		assertEquals("Only making a part visible, the active part should not have changed", partA,
-				partService.getActivePart());
-		assertNotNull("The shown part should have a context", partB.getContext());
-		assertTrue("The part is the only one in the stack, it should be visible", partService.isPartVisible(partB));
+		assertEquals(partA, partService.getActivePart(), "Only making a part visible, the active part should not have changed");
+		assertNotNull(partB.getContext(), "The shown part should have a context");
+		assertTrue(partService.isPartVisible(partB), "The part is the only one in the stack, it should be visible");
 	}
 
 	@Test
@@ -1820,9 +1808,8 @@ public class EPartServiceTest extends UITest {
 		MPart shownPart = partService.showPart("partB", EPartService.PartState.VISIBLE);
 
 		assertEquals(2, partStack.getChildren().size());
-		assertEquals("The part is in the same stack as the active part, so the active part should have changed", partB,
-				partService.getActivePart());
-		assertNotNull("The shown part should have a context", partB.getContext());
+		assertEquals(partB, partService.getActivePart(), "The part is in the same stack as the active part, so the active part should have changed");
+		assertNotNull(partB.getContext(), "The shown part should have a context");
 		assertFalse(partService.isPartVisible(partA));
 		assertTrue(partService.isPartVisible(partB));
 		assertEquals(partB, shownPart);
@@ -1849,8 +1836,8 @@ public class EPartServiceTest extends UITest {
 		assertEquals(1, window.getChildren().size());
 		assertEquals(part, window.getChildren().get(0));
 		assertEquals(part, shownPart);
-		assertTrue("A shown part should be rendered", part.isToBeRendered());
-		assertNotNull("A shown part should have a widget", part.getWidget());
+		assertTrue(part.isToBeRendered(), "A shown part should be rendered");
+		assertNotNull(part.getWidget(), "A shown part should have a widget");
 	}
 
 	@Test
@@ -1893,8 +1880,8 @@ public class EPartServiceTest extends UITest {
 		assertEquals(1, partStack.getChildren().size());
 		assertEquals(part, partStack.getChildren().get(0));
 		assertEquals(part, shownPart);
-		assertTrue("A shown part should be rendered", part.isToBeRendered());
-		assertNotNull("A shown part should have a widget", part.getWidget());
+		assertTrue(part.isToBeRendered(), "A shown part should be rendered");
+		assertNotNull(part.getWidget(), "A shown part should have a widget");
 	}
 
 	@Test
@@ -1941,8 +1928,8 @@ public class EPartServiceTest extends UITest {
 		assertEquals(1, partStack.getChildren().size());
 		assertEquals(part, partStack.getChildren().get(0));
 		assertEquals(part, shownPart);
-		assertTrue("A shown part should be rendered", part.isToBeRendered());
-		assertNotNull("A shown part should have a widget", part.getWidget());
+		assertTrue(part.isToBeRendered(), "A shown part should be rendered");
+		assertNotNull(part.getWidget(), "A shown part should have a widget");
 	}
 
 	@Test
@@ -1976,7 +1963,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(part, partService.getActivePart());
 
 		MPart part2 = partService.showPart("partId", partState);
-		assertEquals("Should not have instantiated a new MPart", part, part2);
+		assertEquals(part, part2, "Should not have instantiated a new MPart");
 		assertEquals(part, partService.getActivePart());
 	}
 
@@ -3058,13 +3045,13 @@ public class EPartServiceTest extends UITest {
 		initialize();
 		getEngine().createGui(window);
 
-		assertNull("The part shouldn't have been rendered", partB.getContext());
+		assertNull(partB.getContext(), "The part shouldn't have been rendered");
 		assertEquals(partB, placeholderB.getRef());
 		assertNull(partB.getCurSharedRef());
 
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.showPart(partB, partState);
-		assertNotNull("The part should have been rendered", partB.getContext());
+		assertNotNull(partB.getContext(), "The part should have been rendered");
 		assertEquals(partB, placeholderB.getRef());
 		assertEquals(placeholderB, partB.getCurSharedRef());
 	}
@@ -3598,8 +3585,7 @@ public class EPartServiceTest extends UITest {
 		if (beforeDirty) {
 			assertEquals(success, partService.savePart(saveablePart, confirm));
 		} else {
-			assertTrue("The part is not dirty, the save operation should complete successfully",
-					partService.savePart(saveablePart, confirm));
+			assertTrue(partService.savePart(saveablePart, confirm), "The part is not dirty, the save operation should complete successfully");
 		}
 
 		assertEquals(afterDirty, saveablePart.isDirty());
@@ -3826,8 +3812,7 @@ public class EPartServiceTest extends UITest {
 		if (beforeDirty) {
 			assertEquals(!throwException, partService.savePart(saveablePart, confirm));
 		} else {
-			assertTrue("The part is not dirty, the save operation should have complete successfully",
-					partService.savePart(saveablePart, confirm));
+			assertTrue(partService.savePart(saveablePart, confirm), "The part is not dirty, the save operation should have complete successfully");
 		}
 
 		assertEquals(beforeDirty && throwException, saveablePart.isDirty());
@@ -5578,8 +5563,7 @@ public class EPartServiceTest extends UITest {
 		if (beforeDirty) {
 			assertEquals(!throwException, partService.saveAll(confirm));
 		} else {
-			assertTrue("The part is not dirty, the save operation should have complete successfully",
-					partService.saveAll(confirm));
+			assertTrue(partService.saveAll(confirm), "The part is not dirty, the save operation should have complete successfully");
 		}
 
 		assertEquals(beforeDirty && throwException, saveablePart.isDirty());
@@ -5848,22 +5832,22 @@ public class EPartServiceTest extends UITest {
 		assertNotNull(windowService1);
 		assertNotNull(windowService2);
 
-		assertNotNull("The first part is active in the first window", windowService1.getActivePart());
-		assertNull("There should be nothing active in the second window", windowService2.getActivePart());
+		assertNotNull(windowService1.getActivePart(), "The first part is active in the first window");
+		assertNull(windowService2.getActivePart(), "There should be nothing active in the second window");
 
 		// activate the part
 		windowService1.activate(part);
 
-		assertEquals("The part should have been activated", part, windowService1.getActivePart());
-		assertNull("The second window has no parts, this should be null", windowService2.getActivePart());
+		assertEquals(part, windowService1.getActivePart(), "The part should have been activated");
+		assertNull(windowService2.getActivePart(), "The second window has no parts, this should be null");
 
 		// now move the part over from the first window to the second window
 		window2.getChildren().add(part);
 		// activate the part
 		windowService2.activate(part);
 
-		assertEquals("No parts in this window, this should be null", null, windowService1.getActivePart());
-		assertEquals("We activated it just now, this should be active", part, windowService2.getActivePart());
+		assertEquals(null, windowService1.getActivePart(), "No parts in this window, this should be null");
+		assertEquals(part, windowService2.getActivePart(), "We activated it just now, this should be active");
 	}
 
 	@Test
@@ -5927,7 +5911,7 @@ public class EPartServiceTest extends UITest {
 		MPart partB = partService.showPart("partId", partState);
 
 		// showPart should instantiate the part
-		assertNotNull("The part should have been rendered", partB.getContext());
+		assertNotNull(partB.getContext(), "The part should have been rendered");
 	}
 
 	@Test
@@ -6429,8 +6413,7 @@ public class EPartServiceTest extends UITest {
 
 		assertEquals(perspectiveContext1, partContext.getParent());
 		assertEquals(partContext, perspectiveContext1.getActiveChild());
-		assertNull("perspective2 doesn't have any parts, it should not have an active child context",
-				perspectiveContext2.getActiveChild());
+		assertNull(perspectiveContext2.getActiveChild(), "perspective2 doesn't have any parts, it should not have an active child context");
 	}
 
 	@Test
@@ -7257,23 +7240,19 @@ public class EPartServiceTest extends UITest {
 		partService.activate(partB);
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals("partB is in both perspectives, active part should have been preserved", partB,
-				partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB is in both perspectives, active part should have been preserved");
 
 		partService.hidePart(partB);
-		assertEquals("Hiding partB should have caused partA to be activated", partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "Hiding partB should have caused partA to be activated");
 
 		partService.switchPerspective(perspectiveA);
-		assertEquals("partA is in both perspectives, active part should have been preserved", partA,
-				partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA is in both perspectives, active part should have been preserved");
 
 		partService.activate(partB);
-		assertEquals("partB should have been activated by activate(MPart)", partB, partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB should have been activated by activate(MPart)");
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals(
-				"partA should be the only part that's being shown in perspectiveB, thus, it should be the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should be the only part that's being shown in perspectiveB, thus, it should be the active part");
 	}
 
 	/**
@@ -7325,20 +7304,16 @@ public class EPartServiceTest extends UITest {
 		partService.activate(partB);
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals("partB is in both perspectives, active part should have been preserved", partB,
-				partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB is in both perspectives, active part should have been preserved");
 
 		partService.hidePart(partB);
-		assertEquals("Hiding partB should have caused partA to be activated", partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "Hiding partB should have caused partA to be activated");
 
 		partService.switchPerspective(perspectiveA);
-		assertEquals("partB is the only part in perspectiveA, thus, it should be the active part", partB,
-				partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB is the only part in perspectiveA, thus, it should be the active part");
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals(
-				"partA should be the only part that's being shown in perspectiveB, thus, it should be the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should be the only part that's being shown in perspectiveB, thus, it should be the active part");
 	}
 
 	/**
@@ -7401,7 +7376,7 @@ public class EPartServiceTest extends UITest {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.activate(partB);
-		assertEquals("partB should be the active part", partB, partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB should be the active part");
 
 		partService.switchPerspective(perspectiveB);
 		// assertEquals(
@@ -7410,20 +7385,16 @@ public class EPartServiceTest extends UITest {
 		// partA, partService.getActivePart());
 
 		partService.hidePart(partB);
-		assertEquals("partA should still be the active part", partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should still be the active part");
 
 		partService.switchPerspective(perspectiveA);
-		assertEquals(
-				"partA is in both perspectives, but since partA is obscured by partB, partB should be the active part",
-				partB, partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partA is in both perspectives, but since partA is obscured by partB, partB should be the active part");
 
 		partService.activate(partB);
-		assertEquals("partB should have been activated by activate(MPart)", partB, partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB should have been activated by activate(MPart)");
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals(
-				"partA should be the only part that's being shown in perspectiveB, thus, it should be the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should be the only part that's being shown in perspectiveB, thus, it should be the active part");
 	}
 
 	/**
@@ -7483,21 +7454,16 @@ public class EPartServiceTest extends UITest {
 		partService.activate(partB);
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals(
-				"partB is in both perspectives, but since partB is obscured by partA, partA should be the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partB is in both perspectives, but since partB is obscured by partA, partA should be the active part");
 
 		partService.hidePart(partB);
-		assertEquals("partA should still be the active part", partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should still be the active part");
 
 		partService.switchPerspective(perspectiveA);
-		assertEquals("partB is the only part in perspectiveA, thus, it should be the active part", partB,
-				partService.getActivePart());
+		assertEquals(partB, partService.getActivePart(), "partB is the only part in perspectiveA, thus, it should be the active part");
 
 		partService.switchPerspective(perspectiveB);
-		assertEquals(
-				"partA should be the only part that's being shown in perspectiveB, thus, it should be the active part",
-				partA, partService.getActivePart());
+		assertEquals(partA, partService.getActivePart(), "partA should be the only part that's being shown in perspectiveB, thus, it should be the active part");
 	}
 
 	@Test
@@ -9033,7 +8999,7 @@ public class EPartServiceTest extends UITest {
 
 		partService.hidePart(partD);
 		assertEquals(partC, partStack.getSelectedElement());
-		assertEquals("The active part should have remained in the area", partC, partService.getActivePart());
+		assertEquals(partC, partService.getActivePart(), "The active part should have remained in the area");
 	}
 
 	@Test
@@ -9080,7 +9046,7 @@ public class EPartServiceTest extends UITest {
 
 		partService.hidePart(partD);
 		assertEquals(partC, partStack.getSelectedElement());
-		assertEquals("The active part should have remained in the area", partC, partService.getActivePart());
+		assertEquals(partC, partService.getActivePart(), "The active part should have remained in the area");
 	}
 
 	@Test
@@ -9150,7 +9116,7 @@ public class EPartServiceTest extends UITest {
 
 		partService.hidePart(partD);
 		assertEquals(partC, partStack.getSelectedElement());
-		assertEquals("The active part should have remained in the area", partC, partService.getActivePart());
+		assertEquals(partC, partService.getActivePart(), "The active part should have remained in the area");
 	}
 
 	@Test
@@ -9892,7 +9858,7 @@ public class EPartServiceTest extends UITest {
 		System.runFinalization();
 		System.gc();
 
-		assertNull("The part should no longer be reachable", ref.get());
+		assertNull(ref.get(), "The part should no longer be reachable");
 	}
 
 	@Test

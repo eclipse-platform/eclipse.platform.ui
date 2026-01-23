@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ModelElementTest {
 

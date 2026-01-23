@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -28,9 +28,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SashRendererTest {
 
@@ -38,14 +38,14 @@ public class SashRendererTest {
 	private E4Workbench wb;
 	private EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 		ems = appContext.get(EModelService.class);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();

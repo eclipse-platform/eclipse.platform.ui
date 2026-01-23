@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -33,11 +33,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+@Disabled
 public class SWTPartRendererTest {
 	private SWTPartRenderer renderer;
 	private Shell shell;
@@ -45,7 +45,7 @@ public class SWTPartRendererTest {
 	private IEclipseContext context;
 	private Map<String, Object[]> stylingEngineExecutedMethods;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		renderer = new SWTPartRenderer() {
 			@Override

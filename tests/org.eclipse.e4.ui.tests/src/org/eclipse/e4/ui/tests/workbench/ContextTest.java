@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -24,9 +24,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ContextTest {
 	private static final String WINDOW_ID = "org.eclipse.ui.contexts.window";
@@ -34,13 +34,13 @@ public class ContextTest {
 	private static final String DIALOG_AND_WINDOW_ID = "org.eclipse.ui.contexts.dialogAndWindow";
 	private IEclipseContext appContext;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		appContext.dispose();
 	}

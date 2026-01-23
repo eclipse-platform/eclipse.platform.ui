@@ -13,9 +13,9 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -41,7 +41,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
 import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ESelectionServiceTest extends UITest {
 
@@ -929,7 +929,7 @@ public class ESelectionServiceTest extends UITest {
 		assertEquals(o, injectPart.selection);
 
 		partService.activate(partB);
-		assertEquals("Part B doesn't post a selection, no change", o, injectPart.selection);
+		assertEquals(o, injectPart.selection, "Part B doesn't post a selection, no change");
 
 		partService.activate(partA);
 		assertEquals(o, injectPart.selection);

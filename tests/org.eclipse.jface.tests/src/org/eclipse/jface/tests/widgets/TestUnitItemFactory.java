@@ -20,7 +20,7 @@ import org.eclipse.jface.widgets.TableColumnFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,7 +32,7 @@ public class TestUnitItemFactory extends AbstractFactoryTest {
 	private Table table;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setup() {
 		super.setup();
 		table = new Table(shell, SWT.NONE);

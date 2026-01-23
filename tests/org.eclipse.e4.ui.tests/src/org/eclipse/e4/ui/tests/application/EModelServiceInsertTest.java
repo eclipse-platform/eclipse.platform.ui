@@ -13,9 +13,9 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -28,9 +28,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EModelServiceInsertTest {
 
@@ -40,13 +40,13 @@ public class EModelServiceInsertTest {
 
 	private EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
 		ems = applicationContext.get(EModelService.class);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		applicationContext.dispose();
 	}
@@ -113,20 +113,19 @@ public class EModelServiceInsertTest {
 				ratio);
 
 		MUIElement newPartParent = newPart.getParent();
-		assertTrue("parent must be a sash",
-				(newPartParent instanceof MPartSashContainer));
+		assertTrue((newPartParent instanceof MPartSashContainer), "parent must be a sash");
 		MPartSashContainer psc = (MPartSashContainer) newPartParent;
 
 		boolean horizontal = where == EModelService.LEFT_OF
 				|| where == EModelService.RIGHT_OF;
-		assertEquals("invalid sash orientation", horizontal, psc.isHorizontal());
+		assertEquals(horizontal, psc.isHorizontal(), "invalid sash orientation");
 
 		if (where == EModelService.LEFT_OF || where == EModelService.ABOVE) {
-			assertEquals("new part should be first", 0, psc.getChildren().indexOf(newPart));
-			assertEquals("old part should be second", 1, psc.getChildren().indexOf(relTo));
+			assertEquals(0, psc.getChildren().indexOf(newPart), "new part should be first");
+			assertEquals(1, psc.getChildren().indexOf(relTo), "old part should be second");
 		} else {
-			assertEquals("old part should be first", 0, psc.getChildren().indexOf(relTo));
-			assertEquals("new part should be second", 1, psc.getChildren().indexOf(newPart));
+			assertEquals(0, psc.getChildren().indexOf(relTo), "old part should be first");
+			assertEquals(1, psc.getChildren().indexOf(newPart), "new part should be second");
 		}
 	}
 

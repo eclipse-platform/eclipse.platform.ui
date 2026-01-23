@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -29,9 +29,9 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test validates the UI Model &lt;-&gt; SWT Widget interactions specifically
@@ -62,7 +62,7 @@ public class MSashTest {
 	protected E4Workbench wb;
 	private EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(IWorkbench.PRESENTATION_URI_ARG,
@@ -70,7 +70,7 @@ public class MSashTest {
 		ems = appContext.get(EModelService.class);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
@@ -103,16 +103,16 @@ public class MSashTest {
 			cdVal0 = Integer.parseInt(part0.getContainerData());
 		} catch (NumberFormatException e) {
 		}
-		assertNotEquals("Part0 data is not an integer", -1, cdVal0);
+		assertNotEquals(-1, cdVal0, "Part0 data is not an integer");
 
 		int cdVal1 = -1;
 		try {
 			cdVal1 = Integer.parseInt(part1.getContainerData());
 		} catch (NumberFormatException e) {
 		}
-		assertNotEquals("Part1 data is not an integer", -1, cdVal1);
+		assertNotEquals(-1, cdVal1, "Part1 data is not an integer");
 
-		assertEquals("Values should be equal", cdVal0, cdVal1);
+		assertEquals(cdVal0, cdVal1, "Values should be equal");
 	}
 
 	private MWindow createSashWithNViews(int n) {

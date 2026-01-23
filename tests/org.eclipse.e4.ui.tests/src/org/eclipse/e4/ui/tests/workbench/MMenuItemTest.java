@@ -15,11 +15,11 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -367,7 +367,7 @@ public class MMenuItemTest {
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
-		assertNotNull("failed to create menu bar manager", manager);
+		assertNotNull(manager, "failed to create menu bar manager");
 
 		assertEquals(1, manager.getSize());
 
@@ -410,7 +410,7 @@ public class MMenuItemTest {
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
-		assertNotNull("failed to create menu bar manager", manager);
+		assertNotNull(manager, "failed to create menu bar manager");
 
 		assertEquals(1, manager.getSize());
 
@@ -453,7 +453,7 @@ public class MMenuItemTest {
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
-		assertNotNull("failed to create menu bar manager", manager);
+		assertNotNull(manager, "failed to create menu bar manager");
 
 		assertEquals(1, manager.getSize());
 
@@ -499,7 +499,7 @@ public class MMenuItemTest {
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
 		MenuManager fileManager = renderer.getManager(fileMenu);
-		assertNotNull("No file menu?", fileManager);
+		assertNotNull(fileManager, "No file menu?");
 
 		assertEquals(4, fileManager.getSize());
 
@@ -539,13 +539,13 @@ public class MMenuItemTest {
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
 		MenuManager fileManager = renderer.getManager(fileMenu);
-		assertNotNull("No file menu?", fileManager);
+		assertNotNull(fileManager, "No file menu?");
 
 		assertEquals(4, fileManager.getSize());
 
 		IContributionItem mmcItem = fileManager.getItems()[3];
 		assertEquals("mmc.item1", mmcItem.getId());
-		assertTrue("before the first show, we have no context to evaluate", mmcItem.isVisible());
+		assertTrue(mmcItem.isVisible(), "before the first show, we have no context to evaluate");
 
 		MenuManager manager = renderer.getManager(mainMenu);
 		manager.updateAll(true);
@@ -562,13 +562,13 @@ public class MMenuItemTest {
 
 		fileWidget.notifyListeners(SWT.Show, show);
 
-		assertFalse("after the first show, it should not be visible", mmcItem.isVisible());
+		assertFalse(mmcItem.isVisible(), "after the first show, it should not be visible");
 
 		fileWidget.notifyListeners(SWT.Hide, hide);
 
 		appContext.set("mmc1", Boolean.TRUE);
 
-		assertFalse("Change should not show up until next show", mmcItem.isVisible());
+		assertFalse(mmcItem.isVisible(), "Change should not show up until next show");
 
 		fileWidget.notifyListeners(SWT.Show, show);
 

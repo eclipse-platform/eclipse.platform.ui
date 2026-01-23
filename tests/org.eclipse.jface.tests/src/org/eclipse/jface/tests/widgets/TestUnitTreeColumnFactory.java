@@ -24,7 +24,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TestUnitTreeColumnFactory extends AbstractFactoryTest {
@@ -32,7 +32,7 @@ public class TestUnitTreeColumnFactory extends AbstractFactoryTest {
 	private Tree tree;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setup() {
 		super.setup();
 		tree = WidgetFactory.tree(SWT.NONE).create(shell);

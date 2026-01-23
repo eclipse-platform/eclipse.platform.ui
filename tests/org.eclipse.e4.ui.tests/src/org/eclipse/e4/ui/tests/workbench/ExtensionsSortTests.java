@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.internal.workbench.ExtensionsSort;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -43,7 +43,7 @@ public class ExtensionsSortTests {
 	Bundle intermediate;
 	Bundle leaf;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		BundleContext context = FrameworkUtil.getBundle(getClass())
 				.getBundleContext();
@@ -104,7 +104,7 @@ public class ExtensionsSortTests {
 		return Integer.MIN_VALUE; // keep JDT happy
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (root != null) {
 			root.uninstall();

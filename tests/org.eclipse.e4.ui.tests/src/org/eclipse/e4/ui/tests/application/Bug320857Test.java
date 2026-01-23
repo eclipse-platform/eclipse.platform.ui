@@ -13,9 +13,9 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -33,9 +33,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.notify.Notifier;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class Bug320857Test {
 
@@ -45,7 +45,7 @@ public class Bug320857Test {
 
 	private EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
 		ems = applicationContext.get(EModelService.class);
@@ -55,7 +55,7 @@ public class Bug320857Test {
 		return "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		applicationContext.dispose();
 	}

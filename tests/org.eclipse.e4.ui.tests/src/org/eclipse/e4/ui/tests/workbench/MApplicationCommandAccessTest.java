@@ -14,10 +14,10 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -27,23 +27,23 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MApplicationCommandAccessTest {
 	private static final int NUMBER_OF_COMMANDS = 1000;
 	protected IEclipseContext applicationContext;
 	protected E4Workbench wb;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
 
 		ContextInjectionFactory.make(CommandServiceAddon.class, applicationContext);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		applicationContext.dispose();
 	}
