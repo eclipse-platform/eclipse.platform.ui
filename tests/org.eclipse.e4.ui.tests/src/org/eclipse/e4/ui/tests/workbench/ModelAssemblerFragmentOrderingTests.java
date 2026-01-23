@@ -15,8 +15,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
@@ -55,8 +55,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the ordering of fragment contributions based on their declared
@@ -75,7 +75,7 @@ public class ModelAssemblerFragmentOrderingTests {
 	private static final String MAIN_TOOLBAR_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow.mainToolBar";
 	private static final String MAIN_WINDOW_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow";
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		appContext = E4Application.createDefaultContext();
 		application = ApplicationFactoryImpl.eINSTANCE.createApplication();

@@ -14,15 +14,15 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -34,7 +34,7 @@ public class EventBrokerTest extends UITest {
 	private AtomicInteger seen;
 	private IEclipseContext context;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -42,7 +42,7 @@ public class EventBrokerTest extends UITest {
 		context = application.getContext().createChild(getClass().getName());
 	}
 
-	@After
+	@AfterEach
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
@@ -87,8 +87,7 @@ public class EventBrokerTest extends UITest {
 		child.dispose(); // subscriber should unsubscribe from notifications
 
 		publisher.send(TEST_TOPIC, new Object());
-		assertEquals("event broker did not properly unsubscribe on dispose", 1,
-				seen.get());
+		assertEquals(1, seen.get(), "event broker did not properly unsubscribe on dispose");
 	}
 
 	@Test
@@ -108,7 +107,7 @@ public class EventBrokerTest extends UITest {
 
 		eb.unsubscribe(handler);
 		eb.send(TEST_TOPIC, new Object());
-		assertEquals("subscription was not removed", 2, seen.get());
+		assertEquals(2, seen.get(), "subscription was not removed");
 	}
 
 }

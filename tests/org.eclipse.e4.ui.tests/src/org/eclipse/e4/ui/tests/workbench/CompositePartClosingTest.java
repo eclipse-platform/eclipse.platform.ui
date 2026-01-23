@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import jakarta.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -76,8 +76,8 @@ public class CompositePartClosingTest {
 		partService.activate(part2);
 		partService.hidePart(part2);
 
-		assertNotEquals("Composite part got activated", compositePart, partStack1.getSelectedElement());
-		assertEquals("Wrong part got activated", part1, partStack1.getSelectedElement());
+		assertNotEquals(compositePart, partStack1.getSelectedElement(), "Composite part got activated");
+		assertEquals(part1, partStack1.getSelectedElement(), "Wrong part got activated");
 
 	}
 

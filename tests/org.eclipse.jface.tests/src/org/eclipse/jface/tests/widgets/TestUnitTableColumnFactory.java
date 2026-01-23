@@ -24,7 +24,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TestUnitTableColumnFactory extends AbstractFactoryTest {
@@ -32,7 +32,7 @@ public class TestUnitTableColumnFactory extends AbstractFactoryTest {
 	private Table table;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setup() {
 		super.setup();
 		table = WidgetFactory.table(SWT.NONE).create(shell);

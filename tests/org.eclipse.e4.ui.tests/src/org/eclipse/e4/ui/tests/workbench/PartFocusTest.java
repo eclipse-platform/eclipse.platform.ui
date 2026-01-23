@@ -14,10 +14,10 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -43,17 +43,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 /**
  * Ensure that setting focus to a widget within an non-active part causes the
  * part to be activated while not changing the focus.
  */
-@Ignore("See bug 505678")
+@Disabled("See bug 505678")
 public class PartFocusTest {
 
 	protected IEclipseContext appContext;
@@ -68,7 +68,7 @@ public class PartFocusTest {
 	protected MPart otherPart;
 	private EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(IWorkbench.PRESENTATION_URI_ARG,
@@ -139,7 +139,7 @@ public class PartFocusTest {
 		assertTrue(((PartBackend) otherPart.getObject()).text1.isFocusControl());
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
@@ -170,7 +170,7 @@ public class PartFocusTest {
 		assertTrue(((PartBackend) part.getObject()).text1.isFocusControl());
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void XXXtestNoFocusChangeOnExplicitWidgetSelection() {
 		assertFalse(((PartBackend) part.getObject()).text1.isFocusControl());

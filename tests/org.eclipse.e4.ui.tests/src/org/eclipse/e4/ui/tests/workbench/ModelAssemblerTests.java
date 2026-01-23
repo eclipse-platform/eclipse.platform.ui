@@ -16,8 +16,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -65,10 +65,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.equinox.log.ExtendedLogReaderService;
 import org.eclipse.equinox.log.LogFilter;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 
@@ -102,7 +102,7 @@ public class ModelAssemblerTests {
 
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		appContext = E4Application.createDefaultContext();
 		application = ApplicationFactoryImpl.eINSTANCE.createApplication();
@@ -135,7 +135,7 @@ public class ModelAssemblerTests {
 		modelService = application.getContext().get(EModelService.class);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		ExtendedLogReaderService log = appContext.get(ExtendedLogReaderService.class);
 		log.removeLogListener(logListener);
@@ -198,7 +198,7 @@ public class ModelAssemblerTests {
 	}
 
 	@Test
-	@Ignore // currently ignored due to bug 487748
+	@Disabled // currently ignored due to bug 487748
 	public void testFragments_existingXMIID_checkExists() throws Exception {
 		// create fragment
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
@@ -334,7 +334,7 @@ public class ModelAssemblerTests {
 		assertEquals(null, placeholder.getRef());
 
 		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-		assertTrue("Timeout - no event received", completed);
+		assertTrue(completed, "Timeout - no event received");
 
 		assertEquals(1, logMessages.size());
 		assertEquals("Could not resolve import for null", logMessages.poll());
@@ -491,7 +491,7 @@ public class ModelAssemblerTests {
 
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_null.xml", true, false);
 		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-		assertTrue("Timeout - no event received", completed);
+		assertTrue(completed, "Timeout - no event received");
 
 		assertEquals(1, logMessages.size());
 		assertEquals("Unable to create processor null from org.eclipse.e4.ui.tests", logMessages.poll());
@@ -511,7 +511,7 @@ public class ModelAssemblerTests {
 
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_wrongProcessorClass.xml", true, false);
 		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-		assertTrue("Timeout - no event received", completed);
+		assertTrue(completed, "Timeout - no event received");
 
 		assertEquals(1, logMessages.size());
 		assertEquals(
@@ -535,7 +535,7 @@ public class ModelAssemblerTests {
 		application.setElementId("newID");
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", true, true);
 		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-		assertTrue("Timeout - no event received", completed);
+		assertTrue(completed, "Timeout - no event received");
 
 		assertEquals(1, logMessages.size());
 		assertEquals("Could not find element with id org.eclipse.e4.ui.tests.modelassembler.app", logMessages.poll());

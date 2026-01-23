@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -22,8 +22,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class UITest {
 
@@ -36,7 +36,7 @@ public class UITest {
 
 	protected EModelService ems;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 
 		application = ApplicationFactoryImpl.eINSTANCE.createApplication();
@@ -47,7 +47,7 @@ public class UITest {
 		E4Application.initializeServices(application);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		applicationContext.dispose(); // used by the tests to dispose GUI?
 	}
