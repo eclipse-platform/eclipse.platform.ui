@@ -83,11 +83,15 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 		if (!textWidget.getBlockSelection() && isFullSelectionStyle && isOffsetSelected(textWidget, offset)) {
 			fg = textWidget.getSelectionForeground();
 		} else {
-			StyleRange styleRange = textWidget.getStyleRangeAtOffset(offset);
-			if (styleRange == null || styleRange.foreground == null) {
+			if (offset < 0 || offset >= textWidget.getCharCount()) {
 				fg = textWidget.getForeground();
 			} else {
-				fg = styleRange.foreground;
+				StyleRange styleRange = textWidget.getStyleRangeAtOffset(offset);
+				if (styleRange == null || styleRange.foreground == null) {
+					fg = textWidget.getForeground();
+				} else {
+					fg = styleRange.foreground;
+				}
 			}
 		}
 		return fg;
