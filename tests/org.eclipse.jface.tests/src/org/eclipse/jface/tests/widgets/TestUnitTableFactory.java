@@ -13,16 +13,16 @@
 ******************************************************************************/
 package org.eclipse.jface.tests.widgets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.widgets.TableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitTableFactory extends AbstractFactoryTest {
 

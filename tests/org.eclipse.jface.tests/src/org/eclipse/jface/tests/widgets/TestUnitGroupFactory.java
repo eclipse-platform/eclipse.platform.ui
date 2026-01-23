@@ -13,12 +13,12 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.widgets;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.widgets.GroupFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestUnitGroupFactory extends AbstractFactoryTest {
 
