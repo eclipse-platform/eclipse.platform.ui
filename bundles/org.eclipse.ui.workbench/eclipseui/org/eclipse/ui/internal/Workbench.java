@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -3243,6 +3243,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public IWorkbenchContextSupport getContextSupport() {
 		return workbenchContextSupport;
 	}
@@ -3670,14 +3671,17 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 		private final String initialAutoScaleValue;
 
+		@SuppressWarnings("restriction")
 		public AutoscaleAdaptation() {
 			initialAutoScaleValue = DPIUtil.getEffectiveAutoScaleValue();
 		}
 
+		@SuppressWarnings("restriction")
 		public void runWithInitialAutoScaleValue(Runnable runnable) {
 			DPIUtil.runWithAutoScaleValue(initialAutoScaleValue, runnable);
 		}
 
+		@SuppressWarnings("restriction")
 		public void setRescaleAtRuntimePropertyFromPreference() {
 			if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
 				WorkbenchPlugin.log(Status.warning(SWT_RESCALE_AT_RUNTIME_PROPERTY

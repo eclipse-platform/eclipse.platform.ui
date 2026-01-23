@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Brian de Alwis, and others.
+ * Copyright (c) 2010, 2026 Brian de Alwis, and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,9 +45,9 @@ public class CocoaUIProcessor {
 	/**
 	 * Useful constants for referencing classes defined within this host/fragment
 	 */
-	static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
+	private static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
 	protected static final String CONTRIBUTOR_URI = "platform:/fragment/" + FRAGMENT_ID; //$NON-NLS-1$
-	static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
+	private static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 	protected static final String CONTRIBUTION_URI_PREFIX = "bundleclass://" + HOST_ID; //$NON-NLS-1$
 
 	// constants for close dialog
@@ -58,6 +58,7 @@ public class CocoaUIProcessor {
 	protected MApplication app;
 
 	@Inject
+	@SuppressWarnings("restriction")
 	protected Provider<StatusReporter> statusReporter;
 
 	/**
@@ -149,10 +150,7 @@ public class CocoaUIProcessor {
 		if (bindingTable == null) {
 			MBindingContext bindingContext = findBindingContext(app.getBindingContexts(), bindingContextId);
 			if (bindingContext == null) {
-				statusReporter.get()
-						.report(new Status(IStatus.WARNING, CocoaUIProcessor.FRAGMENT_ID,
-								"No binding context exists for " + bindingContextId), //$NON-NLS-1$
-								StatusReporter.LOG);
+				log(Status.warning("No binding context exists for " + bindingContextId)); //$NON-NLS-1$
 				return;
 			}
 			bindingTable = MCommandsFactory.INSTANCE.createBindingTable();
@@ -165,6 +163,11 @@ public class CocoaUIProcessor {
 		binding.setCommand(cmd);
 		binding.setKeySequence(keysequence);
 		bindingTable.getBindings().add(binding);
+	}
+
+	@SuppressWarnings("restriction")
+	private void log(IStatus status) {
+		statusReporter.get().report(status, StatusReporter.LOG);
 	}
 
 	/**
