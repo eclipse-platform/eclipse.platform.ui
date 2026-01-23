@@ -16,32 +16,32 @@ package org.eclipse.jface.tests.widgets;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class AbstractFactoryTest {
 	protected static Shell shell;
 	protected static Image image;
 
-	@BeforeClass
+	@BeforeAll
 	public static void classSetup() {
 		final ImageGcDrawer noOp = (gc, width, height) -> {};
 		image = new Image(null, noOp, 1, 1);
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		shell = new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void classTearDown() {
 		image.dispose();
 		shell.dispose();

@@ -14,11 +14,11 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.widgets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.widgets.LabelFactory;
@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test uses a LabelFactory to test the methods of AbstractControlFactory.
