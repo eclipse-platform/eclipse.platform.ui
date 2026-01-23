@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,13 +37,16 @@ public class ArrangeWindowHandler extends AbstractWindowHandler {
 
 		// not all windows should be in minimized state
 		for (int i = 0; i < shells.length; i++) {
-			if (shells[i].view.window().isKeyWindow()) {
+			@SuppressWarnings("restriction")
+			boolean isKeyWindow = shells[i].view.window().isKeyWindow();
+			if (isKeyWindow) {
 				isEnabled = true;
 				break;
 			}
 		}
 		return isEnabled;
 	}
+
 	/**
 	 * Utilizes the {@code NSApplication} to access the application instance and
 	 * invokes {@code arrangeInFront} to prioritize its window on the desktop <br>
@@ -52,6 +55,7 @@ public class ArrangeWindowHandler extends AbstractWindowHandler {
 	 * API's
 	 */
 	@Execute
+	@SuppressWarnings("restriction")
 	public void execute() {
 		NSApplication app = NSApplication.sharedApplication();
 		app.arrangeInFront(app);

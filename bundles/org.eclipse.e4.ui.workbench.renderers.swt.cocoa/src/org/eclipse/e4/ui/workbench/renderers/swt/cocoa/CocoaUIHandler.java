@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Adobe Systems, Inc. and others.
+ * Copyright (c) 2008, 2026 Adobe Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,6 +87,7 @@ public class CocoaUIHandler {
 	@Inject
 	protected MApplication app;
 	@Inject
+	@SuppressWarnings("restriction")
 	protected Provider<StatusReporter> statusReporter;
 	@Inject
 	protected ECommandService commandService;
@@ -142,10 +143,9 @@ public class CocoaUIHandler {
 		}
 	}
 
-	void log(Exception e) {
-		// StatusUtil.handleStatus(e, StatusManager.LOG);
-		statusReporter.get().report(new Status(IStatus.WARNING, CocoaUIProcessor.FRAGMENT_ID,
-				"Exception occurred during CocoaUI processing", e), StatusReporter.LOG); //$NON-NLS-1$
+	@SuppressWarnings("restriction")
+	private void log(IStatus status) {
+		statusReporter.get().report(status, StatusReporter.LOG);
 	}
 
 	/*
@@ -353,7 +353,7 @@ public class CocoaUIHandler {
 			// theoretically, one of
 			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
 			// not expected to happen at all.
-			log(e);
+			log(Status.warning("Exception occurred during CocoaUI processing", e)); //$NON-NLS-1$
 			// return false?
 		}
 		return true;
@@ -381,10 +381,7 @@ public class CocoaUIHandler {
 			service.executeHandler(cmd);
 			lclContext.remove(MItem.class.getName());
 		} else {
-			statusReporter.get()
-					.report(new Status(IStatus.WARNING, CocoaUIProcessor.FRAGMENT_ID,
-							"Unhandled menu type: " + item.getClass() + ": " + item), //$NON-NLS-1$ //$NON-NLS-2$
-							StatusReporter.LOG);
+			log(Status.warning("Unhandled menu type: " + item.getClass() + ": " + item)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

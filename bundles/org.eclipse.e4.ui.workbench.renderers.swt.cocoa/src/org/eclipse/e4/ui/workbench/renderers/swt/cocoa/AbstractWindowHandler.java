@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class AbstractWindowHandler {
 	@CanExecute
-	public boolean canExecute(
-			@Optional @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
+	@SuppressWarnings("restriction")
+	public boolean canExecute(@Optional @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
 		if (shell == null || shell.view == null) {
 			return false;
 		}
