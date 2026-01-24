@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 Brad Reynolds, IBM Corporation and others.
+ * Copyright (c) 2006, 2026 Brad Reynolds, IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitAndAssertCondition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -27,10 +29,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ public class ListViewerRefreshTest {
 
 	private ListViewer viewer = null;
 
-	private ArrayList<String> input = null;
+	private List<String> input = null;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -81,16 +81,15 @@ public class ListViewerRefreshTest {
 	@Test
 	public void testNoSelectionRefresh() throws Exception {
 		shell.setText("Lost Scrolled Position Test"); //$NON-NLS-1$
-		readAndDispatch();
+		runEventLoop(shell.getDisplay(), DELAY);
 
 		run("Scrolled to position 30.", () -> viewer.reveal(input.get(30)));
 
-		run("Refreshed viewer without a selection.", () -> viewer.refresh());
+		run("Refreshed viewer without a selection.", viewer::refresh);
 
 		// BUG: The top index should not be the first item.
 
-		DisplayHelper.waitAndAssertCondition(shell.getDisplay(),
-				() -> assertNotEquals(viewer.getList().getTopIndex(), 0));
+		waitAndAssertCondition(shell.getDisplay(), () -> assertNotEquals(viewer.getList().getTopIndex(), 0));
 	}
 
 	/**
@@ -100,22 +99,21 @@ public class ListViewerRefreshTest {
 	@Test
 	public void testSelectionRefresh() throws Exception {
 		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
-		readAndDispatch();
+		runEventLoop(shell.getDisplay(), DELAY);
 
 		run("Setting selection to index 30.", () -> viewer.setSelection(new StructuredSelection(input.get(30))));
 
 		// Ensure that to index is 0
 		viewer.getList().setTopIndex(0);
 
-		run("Refreshed viewer with selection.", () -> viewer.refresh());
+		run("Refreshed viewer with selection.", viewer::refresh);
 
 		// Checking that the viewer is not scrolling
 		assertEquals(0, viewer.getList().getTopIndex());
 
 		viewer.getList().showSelection();
 
-		DisplayHelper.waitAndAssertCondition(shell.getDisplay(),
-				() -> assertNotEquals(viewer.getList().getTopIndex(), 0));
+		waitAndAssertCondition(shell.getDisplay(), () -> assertNotEquals(viewer.getList().getTopIndex(), 0));
 	}
 
 	/**
@@ -125,22 +123,7 @@ public class ListViewerRefreshTest {
 		runnable.run();
 		label.setText(description);
 
-		readAndDispatch();
-	}
-
-	/**
-	 * Flush UI events and {@link #DELAY delays}.
-	 */
-	private static void readAndDispatch() {
-		Display display = Display.getCurrent();
-		while (display.readAndDispatch()) {
-		}
-
-		try {
-			Thread.sleep(DELAY);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		runEventLoop(shell.getDisplay(), DELAY);
 	}
 
 	private static class ContentProvider implements IStructuredContentProvider {
