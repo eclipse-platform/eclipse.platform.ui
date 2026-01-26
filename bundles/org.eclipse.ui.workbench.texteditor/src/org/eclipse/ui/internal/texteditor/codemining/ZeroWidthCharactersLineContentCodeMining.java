@@ -78,15 +78,16 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 	}
 
 	private Color getColor(StyledText textWidget) {
+		int off = offset - 1;
 		Color fg;
 		boolean isFullSelectionStyle = (textWidget.getStyle() & SWT.FULL_SELECTION) != SWT.NONE;
-		if (!textWidget.getBlockSelection() && isFullSelectionStyle && isOffsetSelected(textWidget, offset)) {
+		if (!textWidget.getBlockSelection() && isFullSelectionStyle && isOffsetSelected(textWidget, off)) {
 			fg = textWidget.getSelectionForeground();
 		} else {
-			if (offset < 0 || offset >= textWidget.getCharCount()) {
+			if (off < 0 || off >= textWidget.getCharCount()) {
 				fg = textWidget.getForeground();
 			} else {
-				StyleRange styleRange = textWidget.getStyleRangeAtOffset(offset);
+				StyleRange styleRange = textWidget.getStyleRangeAtOffset(off);
 				if (styleRange == null || styleRange.foreground == null) {
 					fg = textWidget.getForeground();
 				} else {
