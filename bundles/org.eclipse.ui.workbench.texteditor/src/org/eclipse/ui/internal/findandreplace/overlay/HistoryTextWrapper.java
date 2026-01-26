@@ -200,6 +200,7 @@ public class HistoryTextWrapper extends Composite {
 
 	@Override
 	public void notifyListeners(int eventType, Event event) {
+		super.notifyListeners(eventType, event);
 		textBar.notifyListeners(eventType, event);
 	}
 
