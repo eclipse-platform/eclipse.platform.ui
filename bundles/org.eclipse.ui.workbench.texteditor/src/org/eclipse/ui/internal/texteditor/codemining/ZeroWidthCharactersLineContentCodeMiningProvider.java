@@ -104,7 +104,7 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 	}
 
 	private ICodeMining createCodeMining(int offset) {
-		return new ZeroWidthCharactersLineContentCodeMining(offset, this, store);
+		return new ZeroWidthCharactersLineContentCodeMining(offset + 1, this, store);
 	}
 
 	private void readShowZwspFromStore() {

@@ -41,7 +41,7 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 	private final int offset;
 
 	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider, IPreferenceStore store) {
-		super(new Position(offset, 1), true, provider);
+		super(new Position(offset, 1), false, provider);
 		this.store = store;
 		this.offset = offset;
 	}
