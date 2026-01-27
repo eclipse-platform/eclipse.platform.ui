@@ -573,6 +573,32 @@ public class StackRendererTest {
 		assertSame(tabFolder.getTopRight(), toolbarControl.getParent());
 	}
 
+	@Test
+	public void testPartReordering() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		part1.setLabel("Part 1");
+		MPart part2 = ems.createModelElement(MPart.class);
+		part2.setLabel("Part 2");
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+		assertEquals(2, tabFolder.getItemCount());
+		assertEquals("Part 1", tabFolder.getItem(0).getText());
+		assertEquals("Part 2", tabFolder.getItem(1).getText());
+
+		// Move part2 to index 0
+		partStack.getChildren().remove(part2);
+		partStack.getChildren().add(0, part2);
+
+		// Verify order in Widget
+		assertEquals("Part 2", tabFolder.getItem(0).getText());
+		assertEquals("Part 1", tabFolder.getItem(1).getText());
+	}
+
 	// helper functions
 
 	/*
