@@ -13,9 +13,9 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class contains test cases appropriate for generic field assist
@@ -104,7 +104,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		ensurePopupIsUp();
 		assertTwoShellsUp();
 		sendKeyDownToControl(EXTRA_CHAR);
-		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR}), getControlContent());
+		assertEquals(SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR}), getControlContent(), "1.0");
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		ensurePopupIsUp();
 		assertTwoShellsUp();
 		sendKeyDownToControl(EXTRA_CHAR);
-		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR, EXTRA_CHAR}), getControlContent());
+		assertEquals(SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR, EXTRA_CHAR}), getControlContent(), "1.0");
 	}
 
 	@Test
@@ -169,28 +169,28 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		spinEventLoop();
-		assertTrue("1.0", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.0");
 		decoration.hide();
-		assertFalse("1.1", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.1");
 		decoration.setShowOnlyOnFocus(true);
 		sendFocusElsewhere();
 		sendFocusInToControl();
 		spinEventLoop();
-		assertFalse("1.2", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.2");
 		decoration.show();
-		assertTrue("1.3", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.3");
 		sendFocusElsewhere();
 		spinEventLoop();
-		assertFalse("1.4", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.4");
 		decoration.setShowOnlyOnFocus(false);
-		assertTrue("1.5", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.5");
 		window.getFieldAssistControl().setVisible(false);
-		assertFalse("1.6", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.6");
 		decoration.hide();
 		window.getFieldAssistControl().setVisible(true);
-		assertFalse("1.7", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.7");
 		decoration.show();
-		assertTrue("1.8", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.8");
 	}
 
 	@Test
@@ -206,16 +206,16 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		// Send focus to the control (not the popup)
 		window.getFieldAssistControl().setFocus();
 		spinEventLoop();
-		assertFalse("1.0", window.getContentProposalAdapter().hasProposalPopupFocus());
+		assertFalse(window.getContentProposalAdapter().hasProposalPopupFocus(), "1.0");
 		window.getContentProposalAdapter().setProposalPopupFocus();
 		spinEventLoop();
-		assertTrue("1.1", window.getContentProposalAdapter().hasProposalPopupFocus());
+		assertTrue(window.getContentProposalAdapter().hasProposalPopupFocus(), "1.1");
 
 		// Setting focus to another shell deactivates the popup
 		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
-		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
+		assertFalse(window.getContentProposalAdapter().hasProposalPopupFocus(), "1.2");
 	}
 
 	@Test
@@ -226,16 +226,16 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		window.setKeyStroke(stroke);
 		window.open();
 
-		assertFalse("1.0", window.getContentProposalAdapter().isProposalPopupOpen());
+		assertFalse(window.getContentProposalAdapter().isProposalPopupOpen(), "1.0");
 		sendKeyDownToControl(stroke);
 		assertTwoShellsUp();
-		assertTrue("1.1", window.getContentProposalAdapter().isProposalPopupOpen());
+		assertTrue(window.getContentProposalAdapter().isProposalPopupOpen(), "1.1");
 
 		// Setting focus to another shell deactivates the popup
 		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
-		assertFalse("1.2", window.getContentProposalAdapter().isProposalPopupOpen());
+		assertFalse(window.getContentProposalAdapter().isProposalPopupOpen(), "1.2");
 	}
 
 	/**
@@ -264,7 +264,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		Rectangle popupBounds = popupShell.getBounds();
 		Rectangle controlBounds = getFieldAssistWindow().getFieldAssistControl().getBounds();
 		controlBounds = getDisplay().map(getFieldAssistWindow().getFieldAssistControl().getParent(), null, controlBounds);
-		assertFalse("Popup is blocking the control", popupBounds.intersects(controlBounds));
+		assertFalse(popupBounds.intersects(controlBounds), "Popup is blocking the control");
 	}
 
 	/**
@@ -292,6 +292,6 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		Rectangle popupBounds = popupShell.getBounds();
 		Rectangle controlBounds = getFieldAssistWindow().getFieldAssistControl().getBounds();
 		controlBounds = getDisplay().map(getFieldAssistWindow().getFieldAssistControl().getParent(), null, controlBounds);
-		assertFalse("Popup is blocking the control", popupBounds.intersects(controlBounds));
+		assertFalse(popupBounds.intersects(controlBounds), "Popup is blocking the control");
 	}
 }
