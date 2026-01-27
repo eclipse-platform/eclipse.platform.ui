@@ -13,9 +13,9 @@
 *******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -28,15 +28,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 public class ContentProposalAdapterTest {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	/**
 	 * A shell that hosts the decorated text control
@@ -121,8 +118,9 @@ public class ContentProposalAdapterTest {
 
 	// most of the following code is copied from AbstractFieldAssistTestCase
 
-	@Before
-	public final void setUp() throws Exception {
+	@BeforeEach
+	public final void setUp(TestInfo testInfo) throws Exception {
+		System.out.println(TestRunLogUtil.formatTestStartMessage(testInfo.getTestMethod().get().getName()));
 		Display display = getDisplay();
 		originalShellCount = display.getShells().length;
 		controlShell = new Shell(display);
@@ -133,8 +131,8 @@ public class ContentProposalAdapterTest {
 		assertNotNull(contentProposalAdapter);
 	}
 
-	@After
-	public final void tearDown() throws Exception {
+	@AfterEach
+	public final void tearDown(TestInfo testInfo) throws Exception {
 		if (controlShell != null) {
 			spinEventLoop();
 			controlShell.close();
@@ -145,6 +143,7 @@ public class ContentProposalAdapterTest {
 			}
 			this.display = null;
 		}
+		System.out.println(TestRunLogUtil.formatTestFinishedMessage(testInfo.getTestMethod().get().getName()));
 	}
 
 	private Display getDisplay() {
@@ -179,7 +178,7 @@ public class ContentProposalAdapterTest {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.character = character;
-		assertTrue("unable to post event to display queue for test case", text.getDisplay().post(event));
+		assertTrue(text.getDisplay().post(event), "unable to post event to display queue for test case");
 		spinEventLoop();
 	}
 
@@ -233,7 +232,7 @@ public class ContentProposalAdapterTest {
 	 */
 	private void assertOneShellUp() {
 		spinEventLoop();
-		assertEquals("There should only be one shell up, the dialog", originalShellCount + 1,
-				text.getDisplay().getShells().length);
+		assertEquals(originalShellCount + 1,
+				text.getDisplay().getShells().length, "There should only be one shell up, the dialog");
 	}
 }

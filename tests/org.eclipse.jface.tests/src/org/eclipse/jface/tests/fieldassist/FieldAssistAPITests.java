@@ -14,13 +14,13 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 
