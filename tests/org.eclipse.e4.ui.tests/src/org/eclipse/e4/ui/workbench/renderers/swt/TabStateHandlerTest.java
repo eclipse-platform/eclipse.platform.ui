@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -34,9 +34,9 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.Event;
 
 public class TabStateHandlerTest {
@@ -44,14 +44,14 @@ public class TabStateHandlerTest {
 	private TabStateHandler handler;
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		shell = new Shell();
 		renderer = new StackRendererTestable();
 		handler = renderer.new TabStateHandler();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		shell.dispose();
 	}

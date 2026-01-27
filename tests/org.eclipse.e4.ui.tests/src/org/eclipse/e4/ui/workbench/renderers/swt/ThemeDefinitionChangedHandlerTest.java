@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -40,7 +40,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer.ThemeDefinitionChangedHandler;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Resource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.event.Event;
 
 public class ThemeDefinitionChangedHandlerTest {
