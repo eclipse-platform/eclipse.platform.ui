@@ -446,6 +446,7 @@ public class StackRenderer extends LazyStackRenderer {
 		newItem.setToolTipText(toolTipText);
 		newItem.setFont(font);
 		newItem.setData(data);
+		newItem.setData(OWNING_ME, movedElement);
 		newItem.setControl(control);
 	}
 
