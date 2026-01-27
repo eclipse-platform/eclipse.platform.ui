@@ -444,7 +444,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 					ImageGcDrawer imageGcDrawer = (gc, imageWidth, imageHeight) -> {
 						gc.setForeground(tree.getViewer().getControl().getBackground());
 						gc.drawRectangle(0, 0, imageWidth - 1, imageHeight - 1);
-						
+
 						gc.setForeground(gcForegroundColor);
 						gc.setBackground(gcBackgroundcolor);
 						gc.fillRectangle(2, 2, 11, 11);
