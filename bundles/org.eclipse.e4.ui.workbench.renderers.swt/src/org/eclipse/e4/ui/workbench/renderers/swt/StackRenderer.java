@@ -438,6 +438,8 @@ public class StackRenderer extends LazyStackRenderer {
 		Font font = item.getFont();
 		Object data = item.getData();
 
+		boolean wasSelected = tabFolder.getSelection() == item;
+
 		item.dispose();
 
 		CTabItem newItem = new CTabItem(tabFolder, (showClose ? SWT.CLOSE : SWT.NONE), newIndex);
@@ -448,6 +450,9 @@ public class StackRenderer extends LazyStackRenderer {
 		newItem.setData(data);
 		newItem.setData(OWNING_ME, movedElement);
 		newItem.setControl(control);
+		if (wasSelected) {
+			tabFolder.setSelection(newItem);
+		}
 	}
 
 	@Inject
