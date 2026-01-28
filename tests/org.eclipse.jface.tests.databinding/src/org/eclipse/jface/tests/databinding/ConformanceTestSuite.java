@@ -27,7 +27,12 @@
 package org.eclipse.jface.tests.databinding;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
@@ -85,24 +90,128 @@ import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueDefau
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueFocusOutTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueModifyTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableViewerElementSetTest;
-import org.junit.runner.RunWith;
-import org.junit.runner.Runner;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.TestClass;
-import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
-import org.junit.runners.parameterized.ParametersRunnerFactory;
-import org.junit.runners.parameterized.TestWithParameters;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
-@RunWith(Parameterized.class)
-@Parameterized.UseParametersRunnerFactory(ConformanceTestSuite.RunnerFactory.class)
 public class ConformanceTestSuite {
+
+	@TestFactory
+	public Stream<DynamicContainer> conformanceTests() {
+		List<DynamicContainer> containers = new ArrayList<>();
+		Iterable<Object[]> data = data();
+
+		for (Object[] params : data) {
+			Class<?> testClass = (Class<?>) params[0];
+			Object delegate = params[1];
+			String testName = testClass.getSimpleName() + " for " + delegate;
+
+			List<DynamicTest> tests = new ArrayList<>();
+			// Find all test methods (JUnit 4 and 5 support)
+			List<Method> testMethods = getTestMethods(testClass);
+
+			for (Method method : testMethods) {
+				tests.add(DynamicTest.dynamicTest(method.getName(), () -> {
+					Object instance = instantiate(testClass, delegate);
+					runBefore(instance);
+					try {
+						method.invoke(instance);
+					} finally {
+						runAfter(instance);
+					}
+				}));
+			}
+
+			containers.add(DynamicContainer.dynamicContainer(testName, tests));
+		}
+
+		return containers.stream();
+	}
+
+	private Object instantiate(Class<?> testClass, Object delegate) throws Exception {
+		Constructor<?>[] constructors = testClass.getConstructors();
+		for (Constructor<?> constructor : constructors) {
+			if (constructor.getParameterCount() == 1) {
+				return constructor.newInstance(delegate);
+			}
+		}
+		throw new RuntimeException("Could not find a constructor with one argument for " + testClass.getName());
+	}
+
+	private List<Method> getTestMethods(Class<?> testClass) {
+		List<Method> methods = new ArrayList<>();
+		Class<?> clazz = testClass;
+		while (clazz != null) {
+			for (Method method : clazz.getDeclaredMethods()) {
+				if (isTest(method)) {
+					methods.add(method);
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}
+		return methods;
+	}
+
+	private boolean isTest(Method method) {
+		return hasAnnotation(method, "org.junit.Test") || hasAnnotation(method, "org.junit.jupiter.api.Test");
+	}
+
+	private boolean isBefore(Method method) {
+		return hasAnnotation(method, "org.junit.Before") || hasAnnotation(method, "org.junit.jupiter.api.BeforeEach");
+	}
+
+	private boolean isAfter(Method method) {
+		return hasAnnotation(method, "org.junit.After") || hasAnnotation(method, "org.junit.jupiter.api.AfterEach");
+	}
+
+	private boolean hasAnnotation(Method method, String annotationName) {
+		for (Annotation annotation : method.getAnnotations()) {
+			if (annotation.annotationType().getName().equals(annotationName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void runBefore(Object instance) throws Exception {
+		List<Method> befores = new ArrayList<>();
+		Class<?> clazz = instance.getClass();
+		while (clazz != null) {
+			for (Method m : clazz.getDeclaredMethods()) {
+				if (isBefore(m)) {
+					befores.add(m);
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}
+		Collections.reverse(befores); // Superclass first
+		for (Method m : befores) {
+			m.setAccessible(true);
+			m.invoke(instance);
+		}
+	}
+
+	private void runAfter(Object instance) throws Exception {
+		List<Method> afters = new ArrayList<>();
+		Class<?> clazz = instance.getClass();
+		while (clazz != null) {
+			for (Method m : clazz.getDeclaredMethods()) {
+				if (isAfter(m)) {
+					afters.add(m);
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}
+		// Subclass first (default order of walking up)
+		for (Method m : afters) {
+			m.setAccessible(true);
+			m.invoke(instance);
+		}
+	}
 
 	/**
 	 * Returns a list of all test classes and delegates.
 	 */
-	@Parameters
 	public static Iterable<Object[]> data() {
 		TestCollection suite = new TestCollection();
 		AbstractObservableListTest.addConformanceTest(suite);
@@ -161,29 +270,5 @@ public class ConformanceTestSuite {
 		WritableSetTest.addConformanceTest(suite);
 		WritableValueTest.addConformanceTest(suite);
 		return suite.getDataForParameterizedRunner();
-	}
-
-	/**
-	 * Creates a test runner from each entry in the list that is returned from
-	 * {@link #data}.
-	 */
-	public static class RunnerFactory implements ParametersRunnerFactory {
-		@Override
-		public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {
-			Class<?> testClass = (Class<?>) test.getParameters().get(0);
-			List<Object> parameters = test.getParameters().subList(1, test.getParameters().size());
-			String testName = testClass.getSimpleName() + " for " + parameters.get(0);
-			return new BlockJUnit4ClassRunnerWithParameters(
-					new TestWithParameters(testName, new TestClass(testClass), parameters)) {
-				@Override
-				protected Annotation[] getRunnerAnnotations() {
-					/*
-					 * The overridden method expects the test class to have at least one annotation,
-					 * otherwise the Array will be created with a negative length.
-					 */
-					return new Annotation[0];
-				}
-			};
-		}
 	}
 }

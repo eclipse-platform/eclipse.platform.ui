@@ -16,8 +16,8 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -25,8 +25,8 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for IObservableCollection that don't mutate the collection.
@@ -52,7 +52,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		collection = (IObservableCollection) getObservable();
@@ -163,9 +163,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	@Test
 	public void testGetElementType_ReturnsType() throws Exception {
-		assertEquals(
-				"Element type of the collection should be returned from IObservableCollection.getElementType()",
-				delegate.getElementType(collection),
-				collection.getElementType());
+		assertEquals(delegate.getElementType(collection), collection.getElementType(),
+				"Element type of the collection should be returned from IObservableCollection.getElementType()");
 	}
 }
