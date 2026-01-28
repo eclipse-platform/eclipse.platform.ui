@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Simple test icon with a circle and text for testing size hint detection -->
+  <circle cx="64" cy="64" r="50" fill="#4285F4" stroke="#1967D2" stroke-width="4"/>
+  <text x="64" y="74" font-family="Arial" font-size="48" fill="white" text-anchor="middle">S</text>
+</svg>
