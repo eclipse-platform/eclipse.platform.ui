@@ -44,6 +44,8 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 
 	private int redrawnCharacterWidth;
 
+	private boolean isZeroWidthCharacter;
+
 	/**
 	 * Line content annotation constructor.
 	 *
@@ -113,8 +115,9 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		return redrawnCharacterWidth;
 	}
 
-	void setRedrawnCharacterWidth(int redrawnCharacterWidth) {
+	void setRedrawnCharacterWidth(int redrawnCharacterWidth, boolean isZeroWidthCharacter) {
 		this.redrawnCharacterWidth= redrawnCharacterWidth;
+		this.isZeroWidthCharacter= isZeroWidthCharacter;
 	}
 
 	@Override
@@ -151,7 +154,7 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		if (!afterPosition) {
 			usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset(), textWidget);
 		}
-		if (width == 0 || getRedrawnCharacterWidth() == 0) {
+		if (isZeroWidthCharacter == false && (width == 0 || getRedrawnCharacterWidth() == 0)) {
 			return null;
 		}
 		int fullWidth= width + getRedrawnCharacterWidth();
