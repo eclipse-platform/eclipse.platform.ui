@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Assert;
@@ -115,17 +118,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * The list of post notification changes
 	 * @since 2.0
 	 */
-	private List<RegisteredReplace> fPostNotificationChanges;
+	private volatile List<RegisteredReplace> fPostNotificationChanges;
 	/**
 	 * The reentrance count for post notification changes.
 	 * @since 2.0
 	 */
-	private int fReentranceCount= 0;
+	private volatile int fReentranceCount;
 	/**
 	 * Indicates whether post notification change processing has been stopped.
 	 * @since 2.0
 	 */
-	private int fStoppedCount= 0;
+	private volatile int fStoppedCount;
 	/**
 	 * Indicates whether the registration of post notification changes should be ignored.
 	 * @since 2.1
@@ -135,12 +138,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Indicates whether the notification of listeners has been stopped.
 	 * @since 2.1
 	 */
-	private int fStoppedListenerNotification= 0;
+	private final AtomicInteger fStoppedListenerNotification;
 	/**
-	 * The document event to be sent after listener notification has been resumed.
-	 * @since 2.1
+	 * The document event list to be sent after listener notification has been resumed.
+	 * @since 3.15
 	 */
-	private DocumentEvent fDeferredDocumentEvent;
+	private final List<DocumentEvent> fDeferredDocumentEvents;
 	/**
 	 * The registered document partitioners.
 	 * @since 3.0
@@ -148,9 +151,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	private Map<String, IDocumentPartitioner> fDocumentPartitioners;
 	/**
 	 * The partitioning changed event.
-	 * @since 3.0
+	 * @since 3.15.0
 	 */
-	private DocumentPartitioningChangedEvent fDocumentPartitioningChangedEvent;
+	private final AtomicReference<DocumentPartitioningChangedEvent> fDocumentPartitioningChangedEvent;
 	/**
 	 * The find/replace document adapter.
 	 * @since 3.0
@@ -175,7 +178,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Keeps track of next modification stamp.
 	 * @since 3.1.1
 	 */
-	private long fNextModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+	private final AtomicLong fNextModificationStamp= new AtomicLong(IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP);
 	/**
 	 * This document's default line delimiter.
 	 * @since 3.1
@@ -191,6 +194,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	protected AbstractDocument() {
 		fModificationStamp= getNextModificationStamp();
+		fStoppedListenerNotification = new AtomicInteger();
+		fDeferredDocumentEvents = new CopyOnWriteArrayList<>();
+		fDocumentPartitioningChangedEvent = new AtomicReference<>();
 	}
 
 
@@ -437,7 +443,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see IDocument#computeIndexInCategory(String, int)
 	 * @deprecated As of 3.4, replaced by {@link #computeIndexInPositionList(List, int, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	protected int computeIndexInPositionList(List<? extends Position> positions, int offset) {
 		return computeIndexInPositionList(positions, offset, true);
 	}
@@ -542,7 +548,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *
 	 * @deprecated as of 2.0. Use <code>fireDocumentPartitioningChanged(IRegion)</code> instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	protected void fireDocumentPartitioningChanged() {
 		if (fDocumentPartitioningListeners == null) {
 			return;
@@ -565,7 +571,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *             <code>fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent)</code>
 	 *             instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	protected void fireDocumentPartitioningChanged(IRegion region) {
 		if (fDocumentPartitioningListeners == null) {
 			return;
@@ -670,7 +676,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void updateDocumentStructures(DocumentEvent event) {
 
 		if (fDocumentPartitioners != null) {
-			fDocumentPartitioningChangedEvent= new DocumentPartitioningChangedEvent(this);
+			DocumentPartitioningChangedEvent newValue= new DocumentPartitioningChangedEvent(this);
 			for (Entry<String, IDocumentPartitioner> entry : fDocumentPartitioners.entrySet()) {
 
 				String partitioning= entry.getKey();
@@ -685,14 +691,15 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				if (partitioner instanceof IDocumentPartitionerExtension extension) {
 					IRegion r= extension.documentChanged2(event);
 					if (r != null) {
-						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, r.getOffset(), r.getLength());
+						newValue.setPartitionChange(partitioning, r.getOffset(), r.getLength());
 					}
 				} else {
 					if (partitioner.documentChanged(event)) {
-						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, 0, event.getDocument().getLength());
+						newValue.setPartitionChange(partitioning, 0, event.getDocument().getLength());
 					}
 				}
 			}
+			fDocumentPartitioningChangedEvent.set(newValue);
 		}
 
 		if (!fPositions.isEmpty()) {
@@ -709,8 +716,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param event the event to be sent out.
 	 */
 	protected void doFireDocumentChanged(DocumentEvent event) {
-		boolean changed= fDocumentPartitioningChangedEvent != null && !fDocumentPartitioningChangedEvent.isEmpty();
-		IRegion change= changed ? fDocumentPartitioningChangedEvent.getCoverage() : null;
+		DocumentPartitioningChangedEvent changedEvent= fDocumentPartitioningChangedEvent.get();
+		boolean changed= changedEvent != null && !changedEvent.isEmpty();
+		IRegion change= changed ? changedEvent.getCoverage() : null;
 		doFireDocumentChanged(event, changed, change);
 	}
 
@@ -725,7 +733,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.0
 	 * @deprecated as of 3.0. Use <code>doFireDocumentChanged2(DocumentEvent)</code> instead; this method will be removed.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	protected void doFireDocumentChanged(DocumentEvent event, boolean firePartitionChange, IRegion partitionChange) {
 		doFireDocumentChanged2(event);
 	}
@@ -743,8 +751,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	protected void doFireDocumentChanged2(DocumentEvent event) {
 
-		DocumentPartitioningChangedEvent p= fDocumentPartitioningChangedEvent;
-		fDocumentPartitioningChangedEvent= null;
+		DocumentPartitioningChangedEvent p= fDocumentPartitioningChangedEvent.getAndSet(null);
 		if (p != null && !p.isEmpty()) {
 			fireDocumentPartitioningChanged(p);
 		}
@@ -786,10 +793,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void fireDocumentChanged(DocumentEvent event) {
 		updateDocumentStructures(event);
 
-		if (fStoppedListenerNotification == 0) {
+		if (fStoppedListenerNotification.get() == 0) {
 			doFireDocumentChanged(event);
 		} else {
-			fDeferredDocumentEvent= event;
+			fDeferredDocumentEvents.add(event);
 		}
 	}
 
@@ -1099,13 +1106,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 
 	private long getNextModificationStamp() {
-		if (fNextModificationStamp == Long.MAX_VALUE || fNextModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
-			fNextModificationStamp= 0;
-		} else {
-			fNextModificationStamp= fNextModificationStamp + 1;
-		}
-
-		return fNextModificationStamp;
+		return fNextModificationStamp.getAndUpdate(current -> {
+			if (current == Long.MAX_VALUE || current == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
+				return 0;
+			} else {
+				return current + 1;
+			}
+		});
 	}
 
 	@Override
@@ -1126,7 +1133,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		getTracker().replace(pos, length, text);
 
 		fModificationStamp= modificationStamp;
-		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
+		fNextModificationStamp.getAndAccumulate(fModificationStamp, Math::max);
 		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
@@ -1167,7 +1174,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		getTracker().set(text);
 
 		fModificationStamp= modificationStamp;
-		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
+		fNextModificationStamp.getAndAccumulate(fModificationStamp, Math::max);
 		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
@@ -1192,7 +1199,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *
 	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	@Override
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
 		try {
@@ -1295,7 +1302,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
 	 *             instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	@Override
 	public void startSequentialRewrite(boolean normalized) {
 	}
@@ -1306,22 +1313,21 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.0
 	 * @deprecated As of 3.1, replaced by {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since= "3.15.0")
 	@Override
 	public void stopSequentialRewrite() {
 	}
 
 	@Override
 	public void resumeListenerNotification() {
-		-- fStoppedListenerNotification;
-		if (fStoppedListenerNotification == 0) {
+		if (fStoppedListenerNotification.decrementAndGet() == 0) {
 			resumeDocumentListenerNotification();
 		}
 	}
 
 	@Override
 	public void stopListenerNotification() {
-		++ fStoppedListenerNotification;
+		fStoppedListenerNotification.incrementAndGet();
 	}
 
 	/**
@@ -1331,17 +1337,20 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.1
 	 */
 	private void resumeDocumentListenerNotification() {
-		if (fDeferredDocumentEvent != null) {
-			DocumentEvent event= fDeferredDocumentEvent;
-			fDeferredDocumentEvent= null;
-			doFireDocumentChanged(event);
+		while (!fDeferredDocumentEvents.isEmpty()) {
+			if (fStoppedListenerNotification.get() == 0) {
+				try {
+					DocumentEvent event= fDeferredDocumentEvents.remove(0);
+					doFireDocumentChanged(event);
+				} catch (IndexOutOfBoundsException ex) {
+					log(ex);
+				}
+			} else {
+				break;
+			}
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension3#computeZeroLengthPartitioning(java.lang.String, int, int)
-	 * @since 3.0
-	 */
 	@Override
 	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (0 > length) || (offset + length > getLength())) {
