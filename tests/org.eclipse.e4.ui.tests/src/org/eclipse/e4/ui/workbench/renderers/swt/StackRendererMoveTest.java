@@ -1,6 +1,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -84,7 +85,8 @@ public class StackRendererMoveTest {
 
 		// The old item1 should be disposed
 		assertTrue(item1.isDisposed(), "Old item for part1 should be disposed");
-		
+		assertFalse(item2.isDisposed(), "Item2 should not be disposed");
+
 		// part1 should have a NEW widget item, but the part's widget (content) should be preserved
 		assertNotSame(item1, newItem1);
 		assertEquals(part1, newItem1.getData(AbstractPartRenderer.OWNING_ME), "New item should have OWNING_ME set");
