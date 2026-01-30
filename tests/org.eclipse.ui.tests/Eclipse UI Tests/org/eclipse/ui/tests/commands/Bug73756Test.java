@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -26,8 +26,8 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.statushandlers.TestStatusHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * A tests whether is active will log an exception if the command is not
@@ -50,7 +50,7 @@ public final class Bug73756Test {
 
 	private static String PLUGIN_ID = "org.eclipse.jface";
 
-	@Before
+	@BeforeEach
 	public void doTearDown() throws Exception {
 		TestStatusHandler.uninstall();
 	}
@@ -77,7 +77,7 @@ public final class Bug73756Test {
 	 * Checks whether the last handled status is correct
 	 */
 	private void assertStatusAdapter(StatusAdapter statusAdapter) {
-		assertNotNull("A warning should have been logged.", statusAdapter);
+		assertNotNull(statusAdapter, "A warning should have been logged.");
 		IStatus status = statusAdapter.getStatus();
 		assertEquals(status.getSeverity(), SEVERITY);
 		assertEquals(status.getPlugin(), PLUGIN_ID);

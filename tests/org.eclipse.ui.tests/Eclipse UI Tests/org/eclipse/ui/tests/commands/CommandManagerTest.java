@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.commands;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -23,7 +23,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests some of the API on command manager.
@@ -102,13 +102,13 @@ public final class CommandManagerTest {
 			exception = e;
 		}
 
-		assertSame("Should have received a pre-execute event for the correct command", commandId,
-				listener.preExecuteId);
-		assertSame("Should have received a pre-execute event with the correct event", event, listener.preExecuteEvent);
-		assertSame("Should have received a not-handled event for the correct command", commandId,
-				listener.notHandledId);
-		assertSame("Should have received a not-handled event with the correct exception", exception,
-				listener.notHandledException);
+		assertSame(commandId,
+				listener.preExecuteId, "Should have received a pre-execute event for the correct command");
+		assertSame(event, listener.preExecuteEvent, "Should have received a pre-execute event with the correct event");
+		assertSame(commandId,
+				listener.notHandledId, "Should have received a not-handled event for the correct command");
+		assertSame(exception,
+				listener.notHandledException, "Should have received a not-handled event with the correct exception");
 
 	}
 }

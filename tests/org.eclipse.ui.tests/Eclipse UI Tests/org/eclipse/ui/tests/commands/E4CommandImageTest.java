@@ -1,11 +1,11 @@
 package org.eclipse.ui.tests.commands;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.5

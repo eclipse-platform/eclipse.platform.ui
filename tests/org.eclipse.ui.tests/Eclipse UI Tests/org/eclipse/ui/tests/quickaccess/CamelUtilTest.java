@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.quickaccess;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.ui.internal.quickaccess.CamelUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CamelUtilTest {
 
@@ -66,10 +66,10 @@ public class CamelUtilTest {
 		assertEquals(is.length, camelCaseIndices.length);
 		for (int i = 0; i < is.length; i++) {
 			int[] js = is[i];
-			assertEquals("i=" + i, js.length, camelCaseIndices[i].length);
+			assertEquals(js.length, camelCaseIndices[i].length, "i=" + i);
 			for (int j = 0; j < js.length; j++) {
-				assertEquals("i=" + i + ", j=" + j, js[j],
-						camelCaseIndices[i][j]);
+				assertEquals(js[j],
+						camelCaseIndices[i][j], "i=" + i + ", j=" + j);
 			}
 		}
 	}
