@@ -13,20 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IPerspectiveDescriptorTest {
 
 	private IPerspectiveDescriptor[] fPerspectives;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fPerspectives = PlatformUI
 				.getWorkbench().getPerspectiveRegistry().getPerspectives();

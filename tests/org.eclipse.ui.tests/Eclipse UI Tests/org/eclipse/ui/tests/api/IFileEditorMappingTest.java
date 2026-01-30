@@ -13,22 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class IFileEditorMappingTest {
 	private IFileEditorMapping[] fMappings;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fMappings = PlatformUI.getWorkbench().getEditorRegistry()
 				.getFileEditorMappings();
@@ -78,7 +78,7 @@ public class IFileEditorMappingTest {
 
 	//how do i set the default editor?
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetDefaultEditor() throws Throwable {
 		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getDefaultEditor());

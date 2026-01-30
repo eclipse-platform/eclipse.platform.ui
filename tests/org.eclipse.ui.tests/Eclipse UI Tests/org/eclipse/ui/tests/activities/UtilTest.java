@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,9 +40,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.services.IEvaluationService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests various utility methods on WorkbenchActivityHelper as well as other misc. activities functionality.
@@ -607,12 +607,12 @@ public class UtilTest {
 		evalService.removeSourceProvider(testSourceProvider);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		rememberedSet = getActivityManager().getEnabledActivityIds();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				rememberedSet);

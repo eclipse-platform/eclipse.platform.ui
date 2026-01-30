@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.part.FileEditorInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests [I]FileEditorInput API.
