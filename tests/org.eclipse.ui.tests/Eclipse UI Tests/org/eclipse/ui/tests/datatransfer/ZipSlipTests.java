@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -26,8 +30,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -41,16 +44,16 @@ public class ZipSlipTests {
 		try (ZipFile zipFile = new ZipFile(path.toFile())) {
 			ZipFileStructureProvider zipfileStructureProvider = new ZipFileStructureProvider(zipFile);
 			List<?> children = zipfileStructureProvider.getChildren(zipfileStructureProvider.getRoot());
-			Assert.assertEquals(1, children.size());
+			assertEquals(1, children.size());
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 				InputStream stream = zipfileStructureProvider.getContents(entry);
 				String name = entry.getName();
 				if (name.startsWith("../")) {
-					Assert.assertNull(stream);
+					assertNull(stream);
 				} else {
-					Assert.assertNotNull(stream);
+					assertNotNull(stream);
 				}
 			}
 		}
@@ -62,16 +65,16 @@ public class ZipSlipTests {
 		try (ZipFile zipFile = new ZipFile(path.toFile());
 				ZipLeveledStructureProvider zipLeveledStructureProvider = new ZipLeveledStructureProvider(zipFile)) {
 			List<?> children = zipLeveledStructureProvider.getChildren(zipLeveledStructureProvider.getRoot());
-			Assert.assertEquals(1, children.size());
+			assertEquals(1, children.size());
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 				InputStream stream = zipLeveledStructureProvider.getContents(entry);
 				String name = entry.getName();
 				if (name.startsWith("../")) {
-					Assert.assertNull(stream);
+					assertNull(stream);
 				} else {
-					Assert.assertNotNull(stream);
+					assertNotNull(stream);
 				}
 			}
 		}
