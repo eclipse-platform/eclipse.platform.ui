@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -693,8 +693,7 @@ public class StatusDialogManagerTest {
 
 	@Test
 	public void testBug276371(){
-		StatusAdapter bomb = new StatusAdapter(new Status(IStatus.ERROR,
-				"org.eclipse.ui.tests", "bomb"){
+		StatusAdapter bomb = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "bomb") {
 			int i = 0;
 
 			@Override
@@ -969,7 +968,7 @@ public class StatusDialogManagerTest {
 		selectWidget(StatusDialogUtil.getOkButton());
 		MultiStatus ms = new MultiStatus("org.eclipse.ui.tests", 0, MESSAGE_1, null);
 		for (int i = 0; i < 50; i++) {
-			ms.add(new Status(IStatus.ERROR, "org.eclipse.ui.tests", MESSAGE_2));
+			ms.add(Status.error(MESSAGE_2));
 		}
 		wsdm.addStatusAdapter(new StatusAdapter(ms), false);
 		shell = StatusDialogUtil.getStatusShell();
@@ -1307,8 +1306,7 @@ public class StatusDialogManagerTest {
 	 * @return created StatusAdapter
 	 */
 	private StatusAdapter createStatusAdapter(String message) {
-		return new StatusAdapter(new Status(IStatus.ERROR,
-				"org.eclipse.ui.tests", message));
+		return new StatusAdapter(Status.error(message));
 	}
 
 	/**
@@ -1322,8 +1320,7 @@ public class StatusDialogManagerTest {
 	 */
 	private StatusAdapter createStatusAdapter(String message,
 			Throwable throwable) {
-		return new StatusAdapter(new Status(IStatus.ERROR,
-				"org.eclipse.ui.tests", message, throwable));
+		return new StatusAdapter(Status.error(message, throwable));
 	}
 
 	/**

@@ -18,7 +18,6 @@ import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -112,8 +111,7 @@ public class VirtualTestFileStore extends FileStore {
 		if (contents != null) {
 			return new ByteArrayInputStream(contents);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.ui.tests", //$NON-NLS-1$
-				"File does not exist: " + toURI())); //$NON-NLS-1$
+		throw new CoreException(Status.error("File does not exist: " + toURI())); //$NON-NLS-1$
 	}
 
 	@Override
@@ -133,16 +131,14 @@ public class VirtualTestFileStore extends FileStore {
 		IFileInfo info = fetchInfo();
 		if (info.exists()) {
 			if (!info.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.ui.tests", //$NON-NLS-1$
-						"mkdir failed - file already exists with name: " + toURI())); //$NON-NLS-1$
+				throw new CoreException(Status.error("mkdir failed - file already exists with name: " + toURI())); //$NON-NLS-1$
 			}
 		} else {
 			IFileStore parent = getParent();
 			if (parent.fetchInfo().exists()) {
 				VirtualTestFileSystem.getDefault().setContents(toURI(), VirtualTestFileSystem.DIRECTORY_BYTES);
 			} else if ((options & EFS.SHALLOW) > 0) {
-				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.ui.tests", //$NON-NLS-1$
-						"mkdir failed - parent does not exist: " + toURI())); //$NON-NLS-1$
+				throw new CoreException(Status.error("mkdir failed - parent does not exist: " + toURI())); //$NON-NLS-1$
 			} else {
 				parent.mkdir(EFS.NONE, null);
 			}

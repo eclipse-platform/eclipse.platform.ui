@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2021 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -207,7 +207,7 @@ public class AccumulatingProgressMonitorTest {
 					wrapper.worked(10);
 					wrapper.isCanceled();
 					wrapper.setCanceled(false);
-					wrapper.setBlocked(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "Some Error"));
+					wrapper.setBlocked(Status.error("Some Error"));
 
 					uiSemaphore.release();
 					uiReleaseCount++;

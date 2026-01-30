@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -93,9 +93,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 				monitor.worked(1);
 			}
 			if (data.throwExceptionInForeground) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						"org.eclipse.ui.tests",
-						"Saving in the foreground failed"));
+				throw new CoreException(Status.error("Saving in the foreground failed"));
 			}
 			monitor.done();
 			if (!data.saveInBackground) {
@@ -119,7 +117,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 					monitor1.worked(1);
 				}
 				if (data.throwExceptionInBackground) {
-					return new Status(IStatus.ERROR, "org.eclipse.ui.tests", "Saving in the background failed");
+					return Status.error("Saving in the background failed");
 				}
 				data.setOutput(data.getInput());
 				setDirty(false);

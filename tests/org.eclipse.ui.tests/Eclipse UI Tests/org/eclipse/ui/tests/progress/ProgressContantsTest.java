@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2024 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -219,7 +219,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 			// Solution is to add an unique job after the 'keep one' jobs are finished and
 			// wait for it's appearance. The UI updates are ordered enough to be sure that
 			// kept job processing is finished when this error job appears.
-			DummyJob errorJob = new DummyJob("Last Job", new Status(IStatus.ERROR, TestPlugin.PLUGIN_ID, "error"));
+			DummyJob errorJob = new DummyJob("Last Job", Status.error("error"));
 			errorJob.schedule();
 			processEventsUntil(() -> findProgressInfoItem(errorJob) != null, 3000);
 		}
@@ -252,7 +252,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		// Process events to ensure job completion events are handled
 		processEvents();
 		{
-			DummyJob errorJob = new DummyJob("Last Job", new Status(IStatus.ERROR, TestPlugin.PLUGIN_ID, "error"));
+			DummyJob errorJob = new DummyJob("Last Job", Status.error("error"));
 			errorJob.schedule();
 			processEventsUntil(() -> findProgressInfoItem(errorJob) != null, 3000);
 		}
