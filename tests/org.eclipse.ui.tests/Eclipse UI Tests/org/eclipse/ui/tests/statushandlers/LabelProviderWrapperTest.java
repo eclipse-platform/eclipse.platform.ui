@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -100,13 +100,13 @@ public class LabelProviderWrapperTest {
 
 	@Test
 	public void testImages(){
-		StatusAdapter saError = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "errorMessage"));
+		StatusAdapter saError = new StatusAdapter(Status.error("errorMessage"));
 		assertEquals(wrapper.getSWTImage(SWT.ICON_ERROR), wrapper.getImage(saError));
 
-		StatusAdapter saWarning = new StatusAdapter(new Status(IStatus.WARNING, "org.eclipse.ui.tests", "warningMessage"));
+		StatusAdapter saWarning = new StatusAdapter(Status.warning("warningMessage"));
 		assertEquals(wrapper.getSWTImage(SWT.ICON_WARNING), wrapper.getImage(saWarning));
 
-		StatusAdapter saInfo = new StatusAdapter(new Status(IStatus.INFO, "org.eclipse.ui.tests", "infoMessage"));
+		StatusAdapter saInfo = new StatusAdapter(Status.info("infoMessage"));
 		assertEquals(wrapper.getSWTImage(SWT.ICON_INFORMATION), wrapper.getImage(saInfo));
 
 		StatusAdapter cancelOK = new StatusAdapter(new Status(IStatus.CANCEL, "org.eclipse.ui.tests", "cancelMessage"));
@@ -125,7 +125,7 @@ public class LabelProviderWrapperTest {
 		final String title = "title";
 		final String message = "errorMessage";
 
-		StatusAdapter saError = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", message));
+		StatusAdapter saError = new StatusAdapter(Status.error(message));
 		saError.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
 
 		assertEquals(title, wrapper.getMainMessage(saError));
@@ -144,26 +144,19 @@ public class LabelProviderWrapperTest {
 		dialogState.put(IStatusDialogConstants.DECORATOR, new ILabelDecorator() {
 			@Override
 			public void removeListener(ILabelProviderListener listener) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public boolean isLabelProperty(Object element, String property) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
 			@Override
 			public void dispose() {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void addListener(ILabelProviderListener listener) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -173,11 +166,10 @@ public class LabelProviderWrapperTest {
 
 			@Override
 			public Image decorateImage(Image image, Object element) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		});
-		StatusAdapter saError = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "message"));
+		StatusAdapter saError = new StatusAdapter(Status.error("message"));
 		saError.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, "title");
 		assertEquals("decoratedtitle", wrapper.getMainMessage(saError));
 		assertEquals("decoratedmessage", wrapper.getSecondaryMessage(saError));

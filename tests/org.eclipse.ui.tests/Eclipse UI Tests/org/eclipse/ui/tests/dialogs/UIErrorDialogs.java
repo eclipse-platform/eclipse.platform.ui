@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,15 +35,12 @@ public class UIErrorDialogs {
 	private ErrorDialog getMultiStatusErrorDialog() {
 
 		IStatus[] childStatuses = new IStatus[2];
-		childStatuses[0] = new Status(IStatus.ERROR, "org.eclipse.ui.tests",
-				IStatus.ERROR, "Error message 1", new Throwable());
-		childStatuses[1] = new Status(IStatus.ERROR, "org.eclipse.ui.tests",
-				IStatus.ERROR, "Error message 2", new Throwable());
-		MultiStatus mainStatus = new MultiStatus("org.eclipse.ui.tests",
-				IStatus.ERROR, childStatuses, "Main error", new Throwable());
+		childStatuses[0] = Status.error("Error message 1", new Throwable());
+		childStatuses[1] = Status.error("Error message 2", new Throwable());
+		MultiStatus mainStatus = new MultiStatus("org.eclipse.ui.tests", IStatus.ERROR, childStatuses, "Main error",
+				new Throwable());
 
-		return new ErrorDialog(getShell(), "Error Test", "Error message",
-				mainStatus, IStatus.ERROR);
+		return new ErrorDialog(getShell(), "Error Test", "Error message", mainStatus, IStatus.ERROR);
 	}
 
 	@Test

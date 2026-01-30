@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
@@ -80,21 +79,21 @@ public class WorkbenchStatusDialogManagerImplTest {
 	@Test
 	public void testCheckRecognizingImmediatePrompting1(){
 		//no property
-		StatusAdapter sa = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "message"));
+		StatusAdapter sa = new StatusAdapter(Status.error("message"));
 		assertTrue(mgr.shouldPrompt(sa));
 	}
 
 	@Test
 	public void testCheckRecognizingImmediatePrompting2(){
 		//property set to false
-		StatusAdapter sa = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "message"));
+		StatusAdapter sa = new StatusAdapter(Status.error("message"));
 		sa.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.FALSE);
 		assertTrue(mgr.shouldPrompt(sa));
 	}
 
 	@Test
 	public void testCheckRecognizingNonImmediatePrompting(){
-		StatusAdapter sa = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "message"));
+		StatusAdapter sa = new StatusAdapter(Status.error("message"));
 		sa.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
 		assertFalse(mgr.shouldPrompt(sa));
 	}

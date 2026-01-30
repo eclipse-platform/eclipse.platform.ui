@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -108,18 +108,11 @@ public class GenericCommandActionDelegate implements
 		} else if (data instanceof Map) {
 			parameterMap = (Map<String, String>) data;
 			if (parameterMap.get(PARM_COMMAND_ID) == null) {
-				Status status = new Status(IStatus.ERROR,
-						"org.eclipse.ui.tests", "The '" + id
-								+ "' action won't work without a commandId");
+				IStatus status = Status.error("The '" + id + "' action won't work without a commandId");
 				throw new CoreException(status);
 			}
 		} else {
-			Status status = new Status(
-					IStatus.ERROR,
-					"org.eclipse.ui.tests",
-					"The '"
-							+ id
-							+ "' action won't work without some initialization parameters");
+			IStatus status = Status.error("The '" + id + "' action won't work without some initialization parameters");
 			throw new CoreException(status);
 		}
 	}

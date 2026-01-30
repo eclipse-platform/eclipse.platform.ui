@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -69,8 +69,7 @@ public class SupportTrayTest {
 	@Test
 	public void testDefaultSupportProviderEnablement(){
 		Map<Object, Object> dialogState = new HashMap<>();
-		Status status = new Status(IStatus.ERROR, "org.eclipse.ui.test",
-				"Message.", new NullPointerException());
+		IStatus status = Status.error("Message.", new NullPointerException());
 		StatusAdapter sa = new StatusAdapter(status);
 		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, sa);
 		SupportTray st = new SupportTray(dialogState, new NullListener());
