@@ -261,7 +261,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 			final String matchingCharacter= fTextWidget.getText(offset, offset);
 			Point characterBounds= gc.textExtent(matchingCharacter);
-			characterBounds.y-= 1;
 			Rectangle hightlightingArea= Rectangle.of(offsetLocation, characterBounds);
 
 			// draw box around line segment
