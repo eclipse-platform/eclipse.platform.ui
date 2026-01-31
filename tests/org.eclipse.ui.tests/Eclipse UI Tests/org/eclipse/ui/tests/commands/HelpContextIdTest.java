@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.tests.commands;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
@@ -28,7 +28,7 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the new help context identifier support on commands and handlers.
@@ -63,9 +63,8 @@ public final class HelpContextIdTest {
 
 		// At first, the help context id should be the handler.
 		helpContextId = commandService.getHelpContextId(COMMAND_ID);
-		assertEquals(
-				"The initial help context id should be that of the handler",
-				HANDLER_HELP_ID, helpContextId);
+		assertEquals(HANDLER_HELP_ID, helpContextId,
+				"The initial help context id should be that of the handler");
 
 		// Retract the handler help context id by creating a more specific handler
 		handlerService.activateHandler(COMMAND_ID, new AbstractHandler() {
@@ -86,8 +85,7 @@ public final class HelpContextIdTest {
 			}
 		});
 		helpContextId = commandService.getHelpContextId(COMMAND_ID);
-		assertEquals("The help context id should now be that of the command",
-				COMMAND_HELP_ID, helpContextId);
+		assertEquals(COMMAND_HELP_ID, helpContextId, "The help context id should now be that of the command");
 
 		// Now re-define the command with a different help context id.
 		final Command command = commandService.getCommand(COMMAND_ID);
@@ -95,8 +93,7 @@ public final class HelpContextIdTest {
 		command.define("New Name", null, commandService.getCategory(null),
 				null, null, NEW_HELP_ID);
 		helpContextId = commandService.getHelpContextId(COMMAND_ID);
-		assertEquals("The help context id should now be the new id",
-				NEW_HELP_ID, helpContextId);
+		assertEquals(NEW_HELP_ID, helpContextId, "The help context id should now be the new id");
 	}
 }
 

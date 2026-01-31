@@ -15,13 +15,13 @@
 
 package org.eclipse.ui.tests.activities;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.internal.activities.PatternUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for:

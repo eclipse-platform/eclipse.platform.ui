@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,7 +25,7 @@ import java.io.StringWriter;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testing XMLMemento (see bug 93262). Emphasis is on ensuring that the 3.1
@@ -52,8 +52,9 @@ public class XMLMementoTest {
 	@Test
 	public void testCreateReadRootReaderExceptionCases() {
 		assertThrows(WorkbenchException.class, () -> XMLMemento.createReadRoot(new StringReader("Invalid format")));
-		assertThrows("no exception even though there is noe element", WorkbenchException.class,
-				() -> XMLMemento.createReadRoot(new StringReader("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>")));
+		assertThrows(WorkbenchException.class,
+				() -> XMLMemento.createReadRoot(new StringReader("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>")),
+				"no exception even though there is noe element");
 		assertThrows(WorkbenchException.class, () ->
 			XMLMemento.createReadRoot(new Reader() {
 
@@ -479,7 +480,7 @@ public class XMLMementoTest {
 
 		for (final String key : illegalKeys) {
 			XMLMemento memento = XMLMemento.createWriteRoot("foo");
-			assertThrows("should fail with illegal key", Exception.class, () -> memento.putString(key, "some string"));
+			assertThrows(Exception.class, () -> memento.putString(key, "some string"), "should fail with illegal key");
 		}
 	}
 
