@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2024 Emmanuel Chebbi and others.
+ * Copyright (c) 2019, 2026 Emmanuel Chebbi and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,17 +14,17 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,9 +41,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that FilteredResourcesSelectionDialog selects its initial selection
@@ -64,7 +64,7 @@ public class ResourceInitialSelectionTest {
 	private IProject project;
 
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		FILES.clear();
 		createProject();
@@ -87,7 +87,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertFalse("One file should be selected by default", selected.isEmpty());
+		assertFalse(selected.isEmpty(), "One file should be selected by default");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertEquals("One file should be selected by default", asList(FILES.get("foo.txt")), selected);
+		assertEquals(asList(FILES.get("foo.txt")), selected, "One file should be selected by default");
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertTrue("No file should be selected by default", selected.isEmpty());
+		assertTrue(selected.isEmpty(), "No file should be selected by default");
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertTrue("No file should be selected by default", selected.isEmpty());
+		assertTrue(selected.isEmpty(), "No file should be selected by default");
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertTrue("No file should be selected by default", selected.isEmpty());
+		assertTrue(selected.isEmpty(), "No file should be selected by default");
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertEquals("The first file should be selected by default", asList(FILES.get("foo.txt")), selected);
+		assertEquals(asList(FILES.get("foo.txt")), selected, "The first file should be selected by default");
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertFalse("One file should be selected by default", selected.isEmpty());
+		assertFalse(selected.isEmpty(), "One file should be selected by default");
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertEquals("One file should be selected by default", asList(FILES.get("foo.txt")), selected);
+		assertEquals(asList(FILES.get("foo.txt")), selected, "One file should be selected by default");
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertTrue("No file should be selected by default", selected.isEmpty());
+		assertTrue(selected.isEmpty(), "No file should be selected by default");
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class ResourceInitialSelectionTest {
 
 		List<Object> selected = getSelectedItems(dialog);
 
-		assertTrue("No file should be selected by default", selected.isEmpty());
+		assertTrue(selected.isEmpty(), "No file should be selected by default");
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class ResourceInitialSelectionTest {
 		Set<IFile> expectedSelection = new HashSet<>(asList(FILES.get("bar.txt"), FILES.get("foofoo")));
 		boolean allInitialElementsAreSelected = expectedSelection.equals(new HashSet<>(selected));
 
-		assertTrue("Two files should be selected by default", allInitialElementsAreSelected);
+		assertTrue(allInitialElementsAreSelected, "Two files should be selected by default");
 	}
 
 	/**
@@ -328,7 +328,7 @@ public class ResourceInitialSelectionTest {
 		boolean initialElementsAreSelected = selected.containsAll(initialSelection)
 				&& initialSelection.containsAll(selected);
 
-		assertTrue("Two files should be selected by default", initialElementsAreSelected);
+		assertTrue(initialElementsAreSelected, "Two files should be selected by default");
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class ResourceInitialSelectionTest {
 		boolean initialElementsAreSelected = selected.containsAll(expectedSelection)
 				&& expectedSelection.containsAll(selected);
 
-		assertTrue("Two files should be selected by default", initialElementsAreSelected);
+		assertTrue(initialElementsAreSelected, "Two files should be selected by default");
 	}
 
 	private FilteredResourcesSelectionDialog createDialog(boolean multiSelection) {
@@ -394,11 +394,11 @@ public class ResourceInitialSelectionTest {
 
 		for (String fileName : FILE_NAMES) {
 			DisplayHelper.waitForCondition(display, 1000, () -> project.getFile(fileName).exists());
-			assertTrue("File was not created", project.getFile(fileName).exists());
+			assertTrue(project.getFile(fileName).exists(), "File was not created");
 		}
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
@@ -406,22 +406,22 @@ public class ResourceInitialSelectionTest {
 		if (project != null) {
 			// Process any pending UI events before cleanup
 			processUIEvents();
-			
+
 			try {
 				// Wait for decorator jobs to finish
 				Job.getJobManager().wakeUp(DecoratorManager.FAMILY_DECORATE);
 				Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
-				
+
 				// Wait for any resource jobs that might be running
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-				
+
 				// Process UI events again after joining jobs
 				processUIEvents();
-				
+
 				// Try to delete with proper progress monitor and retry mechanism
 				deleteProjectWithRetry(project);
-				
+
 			} catch (Exception e) {
 				// try to get a stacktrace which jobs still has project open so that it can not
 				// be deleted:
@@ -495,7 +495,7 @@ public class ResourceInitialSelectionTest {
 	private void deleteProjectWithRetry(IProject projectToDelete) throws CoreException {
 		final int MAX_RETRY = 5;
 		CoreException lastException = null;
-		
+
 		for (int i = 0; i < MAX_RETRY; i++) {
 			try {
 				projectToDelete.delete(true, true, new NullProgressMonitor());
@@ -514,7 +514,7 @@ public class ResourceInitialSelectionTest {
 				}
 			}
 		}
-		
+
 		// If we get here, all retries failed
 		if (lastException != null) {
 			throw lastException;

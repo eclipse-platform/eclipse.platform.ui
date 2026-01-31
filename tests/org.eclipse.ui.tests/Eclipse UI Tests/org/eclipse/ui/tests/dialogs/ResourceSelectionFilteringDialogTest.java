@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,6 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -24,10 +26,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ResourceSelectionFilteringDialogTest {
 
@@ -41,7 +42,7 @@ public class ResourceSelectionFilteringDialogTest {
 
 	private IProject project;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getSimpleName() + System.currentTimeMillis());
@@ -61,7 +62,7 @@ public class ResourceSelectionFilteringDialogTest {
 			dialog.setInitialPattern("c/f");
 			dialog.open();
 			dialog.refresh();
-			Assert.assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), 3000,
+			assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), 3000,
 					() -> file.equals(dialog.getSelectedItems().getFirstElement())
 			));
 		} finally {
@@ -69,7 +70,7 @@ public class ResourceSelectionFilteringDialogTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		project.delete(true, null);
 	}
