@@ -201,6 +201,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 * this threshold, the image is hidden.
 	 */
 	public static final int ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD = 450;
+	public static final int ONBOARDING_SMALL_IMAGE_MAX_HEIGHT = 250; // "small" cutoff
+	public static final int ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL = 314; // 256 + 32(top/bot) + 32(extra)
 
 	private MPerspective currentPerspectiveForOnboarding;
 
@@ -857,6 +859,7 @@ public class StackRenderer extends LazyStackRenderer {
 				|| onBoardingImage == null || onBoardingImage.isDisposed()) {
 			return;
 		}
+		int imgHeight = getImageHeight(onBoardingImage);
 		boolean showComposite = tabFolder.getItemCount() == 0;
 		boolean compositeVisible = onBoarding.isVisible();
 		boolean imageVisible = onBoardingImage.isVisible();
@@ -869,14 +872,12 @@ public class StackRenderer extends LazyStackRenderer {
 			int height = folderBounds.height - ONBOARDING_TOP_SPACING - ONBOARDING_SPACING;
 			if (!new Point(width, height).equals(onBoarding.getSize())) {
 				onBoarding.setSize(width, height);
-
-				boolean showImage = height > ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
+				boolean showImage = shouldShowOnboardingImage(height, imgHeight);
 				if (imageVisible != showImage || showComposite != compositeVisible) {
 					onBoardingImage.setVisible(showImage);
 					((GridData) onBoardingImage.getLayoutData()).exclude = !showImage;
 					onboardingComposite.getParent().layout(true);
 				}
-
 			}
 		} else {
 			if (compositeVisible) {
@@ -886,6 +887,46 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 	}
 
+	/**
+	 * Checks if the onboarding image should be shown, based on how much vertical
+	 * space is available and the image size.
+	 * <p>
+	 * <ul>
+	 *   <li>Small images: allowed with a lower minimum height.</li>
+	 *   <li>Large images: require the standard higher threshold.</li>
+	 * </ul>
+	 *
+	 * @param contentHeight     available space in pixels
+	 * @param imageHeight       image height in pixels (0 if none)
+	 * @return true if the image should be shown; false otherwise
+	 */
+	private static boolean shouldShowOnboardingImage(int contentHeight, int imageHeight) {
+	    if (imageHeight > 0 && imageHeight <= ONBOARDING_SMALL_IMAGE_MAX_HEIGHT) {
+	        // 314 total minus (top + bottom) = 314 - (30 + 2) = 282
+	        int required = ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL - (ONBOARDING_TOP_SPACING + ONBOARDING_SPACING);
+	        return contentHeight >= required;
+	    }
+	    // Larger images fall back to the original (higher) threshold
+	    return contentHeight >= ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
+	}
+
+	/**
+	 * Returns the height of the image assigned to the given label.
+	 *
+	 * @param label the Label widget holding the image
+	 * @return the height in pixels, or 0 if the label has no valid image
+	 */
+	private static int getImageHeight(Label label) {
+		if (label == null || label.isDisposed()) {
+			return 0;
+		}
+		Image img = label.getImage();
+		if (img == null || img.isDisposed()) {
+			return 0;
+		}
+		return img.getBounds().height;
+	}
+ 
 	private boolean getMRUValue() {
 		return getMRUValueFromPreferences();
 	}
