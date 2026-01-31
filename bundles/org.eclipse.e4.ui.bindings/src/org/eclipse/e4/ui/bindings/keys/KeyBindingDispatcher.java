@@ -295,32 +295,42 @@ public class KeyBindingDispatcher {
 		final EHandlerService handlerService = getHandlerService();
 		final Command command = parameterizedCommand.getCommand();
 
-		final IEclipseContext staticContext = createContext(trigger);
-
 		final boolean commandDefined = command.isDefined();
 		// boolean commandEnabled;
 		boolean commandHandled = false;
 
+		// commandEnabled = handlerService.canExecute(parameterizedCommand,
+		// staticContext);
+		Object obj = HandlerServiceImpl.lookUpHandler(context, command.getId());
+		if (obj != null) {
+			if (obj instanceof IHandler handler) {
+				commandHandled = command.isEnabled() && handler.isHandled();
+			} else {
+				commandHandled = true;
+			}
+		}
+
+		if (isTracingEnabled()) {
+			logger.trace("Command " + parameterizedCommand + ", defined: " + commandDefined + ", handled: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ commandHandled + " in " + describe(context)); //$NON-NLS-1$
+		}
+
+		if (trigger != null && trigger.widget instanceof Browser) {
+			getDisplay()
+					.asyncExec(() -> handleCommandExecution(parameterizedCommand, handlerService, trigger, obj));
+		} else {
+			handleCommandExecution(parameterizedCommand, handlerService, trigger, obj);
+		}
+		return (commandDefined && commandHandled);
+	}
+
+	private void handleCommandExecution(final ParameterizedCommand parameterizedCommand,
+			final EHandlerService handlerService, final Event trigger, Object handler) {
+		final IEclipseContext staticContext = createContext(trigger);
 		try {
-			// commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
-			Object obj = HandlerServiceImpl.lookUpHandler(context, command.getId());
-			if (obj != null) {
-				if (obj instanceof IHandler) {
-					commandHandled = ((IHandler) obj).isHandled();
-				} else {
-					commandHandled = true;
-				}
-			}
-
-			if (isTracingEnabled()) {
-				logger.trace("Command " + parameterizedCommand + ", defined: " + commandDefined + ", handled: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ commandHandled + " in " + describe(context)); //$NON-NLS-1$
-			}
-
 			handlerService.executeHandler(parameterizedCommand, staticContext);
 			final Object commandException = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
 			if (commandException instanceof CommandException) {
-				commandHandled = false;
 				if (commandException instanceof ExecutionException) {
 					if (logger != null) {
 						logger.error((Throwable) commandException,
@@ -328,8 +338,7 @@ public class KeyBindingDispatcher {
 										+ describe(context));
 					}
 				} else if (isTracingEnabled()) {
-					logger.trace((Throwable) commandException,
-							"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
+					logger.trace((Throwable) commandException, "Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
 									+ describe(context));
 					if (handlerService instanceof HandlerServiceImpl serviceImpl) {
 						IEclipseContext serviceContext = serviceImpl.getContext();
@@ -337,7 +346,7 @@ public class KeyBindingDispatcher {
 							StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
 							sb.append(describe(serviceContext));
 							sb.append("\n\tHandler: "); //$NON-NLS-1$
-							sb.append(obj);
+							sb.append(handler);
 							logger.trace(sb.toString());
 						}
 					}
@@ -352,17 +361,16 @@ public class KeyBindingDispatcher {
 					}
 				}
 			}
-			/*
-			 * Now that the command has executed (and had the opportunity to use the remembered
-			 * state of the dialog), it is safe to delete that information.
-			 */
-			if (keyAssistDialog != null) {
-				keyAssistDialog.clearRememberedState();
-			}
 		} finally {
 			staticContext.dispose();
 		}
-		return (commandDefined && commandHandled);
+		/*
+		 * Now that the command has executed (and had the opportunity to use the
+		 * remembered state of the dialog), it is safe to delete that information.
+		 */
+		if (keyAssistDialog != null) {
+			keyAssistDialog.clearRememberedState();
+		}
 	}
 
 	private boolean isTracingEnabled() {
