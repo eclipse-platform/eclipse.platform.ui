@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -35,9 +36,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that resources are highlighted to match user search input. See Bug
@@ -49,7 +50,7 @@ public class ResourceItemLabelTest {
 
 	private IProject project;
 
-	@Before
+	@BeforeEach
 	public void doSetUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getName() + "_" + System.currentTimeMillis());
@@ -269,16 +270,16 @@ public class ResourceItemLabelTest {
 	}
 
 	private void compareStyleRanges(Position[] expected, StyleRange[] actual, String fileName, String fileParentPath) {
-		assertEquals("Length of StyleRanges is incorrect: " + printStyleRanges(actual), expected.length + 1,
-				actual.length);
+		assertEquals(expected.length + 1, actual.length,
+				"Length of StyleRanges is incorrect: " + printStyleRanges(actual));
 		int i;
 		for (i = 0; i < actual.length - 1; i++) {
-			assertEquals("Start of StyleRange at index " + i + " is incorrect.", expected[i].offset, actual[i].start);
-			assertEquals("Length of StyleRange at index " + i + " is incorrect.", expected[i].length, actual[i].length);
+			assertEquals(expected[i].offset, actual[i].start, "Start of StyleRange at index " + i + " is incorrect.");
+			assertEquals(expected[i].length, actual[i].length, "Length of StyleRange at index " + i + " is incorrect.");
 		}
-		assertEquals("Start of file path StyleRange is incorrect.", fileName.length(), actual[i].start);
-		assertEquals("Length of file path StyleRange at index is incorrect.",
-				3 + project.getName().length() + fileParentPath.length(), actual[i].length);
+		assertEquals(fileName.length(), actual[i].start, "Start of file path StyleRange is incorrect.");
+		assertEquals(3 + project.getName().length() + fileParentPath.length(), actual[i].length,
+				"Length of file path StyleRange at index is incorrect.");
 	}
 
 	private FilteredResourcesSelectionDialog dialog;
@@ -304,7 +305,7 @@ public class ResourceItemLabelTest {
 			}
 		}.waitForCondition(shell.getDisplay(), 1000);
 
-		assertTrue("File was not created", project.getFile(fileName).exists());
+		assertTrue(project.getFile(fileName).exists(), "File was not created");
 		dialog.reloadCache(true, new NullProgressMonitor());
 
 		((Text) dialog.getPatternControl()).setText(searchString);
@@ -350,7 +351,7 @@ public class ResourceItemLabelTest {
 		return builder.toString();
 	}
 
-	@After
+	@AfterEach
 	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
