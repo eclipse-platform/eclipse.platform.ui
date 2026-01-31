@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import org.junit.runner.JUnitCore;
+
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -23,8 +23,6 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({ ButtonAlignmentTest.class, WizardTest.class, WizardProgressMonitorTest.class })
 public class WizardTestSuite {
 
-	public static void main(String[] args) {
-		JUnitCore.main(WizardTestSuite.class.getName());
-	}
+	
 
 }

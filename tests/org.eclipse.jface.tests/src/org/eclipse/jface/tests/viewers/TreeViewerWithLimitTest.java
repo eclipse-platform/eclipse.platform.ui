@@ -14,10 +14,10 @@
 
 package org.eclipse.jface.tests.viewers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +50,17 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		treeViewer.setSelection(new StructuredSelection(invisible), true);
 		processEvents();
 		IStructuredSelection selection = treeViewer.getStructuredSelection();
-		assertFalse("Selection must not be empty", selection.isEmpty());
+		assertFalse(selection.isEmpty(), "Selection must not be empty");
 		Object firstElement = selection.getFirstElement();
-		assertTrue("Selection must be expandable node: " + firstElement, treeViewer.isExpandableNode(firstElement));
+		assertTrue(treeViewer.isExpandableNode(firstElement), "Selection must be expandable node: " + firstElement);
 	}
 
 	private void assertSetSelection(DataModel firstEle) {
 		treeViewer.setSelection(new StructuredSelection(firstEle));
 		processEvents();
 		IStructuredSelection selection = treeViewer.getStructuredSelection();
-		assertFalse("Selection must not be empty", selection.isEmpty());
-		assertEquals("incorrect element is selected", firstEle, selection.getFirstElement());
+		assertFalse(selection.isEmpty(), "Selection must not be empty");
+		assertEquals(firstEle, selection.getFirstElement(), "incorrect element is selected");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 				break;
 			}
 		}
-		assertTrue("item to select must be inside expandable node", found);
+		assertTrue(found, "item to select must be inside expandable node");
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		TreeItem[] items = assertLimitedItems();
 		for (int i = 0; i < VIEWER_LIMIT; i++) {
 			TreeItem treeItem = items[i];
-			assertFalse("expansion must be false", treeItem.getExpanded());
+			assertFalse(treeItem.getExpanded(), "expansion must be false");
 		}
 	}
 
@@ -124,17 +124,17 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	private TreeItem[] assertLimitedItems(TreeItem treeItem) {
 		TreeItem[] items = treeItem.getItems();
-		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, items.length);
+		assertEquals(VIEWER_LIMIT + 1, items.length, "There should be only limited items");
 		Object data = items[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue(treeViewer.isExpandableNode(data), "last item must be expandable node");
 		return items;
 	}
 
 	private TreeItem[] assertLimitedItems() {
 		TreeItem[] rootLevelItems = treeViewer.getTree().getItems();
-		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, rootLevelItems.length);
+		assertEquals(VIEWER_LIMIT + 1, rootLevelItems.length, "There should be only limited items");
 		Object data = rootLevelItems[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue(treeViewer.isExpandableNode(data), "last item must be expandable node");
 		return rootLevelItems;
 	}
 
@@ -153,8 +153,8 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	private static void assertDummyItem(TreeItem treeItem) {
 		TreeItem[] items = treeItem.getItems();
-		assertEquals("Item must not be expanded", 1, items.length);
-		assertNull("Dummy tree item data must be null", items[0].getData());
+		assertEquals(1, items.length, "Item must not be expanded");
+		assertNull(items[0].getData(), "Dummy tree item data must be null");
 	}
 
 	@Test
@@ -181,12 +181,12 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		DataModel firstEle = rootModel.get(0);
 		DataModel thirdOfFirst = firstEle.children.get(2).children.remove(2);
 		TreeItem visItem = treeViewer.getTree().getItem(0).getItem(2).getItem(2);
-		assertEquals("element contains unexpected data", thirdOfFirst, visItem.getData());
+		assertEquals(thirdOfFirst, visItem.getData(), "element contains unexpected data");
 		treeViewer.remove(firstEle, new Object[] { thirdOfFirst });
 		processEvents();
 		thirdOfFirst = firstEle.children.get(2).children.get(2);
 		visItem = treeViewer.getTree().getItem(0).getItem(2).getItem(2);
-		assertEquals("element contains unexpected data", thirdOfFirst, visItem.getData());
+		assertEquals(thirdOfFirst, visItem.getData(), "element contains unexpected data");
 	}
 
 	@Test
@@ -196,12 +196,12 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		processEvents();
 		DataModel firstEle = rootModel.remove(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 		treeViewer.remove(firstEle);
 		processEvents();
 		firstEle = rootModel.get(0);
 		firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 	}
 
 	@Test
@@ -222,37 +222,37 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	@Test
 	public void testInsert() {
 		TreeItem thirdItem = treeViewer.getTree().getItem(2);
-		assertEquals("unexpected element found at position 2", rootModel.get(2), thirdItem.getData());
+		assertEquals(rootModel.get(2), thirdItem.getData(), "unexpected element found at position 2");
 		DataModel newElement = new DataModel(Integer.valueOf(3));
 		rootModel.add(newElement);
 		treeViewer.insert(rootModel, newElement, 2);
 		processEvents();
 		thirdItem = treeViewer.getTree().getItem(2);
-		assertEquals("unexpected element found at position 2", newElement, thirdItem.getData());
+		assertEquals(newElement, thirdItem.getData(), "unexpected element found at position 2");
 	}
 
 	@Test
 	public void testRefresh() {
 		DataModel firstEle = rootModel.remove(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 		treeViewer.refresh();
 		processEvents();
 		firstEle = rootModel.get(0);
 		firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 	}
 
 	@Test
 	public void testSetFilters() {
 		DataModel firstEle = rootModel.get(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 		treeViewer.setFilters(new TestViewerFilter());
 		processEvents();
 		firstEle = rootModel.get(6);
 		firstItem = treeViewer.getTree().getItem(0);
-		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
+		assertEquals(firstEle, firstItem.getData(), "element contains unexpected data");
 	}
 
 	@Test
@@ -262,7 +262,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		rootModel.add(rootLevel);
 		treeViewer.setInput(rootModel);
 		processEvents();
-		assertEquals("there must be only one item", 1, treeViewer.getTree().getItems().length);
+		assertEquals(1, treeViewer.getTree().getItems().length, "there must be only one item");
 		treeViewer.setInput(createModel(DEFAULT_ELEMENTS_COUNT));
 		processEvents();
 		assertLimitedItems();
@@ -271,21 +271,21 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	@Test
 	public void testContains() {
 		// some random element.
-		assertFalse("element must not be available on the viewer", treeViewer.contains(fRootElement, ""));
+		assertFalse(treeViewer.contains(fRootElement, ""), "element must not be available on the viewer");
 
 		// first child of root.
-		assertTrue("element must be available on the viewer", treeViewer.contains(rootModel, rootModel.get(0)));
+		assertTrue(treeViewer.contains(rootModel, rootModel.get(0)), "element must be available on the viewer");
 
 		// last child of the root
-		assertTrue("element must be available on the viewer",
-				treeViewer.contains(rootModel, rootModel.get(rootModel.size() - 1)));
+		assertTrue(
+				treeViewer.contains(rootModel, rootModel.get(rootModel.size() - 1)), "element must be available on the viewer");
 		// child of first element is not expanded
-		assertFalse("element must not be available on the viewer",
-				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)));
+		assertFalse(
+				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must not be available on the viewer");
 		treeViewer.expandAll();
 		// child of first element when expanded.
-		assertTrue("element must be available on the viewer",
-				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)));
+		assertTrue(
+				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must be available on the viewer");
 	}
 
 	@Override

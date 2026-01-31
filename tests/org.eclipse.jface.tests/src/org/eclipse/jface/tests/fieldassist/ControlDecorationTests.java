@@ -13,16 +13,16 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 
@@ -37,15 +37,15 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		window.open();
-		assertTrue("1.0", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.0");
 		decoration.hide();
-		assertFalse("1.1", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.1");
 		decoration.show();
-		assertTrue("1.2", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.2");
 		window.getFieldAssistControl().setVisible(false);
-		assertFalse("1.3", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.3");
 		window.getFieldAssistControl().setVisible(true);
-		assertTrue("1.4", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.4");
 
 		// focus related tests.  Comment out for now.
 		// see bug 275393
@@ -71,7 +71,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		decoration.setImage(FieldDecorationRegistry.getDefault()
 			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
-		assertTrue("1.0", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.0");
 		assertOneShellUp();
 		decoration.hide();
 		decoration.showHoverText("Show me");
@@ -87,7 +87,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 
 	// focus related tests
 	@Test
-	@Ignore("Disabled see Bug 418420 and bug 275393")
+	@Disabled("Disabled see Bug 418420 and bug 275393")
 	public void testBug418420() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();

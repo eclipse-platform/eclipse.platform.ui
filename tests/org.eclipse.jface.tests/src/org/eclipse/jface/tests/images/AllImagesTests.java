@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import org.junit.runner.JUnitCore;
+
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -24,7 +24,5 @@ import org.junit.platform.suite.api.Suite;
 		UrlImageDescriptorTest.class, DecorationOverlayIconTest.class, DeferredImageDescriptorTest.class })
 public class AllImagesTests {
 
-	public static void main(String[] args) {
-		JUnitCore.main(AllImagesTests.class.getName());
-	}
+	
 }
