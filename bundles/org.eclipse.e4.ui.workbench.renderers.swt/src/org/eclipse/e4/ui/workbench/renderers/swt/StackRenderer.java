@@ -403,11 +403,10 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 		// Ensure that this event is for a MPartStack
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(element instanceof MPartStack)) {
+		if (!(element instanceof MPartStack stack)) {
 			return;
 		}
 
-		MPartStack stack = (MPartStack) element;
 		if (stack.getRenderer() != this) {
 			return;
 		}
