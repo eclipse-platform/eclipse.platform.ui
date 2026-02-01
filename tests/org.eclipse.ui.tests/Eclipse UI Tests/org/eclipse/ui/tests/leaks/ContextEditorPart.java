@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,13 +40,11 @@ public class ContextEditorPart extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -79,13 +77,11 @@ public class ContextEditorPart extends EditorPart {
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2021 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,8 @@ package org.eclipse.ui.tests.leaks;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
@@ -44,12 +44,12 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.tests.api.MockViewPart;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Very simple leak tests to determine if any of our heavy objects are not being
@@ -58,9 +58,8 @@ import org.junit.Test;
  *
  * @since 3.1
  */
+@ExtendWith(CloseTestWindowsExtension.class)
 public class LeakTests {
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IWorkbenchPage fActivePage;
 
@@ -72,7 +71,6 @@ public class LeakTests {
 			throws IllegalArgumentException, InterruptedException {
 		boolean flag = false;
 		for (int i = 0; i < 100; i++) {
-			System.runFinalization();
 			System.gc();
 			Thread.yield();
 			processEvents();
@@ -83,7 +81,7 @@ public class LeakTests {
 			}
 		}
 
-		assertTrue("Reference not enqueued", flag);
+		assertTrue(flag, "Reference not enqueued");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,13 +89,13 @@ public class LeakTests {
 		return new PhantomReference<>(object, queue);
 	}
 
-	@Before
+	@BeforeEach
 	public final void setUp() throws Exception {
 		fWin = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		fActivePage = fWin.getActivePage();
 	}
 
-	@After
+	@AfterEach
 	public final void tearDown() throws Exception {
 		fWin = null;
 		fActivePage = null;

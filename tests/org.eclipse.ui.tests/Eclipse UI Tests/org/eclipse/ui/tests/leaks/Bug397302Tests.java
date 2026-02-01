@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2017 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,24 +14,21 @@
 
 package org.eclipse.ui.tests.leaks;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.5
  */
 public class Bug397302Tests {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	/**
 	 * @since 3.5
@@ -68,7 +65,7 @@ public class Bug397302Tests {
 
 		@Override
 		public Map getCurrentState() {
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
 
 		@Override
@@ -77,7 +74,7 @@ public class Bug397302Tests {
 		}
 
 		public void callOut() {
-			this.fireSourceChanged(0, Collections.EMPTY_MAP);
+			this.fireSourceChanged(0, Collections.emptyMap());
 		}
 
 	}
@@ -100,8 +97,8 @@ public class Bug397302Tests {
 
 		testSourceProvider.callOut();
 
-		Assert.assertEquals(1, a.getCallCount());
-		Assert.assertEquals(1, b.getCallCount());
+		assertEquals(1, a.getCallCount());
+		assertEquals(1, b.getCallCount());
 
 		// remove listeners, call out to them, and verify that they no longer got called
 		testSourceProvider.removeSourceProviderListener(a);
@@ -109,8 +106,8 @@ public class Bug397302Tests {
 
 		testSourceProvider.callOut();
 
-		Assert.assertEquals(1, a.getCallCount());
-		Assert.assertEquals(1, b.getCallCount());
+		assertEquals(1, a.getCallCount());
+		assertEquals(1, b.getCallCount());
 
 		// loose our strong references to a & b, force a GC, and see whether either gets leaked.
 		// Test: The bug asserts that B has been leaked. Force a GC, and test whether
@@ -121,8 +118,8 @@ public class Bug397302Tests {
 
 		System.gc();
 
-		Assert.assertNull("Reference A", listenerARef.get());
-		Assert.assertNull("Reference B", listenerBRef.get());
+		assertNull(listenerARef.get(), "Reference A");
+		assertNull(listenerBRef.get(), "Reference B");
 
 		// Need this to prevent the above GC call from sweeping everything up before we're ready.
 		// See this only when NOT in debug.
