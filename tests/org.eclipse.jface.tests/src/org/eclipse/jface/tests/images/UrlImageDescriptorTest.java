@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Christoph Läubrich and others.
+ * Copyright (c) 2020, 2026 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -161,7 +161,9 @@ public class UrlImageDescriptorTest {
 		File imageFile = new File(imageFolder, "image with spaces.png");
 		imageFile.createNewFile();
 
-		// This is an invalid URL because the whitespace characters are not properly encoded
+		// This is an invalid URL because the whitespace characters are not properly
+		// encoded
+		@SuppressWarnings("deprecation")
 		URL imageFileURL = new URL("file", null, imageFile.getPath());
 		ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageFileURL);
 
