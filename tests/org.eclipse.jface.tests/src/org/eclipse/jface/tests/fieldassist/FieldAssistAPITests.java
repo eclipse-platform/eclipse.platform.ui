@@ -14,13 +14,13 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 
@@ -32,37 +32,37 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 	@Test
 	public void testSimpleContentProposal() {
 		proposal = new ContentProposal(content);
-		assertEquals("1.0", content, proposal.getContent());
-		assertEquals("1.1", content, proposal.getLabel());
-		assertNull("1.2", proposal.getDescription());
-		assertEquals("1.3", content.length(), proposal.getCursorPosition());
+		assertEquals(content, proposal.getContent(), "1.0");
+		assertEquals(content, proposal.getLabel(), "1.1");
+		assertNull(proposal.getDescription(), "1.2");
+		assertEquals(content.length(), proposal.getCursorPosition(), "1.3");
 	}
 
 	@Test
 	public void testContentProposalWithCursor() {
 		proposal = new ContentProposal(content, label, description, 3);
-		assertEquals("3.0", content, proposal.getContent());
-		assertEquals("3.1", label, proposal.getLabel());
-		assertEquals("3.2", description, proposal.getDescription());
-		assertEquals("3.3", 3, proposal.getCursorPosition());
+		assertEquals(content, proposal.getContent(), "3.0");
+		assertEquals(label, proposal.getLabel(), "3.1");
+		assertEquals(description, proposal.getDescription(), "3.2");
+		assertEquals(3, proposal.getCursorPosition(), "3.3");
 	}
 
 	@Test
 	public void testContentProposalWithLabel() {
 		proposal = new ContentProposal(content, label, description);
-		assertEquals("3.0", content, proposal.getContent());
-		assertEquals("3.1", label, proposal.getLabel());
-		assertEquals("3.2", description, proposal.getDescription());
-		assertEquals("3.3", content.length(), proposal.getCursorPosition());
+		assertEquals(content, proposal.getContent(), "3.0");
+		assertEquals(label, proposal.getLabel(), "3.1");
+		assertEquals(description, proposal.getDescription(), "3.2");
+		assertEquals(content.length(), proposal.getCursorPosition(), "3.3");
 	}
 
 	@Test
 	public void testContentProposalWithDescription() {
 		proposal = new ContentProposal(content, description);
-		assertEquals("2.0", content, proposal.getContent());
-		assertEquals("2.1", content, proposal.getLabel());
-		assertEquals("2.2", description, proposal.getDescription());
-		assertEquals("2.3", content.length(), proposal.getCursorPosition());
+		assertEquals(content, proposal.getContent(), "2.0");
+		assertEquals(content, proposal.getLabel(), "2.1");
+		assertEquals(description, proposal.getDescription(), "2.2");
+		assertEquals(content.length(), proposal.getCursorPosition(), "2.3");
 	}
 
 	public void testInitializationWithInvalidCursor() {
@@ -70,7 +70,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 			proposal = new ContentProposal(content, label, description, 100);
 			fail("4.0");
 		} catch (IllegalArgumentException e) {
-			assertNull("It is expected to be null", proposal);
+			assertNull(proposal, "It is expected to be null");
 		}
 	}
 
