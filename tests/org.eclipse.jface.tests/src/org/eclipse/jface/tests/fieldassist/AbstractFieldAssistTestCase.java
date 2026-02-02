@@ -14,9 +14,9 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
@@ -25,15 +25,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 public abstract class AbstractFieldAssistTestCase {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
-
+	
 	/**
 	 * The window that is being tested.
 	 */
@@ -49,8 +46,9 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	private int originalShellCount;
 
-	@Before
-	public final void setUp() throws Exception {
+	@BeforeEach
+	public final void setUp(TestInfo testInfo) throws Exception {
+		System.out.println(TestRunLogUtil.formatTestStartMessage(testInfo.getTestMethod().get().getName()));
 		Display display = getDisplay();
 		anotherShell = new Shell(display);
 		new Text(anotherShell, SWT.SINGLE);
@@ -61,13 +59,14 @@ public abstract class AbstractFieldAssistTestCase {
 		assertNotNull(window);
 	}
 
-	@After
-	public final void tearDown() throws Exception {
+	@AfterEach
+	public final void tearDown(TestInfo testInfo) throws Exception {
 		if (window != null) {
 			spinEventLoop();
 		}
 		closeFieldAssistWindow();
 		anotherShell.close();
+		System.out.println(TestRunLogUtil.formatTestFinishedMessage(testInfo.getTestMethod().get().getName()));
 	}
 
 	protected Display getDisplay() {
@@ -171,7 +170,7 @@ public abstract class AbstractFieldAssistTestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.character = character;
-		assertTrue("unable to post event to display queue for test case", window.getDisplay().post(event));
+		assertTrue(window.getDisplay().post(event), "unable to post event to display queue for test case");
 		spinEventLoop();
 	}
 
@@ -186,7 +185,7 @@ public abstract class AbstractFieldAssistTestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.keyCode = keystroke.getNaturalKey();
-		assertTrue("unable to post event to display queue for test case", window.getDisplay().post(event));
+		assertTrue(window.getDisplay().post(event), "unable to post event to display queue for test case");
 		spinEventLoop();
 	}
 
@@ -195,8 +194,8 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	protected void assertOneShellUp() {
 		spinEventLoop();
-		assertEquals("There should only be one shell up, the dialog", originalShellCount + 1,
-				window.getDisplay().getShells().length);
+		assertEquals(originalShellCount + 1,
+				window.getDisplay().getShells().length, "There should only be one shell up, the dialog");
 	}
 
 	/**
@@ -205,8 +204,8 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	protected void assertTwoShellsUp() {
 		spinEventLoop();
-		assertEquals("There should two shells up, the dialog and the proposals dialog", originalShellCount + 2,
-				window.getDisplay().getShells().length);
+		assertEquals(originalShellCount + 2,
+				window.getDisplay().getShells().length, "There should two shells up, the dialog and the proposals dialog");
 	}
 
 	protected void setControlContent(String text) {

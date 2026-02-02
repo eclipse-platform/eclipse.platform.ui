@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -55,7 +55,7 @@ public class FontRegistryTest {
 
 	@Test
 	public void multipleDisplayDispose() {
-		assumeTrue("multiple Display instance only allowed on Windows", OS.isWindows());
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		FontRegistry fontRegistry = new FontRegistry();
 		Display secondDisplay = initializeDisplayInSeparateThread();
