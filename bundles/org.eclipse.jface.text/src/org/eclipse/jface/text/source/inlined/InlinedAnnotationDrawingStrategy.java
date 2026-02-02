@@ -13,6 +13,8 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -42,6 +44,16 @@ import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 	private final ITextViewer viewer;
+
+	private static final char ZW_SPACE= '\u200b';
+
+	private static final char ZW_NON_JOINER= '\u200c';
+
+	private static final char ZW_JOINER= '\u200d';
+
+	private static final char ZW_NO_BREAK_SPACE= '\ufeff';
+
+	private static final Set<Character> ZW_CHARACTERS= Set.of(ZW_SPACE, ZW_NON_JOINER, ZW_JOINER, ZW_NO_BREAK_SPACE);
 
 	public InlinedAnnotationDrawingStrategy(ITextViewer viewer) {
 		this.viewer = viewer;
@@ -436,13 +448,17 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// Get size of the character where GlyphMetrics width is added
 					Point charBounds= gc.stringExtent(hostCharacter);
 					int charWidth= charBounds.x;
-					if (charWidth == 0 && ("\r".equals(hostCharacter) || "\n".equals(hostCharacter))) { //$NON-NLS-1$ //$NON-NLS-2$
+					boolean isZeroWidthCharacter= false;
+					if (hostCharacter.length() == 1 && ZW_CHARACTERS.contains(hostCharacter.charAt(0))) {
+						isZeroWidthCharacter= true;
+						charWidth= 0;
+					} else if (charWidth == 0 && ("\r".equals(hostCharacter) || "\n".equals(hostCharacter))) { //$NON-NLS-1$ //$NON-NLS-2$
 						// charWidth is 0 for '\r' on font Consolas, but not on other fonts, why?
 						charWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
 					}
 					// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 					// START TO REMOVE
-					annotation.setRedrawnCharacterWidth(charWidth);
+					annotation.setRedrawnCharacterWidth(charWidth, isZeroWidthCharacter);
 					// END TO REMOVE
 
 					// Annotation takes place, add GlyphMetrics width to the style
@@ -523,6 +539,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			char hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1).charAt(0);
 			// use gc.stringExtent instead of gc.geCharWidth because of bug 548866
 			int redrawnCharacterWidth= hostCharacter != '\t' ? gc.stringExtent(Character.toString(hostCharacter)).x : textWidget.getTabs() * gc.stringExtent(" ").x; //$NON-NLS-1$
+			boolean isZeroWidthCharacter= false;
+			if (ZW_CHARACTERS.contains(hostCharacter)) {
+				redrawnCharacterWidth= 0;
+				isZeroWidthCharacter= true;
+			}
 			Rectangle charBounds= textWidget.getTextBounds(widgetOffset - 1, widgetOffset - 1);
 			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
 
@@ -539,7 +560,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			if (width != 0) {
 				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 				// START TO REMOVE
-				annotation.setRedrawnCharacterWidth(redrawnCharacterWidth);
+				annotation.setRedrawnCharacterWidth(redrawnCharacterWidth, isZeroWidthCharacter);
 				// END TO REMOVE
 
 				// Annotation takes place, add GlyphMetrics width to the style

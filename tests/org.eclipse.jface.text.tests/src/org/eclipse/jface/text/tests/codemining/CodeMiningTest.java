@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -510,6 +509,53 @@ public class CodeMiningTest {
 				}
 			}
 		}.waitForCondition(widget.getDisplay(), 1000), "Code mining is unexpectedly rendered below last line");
+	}
+
+	@Test
+	public void testCodeMiningOnZeroWitdhCharacterAfterPosition() {
+		codeMiningOnZeroWidthCharacter(true);
+	}
+
+	@Test
+	public void testCodeMiningOnZeroWidthCharacterBeforePosition() {
+		codeMiningOnZeroWidthCharacter(false);
+	}
+
+	private void codeMiningOnZeroWidthCharacter(boolean afterPosition) {
+		char ZW_SPACE= '\u200b';
+		String text= "a" + ZW_SPACE + "b";
+		fViewer.getDocument().set(text);
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] {
+				new AbstractCodeMiningProvider() {
+					@Override
+					public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+						List<ICodeMining> result= new ArrayList<>();
+						result.add(new LineContentCodeMining(new Position(1, 1), afterPosition, this) {
+							@Override
+							public String getLabel() {
+								return "ZWSP";
+							}
+						});
+						return CompletableFuture.completedFuture(result);
+					}
+				}
+		});
+		fViewer.updateCodeMinings();
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				var tw= fViewer.getTextWidget();
+				int off= afterPosition ? 1 : 0;
+				StyleRange styleRange= tw.getStyleRangeAtOffset(off);
+				if (styleRange != null && styleRange.metrics != null) {
+					// code mining applied a style range with metrics at offset 1
+					return true;
+				} else {
+					tw.redraw();
+				}
+				return false;
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000), "Line content code mining not rendered at zero width character");
 	}
 
 	@Test
