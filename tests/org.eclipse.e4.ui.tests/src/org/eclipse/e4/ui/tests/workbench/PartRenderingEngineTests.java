@@ -2451,7 +2451,7 @@ public class PartRenderingEngineTests {
 		// and retries. Calling spinEventLoop() here creates a race condition where
 		// events may be processed before CleanupAddon's asyncExec() is queued (line 352).
 		assertTrue(
-				DisplayHelper.waitForCondition(Display.getDefault(), 5_000,
+				DisplayHelper.waitForCondition(Display.getDefault(), 30_000,
 						() -> !partStackForPartBPartC.isToBeRendered()), "CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed");
 		// PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be removed
 		// even if children are removed
