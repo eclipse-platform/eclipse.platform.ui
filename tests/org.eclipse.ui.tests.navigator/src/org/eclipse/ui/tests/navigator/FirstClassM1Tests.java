@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * M1/M2 tests with M1 as a first class provider (i.e. override policy set to

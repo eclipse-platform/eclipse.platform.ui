@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,8 +57,8 @@ import org.eclipse.ui.tests.navigator.extension.TestSorterData;
 import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
 import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class NavigatorTestBase {
 
@@ -181,7 +181,7 @@ public class NavigatorTestBase {
 		// Nothing
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException {
 
 		if (_navigatorInstanceId == null) {
@@ -274,7 +274,7 @@ public class NavigatorTestBase {
 		_viewer = _commonNavigator.getAdapter(CommonViewer.class);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws CoreException {
 		clearAll();
 		// Hide it, we want a new one each time
@@ -397,7 +397,7 @@ public class NavigatorTestBase {
 	 */
 	protected TreeItem _findChild(String name, TreeItem[] items) {
 		for (TreeItem item : items) {
-			assertTrue("Child " + item + " should be an M1 or M2 resource", item.getData() instanceof ResourceWrapper);
+			assertTrue(item.getData() instanceof ResourceWrapper, "Child " + item + " should be an M1 or M2 resource");
 			ResourceWrapper rw = (ResourceWrapper) item.getData();
 			if (name.equals(rw.getResource().getName())) {
 				return item;

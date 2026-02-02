@@ -14,7 +14,7 @@
 package org.eclipse.ui.tests.navigator.extension;
 
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,7 +34,7 @@ public class TestActionProviderDependent extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = menu.findMenuUsingPath(TestActionProviderMenu.GROUP_TEST_MENU);
-		Assert.assertNotNull("The submenu should have been added by TestActionProviderMenu!", submenu);
+		Assertions.assertNotNull(submenu, "The submenu should have been added by TestActionProviderMenu!");
 		submenu.insertAfter(TestActionProviderMenu.GROUP_TEST_DEPENDENCY, action);
 	}
 

@@ -15,7 +15,7 @@
 
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,19 +25,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.eclipse.ui.tests.navigator.extension.TestPipelineProvider;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3
  */
 public class PipelineChainTest extends NavigatorTestBase {
-
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	private static final boolean SLEEP_LONG = false;
 
@@ -113,8 +107,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 			DisplayHelper.sleep(10000000);
 		_viewer.refresh(rootItems[_p1Ind]);
 
-		assertEquals("Wrong query sequence for getPipelineChildren", "A1CGFBDE",
-				TestPipelineProvider.CHILDREN.get(_p1));
+		assertEquals("A1CGFBDE", TestPipelineProvider.CHILDREN.get(_p1), "Wrong query sequence for getPipelineChildren");
 	}
 
 	/** Verifies that interceptAdd is called in the right sequence */
@@ -145,8 +138,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		TestPipelineProvider.reset();
 		newFolder1.create(true, true, new NullProgressMonitor());
 
-		assertEquals("Wrong query sequence for interceptAdd", "ACGFBDE",
-				TestPipelineProvider.ADDS.get(newFolder1));
+		assertEquals("ACGFBDE", TestPipelineProvider.ADDS.get(newFolder1), "Wrong query sequence for interceptAdd");
 	}
 
 	/** Verifies that interceptRemove is called in the right sequence */
@@ -183,8 +175,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		TestPipelineProvider.reset();
 		newFolder1.delete(true, new NullProgressMonitor());
 
-		assertEquals("Wrong query sequence for interceptRemove", "ACGFBDE",
-				TestPipelineProvider.REMOVES.get(newFolder1));
+		assertEquals("ACGFBDE", TestPipelineProvider.REMOVES.get(newFolder1), "Wrong query sequence for interceptRemove");
 	}
 
 	/** Verifies that interceptRefresh or interceptUpdate is called in the right sequence */
@@ -217,8 +208,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		TestPipelineProvider.reset();
 		ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
 
-		assertEquals("Wrong query sequence for interceptRefresh/update", "ACGFBDE",
-				TestPipelineProvider.UPDATES.get(file2));
+		assertEquals("ACGFBDE", TestPipelineProvider.UPDATES.get(file2), "Wrong query sequence for interceptRefresh/update");
 	}
 
 
@@ -254,10 +244,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		TestPipelineProvider.reset();
 		newFolder1.move(newFolder1.getFullPath().removeLastSegments(1).append("newFolderRenamed"), true, null);
 
-		assertEquals("Wrong query sequence for interceptUpdate", "ACGFBDE",
-				TestPipelineProvider.REMOVES.get(newFolder1));
+		assertEquals("ACGFBDE", TestPipelineProvider.REMOVES.get(newFolder1), "Wrong query sequence for interceptUpdate");
 	}
-
-
 
 }

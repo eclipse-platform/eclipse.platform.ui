@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Arrays;
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ResourceTransferTest {
 

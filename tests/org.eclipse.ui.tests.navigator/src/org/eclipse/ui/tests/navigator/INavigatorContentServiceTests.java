@@ -31,7 +31,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class INavigatorContentServiceTests extends NavigatorTestBase {
 

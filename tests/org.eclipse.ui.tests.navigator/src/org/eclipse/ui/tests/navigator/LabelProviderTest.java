@@ -17,9 +17,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -36,7 +36,7 @@ import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlank;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderStyledGreen;
 import org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LabelProviderTest extends NavigatorTestBase {
 
@@ -258,7 +258,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 		String queries = (String) TrackingLabelProvider.styledTextQueries.get(_project);
 		// This can happen multiple times depending on when the decorating label
 		// provider runs, so just make sure the sequence is right
-		assertTrue("F has the highest priority", queries.startsWith("F"));
+		assertTrue(queries.startsWith("F"), "F has the highest priority");
 		assertBefore(queries, 'C', 'A');
 		assertBefore(queries, 'B', 'A');
 		assertBefore(queries, 'D', 'B');
@@ -276,7 +276,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 				first = true;
 			}
 			if (cur == secondChar) {
-				assertTrue("Failed to find " + firstChar + " before " + secondChar + " in " + queries, first);
+				assertTrue(first, "Failed to find " + firstChar + " before " + secondChar + " in " + queries);
 				return;
 			}
 		}

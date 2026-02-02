@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ShowInTest extends NavigatorTestBase {
 

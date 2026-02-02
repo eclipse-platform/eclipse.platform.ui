@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
@@ -35,7 +35,7 @@ import org.eclipse.ui.navigator.ICommonViewerMapper;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * A test to see if created projects are reflected in Project Explorer

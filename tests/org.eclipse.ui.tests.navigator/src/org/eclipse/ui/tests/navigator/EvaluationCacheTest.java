@@ -23,8 +23,9 @@ import org.eclipse.ui.navigator.INavigatorActivationService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.tests.navigator.util.TestNavigatorActivationService;
 import org.eclipse.ui.tests.navigator.util.TestNavigatorViewerDescriptor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link EvaluationCache} to ensure it can find various key types as
@@ -38,6 +39,7 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 	}
 
 	@Override
+	@BeforeEach
 	public void setUp() throws CoreException {
 		super.setUp();
 		INavigatorViewerDescriptor mockViewerDescript = new TestNavigatorViewerDescriptor();
@@ -51,9 +53,9 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		Object key = new Object();
 		NavigatorContentDescriptor[] value = new NavigatorContentDescriptor[0];
 		cache.setDescriptors(key, value, toComputeOverrides);
-		Assert.assertSame(value, cache.getDescriptors(key, toComputeOverrides));
+		Assertions.assertSame(value, cache.getDescriptors(key, toComputeOverrides));
 		// The other "half" of the cache should not have this.
-		Assert.assertNull(cache.getDescriptors(key, !toComputeOverrides));
+		Assertions.assertNull(cache.getDescriptors(key, !toComputeOverrides));
 	}
 
 	@Test
@@ -76,10 +78,10 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		// Equal thing but different instance should still be equal.
 		java.util.List key2 = new ArrayList<>(key);
 		// Should also find it under this new, equal key.
-		Assert.assertSame(value, cache.getDescriptors(key2, toComputeOverrides));
+		Assertions.assertSame(value, cache.getDescriptors(key2, toComputeOverrides));
 		// The other "half" of the cache should not have this for either key.
-		Assert.assertNull(cache.getDescriptors(key, !toComputeOverrides));
-		Assert.assertNull(cache.getDescriptors(key2, !toComputeOverrides));
+		Assertions.assertNull(cache.getDescriptors(key, !toComputeOverrides));
+		Assertions.assertNull(cache.getDescriptors(key2, !toComputeOverrides));
 	}
 
 	@Test
@@ -96,10 +98,10 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		Object key = new Object();
 		NavigatorContentDescriptor[] value1 = new NavigatorContentDescriptor[0];
 		cache.setDescriptors(key, value1, toComputeOverrides);
-		Assert.assertSame(value1, cache.getDescriptors(key, toComputeOverrides));
+		Assertions.assertSame(value1, cache.getDescriptors(key, toComputeOverrides));
 		NavigatorContentDescriptor[] value2 = new NavigatorContentDescriptor[0];
 		cache.setDescriptors(key, value2, toComputeOverrides);
-		Assert.assertSame(value2, cache.getDescriptors(key, toComputeOverrides));
+		Assertions.assertSame(value2, cache.getDescriptors(key, toComputeOverrides));
 	}
 
 	@Test
@@ -118,14 +120,14 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		NavigatorContentDescriptor[] value1 = new NavigatorContentDescriptor[0];
 		cache.setDescriptors(key, value1, false);
 		// Make sure they actually got inserted.
-		Assert.assertSame(value1, cache.getDescriptors(key, false));
+		Assertions.assertSame(value1, cache.getDescriptors(key, false));
 		NavigatorContentDescriptor[] value2 = new NavigatorContentDescriptor[0];
 		cache.setDescriptors(key, value2, true);
-		Assert.assertSame(value2, cache.getDescriptors(key, true));
+		Assertions.assertSame(value2, cache.getDescriptors(key, true));
 		cache.onVisibilityOrActivationChange();
 		// Now trying to find them should give null (non present).
-		Assert.assertNull(cache.getDescriptors(key, false));
-		Assert.assertNull(cache.getDescriptors(key, true));
+		Assertions.assertNull(cache.getDescriptors(key, false));
+		Assertions.assertNull(cache.getDescriptors(key, true));
 	}
 
 	// TODO Some way to reliably test the clearing of entries. Possibly using

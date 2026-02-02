@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ActionProviderTest extends NavigatorTestBase {
 
