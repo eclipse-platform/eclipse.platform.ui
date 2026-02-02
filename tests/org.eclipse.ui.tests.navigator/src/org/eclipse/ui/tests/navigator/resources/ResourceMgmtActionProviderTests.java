@@ -35,8 +35,8 @@ import org.eclipse.ui.navigator.CommonViewerSiteFactory;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.tests.navigator.NavigatorTestBase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 
@@ -47,7 +47,7 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException {
 		super.setUp();
 		manager = new MenuManager();

@@ -12,10 +12,10 @@
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,7 +29,7 @@ import org.eclipse.ui.tests.navigator.m12.M1ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.M2ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
 import org.eclipse.ui.tests.navigator.m12.model.M2File;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * M1/M2 tests. Those tests configure the M1 content provider override policy as
@@ -67,18 +67,16 @@ public class M12Tests extends NavigatorTestBase {
 		_expand(rootItems);
 		TreeItem p1Item = rootItems[_p1Ind];
 
-		assertEquals("P1 tree item should be an M1Project", M1Project.class,
-				p1Item.getData().getClass());
+		assertEquals(M1Project.class, p1Item.getData().getClass(), "P1 tree item should be an M1Project");
 
 		TreeItem[] p1Children = p1Item.getItems();
 		_expand(p1Children);
 
 		TreeItem f1Child = _findChild("f1", p1Children);
-		assertNotNull("P1 should have a child named f1", f1Child);
+		assertNotNull(f1Child, "P1 should have a child named f1");
 
 		TreeItem[] f1Children = f1Child.getItems();
-		assertEquals("[bug #285353] f1 folder should have 2 children", 2,
-				f1Children.length);
+		assertEquals(2, f1Children.length, "[bug #285353] f1 folder should have 2 children");
 	}
 
 	/** Test that when M2 is not active F1 has two children. */
@@ -100,10 +98,10 @@ public class M12Tests extends NavigatorTestBase {
 
 		TreeItem f1Child = _findChild("f1", p1Children);
 
-		assertNotNull("P1 should have a child named f1", f1Child);
+		assertNotNull(f1Child, "P1 should have a child named f1");
 
 		TreeItem[] f1Children = f1Child.getItems();
-		assertEquals("f1 folder should have 2 children", 2, f1Children.length);
+		assertEquals(2, f1Children.length, "f1 folder should have 2 children");
 	}
 
 	/** Tests that file2.txt in p2 is provided by M2 content provider. */
@@ -122,9 +120,8 @@ public class M12Tests extends NavigatorTestBase {
 			DisplayHelper.sleep(10000000);
 
 		TreeItem file2Child = _findChild("file2.txt", p2Children);
-		assertNotNull("P2 should have a child named file2.txt", file2Child);
-		assertEquals("file2.txt should be provided by M2 content provider",
-				M2File.class, file2Child.getData().getClass());
+		assertNotNull(file2Child, "P2 should have a child named file2.txt");
+		assertEquals(M2File.class, file2Child.getData().getClass(), "file2.txt should be provided by M2 content provider");
 
 	}
 
@@ -149,8 +146,7 @@ public class M12Tests extends NavigatorTestBase {
 		TreeItem folder1Item = _findChild(NEW_FOLDER_1, rootItems[_p1Ind]
 				.getItems());
 
-		assertNotNull("M1 interceptAdd method should have been called",
-				folder1Item);
+		assertNotNull(folder1Item, "M1 interceptAdd method should have been called");
 	}
 
 	/**
@@ -178,9 +174,8 @@ public class M12Tests extends NavigatorTestBase {
 
 		newFolder1.delete(true, new NullProgressMonitor());
 		folder1Item = _findChild(NEW_FOLDER_1, rootItems[_p1Ind].getItems());
-		assertNull(
-				"[bug 285529] M1 interceptRemove method should have been called",
-				folder1Item);
+		assertNull(folder1Item,
+				"[bug 285529] M1 interceptRemove method should have been called");
 	}
 
 	/**
@@ -207,14 +202,10 @@ public class M12Tests extends NavigatorTestBase {
 		M2ContentProvider.resetCounters();
 		ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
 
-		assertTrue(
-				"[bug 285529] M1 intercept update or refresh should have been called",
-				M1ContentProvider.getInterceptRefreshCount()
-						+ M1ContentProvider.getInterceptUpdateCount() >= 1);
-		assertTrue(
-				"[bug 285529] M2 intercept update or refresh should have been called",
-				M2ContentProvider.getInterceptRefreshCount()
-						+ M2ContentProvider.getInterceptUpdateCount() >= 1);
+		assertTrue(M1ContentProvider.getInterceptRefreshCount()
+						+ M1ContentProvider.getInterceptUpdateCount() >= 1, "[bug 285529] M1 intercept update or refresh should have been called");
+		assertTrue(M2ContentProvider.getInterceptRefreshCount()
+						+ M2ContentProvider.getInterceptUpdateCount() >= 1, "[bug 285529] M2 intercept update or refresh should have been called");
 	}
 
 }

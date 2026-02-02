@@ -31,8 +31,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.NavigatorTestBase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class JstPipelineTest extends NavigatorTestBase {
 
@@ -43,7 +43,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException {
 		super.setUp();
 

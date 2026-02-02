@@ -41,7 +41,7 @@ import org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue;
 import org.eclipse.ui.tests.navigator.extension.TestSorterDataAndResource;
 import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SorterTest extends NavigatorTestBase {
 

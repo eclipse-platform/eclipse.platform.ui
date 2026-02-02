@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderNoChildren;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PipelineTest extends NavigatorTestBase {
 
@@ -41,8 +41,7 @@ public class PipelineTest extends NavigatorTestBase {
 	public void testNavigatorResourceJava() throws Exception {
 
 		assertEquals(
-				"There should be no visible extensions for the pipeline viewer.",
-				0, _contentService.getVisibleExtensionIds().length);
+				0, _contentService.getVisibleExtensionIds().length, "There should be no visible extensions for the pipeline viewer.");
 
 		_contentService.bindExtensions(new String[] {
 				COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT },
@@ -51,8 +50,7 @@ public class PipelineTest extends NavigatorTestBase {
 		// Note this test will fail showing only one if the JDT stuff
 		// is not included in the executing bundles (which it normally is)
 		assertEquals(
-				"There should be two visible extensions for the pipeline viewer.",
-				2, _contentService.getVisibleExtensionIds().length);
+				2, _contentService.getVisibleExtensionIds().length, "There should be two visible extensions for the pipeline viewer.");
 
 		_contentService.getActivationService().activateExtensions(
 				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
@@ -67,10 +65,10 @@ public class PipelineTest extends NavigatorTestBase {
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
 		assertEquals(
-				"There should be " + _projectCount + " item(s).", _projectCount, rootItems.length); //$NON-NLS-1$
+				_projectCount, rootItems.length, "There should be " + _projectCount + " item(s)."); //$NON-NLS-1$
 
 		assertTrue(
-				"The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
+				rootItems[0].getData() instanceof IAdaptable, "The root object should be an IJavaProject, which is IAdaptable."); //$NON-NLS-1$
 
 		IProject adaptedProject = ((IAdaptable) rootItems[_projectInd]
 				.getData()).getAdapter(IProject.class);
@@ -81,7 +79,7 @@ public class PipelineTest extends NavigatorTestBase {
 
 		TreeItem[] projectChildren = rootItems[_projectInd].getItems();
 
-		assertTrue("There should be some items.", projectChildren.length > 0); //$NON-NLS-1$
+		assertTrue(projectChildren.length > 0, "There should be some items."); //$NON-NLS-1$
 		for (TreeItem projectChild : projectChildren) {
 			if (projectChild.getData() == sourceFolder) {
 				fail("The src folder should not be added as an IFolder.");
@@ -95,8 +93,7 @@ public class PipelineTest extends NavigatorTestBase {
 
 		rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be " + (_projectCount + 1) + " items.",
-				_projectCount + 1, rootItems.length);
+		assertEquals(_projectCount + 1, rootItems.length, "There should be " + (_projectCount + 1) + " items.");
 
 		boolean found = false;
 		for (int i = 0; i < rootItems.length && !found; i++) {

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Semaphore;
 
@@ -32,9 +32,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.DecorationSchedulerRaceConditionTestDecorator;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 3.3
@@ -79,7 +79,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws CoreException {
 		super.setUp();
 
@@ -102,7 +102,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 		assertEquals(TestWorkspace.P1_PROJECT_NAME + DECORATION_TEXT_1, rootItems[0].getText());
 	}
 
-	@After
+	@AfterEach
 	public void resetDecoratorEnablement() throws CoreException {
 		IDecoratorManager manager = PlatformUI.getWorkbench().getDecoratorManager();
 		manager.setEnabled("org.eclipse.ui.tests.navigator.bug417255Decorator", false);

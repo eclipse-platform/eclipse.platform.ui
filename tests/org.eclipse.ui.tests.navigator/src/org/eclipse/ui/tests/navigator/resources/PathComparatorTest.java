@@ -20,7 +20,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.navigator.resources.nested.PathComparator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PathComparatorTest {
 

@@ -47,15 +47,14 @@ import org.eclipse.ui.internal.navigator.resources.actions.FoldersAsProjectsActi
 import org.eclipse.ui.internal.navigator.resources.actions.OpenFolderAsProjectAction;
 import org.eclipse.ui.internal.navigator.resources.actions.SelectProjectForFolderAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public final class FoldersAsProjectsContributionTest {
 
-	@Rule
-	public final TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public File folder;
 
 	@Test
 	public void notAFolder() {
@@ -80,7 +79,7 @@ public final class FoldersAsProjectsContributionTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void alreadyAdded() throws IOException, CoreException {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner1");
@@ -89,7 +88,8 @@ public final class FoldersAsProjectsContributionTest {
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
 			Job.getJobManager().beginRule(rule, null);
-			File root = folder.newFolder(outer.getName());
+			File root = new File(folder, outer.getName());
+			root.mkdir();
 			createProject(root, outer);
 			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
@@ -112,7 +112,7 @@ public final class FoldersAsProjectsContributionTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void notYetImported() throws IOException, CoreException {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.notYetImported.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot()
@@ -123,7 +123,8 @@ public final class FoldersAsProjectsContributionTest {
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
 			Job.getJobManager().beginRule(rule, null);
-			File root = folder.newFolder(outer.getName());
+			File root = new File(folder, outer.getName());
+			root.mkdir();
 			createProject(root, outer);
 			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
@@ -155,7 +156,8 @@ public final class FoldersAsProjectsContributionTest {
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
 			Job.getJobManager().beginRule(rule, null);
-			File root = folder.newFolder(outer.getName());
+			File root = new File(folder, outer.getName());
+			root.mkdir();
 			createProject(root, outer);
 			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
