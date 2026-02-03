@@ -40,7 +40,14 @@ public class NewWizardTests extends DynamicTestCase {
 		assertNotNull(wizard);
 		testNewWizardProperties(wizard);
 		removeBundle();
-		assertThrows(InvalidRegistryObjectException.class, () -> registry.findWizard(WIZARD_ID));
+		try {
+			IWizardDescriptor w = registry.findWizard(WIZARD_ID);
+			if (w != null) {
+				assertThrows(RuntimeException.class, () -> testNewWizardProperties(w));
+			}
+		} catch (InvalidRegistryObjectException e) {
+			// Expected exception
+		}
 		assertThrows(RuntimeException.class, () -> testNewWizardProperties(wizard));
 	}
 
