@@ -10,20 +10,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ResourceBundle;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import org.eclipse.swt.SWT;
 
@@ -37,8 +36,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 
 public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess> {
-	@Rule
-	public TestName testName= new TestName();
+	
+	protected TestInfo testInfo;
 
 	private TextViewer fTextViewer;
 
@@ -46,8 +45,9 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 	private AccessType dialog;
 
-	@Before
-	public final void ensureWorkbenchWindowIsActive() {
+	@BeforeEach
+	public final void ensureWorkbenchWindowIsActive(TestInfo info) {
+		this.testInfo = info;
 		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
 	}
 
@@ -80,7 +80,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 	protected abstract AccessType openUIFromTextViewer(TextViewer viewer);
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.closeAndRestore();

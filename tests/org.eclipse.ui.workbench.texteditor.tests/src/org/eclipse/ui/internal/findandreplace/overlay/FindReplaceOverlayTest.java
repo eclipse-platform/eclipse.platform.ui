@@ -16,10 +16,10 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -48,7 +48,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		actionAccessor.invoke("showOverlayInEditor");
 		FindReplaceOverlay overlay= (FindReplaceOverlay) actionAccessor.get("overlay");
 		OverlayAccess uiAccess= new OverlayAccess(getFindReplaceTarget(), overlay);
-		waitForFocus(uiAccess::hasFocus, testName.getMethodName());
+		waitForFocus(uiAccess::hasFocus, testInfo.getTestMethod().get().getName());
 		return uiAccess;
 	}
 
@@ -177,7 +177,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		boolean useOverlayPreference= preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
 		try {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, false);
-			assertFalse("dialog should be closed after changing preference", getDialog().isShown());
+			assertFalse(getDialog().isShown(), "dialog should be closed after changing preference");
 		} finally {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
 			reopenFindReplaceUIForTextViewer();

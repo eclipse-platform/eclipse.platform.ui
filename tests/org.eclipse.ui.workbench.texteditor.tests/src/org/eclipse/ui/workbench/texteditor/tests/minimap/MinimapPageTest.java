@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.minimap;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -77,20 +77,20 @@ public class MinimapPageTest {
 	public void createNoneMinimapPage() {
 		ITextEditor textEditor= new MyTextEditor(TextVieverAdapterKind.None);
 		MinimapPage page= MinimapPage.createMinimapPage(textEditor);
-		Assert.assertNull(page);
+		Assertions.assertNull(page);
 	}
 
 	@Test
 	public void createMinimapPageWithITextViewerAdapter() {
 		ITextEditor textEditor= new MyTextEditor(TextVieverAdapterKind.ITextViewer);
 		MinimapPage page= MinimapPage.createMinimapPage(textEditor);
-		Assert.assertNotNull(page);
+		Assertions.assertNotNull(page);
 	}
 
 	@Test
 	public void createMinimapPageWithITextOperationTargetAdapter() {
 		ITextEditor textEditor= new MyTextEditor(TextVieverAdapterKind.ITextOperationTarget);
 		MinimapPage page= MinimapPage.createMinimapPage(textEditor);
-		Assert.assertNotNull(page);
+		Assertions.assertNotNull(page);
 	}
 }

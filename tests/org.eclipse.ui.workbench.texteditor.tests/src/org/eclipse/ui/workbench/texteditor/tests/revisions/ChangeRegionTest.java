@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.graphics.RGB;
 
@@ -62,7 +62,7 @@ public class ChangeRegionTest {
 
 	private Revision fRevision;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fRevision= new TestRevision();
 	}

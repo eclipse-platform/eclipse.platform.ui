@@ -14,18 +14,18 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 
@@ -47,7 +47,7 @@ public class HippieCompletionTest {
 	IDocument[] documents;
 	private HippieCompletionEngine fEngine;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		documents= new IDocument[5];
 		documents[0]= new Document("""
@@ -149,25 +149,25 @@ public class HippieCompletionTest {
 	public void testSearchBackwards1() throws BadLocationException {
 		List<String> list= fEngine.getCompletionsBackwards(documents[0],
 				"pri", documents[0].get().indexOf("println") + 10);
-		assertEquals(list.size(), 2);
-		assertEquals(list.get(0), "ntln");
-		assertEquals(list.get(1), "nt");
+		assertEquals(2, list.size());
+		assertEquals("ntln", list.get(0));
+		assertEquals("nt", list.get(1));
 
 		list= fEngine.getCompletionsBackwards(documents[0],
 				"pri", documents[0].getLength());
-		assertEquals(list.size(), 3);
-		assertEquals(list.get(0), "nting");
-		assertEquals(list.get(1), "ntln");
-		assertEquals(list.get(2), "nt");
+		assertEquals(3, list.size());
+		assertEquals("nting", list.get(0));
+		assertEquals("ntln", list.get(1));
+		assertEquals("nt", list.get(2));
 
 		list= fEngine.getCompletionsBackwards(documents[0],
 				"pri", documents[0].get().indexOf("println") + 1);
-		assertEquals(list.size(), 1);
-		assertEquals(list.get(0), "nt");
+		assertEquals(1, list.size());
+		assertEquals("nt", list.get(0));
 
 		list= fEngine.getCompletionsBackwards(documents[0],
 				"pa", 2);
-		assertEquals(list.size(), 0);
+		assertEquals(0, list.size());
 
 	}
 
@@ -190,54 +190,54 @@ public class HippieCompletionTest {
 	public void testSearchBackwards3() throws BadLocationException {
 		List<String> list= fEngine.getCompletionsBackwards(documents[1],
 				"test", documents[1].getLength());
-		assertEquals("Number of backwards suggestions does not match", 2, list.size());
+		assertEquals(2, list.size(), "Number of backwards suggestions does not match");
 		list= fEngine.getCompletionsBackwards(documents[1],
 				"tests", documents[1].getLength());
-		assertEquals("Number of backwards suggestions does not match", 1, list.size());
+		assertEquals(1, list.size(), "Number of backwards suggestions does not match");
 
 		list= fEngine.getCompletionsBackwards(documents[1],
 				"test", documents[1].getLength() - 1);
-		assertEquals("Number of backwards suggestions does not match", 1, list.size());
+		assertEquals(1, list.size(), "Number of backwards suggestions does not match");
 	}
 
 	@Test
 	public void testSearch() throws BadLocationException {
 		ArrayList<IDocument> docsList= new ArrayList<>(Arrays.asList(this.documents));
 		List<String> result= createSuggestions("te", docsList);
-		assertEquals("Number of completions does not match", 15, result.size());
+		assertEquals(15, result.size(), "Number of completions does not match");
 		result= fEngine.makeUnique(result);
-		assertEquals("Number of completions does not match", 7, result.size());
+		assertEquals(7, result.size(), "Number of completions does not match");
 
 		result= createSuggestions("Plug", docsList);
-		assertEquals("Number of completions does not match", 2, result.size());
+		assertEquals(2, result.size(), "Number of completions does not match");
 
 		result= createSuggestions("p", docsList);
-		assertEquals("Number of completions does not match", 23, result.size());
+		assertEquals(23, result.size(), "Number of completions does not match");
 		result= fEngine.makeUnique(result);
-		assertEquals("Number of completions does not match", 10, result.size());
-		assertEquals("Incorrect completion", "ackage", result.get(0));
-		assertEquals("Incorrect completion", "rint", result.get(1));
-		assertEquals("Incorrect completion", "ublic", result.get(2));
-		assertEquals("Incorrect completion", "rintln", result.get(3));
-		assertEquals("Incorrect completion", "rinting", result.get(4));
-		assertEquals("Incorrect completion", "lugin", result.get(5));
-		assertEquals("Incorrect completion", "rovider", result.get(6));
-		assertEquals("Incorrect completion", "roviderName", result.get(7));
-		assertEquals("Incorrect completion", "rogram", result.get(8));
-		assertEquals("Incorrect completion", "roperties", result.get(9));
+		assertEquals(10, result.size(), "Number of completions does not match");
+		assertEquals("ackage", result.get(0), "Incorrect completion");
+		assertEquals("rint", result.get(1), "Incorrect completion");
+		assertEquals("ublic", result.get(2), "Incorrect completion");
+		assertEquals("rintln", result.get(3), "Incorrect completion");
+		assertEquals("rinting", result.get(4), "Incorrect completion");
+		assertEquals("lugin", result.get(5), "Incorrect completion");
+		assertEquals("rovider", result.get(6), "Incorrect completion");
+		assertEquals("roviderName", result.get(7), "Incorrect completion");
+		assertEquals("rogram", result.get(8), "Incorrect completion");
+		assertEquals("roperties", result.get(9), "Incorrect completion");
 	}
 
 	@Test
 	public void testSearch2() throws BadLocationException {
 		ArrayList<IDocument> docsList= new ArrayList<>(Arrays.asList(this.documents));
 		List<String> result= createSuggestions("printe", docsList);
-		assertEquals("Number of completions does not match", 0, result.size());
+		assertEquals(0, result.size(), "Number of completions does not match");
 
 		result= createSuggestions("s", docsList);
-		assertEquals("Number of completions does not match", 8, result.size());
+		assertEquals(8, result.size(), "Number of completions does not match");
 
 		result= createSuggestions("pack", documents[0]);
-		assertEquals("Number of completions does not match", 1, result.size());
+		assertEquals(1, result.size(), "Number of completions does not match");
 	}
 
 	@Test
@@ -283,56 +283,56 @@ public class HippieCompletionTest {
 	public void testPrefix() throws BadLocationException {
 		String prefix= fEngine.getPrefixString(documents[0],
 				documents[0].get().indexOf("testing") + 3);
-		assertEquals(prefix, "tes");
+		assertEquals("tes", prefix);
 
 		prefix= fEngine.getPrefixString(documents[0],
 				documents[0].get().indexOf("public") + 4);
-		assertEquals(prefix, "publ");
+		assertEquals("publ", prefix);
 
 		prefix= fEngine.getPrefixString(documents[0],
 				documents[0].get().indexOf("println") + 7);
-		assertEquals(prefix, "println");
+		assertEquals("println", prefix);
 
 		prefix= fEngine.getPrefixString(documents[0],
 				documents[0].get().indexOf("println") + 8);
-		assertEquals(prefix, null);
+		assertEquals(null, prefix);
 
 		prefix= fEngine.getPrefixString(documents[1], 3);
-		assertEquals(prefix, "Thi");
+		assertEquals("Thi", prefix);
 
 		prefix= fEngine.getPrefixString(documents[1], 0);
-		assertEquals(prefix, null);
+		assertEquals(null, prefix);
 
 		prefix= fEngine.getPrefixString(documents[1], documents[1].getLength());
-		assertEquals(prefix, "tests");
+		assertEquals("tests", prefix);
 
 		prefix= fEngine.getPrefixString(documents[3],
 				documents[3].get().indexOf("Copyright") - 2);
-		assertEquals(prefix, null);
+		assertEquals(null, prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("IDE") + 2);
-		assertEquals(prefix, "ID");
+		assertEquals("ID", prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("$arabic\u20ACDigits") + 8);
-		assertEquals(prefix, "$arabic\u20AC");
+		assertEquals("$arabic\u20AC", prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("$arabic\u20AAWord") + 8);
-		assertEquals(prefix, "$arabic\u20AA");
+		assertEquals("$arabic\u20AA", prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("\u00A3\u0661\u0662\u0663") + 3);
-		assertEquals(prefix, "\u00A3\u0661\u0662");
+		assertEquals("\u00A3\u0661\u0662", prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("a\u0300\u0301b") + 3);
-		assertEquals(prefix, "a\u0300\u0301");
+		assertEquals("a\u0300\u0301", prefix);
 
 		prefix= fEngine.getPrefixString(documents[4],
 				documents[4].get().indexOf("\u0667\u0668\u0669\u0660") + 2);
-		assertEquals(prefix, "\u0667\u0668");
+		assertEquals("\u0667\u0668", prefix);
 	}
 
 	@Test
@@ -340,66 +340,66 @@ public class HippieCompletionTest {
 		IDocument intlDoc= documents[4];
 
 		List<String> result= createSuggestions("\u05D4", intlDoc); // hebrew letter heh
-		assertEquals("Number of completions does not match", 4, result.size());
-		assertEquals(result.get(0), "\u05DE\u05D7\u05DC\u05E7\u05D4");
-		assertEquals(result.get(1), "\u05D6\u05D5");
-		assertEquals(result.get(2), "\u05D4\u05E9\u05DC\u05DE\u05D5\u05EA");
-		assertEquals(result.get(3), "\u05D4\u05E9");
+		assertEquals(4, result.size(), "Number of completions does not match");
+		assertEquals("\u05DE\u05D7\u05DC\u05E7\u05D4", result.get(0));
+		assertEquals("\u05D6\u05D5", result.get(1));
+		assertEquals("\u05D4\u05E9\u05DC\u05DE\u05D5\u05EA", result.get(2));
+		assertEquals("\u05D4\u05E9", result.get(3));
 
 		result= createSuggestions("\u0661", intlDoc); // arabic digit "1"
-		assertEquals("Number of completions does not match", 1, result.size());
-		assertEquals(result.get(0), "\u0662\u0663\u0664\u0665\u0666");
+		assertEquals(1, result.size(), "Number of completions does not match");
+		assertEquals("\u0662\u0663\u0664\u0665\u0666", result.get(0));
 
 		result= createSuggestions("\u0628\u064E", intlDoc); // arabic letter bah and fatha
-		assertEquals("Number of completions does not match", 1, result.size());
-		assertEquals(result.get(0), "\u0627\u0628\u0650");
+		assertEquals(1, result.size(), "Number of completions does not match");
+		assertEquals("\u0627\u0628\u0650", result.get(0));
 		result= createSuggestions("\u0628", intlDoc); // arabic letter bah
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "\u064E\u0627\u0628\u0650");
-		assertEquals(result.get(1), "\u0627\u0628");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("\u064E\u0627\u0628\u0650", result.get(0));
+		assertEquals("\u0627\u0628", result.get(1));
 
 		result= createSuggestions("$ara", intlDoc);
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "bic\u20ACDigits");
-		assertEquals(result.get(1), "bic\u20AAWord");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("bic\u20ACDigits", result.get(0));
+		assertEquals("bic\u20AAWord", result.get(1));
 
 		result= createSuggestions("\u0441\u0430", intlDoc); // russian letters "s" and "a"
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "\u043C\u044B\u0439");
-		assertEquals(result.get(1), "\u043C");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("\u043C\u044B\u0439", result.get(0));
+		assertEquals("\u043C", result.get(1));
 
 		result= createSuggestions("\u05D1\u05D5", intlDoc); // hebrew letters bet and vav
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "\u05D3\u05E7\u05EA");
-		assertEquals(result.get(1), "\u05D3\u05E7");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("\u05D3\u05E7\u05EA", result.get(0));
+		assertEquals("\u05D3\u05E7", result.get(1));
 
 		result= createSuggestions("a", intlDoc);
-		assertEquals("Number of completions does not match", 4, result.size());
-		assertEquals(result.get(0), "n");
-		assertEquals(result.get(1), "rabic");
-		assertEquals(result.get(2), "rgs");
-		assertEquals(result.get(3), "\u0300\u0301b");
+		assertEquals(4, result.size(), "Number of completions does not match");
+		assertEquals("n", result.get(0));
+		assertEquals("rabic", result.get(1));
+		assertEquals("rgs", result.get(2));
+		assertEquals("\u0300\u0301b", result.get(3));
 
 		result= createSuggestions("\u20AA", intlDoc);  // israeli currency (shekel)
-		assertEquals("Number of completions does not match", 1, result.size());
-		assertEquals(result.get(0), "129");
+		assertEquals(1, result.size(), "Number of completions does not match");
+		assertEquals("129", result.get(0));
 
 		result= createSuggestions("\u20A3", intlDoc);  // french currency (frank)
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "1");
-		assertEquals(result.get(1), "1");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("1", result.get(0));
+		assertEquals("1", result.get(1));
 
 		result= createSuggestions("\u044D", intlDoc);  // russial letter "hard e"
-		assertEquals("Number of completions does not match", 2, result.size());
-		assertEquals(result.get(0), "\u0442\u043E");
-		assertEquals(result.get(1), "\u0442");
+		assertEquals(2, result.size(), "Number of completions does not match");
+		assertEquals("\u0442\u043E", result.get(0));
+		assertEquals("\u0442", result.get(1));
 
 		result= createSuggestions("\u00A3", intlDoc);  // pound currency sign
-		assertEquals("Number of completions does not match", 1, result.size());
-		assertEquals(result.get(0), "\u0661\u0662\u0663");
+		assertEquals(1, result.size(), "Number of completions does not match");
+		assertEquals("\u0661\u0662\u0663", result.get(0));
 
 		result= createSuggestions("\u00A5", intlDoc);  // yen currency sign
-		assertEquals("Number of completions does not match", 0, result.size());
+		assertEquals(0, result.size(), "Number of completions does not match");
 	}
 
 	@Test
@@ -408,14 +408,14 @@ public class HippieCompletionTest {
 		List<String> list= fEngine.getCompletionsBackwards(intlDoc,
 				"\u043B\u0443", intlDoc.get().indexOf("129"));
 		assertEquals(2, list.size());
-		assertEquals(list.get(0), "\u0447\u0448");
-		assertEquals(list.get(1), "\u0447\u0448\u0438\u0439");
+		assertEquals("\u0447\u0448", list.get(0));
+		assertEquals("\u0447\u0448\u0438\u0439", list.get(1));
 
 		list= fEngine.getCompletionsBackwards(intlDoc,
 				"\u05DE", intlDoc.get().lastIndexOf('+'));
 		assertEquals(2, list.size());
-		assertEquals(list.get(0), "\u05D7");
-		assertEquals(list.get(1), "\u05E0\u05D2\u05E0\u05D5\u05DF");
+		assertEquals("\u05D7", list.get(0));
+		assertEquals("\u05E0\u05D2\u05E0\u05D5\u05DF", list.get(1));
 
 		list= fEngine.getCompletionsBackwards(intlDoc,
 				"\u0667", intlDoc.get().indexOf("\u2021\u0667") + 1);
@@ -424,7 +424,7 @@ public class HippieCompletionTest {
 		list= fEngine.getCompletionsBackwards(intlDoc,
 				"\u0628", intlDoc.get().lastIndexOf("\u0628"));
 		assertEquals(1, list.size());
-		assertEquals(list.get(0), "\u064E\u0627\u0628\u0650");
+		assertEquals("\u064E\u0627\u0628\u0650", list.get(0));
 
 	}
 
@@ -508,7 +508,7 @@ public class HippieCompletionTest {
 	@Test
 	public void testIteration() throws Exception {
 		//Check only with current document
-		IDocument openDocument= new Document("" +
+		IDocument openDocument= new Document ("" +
 				"bar\n" +
 				"bar1\n" +
 				"bar2\n" +
@@ -523,7 +523,7 @@ public class HippieCompletionTest {
 
 		//Check with 2 documents
 		List<IDocument> otherDocuments= new ArrayList<>();
-		otherDocuments.add(new Document("" +
+		otherDocuments.add(new Document ("" +
 				"bar3\n" +
 				"bar4\n" +
 				""));
