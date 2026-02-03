@@ -10,15 +10,15 @@
  *
  * Contributors:
  *     Pierre-Yves Bigourdan - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -42,7 +42,7 @@ public class TextViewerDeleteLineTargetTest {
 	private Shell parentShell;
 	private TextViewerDeleteLineTarget underTest;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		document= new Document("first line\n" +
 				"\n" +
@@ -55,7 +55,7 @@ public class TextViewerDeleteLineTargetTest {
 		underTest= new TextViewerDeleteLineTarget(textViewer);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (parentShell != null) {
 			parentShell.dispose();

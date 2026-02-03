@@ -20,9 +20,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -33,9 +33,9 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.function.Predicate;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.eclipse.swt.SWT;
@@ -86,14 +86,14 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.setReplaceString(replaceString);
 	}
 
-	@After
+	@AfterEach
 	public void disposeShell() {
 		if (parentShell != null) {
 			parentShell.dispose();
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setupShell() {
 		parentShell= new Shell();
 	}
@@ -252,8 +252,8 @@ public class FindReplaceLogicTest {
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performSelectAndReplace();
-		assertEquals("Status wasn't correctly returned", false, status);
-		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		assertEquals(false, status, "Status wasn't correctly returned");
+		assertEquals("Hello World !", textViewer.getDocument().get(), "Text shouldn't have been changed");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -288,12 +288,12 @@ public class FindReplaceLogicTest {
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, """
-				""", " ");
+				 """, " ");
 		status= findReplaceLogic.performSelectAndReplace();
-		assertEquals("Status wasn't correctly returned", false, status);
-		assertEquals("Text shouldn't have been changed", """
+		assertEquals(false, status, "Status wasn't correctly returned");
+		assertEquals("""
 				Hello!
-				World!""", textViewer.getDocument().get());
+				World!""", textViewer.getDocument().get(), "Text shouldn't have been changed");
 	}
 
 	@Test
@@ -324,8 +324,8 @@ public class FindReplaceLogicTest {
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performSelectAndReplace();
-		assertEquals("Status wasn't correctly returned", false, status);
-		assertEquals("Text shouldn't have been changed", "Hello World ! !", textViewer.getDocument().get());
+		assertEquals(false, status, "Status wasn't correctly returned");
+		assertEquals("Hello World ! !", textViewer.getDocument().get(), "Text shouldn't have been changed");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -355,20 +355,20 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "<Replace>", " ");
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
-		assertTrue("replace should have been performed", status);
+		assertTrue(status, "replace should have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
-		assertTrue("replace should have been performed", status);
+		assertTrue(status, "replace should have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		status= findReplaceLogic.performReplaceAndFind();
-		assertFalse("replace should not have been performed", status);
-		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		assertFalse(status, "replace should not have been performed");
+		assertEquals("Hello World !", textViewer.getDocument().get(), "Text shouldn't have been changed");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -381,12 +381,12 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
-		assertTrue("replace should have been performed", status);
+		assertTrue(status, "replace should have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
 
 		status= findReplaceLogic.performReplaceAndFind();
-		assertFalse("replace should not have been performed", status);
+		assertFalse(status, "replace should not have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
 	}
@@ -400,20 +400,20 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "<Replace>", " ");
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
-		assertTrue("replace should have been performed", status);
+		assertTrue(status, "replace should have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
-		assertTrue("replace should have been performed", status);
+		assertTrue(status, "replace should have been performed");
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		status= findReplaceLogic.performReplaceAndFind();
-		assertFalse("replace should not have been performed", status);
-		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		assertFalse(status, "replace should not have been performed");
+		assertEquals("Hello World !", textViewer.getDocument().get(), "Text shouldn't have been changed");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -484,8 +484,8 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "<(\\w*)>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
-		assertEquals("Status wasn't correctly returned", false, status);
-		assertEquals("Text shouldn't have been changed", "Hello World ! !", textViewer.getDocument().get());
+		assertEquals(false, status, "Status wasn't correctly returned");
+		assertEquals("Hello World ! !", textViewer.getDocument().get(), "Text shouldn't have been changed");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 

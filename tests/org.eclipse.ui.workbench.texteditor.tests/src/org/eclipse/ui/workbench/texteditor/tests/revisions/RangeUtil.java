@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.junit.Assert;
 
 import org.eclipse.jface.internal.text.revisions.Range;
 
 import org.eclipse.jface.text.source.ILineRange;
 
 
-class RangeUtil extends Assert {
+class RangeUtil {
 	private RangeUtil() {}
 
 	static void assertEqualRange(ILineRange expected, ILineRange actual) {

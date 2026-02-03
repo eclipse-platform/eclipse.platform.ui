@@ -17,11 +17,11 @@ import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEven
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -54,13 +54,13 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 
 		Dialog dialog= (Dialog) fFindReplaceDialogStubAccessor.invoke("getDialog");
 		DialogAccess uiAccess= new DialogAccess(getFindReplaceTarget(), dialog);
-		waitForFocus(uiAccess::hasFocus, testName.getMethodName());
+		waitForFocus(uiAccess::hasFocus, testInfo.getTestMethod().get().getName());
 		return uiAccess;
 	}
 
 	@Test
 	public void testFocusNotChangedWhenEnterPressed() {
-		assumeFalse("On Mac, checkboxes only take focus if 'Full Keyboard Access' is enabled in the system preferences", Util.isMac());
+		assumeFalse(Util.isMac(), "On Mac, checkboxes only take focus if 'Full Keyboard Access' is enabled in the system preferences");
 
 		initializeTextViewerWithFindReplaceUI("line\nline\nline");
 		DialogAccess dialog= getDialog();
@@ -68,22 +68,22 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.getFindCombo().setFocus();
 		dialog.setFindText("line");
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		waitForFocus(dialog.getFindCombo()::isFocusControl, testName.getMethodName());
+		waitForFocus(dialog.getFindCombo()::isFocusControl, testInfo.getTestMethod().get().getName());
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		Button globalRadioButton= dialog.getButtonForSearchOption(SearchOptions.GLOBAL);
 		wrapCheckBox.setFocus();
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		waitForFocus(wrapCheckBox::isFocusControl, testName.getMethodName());
+		waitForFocus(wrapCheckBox::isFocusControl, testInfo.getTestMethod().get().getName());
 
 		globalRadioButton.setFocus();
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
+		waitForFocus(globalRadioButton::isFocusControl, testInfo.getTestMethod().get().getName());
 	}
 
 	@Test
 	public void testFocusNotChangedWhenButtonMnemonicPressed() {
-		assumeFalse("Mac does not support mnemonics", Util.isMac());
+		assumeFalse(Util.isMac(), "Mac does not support mnemonics");
 
 		initializeTextViewerWithFindReplaceUI("");
 		DialogAccess dialog= getDialog();
@@ -97,20 +97,20 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		event.character= 'n';
 		event.doit= false;
 		wrapCheckBox.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		waitForFocus(wrapCheckBox::isFocusControl, testName.getMethodName());
+		waitForFocus(wrapCheckBox::isFocusControl, testInfo.getTestMethod().get().getName());
 
 		Button globalRadioButton= dialog.getButtonForSearchOption(SearchOptions.GLOBAL);
 		globalRadioButton.setFocus();
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.doit= false;
 		globalRadioButton.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
+		waitForFocus(globalRadioButton::isFocusControl, testInfo.getTestMethod().get().getName());
 
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.character= 'r';
 		event.doit= false;
 		globalRadioButton.traverse(SWT.TRAVERSE_MNEMONIC, event);
-		waitForFocus(globalRadioButton::isFocusControl, testName.getMethodName());
+		waitForFocus(globalRadioButton::isFocusControl, testInfo.getTestMethod().get().getName());
 	}
 
 	@Test

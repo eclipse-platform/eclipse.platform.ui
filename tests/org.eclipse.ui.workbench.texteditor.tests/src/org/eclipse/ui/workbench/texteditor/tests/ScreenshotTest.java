@@ -16,9 +16,8 @@ package org.eclipse.ui.workbench.texteditor.tests;
 import java.io.File;
 import java.io.PrintStream;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -39,17 +38,14 @@ import org.eclipse.ui.PlatformUI;
 
 public class ScreenshotTest {
 
-	@Rule
-	public TestName testName = new TestName();
-
 	@Test
-	public void testScreenshot() throws Exception {
-		String screenshot= takeScreenshot(ScreenshotTest.class, testName.getMethodName(), System.out);
+	public void testScreenshot(TestInfo testInfo) throws Exception {
+		String screenshot= takeScreenshot(ScreenshotTest.class, testInfo.getTestMethod().get().getName(), System.out);
 		new File(screenshot).delete();
 	}
 
 	@Test
-	public void testWindowsTaskManagerScreenshots() throws Exception {
+	public void testWindowsTaskManagerScreenshots(TestInfo testInfo) throws Exception {
 		if (! Util.isWindows())
 			return;
 
@@ -74,7 +70,7 @@ public class ScreenshotTest {
 		System.out.println("* CTRL up " + display.post(event));
 
 		runEventQueue();
-		String screenshot1= takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
+		String screenshot1= takeScreenshot(ScreenshotTest.class, testInfo.getTestMethod().get().getName() + 2, System.out);
 
 		event.type= SWT.KeyDown;
 		event.character= SWT.ESC;
@@ -84,7 +80,7 @@ public class ScreenshotTest {
 		System.out.println("* ESC up " + display.post(event));
 
 		runEventQueue();
-		String screenshot2= takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
+		String screenshot2= takeScreenshot(ScreenshotTest.class, testInfo.getTestMethod().get().getName() + 3, System.out);
 		new File(screenshot1).delete();
 		new File(screenshot2).delete();
 	}

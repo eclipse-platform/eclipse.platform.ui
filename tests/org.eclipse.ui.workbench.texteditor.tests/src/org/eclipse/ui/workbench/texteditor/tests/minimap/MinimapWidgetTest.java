@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.minimap;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -53,7 +53,7 @@ public class MinimapWidgetTest {
 
 	private StyledText minimapStyledText;
 
-	@Before
+	@BeforeEach
 	public void createMinimap() {
 		minimapParent= new Shell();
 		editorViewer= new TextViewer(minimapParent, SWT.NONE);
@@ -65,7 +65,7 @@ public class MinimapWidgetTest {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDownMinimap() {
 		if (minimapParent != null) {
 			minimapParent.dispose();
@@ -76,10 +76,10 @@ public class MinimapWidgetTest {
 	@Test
 	public void testMinimapContent() {
 		editorStyledText.setText("abcd");
-		Assert.assertEquals("abcd", minimapStyledText.getText());
+		Assertions.assertEquals("abcd", minimapStyledText.getText());
 
 		editorStyledText.replaceTextRange(1, 0, "ABCD");
-		Assert.assertEquals("aABCDbcd", minimapStyledText.getText());
+		Assertions.assertEquals("aABCDbcd", minimapStyledText.getText());
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class MinimapWidgetTest {
 		StyleRange[] ranges= new StyleRange[] { new StyleRange(0, 1, editorStyledText.getDisplay().getSystemColor(SWT.COLOR_BLACK), null) };
 		editorStyledText.setStyleRanges(ranges);
 		// Styles of minimap doesn't changed
-		Assert.assertArrayEquals(orginalMinimapStyles, minimapStyledText.getStyleRanges());
+		Assertions.assertArrayEquals(orginalMinimapStyles, minimapStyledText.getStyleRanges());
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class MinimapWidgetTest {
 		presentation.mergeStyleRanges(ranges);
 		editorViewer.changeTextPresentation(presentation, false);
 		StyleRange[] expectedRanges= new StyleRange[] { new StyleRange(0, 1, editorStyledText.getDisplay().getSystemColor(SWT.COLOR_BLACK), null) };
-		Assert.assertArrayEquals(expectedRanges, minimapStyledText.getStyleRanges());
+		Assertions.assertArrayEquals(expectedRanges, minimapStyledText.getStyleRanges());
 
 		ranges= new StyleRange[] { new StyleRange(1, 1, editorStyledText.getDisplay().getSystemColor(SWT.COLOR_RED), null) };
 		presentation= new TextPresentation();
@@ -111,6 +111,6 @@ public class MinimapWidgetTest {
 		editorViewer.changeTextPresentation(presentation, false);
 		expectedRanges= new StyleRange[] { new StyleRange(0, 1, editorStyledText.getDisplay().getSystemColor(SWT.COLOR_BLACK), null),
 				new StyleRange(1, 1, editorStyledText.getDisplay().getSystemColor(SWT.COLOR_RED), null) };
-		Assert.assertArrayEquals(expectedRanges, minimapStyledText.getStyleRanges());
+		Assertions.assertArrayEquals(expectedRanges, minimapStyledText.getStyleRanges());
 	}
 }
