@@ -64,7 +64,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -2447,12 +2446,9 @@ public class PartRenderingEngineTests {
 		assertTrue(partStackForPartBPartC.isToBeRendered(), " PartStack with children should be rendered");
 		partService.hidePart(partB);
 		partService.hidePart(partC);
-		// DisplayHelper.waitForCondition() handles event processing via Display.sleep()
-		// and retries. Calling spinEventLoop() here creates a race condition where
-		// events may be processed before CleanupAddon's asyncExec() is queued (line 352).
-		assertTrue(
-				DisplayHelper.waitForCondition(Display.getDefault(), 30_000,
-						() -> !partStackForPartBPartC.isToBeRendered()), "CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed");
+		contextRule.spinEventLoop();
+		assertFalse(partStackForPartBPartC.isToBeRendered(),
+				"CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed");
 		// PartStack with IPresentationEngine.NO_AUTO_COLLAPSE should not be removed
 		// even if children are removed
 		partService.hidePart(editor, true);
