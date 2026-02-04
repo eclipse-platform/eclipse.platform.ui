@@ -3932,7 +3932,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		String perspId = mperspective.getElementId();
 		String label = mperspective.getLabel();
 		String msg = "Perspective with name '" + label + "' and id '" + perspId + "' has been made into a local copy"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		IStatus status = StatusUtil.newStatus(IStatus.WARNING, msg, null);
+		IStatus status = StatusUtil.newStatus(IStatus.INFO, msg, null);
 		StatusManager.getManager().handle(status, StatusManager.LOG);
 
 		String newDescId = NLS.bind(WorkbenchMessages.Perspective_localCopyLabel, label);
