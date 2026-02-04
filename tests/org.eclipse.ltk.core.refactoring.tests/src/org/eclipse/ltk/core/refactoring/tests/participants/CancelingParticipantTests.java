@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -131,14 +131,14 @@ public class CancelingParticipantTests {
 	private ILogListener fLogListener;
 	private List<IStatus> fLogEntries;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fLogListener= (status, plugin) -> fLogEntries.add(status);
 		Platform.addLogListener(fLogListener);
 		fLogEntries= new ArrayList<>();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}

@@ -14,16 +14,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.filesystem.EFS;
 
@@ -59,12 +59,12 @@ import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 public class ResourceRefactoringTests {
 	private SimpleTestProject fProject;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		fProject.delete();
 	}
@@ -304,7 +304,7 @@ public class ResourceRefactoringTests {
 		IFolder testFolder= fProject.createFolder("test");
 		fProject.createFile(testFolder, "myFile.txt", "hello");
 
-		IProject testProject2= ResourcesPlugin.getWorkspace().getRoot().getProject(SimpleTestProject.TEST_PROJECT_NAME + "2");
+		IProject testProject2= ResourcesPlugin.getWorkspace().getRoot().getProject(fProject.getProject().getName() + "2");
 		try {
 			testProject2.create(null);
 			testProject2.open(null);
