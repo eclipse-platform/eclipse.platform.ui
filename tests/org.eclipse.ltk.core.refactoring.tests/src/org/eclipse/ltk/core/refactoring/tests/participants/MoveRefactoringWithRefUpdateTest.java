@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -196,12 +196,12 @@ public class MoveRefactoringWithRefUpdateTest {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		fProject.delete();
 	}
@@ -218,7 +218,7 @@ public class MoveRefactoringWithRefUpdateTest {
 		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 		ResourcesPlugin.getWorkspace().run(op, null);
 
-		assertTrue("File is not moved", this.fProject.getProject().getFolder("dest").getFile("fileToMove.txt").exists());
+		assertTrue(this.fProject.getProject().getFolder("dest").getFile("fileToMove.txt").exists(), "File is not moved");
 
 		String actual= fProject.getContent(fileToUpdate);
 		//reference has to be updated only once despite two changes are supplied.

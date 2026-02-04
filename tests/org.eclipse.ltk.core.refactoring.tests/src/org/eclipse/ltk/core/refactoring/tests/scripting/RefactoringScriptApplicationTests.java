@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.scripting;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RefactoringScriptApplicationTests {
 
