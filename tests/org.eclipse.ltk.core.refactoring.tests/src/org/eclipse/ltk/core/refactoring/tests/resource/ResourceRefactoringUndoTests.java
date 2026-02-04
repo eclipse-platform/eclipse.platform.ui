@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -98,7 +98,7 @@ public class ResourceRefactoringUndoTests {
 	private IFile testLinkedFile;
 	private IFolder testSubFolder;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 
@@ -126,7 +126,7 @@ public class ResourceRefactoringUndoTests {
 		context= RefactoringCorePlugin.getUndoContext();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		fProject.delete();
 		final IFileStore[] toDelete= storesToDelete.toArray(new IFileStore[storesToDelete.size()]);
@@ -149,18 +149,18 @@ public class ResourceRefactoringUndoTests {
 		execute(op);
 
 		IFile renamedFile= testFolder.getFile(TEST_NEWFILE_NAME);
-		assertTrue("File rename failed", renamedFile.exists());
+		assertTrue(renamedFile.exists(), "File rename failed");
 		snap.name= TEST_NEWFILE_NAME;
-		assertTrue("File CONTENT was altered on rename", snap.isValid(testFolder));
+		assertTrue(snap.isValid(testFolder), "File CONTENT was altered on rename");
 
 		undo();
 		snap.name= TEST_FILE_NAME;
-		assertTrue("File CONTENT was altered on undo rename", snap.isValid(testFolder));
-		assertFalse("Undo rename failed", renamedFile.exists());
+		assertTrue(snap.isValid(testFolder), "File CONTENT was altered on undo rename");
+		assertFalse(renamedFile.exists(), "Undo rename failed");
 
 		redo();
 		snap.name= TEST_NEWFILE_NAME;
-		assertTrue("File CONTENT was altered on redo rename", snap.isValid(testFolder));
+		assertTrue(snap.isValid(testFolder), "File CONTENT was altered on redo rename");
 	}
 
 	@Test
@@ -174,18 +174,18 @@ public class ResourceRefactoringUndoTests {
 		FolderSnapshot snap= new FolderSnapshot(testFolder);
 		execute(op);
 		IFolder renamedFolder= fProject.getProject().getFolder(TEST_NEWFOLDER_NAME);
-		assertTrue("Project rename failed", renamedFolder.exists());
+		assertTrue(renamedFolder.exists(), "Project rename failed");
 		snap.name= TEST_NEWFOLDER_NAME;
-		assertTrue("Folder CONTENT was altered on rename", snap.isValid(fProject.getProject()));
+		assertTrue(snap.isValid(fProject.getProject()), "Folder CONTENT was altered on rename");
 
 		undo();
 		snap.name= TEST_FOLDER_NAME;
-		assertTrue("Folder CONTENT was altered on undo rename", snap.isValid(fProject.getProject()));
-		assertFalse("Undo rename failed", renamedFolder.exists());
+		assertTrue(snap.isValid(fProject.getProject()), "Folder CONTENT was altered on undo rename");
+		assertFalse(renamedFolder.exists(), "Undo rename failed");
 
 		redo();
 		snap.name= TEST_NEWFOLDER_NAME;
-		assertTrue("Folder CONTENT was altered on redo rename", snap.isValid(fProject.getProject()));
+		assertTrue(snap.isValid(fProject.getProject()), "Folder CONTENT was altered on redo rename");
 	}
 
 	@Test
@@ -200,16 +200,16 @@ public class ResourceRefactoringUndoTests {
 		execute(op);
 		IProject renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
 		try {
-			assertTrue("Project rename failed", renamedProject.exists());
+			assertTrue(renamedProject.exists(), "Project rename failed");
 			snap.name= TEST_NEWPROJECT_NAME;
-			assertTrue("Project CONTENT was altered on rename", snap.isValid());
+			assertTrue(snap.isValid(), "Project CONTENT was altered on rename");
 			undo();
-			snap.name= SimpleTestProject.TEST_PROJECT_NAME;
-			assertTrue("Project CONTENT was altered on undo rename", snap.isValid());
-			assertFalse("Undo rename failed", renamedProject.exists());
+			snap.name= fProject.getProject().getName();
+			assertTrue(snap.isValid(), "Project CONTENT was altered on undo rename");
+			assertFalse(renamedProject.exists(), "Undo rename failed");
 			redo();
 			snap.name= TEST_NEWPROJECT_NAME;
-			assertTrue("Project CONTENT was altered on redo rename", snap.isValid());
+			assertTrue(snap.isValid(), "Project CONTENT was altered on redo rename");
 		} finally {
 			renamedProject.delete(true, true, null);
 		}
@@ -227,12 +227,12 @@ public class ResourceRefactoringUndoTests {
 
 		execute(op);
 
-		assertFalse("File delete failed", testFile.exists());
+		assertFalse(testFile.exists(), "File delete failed");
 		undo();
-		assertTrue("File recreation failed", testFile.exists());
-		assertTrue("File CONTENT was altered on undo", snap.isValid(testFile.getParent()));
+		assertTrue(testFile.exists(), "File recreation failed");
+		assertTrue(snap.isValid(testFile.getParent()), "File CONTENT was altered on undo");
 		redo();
-		assertFalse("Redo delete failed", testFile.exists());
+		assertFalse(testFile.exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -247,12 +247,12 @@ public class ResourceRefactoringUndoTests {
 
 		execute(op);
 
-		assertFalse("File delete failed", testLinkedFile.exists());
+		assertFalse(testLinkedFile.exists(), "File delete failed");
 		undo();
-		assertTrue("File recreation failed", testLinkedFile.exists());
-		assertTrue("File CONTENT was altered on undo", snap.isValid(testLinkedFile.getParent()));
+		assertTrue(testLinkedFile.exists(), "File recreation failed");
+		assertTrue(snap.isValid(testLinkedFile.getParent()), "File CONTENT was altered on undo");
 		redo();
-		assertFalse("Redo delete failed", testLinkedFile.exists());
+		assertFalse(testLinkedFile.exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -267,12 +267,12 @@ public class ResourceRefactoringUndoTests {
 
 		execute(op);
 
-		assertFalse("Folder delete failed", testSubFolder.exists());
+		assertFalse(testSubFolder.exists(), "Folder delete failed");
 		undo();
-		assertTrue("Folder recreation failed", testSubFolder.exists());
-		assertTrue("Folder CONTENT was altered on undo", snap.isValid(testSubFolder.getParent()));
+		assertTrue(testSubFolder.exists(), "Folder recreation failed");
+		assertTrue(snap.isValid(testSubFolder.getParent()), "Folder CONTENT was altered on undo");
 		redo();
-		assertFalse("Redo delete failed", testSubFolder.exists());
+		assertFalse(testSubFolder.exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -285,12 +285,12 @@ public class ResourceRefactoringUndoTests {
 
 		FolderSnapshot snap= new FolderSnapshot(testLinkedFolder);
 		execute(op);
-		assertFalse("Folder delete failed", testLinkedFolder.exists());
+		assertFalse(testLinkedFolder.exists(), "Folder delete failed");
 		undo();
-		assertTrue("Folder recreation failed", testLinkedFolder.exists());
-		assertTrue("Folder CONTENT was altered on undo", snap.isValid(testLinkedFolder.getParent()));
+		assertTrue(testLinkedFolder.exists(), "Folder recreation failed");
+		assertTrue(snap.isValid(testLinkedFolder.getParent()), "Folder CONTENT was altered on undo");
 		redo();
-		assertFalse("Redo delete failed", testLinkedFolder.exists());
+		assertFalse(testLinkedFolder.exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -316,12 +316,12 @@ public class ResourceRefactoringUndoTests {
 		folderStore.delete(EFS.NONE, getMonitor());  // Delete the target folder on the file system.
 
 		execute(op);
-		assertFalse("Folder delete failed", testLinkedFolder.exists());
+		assertFalse(testLinkedFolder.exists(), "Folder delete failed");
 		undo();
-		assertTrue("Folder recreation failed", testLinkedFolder.exists());
-		assertTrue("Folder CONTENT was altered on undo", snap.isValid(testLinkedFolder.getParent()));
+		assertTrue(testLinkedFolder.exists(), "Folder recreation failed");
+		assertTrue(snap.isValid(testLinkedFolder.getParent()), "Folder CONTENT was altered on undo");
 		redo();
-		assertFalse("Redo delete failed", testLinkedFolder.exists());
+		assertFalse(testLinkedFolder.exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -333,19 +333,19 @@ public class ResourceRefactoringUndoTests {
 		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		execute(op);
-		assertFalse("Project delete failed", fProject.getProject().exists());
+		assertFalse(fProject.getProject().exists(), "Project delete failed");
 		undo();
-		assertTrue("Project recreation failed", fProject.getProject().exists());
+		assertTrue(fProject.getProject().exists(), "Project recreation failed");
 // Ideally we could run this test everytime, but it fails intermittently
 // because opening the recreated project occurs in the background, and
 // the creation of the workspace representation for the disk contents
 // may not have happened yet. This test always passes under debug where
 // timing can be controlled.
 // ***********
-// assertTrue("Project CONTENT was altered on undo", snap.isValid());
+// assertTrue(snap.isValid(), "Project CONTENT was altered on undo");
 // ************
 		redo();
-		assertFalse("Redo delete failed", fProject.getProject().exists());
+		assertFalse(fProject.getProject().exists(), "Redo delete failed");
 // We undo again so that the project will exist during teardown and
 // get cleaned up. Otherwise some CONTENT is left on disk.
 		undo();
@@ -368,11 +368,11 @@ public class ResourceRefactoringUndoTests {
 
 // we don't snapshot since CONTENT will be deleted
 		execute(op);
-		assertFalse("Project delete failed", fProject.getProject().exists());
+		assertFalse(fProject.getProject().exists(), "Project delete failed");
 		undo();
-		assertTrue("Project was recreated", fProject.getProject().exists());
+		assertTrue(fProject.getProject().exists(), "Project was recreated");
 		redo();
-		assertFalse("Redo delete failed", fProject.getProject().exists());
+		assertFalse(fProject.getProject().exists(), "Redo delete failed");
 	}
 
 	@Test
@@ -425,15 +425,15 @@ public class ResourceRefactoringUndoTests {
 	}
 
 	private void undo() throws ExecutionException {
-		assertTrue("Operation can be undone", history.canUndo(context));
+		assertTrue(history.canUndo(context), "Operation can be undone");
 		IStatus status= history.undo(context, getMonitor(), null);
-		assertTrue("Undo should be OK status", status.isOK());
+		assertTrue(status.isOK(), "Undo should be OK status");
 	}
 
 	private void redo() throws ExecutionException {
-		assertTrue("Operation can be redone", history.canRedo(context));
+		assertTrue(history.canRedo(context), "Operation can be redone");
 		IStatus status= history.redo(context, getMonitor(), null);
-		assertTrue("Redo should be OK status", status.isOK());
+		assertTrue(status.isOK(), "Redo should be OK status");
 	}
 
 	private IProgressMonitor getMonitor() {

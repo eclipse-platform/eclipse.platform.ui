@@ -35,7 +35,7 @@ public class SimpleTestProject {
 
 	public SimpleTestProject() throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		fProject= root.getProject(TEST_PROJECT_NAME);
+		fProject= root.getProject(TEST_PROJECT_NAME + System.nanoTime());
 		fProject.create(null);
 		fProject.open(null);
 	}
