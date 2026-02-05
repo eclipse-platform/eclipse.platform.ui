@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
@@ -235,5 +236,32 @@ public class ContentProposalAdapterTest {
 		spinEventLoop();
 		assertEquals("There should only be one shell up, the dialog", originalShellCount + 1,
 				text.getDisplay().getShells().length);
+	}
+
+	/**
+	 * Test that openProposalPopup(boolean beep) method is available and can be called
+	 * to suppress the beep. This test verifies that the method accepts both true and false
+	 * for the beep parameter.
+	 */
+	@Test
+	public void testOpenProposalPopupWithBeepParameter() {
+		// Create an adapter with an empty proposal provider to test the beep control
+		ContentProposalAdapter adapter = new ContentProposalAdapter(text, new TextContentAdapter(),
+				(contents, position) -> new IContentProposal[0], null, null);
+		
+		// Test calling with beep=false (should not beep)
+		adapter.openProposalPopup(false);
+		spinEventLoop();
+		assertOneShellUp(); // No popup should open since there are no proposals
+		
+		// Test calling with beep=true (would beep, but we can't test the sound)
+		adapter.openProposalPopup(true);
+		spinEventLoop();
+		assertOneShellUp(); // No popup should open since there are no proposals
+		
+		// Verify the parameterless method still works (should beep by default)
+		adapter.openProposalPopup();
+		spinEventLoop();
+		assertOneShellUp(); // No popup should open since there are no proposals
 	}
 }
