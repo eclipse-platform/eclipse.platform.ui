@@ -10,11 +10,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.history;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -62,20 +62,20 @@ public class RefactoringHistorySerializationTests {
 		RefactoringHistory result= RefactoringCore.getHistoryService().readRefactoringHistory(stream, flags);
 		RefactoringDescriptorProxy[] actualProxies= result.getDescriptors();
 		RefactoringDescriptorProxy[] expectedProxies= list.toArray(new RefactoringDescriptorProxy[list.size()]);
-		assertEquals("The number of refactoring descriptors is incorrect.", expectedProxies.length, actualProxies.length);
+		assertEquals(expectedProxies.length, actualProxies.length, "The number of refactoring descriptors is incorrect.");
 		for (int index= 0; index < expectedProxies.length; index++) {
 			RefactoringDescriptor expectedDescriptor= expectedProxies[index].requestDescriptor(null);
-			assertNotNull("Expected refactoring descriptor cannot be resolved.", expectedDescriptor);
+			assertNotNull(expectedDescriptor, "Expected refactoring descriptor cannot be resolved.");
 			RefactoringDescriptor actualDescriptor= actualProxies[index].requestDescriptor(null);
-			assertNotNull("Actual refactoring descriptor cannot be resolved.", actualDescriptor);
-			assertEquals("Expected refactoring descriptor is not equal to actual one:", expectedDescriptor.toString(), actualDescriptor.toString());
+			assertNotNull(actualDescriptor, "Actual refactoring descriptor cannot be resolved.");
+			assertEquals(expectedDescriptor.toString(), actualDescriptor.toString(), "Expected refactoring descriptor is not equal to actual one:");
 		}
 	}
 
 	private static void compareWrittenDescriptor(RefactoringSessionDescriptor descriptor, boolean time, String xml) throws CoreException {
 		ByteArrayOutputStream stream= new ByteArrayOutputStream();
 		RefactoringCore.getHistoryService().writeRefactoringSession(descriptor, stream, time);
-		assertEquals("The refactoring descriptor has not been correctly serialized:", convertLineDelimiters(xml), stream.toString(StandardCharsets.UTF_8));
+		assertEquals(convertLineDelimiters(xml), stream.toString(StandardCharsets.UTF_8), "The refactoring descriptor has not been correctly serialized:");
 	}
 
 	private static String concatenate(String[] lines, String delimiter) {
@@ -107,15 +107,24 @@ public class RefactoringHistorySerializationTests {
 
 	private static String convertLineDelimiters(String xml) {
 		String delimiter= System.lineSeparator();
-		assertNotNull("Could not determine line separator.", delimiter);
+		assertNotNull(delimiter, "Could not determine line separator.");
 		if (!"\n".equals(delimiter))
 			xml= concatenate(convertIntoLines(xml), delimiter);
+		// Trim the trailing newline if the xml string has one (Text Blocks usually add one)
+		// But here we might want to keep it if original tests expected it?
+		// Original tests: "...</session>\n" + "";
+		// So they ended with \n.
 		return xml;
 	}
 
 	@Test
 	public void testReadDescriptor0() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"1.0\">\n" + "<refactoring arg0=\"value0\" arg1=\"value1\" arg2=\"value2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"3\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session comment="A mock comment" version="1.0">
+				<refactoring arg0="value0" arg1="value1" arg2="value2" comment="A mock comment" description="A mock refactoring" flags="3" id="org.eclipse.ltk.core.mock" project="test0"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test0", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		Map<String, String> arguments= descriptor.getArguments();
@@ -127,7 +136,12 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor1() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" arg1=\"value 1\" arg2=\"value 2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"6\" id=\"org.eclipse.ltk.core.mock\" project=\"test1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session comment="A mock comment" version="1.0">
+				<refactoring arg0="value 0" arg1="value 1" arg2="value 2" comment="A mock comment" description="A mock refactoring" flags="6" id="org.eclipse.ltk.core.mock" project="test1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test1", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= descriptor.getArguments();
@@ -139,7 +153,14 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor10() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -148,13 +169,20 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, true);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history io error:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history io error:");
 		}
 	}
 
 	@Test
 	public void testReadDescriptor11() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refact oring arg0=\"value 0\" com ment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refact oring arg0="value 0" com ment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -163,13 +191,20 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, false);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history io error:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history io error:");
 		}
 	}
 
 	@Test
 	public void testReadDescriptor12() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" com ment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" com ment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -178,13 +213,18 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, true);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history io error:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history io error:");
 		}
 	}
 
 	@Test
 	public void testReadDescriptor2() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		Map<String, String> arguments= descriptor.getArguments();
@@ -194,7 +234,13 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor3() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
@@ -207,7 +253,14 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor4() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
@@ -225,7 +278,14 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor5() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.BREAKING_CHANGE;
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
@@ -240,7 +300,14 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor6() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -251,7 +318,14 @@ public class RefactoringHistorySerializationTests {
 
 	@Test
 	public void testReadDescriptor7() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -260,13 +334,20 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, false);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for unsupported refactoring history version exception:", IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, exception.getStatus().getCode(), "Wrong status code for unsupported refactoring history version exception:");
 		}
 	}
 
 	@Test
 	public void testReadDescriptor8() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session>\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session>
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -275,13 +356,20 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, false);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for missing refactoring history version exception:", IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, exception.getStatus().getCode(), "Wrong status code for missing refactoring history version exception:");
 		}
 	}
 
 	@Test
 	public void testReadDescriptor9() throws Exception {
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<error version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</error>\n" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<error version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</error>
+				""";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		Map<String, String> arguments= third.getArguments();
@@ -290,7 +378,7 @@ public class RefactoringHistorySerializationTests {
 		try {
 			compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, false);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history format exception:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history format exception:");
 		}
 	}
 
@@ -304,7 +392,11 @@ public class RefactoringHistorySerializationTests {
 		String version= "1.0";
 		String comment= "A mock comment";
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { descriptor}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"1.0\">\n" + "<refactoring arg0=\"value0\" arg1=\"value1\" arg2=\"value2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"3\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session comment="A mock comment" version="1.0">
+				<refactoring arg0="value0" arg1="value1" arg2="value2" comment="A mock comment" description="A mock refactoring" flags="3" id="org.eclipse.ltk.core.mock" project="test0"/>
+				</session>""";
 		compareWrittenDescriptor(session, true, xml);
 	}
 
@@ -318,7 +410,11 @@ public class RefactoringHistorySerializationTests {
 		String version= "2.0";
 		String comment= "A mock comment";
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { descriptor}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"2.0\">\n" + "<refactoring arg0=\"value 0\" arg1=\"value 1\" arg2=\"value 2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"6\" id=\"org.eclipse.ltk.core.mock\" project=\"test1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session comment="A mock comment" version="2.0">
+				<refactoring arg0="value 0" arg1="value 1" arg2="value 2" comment="A mock comment" description="A mock refactoring" flags="6" id="org.eclipse.ltk.core.mock" project="test1"/>
+				</session>""";
 		compareWrittenDescriptor(session, true, xml);
 	}
 
@@ -330,7 +426,11 @@ public class RefactoringHistorySerializationTests {
 		String version= "2.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { descriptor}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"2.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "</session>" ;
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="2.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				</session>""";
 		compareWrittenDescriptor(session, true, xml);
 	}
 
@@ -345,7 +445,12 @@ public class RefactoringHistorySerializationTests {
 		String version= "1.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="1.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock"/>
+				</session>""";
 		compareWrittenDescriptor(session, false, xml);
 	}
 
@@ -365,7 +470,13 @@ public class RefactoringHistorySerializationTests {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>""";
 		compareWrittenDescriptor(session, true, xml);
 	}
 
@@ -385,11 +496,17 @@ public class RefactoringHistorySerializationTests {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>""";
 		try {
 			compareWrittenDescriptor(session, true, xml);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history format exception:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history format exception:");
 		}
 	}
 
@@ -409,11 +526,17 @@ public class RefactoringHistorySerializationTests {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>""";
 		try {
 			compareWrittenDescriptor(session, true, xml);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history format exception:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history format exception:");
 		}
 	}
 
@@ -433,11 +556,17 @@ public class RefactoringHistorySerializationTests {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="value 0" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>""";
 		try {
 			compareWrittenDescriptor(session, true, xml);
 		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history format exception:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode());
+			assertEquals(IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode(), "Wrong status code for refactoring history format exception:");
 		}
 	}
 
@@ -457,7 +586,13 @@ public class RefactoringHistorySerializationTests {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>" + "";
+		String xml= """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<session version="3.0">
+				<refactoring arg0="" comment="A mock comment" description="A mock refactoring" id="org.eclipse.ltk.core.mock"/>
+				<refactoring arg1="value 1" comment="No comment" description="Another mock refactoring" flags="1" id="org.eclipse.ltk.core.mock" version="1.0"/>
+				<refactoring arg2="value 2" description="Yet another mock refactoring" flags="5" id="org.eclipse.ltk.core.mock" project="test0" version="1.1"/>
+				</session>""";
 		compareWrittenDescriptor(session, true, xml);
 	}
 
