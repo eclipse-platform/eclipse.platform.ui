@@ -3212,7 +3212,7 @@ public class TextViewer extends Viewer implements
 	 * @return the view port height in lines
 	 * @deprecated as of 3.2
 	 */
-	@Deprecated(forRemoval= true, since= "2025-12")
+	@Deprecated
 	protected int getVisibleLinesInViewport() {
 		if (fTextWidget != null) {
 			Rectangle clArea= fTextWidget.getClientArea();
