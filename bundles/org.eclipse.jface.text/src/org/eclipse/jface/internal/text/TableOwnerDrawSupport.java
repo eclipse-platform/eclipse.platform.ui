@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.viewers.ColumnViewerSelectionColorListener;
+
 
 /**
  * Adds owner draw support for tables.
@@ -83,7 +85,7 @@ public class TableOwnerDrawSupport implements Listener {
 				measureItem(event);
 				break;
 			case SWT.EraseItem:
-				event.detail &= ~SWT.FOREGROUND;
+				event.detail&= ~SWT.FOREGROUND;
 				break;
 			case SWT.PaintItem:
 				performPaint(event);
@@ -147,7 +149,9 @@ public class TableOwnerDrawSupport implements Listener {
 		Color oldForeground= gc.getForeground();
 		Color oldBackground= gc.getBackground();
 
-		if (!isSelected) {
+		if (isSelected) {
+			ColumnViewerSelectionColorListener.drawSelection(event);
+		} else {
 			Color foreground= item.getForeground(index);
 			gc.setForeground(foreground);
 
