@@ -250,14 +250,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	@Override
 	public void replace(int offset, int length, String text) throws BadLocationException {
-		Object lockObject= getLockObject();
-		if (lockObject == null) {
-			super.replace(offset, length, text);
-			return;
-		}
-		synchronized (lockObject) {
-			super.replace(offset, length, text);
-		}
+		super.replace(offset, length, text);
 	}
 
 	@Override
@@ -267,21 +260,19 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			super.replace(offset, length, text, modificationStamp);
 			return;
 		}
-		synchronized (lockObject) {
-			super.replace(offset, length, text, modificationStamp);
+		try {
+			stopListenerNotification();
+			synchronized (lockObject) {
+				super.replace(offset, length, text, modificationStamp);
+			}
+		} finally {
+			resumeListenerNotification();
 		}
 	}
 
 	@Override
 	public void set(String text) {
-		Object lockObject= getLockObject();
-		if (lockObject == null) {
-			super.set(text);
-			return;
-		}
-		synchronized (lockObject) {
-			super.set(text);
-		}
+		super.set(text);
 	}
 
 	@Override
@@ -291,9 +282,20 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			super.set(text, modificationStamp);
 			return;
 		}
-		synchronized (lockObject) {
-			super.set(text, modificationStamp);
+		try {
+			stopListenerNotification();
+			synchronized (lockObject) {
+				super.set(text, modificationStamp);
+			}
+		} finally {
+			resumeListenerNotification();
 		}
+	}
+
+	@Override
+	protected void doFireDocumentChanged2(DocumentEvent event) {
+		// TODO this code could use a job to dispatch updates to listeners asynchronously
+		super.doFireDocumentChanged2(event);
 	}
 
 	@Override
