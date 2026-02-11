@@ -14,15 +14,11 @@
 
 package org.eclipse.jface.tests.wizards;
 
-
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({ ButtonAlignmentTest.class, WizardTest.class, WizardProgressMonitorTest.class })
 public class WizardTestSuite {
-
-	
 
 }

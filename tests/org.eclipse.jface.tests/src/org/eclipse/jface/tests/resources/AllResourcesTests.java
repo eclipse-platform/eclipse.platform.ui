@@ -14,8 +14,6 @@
 
 package org.eclipse.jface.tests.resources;
 
-
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -23,5 +21,4 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({ FontRegistryTest.class, JFaceResourcesTest.class })
 public class AllResourcesTests {
 
-	
 }

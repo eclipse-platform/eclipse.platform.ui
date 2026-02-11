@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -24,5 +22,4 @@ import org.junit.platform.suite.api.Suite;
 		ProgressMonitorDialogTest.class, PlainMessageDialogTest.class })
 public class AllDialogTests {
 
-	
 }

@@ -18,8 +18,6 @@ import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.opentest4j.AssertionFailedError;
-
 /**
  * The TestLazyModelContentProvider is the lazy version
  * of the model content provider.
@@ -32,7 +30,7 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 	TestLazyModelContentProvider(TableViewerTest testObject){
 		test = testObject;
 		if(!(testObject instanceof VirtualLazyTableViewerTest)) {
-			throw new AssertionFailedError("TestLazyModelContentProvider only works with VirtualLazyTableViewerTest");
+			throw new IllegalStateException("TestLazyModelContentProvider only works with VirtualLazyTableViewerTest");
 		}
 	}
 

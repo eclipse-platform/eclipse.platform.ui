@@ -27,11 +27,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 
 public class ContentProposalAdapterTest {
 
@@ -119,8 +117,7 @@ public class ContentProposalAdapterTest {
 	// most of the following code is copied from AbstractFieldAssistTestCase
 
 	@BeforeEach
-	public final void setUp(TestInfo testInfo) throws Exception {
-		System.out.println(TestRunLogUtil.formatTestStartMessage(testInfo.getTestMethod().get().getName()));
+	public final void setUp() throws Exception {
 		Display display = getDisplay();
 		originalShellCount = display.getShells().length;
 		controlShell = new Shell(display);
@@ -132,7 +129,7 @@ public class ContentProposalAdapterTest {
 	}
 
 	@AfterEach
-	public final void tearDown(TestInfo testInfo) throws Exception {
+	public final void tearDown() throws Exception {
 		if (controlShell != null) {
 			spinEventLoop();
 			controlShell.close();
@@ -143,7 +140,6 @@ public class ContentProposalAdapterTest {
 			}
 			this.display = null;
 		}
-		System.out.println(TestRunLogUtil.formatTestFinishedMessage(testInfo.getTestMethod().get().getName()));
 	}
 
 	private Display getDisplay() {
@@ -232,7 +228,6 @@ public class ContentProposalAdapterTest {
 	 */
 	private void assertOneShellUp() {
 		spinEventLoop();
-		assertEquals(originalShellCount + 1,
-				text.getDisplay().getShells().length, "There should only be one shell up, the dialog");
+		assertEquals(originalShellCount + 1, text.getDisplay().getShells().length, "There should only be one shell up, the dialog");
 	}
 }

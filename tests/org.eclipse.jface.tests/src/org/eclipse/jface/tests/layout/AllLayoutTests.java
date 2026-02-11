@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.layout;
 
-
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -22,7 +20,5 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({ GeometryTest.class, AbstractColumnLayoutTest.class, GridDataFactoryTest.class,
 		GridLayoutFactoryTest.class, TreeColumnLayoutTest.class })
 public class AllLayoutTests {
-
-	
 
 }
