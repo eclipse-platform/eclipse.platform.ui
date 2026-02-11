@@ -54,10 +54,10 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		spinEventLoop();
 
 		/*
-		assertFalse("1.5", decoration.isVisible());
+		assertFalse(decoration.isVisible(), "1.5");
 		window.getFieldAssistControl().setFocus();
 		spinEventLoop();
-		assertTrue("1.6", decoration.isVisible());
+		assertTrue(decoration.isVisible(), "1.6");
 		decoration.setShowOnlyOnFocus(false);
 		*/
 

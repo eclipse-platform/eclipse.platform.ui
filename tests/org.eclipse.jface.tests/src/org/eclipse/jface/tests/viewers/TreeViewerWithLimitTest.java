@@ -277,15 +277,12 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertTrue(treeViewer.contains(rootModel, rootModel.get(0)), "element must be available on the viewer");
 
 		// last child of the root
-		assertTrue(
-				treeViewer.contains(rootModel, rootModel.get(rootModel.size() - 1)), "element must be available on the viewer");
+		assertTrue(treeViewer.contains(rootModel, rootModel.get(rootModel.size() - 1)), "element must be available on the viewer");
 		// child of first element is not expanded
-		assertFalse(
-				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must not be available on the viewer");
+		assertFalse(treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must not be available on the viewer");
 		treeViewer.expandAll();
 		// child of first element when expanded.
-		assertTrue(
-				treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must be available on the viewer");
+		assertTrue(treeViewer.contains(rootModel, rootModel.get(0).children.get(0)), "element must be available on the viewer");
 	}
 
 	@Override

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -35,7 +33,5 @@ import org.junit.platform.suite.api.Suite;
 		TreeViewerWithLimitTest.class, TreeViewerWithLimitCompatibilityTest.class, TableViewerWithLimitTest.class,
 		TableViewerWithLimitCompatibilityTest.class })
 public class AllViewersTests {
-
-	
 
 }

@@ -24,13 +24,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInfo;
 
 public abstract class AbstractFieldAssistTestCase {
-	
+
+
 	/**
 	 * The window that is being tested.
 	 */
@@ -47,8 +46,7 @@ public abstract class AbstractFieldAssistTestCase {
 	private int originalShellCount;
 
 	@BeforeEach
-	public final void setUp(TestInfo testInfo) throws Exception {
-		System.out.println(TestRunLogUtil.formatTestStartMessage(testInfo.getTestMethod().get().getName()));
+	public final void setUp() throws Exception {
 		Display display = getDisplay();
 		anotherShell = new Shell(display);
 		new Text(anotherShell, SWT.SINGLE);
@@ -60,13 +58,12 @@ public abstract class AbstractFieldAssistTestCase {
 	}
 
 	@AfterEach
-	public final void tearDown(TestInfo testInfo) throws Exception {
+	public final void tearDown() throws Exception {
 		if (window != null) {
 			spinEventLoop();
 		}
 		closeFieldAssistWindow();
 		anotherShell.close();
-		System.out.println(TestRunLogUtil.formatTestFinishedMessage(testInfo.getTestMethod().get().getName()));
 	}
 
 	protected Display getDisplay() {
@@ -194,8 +191,7 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	protected void assertOneShellUp() {
 		spinEventLoop();
-		assertEquals(originalShellCount + 1,
-				window.getDisplay().getShells().length, "There should only be one shell up, the dialog");
+		assertEquals(originalShellCount + 1, window.getDisplay().getShells().length, "There should only be one shell up, the dialog");
 	}
 
 	/**
@@ -204,8 +200,7 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	protected void assertTwoShellsUp() {
 		spinEventLoop();
-		assertEquals(originalShellCount + 2,
-				window.getDisplay().getShells().length, "There should two shells up, the dialog and the proposals dialog");
+		assertEquals(originalShellCount + 2, window.getDisplay().getShells().length, "There should two shells up, the dialog and the proposals dialog");
 	}
 
 	protected void setControlContent(String text) {

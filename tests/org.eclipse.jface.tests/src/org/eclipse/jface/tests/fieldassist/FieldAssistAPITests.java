@@ -65,6 +65,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 		assertEquals(content.length(), proposal.getCursorPosition(), "2.3");
 	}
 
+	@Test
 	public void testInitializationWithInvalidCursor() {
 		try {
 			proposal = new ContentProposal(content, label, description, 100);

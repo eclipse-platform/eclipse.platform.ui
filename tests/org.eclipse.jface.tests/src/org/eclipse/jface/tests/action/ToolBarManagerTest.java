@@ -52,6 +52,7 @@ public class ToolBarManagerTest {
 	@RegisterExtension
 	public JFaceActionExtension rule = new JFaceActionExtension();
 
+	@Test
 	public void testSetStyleWhenToolBarDoesNotExist() {
 		Composite parent = createComposite();
 		ToolBarManager manager = new ToolBarManager(DEFAULT_STYLE | SWT.HORIZONTAL);
