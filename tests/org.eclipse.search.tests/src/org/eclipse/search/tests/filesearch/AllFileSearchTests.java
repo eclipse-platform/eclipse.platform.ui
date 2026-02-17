@@ -16,6 +16,8 @@ package org.eclipse.search.tests.filesearch;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
+import org.eclipse.search.tests.TextSearchResultTest;
+
 @Suite
 @SelectClasses({
 		AnnotationManagerTest.class,
@@ -24,7 +26,8 @@ import org.junit.platform.suite.api.Suite;
 		PositionTrackerTest.class,
 		ResultUpdaterTest.class,
 		SearchResultPageTest.class,
-		SortingTest.class
+		SortingTest.class,
+		TextSearchResultTest.class,
 })
 public class AllFileSearchTests {
 }

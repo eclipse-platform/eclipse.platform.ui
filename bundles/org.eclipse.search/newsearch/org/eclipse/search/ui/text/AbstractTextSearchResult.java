@@ -14,7 +14,6 @@
 package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -23,8 +22,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -44,6 +45,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private final ConcurrentMap<Object, Set<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
 	private final AtomicInteger matchCount;
+	private final ConcurrentHashMap<Match, Long> collisionOrder;
+	private final AtomicLong collisionCounter;
 
 	private MatchFilter[] fMatchFilters;
 
@@ -55,6 +58,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fListeners = new CopyOnWriteArrayList<>();
 		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
+		collisionOrder = new ConcurrentHashMap<>();
+		collisionCounter = new AtomicLong(0);
 	}
 
 	/**
@@ -78,9 +83,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 		Set<Match> matches = fElementsToMatches.get(element);
 		if (matches != null) {
-			Match[] sortingCopy = matches.toArray(new Match[matches.size()]);
-			Arrays.sort(sortingCopy, AbstractTextSearchResult::compare);
-			return sortingCopy;
+			return matches.toArray(new Match[0]);
 		}
 		return EMPTY_ARRAY;
 	}
@@ -161,15 +164,36 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private boolean didAddMatch(Match match) {
 		matchCount.set(0);
 		updateFilterState(match);
-		return fElementsToMatches.computeIfAbsent(match.getElement(), k -> ConcurrentHashMap.newKeySet()).add(match);
+		return fElementsToMatches.computeIfAbsent(match.getElement(),
+				k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
 	}
 
-	private static int compare(Match match2, Match match1) {
-		int diff= match2.getOffset()-match1.getOffset();
+	private int compare(Match match2, Match match1) {
+		if (match1 == match2) {
+			return 0;
+		}
+		int diff = Integer.compare(match2.getOffset(), match1.getOffset());
 		if (diff != 0) {
 			return diff;
 		}
-		return match2.getLength()-match1.getLength();
+		diff = Integer.compare(match2.getLength(), match1.getLength());
+		if (diff != 0) {
+			return diff;
+		}
+		diff = Integer.compare(System.identityHashCode(match2), System.identityHashCode(match1));
+		if (diff != 0) {
+			return diff;
+		}
+		// Identity hash collision for two distinct objects: use a stable
+		// tiebreaker so the set does not treat them as duplicates.
+		return resolveCollision(match2, match1);
+	}
+
+	@SuppressWarnings("boxing")
+	private int resolveCollision(Match a, Match b) {
+		long orderA = collisionOrder.computeIfAbsent(a, k -> collisionCounter.incrementAndGet());
+		long orderB = collisionOrder.computeIfAbsent(b, k -> collisionCounter.incrementAndGet());
+		return Long.compare(orderA, orderB);
 	}
 
 	/**
@@ -185,6 +209,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private void doRemoveAll() {
 		matchCount.set(0);
 		fElementsToMatches.clear();
+		collisionOrder.clear();
 	}
 
 	/**
@@ -233,6 +258,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			}
 			return matches;
 		});
+		if (existed[0]) {
+			collisionOrder.remove(match);
+		}
 		return existed[0];
 	}
 
@@ -329,6 +357,25 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			if (!entry.getValue().isEmpty()) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the given element has any matches in this search result.
+	 *
+	 * @param element
+	 *            the element to test for matches
+	 * @return {@code true} if the given element has at least one match
+	 * @since 3.19
+	 */
+	public boolean hasMatches(Object element) {
+		if (element == null) {
+			return false;
+		}
+		Set<Match> matches = fElementsToMatches.get(element);
+		if (matches != null) {
+			return !matches.isEmpty();
 		}
 		return false;
 	}
@@ -442,4 +489,28 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @see IFileMatchAdapter
 	 */
 	public abstract IFileMatchAdapter getFileMatchAdapter();
+
+	/**
+	 * Batch removing of matches by using their enclosing elements.
+	 *
+	 * @param elements
+	 *            the elements of which matches should be removed.
+	 * @since 3.19
+	 */
+	public void removeElements(Collection<?> elements) {
+		matchCount.set(0);
+		List<Match> removedMatches = new ArrayList<>();
+		for (Object object : elements) {
+			Set<Match> matches = fElementsToMatches.remove(object);
+			if (matches != null) {
+				removedMatches.addAll(matches);
+			}
+		}
+		if (!removedMatches.isEmpty()) {
+			if (!collisionOrder.isEmpty()) {
+				removedMatches.forEach(collisionOrder::remove);
+			}
+			fireChange(getSearchResultEvent(removedMatches, MatchEvent.REMOVED));
+		}
+	}
 }

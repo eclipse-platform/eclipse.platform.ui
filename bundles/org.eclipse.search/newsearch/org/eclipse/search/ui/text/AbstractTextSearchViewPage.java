@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -41,7 +42,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -61,6 +64,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -645,7 +649,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void updateBusyLabel() {
 		AbstractTextSearchResult result = getInput();
-		boolean shouldShowBusy = result != null && NewSearchUI.isQueryRunning(result.getQuery()) && result.getMatchCount() == 0;
+		boolean shouldShowBusy = result != null && NewSearchUI.isQueryRunning(result.getQuery()) && !result.hasMatches();
 		if (shouldShowBusy == fIsBusyShown) {
 			return;
 		}
@@ -1387,6 +1391,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		StructuredViewer viewer = getViewer();
 		IStructuredSelection selection = viewer.getStructuredSelection();
 
+		selection = handleRemovalOfResources(result, selection);
+		if (selection.isEmpty()) {
+			return;
+		}
 		HashSet<Match> set = new HashSet<>();
 		if (viewer instanceof TreeViewer) {
 			ITreeContentProvider cp = (ITreeContentProvider) viewer.getContentProvider();
@@ -1399,6 +1407,35 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Match[] matches = new Match[set.size()];
 		set.toArray(matches);
 		result.removeMatches(matches);
+	}
+
+	private IStructuredSelection handleRemovalOfResources(AbstractTextSearchResult result,
+			IStructuredSelection selection) {
+		Set<IResource> elementsToRemove = new HashSet<>();
+		List<Object> others = new ArrayList<>();
+		Object[] resultElements = result.getElements();
+		for (Object selectedObj : selection) {
+			if (selectedObj instanceof IFile resource) {
+				elementsToRemove.add(resource);
+			} else if (selectedObj instanceof IContainer container) {
+				for (Object resElement : resultElements) {
+					if (resElement instanceof IResource res && container.getFullPath().isPrefixOf(res.getFullPath())) {
+						elementsToRemove.add(res);
+					}
+				}
+			} else {
+				others.add(selectedObj);
+			}
+		}
+		if (!elementsToRemove.isEmpty()) {
+			result.removeElements(elementsToRemove);
+			if (others.isEmpty()) {
+				navigateNext(true);
+				return StructuredSelection.EMPTY;
+			}
+			selection = new StructuredSelection(others);
+		}
+		return selection;
 	}
 
 	private void collectAllMatches(HashSet<Match> set, Object[] elements) {
