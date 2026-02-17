@@ -65,8 +65,7 @@ public class TestJob extends Job {
 		this.reschedule = reschedule;
 		this.rescheduleWait = rescheduleWait;
 		setProperty(IProgressConstants.ICON_PROPERTY,
-				ResourceLocator.imageDescriptorFromBundle(TestJob.class, "icons/sample.gif")); //$NON-NLS-1$
-		if (lock) {
+				                             ResourceLocator.imageDescriptorFromBundle(TestJob.class, "icons/sample.svg")); //$NON-NLS-1$		if (lock) {
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 		}
 	}
