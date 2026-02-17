@@ -72,8 +72,7 @@ public class TestJob extends Job {
 		this.rescheduleWait = rescheduleWait;
 
 		setProperty(IProgressConstants.ICON_PROPERTY,
-				getImageDescriptor("icons/sample.gif"));
-		if (lock)
+				                               getImageDescriptor("icons/sample.svg"));		if (lock)
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
