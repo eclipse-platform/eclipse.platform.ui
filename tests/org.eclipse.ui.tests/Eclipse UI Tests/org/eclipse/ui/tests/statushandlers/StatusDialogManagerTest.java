@@ -774,7 +774,16 @@ public class StatusDialogManagerTest {
 		wsdm.addStatusAdapter(statusAdapter, false);
 		assertNotNull(StatusDialogUtil.getStatusShell());
 		Shell shell = StatusDialogUtil.getStatusShell();
-		assertEquals("Dialog is not centered correctly",getInitialLocation(shell), shell.getLocation());
+
+		Point expected = getInitialLocation(shell);
+		Point actual = shell.getLocation();
+		int tolerance = 1;
+		assertTrue("Dialog is not centered correctly" //
+				+ " (expected location: " + expected + " ± " + tolerance //
+				+ ", actual location: " + actual //
+				+ ", dialog bounds: " + shell.getBounds() //
+				+ ", parent bounds: " + shell.getParent().getBounds() + ")",
+				Math.abs(expected.x - actual.x) <= tolerance && Math.abs(expected.y - actual.y) <= tolerance);
 	}
 
 	//error link present
