@@ -13,6 +13,7 @@
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     René Brandstetter - Bug 433778
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491410
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug #3742
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -246,10 +247,21 @@ public class QuickAccessDialog extends PopupDialog {
 		gridData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		hintText.setLayoutData(gridData);
 
-		Table table = contents.createTable(composite, getDefaultOrientation());
+		Table table = contents.createTable(composite);
 		table.addKeyListener(getKeyAdapter());
 
 		return composite;
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
+
+		// after the complete contents (including dialog fonts) are configured, apply
+		// the table layout and styling
+		contents.configureTableStyling(getDefaultOrientation());
+
+		return control;
 	}
 
 	private TriggerSequence[] getInvokingCommandKeySequences() {
@@ -309,6 +321,7 @@ public class QuickAccessDialog extends PopupDialog {
 	@Override
 	protected Point getDefaultSize() {
 		GC gc = new GC(getContents());
+		gc.setFont(contents.getTable().getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 		int x = Dialog.convertHorizontalDLUsToPixels(fontMetrics, 300);
