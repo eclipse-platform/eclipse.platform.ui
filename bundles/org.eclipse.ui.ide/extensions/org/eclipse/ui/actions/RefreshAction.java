@@ -290,7 +290,8 @@ public class RefreshAction extends WorkspaceAction {
 				}
 			}
 		};
-		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+		String jobName = (rule instanceof IProject p) ? "refresh (" + p.getName() + ")" : "refresh"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		WorkspaceJob job = new WorkspaceJob(jobName) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {
