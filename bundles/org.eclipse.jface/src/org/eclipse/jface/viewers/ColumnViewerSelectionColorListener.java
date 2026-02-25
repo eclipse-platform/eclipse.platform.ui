@@ -64,10 +64,6 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	 * @param viewer the viewer to which the listener should be added
 	 */
 	public static void addListenerToViewer(StructuredViewer viewer) {
-		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			return; // Skip on Linux
-		}
-
 		Control control = viewer.getControl();
 		if (control.isDisposed() || isListenerRegistered(control)) {
 			return; // Already registered or disposed
@@ -133,23 +129,13 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	 * @since 3.32
 	 */
 	public static void drawSelection(Event event) {
-		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			return; // Skip on Linux
-		}
-
 		Control control = (Control) event.widget;
 		GC gc = event.gc;
 
-		Color backgroundColor;
-		Color foregroundColor;
-
-		if (control.isFocusControl()) {
-			backgroundColor = getSelectionColor(COLOR_SELECTION_BG_FOCUS, event.display);
-			foregroundColor = getSelectionColor(COLOR_SELECTION_FG_FOCUS, event.display);
-		} else {
-			backgroundColor = getSelectionColor(COLOR_SELECTION_BG_NO_FOCUS, event.display);
-			foregroundColor = getSelectionColor(COLOR_SELECTION_FG_NO_FOCUS, event.display);
-		}
+		final Color backgroundColor = getSelectionColor(
+				control.isFocusControl() ? COLOR_SELECTION_BG_FOCUS : COLOR_SELECTION_BG_NO_FOCUS, event.display);
+		final Color foregroundColor = getSelectionColor(
+				control.isFocusControl() ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS, event.display);
 
 		gc.setBackground(backgroundColor);
 		gc.setForeground(foregroundColor);
@@ -169,31 +155,22 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	private static Color getSelectionColor(String key, org.eclipse.swt.graphics.Device device) {
 		ColorRegistry registry = JFaceResources.getColorRegistry();
 
-		if (registry.hasValueFor(key)) {
-			return registry.get(key);
+		if (!registry.hasValueFor(key)) {
+			RGB systemColor = device.getSystemColor(idToColor(key)).getRGB();
+			registry.put(key, systemColor);
 		}
 
-		RGB systemColor;
-		switch (key) {
-		case COLOR_SELECTION_BG_FOCUS:
-			systemColor = device.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB();
-			break;
-		case COLOR_SELECTION_FG_FOCUS:
-			systemColor = device.getSystemColor(SWT.COLOR_WHITE).getRGB();
-			break;
-		case COLOR_SELECTION_BG_NO_FOCUS:
-			systemColor = device.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND).getRGB();
-			break;
-		case COLOR_SELECTION_FG_NO_FOCUS:
-			systemColor = device.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND).getRGB();
-			break;
-		default:
-			systemColor = device.getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
-			break;
-		}
-
-		registry.put(key, systemColor);
 		return registry.get(key);
+	}
+
+	private static int idToColor(String id) {
+		return switch (id) {
+		case COLOR_SELECTION_BG_FOCUS -> SWT.COLOR_TITLE_BACKGROUND;
+		case COLOR_SELECTION_FG_FOCUS -> SWT.COLOR_WHITE;
+		case COLOR_SELECTION_BG_NO_FOCUS -> SWT.COLOR_TITLE_INACTIVE_BACKGROUND;
+		case COLOR_SELECTION_FG_NO_FOCUS -> SWT.COLOR_TITLE_INACTIVE_FOREGROUND;
+		default -> SWT.COLOR_LIST_SELECTION;
+		};
 	}
 
 }

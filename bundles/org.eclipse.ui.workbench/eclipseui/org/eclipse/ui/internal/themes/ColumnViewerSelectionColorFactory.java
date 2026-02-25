@@ -39,23 +39,17 @@ public class ColumnViewerSelectionColorFactory implements IColorFactory, IExecut
 
 	@Override
 	public RGB createColor() {
-		Display display = Display.getDefault();
+		return Display.getDefault().getSystemColor(idToColor(color)).getRGB();
+	}
 
-		if ("SELECTED_CELL_BACKGROUND".equals(color)) { //$NON-NLS-1$
-			return display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB();
-
-		} else if ("SELECTED_CELL_FOREGROUND".equals(color)) { //$NON-NLS-1$
-			return display.getSystemColor(SWT.COLOR_WHITE).getRGB();
-
-		} else if ("SELECTED_CELL_BACKGROUND_NO_FOCUS".equals(color)) { //$NON-NLS-1$
-			return display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND).getRGB();
-
-		} else if ("SELECTED_CELL_FOREGROUND_NO_FOCUS".equals(color)) { //$NON-NLS-1$
-			return display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND).getRGB();
-
-		} else {
-			return new RGB(0, 0, 0);
-		}
+	private int idToColor(String id) {
+		return switch (id) {
+		case "SELECTED_CELL_BACKGROUND" -> SWT.COLOR_TITLE_BACKGROUND; //$NON-NLS-1$
+		case "SELECTED_CELL_FOREGROUND" -> SWT.COLOR_WHITE; //$NON-NLS-1$
+		case "SELECTED_CELL_BACKGROUND_NO_FOCUS" -> SWT.COLOR_TITLE_INACTIVE_BACKGROUND; //$NON-NLS-1$
+		case "SELECTED_CELL_FOREGROUND_NO_FOCUS" -> SWT.COLOR_TITLE_INACTIVE_FOREGROUND; //$NON-NLS-1$
+		default -> SWT.COLOR_BLACK;
+		};
 	}
 
 	@Override
