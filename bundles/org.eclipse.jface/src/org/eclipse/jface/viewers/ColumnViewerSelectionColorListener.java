@@ -113,7 +113,9 @@ public class ColumnViewerSelectionColorListener implements Listener {
 
 		Listener[] listeners = control.getListeners(SWT.EraseItem);
 		Object ownerDrawListener = control.getData(OWNER_DRAW_LISTENER_KEY);
-		return Arrays.stream(listeners).anyMatch(l -> l != this && l != ownerDrawListener);
+		return Arrays.stream(listeners).dropWhile(l -> l != this) // ignore listeners before "this"
+				.dropWhile(l -> l == this) // also ignore "this"
+				.anyMatch(l -> l != ownerDrawListener);
 	}
 
 	/**
