@@ -147,7 +147,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 			width = scrollable.getClientArea().width;
 		}
 
-		gc.fillRectangle(0, event.y, width, event.height);
+		gc.fillRectangle(15, event.y, width, event.height);
 
 		// Remove SELECTED and BACKGROUND flags to prevent native drawing from
 		// overwriting our custom colors
