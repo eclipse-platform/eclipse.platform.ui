@@ -331,7 +331,10 @@ public class StickyScrollingControl {
 		StyledText textWidget= sourceViewer.getTextWidget();
 
 		int numberStickyLines= getNumberStickyLines();
-		int lineHeight= stickyLineText.getLineHeight() * numberStickyLines;
+		int lineHeight= 0;
+		for (int i= 0; i < numberStickyLines; i++) {
+			lineHeight+= stickyLineText.getLineHeight(stickyLineText.getOffsetAtLine(i));
+		}
 		int spacingHeight= stickyLineText.getLineSpacing() * (numberStickyLines - 1);
 		int separatorHeight= bottomSeparator.getBounds().height;
 
@@ -450,7 +453,8 @@ public class StickyScrollingControl {
 	}
 
 	private void limitVisibleStickyLinesToTextWidgetHeight(StyledText textWidget) {
-		int lineHeight= textWidget.getLineHeight() + textWidget.getLineSpacing();
+		int topOffset= textWidget.getOffsetAtLine(textWidget.getTopIndex());
+		int lineHeight= textWidget.getLineHeight(topOffset) + textWidget.getLineSpacing();
 		int textWidgetHeight= textWidget.getBounds().height;
 
 		int visibleLinesInTextWidget= textWidgetHeight / lineHeight;

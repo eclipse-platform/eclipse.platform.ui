@@ -237,6 +237,26 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
+	void testCanvasBoundsHeightMatchesPerLineHeights() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
+		StyledText stickyLineText = getStickyLineText();
+		Composite stickyLineSeparator = getStickyLineSeparator();
+
+		int expectedHeight = 0;
+		for (int i = 0; i < 2; i++) {
+			expectedHeight += stickyLineText.getLineHeight(stickyLineText.getOffsetAtLine(i));
+		}
+		expectedHeight += stickyLineText.getLineSpacing(); // (2-1) * spacing
+		expectedHeight += stickyLineSeparator.getBounds().height;
+
+		assertEquals(expectedHeight, stickyControlCanvas.getBounds().height);
+	}
+
+	@Test
 	void testLayoutStickyLinesCanvasOnResize() {
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
