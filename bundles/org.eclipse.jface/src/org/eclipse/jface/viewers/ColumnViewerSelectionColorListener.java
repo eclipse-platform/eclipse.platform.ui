@@ -20,11 +20,14 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  * EraseItem event listener that provides custom selection coloring for JFace
@@ -152,6 +155,22 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		// Remove SELECTED and BACKGROUND flags to prevent native drawing from
 		// overwriting our custom colors
 		event.detail &= ~(SWT.SELECTED | SWT.BACKGROUND);
+
+		// GTK paints over the image so we need to redraw explicitly
+		if (!(event.item instanceof TableItem item))
+			return;
+
+		int index = event.index;
+		Image image = item.getImage(index);
+
+		if (image == null)
+			return;
+
+		Rectangle imageBounds = item.getImageBounds(index);
+		Rectangle bounds = image.getBounds();
+		int x = imageBounds.x + Math.max(0, (imageBounds.width - bounds.width) / 2);
+		int y = imageBounds.y + Math.max(0, (imageBounds.height - bounds.height) / 2);
+		gc.drawImage(image, x, y);
 	}
 
 	private static Color getSelectionColor(String key, org.eclipse.swt.graphics.Device device) {
