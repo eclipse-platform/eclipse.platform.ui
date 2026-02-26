@@ -58,6 +58,13 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	private static final String COLOR_SELECTION_FG_NO_FOCUS = "org.eclipse.jface.SELECTION_FOREGROUND_NO_FOCUS"; //$NON-NLS-1$
 
 	/**
+	 * This class shouldn't be instantiated directly. Attach this listener to a
+	 * viewer via {@link #addListenerToViewer(StructuredViewer)} instead.
+	 */
+	private ColumnViewerSelectionColorListener() {
+	}
+
+	/**
 	 * Registers the selection color listener on the given viewer.
 	 * <p>
 	 * This method is idempotent - calling it multiple times on the same viewer has
