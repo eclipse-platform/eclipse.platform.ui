@@ -153,10 +153,10 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	}
 
 	private static RGB getSystemColorForId(Device device, String id) {
-		return device.getSystemColor(idToColor(id)).getRGB();
+		return device.getSystemColor(idToDefaultSWTSystemColor(id)).getRGB();
 	}
 
-	private static int idToColor(String id) {
+	private static int idToDefaultSWTSystemColor(String id) {
 		return switch (id) {
 		case COLOR_SELECTION_BG_FOCUS -> SWT.COLOR_TITLE_BACKGROUND;
 		case COLOR_SELECTION_FG_FOCUS -> SWT.COLOR_WHITE;
