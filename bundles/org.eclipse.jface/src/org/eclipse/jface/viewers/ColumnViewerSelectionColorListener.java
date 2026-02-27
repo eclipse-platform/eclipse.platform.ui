@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.TableItem;
  * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider
  * @see org.eclipse.jface.viewers.StyledCellLabelProvider
  * @see org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter
- * @since 3.39
+ * @since 3.40
  */
 public class ColumnViewerSelectionColorListener implements Listener {
 
