@@ -51,23 +51,6 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class ColumnViewerSelectionColorListener implements Listener {
 
-	/**
-	 * Contains the values of the color definitions from the
-	 * <code>plugin.xml</code>. <br/>
-	 *
-	 * @implNote If some value doesn't match the exact name (String) inside the
-	 *           <code>plugin.xml</code> or if some string from the xml is not
-	 *           present here then
-	 *           {@link ColumnViewerSelectionColorFactory#getSystemColorForId(ColorId)}
-	 *           will not return what you expect.
-	 * @since 3.5
-	 *
-	 */
-//	private static enum ColorId {
-//		SELECTED_CELL_BACKGROUND, SELECTED_CELL_FOREGROUND, SELECTED_CELL_BACKGROUND_NO_FOCUS,
-//		SELECTED_CELL_FOREGROUND_NO_FOCUS
-//	}
-
 	private static final String LISTENER_KEY = "org.eclipse.jface.viewers.selection_color_listener"; //$NON-NLS-1$
 	private static final String OWNER_DRAW_LISTENER_KEY = "owner_draw_label_provider_listener"; //$NON-NLS-1$
 
@@ -110,25 +93,19 @@ public class ColumnViewerSelectionColorListener implements Listener {
 				.anyMatch(l -> l != ownerDrawListener);
 	}
 
-	public static Color getForegroundColor(boolean focused, Device device) {
-		return getSelectionColor(focused ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS, device);
+	public static Color getForegroundColor(Device device, boolean focused) {
+		return getSelectionColor(device, focused ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS);
 	}
 
-	public static Color getBackgroundColor(boolean focused, Device device) {
-		return getSelectionColor(focused ? COLOR_SELECTION_BG_FOCUS : COLOR_SELECTION_BG_NO_FOCUS, device);
+	public static Color getBackgroundColor(Device device, boolean focused) {
+		return getSelectionColor(device, focused ? COLOR_SELECTION_BG_FOCUS : COLOR_SELECTION_BG_NO_FOCUS);
 	}
 
-	public static Color getSelectionColor(String key, Device device) {
+	private static Color getSelectionColor(Device device, String key) {
 		ColorRegistry registry = JFaceResources.getColorRegistry();
 
 		if (!registry.hasValueFor(key)) {
-
 			RGB systemColor = device.getSystemColor(idToColor(key)).getRGB();
-//			RGB systemColor2 = getSystemColorForId(device, key);
-//
-//			if (!systemColor.equals(systemColor2))
-//				throw new RuntimeException("Something's fishy"); //$NON-NLS-1$
-
 			registry.put(key, systemColor);
 		}
 
@@ -190,8 +167,8 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		Control control = (Control) event.widget;
 		GC gc = event.gc;
 
-		Color bg = getBackgroundColor(control.isFocusControl(), event.display);
-		Color fg = getForegroundColor(control.isFocusControl(), event.display);
+		Color bg = getBackgroundColor(event.display, control.isFocusControl());
+		Color fg = getForegroundColor(event.display, control.isFocusControl());
 
 		gc.setBackground(bg);
 		gc.setForeground(fg);
@@ -210,7 +187,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 
 	}
 
-	public static void handlePaintItem(Event event) {
+	private void handlePaintItem(Event event) {
 		// We must not rely on event.detail & SWT.SELECTED because we cleared it above.
 		// Instead compute selection state from the widget.
 		if (!(event.widget instanceof org.eclipse.swt.widgets.Table table))
@@ -225,8 +202,8 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		GC gc = event.gc;
 
 		// Set the foreground color for selected text/icon painting, if needed
-		Color fg = getSelectionColor(table.isFocusControl() ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS,
-				event.display);
+		Color fg = getSelectionColor(event.display,
+				table.isFocusControl() ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS);
 		gc.setForeground(fg);
 
 		// Paint the image explicitly (like TableOwnerDrawSupport does)

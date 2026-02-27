@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.util.Hashtable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.viewers.ColumnViewerSelectionColorListener;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.themes.IColorFactory;
 
 /**
@@ -39,23 +37,13 @@ public class ColumnViewerSelectionColorFactory implements IColorFactory, IExecut
 
 	@Override
 	public RGB createColor() {
-		return Display.getDefault().getSystemColor(idToColor(color)).getRGB();
-	}
-
-	private int idToColor(String id) {
-		return switch (id) {
-		case "SELECTED_CELL_BACKGROUND" -> SWT.COLOR_TITLE_BACKGROUND; //$NON-NLS-1$
-		case "SELECTED_CELL_FOREGROUND" -> SWT.COLOR_WHITE; //$NON-NLS-1$
-		case "SELECTED_CELL_BACKGROUND_NO_FOCUS" -> SWT.COLOR_TITLE_INACTIVE_BACKGROUND; //$NON-NLS-1$
-		case "SELECTED_CELL_FOREGROUND_NO_FOCUS" -> SWT.COLOR_TITLE_INACTIVE_FOREGROUND; //$NON-NLS-1$
-		default -> SWT.COLOR_BLACK;
-		};
+		return ColumnViewerSelectionColorListener.getSystemColorForId(color);
 	}
 
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
-		if (data instanceof Hashtable table) {
-			this.color = (String) table.get("color"); //$NON-NLS-1$
+		if ("colorDefinition".equals(config.getName())) { //$NON-NLS-1$
+			this.color = config.getAttribute("id"); //$NON-NLS-1$
 		}
 	}
 }

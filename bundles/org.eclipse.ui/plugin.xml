@@ -1749,10 +1749,6 @@
          <colorFactory
                plugin="org.eclipse.ui.workbench"
                class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
-            <parameter
-                  name="color"
-                  value="SELECTED_CELL_BACKGROUND">
-            </parameter>
          </colorFactory>
          <description>
             %Color.viewerSelectionBackgroundFocusedDesc
@@ -1765,10 +1761,6 @@
          <colorFactory
                plugin="org.eclipse.ui.workbench"
                class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
-            <parameter
-                  name="color"
-                  value="SELECTED_CELL_FOREGROUND">
-            </parameter>
          </colorFactory>
          <description>
             %Color.viewerSelectionForegroundFocusedDesc
@@ -1781,10 +1773,6 @@
          <colorFactory
                plugin="org.eclipse.ui.workbench"
                class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
-            <parameter
-                  name="color"
-                  value="SELECTED_CELL_BACKGROUND_NO_FOCUS">
-            </parameter>
          </colorFactory>
          <description>
             %Color.viewerSelectionBackgroundNoFocusDesc
@@ -1797,10 +1785,6 @@
          <colorFactory
                plugin="org.eclipse.ui.workbench"
                class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
-            <parameter
-                  name="color"
-                  value="SELECTED_CELL_FOREGROUND_NO_FOCUS">
-            </parameter>
          </colorFactory>
          <description>
             %Color.viewerSelectionForegroundNoFocusDesc
