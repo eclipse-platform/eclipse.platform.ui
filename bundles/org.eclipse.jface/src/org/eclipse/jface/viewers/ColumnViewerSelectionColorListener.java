@@ -62,7 +62,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 
 	/**
 	 * This class shouldn't be instantiated directly. Attach this listener to a
-	 * viewer via {@link #addListenerToViewer(StructuredViewer)} instead.
+	 * viewer via {@link #install(StructuredViewer)} instead.
 	 */
 	private ColumnViewerSelectionColorListener() {
 	}
@@ -131,7 +131,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		};
 	}
 
-	public static void addListenerToViewer(StructuredViewer viewer) {
+	public static void install(StructuredViewer viewer) {
 		Control control = viewer.getControl();
 		if (control.isDisposed() || isListenerRegistered(control)) {
 			return;

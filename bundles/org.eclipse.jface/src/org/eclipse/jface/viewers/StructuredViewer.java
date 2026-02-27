@@ -1210,7 +1210,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		});
 		handler.addPostSelectionListener(widgetSelectedAdapter(this::handlePostSelect));
 		handler.addOpenListener(StructuredViewer.this::handleOpen);
-		ColumnViewerSelectionColorListener.addListenerToViewer(this);
+		ColumnViewerSelectionColorListener.install(this);
 	}
 
 	/**
