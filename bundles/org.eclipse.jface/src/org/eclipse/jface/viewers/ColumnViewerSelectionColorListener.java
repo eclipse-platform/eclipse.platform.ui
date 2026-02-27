@@ -190,17 +190,14 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		GC gc = event.gc;
 
 		Color bg = getSelectionBackgroundColor(event.display, control.isFocusControl());
-		Color fg = getSelectionForegroundColor(event.display, control.isFocusControl());
 
 		gc.setBackground(bg);
-		gc.setForeground(fg);
 
 		int rowWidth = (event.widget instanceof Scrollable s) ? s.getClientArea().width : event.width;
 		gc.fillRectangle(0, event.y, rowWidth, event.height);
 
 		// Prevent native selection drawing
 		event.detail &= ~SWT.SELECTED;
-
 	}
 
 	private void handlePaintItem(Event event) {
