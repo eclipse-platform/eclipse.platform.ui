@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
@@ -159,8 +160,8 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		if (event.widget instanceof Control c && !c.isEnabled())
 			return;
 
-		// Your "other listeners" logic still applies, but note:
-		// TableOwnerDrawSupport is a different listener and will still run.
+		// No need to process if there are more processors (other than
+		// TableOwnerDrawSupport) after this one.
 		if (hasAdditionalEraseItemListeners(event))
 			return;
 
@@ -173,16 +174,10 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		gc.setBackground(bg);
 		gc.setForeground(fg);
 
-		// (A) full-row
 		int rowWidth = (event.widget instanceof Scrollable s) ? s.getClientArea().width : event.width;
 		gc.fillRectangle(0, event.y, rowWidth, event.height);
 
 		// Prevent native selection drawing
-		// Do NOT clear SWT.BACKGROUND here unless you really want to suppress SWT
-		// background painting.
-		// (You *can* clear SWT.BACKGROUND if you see it overwriting your fill on a
-		// platform,
-		// but try without first.)
 		event.detail &= ~SWT.SELECTED;
 
 	}
@@ -190,7 +185,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	private void handlePaintItem(Event event) {
 		// We must not rely on event.detail & SWT.SELECTED because we cleared it above.
 		// Instead compute selection state from the widget.
-		if (!(event.widget instanceof org.eclipse.swt.widgets.Table table))
+		if (!(event.widget instanceof Table table))
 			return;
 		if (!(event.item instanceof TableItem item))
 			return;

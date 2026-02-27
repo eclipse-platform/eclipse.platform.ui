@@ -36,6 +36,9 @@ import org.eclipse.jface.viewers.ColumnViewerSelectionColorListener;
  */
 public class CompletionProposalDrawSupport implements Listener {
 
+	/**
+	 * Delegate
+	 */
 	private final TableOwnerDrawSupport fTableOwnerDrawSupport;
 
 	private CompletionProposalDrawSupport(Table table) {
@@ -44,6 +47,10 @@ public class CompletionProposalDrawSupport implements Listener {
 
 	public static void install(Table table) {
 		CompletionProposalDrawSupport listener= new CompletionProposalDrawSupport(table);
+
+		// Since this listener delegates to TableOwnerDrawSupport right after doing
+		// its own stuff, we need to make sure to listen for all kind of events so
+		// that the delegation happens even after a No-Op.
 		table.addListener(SWT.Dispose, listener);
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
@@ -66,19 +73,11 @@ public class CompletionProposalDrawSupport implements Listener {
 				event.gc.fillRectangle(0, event.y, width, event.height);
 
 				// Prevent native selection drawing
-				// Do NOT clear SWT.BACKGROUND here unless you really want to suppress SWT
-				// background painting.
-				// (You *can* clear SWT.BACKGROUND if you see it overwriting your fill on a
-				// platform,
-				// but try without first.)
 				event.detail&= ~SWT.SELECTED;
 
 			} else if (event.type == SWT.PaintItem) {
-
 				final Color foregroundColor= ColumnViewerSelectionColorListener.getForegroundColor(event.display, isSelected);
 				event.gc.setForeground(foregroundColor);
-
-//				event.detail&= ~SWT.FOREGROUND;
 			}
 		}
 
