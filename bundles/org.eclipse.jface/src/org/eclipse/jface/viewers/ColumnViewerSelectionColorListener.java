@@ -218,8 +218,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		GC gc = event.gc;
 
 		// Set the foreground color for selected text/icon painting, if needed
-		Color fg = getSelectionColor(event.display,
-				table.isFocusControl() ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS);
+		Color fg = getSelectionForegroundColor(event.display, table.isFocusControl());
 		gc.setForeground(fg);
 
 		// Paint the image explicitly (like TableOwnerDrawSupport does)
