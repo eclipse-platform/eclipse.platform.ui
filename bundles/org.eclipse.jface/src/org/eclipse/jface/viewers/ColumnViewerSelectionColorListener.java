@@ -67,6 +67,20 @@ public class ColumnViewerSelectionColorListener implements Listener {
 	private ColumnViewerSelectionColorListener() {
 	}
 
+	public static void install(StructuredViewer viewer) {
+		Control control = viewer.getControl();
+		if (control.isDisposed() || isListenerRegistered(control)) {
+			return;
+		}
+
+		ColumnViewerSelectionColorListener listener = new ColumnViewerSelectionColorListener();
+		control.setData(LISTENER_KEY, listener);
+
+		// We need both phases
+		control.addListener(SWT.EraseItem, listener);
+		control.addListener(SWT.PaintItem, listener);
+	}
+
 	private static boolean isListenerRegistered(Control control) {
 		return control.getData(LISTENER_KEY) != null;
 	}
@@ -129,20 +143,6 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		case COLOR_SELECTION_FG_NO_FOCUS -> SWT.COLOR_TITLE_INACTIVE_FOREGROUND;
 		default -> SWT.COLOR_LIST_SELECTION;
 		};
-	}
-
-	public static void install(StructuredViewer viewer) {
-		Control control = viewer.getControl();
-		if (control.isDisposed() || isListenerRegistered(control)) {
-			return;
-		}
-
-		ColumnViewerSelectionColorListener listener = new ColumnViewerSelectionColorListener();
-		control.setData(LISTENER_KEY, listener);
-
-		// We need both phases
-		control.addListener(SWT.EraseItem, listener);
-		control.addListener(SWT.PaintItem, listener);
 	}
 
 	@Override
