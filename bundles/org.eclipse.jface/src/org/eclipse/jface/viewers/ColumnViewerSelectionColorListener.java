@@ -120,11 +120,15 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		return getSelectionColor(device, focused ? COLOR_SELECTION_BG_FOCUS : COLOR_SELECTION_BG_NO_FOCUS);
 	}
 
+	/**
+	 * @return either a color set via preferences or the system color for the given
+	 *         key.
+	 */
 	private static Color getSelectionColor(Device device, String key) {
 		ColorRegistry registry = JFaceResources.getColorRegistry();
 
 		if (!registry.hasValueFor(key)) {
-			RGB systemColor = device.getSystemColor(idToColor(key)).getRGB();
+			RGB systemColor = getSystemColorForId(device, key);
 			registry.put(key, systemColor);
 		}
 
