@@ -18,9 +18,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Table;
 
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
+import org.eclipse.jface.viewers.ColumnViewerSelectionColorListener;
 
 /**
  * Provides custom drawing support for completion proposals. This class ensures that completion
@@ -50,14 +52,36 @@ public class CompletionProposalDrawSupport implements Listener {
 
 	@Override
 	public void handleEvent(Event event) {
-		if (event.widget instanceof Control control && !control.isFocusControl() && (event.type == SWT.EraseItem || event.type == SWT.PaintItem) && event.gc != null) {
-			Color background= event.widget.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-			Color foreground= event.widget.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-			event.gc.setBackground(background);
-			event.gc.setForeground(foreground);
+
+		if (event.widget instanceof Control && event.gc != null) {
+
+			boolean isSelected= (event.detail & SWT.SELECTED) != 0;
+
+			if (event.type == SWT.EraseItem && isSelected) {
+
+				final Color backgroundColor= ColumnViewerSelectionColorListener.getBackgroundColor(isSelected, event.display);
+				event.gc.setBackground(backgroundColor);
+
+				final int width= (event.widget instanceof Scrollable s) ? s.getClientArea().width : event.width;
+				event.gc.fillRectangle(0, event.y, width, event.height);
+
+				// Prevent native selection drawing
+				// Do NOT clear SWT.BACKGROUND here unless you really want to suppress SWT
+				// background painting.
+				// (You *can* clear SWT.BACKGROUND if you see it overwriting your fill on a
+				// platform,
+				// but try without first.)
+				event.detail&= ~SWT.SELECTED;
+
+			} else if (event.type == SWT.PaintItem) {
+
+				final Color foregroundColor= ColumnViewerSelectionColorListener.getForegroundColor(isSelected, event.display);
+				event.gc.setForeground(foregroundColor);
+
+//				event.detail&= ~SWT.FOREGROUND;
+			}
 		}
 
 		fTableOwnerDrawSupport.handleEvent(event);
 	}
-
 }
