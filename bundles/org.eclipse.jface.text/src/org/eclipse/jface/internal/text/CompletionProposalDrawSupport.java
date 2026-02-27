@@ -65,7 +65,7 @@ public class CompletionProposalDrawSupport implements Listener {
 
 			if (event.type == SWT.EraseItem && isSelected) {
 
-				final Color backgroundColor= ColumnViewerSelectionColorListener.getBackgroundColor(event.display, isSelected);
+				final Color backgroundColor= ColumnViewerSelectionColorListener.getSelectionBackgroundColor(event.display, isSelected);
 				event.gc.setBackground(backgroundColor);
 
 				final int width= (event.widget instanceof Scrollable s) ? s.getClientArea().width : event.width;
@@ -75,7 +75,7 @@ public class CompletionProposalDrawSupport implements Listener {
 				event.detail&= ~SWT.SELECTED;
 
 			} else if (event.type == SWT.PaintItem) {
-				final Color foregroundColor= ColumnViewerSelectionColorListener.getForegroundColor(event.display, isSelected);
+				final Color foregroundColor= ColumnViewerSelectionColorListener.getSelectionForegroundColor(event.display, isSelected);
 				event.gc.setForeground(foregroundColor);
 			}
 		}

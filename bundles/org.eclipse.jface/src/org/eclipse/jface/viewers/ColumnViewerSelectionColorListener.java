@@ -112,18 +112,32 @@ public class ColumnViewerSelectionColorListener implements Listener {
 				.anyMatch(l -> l != ownerDrawListener);
 	}
 
-	public static Color getForegroundColor(Device device, boolean focused) {
+	/**
+	 * Gets the foreground color for a selected cell or item in a viewer.
+	 *
+	 * @param device  The device to get the system color from (in case there is no
+	 *                color set in the preferences)
+	 * @param focused Whether or not the control that contains the cell or item is
+	 *                currently focused.
+	 * @return either a color set via preferences or the default system color.
+	 */
+	public static Color getSelectionForegroundColor(Device device, boolean focused) {
 		return getSelectionColor(device, focused ? COLOR_SELECTION_FG_FOCUS : COLOR_SELECTION_FG_NO_FOCUS);
 	}
 
-	public static Color getBackgroundColor(Device device, boolean focused) {
+	/**
+	 * Gets the background color for a selected cell or item in a viewer.
+	 *
+	 * @param device  The device to get the system color from (in case there is no
+	 *                color set in the preferences)
+	 * @param focused Whether or not the control that contains the cell or item is
+	 *                currently focused.
+	 * @return either a color set via preferences or the default system color.
+	 */
+	public static Color getSelectionBackgroundColor(Device device, boolean focused) {
 		return getSelectionColor(device, focused ? COLOR_SELECTION_BG_FOCUS : COLOR_SELECTION_BG_NO_FOCUS);
 	}
 
-	/**
-	 * @return either a color set via preferences or the system color for the given
-	 *         key.
-	 */
 	private static Color getSelectionColor(Device device, String key) {
 		ColorRegistry registry = JFaceResources.getColorRegistry();
 
@@ -176,8 +190,8 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		Control control = (Control) event.widget;
 		GC gc = event.gc;
 
-		Color bg = getBackgroundColor(event.display, control.isFocusControl());
-		Color fg = getForegroundColor(event.display, control.isFocusControl());
+		Color bg = getSelectionBackgroundColor(event.display, control.isFocusControl());
+		Color fg = getSelectionForegroundColor(event.display, control.isFocusControl());
 
 		gc.setBackground(bg);
 		gc.setForeground(fg);
