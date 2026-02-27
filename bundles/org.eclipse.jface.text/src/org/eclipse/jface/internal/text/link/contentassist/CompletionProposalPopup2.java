@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.internal.text.CompletionProposalDrawSupport;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
-import org.eclipse.jface.internal.text.contentassist.CompletionProposalDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;

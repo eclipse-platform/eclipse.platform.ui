@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.text.contentassist;
+package org.eclipse.jface.internal.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Table;
 
-import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.viewers.ColumnViewerSelectionColorListener;
 
 /**
