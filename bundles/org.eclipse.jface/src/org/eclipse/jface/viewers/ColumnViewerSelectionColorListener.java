@@ -74,7 +74,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		}
 
 		ColumnViewerSelectionColorListener listener = new ColumnViewerSelectionColorListener();
-		control.setData(LISTENER_KEY, listener);
+		registerListener(control, listener);
 
 		// We need both phases
 		control.addListener(SWT.EraseItem, listener);
@@ -83,6 +83,10 @@ public class ColumnViewerSelectionColorListener implements Listener {
 
 	private static boolean isListenerRegistered(Control control) {
 		return control.getData(LISTENER_KEY) != null;
+	}
+
+	private static void registerListener(Control control, ColumnViewerSelectionColorListener listener) {
+		control.setData(LISTENER_KEY, listener);
 	}
 
 	/**
