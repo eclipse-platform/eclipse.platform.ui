@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.TableItem;
 public class ColumnViewerSelectionColorListener implements Listener {
 
 	private static final String LISTENER_KEY = "org.eclipse.jface.viewers.selection_color_listener"; //$NON-NLS-1$
-	private static final String OWNER_DRAW_LISTENER_KEY = "owner_draw_label_provider_listener"; //$NON-NLS-1$
 
 	private static final String COLOR_SELECTION_BG_FOCUS = "org.eclipse.jface.SELECTION_BACKGROUND_FOCUSED"; //$NON-NLS-1$
 	private static final String COLOR_SELECTION_FG_FOCUS = "org.eclipse.jface.SELECTION_FOREGROUND_FOCUSED"; //$NON-NLS-1$
@@ -106,7 +105,7 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		}
 
 		Listener[] listeners = control.getListeners(SWT.EraseItem);
-		Object ownerDrawListener = control.getData(OWNER_DRAW_LISTENER_KEY);
+		Object ownerDrawListener = control.getData(OwnerDrawLabelProvider.OWNER_DRAW_LABEL_PROVIDER_LISTENER);
 		return Arrays.stream(listeners).dropWhile(l -> l != this) // ignore listeners before "this"
 				.dropWhile(l -> l == this) // also ignore "this"
 				.anyMatch(l -> l != ownerDrawListener);
