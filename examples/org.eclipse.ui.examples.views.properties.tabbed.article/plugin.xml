@@ -10,7 +10,7 @@
       <view
             name="%Views.example.name"
             category="org.eclipse.ui.views.properties.tabbed"
-            icon="icons/sample.gif"
+            icon="icons/sample.svg"
             class="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView"
             id="org.eclipse.ui.examples.views.properties.tabbed.article.views.SampleView">
       </view>

@@ -24,7 +24,7 @@
       </category>
       <view
             name="%Views.boxView"
-            icon="icons/sample.gif"
+            icon="icons/sample.svg"
             category="org.eclipse.ui.examples.undo"
             class="org.eclipse.ui.examples.undo.views.BoxView"
             id="org.eclipse.ui.examples.undo.views.BoxView">
@@ -38,7 +38,7 @@
             id="org.eclipse.ui.examples.undo"/>
       <view
             class="org.eclipse.ui.examples.undo.views.UndoHistoryView"
-            icon="icons/sample.gif"
+            icon="icons/sample.svg"
             category="org.eclipse.ui.examples.undo"
             name="%Views.historyView"
             id="org.eclipse.ui.examples.undo.views.UndoHistoryView"/>

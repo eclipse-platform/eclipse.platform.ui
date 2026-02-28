@@ -12,7 +12,7 @@
       <view
             allowMultiple="false"
             class="org.eclipse.ui.navigator.CommonNavigator"
-            icon="icons/filenav_nav.gif"
+            icon="icons/filenav_nav.svg"
             id="org.eclipse.ui.examples.navigator.view"
             name="Example View"/>
    </extension>
@@ -95,7 +95,7 @@
             contentProvider="org.eclipse.ui.examples.navigator.PropertiesContentProvider"
             labelProvider="org.eclipse.ui.examples.navigator.PropertiesLabelProvider" 
             activeByDefault="true"
-            icon="icons/prop_ps.gif"
+            icon="icons/prop_ps.svg"
             priority="normal" >
          <triggerPoints>
          	<or>
@@ -141,7 +141,7 @@
                class="org.eclipse.ui.examples.navigator.actions.DeletePropertyAction"
                enablesFor="1"
                helpContextId="org.eclipse.ui.edit.delete"
-               icon="icons/delete_obj.gif"
+               icon="icons/delete_obj.svg"
                id="org.eclipse.ui.examples.navigator.actions.deleteProperty"
                label="Delete Property"
                menubarPath="group.edit"
