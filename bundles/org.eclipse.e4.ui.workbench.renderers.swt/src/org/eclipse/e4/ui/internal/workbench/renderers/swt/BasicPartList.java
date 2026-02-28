@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
@@ -167,6 +168,20 @@ public class BasicPartList extends AbstractTableInformationControl {
 			}
 		}
 		return list;
+	}
+
+	public List<MPart> getEditorsReversed() {
+		List<MPart> showEditors = new ArrayList<>();
+		for (Object obj : getInput()) {
+			if (obj instanceof MPart part) {
+				CTabItem item = renderer.findItemForPart(part);
+				if (item != null && !item.isShowing()) {
+					showEditors.add(part);
+				}
+			}
+		}
+		Collections.reverse(showEditors);
+		return showEditors;
 	}
 
 	public void setInput() {
