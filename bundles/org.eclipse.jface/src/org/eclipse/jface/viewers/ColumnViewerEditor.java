@@ -19,6 +19,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
@@ -279,7 +280,13 @@ public abstract class ColumnViewerEditor {
 
 	private boolean shouldFireDoubleClick(int activationTime, int mouseTime,
 			ColumnViewerEditorActivationEvent activationEvent) {
-		return mouseTime <= activationTime
+		boolean lessThanActivationTime = mouseTime <= activationTime;
+		if (Util.isMac() && lessThanActivationTime
+				&& (activationEvent.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
+						|| activationEvent.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION)) {
+			return false;
+		}
+		return lessThanActivationTime
 				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.KEY_PRESSED
 				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.PROGRAMMATIC
 				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL;
