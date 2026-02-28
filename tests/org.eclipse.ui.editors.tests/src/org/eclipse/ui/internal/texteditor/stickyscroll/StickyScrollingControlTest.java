@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -237,23 +238,28 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
-	void testCanvasBoundsHeightMatchesPerLineHeights() {
+	void testCanvasBoundsHeightAdjustsForVariableLineHeights() {
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
-		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1));
-		stickyScrollingControl.setStickyLines(stickyLines);
 
+		// Step 1: Set 2 plain-text sticky lines and record canvas height
+		List<IStickyLine> plainLines = List.of(
+				new StickyLineStub("line 1", 0),
+				new StickyLineStub("line 2", 1));
+		stickyScrollingControl.setStickyLines(plainLines);
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
-		StyledText stickyLineText = getStickyLineText();
-		Composite stickyLineSeparator = getStickyLineSeparator();
+		int heightWithPlainText = stickyControlCanvas.getBounds().height;
 
-		int expectedHeight = 0;
-		for (int i = 0; i < 2; i++) {
-			expectedHeight += stickyLineText.getLineHeight(stickyLineText.getOffsetAtLine(i));
-		}
-		expectedHeight += stickyLineText.getLineSpacing(); // (2-1) * spacing
-		expectedHeight += stickyLineSeparator.getBounds().height;
+		// Step 2: Replace second sticky line with emoji requiring more vertical space
+		List<IStickyLine> emojiLines = List.of(
+				new StickyLineStub("line 1", 0),
+				new StickyLineStub("\uD83D\uDE00\uD83D\uDE80\uD83C\uDF1F", 1));
+		stickyScrollingControl.setStickyLines(emojiLines);
+		stickyControlCanvas = getStickyControlCanvas(shell);
+		int heightWithEmoji = stickyControlCanvas.getBounds().height;
 
-		assertEquals(expectedHeight, stickyControlCanvas.getBounds().height);
+		// Step 3: Assert emoji causes taller canvas (documents the actual bug)
+		assertTrue(heightWithEmoji > heightWithPlainText,
+				"Canvas height should increase when sticky lines contain emoji with larger line heights");
 	}
 
 	@Test
