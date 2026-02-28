@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.util.impl.resources;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
@@ -33,7 +32,7 @@ public class HttpResourcesLocatorImpl implements IResourceLocator {
 
 	@Override
 	public InputStream getInputStream(String uri) throws Exception {
-		URL url = new java.net.URL((new File("./")).toURL(), uri);
+		URL url = new URL(uri);
 		return url.openStream();
 	}
 
