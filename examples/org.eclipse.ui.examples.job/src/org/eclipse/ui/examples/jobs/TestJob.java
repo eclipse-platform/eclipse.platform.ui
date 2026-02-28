@@ -14,10 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.jobs;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ResourceLocator;
@@ -97,6 +101,31 @@ public class TestJob extends Job {
 		}
 		try {
 			for (int i = 0; i < ticks; i++) {
+				// First case: just any resource operation
+				try {
+					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(0, monitor);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				// Second case: just call ResourcesPlugin.getWorkspace().run()
+				try {
+					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+
+						@Override
+						public void run(IProgressMonitor innerMonitor) {
+							//
+						}
+					}, ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				// Third case: just call a join...
+				try {
+					Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
+				} catch (OperationCanceledException | InterruptedException e) {
+					e.printStackTrace();
+				}
+
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
