@@ -28,10 +28,15 @@ public class OuterProjectFileFilter extends MatchFilter {
 	@Override
 	public boolean filters(Match match) {
 		if (match instanceof FileMatch) {
-			IFile file= ((FileMatch)match).getFile();
+			IFile file = ((FileMatch) match).getFile();
 			URI locationUri = file.getLocationURI();
+
 			IFile innermostFile = locationUri == null ? file : //
 					Arrays.stream(file.getWorkspace().getRoot().findFilesForLocationURI(locationUri)) //
+							// Don't consider the content of a closed project
+							// for filtering because the matches there cannot be
+							// shown
+							.filter(aFile -> aFile.getProject().isAccessible())
 							.min(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length))
 							// shortest workspace (project relative) full path
 							// means most nested project
