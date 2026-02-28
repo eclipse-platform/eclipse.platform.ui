@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -458,6 +458,11 @@ public class WorkbenchMessages extends NLS {
 	public static String PreferenceExportWarning_message;
 	public static String PreferenceExportWarning_continue;
 	public static String PreferenceExportWarning_applyAndContinue;
+
+	public static String Preference_Enable_Autocomplete_ChevronPopUp;
+	public static String Preference_Autocomplete;
+
+	public static String Preference_Enable_Autocomplete_ChevronPopUp_ToolTip;
 
 	// --- Workbench ---
 	public static String WorkbenchPreference_allowInplaceEditingButton;

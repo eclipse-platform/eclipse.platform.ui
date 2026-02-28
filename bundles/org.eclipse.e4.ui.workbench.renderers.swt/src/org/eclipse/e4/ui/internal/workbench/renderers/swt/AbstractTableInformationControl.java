@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -25,6 +27,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -312,6 +316,19 @@ public abstract class AbstractTableInformationControl {
 		return fTableViewer;
 	}
 
+	private String suggestCompletionFromTable(String Text) {
+		if (Text == null || Text.isEmpty()) {
+			return null;
+		}
+		for (TableItem item : fTableViewer.getTable().getItems()) {
+			String textTable = item.getText();
+			if (textTable.toLowerCase().startsWith(Text.toLowerCase())) {
+				return textTable;
+			}
+		}
+		return null;
+	}
+
 	protected Text createFilterText(Composite parent) {
 		fFilterText = new Text(parent, SWT.NONE);
 
@@ -371,16 +388,54 @@ public abstract class AbstractTableInformationControl {
 		setBackgroundColor(background);
 	}
 
-	private void installFilter() {
+	private void chevronAutocompleteBehavior() {
 		fFilterText.setMessage(WorkbenchSWTMessages.FilteredTree_FilterMessage);
 		fFilterText.setText(""); //$NON-NLS-1$
+		setMatcherString(""); //$NON-NLS-1$
+		fTableViewer.refresh();
 
-		fFilterText.addModifyListener(e -> {
-			String text = ((Text) e.widget).getText();
-			setMatcherString(text);
+		fFilterText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				int cursor = fFilterText.getSelection().x;
+				String input = fFilterText.getText().substring(0, cursor);
+				setMatcherString(input);
+				fTableViewer.refresh();
+
+				if (e.keyCode == SWT.BS || e.keyCode == SWT.DEL || !Character.isLetterOrDigit(e.character))
+					return;
+
+				String suggestion = suggestCompletionFromTable(input);
+				if (suggestion != null && suggestion.length() > input.length()) {
+					fFilterText.setText(suggestion);
+					fFilterText.setSelection(input.length(), suggestion.length());
+				}
+			}
 		});
 	}
 
+	private void normalFilterBehavior() {
+		fFilterText.setMessage(WorkbenchSWTMessages.FilteredTree_FilterMessage);
+		fFilterText.setText(""); //$NON-NLS-1$
+		fFilterText.addModifyListener(e -> {
+			String text = ((Text) e.widget).getText();
+			setMatcherString(text);
+			fTableViewer.refresh();
+		});
+	}
+
+	private void installFilter() {
+		if (isAutocompleteEnabled()) {
+			chevronAutocompleteBehavior();
+		} else {
+			normalFilterBehavior();
+		}
+	}
+
+	private boolean isAutocompleteEnabled() {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.ui.workbench"); //$NON-NLS-1$
+		return prefs.getBoolean("ENABLE_AUTOCOMPLETE_IN_CHEVRON", false); //$NON-NLS-1$
+	}
 	/**
 	 * The string matcher has been modified. The default implementation
 	 * refreshes the view and selects the first matched element
