@@ -15,7 +15,6 @@
 
 package org.eclipse.ui.internal.navigator.resources.actions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,21 +22,20 @@ import java.util.List;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -48,11 +46,8 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.CloseUnrelatedProjectsAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
@@ -215,40 +210,22 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 
 		refreshAction = new RefreshAction(sp) {
 			@Override
-			public void run() {
-				final IStatus[] errorStatus = new IStatus[1];
-				errorStatus[0] = Status.OK_STATUS;
-				final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
-				WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
-
+			protected void scheduleRefreshJob(List<? extends IResource> resources, ISchedulingRule rule) {
+				WorkspaceJob job = createRefreshJob(resources, rule);
+				job.addJobChangeListener(new JobChangeAdapter() {
 					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						try {
-							op.run(monitor);
-							if (shell != null && !shell.isDisposed()) {
-								shell.getDisplay().asyncExec(() -> {
-									StructuredViewer viewer = getActionSite().getStructuredViewer();
-									if (viewer != null && viewer.getControl() != null
-											&& !viewer.getControl().isDisposed()) {
-										viewer.refresh();
-									}
-								});
-							}
-						} catch (InvocationTargetException e) {
-							String msg = NLS.bind(WorkbenchNavigatorMessages.ResourceMgmtActionProvider_logTitle, getClass().getName(), e.getTargetException());
-							throw new CoreException(new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, IStatus.ERROR, msg, e.getTargetException()));
-						} catch (InterruptedException e) {
-							return Status.CANCEL_STATUS;
+					public void done(IJobChangeEvent event) {
+						if (shell != null && !shell.isDisposed()) {
+							shell.getDisplay().asyncExec(() -> {
+								StructuredViewer viewer = getActionSite().getStructuredViewer();
+								if (viewer != null && viewer.getControl() != null
+										&& !viewer.getControl().isDisposed()) {
+									viewer.refresh();
+								}
+							});
 						}
-						return errorStatus[0];
 					}
-
-				};
-				ISchedulingRule rule = op.getRule();
-				if (rule != null) {
-					job.setRule(rule);
-				}
-				job.setUser(true);
+				});
 				job.schedule();
 			}
 		};
