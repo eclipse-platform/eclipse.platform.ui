@@ -16,9 +16,9 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,8 +30,8 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionC
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Mutability tests for IObservableCollection.
@@ -58,7 +58,7 @@ public class MutableObservableCollectionContractTest extends
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		collection = (IObservableCollection) super.getObservable();
@@ -160,9 +160,8 @@ public class MutableObservableCollectionContractTest extends
 	public void testRemoveAll_NoChange() throws Exception {
 		ChangeEventTracker tracker = ChangeEventTracker.observe(collection);
 		collection.removeAll(Collections.EMPTY_LIST);
-		assertEquals(
-				"List.removeAll on an empty list should not fire a list change event",
-				0, tracker.count);
+		assertEquals(0, tracker.count,
+				"List.removeAll on an empty list should not fire a list change event");
 	}
 
 	@Test
@@ -205,20 +204,18 @@ public class MutableObservableCollectionContractTest extends
 		listener2.contains = true;
 
 		collection.retainAll(Arrays.asList(new Object[] { element1 }));
-		assertTrue(
-				formatFail("When Collection.retainAll(...) fires the change event the element should have been retained in the Collection."),
-				listener1.contains);
-		assertFalse(
-				formatFail("When Collection.retainAll(...) fires the change event the element should have been removed from the Collection."),
-				listener2.contains);
+		assertTrue(listener1.contains,
+				formatFail("When Collection.retainAll(...) fires the change event the element should have been retained in the Collection."));
+		assertFalse(listener2.contains,
+				formatFail("When Collection.retainAll(...) fires the change event the element should have been removed from the Collection."));
 	}
 
 	@Test
 	public void testRetainAll_NoChangeFiresNoChangeEvent() throws Exception {
 		ChangeEventTracker tracker = ChangeEventTracker.observe(collection);
 		collection.retainAll(Collections.EMPTY_LIST);
-		assertEquals("List.retainAll should not have fired a change event:", 0,
-				tracker.count);
+		assertEquals(0, tracker.count,
+				"List.retainAll should not have fired a change event:");
 	}
 
 	@Test
@@ -253,12 +250,11 @@ public class MutableObservableCollectionContractTest extends
 		ChangeEventTracker listener = ChangeEventTracker.observe(collection);
 		runnable.run();
 
-		assertEquals(formatFail(methodName + " should fire one ChangeEvent."),
-				1, listener.count);
-		assertEquals(
+		assertEquals(1, listener.count,
+				formatFail(methodName + " should fire one ChangeEvent."));
+		assertEquals(collection, listener.event.getObservable(),
 				formatFail(methodName
-						+ "'s change event observable should be the created Collection."),
-				collection, listener.event.getObservable());
+						+ "'s change event observable should be the created Collection."));
 	}
 
 	/**
@@ -277,11 +273,11 @@ public class MutableObservableCollectionContractTest extends
 				elementNotContained).init();
 		listener.contains = true;
 		collection.remove(elementNotContained);
-		assertFalse(
+		assertFalse(listener.contains,
 				formatFail(new StringBuilder("When ")
 						.append(methodName)
 						.append(" fires a change event the element should have been removed from the Collection.")
-						.toString()), listener.contains);
+						.toString()));
 	}
 
 	/**
@@ -299,11 +295,11 @@ public class MutableObservableCollectionContractTest extends
 		assertFalse(collection.contains(elementContained));
 		runnable.run();
 
-		assertTrue(
+		assertTrue(listener.contains,
 				formatFail(new StringBuilder("When ")
 						.append(methodName)
 						.append(" fires a change event the element should have been added to the Collection.")
-						.toString()), listener.contains);
+						.toString()));
 	}
 
 	/* package */static class ContainsListener implements IChangeListener {
