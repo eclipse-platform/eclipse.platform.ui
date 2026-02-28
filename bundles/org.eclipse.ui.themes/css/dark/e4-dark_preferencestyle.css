@@ -76,4 +76,6 @@ IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo a
 		'org.eclipse.ui.editors.rangeIndicatorColor=27,118,153'
 		'org.eclipse.jface.REVISION_NEWEST_COLOR=75,44,3'
 		'org.eclipse.jface.REVISION_OLDEST_COLOR=154,113,61'
+		'org.eclipse.jface.SELECTION_FOREGROUND_NO_FOCUS=240,240,240'
+		'org.eclipse.jface.SELECTION_BACKGROUND_NO_FOCUS=95,95,95'
 }
