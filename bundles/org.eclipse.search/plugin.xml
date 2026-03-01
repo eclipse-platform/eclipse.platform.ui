@@ -104,6 +104,20 @@
 			name="%command.performTextSearchFile.name" 
 			description="%command.performTextSearchFile.description"
 	    />
+		<command
+			categoryId="org.eclipse.ui.category.navigate"
+  			id="org.eclipse.search.ui.globalNextSearchEntry"
+			name="%GlobalNextSearchEntryAction_label"
+			description="%GlobalNextSearchEntryAction_description"
+			defaultHandler="org.eclipse.search2.internal.ui.basic.views.GlobalNextPrevSearchEntryHandler:next"
+	    />
+		<command
+			categoryId="org.eclipse.ui.category.navigate"
+  			id="org.eclipse.search.ui.globalPreviousSearchEntry"
+			name="%GlobalPreviousSearchEntryAction_label"
+			description="%GlobalPreviousSearchEntryAction_description"
+			defaultHandler="org.eclipse.search2.internal.ui.basic.views.GlobalNextPrevSearchEntryHandler:previous"
+	    />
 
 	</extension>
 	
@@ -162,6 +176,32 @@
             commandId="org.eclipse.search.ui.performTextSearchWorkspace"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+T"/>
+		<key
+			commandId="org.eclipse.search.ui.globalNextSearchEntry"
+			contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			sequence="ALT+.">
+		</key>
+		<key
+			commandId="org.eclipse.search.ui.globalNextSearchEntry"
+			contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			platform="cocoa"
+			sequence="M1+M3+.">
+		</key>
+		<key
+			commandId="org.eclipse.search.ui.globalPreviousSearchEntry"
+			contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			sequence="ALT+,">
+		</key>
+		<key
+			commandId="org.eclipse.search.ui.globalPreviousSearchEntry"
+			contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			platform="cocoa"
+			sequence="M1+M3+,">
+		</key>
 	    
 	</extension>
 	
