@@ -346,16 +346,13 @@ public class CleanupAddon {
 				int visCount = modelService.countRenderableChildren(container);
 
 				// Remove stacks with no visible children from the display (but not the
-				// model)
-				final MElementContainer<MUIElement> theContainer = container;
-				if (visCount == 0) {
-					Display.getCurrent().asyncExec(() -> {
-						int visCount1 = modelService.countRenderableChildren(theContainer);
-						if (!isLastEditorStack(theContainer) && visCount1 == 0) {
-							theContainer.setToBeRendered(false);
-							transferPrimaryDataStackIfRemoved(theContainer);
-						}
-					});
+				// model). Since event delivery is synchronous (EventBroker.send via
+				// EventAdmin.sendEvent and Display.syncExec), the visCount reflects
+				// the actual state at the time of this event and can be acted upon
+				// immediately without deferring via asyncExec.
+				if (visCount == 0 && !isLastEditorStack(container)) {
+					container.setToBeRendered(false);
+					transferPrimaryDataStackIfRemoved(container);
 				} else if (container.getParent() != null) { // omit detached windows
 					// if there are rendered elements but none are 'visible' we should
 					// make the container invisible as well
