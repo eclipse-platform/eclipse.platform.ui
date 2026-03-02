@@ -198,9 +198,10 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		int rowWidth = (event.widget instanceof Scrollable s) ? s.getClientArea().width : event.width;
 		gc.fillRectangle(0, event.y, rowWidth, event.height);
 
-		// Prevent native selection drawing
-		event.detail &= ~SWT.SELECTED;
-
+		// Remove SELECTED and BACKGROUND flags to prevent native drawing from
+		// overwriting our custom colors. Removing SWT.BACKGROUND is necessary for Linux
+		// and Mac (Windows works just fine even when the bit has not been removed)
+		event.detail &= ~(SWT.SELECTED | SWT.BACKGROUND);
 	}
 
 	private void handlePaintItem(Event event) {
