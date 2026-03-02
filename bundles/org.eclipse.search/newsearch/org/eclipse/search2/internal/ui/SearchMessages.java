@@ -69,6 +69,12 @@ public final class SearchMessages extends NLS {
 	public static String ShowNextResultAction_tooltip;
 	public static String ShowPreviousResultAction_label;
 	public static String ShowPreviousResultAction_tooltip;
+	public static String GlobalNextSearchEntryAction_label;
+	public static String GlobalNextSearchEntryAction_tooltip;
+	public static String GlobalNextSearchEntryAction_description;
+	public static String GlobalPreviousSearchEntryAction_label;
+	public static String GlobalPreviousSearchEntryAction_tooltip;
+	public static String GlobalPreviousSearchEntryAction_description;
 	public static String RemoveMatchAction_label;
 	public static String RemoveMatchAction_tooltip;
 	public static String DefaultSearchViewPage_show_match;

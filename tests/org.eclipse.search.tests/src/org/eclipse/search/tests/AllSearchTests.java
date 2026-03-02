@@ -23,7 +23,9 @@ import org.eclipse.search.tests.filesearch.AllFileSearchTests;
 @SelectClasses({
 		AllFileSearchTests.class,
 		AllSearchModelTests.class,
-		TextSearchRegistryTest.class
+		TextSearchRegistryTest.class,
+		GlobalNextPrevSearchEntryHandlerTest.class,
+		GlobalNextPrevSearchEntryHandlerIntegrationTest.class
 })
 public class AllSearchTests {
 	// see @SelectClasses
