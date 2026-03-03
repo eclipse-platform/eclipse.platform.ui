@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.jface.resource.FontRegistry;
@@ -58,10 +59,34 @@ public class FontRegistryTest {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		FontRegistry fontRegistry = new FontRegistry();
-		Display secondDisplay = initializeDisplayInSeparateThread();
-		Font fontOnSecondDisplay = secondDisplay.syncCall(fontRegistry::defaultFont);
+		testMultipleDisplayDispose(fontRegistry::defaultFont);
+	}
 
-		Font fontOnThisDisplayBeforeSecondDisplayDispose = fontRegistry.defaultFont();
+	@Test
+	public void multipleDisplayDispose_boldFont() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.get(JFaceResources.DEFAULT_FONT);
+		testMultipleDisplayDispose(() -> fontRegistry.getBold(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
+	public void multipleDisplay_italicFont() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.get(JFaceResources.DEFAULT_FONT);
+		testMultipleDisplayDispose(() -> fontRegistry.getItalic(JFaceResources.DEFAULT_FONT));
+	}
+
+	private static void testMultipleDisplayDispose(Supplier<Font> fontSupplier) {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		Font fontOnSecondDisplay = secondDisplay.syncCall(fontSupplier::get);
+
+		Font fontOnThisDisplayBeforeSecondDisplayDispose = fontSupplier.get();
 		Device displayOfFontOnSecondDisplay = fontOnSecondDisplay.getDevice();
 		// font registry returns same font for every display
 		assertEquals(secondDisplay, displayOfFontOnSecondDisplay);
@@ -70,7 +95,7 @@ public class FontRegistryTest {
 		// after disposing font's display, registry should reinitialize the font
 		secondDisplay.syncExec(secondDisplay::dispose);
 		assertTrue(fontOnSecondDisplay.isDisposed());
-		Font fontOnThisDisplayAfterSecondDisplayDispose = fontRegistry.defaultFont();
+		Font fontOnThisDisplayAfterSecondDisplayDispose = fontSupplier.get();
 		assertNotEquals(fontOnThisDisplayAfterSecondDisplayDispose, fontOnSecondDisplay);
 	}
 

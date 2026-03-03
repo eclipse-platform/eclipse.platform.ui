@@ -121,7 +121,8 @@ public class FontRegistry extends ResourceRegistry {
 			}
 
 			FontData[] boldData = getModifiedFontData(SWT.BOLD);
-			boldFont = new Font(Display.getCurrent(), boldData);
+			Display display = getDisplayAndHookForDisposal();
+			boldFont = new Font(display, boldData);
 			return boldFont;
 		}
 
@@ -157,7 +158,8 @@ public class FontRegistry extends ResourceRegistry {
 			}
 
 			FontData[] italicData = getModifiedFontData(SWT.ITALIC);
-			italicFont = new Font(Display.getCurrent(), italicData);
+			Display display = getDisplayAndHookForDisposal();
+			italicFont = new Font(display, italicData);
 			return italicFont;
 		}
 
@@ -489,12 +491,9 @@ public class FontRegistry extends ResourceRegistry {
 	 * @return FontRecord for the new Font or <code>null</code>.
 	 */
 	private FontRecord createFont(String symbolicName, FontData[] fonts) {
-		Display display = Display.getCurrent();
+		Display display = getDisplayAndHookForDisposal();
 		if (display == null) {
 			return null;
-		}
-		if (cleanOnDisplayDisposal && !displayDisposeHooked.contains(display)) {
-			hookDisplayDispose(display);
 		}
 
 		FontData[] validData = filterData(fonts, display);
@@ -507,6 +506,17 @@ public class FontRegistry extends ResourceRegistry {
 		put(symbolicName, validData, false);
 		Font newFont = new Font(display, validData);
 		return new FontRecord(newFont, validData);
+	}
+
+	private Display getDisplayAndHookForDisposal() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			return null;
+		}
+		if (cleanOnDisplayDisposal && !displayDisposeHooked.contains(display)) {
+			hookDisplayDispose(display);
+		}
+		return display;
 	}
 
 	/**
