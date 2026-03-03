@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.jface.tests
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 1.5.100.qualifier
 Automatic-Module-Name: org.eclipse.jface.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.jface,
