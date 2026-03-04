@@ -14,8 +14,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -98,5 +100,20 @@ public final class UIPlugin extends AbstractUIPlugin {
 				UIPlugin.this.savePluginPreferences();
 			}
 		});
+		initializeIconConfigurations();
 	}
+
+	private void initializeIconConfigurations() {
+		// configure disabled icons appearance
+		boolean ignoreDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.IGNORE_DISABLED_ICONS);
+		ActionContributionItem.setIgnoreDisabledIcons(ignoreDisabledIcons);
+
+		boolean useDesaturatedDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS);
+		if (useDesaturatedDisabledIcons) {
+			System.setProperty("org.eclipse.swt.image.disablement", "desaturated"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
 }

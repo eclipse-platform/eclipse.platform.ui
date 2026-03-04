@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuCreator;
@@ -211,6 +212,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	}
 
 	private String getDisabledIconURI(MItem toolItem) {
+		if (ActionContributionItem.getIgnoreDisabledIcons()) {
+			return ""; //$NON-NLS-1$
+		}
 		Object obj = toolItem.getTransientData().get(IPresentationEngine.DISABLED_ICON_IMAGE_KEY);
 		return obj instanceof String s ? s : ""; //$NON-NLS-1$
 	}

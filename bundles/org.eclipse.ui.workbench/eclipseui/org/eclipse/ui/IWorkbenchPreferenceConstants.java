@@ -721,4 +721,25 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.134
 	 */
 	String RESCALING_AT_RUNTIME = "monitorSpecificScaling"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Whether explicitly defined disabled icons shall be ignored in favor of using
+	 * on-the-fly generated disabled icons.
+	 * </p>
+	 *
+	 * @since 3.139
+	 */
+	String IGNORE_DISABLED_ICONS = "ignoreDisabledIcons"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Whether to use a different algorithm for generating disabled icons that
+	 * desaturates the icons rather than making them completely grayscaled.
+	 * </p>
+	 *
+	 * @since 3.139
+	 */
+	String USE_DESATURATED_DISABLED_ICONS = "desaturatedDisabledIcons"; //$NON-NLS-1$
+
 }

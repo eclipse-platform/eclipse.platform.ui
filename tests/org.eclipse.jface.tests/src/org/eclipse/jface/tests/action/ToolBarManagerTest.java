@@ -141,8 +141,10 @@ public class ToolBarManagerTest {
 	@Test
 	public void testDefaultImageIsGray() {
 		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
+		boolean oldStateIgnoreDisabled = ActionContributionItem.getIgnoreDisabledIcons();
 		try {
 			ActionContributionItem.setUseColorIconsInToolbars(false);
+			ActionContributionItem.setIgnoreDisabledIcons(false);
 			ToolBarManager manager = new ToolBarManager();
 			Action action = new Action("Button with Hover") {
 			};
@@ -165,14 +167,17 @@ public class ToolBarManagerTest {
 			assertImageEqualsDescriptor(ImageDescriptor.createWithFlags(descriptor, SWT.IMAGE_GRAY), item.getImage());
 		} finally {
 			ActionContributionItem.setUseColorIconsInToolbars(oldState);
+			ActionContributionItem.setIgnoreDisabledIcons(oldStateIgnoreDisabled);
 		}
 	}
 
 	@Test
 	public void testActionImagesAreSet() {
 		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
+		boolean oldStateIgnoreDisabled = ActionContributionItem.getIgnoreDisabledIcons();
 		try {
 			ActionContributionItem.setUseColorIconsInToolbars(true);
+			ActionContributionItem.setIgnoreDisabledIcons(false);
 			ToolBarManager manager = new ToolBarManager();
 			Action action = new Action("Button with Hover") {
 			};
@@ -195,6 +200,7 @@ public class ToolBarManagerTest {
 			assertImageEqualsDescriptor(disabledDescriptor, item.getDisabledImage());
 		} finally {
 			ActionContributionItem.setUseColorIconsInToolbars(oldState);
+			ActionContributionItem.setIgnoreDisabledIcons(oldStateIgnoreDisabled);
 		}
 	}
 

@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener2;
@@ -892,7 +893,9 @@ public class CommandContributionItem extends ContributionItem {
 			localResourceManager = m;
 		} else if (widget instanceof ToolItem item) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
-			item.setDisabledImage(disabledIcon == null ? null : m.create(disabledIcon));
+			if (!ActionContributionItem.getIgnoreDisabledIcons()) {
+				item.setDisabledImage(disabledIcon == null ? null : m.create(disabledIcon));
+			}
 			item.setHotImage(hoverIcon == null ? null : m.create(hoverIcon));
 			item.setImage(icon == null ? null : m.create(icon));
 			disposeOldImages();
