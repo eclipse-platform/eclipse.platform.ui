@@ -27,7 +27,9 @@ import org.eclipse.swt.widgets.TableItem;
 
 
 /**
- * Adds owner draw support for tables.
+ * Adds owner draw support for tables.<br/>
+ * <br/>
+ * It has been replaced by {@link CompletionProposalDrawSupport} in 2026-06.
  *
  * @since 3.4
  */
@@ -39,14 +41,6 @@ public class TableOwnerDrawSupport implements Listener {
 	private final TextLayout fSharedLayout;
 
 	private int fDeltaOfLastMeasure;
-
-	public static void install(Table table) {
-		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table);
-		table.addListener(SWT.Dispose, listener);
-		table.addListener(SWT.MeasureItem, listener);
-		table.addListener(SWT.EraseItem, listener);
-		table.addListener(SWT.PaintItem, listener);
-	}
 
 	/**
 	 * Stores the styled ranges in the given table item.
@@ -70,7 +64,7 @@ public class TableOwnerDrawSupport implements Listener {
 		return (StyleRange[])item.getData(STYLED_RANGES_KEY + column);
 	}
 
-	private TableOwnerDrawSupport(Table table) {
+	TableOwnerDrawSupport(Table table) {
 		int orientation= table.getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 		fSharedLayout= new TextLayout(table.getDisplay());
 		fSharedLayout.setOrientation(orientation);

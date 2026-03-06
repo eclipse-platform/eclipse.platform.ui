@@ -1741,6 +1741,56 @@
          </description>
       </colorDefinition>
       
+      <!-- Viewer Selection Colors - can be overridden by themes -->
+      <colorDefinition
+            label="%Color.viewerSelectionBackgroundFocused"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.jface.SELECTION_BACKGROUND_FOCUSED">
+         <colorFactory
+               plugin="org.eclipse.ui.workbench"
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
+         </colorFactory>
+         <description>
+            %Color.viewerSelectionBackgroundFocusedDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.viewerSelectionForegroundFocused"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.jface.SELECTION_FOREGROUND_FOCUSED">
+         <colorFactory
+               plugin="org.eclipse.ui.workbench"
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
+         </colorFactory>
+         <description>
+            %Color.viewerSelectionForegroundFocusedDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.viewerSelectionBackgroundNoFocus"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.jface.SELECTION_BACKGROUND_NO_FOCUS">
+         <colorFactory
+               plugin="org.eclipse.ui.workbench"
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
+         </colorFactory>
+         <description>
+            %Color.viewerSelectionBackgroundNoFocusDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.viewerSelectionForegroundNoFocus"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.jface.SELECTION_FOREGROUND_NO_FOCUS">
+         <colorFactory
+               plugin="org.eclipse.ui.workbench"
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory">
+         </colorFactory>
+         <description>
+            %Color.viewerSelectionForegroundNoFocusDesc
+         </description>
+      </colorDefinition>
+      
       <data
       	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">
       </data>

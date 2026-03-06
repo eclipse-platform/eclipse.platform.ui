@@ -68,7 +68,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 		}
 	}
 
-	private static final String OWNER_DRAW_LABEL_PROVIDER_LISTENER = "owner_draw_label_provider_listener"; //$NON-NLS-1$
+	static final String OWNER_DRAW_LABEL_PROVIDER_LISTENER = "owner_draw_label_provider_listener"; //$NON-NLS-1$
 
 	/**
 	 * Set up the owner draw callbacks for the viewer.
