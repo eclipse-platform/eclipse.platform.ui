@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterEach;
 import org.osgi.framework.Bundle;
@@ -54,9 +56,6 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		return file.getFullPath();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
-	 */
 	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
@@ -93,7 +92,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 
 	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
-		FileTool.write(fExternalFile.getAbsolutePath(), "Changed content of linked file");
+		Files.writeString(Path.of(fExternalFile.getAbsolutePath()), "Changed content of linked file");
 		fExternalFile.setLastModified(1000);
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);

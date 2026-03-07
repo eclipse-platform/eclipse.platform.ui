@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,7 +77,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fProject= ResourceHelper.createProject("project");
 		fFileStore= EFS.getLocalFileSystem().getStore(createPath(fProject));
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-		assertTrue(buffer == null);
+		assertNull(buffer);
 	}
 
 	protected IProject getProject() {
@@ -85,7 +87,7 @@ public abstract class FileStoreFileBufferFunctions {
 	@AfterEach
 	public void tearDown() {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-		assertTrue(buffer == null);
+		assertNull(buffer);
 		ResourceHelper.deleteProject("project");
 	}
 
@@ -375,13 +377,13 @@ public abstract class FileStoreFileBufferFunctions {
 
 			fManager.connectFileStore(fFileStore, null);
 
-			assertTrue(listener.count == 1);
+			assertEquals(1, listener.count);
 			assertNotNull(listener.buffer);
 			IFileBuffer fileBuffer= fManager.getFileStoreFileBuffer(fFileStore);
 			assertTrue(listener.buffer == fileBuffer);
 
 			fManager.disconnectFileStore(fFileStore, null);
-			assertTrue(listener.count == 0);
+			assertEquals(0, listener.count);
 			assertTrue(listener.buffer == fileBuffer);
 
 		} finally {
@@ -417,7 +419,7 @@ public abstract class FileStoreFileBufferFunctions {
 		try {
 
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -426,13 +428,13 @@ public abstract class FileStoreFileBufferFunctions {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 
-				assertTrue(listener.count == 1);
+				assertEquals(1, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 				assertTrue(listener.isDirty);
 
 				fileBuffer.commit(null, true);
 
-				assertTrue(listener.count == 2);
+				assertEquals(2, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 				assertFalse(listener.isDirty);
 
@@ -468,7 +470,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -477,13 +479,13 @@ public abstract class FileStoreFileBufferFunctions {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 
-				assertTrue(listener.count == 1);
+				assertEquals(1, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 				assertTrue(listener.isDirty);
 
 				fileBuffer.revert(null);
 
-				assertTrue(listener.count == 2);
+				assertEquals(2, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 				assertFalse(listener.isDirty);
 
@@ -534,9 +536,9 @@ public abstract class FileStoreFileBufferFunctions {
 
 				fileBuffer.revert(null);
 
-				assertTrue(listener.preCount == 1);
+				assertEquals(1, listener.preCount);
 				assertTrue(listener.preBuffer == fileBuffer);
-				assertTrue(listener.postCount == 1);
+				assertEquals(1, listener.postCount);
 				assertTrue(listener.postBuffer == fileBuffer);
 
 			} finally {
@@ -583,9 +585,9 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 
 				if (modifyUnderlyingFile()) {
-					assertTrue(listener.preCount == 1);
+					assertEquals(1, listener.preCount);
 					assertTrue(listener.preBuffer == fileBuffer);
-					assertTrue(listener.postCount == 1);
+					assertEquals(1, listener.postCount);
 					assertTrue(listener.postBuffer == fileBuffer);
 				}
 
@@ -621,7 +623,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -630,7 +632,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 					assertTrue(listener.isStateValidated);
 				}
@@ -667,7 +669,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -677,7 +679,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 					assertTrue(listener.isStateValidated);
 				}
@@ -714,7 +716,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -724,7 +726,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer.resetStateValidation();
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 2);
+					assertEquals(2, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 					assertFalse(listener.isStateValidated);
 				}
@@ -761,7 +763,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -772,7 +774,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer.resetStateValidation();
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 2);
+					assertEquals(2, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 					assertFalse(listener.isStateValidated);
 				}
@@ -808,14 +810,14 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				if (deleteUnderlyingFile()) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
@@ -851,7 +853,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -859,7 +861,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IPath newLocation= moveUnderlyingFile();
 				if (newLocation != null) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 					assertEquals(listener.newLocation, newLocation);
 				}
@@ -894,7 +896,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -935,14 +937,14 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				if (deleteUnderlyingFile()) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
@@ -976,14 +978,14 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				if (moveUnderlyingFile() != null) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
@@ -1017,7 +1019,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -1026,7 +1028,7 @@ public abstract class FileStoreFileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
+					assertEquals(1, listener.count);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
@@ -1059,7 +1061,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -1069,7 +1071,7 @@ public abstract class FileStoreFileBufferFunctions {
 				document.replace(0, 0, "prefix");
 				fileBuffer.revert(null);
 
-				assertTrue(listener.count == 1);
+				assertEquals(1, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {
@@ -1102,7 +1104,7 @@ public abstract class FileStoreFileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connectFileStore(fFileStore, null);
 			try {
@@ -1112,7 +1114,7 @@ public abstract class FileStoreFileBufferFunctions {
 				document.replace(0, 0, "prefix");
 				fileBuffer.commit(null, true);
 
-				assertTrue(listener.count == 1);
+				assertEquals(1, listener.count);
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {

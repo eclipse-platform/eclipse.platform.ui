@@ -15,8 +15,6 @@ package org.eclipse.core.filebuffers.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -34,7 +32,6 @@ import org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants.TestDSP5
 import org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants.TestDSP6;
 
 import org.eclipse.jface.text.IDocument;
-
 
 /**
  * @since 3.4
@@ -124,8 +121,8 @@ public abstract class AbstractFileBufferDocCreationTests {
 		for (LocationKind lk : lks) {
 			IDocument document= fManager.createEmptyDocument(IPath.fromOSString(path), lk);
 			String content= document.get();
-			Set<String> expectedDSPs= new HashSet<>(Arrays.asList(toString(expectedDSPsArray)));
-			Set<String> actualDSPs= new HashSet<>(Arrays.asList(content.split("\n")));
+			Set<String> expectedDSPs= Set.of(toString(expectedDSPsArray));
+			Set<String> actualDSPs= Set.of(content.split("\n"));
 			assertEquals(expectedDSPs, actualDSPs);
 		}
 	}
