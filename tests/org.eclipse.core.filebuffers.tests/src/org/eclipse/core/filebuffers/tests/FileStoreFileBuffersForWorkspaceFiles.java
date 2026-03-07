@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.osgi.framework.Bundle;
@@ -50,9 +49,6 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		return file.getFullPath();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
-	 */
 	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
@@ -94,14 +90,12 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		try (OutputStream out= fileStore.openOutputStream(EFS.NONE, null)) {
 			out.write("Changed content of workspace file".getBytes());
 			out.flush();
-		} catch (IOException x) {
-			fail();
 		}
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		fileInfo.setLastModified(1000);
 		fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
-		assertTrue(iFile.exists() && iFile.getFullPath().equals(getPath()));
+		assertAll(() -> assertTrue(iFile.exists()), () -> assertTrue(iFile.getFullPath().equals(getPath())));
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return true;
 	}

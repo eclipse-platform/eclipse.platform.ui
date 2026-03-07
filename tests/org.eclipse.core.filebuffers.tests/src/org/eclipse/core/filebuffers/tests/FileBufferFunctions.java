@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,11 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -79,7 +81,7 @@ public abstract class FileBufferFunctions {
 		fProject= ResourceHelper.createProject("project");
 		fPath= createPath(fProject);
 		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-		assertTrue(buffer == null);
+		assertNull(buffer);
 	}
 
 	protected IProject getProject() {
@@ -89,7 +91,7 @@ public abstract class FileBufferFunctions {
 	@AfterEach
 	public void tearDown() {
 		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-		assertTrue(buffer == null);
+		assertNull(buffer);
 		ResourceHelper.deleteProject("project");
 	}
 
@@ -426,7 +428,7 @@ public abstract class FileBufferFunctions {
 		try {
 
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -477,7 +479,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -630,7 +632,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -676,7 +678,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -723,7 +725,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -770,7 +772,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -817,7 +819,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -860,7 +862,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -913,7 +915,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -954,7 +956,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -995,7 +997,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -1036,7 +1038,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -1078,7 +1080,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
@@ -1121,7 +1123,7 @@ public abstract class FileBufferFunctions {
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.count == 0 && listener.buffer == null);
+			assertAll(() -> assertEquals(0, listener.count), () -> assertNull(listener.buffer));
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {

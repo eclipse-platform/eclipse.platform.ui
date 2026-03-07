@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,8 @@
 package org.eclipse.core.filebuffers.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -71,9 +69,6 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		return file.getFullPath();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
-	 */
 	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
@@ -115,8 +110,6 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		try (OutputStream out= fileStore.openOutputStream(EFS.NONE, null)) {
 			out.write("Changed content of file in linked folder".getBytes());
 			out.flush();
-		} catch (IOException x) {
-			fail();
 		}
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		fileInfo.setLastModified(1000);

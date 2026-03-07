@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,10 +42,7 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-
-
 
 public class FileBufferCreation {
 
@@ -54,9 +51,7 @@ public class FileBufferCreation {
 	private final static String CONTENT3= "This is the content of the external file.";
 	private final static String CONTENT4= "This is the content of a file in a linked folder.";
 
-
 	private IProject fProject;
-
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -166,11 +161,7 @@ public class FileBufferCreation {
 		assertEquals(CONTENT1, document2.get());
 		assertSame(buffer2, manager.getTextFileBuffer(document2));
 
-		try {
-			document1.replace(0, document1.getLength(), CONTENT3);
-		} catch (BadLocationException x) {
-			assertTrue(false);
-		}
+		document1.replace(0, document1.getLength(), CONTENT3);
 
 		assertEquals(CONTENT3, document2.get());
 
@@ -198,7 +189,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT2.equals(document.get()));
+		assertEquals(CONTENT2, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -221,7 +212,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT4.equals(document.get()));
+		assertEquals(CONTENT4, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -259,11 +250,7 @@ public class FileBufferCreation {
 		assertEquals(document1.get(), document2.get());
 		assertEquals(CONTENT2, document1.get());
 
-		try {
-			document1.replace(0, document1.getLength(), CONTENT1);
-		} catch (BadLocationException x) {
-			assertFalse(false);
-		}
+		document1.replace(0, document1.getLength(), CONTENT1);
 
 		assertFalse(document1.get().equals(document2.get()));
 
@@ -290,7 +277,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT3.equals(document.get()));
+		assertEquals(CONTENT3, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -330,11 +317,7 @@ public class FileBufferCreation {
 		assertEquals(document1.get(), document2.get());
 		assertEquals(CONTENT3, document1.get());
 
-		try {
-			document1.replace(0, document1.getLength(), CONTENT1);
-		} catch (BadLocationException x) {
-			assertFalse(false);
-		}
+		document1.replace(0, document1.getLength(), CONTENT1);
 
 		assertFalse(document1.get().equals(document2.get()));
 
@@ -359,7 +342,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue("".equals(document.get()));
+		assertTrue(document.get().isEmpty());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
@@ -428,11 +411,7 @@ public class FileBufferCreation {
 		assertEquals(CONTENT1, document2.get());
 		assertSame(buffer2, manager.getTextFileBuffer(document2));
 
-		try {
-			document1.replace(0, document1.getLength(), CONTENT3);
-		} catch (BadLocationException x) {
-			assertTrue(false);
-		}
+		document1.replace(0, document1.getLength(), CONTENT3);
 
 		assertEquals(CONTENT3, document2.get());
 
@@ -460,7 +439,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT2.equals(document.get()));
+		assertEquals(CONTENT2, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.IFILE, null);
@@ -483,7 +462,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT4.equals(document.get()));
+		assertEquals(CONTENT4, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.IFILE, null);
@@ -521,11 +500,7 @@ public class FileBufferCreation {
 		assertEquals(document1.get(), document2.get());
 		assertEquals(CONTENT2, document1.get());
 
-		try {
-			document1.replace(0, document1.getLength(), CONTENT1);
-		} catch (BadLocationException x) {
-			assertFalse(false);
-		}
+		document1.replace(0, document1.getLength(), CONTENT1);
 
 		assertFalse(document1.get().equals(document2.get()));
 
@@ -552,7 +527,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue(CONTENT3.equals(document.get()));
+		assertEquals(CONTENT3, document.get());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.LOCATION, null);
@@ -574,7 +549,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue("".equals(document.get()));
+		assertTrue(document.get().isEmpty());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnect(path, LocationKind.LOCATION, null);
@@ -597,7 +572,7 @@ public class FileBufferCreation {
 
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
-		assertTrue("".equals(document.get()));
+		assertTrue(document.get().isEmpty());
 		assertSame(buffer, manager.getTextFileBuffer(document));
 
 		manager.disconnectFileStore(fileStore, null);

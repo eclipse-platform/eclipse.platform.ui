@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,9 +47,6 @@ public class FileStoreFileBuffersForNonExistingExternalFiles extends FileStoreFi
 		return IPath.fromOSString(path.toFile().getAbsolutePath());
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
-	 */
 	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
