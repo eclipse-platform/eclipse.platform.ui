@@ -12,6 +12,7 @@ Export-Package:
  org.eclipse.jface.internal.text.codemining;x-internal:=true,
  org.eclipse.jface.internal.text.html;x-friends:="org.eclipse.ant.ui, org.eclipse.jdt.ui, org.eclipse.ltk.ui.refactoring, org.eclipse.pde.ui, org.eclipse.ui.editors, org.eclipse.xtext.ui",
  org.eclipse.jface.internal.text.link.contentassist;x-internal:=true,
+ org.eclipse.jface.internal.text.reconciler;x-internal:=true,
  org.eclipse.jface.internal.text.revisions;x-internal:=true,
  org.eclipse.jface.internal.text.source;x-internal:=true,
  org.eclipse.jface.text,
