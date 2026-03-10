@@ -118,6 +118,9 @@ public class CodeMiningManager implements Runnable {
 		if (fInlinedAnnotationSupport != null) {
 			fInlinedAnnotationSupport.updateAnnotations(Collections.emptySet());
 		}
+		if (fCodeMiningProviders != null) {
+			fCodeMiningProviders.forEach(ICodeMiningProvider::dispose);
+		}
 	}
 
 	/**
