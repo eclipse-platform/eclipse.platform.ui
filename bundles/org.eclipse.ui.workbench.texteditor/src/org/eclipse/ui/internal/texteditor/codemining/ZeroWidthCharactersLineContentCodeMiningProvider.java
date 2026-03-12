@@ -93,7 +93,10 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 
 	@Override
 	public void dispose() {
-		store.removePropertyChangeListener(this);
+		if (store != null) {
+			store.removePropertyChangeListener(this);
+			store = null;
+		}
 		super.dispose();
 	}
 
