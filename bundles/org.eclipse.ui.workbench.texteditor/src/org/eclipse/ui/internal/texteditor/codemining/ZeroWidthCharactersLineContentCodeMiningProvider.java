@@ -51,7 +51,7 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 	private static final Set<Character> ZW_CHARACTERS = Set.of(ZW_SPACE, ZW_NON_JOINER, ZW_JOINER, ZW_NO_BREAK_SPACE);
 
 	private IPreferenceStore store;
-	private boolean showZwsp = false;
+	private boolean showZwsp;
 
 	@Override
 	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer,
