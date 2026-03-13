@@ -76,10 +76,10 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		public ComparePreviewer(Composite parent) {
 			super(parent, SWT.BORDER | SWT.FLAT, true);
 			fCompareConfiguration= new CompareConfiguration();
-			fCompareConfiguration.setLeftEditable(false);
-			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_original_source);
 			fCompareConfiguration.setRightEditable(false);
-			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
+			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_original_source);
+			fCompareConfiguration.setLeftEditable(false);
+			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
 			addDisposeListener(e -> {
 				if (fImage != null && !fImage.isDisposed()) {
 					fImage.dispose();
@@ -253,7 +253,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		}
 
 		fViewer.setInput(new DiffNode(
-			new CompareElement(left, type, resource),
-			new CompareElement(right, type, resource)));
+			new CompareElement(right, type, resource),
+			new CompareElement(left, type, resource)));
 	}
 }
