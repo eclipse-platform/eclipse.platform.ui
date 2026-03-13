@@ -879,12 +879,24 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 					lastRefreshSelection = prepareInitialSelection(lastRefreshSelection);
 				}
 				// preserve previous selection
-				if (refreshWithLastSelection && lastRefreshSelection != null && lastRefreshSelection.size() > 0) {
-					tableViewer.setSelection(new StructuredSelection(lastRefreshSelection));
+				// Apply selection asynchronously to ensure table refresh has completed
+				// This fixes race condition where setSelection() is called before
+				// tableViewer.refresh() has fully updated the table items
+				final List<Object> selectionToApply = lastRefreshSelection;
+				if (refreshWithLastSelection && selectionToApply != null && selectionToApply.size() > 0) {
+					tableViewer.getTable().getDisplay().asyncExec(() -> {
+						if (!tableViewer.getTable().isDisposed()) {
+							tableViewer.setSelection(new StructuredSelection(selectionToApply));
+						}
+					});
 				} else {
 					refreshWithLastSelection = true;
-					tableViewer.getTable().setSelection(0);
-					tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
+					tableViewer.getTable().getDisplay().asyncExec(() -> {
+						if (!tableViewer.getTable().isDisposed()) {
+							tableViewer.getTable().setSelection(0);
+							tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
+						}
+					});
 				}
 			} else {
 				tableViewer.setSelection(StructuredSelection.EMPTY);
