@@ -801,7 +801,8 @@ class ContextInformationPopup implements IContentAssistListener {
 					break;
 
 				default :
-					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4) {
+					// On Linux ALT_GR is the level3 switch (at least on the US-INTL layout), when using 'include "level3(YOURKEY)"' in the xkb file
+					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4 && e.keyCode != SWT.ALT_GR) {
 						hideContextSelector();
 					}
 					return true;
@@ -844,7 +845,8 @@ class ContextInformationPopup implements IContentAssistListener {
 					validateContextInformation();
 					break;
 				default:
-					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4) {
+					// On Linux ALT_GR is the level3 switch (at least on the US-INTL layout), when using 'include "level3(YOURKEY)"' in the xkb file
+					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4 && e.keyCode != SWT.ALT_GR) {
 						hideContextInfoPopup(true);
 					}
 					break;
