@@ -17,7 +17,7 @@ package org.eclipse.jface.databinding.conformance.util;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Aids in the testing of Realms.
@@ -56,7 +56,7 @@ public class RealmTester {
 			try {
 				runnable.run();
 			} catch (AssertionFailedException e) {
-				Assert.fail("Correct realm, exception should not have been thrown");
+				Assertions.fail("Correct realm, exception should not have been thrown");
 			}
 
 			realm.setCurrent(false);
@@ -66,7 +66,7 @@ public class RealmTester {
 
 			try {
 				runnable.run();
-				Assert.fail("Incorrect realm, exception should have been thrown");
+				Assertions.fail("Incorrect realm, exception should have been thrown");
 			} catch (AssertionFailedException e) {
 			}
 		} finally {
@@ -85,14 +85,14 @@ public class RealmTester {
 		try {
 			runnable.run();
 		} catch (AssertionFailedException e) {
-			Assert.fail("Correct realm, exception should not have been thrown");
+			Assertions.fail("Correct realm, exception should not have been thrown");
 		}
 
 		realm.setCurrent(false);
 
 		try {
 			runnable.run();
-			Assert.fail("Incorrect realm, exception should have been thrown");
+			Assertions.fail("Incorrect realm, exception should have been thrown");
 		} catch (AssertionFailedException e) {
 		}
 	}
