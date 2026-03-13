@@ -10,14 +10,14 @@
       </category>
       <view
             name="Lazy Trees"
-            icon="icons/tree_view.gif"
+            icon="icons/tree_view.svg"
             category="ProgressExamples"
             class="org.eclipse.ui.examples.jobs.views.LazyTreeView"
             id="org.eclipse.ui.examples.jobs.views.LazyTreeView">
       </view>
       <view
             name="Job Factory"
-            icon="icons/job_view.gif"
+            icon="icons/job_view.svg"
             category="ProgressExamples"
             class="org.eclipse.ui.examples.jobs.views.JobsView"
             id="org.eclipse.ui.examples.jobs.views.JobsView">
@@ -56,7 +56,7 @@
          </menu>
          <action
                label="&amp;Suspend Job Manager"
-               icon="icons/suspend.gif"
+               icon="icons/suspend.svg"
                style="toggle"
                class="org.eclipse.ui.examples.jobs.actions.SuspendJobManagerAction"
                tooltip="Suspend the job manager"
@@ -66,7 +66,7 @@
          </action>
          <action
                label="&amp;Dump Job Information"
-               icon="icons/sample.gif"
+               icon="icons/sample.svg"
                class="org.eclipse.ui.examples.jobs.actions.DebugJobManagerAction"
                tooltip="Dump job information"
                menubarPath="sampleMenu/sampleGroup"

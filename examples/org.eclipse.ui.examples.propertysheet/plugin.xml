@@ -6,7 +6,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.UserEditor"
-            icon="icons/obj16/usereditor.gif"
+            icon="icons/obj16/usereditor.svg"
             extensions="usr"
             class="org.eclipse.ui.examples.propertysheet.UserEditor"
             id="org.eclipse.ui.examples.propertysheet.UserEditor">

@@ -73,7 +73,7 @@
             name="%product.name">
          <property
                name="windowImages"
-               value="icons/app.gif">
+               value="icons/app.svg">
          </property>
          <property
                name="cssTheme"

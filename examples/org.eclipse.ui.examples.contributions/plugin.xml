@@ -162,7 +162,7 @@
                id="org.eclipse.ui.examples.contributions.toolbars.sampleToolbar">
             <command
                   commandId="org.eclipse.ui.examples.contributions.commands.globalCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/sample.svg"
                   tooltip="%contributions.toolbars.globalCommand.tooltip"
                   id="org.eclipse.ui.examples.contributions.toolbars.globalCommand">
                <visibleWhen>
@@ -249,7 +249,7 @@
             locationURI="toolbar:org.eclipse.ui.examples.contributions.view?after=additions">
          <command
                commandId="org.eclipse.ui.newWizard"
-               icon="icons/new_wiz.gif"
+               icon="icons/new_wiz.svg"
                style="push"
                tooltip="%command.new.tooltip">
             <parameter
@@ -425,7 +425,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.ui.examples.contributions.editor.InfoEditor"
-            icon="icons/editor.gif"
+            icon="icons/editor.svg"
             id="org.eclipse.ui.examples.contributions.editor"
             name="%contributions.editor.name">
       </editor>
@@ -485,7 +485,7 @@
                id="org.eclipse.ui.examples.contributions.editor.toolbar">
             <command
                   commandId="org.eclipse.ui.examples.contributions.editor.delta"
-                  icon="icons/change_obj.gif"
+                  icon="icons/change_obj.svg"
                   tooltip="%contributions.editor.delta.tooltip">
                <visibleWhen>
                   <reference
@@ -518,7 +518,7 @@
                id="org.eclipse.ui.examples.contributions.verticalTrim">
             <command
                   commandId="org.eclipse.ui.examples.contributions.item2"
-                  icon="icons/editor.gif"
+                  icon="icons/editor.svg"
                   id="contributions.trimItem"
                   label="%Trim.item"
                   tooltip="%TrimItem.toolTip">
@@ -529,7 +529,7 @@
             </control>
             <command
                   commandId="org.eclipse.ui.examples.contributions.item2"
-                  icon="icons/editor.gif"
+                  icon="icons/editor.svg"
                   id="contributions.trimItem2"
                   label="%Trim2.item"
                   tooltip="%TrimItem2.toolTip">
@@ -594,7 +594,7 @@
       <perspective
             class="org.eclipse.ui.examples.contributions.rcp.Perspective"
             fixed="true"
-            icon="icons/perspective.gif"
+            icon="icons/perspective.svg"
             id="org.eclipse.ui.examples.contributions.perspective"
             name="%info.perspective.name">
       </perspective>
@@ -607,7 +607,7 @@
             name="%info.product.name">
          <property
                name="windowImages"
-               value="icons/sample2.gif">
+               value="icons/sample2.svg">
          </property>
          <property
                name="aboutText"
@@ -615,7 +615,7 @@
          </property>
          <property
                name="aboutImage"
-               value="product_lg.gif">
+               value="product_lg.svg">
          </property>
          <property
                name="appName"

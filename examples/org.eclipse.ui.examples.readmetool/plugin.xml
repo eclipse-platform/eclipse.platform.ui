@@ -45,7 +45,7 @@
                toolbarPath="readme"
                class="org.eclipse.ui.examples.readmetool.WindowActionDelegate"
                enablesFor="1"
-               icon="$nl$/icons/ctool16/openbrwsr.gif"
+               icon="$nl$/icons/ctool16/openbrwsr.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
                label="%ReadmeAction.label"
                menubarPath="window/org_eclipse_ui_examples_readmetool/slot1"
@@ -57,7 +57,7 @@
          </action>
          <action
                label="%ReadmeRetargetAction.label"
-               icon="$nl$/icons/ctool16/openbrwsr.gif"
+               icon="$nl$/icons/ctool16/openbrwsr.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
                tooltip="%ReadmeRetargetAction.tooltip"
                retarget="true"
@@ -69,7 +69,7 @@
                allowLabelUpdate="true"
                id="org_eclipse_ui_examples_readmetool_readmeRelabelRetargetAction"
                toolbarPath="readme"
-               icon="$nl$/icons/ctool16/openbrwsr.gif"
+               icon="$nl$/icons/ctool16/openbrwsr.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
                label="%ReadmeRelabelRetargetAction.label"
                menubarPath="window/org_eclipse_ui_examples_readmetool/slot1"
@@ -87,7 +87,7 @@
       </category>
       <wizard
             name="%NewWizard.name"
-            icon="$nl$/icons/obj16/newreadme_wiz.gif"
+            icon="$nl$/icons/obj16/newreadme_wiz.svg"
             category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
             class="org.eclipse.ui.examples.readmetool.ReadmeCreationWizard"
             id="org.eclipse.ui.examples.readmetool.wizards.new.file">
@@ -103,7 +103,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.ReadmeEditor"
-            icon="$nl$/icons/obj16/editor.gif"
+            icon="$nl$/icons/obj16/editor.svg"
             extensions="readme"
             contributorClass="org.eclipse.ui.examples.readmetool.ReadmeEditorActionBarContributor"
             class="org.eclipse.ui.examples.readmetool.ReadmeEditor"
@@ -118,7 +118,7 @@
       </category>
       <view
             name="%Views.ReadmeSections"
-            icon="$nl$/icons/view16/sections.gif"
+            icon="$nl$/icons/view16/sections.svg"
             category="org.eclipse.ui.examples.readmetool"
             class="org.eclipse.ui.examples.readmetool.ReadmeSectionsView"
             id="org.eclipse.ui.examples.readmetool.views.SectionsView">
@@ -165,7 +165,7 @@
             id="org.eclipse.ui.examples.readmetool">
          <action
                label="%PopupMenus.action"
-               icon="$nl$/icons/ctool16/openbrwsr.gif"
+               icon="$nl$/icons/ctool16/openbrwsr.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
                class="org.eclipse.ui.examples.readmetool.PopupMenuActionDelegate"
                menubarPath="additions"
@@ -178,7 +178,7 @@
             id="org.eclipse.ui.examples.readmetool2">
          <action
                label="%PopupMenus.action"
-               icon="$nl$/icons/ctool16/openbrwsr.gif"
+               icon="$nl$/icons/ctool16/openbrwsr.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
                class="org.eclipse.ui.examples.readmetool.ViewActionDelegate"
                menubarPath="additions"
@@ -196,7 +196,7 @@
                toolbarPath="additions"
                class="org.eclipse.ui.examples.readmetool.ViewActionDelegate"
                enablesFor="1"
-               icon="$nl$/icons/obj16/editor.gif"
+               icon="$nl$/icons/obj16/editor.svg"
                helpContextId="org.eclipse.ui.examples.readmetool.view_action_context"
                label="%PopupMenu.ResourceNav.label"
                menubarPath="additions"
@@ -215,7 +215,7 @@
             id="org.eclipse.ui.examples.readmetool.ec1">
          <action
                label="%Editors.Action.label"
-               icon="$nl$/icons/obj16/editor.gif"
+               icon="$nl$/icons/obj16/editor.svg"
                tooltip="%Editors.Action.tooltip"
                class="org.eclipse.ui.examples.readmetool.EditorActionDelegate"
                toolbarPath="ReadmeEditor"
