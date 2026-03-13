@@ -804,10 +804,11 @@ public class StackRenderer extends LazyStackRenderer {
 			tabFolder.setUnselectedCloseVisible(false);
 		}
 
-		bindWidget(element, tabFolder); // ?? Do we need this ?
-
-		// Add a composite to manage the view's TB and Menu
+		// Add a composite to manage the view's TB and Menu before bindWidget,
+		// so the CSS cascade triggered by bindWidget already reaches trComp
 		addTopRight(tabFolder);
+
+		bindWidget(element, tabFolder); // ?? Do we need this ?
 
 		return tabFolder;
 	}
