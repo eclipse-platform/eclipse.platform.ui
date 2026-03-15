@@ -199,6 +199,8 @@ import org.osgi.service.event.EventHandler;
 public class WorkbenchPage implements IWorkbenchPage {
 
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
+	private static final String PERSPECTIVE_SCOPED_OWNER_ID =
+			"org.eclipse.ui.workbench.viewInSharedAreaOwnerPerspectiveId"; //$NON-NLS-1$
 
 	private static final int WINDOW_SCOPE = EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_ANY_PERSPECTIVE
 			| EModelService.IN_SHARED_AREA;
@@ -2920,6 +2922,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 		MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 		// updatePerspectiveActionSets(oldPersp, newPersp);
+		updatePerspectiveScopedSharedViews(newPersp);
 
 		// ((CoolBarToTrimManager)
 		// legacyWindow.getCoolBarManager2()).updateAll(true);
@@ -2979,6 +2982,51 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		legacyWindow.updateActionSets();
 	};
+
+	private void updatePerspectiveScopedSharedViews(MPerspective activePerspective) {
+		String activePerspectiveId = activePerspective == null ? null : activePerspective.getElementId();
+
+		List<MPlaceholder> sharedPlaceholders = modelService.findElements(window, null, MPlaceholder.class, null,
+				EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_SHARED_AREA);
+		for (MPlaceholder placeholder : sharedPlaceholders) {
+			String ownerPerspectiveId = placeholder.getPersistedState().get(PERSPECTIVE_SCOPED_OWNER_ID);
+			if (ownerPerspectiveId == null) {
+				continue;
+			}
+			boolean shouldRender = ownerPerspectiveId.equals(activePerspectiveId);
+			placeholder.setToBeRendered(shouldRender);
+			updateContainerVisibility(placeholder.getParent());
+		}
+
+		List<MPart> sharedParts = modelService.findElements(window, null, MPart.class, null,
+				EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_SHARED_AREA);
+		for (MPart part : sharedParts) {
+			if (part.getCurSharedRef() != null) {
+				continue;
+			}
+			String ownerPerspectiveId = part.getPersistedState().get(PERSPECTIVE_SCOPED_OWNER_ID);
+			if (ownerPerspectiveId == null) {
+				continue;
+			}
+			boolean shouldRender = ownerPerspectiveId.equals(activePerspectiveId);
+			part.setToBeRendered(shouldRender);
+			updateContainerVisibility(part.getParent());
+		}
+	}
+
+	private void updateContainerVisibility(MElementContainer<?> parent) {
+		if (parent == null) {
+			return;
+		}
+		for (Object child : parent.getChildren()) {
+			if (child instanceof MUIElement element && element.isVisible() && element.isToBeRendered()) {
+				parent.setToBeRendered(true);
+				return;
+			}
+		}
+		parent.setToBeRendered(false);
+		updateContainerVisibility(parent.getParent());
+	}
 
 	/**
 	 * See IWorkbenchPage.

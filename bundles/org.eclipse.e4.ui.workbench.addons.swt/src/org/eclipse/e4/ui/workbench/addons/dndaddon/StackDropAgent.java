@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -38,6 +40,9 @@ import org.eclipse.swt.widgets.Display;
  * This agent manage drag and drop when dragging a Tab in Eclipse Part Stacks.
  */
 public class StackDropAgent extends DropAgent {
+	private static final String PERSPECTIVE_SCOPED_OWNER_ID =
+			"org.eclipse.ui.workbench.viewInSharedAreaOwnerPerspectiveId"; //$NON-NLS-1$
+
 	private Rectangle tabArea;
 	private MPartStack dropStack;
 	private CTabFolder dropCTF;
@@ -242,6 +247,7 @@ public class StackDropAgent extends DropAgent {
 
 		List<CTabItem> vItems = getVisibleItems(dropCTF);
 		boolean hiddenTabs = (vItems.size() < dropCTF.getChildren().length);
+		List<MStackElement> movedElements = new ArrayList<>();
 
 		// Adjust the index if necessary
 		List<MStackElement> dropChildren = dropStack.getChildren();
@@ -343,6 +349,7 @@ public class StackDropAgent extends DropAgent {
 			} else {
 				dropChildren.add((MStackElement) dragElement);
 			}
+			movedElements.add((MStackElement) dragElement);
 
 			// Bug 410164: remove placeholder element with same id from the drop stack to
 			// avoid duplicated elements in same stack
@@ -374,6 +381,7 @@ public class StackDropAgent extends DropAgent {
 				} else {
 					dropChildren.add(kid);
 				}
+				movedElements.add(kid);
 			}
 
 			// Finally, move over the selected element
@@ -384,9 +392,47 @@ public class StackDropAgent extends DropAgent {
 			} else {
 				dropChildren.add(curSel);
 			}
+			movedElements.add(curSel);
 
 			// (Re)active the element being dropped
 			dropStack.setSelectedElement(curSel);
+		}
+
+		updatePerspectiveScopeForMovedViews(movedElements);
+	}
+
+	private void updatePerspectiveScopeForMovedViews(List<MStackElement> movedElements) {
+		EModelService modelService = dndManager.getModelService();
+		boolean droppedInSharedArea = modelService.getElementLocation(dropStack) == EModelService.IN_SHARED_AREA;
+		String activePerspectiveId = null;
+		if (droppedInSharedArea) {
+			MWindow window = modelService.getTopLevelWindowFor(dropStack);
+			if (window != null) {
+				MPerspective activePerspective = modelService.getActivePerspective(window);
+				if (activePerspective != null) {
+					activePerspectiveId = activePerspective.getElementId();
+				}
+			}
+		}
+
+		for (MStackElement movedElement : movedElements) {
+			MUIElement trackedElement = movedElement;
+			if (movedElement instanceof MPlaceholder placeholder && placeholder.getRef() instanceof MPart part) {
+				if (part.getTags().contains("Editor")) { //$NON-NLS-1$
+					continue;
+				}
+				trackedElement = placeholder;
+			} else if (movedElement instanceof MPart part) {
+				if (part.getTags().contains("Editor")) { //$NON-NLS-1$
+					continue;
+				}
+			}
+
+			if (droppedInSharedArea && activePerspectiveId != null) {
+				trackedElement.getPersistedState().put(PERSPECTIVE_SCOPED_OWNER_ID, activePerspectiveId);
+			} else {
+				trackedElement.getPersistedState().remove(PERSPECTIVE_SCOPED_OWNER_ID);
+			}
 		}
 	}
 

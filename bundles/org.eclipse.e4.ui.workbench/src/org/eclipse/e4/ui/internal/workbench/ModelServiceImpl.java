@@ -88,6 +88,8 @@ import org.osgi.service.event.EventHandler;
 public class ModelServiceImpl implements EModelService {
 
 	static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
+	private static final String PERSPECTIVE_SCOPED_OWNER_ID =
+			"org.eclipse.ui.workbench.viewInSharedAreaOwnerPerspectiveId"; //$NON-NLS-1$
 
 	private final IEclipseContext appContext;
 
@@ -917,6 +919,10 @@ public class ModelServiceImpl implements EModelService {
 				// Strip out the placeholders in visible stacks
 				List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
 				for (MPlaceholder ph : phList) {
+					String ownerPerspectiveId = ph.getPersistedState().get(PERSPECTIVE_SCOPED_OWNER_ID);
+					if (ownerPerspectiveId != null && !ownerPerspectiveId.equals(persp.getElementId())) {
+						continue;
+					}
 					ps.hidePart((MPart) ph.getRef());
 					ph.getParent().getChildren().remove(ph);
 				}
