@@ -26,6 +26,8 @@ import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
+import org.eclipse.search.ui.NewSearchUI;
+
 
 /**
  * Util class for search tests.
@@ -52,6 +54,26 @@ public class SearchTestUtil {
 
 	public static IEditorPart openTextEditor(IWorkbenchPage activePage, IFile openFile1) throws PartInitException {
 		return IDE.openEditor(activePage, openFile1, EditorsUI.DEFAULT_TEXT_EDITOR_ID, true);
+	}
+
+	/**
+	 * Hides the Search result view in the active workbench window page so that
+	 * {@link NewSearchUI#getSearchResultView()} returns {@code null}. Does nothing
+	 * if no such view is currently open.
+	 */
+	public static void ensureSearchViewClosed() {
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null) {
+			return;
+		}
+		IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
+		if (page == null) {
+			return;
+		}
+		IViewPart searchView = page.findView(NewSearchUI.SEARCH_VIEW_ID);
+		if (searchView != null) {
+			page.hideView(searchView);
+		}
 	}
 
 }
