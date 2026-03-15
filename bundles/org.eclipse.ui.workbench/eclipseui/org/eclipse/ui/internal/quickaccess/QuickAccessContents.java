@@ -725,8 +725,8 @@ public abstract class QuickAccessContents {
 
 	/**
 	 * Creates the table providing the contents for the quick access dialog. After
-	 * applying the dialog font, call {@link #installTableStyling(int)} to complete
-	 * the styling and layout for this table.
+	 * applying the dialog font, call {@link #configureTableStyling(int)} to
+	 * complete the styling and layout for this table.
 	 *
 	 * @param composite parent composite with {@link GridLayout}
 	 * @return the created table
