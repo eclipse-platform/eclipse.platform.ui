@@ -14,6 +14,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 491272, 491398
  *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434, 492452, 459989, 507322
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug #3742
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -57,11 +58,10 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -105,6 +105,7 @@ public abstract class QuickAccessContents {
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
 	private final Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new HashMap<>();
 
+	private Composite tableComposite;
 	protected Table table;
 	protected Label infoLabel;
 
@@ -723,37 +724,18 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
-	 * Creates the table providing the contents for the quick access dialog
+	 * Creates the table providing the contents for the quick access dialog. After
+	 * applying the dialog font, call {@link #installTableStyling(int)} to complete
+	 * the styling and layout for this table.
 	 *
-	 * @param composite          parent composite with {@link GridLayout}
-	 * @param defaultOrientation the window orientation to use for the table
-	 *                           {@link SWT#RIGHT_TO_LEFT} or
-	 *                           {@link SWT#LEFT_TO_RIGHT}
+	 * @param composite parent composite with {@link GridLayout}
 	 * @return the created table
 	 */
-	public Table createTable(Composite composite, int defaultOrientation) {
+	public Table createTable(Composite composite) {
 		composite.addDisposeListener(e -> doDispose());
-		Composite tableComposite = new Composite(composite, SWT.NONE);
+		tableComposite = new Composite(composite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
-		TableColumnLayout tableColumnLayout = new TableColumnLayout();
-		tableComposite.setLayout(tableColumnLayout);
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
-		textLayout = new TextLayout(table.getDisplay());
-		textLayout.setOrientation(defaultOrientation);
-		Font boldFont = resourceManager.create(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
-		textLayout.setFont(table.getFont());
-		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
-		int maxProviderWidth = (textLayout.getBounds().width);
-		textLayout.setFont(boldFont);
-		for (QuickAccessProvider provider : providers) {
-			textLayout.setText(provider.getName());
-			int width = (textLayout.getBounds().width);
-			if (width > maxProviderWidth) {
-				maxProviderWidth = width;
-			}
-		}
-		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE), new ColumnWeightData(0, maxProviderWidth));
-		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE), new ColumnWeightData(100, 100));
 		table.getShell().addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
@@ -772,42 +754,31 @@ public abstract class QuickAccessContents {
 			}
 		});
 
-		table.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
-					filterText.setFocus();
-				} else if (e.character == SWT.ESC) {
-					doClose();
-				}
+		table.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
+				filterText.setFocus();
+			} else if (e.character == SWT.ESC) {
+				doClose();
+			}
+		}));
+
+		table.addMouseListener(MouseListener.mouseUpAdapter(e -> {
+			if (table.getSelectionCount() < 1) {
+				return;
 			}
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// do nothing
+			if (e.button != 1) {
+				return;
 			}
-		});
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
 
-				if (table.getSelectionCount() < 1) {
-					return;
-				}
-
-				if (e.button != 1) {
-					return;
-				}
-
-				if (table.equals(e.getSource())) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					TableItem selection = table.getSelection()[0];
-					if (selection.equals(o)) {
-						handleSelection();
-					}
+			if (table.equals(e.getSource())) {
+				Object o = table.getItem(new Point(e.x, e.y));
+				TableItem selection = table.getSelection()[0];
+				if (selection.equals(o)) {
+					handleSelection();
 				}
 			}
-		});
+		}));
 
 		table.addMouseMoveListener(new MouseMoveListener() {
 			TableItem lastItem = null;
@@ -831,13 +802,44 @@ public abstract class QuickAccessContents {
 			}
 		});
 
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				handleSelection();
-			}
-		});
+		table.addSelectionListener(SelectionListener.widgetDefaultSelectedAdapter(e -> handleSelection()));
+		return table;
+	}
 
+	/**
+	 * Complete the styling/layout for the table.
+	 *
+	 * This method must be called after {@link #createTable(Composite)} and after
+	 * the containing dialog implementation has applied the dialog fonts.
+	 *
+	 * @param defaultOrientation the window orientation to use for the table
+	 *                           {@link SWT#RIGHT_TO_LEFT} or
+	 *                           {@link SWT#LEFT_TO_RIGHT}
+	 */
+	public void configureTableStyling(int defaultOrientation) {
+		// configure the text layout
+		textLayout = new TextLayout(table.getDisplay());
+		textLayout.setOrientation(defaultOrientation);
+		Font boldFont = resourceManager.create(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
+		textLayout.setFont(table.getFont());
+		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
+		int maxProviderWidth = (textLayout.getBounds().width);
+		textLayout.setFont(boldFont);
+		for (QuickAccessProvider provider : providers) {
+			textLayout.setText(provider.getName());
+			int width = (textLayout.getBounds().width);
+			if (width > maxProviderWidth) {
+				maxProviderWidth = width;
+			}
+		}
+
+		// configure the table layout
+		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
+		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE), new ColumnWeightData(0, maxProviderWidth));
+		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE), new ColumnWeightData(100, 100));
+
+		// configure listeners
 		final TextStyle boldStyle;
 		if (PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
 			boldStyle = new TextStyle(boldFont, null, null);
@@ -865,8 +867,6 @@ public abstract class QuickAccessContents {
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
-
-		return table;
 	}
 
 	/**
