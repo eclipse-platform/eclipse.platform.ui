@@ -130,6 +130,10 @@ cat bundles/org.eclipse.jface/META-INF/MANIFEST.MF
 grep -r "pattern" bundles/org.eclipse.jface/src
 ```
 
+## Git Commits
+
+**Do NOT add `Co-Authored-By` or similar AI attribution trailers to commits.** This fails the Eclipse license check.
+
 ## Critical Development Rules
 
 ### 1. OSGi Dependencies
