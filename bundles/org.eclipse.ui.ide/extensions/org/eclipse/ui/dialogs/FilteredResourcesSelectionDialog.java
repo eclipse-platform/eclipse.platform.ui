@@ -723,7 +723,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			Styler boldStyler = new Styler() {
 				@Override
 				public void applyStyles(TextStyle textStyle) {
-					textStyle.font = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
+					textStyle.font = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 				}
 			};
 
