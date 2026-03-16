@@ -229,7 +229,7 @@ public class AbstractContentAssistTest {
 
 	protected static Shell findNewShell(Collection<Shell> beforeShells) {
 		List<Shell> afterShells= findNewShells(beforeShells);
-		for (int attempt= 0; afterShells.size() != 1 && attempt < 10; attempt++) {
+		for (int attempt= 0; afterShells.size() != 1 && attempt < 50; attempt++) {
 			DisplayHelper.sleep(getDisplay(), 100);
 			afterShells= findNewShells(beforeShells);
 		}

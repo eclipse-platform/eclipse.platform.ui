@@ -17,7 +17,6 @@ package org.eclipse.jface.text.tests.contentassist;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,8 +39,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -134,7 +131,6 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testCompleteActivationChar() {
-		assumeFalse(Util.isWindows(), "test fails on Windows, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/890");
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
@@ -151,17 +147,20 @@ public class AsyncContentAssistTest {
 		contentAssistant.install(viewer);
 		shell.open();
 		Display display= shell.getDisplay();
-		Event keyEvent= new Event();
+		DisplayHelper.runEventLoop(display, 0);
 		Control control= viewer.getTextWidget();
+		control.forceFocus();
+		DisplayHelper.runEventLoop(display, 0);
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		// Use notifyListeners instead of Display.post() for reliable event delivery
+		// Display.post() sends native OS events that may not be processed reliably
+		// in headless CI environments
+		Event keyEvent= new Event();
 		keyEvent.widget= control;
 		keyEvent.type= SWT.KeyDown;
 		keyEvent.character= 'b';
 		keyEvent.keyCode= 'b';
-		control.getShell().forceActive();
-		control.getDisplay().post(keyEvent);
-		keyEvent.type= SWT.KeyUp;
-		control.getDisplay().post(keyEvent);
-		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		control.notifyListeners(SWT.KeyDown, keyEvent);
 		AbstractContentAssistTest.processEvents();
 		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
 		assertTrue(new DisplayHelper() {
