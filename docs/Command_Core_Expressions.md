@@ -7,14 +7,14 @@ Core expressions are declarative or programmatic expressions based on the org.ec
 Expressions and the Command Framework
 =====================================
 
-The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions.
-The command framework provides the IEvaluationContext that command core expressions are evaluate against.
+The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for `enabledWhen` and `activeWhen` for handlers, programmatic activation of contexts, and for `visibleWhen` for menu contributions.
+The command framework provides the `IEvaluationContext` that command core expressions are evaluate against.
 
-The IEvaluationContext provides a default variable for evaluations, and a number of named variables.
+The `IEvaluationContext` provides a default variable for evaluations, and a number of named variables.
 In the command framework, we provide the global selection as a `java.util.Collection` as the default variable.
 It can either be empty, have one entry (if the ISelection was something like an ITextSelection), or have the contents of an IStructuredSelection.
 
-The <with/> element can be used to change which variable the child expression elements are evaluating against.
+The `<with/>` element can be used to change which variable the child expression elements are evaluating against.
 
 Variables and the Command Framework
 ===================================
@@ -25,7 +25,7 @@ Some of the variables may not be set, depending on the current application conte
 
 | Name | Type | Description | Since |
 | --- | --- | --- | --- |
-| activeContexts | A `java.util.Collection` of `java.lang.String` |   This is a collection of the active context IDs as strings. Most commonly used with <iterate/>, <count/>, and <test/> with a combined `org.eclipse.common.expressions.PropertyTester`. In **3.3** action sets are mirrored by contexts whose parent is `org.eclipse.ui.actionSet`, and the active action sets show up in the list of active contexts.   | 3.2 |
+| activeContexts | A `java.util.Collection` of `java.lang.String` |   This is a collection of the active context IDs as strings. Most commonly used with `<iterate/>`, `<count/>`, and `<test/>` with a combined `org.eclipse.common.expressions.PropertyTester`. In **3.3** action sets are mirrored by contexts whose parent is `org.eclipse.ui.actionSet`, and the active action sets show up in the list of active contexts.   | 3.2 |
 | activeActionSets | An `IActionSetDescriptor\[\]` |   **Note:** This is currently not used as it points to an internal class and the type might change in any release.   | 3.2 |
 | activeShell | `org.eclipse.swt.widgets.Shell` |   The currently active shell. It can be a dialog or workbench window shell.   | 3.2 |
 | activeWorkbenchWindowShell | `org.eclipse.swt.widgets.Shell` |   The active workbench window shell.   | 3.2 |
@@ -38,14 +38,15 @@ Some of the variables may not be set, depending on the current application conte
 | activePart | `org.eclipse.ui.IWorkbenchPart` |   The active part, which can be the same as the active editor.   | 3.2 |
 | activePartId | `java.lang.String` |   The ID of the currently active part.   | 3.2 |
 | activeSite | `org.eclipse.ui.IWorkbenchPartSite` |   The site of the currently active part.   | 3.2 |
-| selection | `org.eclipse.jface.viewers.ISelection` |   The current global selection. It is often used with <test/> elements with `org.eclipse.core.expressions.PropertyTester`, in programmatic core expressions, and in **3.3** with <iterate/> and <count/> elements.   | 3.2 |
-| activeMenu | A `java.util.Collection` of `java.lang.String` |   This is the list of IDs of the showing context menu. Examples are like #TextEditorRuler or a part ID. Most commonly used with <iterate/>, <count/>, and <test/> with a combined `org.eclipse.common.expressions.PropertyTester`.   | 3.2 |
+| org.eclipse.ui.selection | `Object` |   The current global selection if the `ESelectionService` is used. It is often used with `<test/>` elements with `org.eclipse.core.expressions.PropertyTester`, in programmatic core expressions, potentially with `<iterate/>` and `<count/>` elements.   | 4.0 |
+| selection | `org.eclipse.jface.viewers.ISelection` |   The current global selection. It is often used with `<test/>` elements with `org.eclipse.core.expressions.PropertyTester`, in programmatic core expressions, and in **3.3** with `<iterate/>` and `<count/>` elements.   | 3.2 |
+| activeMenu | A `java.util.Collection` of `java.lang.String` |   This is the list of IDs of the showing context menu. Examples are like #TextEditorRuler or a part ID. Most commonly used with `<iterate/>`, `<count/>`, and `<test/>` with a combined `org.eclipse.common.expressions.PropertyTester`.   | 3.2 |
 | activeMenuSelection | `org.eclipse.jface.viewers.ISelection` |   This is a selection that is available while a context menu is showing. It is the selection from the selection provider used to register the context menu, usually from `getSite().registerContextMenu(*)`. It is usually the same as the `selection`variable, but not always. This is more for legacy compatibility.   | 3.3 |
 | activeMenuEditorInput | `org.eclipse.jface.viewers.ISelection` |   This is a selection that is available while a context menu is showing. It is the selection from the editor input, usually if includeEditorInput was set to `true` during `getEditorSite().registerContextMenu(*)`. This is more for legacy compatibility.   | 3.3 |
 | activeFocusControl | `org.eclipse.swt.widgets.Control` |   A control that has focus and has been registered with the [IFocusService](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/eclipseui/org/eclipse/ui/swt/IFocusService.java).   | 3.3 |
 | activeFocusControlId | `java.lang.String` |   The ID of a control that has focus and has been registered with the `org.eclipse.ui.swt.IFocusService`.   | 3.3 |
 
-Note: All these variables can be used with <test/> and a `org.eclipse.common.expressions.PropertyTester`.
+Note: All these variables can be used with `<test/>` and a `org.eclipse.common.expressions.PropertyTester`.
 
 Property Testers
 ================
@@ -104,7 +105,7 @@ For example, to test an IResource name the property would be `org.eclipse.core.r
 | **Property** | **Description** |  |
 |   isPerspectiveOpen   |   Tests if any perspective is open.   |  |
 
-Expression examples
+Expression Examples
 ===================
 
 Here are some examples. I'll pretend all of the examples are deciding when a handler is active.
@@ -118,7 +119,7 @@ You can browse the [plugin.xml](https://github.com/eclipse-platform/eclipse.plat
 The InfoView provides an `IStructuredSelection` with 0 or more `org.eclipse.ui.examples.contributions.model.Person`.
 
 When using the default variable, you must treat it as an `java.util.Collection`.
-That means using <count> or <iterate>
+That means using `<count>` or `<iterate>`
 
 ```xml
     <activeWhen>
@@ -150,7 +151,7 @@ For example:
     </activeWhen>
 ```
 
-Active editor type
+Active Editor Type
 ------------------
 
 If you want your handler to be active for a specific type of editor, you can use **activeEditorId** to target your handler.
@@ -162,7 +163,7 @@ If you want your handler to be active for a specific type of editor, you can use
     </activeWhen>
 ```
 
-Complex nested boolean expressions
+Complex Nested Boolean Expressions
 ----------------------------------
 
 You can also write complex nested boolean expressions, like **(a & b & (c | d | (!e)))**:
@@ -188,16 +189,16 @@ New Core Expressions in 3.3
 
 In 3.3 there were 2 additions to the core expressions framework.
 
-count and iterate
+Count and Iterate
 -----------------
 
 Count and iterate have always worked against `java.util.Collection`.
-The <count/> and <iterate> elements can now be used on any variable that adapts to `org.eclipse.core.expressions.ICountable` and `org.eclipse.core.expressions.IIterable` or implements the interfaces directly.
+The `<count/>` and `<iterate>` elements can now be used on any variable that adapts to `org.eclipse.core.expressions.ICountable` and `org.eclipse.core.expressions.IIterable` or implements the interfaces directly.
 It wasn't possible to use the java 1.5 constructs for iterable.
 
 The workbench provides an adapter for `ISelection` and `IStructuredSelection`.
 
-definitions
+Definitions
 -----------
 
 The **org.eclipse.core.expressions.definitions** extension point was introduced.
