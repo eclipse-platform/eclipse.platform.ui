@@ -550,12 +550,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	boolean hideWhenNoProposals(boolean autoActivated) {
 		if (autoActivated || !fContentAssistant.isShowEmptyList()) {
-			if (!autoActivated) {
-				Control control= fContentAssistSubjectControlAdapter.getControl();
-				if (control != null && !control.isDisposed()) {
-					control.getDisplay().beep();
-				}
-			}
 			hide();
 			return true;
 		}
