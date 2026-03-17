@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2026 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
+ *     vogella GmbH - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
@@ -29,25 +28,29 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
- * Standard action for copying the currently selected resources to the clipboard.
- * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
+ * Standard action for cutting the currently selected resources to the clipboard.
  *
- * @since 2.0
+ * @since 3.10
  */
-/*package*/class CopyAction extends SelectionListenerAction {
+/*package*/class CutAction extends SelectionListenerAction {
 
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyAction"; //$NON-NLS-1$
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CutAction"; //$NON-NLS-1$
+
+	/**
+	 * Tracks whether the last clipboard operation was a cut.
+	 */
+	public static boolean isCut = false;
 
 	/**
 	 * The shell in which to show any dialogs.
@@ -70,16 +73,19 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 * @param shell the shell for any dialogs
 	 * @param clipboard a platform clipboard
 	 */
-	public CopyAction(Shell shell, Clipboard clipboard) {
-		super(WorkbenchNavigatorMessages.CopyAction_Cop_);
+	public CutAction(Shell shell, Clipboard clipboard) {
+		super(WorkbenchNavigatorMessages.CutAction_Cut);
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(WorkbenchNavigatorMessages.CopyAction_Copy_selected_resource_s_);
-		setId(CopyAction.ID);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "CopyHelpId"); //$NON-NLS-1$
-				// TODO INavigatorHelpContextIds.COPY_ACTION);
+		setToolTipText(WorkbenchNavigatorMessages.CutAction_Cut_selected_resource_s_);
+		setId(CutAction.ID);
+		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+		setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "CutHelpId"); //$NON-NLS-1$
 	}
 
 	/**
@@ -88,19 +94,12 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 * @param shell the shell for any dialogs
 	 * @param clipboard a platform clipboard
 	 * @param pasteAction a paste action
-	 *
-	 * @since 2.0
 	 */
-	public CopyAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
+	public CutAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
 		this(shell, clipboard);
 		this.pasteAction = pasteAction;
 	}
 
-	/**
-	 * The <code>CopyAction</code> implementation of this method defined
-	 * on <code>IAction</code> copies the selected resources to the
-	 * clipboard.
-	 */
 	@Override
 	public void run() {
 		List<? extends IResource> selectedResources = getSelectedResources();
@@ -113,7 +112,6 @@ import org.eclipse.ui.part.ResourceTransfer;
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			IPath location = resources[i].getLocation();
-			// location may be null. See bug 29491.
 			if (location != null) {
 				fileNames[actualLength++] = location.toOSString();
 			}
@@ -122,7 +120,6 @@ import org.eclipse.ui.part.ResourceTransfer;
 			}
 			buf.append(resources[i].getName());
 		}
-		// was one or more of the locations null?
 		if (actualLength < length) {
 			String[] tempFileNames = fileNames;
 			fileNames = new String[actualLength];
@@ -130,55 +127,33 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 		setClipboard(resources, fileNames, buf.toString());
 
-		CutAction.isCut = false;
+		isCut = true;
 
-		// update the enablement of the paste action
-		// workaround since the clipboard does not suppot callbacks
 		if (pasteAction != null && pasteAction.getStructuredSelection() != null) {
 			pasteAction.selectionChanged(pasteAction.getStructuredSelection());
 		}
 	}
 
-	/**
-	 * Set the clipboard contents. Prompt to retry if clipboard is busy.
-	 *
-	 * @param resources the resources to copy to the clipboard
-	 * @param fileNames file names of the resources to copy to the clipboard
-	 * @param names string representation of all names
-	 */
-	private void setClipboard(IResource[] resources, String[] fileNames,
-			String names) {
+	private void setClipboard(IResource[] resources, String[] fileNames, String names) {
 		try {
-			// set the clipboard contents
 			if (fileNames.length > 0) {
 				clipboard.setContents(new Object[] { resources, fileNames, names },
-						new Transfer[] { ResourceTransfer.getInstance(),
-								FileTransfer.getInstance(),
+						new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance(),
 								TextTransfer.getInstance() });
 			} else {
 				clipboard.setContents(new Object[] { resources, names },
-						new Transfer[] { ResourceTransfer.getInstance(),
-								TextTransfer.getInstance() });
+						new Transfer[] { ResourceTransfer.getInstance(), TextTransfer.getInstance() });
 			}
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
 			}
-			if (MessageDialog
-					.openQuestion(
-							shell,
-							"Problem with copy title", // TODO ResourceNavigatorMessages.CopyToClipboardProblemDialog_title,  //$NON-NLS-1$
-							"Problem with copy.")) { //$NON-NLS-1$
+			if (MessageDialog.openQuestion(shell, "Problem with cut title", "Problem with cut.")) { //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(resources, fileNames, names);
 			}
 		}
 	}
 
-	/**
-	 * The <code>CopyAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method enables this action if
-	 * one or more resources of compatible types are selected.
-	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (!super.updateSelection(selection)) {

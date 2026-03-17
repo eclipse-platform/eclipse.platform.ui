@@ -38,6 +38,8 @@ public class EditActionGroup extends ActionGroup {
 
 	private Clipboard clipboard;
 
+	private CutAction cutAction;
+
 	private CopyAction copyAction;
 
 	private DeleteResourceAction deleteAction;
@@ -69,6 +71,8 @@ public class EditActionGroup extends ActionGroup {
 		boolean anyResourceSelected = !selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
+		cutAction.selectionChanged(selection);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, cutAction);
 		copyAction.selectionChanged(selection);
 		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, copyAction);
 		pasteAction.selectionChanged(selection);
@@ -89,6 +93,7 @@ public class EditActionGroup extends ActionGroup {
 			textActionHandler = new TextActionHandler(actionBars); // hook
 																	// handlers
 		}
+		textActionHandler.setCutAction(cutAction);
 		textActionHandler.setCopyAction(copyAction);
 		textActionHandler.setPasteAction(pasteAction);
 		textActionHandler.setDeleteAction(deleteAction);
@@ -124,6 +129,8 @@ public class EditActionGroup extends ActionGroup {
 		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
+		cutAction = new CutAction(shell, clipboard, pasteAction);
+
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
@@ -140,6 +147,7 @@ public class EditActionGroup extends ActionGroup {
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
+		cutAction.selectionChanged(selection);
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
 		deleteAction.selectionChanged(selection);

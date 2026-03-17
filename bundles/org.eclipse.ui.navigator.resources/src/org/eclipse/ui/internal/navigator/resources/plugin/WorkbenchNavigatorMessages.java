@@ -55,6 +55,9 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
 	public static String WorkingSetActionProvider_multipleWorkingSets;
 
+	public static String CutAction_Cut;
+	public static String CutAction_Cut_selected_resource_s_;
+
 	public static String CopyAction_Cop_;
 	public static String CopyAction_Copy_selected_resource_s_;
 

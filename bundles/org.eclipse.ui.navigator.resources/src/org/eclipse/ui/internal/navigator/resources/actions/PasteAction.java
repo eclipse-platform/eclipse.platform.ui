@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
+import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -155,9 +156,15 @@ import org.eclipse.ui.part.ResourceTransfer;
 			} else {
 				// enablement should ensure that we always have access to a container
 				IContainer container = getContainer(resourceData);
-				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
-				operation.copyResources(resourceData, container);
+				if (CutAction.isCut) {
+					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(shell);
+					operation.copyResources(resourceData, container);
+				} else {
+					CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
+					operation.copyResources(resourceData, container);
+				}
 			}
+			CutAction.isCut = false;
 			return;
 		}
 
@@ -171,6 +178,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 			operation.copyFiles(fileData, container);
 		}
+		CutAction.isCut = false;
 	}
 
 	/**

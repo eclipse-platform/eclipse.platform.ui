@@ -30,20 +30,22 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for Copy and Paste actions in the Project Explorer.
+ * Tests for Copy, Cut and Paste actions in the Project Explorer.
+ *
+ * Uses TEST_VIEWER instead of ProjectExplorer.VIEW_ID to avoid JDT's action
+ * providers overriding the navigator's edit actions.
  */
 public class CopyPasteActionTest extends NavigatorTestBase {
 
 	private Clipboard _clipboard;
 
 	public CopyPasteActionTest() {
-		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
+		_navigatorInstanceId = TEST_VIEWER;
 	}
 
 	@Override
@@ -70,6 +72,8 @@ public class CopyPasteActionTest extends NavigatorTestBase {
 		return (ActionContributionItem) item;
 	}
 
+	// --- Copy tests ---
+
 	@Test
 	public void testCopyEnablement() throws Exception {
 		IFile file = _project.getFile("model.properties");
@@ -82,7 +86,6 @@ public class CopyPasteActionTest extends NavigatorTestBase {
 
 	@Test
 	public void testCopyDisabledForMixedSelection() throws Exception {
-		// Mixed selection (Project + File) should disable Copy action
 		IFile file = _project.getFile("model.properties");
 		IStructuredSelection sel = new StructuredSelection(new Object[] { _project, file });
 		_viewer.setSelection(sel);
@@ -97,8 +100,6 @@ public class CopyPasteActionTest extends NavigatorTestBase {
 		_viewer.setSelection(sel);
 
 		Object copyItem = verifyMenu(sel, "Copy");
-		// For an empty selection, the Resource action provider is not even matched,
-		// so the action should be absent from the menu.
 		assertNull(copyItem, "Copy action should be absent for empty selection");
 	}
 
@@ -136,7 +137,6 @@ public class CopyPasteActionTest extends NavigatorTestBase {
 	public void testPasteEnablement() throws Exception {
 		IFile file = _project.getFile("model.properties");
 
-		// Manually put the file on the clipboard
 		getClipboard().setContents(new Object[] { new IResource[] { file }, file.getName() },
 				new Transfer[] { ResourceTransfer.getInstance(), TextTransfer.getInstance() });
 
@@ -152,44 +152,128 @@ public class CopyPasteActionTest extends NavigatorTestBase {
 		IFile file = _project.getFile("model.properties");
 		assertTrue(file.exists());
 
-		// 1. Copy
 		IStructuredSelection selCopy = new StructuredSelection(file);
 		_viewer.setSelection(selCopy);
-		ActionContributionItem copyActionItem = getAction(selCopy, "Copy");
-		copyActionItem.getAction().run();
+		getAction(selCopy, "Copy").getAction().run();
 
-		// 2. Paste into _p1
 		IStructuredSelection selPaste = new StructuredSelection(_p1);
 		_viewer.setSelection(selPaste);
 		ActionContributionItem pasteActionItem = getAction(selPaste, "Paste");
 		assertTrue(pasteActionItem.getAction().isEnabled());
 		pasteActionItem.getAction().run();
 
-		// 3. Verify
 		IFile pastedFile = _p1.getFile(file.getName());
 		waitForCondition("File should be pasted", () -> pastedFile.exists());
 		assertTrue(pastedFile.exists(), "Pasted file should exist in target project");
-	}
-
-	@Test
-	public void testContextMenuContainsCopyPasteDelete() throws Exception {
-		IFile file = _project.getFile("model.properties");
-		IStructuredSelection sel = new StructuredSelection(file);
-		_viewer.setSelection(sel);
-
-		getAction(sel, "Copy");
-		getAction(sel, "Paste");
-		getAction(sel, "Delete");
+		assertTrue(file.exists(), "Original file should still exist after copy-paste");
 	}
 
 	@Test
 	public void testCopyDisabledForWorkspaceRoot() throws Exception {
-		// Selecting the workspace root should enable the resource action provider
-		// but the Copy action itself should be disabled for the root.
 		IStructuredSelection sel = new StructuredSelection(ResourcesPlugin.getWorkspace().getRoot());
 		_viewer.setSelection(sel);
 
 		ActionContributionItem copyActionItem = getAction(sel, "Copy");
 		assertFalse(copyActionItem.getAction().isEnabled(), "Copy action should be disabled for Workspace Root");
+	}
+
+	// --- Cut tests ---
+
+	@Test
+	public void testCutEnablement() throws Exception {
+		IFile file = _project.getFile("model.properties");
+		IStructuredSelection sel = new StructuredSelection(file);
+		_viewer.setSelection(sel);
+
+		ActionContributionItem cutActionItem = getAction(sel, "Cut");
+		assertTrue(cutActionItem.getAction().isEnabled(), "Cut action should be enabled for a file");
+	}
+
+	@Test
+	public void testCutDisabledForMixedSelection() throws Exception {
+		IFile file = _project.getFile("model.properties");
+		IStructuredSelection sel = new StructuredSelection(new Object[] { _project, file });
+		_viewer.setSelection(sel);
+
+		ActionContributionItem cutActionItem = getAction(sel, "Cut");
+		assertFalse(cutActionItem.getAction().isEnabled(), "Cut action should be disabled for mixed selection");
+	}
+
+	@Test
+	public void testCutToClipboard() throws Exception {
+		IFile file = _project.getFile("model.properties");
+		IStructuredSelection sel = new StructuredSelection(file);
+		_viewer.setSelection(sel);
+
+		ActionContributionItem cutActionItem = getAction(sel, "Cut");
+		cutActionItem.getAction().run();
+
+		Object contents = getClipboard().getContents(ResourceTransfer.getInstance());
+		assertNotNull(contents, "Clipboard should contain resources after cut");
+		IResource[] resources = (IResource[]) contents;
+		assertEquals(1, resources.length);
+		assertEquals(file, resources[0]);
+	}
+
+	@Test
+	public void testCutPasteMovesResource() throws Exception {
+		IFile file = _project.getFile("model.properties");
+		assertTrue(file.exists());
+
+		IStructuredSelection selCut = new StructuredSelection(file);
+		_viewer.setSelection(selCut);
+		getAction(selCut, "Cut").getAction().run();
+
+		IStructuredSelection selPaste = new StructuredSelection(_p1);
+		_viewer.setSelection(selPaste);
+		ActionContributionItem pasteActionItem = getAction(selPaste, "Paste");
+		assertTrue(pasteActionItem.getAction().isEnabled());
+		pasteActionItem.getAction().run();
+
+		IFile movedFile = _p1.getFile(file.getName());
+		waitForCondition("File should be moved", () -> movedFile.exists());
+		assertTrue(movedFile.exists(), "Moved file should exist in target project");
+		waitForCondition("Original file should be gone", () -> !file.exists());
+		assertFalse(file.exists(), "Original file should no longer exist after cut-paste");
+	}
+
+	@Test
+	public void testCopyAfterCutResetsCutState() throws Exception {
+		IFile file1 = _project.getFile("model.properties");
+		IFile file2 = _p2.getFile("file1.txt");
+
+		// Cut file1
+		IStructuredSelection selCut = new StructuredSelection(file1);
+		_viewer.setSelection(selCut);
+		getAction(selCut, "Cut").getAction().run();
+
+		// Copy file2 (resets cut state)
+		IStructuredSelection selCopy = new StructuredSelection(file2);
+		_viewer.setSelection(selCopy);
+		getAction(selCopy, "Copy").getAction().run();
+
+		// Paste into _p1
+		IStructuredSelection selPaste = new StructuredSelection(_p1);
+		_viewer.setSelection(selPaste);
+		getAction(selPaste, "Paste").getAction().run();
+
+		// Verify it was a copy, not a move
+		IFile pastedFile = _p1.getFile(file2.getName());
+		waitForCondition("File should be pasted", () -> pastedFile.exists());
+		assertTrue(pastedFile.exists());
+		assertTrue(file2.exists(), "Source file should still exist (it was a copy)");
+		assertTrue(file1.exists(), "Cut file should still exist (copy reset the cut state)");
+	}
+
+	@Test
+	public void testContextMenuContainsEditActions() throws Exception {
+		IFile file = _project.getFile("model.properties");
+		IStructuredSelection sel = new StructuredSelection(file);
+		_viewer.setSelection(sel);
+
+		getAction(sel, "Cut");
+		getAction(sel, "Copy");
+		getAction(sel, "Paste");
+		getAction(sel, "Delete");
 	}
 }
