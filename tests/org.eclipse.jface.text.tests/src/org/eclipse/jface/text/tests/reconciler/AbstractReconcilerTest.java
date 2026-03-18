@@ -173,6 +173,7 @@ public class AbstractReconcilerTest {
 					}
 					@Override
 					protected void reconcilerReset() {
+						AbstractReconcilerTest.this.beforeReconcilerResetLogged();
 						fCallLog.add("reconcilerReset");
 					}
 					@Override
@@ -200,6 +201,10 @@ public class AbstractReconcilerTest {
 
 	void aboutToWork(@SuppressWarnings("unused") AbstractReconciler reconciler) {
 		// nothing
+	}
+
+	void beforeReconcilerResetLogged() {
+		// hook for subclasses to widen race window
 	}
 
 	@AfterEach

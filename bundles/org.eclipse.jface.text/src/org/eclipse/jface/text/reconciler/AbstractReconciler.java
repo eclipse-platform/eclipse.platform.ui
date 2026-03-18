@@ -140,14 +140,13 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void reset() {
 
+			reconcilerReset();
+
 			if (fDelay > 0) {
 
 				synchronized (this) {
 					fIsDirty= true;
 					fReset= true;
-				}
-				synchronized (fDirtyRegionQueue) {
-					fDirtyRegionQueue.notifyAll(); // wake up wait(fDelay);
 				}
 
 			} else {
@@ -155,14 +154,13 @@ abstract public class AbstractReconciler implements IReconciler {
 				synchronized (this) {
 					fIsDirty= true;
 				}
-
-				synchronized (fDirtyRegionQueue) {
-					fDirtyRegionQueue.notifyAll();
-				}
 			}
 
 			informNotFinished();
-			reconcilerReset();
+
+			synchronized (fDirtyRegionQueue) {
+				fDirtyRegionQueue.notifyAll();
+			}
 		}
 
 		/**

@@ -26,6 +26,7 @@ import org.eclipse.jface.text.tests.contentassist.FilteringAsyncContentAssistTes
 import org.eclipse.jface.text.tests.contentassist.IncrementalAsyncContentAssistTests;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.reconciler.FastAbstractReconcilerTest;
+import org.eclipse.jface.text.tests.reconciler.ReconcilerResetOrderingTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
@@ -61,6 +62,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 
 		AbstractReconcilerTest.class,
 		FastAbstractReconcilerTest.class,
+		ReconcilerResetOrderingTest.class,
 
 		FastPartitionerZeroLengthTest.class,
 		FastPartitionerTest.class,
