@@ -156,7 +156,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			} else {
 				// enablement should ensure that we always have access to a container
 				IContainer container = getContainer(resourceData);
-				if (CutAction.isCut) {
+				if (isCutOperation(resourceData)) {
 					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(shell);
 					operation.copyResources(resourceData, container);
 				} else {
@@ -164,7 +164,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 					operation.copyResources(resourceData, container);
 				}
 			}
-			CutAction.isCut = false;
+			CutAction.cutResources = null;
 			return;
 		}
 
@@ -178,7 +178,24 @@ import org.eclipse.ui.part.ResourceTransfer;
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 			operation.copyFiles(fileData, container);
 		}
-		CutAction.isCut = false;
+		CutAction.cutResources = null;
+	}
+
+	/**
+	 * Returns whether the clipboard content originated from a cut operation by
+	 * comparing the clipboard resources with the stored cut resources.
+	 */
+	private boolean isCutOperation(IResource[] clipboardResources) {
+		IResource[] cut = CutAction.cutResources;
+		if (cut == null || cut.length != clipboardResources.length) {
+			return false;
+		}
+		for (int i = 0; i < cut.length; i++) {
+			if (!cut[i].equals(clipboardResources[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -130,7 +130,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 		setClipboard(resources, fileNames, buf.toString());
 
-		CutAction.isCut = false;
+		CutAction.cutResources = null;
 
 		// update the enablement of the paste action
 		// workaround since the clipboard does not suppot callbacks

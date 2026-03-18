@@ -48,9 +48,10 @@ import org.eclipse.ui.part.ResourceTransfer;
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CutAction"; //$NON-NLS-1$
 
 	/**
-	 * Tracks whether the last clipboard operation was a cut.
+	 * Resources that were cut. Non-null when the last clipboard operation was a
+	 * cut, {@code null} when it was a copy or after paste has consumed the cut.
 	 */
-	public static boolean isCut = false;
+	static IResource[] cutResources;
 
 	/**
 	 * The shell in which to show any dialogs.
@@ -127,7 +128,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 		setClipboard(resources, fileNames, buf.toString());
 
-		isCut = true;
+		cutResources = resources;
 
 		if (pasteAction != null && pasteAction.getStructuredSelection() != null) {
 			pasteAction.selectionChanged(pasteAction.getStructuredSelection());
