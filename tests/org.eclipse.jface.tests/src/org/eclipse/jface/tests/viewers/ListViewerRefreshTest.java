@@ -84,12 +84,15 @@ public class ListViewerRefreshTest {
 		runEventLoop(shell.getDisplay(), DELAY);
 
 		run("Scrolled to position 30.", () -> viewer.reveal(input.get(30)));
+		waitAndAssertCondition(shell.getDisplay(), () -> assertNotEquals(viewer.getList().getTopIndex(), 0,
+				"Initial scroll to failed"));
 
 		run("Refreshed viewer without a selection.", viewer::refresh);
 
 		// BUG: The top index should not be the first item.
 
-		waitAndAssertCondition(shell.getDisplay(), () -> assertNotEquals(viewer.getList().getTopIndex(), 0));
+		waitAndAssertCondition(shell.getDisplay(), () -> assertNotEquals(viewer.getList().getTopIndex(), 0,
+				"Scroll to position not preserved after refresh"));
 	}
 
 	/**
