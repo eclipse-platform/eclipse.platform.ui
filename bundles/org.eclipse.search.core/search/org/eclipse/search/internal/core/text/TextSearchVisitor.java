@@ -38,12 +38,14 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobGroup;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceStatus;
@@ -70,6 +72,7 @@ public class TextSearchVisitor {
 
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.search/perf")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
+	private static final String EXCLUSION_PREFERENCE_NAME = "search_exclusion_property"; //$NON-NLS-1$
 
 	/**
 	 * Queue of files to be searched. IFile pointing to the same local file are
@@ -185,8 +188,6 @@ public class TextSearchVisitor {
 		}
 
 		public IStatus processFile(List<IFile> sameFiles, IProgressMonitor monitor) {
-			// A natural cleanup after the change to use JobGroups is accepted would be to move these
-			// methods to the TextSearchJob class.
 			Matcher matcher= fSearchPattern.pattern().isEmpty() ? null : fSearchPattern.matcher(""); //$NON-NLS-1$
 			IFile file = sameFiles.remove(0);
 			monitor.setTaskName(file.getFullPath().toString());
@@ -260,9 +261,7 @@ public class TextSearchVisitor {
 				if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
 					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 				}
-				Object[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
-				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
-				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
+				return errorStatusForFile(file, e);
 			} catch (StackOverflowError e) {
 				fFatalError= true;
 				String message= SearchCoreMessages.TextSearchVisitor_patterntoocomplex0;
@@ -302,6 +301,8 @@ public class TextSearchVisitor {
 	private volatile boolean fIsLightweightAutoRefresh;
 	private final DirtyFileProvider fDirtyDiscovery;
 
+	private final QualifiedName fExclusionProperty;
+
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, DirtyFileProvider dirtyDiscovery) {
 		fCollector= collector;
 		fDirtyDiscovery = dirtyDiscovery;
@@ -312,6 +313,10 @@ public class TextSearchVisitor {
 
 		fIsLightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
 		fileBatches = new ConcurrentLinkedQueue<>();
+
+		IPreferencesService prefs = Platform.getPreferencesService();
+		String exclusionPropertyName = prefs.getString(SearchCorePlugin.PLUGIN_ID, EXCLUSION_PREFERENCE_NAME, "", null); //$NON-NLS-1$
+		fExclusionProperty = exclusionPropertyName.isEmpty() ? null : new QualifiedName(null, exclusionPropertyName);
 	}
 
 	public IStatus search(IFile[] files, IProgressMonitor monitor) {
@@ -345,6 +350,9 @@ public class TextSearchVisitor {
 				Map<String, List<IFile>> remoteFilesByLocation = new LinkedHashMap<>();
 
 				for (IFile file : files) {
+					if (excluded(file)) {
+						continue;
+					}
 					IPath path = file.getLocation();
 					String key = path == null ? file.getLocationURI().toString() : path.toString();
 					Map<String, List<IFile>> filesByLocation = (path != null) ? localFilesByLocation
@@ -513,8 +521,14 @@ public class TextSearchVisitor {
 		return occurences;
 	}
 
+	private static Status errorStatusForFile(IFile file, CoreException e) {
+		Object[] args = { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
+		String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
+		Status status = new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
+		return status;
+	}
 
-	private String getExceptionMessage(Exception e) {
+	private static String getExceptionMessage(Exception e) {
 		String message= e.getLocalizedMessage();
 		if (message == null) {
 			return e.getClass().getName();
@@ -542,4 +556,22 @@ public class TextSearchVisitor {
 		}
 	}
 
+	private boolean excluded(IFile file) {
+		if (fExclusionProperty != null) {
+			try {
+				return file.getSessionProperty(fExclusionProperty) != null;
+			} catch (CoreException e) {
+				/*
+				 * The preference 'search_exclusion_property' indicates we
+				 * should skip files with the respective session property, but
+				 * we ran into an exception while reading the properties of the
+				 * file. Skip the file from the search, since we don't know if
+				 * the property is set or not.
+				 */
+				fStatus.add(errorStatusForFile(file, e));
+				return true;
+			}
+		}
+		return false;
+	}
 }
