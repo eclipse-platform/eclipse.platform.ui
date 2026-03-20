@@ -213,11 +213,11 @@ Form {
 }
 
 Section {
-    background-color: #4F5355;
+    background-color: #2f2f2f;
     color: #AEBED0;
-    background-color-titlebar: #4F5355;
-    background-color-gradient-titlebar: #4F5355;
-    border-color-titlebar: #4F5355;
+    background-color-titlebar: #2f2f2f;
+    background-color-gradient-titlebar: #2f2f2f;
+    border-color-titlebar: #2f2f2f;
     swt-titlebar-color: #cccccc;
 	tb-toggle-hover-color: #F4F7F7;
 	tb-toggle-color: #F4F7F7;
