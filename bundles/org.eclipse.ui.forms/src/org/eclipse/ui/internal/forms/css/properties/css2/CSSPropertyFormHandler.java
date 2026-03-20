@@ -64,8 +64,6 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 		if (TEXT_BACKGROUND_COLOR.equals(property)) {
 			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 				Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
-				// When a single color is received, make it 100% with that
-				// single color.
 				form.setTextBackground(new Color[] { color }, new int[] { 100 }, true);
 
 			} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
@@ -83,12 +81,19 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 				}
 
 				if (colors.size() > 0) {
-					List<Integer> list = grad.getPercents();
-					int[] percents = new int[list.size()];
-					for (int i = 0; i < percents.length; i++) {
-						percents[i] = list.get(i).intValue();
+					Color[] colorArray = colors.toArray(new Color[0]);
+					if (allColorsIdentical(colorArray)) {
+						// All gradient colors are the same — pass a single
+						// color to avoid unnecessary gradient processing
+						form.setTextBackground(new Color[] { colorArray[0] }, new int[] { 100 }, true);
+					} else {
+						List<Integer> list = grad.getPercents();
+						int[] percents = new int[list.size()];
+						for (int i = 0; i < percents.length; i++) {
+							percents[i] = list.get(i).intValue();
+						}
+						form.setTextBackground(colorArray, percents, grad.getVerticalGradient());
 					}
-					form.setTextBackground(colors.toArray(new Color[0]), percents, grad.getVerticalGradient());
 				}
 			}
 
@@ -99,6 +104,19 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 				form.setHeadColor(headProperty, color);
 			}
 		}
+	}
+
+	private static boolean allColorsIdentical(Color[] colors) {
+		if (colors.length <= 1) {
+			return true;
+		}
+		Color first = colors[0];
+		for (int i = 1; i < colors.length; i++) {
+			if (!first.equals(colors[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
