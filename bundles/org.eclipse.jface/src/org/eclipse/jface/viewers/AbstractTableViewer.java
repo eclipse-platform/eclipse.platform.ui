@@ -387,9 +387,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					}
 
 					ViewerColumn columnViewer = getViewerColumn(column);
-					ViewerCell cellToUpdate = new ViewerCell(viewerRowFromItem, column, element);
 
-					columnViewer.refresh(cellToUpdate);
+					if (columnViewer != null) {
+						ViewerCell cellToUpdate = new ViewerCell(viewerRowFromItem, column, element);
+						columnViewer.refresh(cellToUpdate);
+					}
 
 					// As it is possible for user code to run the event
 					// loop check here.
