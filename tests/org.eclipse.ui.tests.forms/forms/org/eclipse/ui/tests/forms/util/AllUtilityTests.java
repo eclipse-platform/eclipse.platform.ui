@@ -22,6 +22,7 @@ import org.junit.platform.suite.api.Suite;
  */
 @Suite
 @SelectClasses({
+	FlatLookTest.class,
 	FormColorsTest.class,
 	FormFontsTest.class,
 	FormImagesTest.class,

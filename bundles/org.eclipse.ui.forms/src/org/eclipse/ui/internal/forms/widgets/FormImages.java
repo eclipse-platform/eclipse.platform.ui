@@ -115,20 +115,26 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError,	Device device) {
-			Color color1 = new Color(device, fRGBs[0]);
-			Color color2 = new Color(device, fRGBs[1]);
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
-				gc.setBackground(color1);
-				gc.fillRectangle(0, 0, width, height);
-				gc.setForeground(color2);
-				gc.setBackground(color1);
-				gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+				Color color1 = new Color(device, fRGBs[0]);
+				Color color2 = new Color(device, fRGBs[1]);
+				try {
+					gc.setBackground(color1);
+					gc.fillRectangle(0, 0, width, height);
+					if (!color1.equals(color2)) {
+						gc.setForeground(color2);
+						gc.setBackground(color1);
+						gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+					}
+				} finally {
+					color1.dispose();
+					color2.dispose();
+				}
 			};
+			Color background = new Color(device, fRGBs[0]);
 			Image image = new Image(device, imageGcDrawer, 1, fLength);
-			image.setBackground(color1);
-			GC gc = new GC(image);
-
-			gc.dispose();
+			image.setBackground(background);
+			background.dispose();
 			return image;
 		}
 	}
@@ -190,13 +196,29 @@ public class FormImages {
 			final ImageGcDrawer imageGcDrawer = (gc, iWidth, iHeight) -> {
 				Color[] colors = new Color[fRGBs.length];
 				for (int i = 0; i < colors.length; i++) {
-					colors[i] = new Color(device, fRGBs[i]);
+					colors[i] = fRGBs[i] == null ? null : new Color(device, fRGBs[i]);
 				}
 				Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
-				drawTextGradient(gc, iWidth, iHeight, colors, fPercents, fVertical, bg);
+				try {
+					drawTextGradient(gc, iWidth, iHeight, colors, fPercents, fVertical, bg);
+				} finally {
+					for (Color color : colors) {
+						if (color != null) {
+							color.dispose();
+						}
+					}
+					if (bg != null) {
+						bg.dispose();
+					}
+				}
 			};
+			Color background = fRGBs[0] == null ? null : new Color(device, fRGBs[0]);
 			Image gradient = new Image(device, imageGcDrawer, Math.max(width, 1), Math
 					.max(height, 1));
+			if (background != null) {
+				gradient.setBackground(background);
+				background.dispose();
+			}
 			return gradient;
 		}
 
@@ -209,7 +231,6 @@ public class FormImages {
 				}
 				gc.fillRectangle(0, 0, width, height);
 			} else {
-				final Color oldForeground = gc.getForeground();
 				Color lastColor = colors[0];
 				if (lastColor == null) {
 					lastColor = oldBackground;
@@ -217,24 +238,29 @@ public class FormImages {
 				int pos = 0;
 				for (int i = 0; i < percents.length; ++i) {
 					gc.setForeground(lastColor);
-					lastColor = colors[i + 1];
-					if (lastColor == null) {
-						lastColor = oldBackground;
+					Color nextColor = colors[i + 1];
+					if (nextColor == null) {
+						nextColor = oldBackground;
 					}
-					gc.setBackground(lastColor);
+					gc.setBackground(nextColor);
 					if (vertical) {
 						int gradientHeight = percents[i] * height / 100;
-
-						gc.fillGradientRectangle(0, pos, width, gradientHeight,
-								true);
+						if (Objects.equals(lastColor, nextColor)) {
+							gc.fillRectangle(0, pos, width, gradientHeight);
+						} else {
+							gc.fillGradientRectangle(0, pos, width, gradientHeight, true);
+						}
 						pos += gradientHeight;
 					} else {
 						int gradientWidth = percents[i] * width / 100;
-
-						gc.fillGradientRectangle(pos, 0, gradientWidth, height,
-								false);
+						if (Objects.equals(lastColor, nextColor)) {
+							gc.fillRectangle(pos, 0, gradientWidth, height);
+						} else {
+							gc.fillGradientRectangle(pos, 0, gradientWidth, height, false);
+						}
 						pos += gradientWidth;
 					}
+					lastColor = nextColor;
 				}
 				if (vertical && pos < height) {
 					if (bg != null) {
@@ -248,7 +274,6 @@ public class FormImages {
 					}
 					gc.fillRectangle(pos, 0, width - pos, height);
 				}
-				gc.setForeground(oldForeground);
 			}
 		}
 	}
@@ -311,17 +336,26 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
-			Color color1 = new Color(device, fRGBs[0]);
-			Color color2 = new Color(device, fRGBs[1]);
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
-				gc.setBackground(color1);
-				gc.fillRectangle(0, 0, width, height);
-				gc.setForeground(color2);
-				gc.setBackground(color1);
-				gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+				Color color1 = new Color(device, fRGBs[0]);
+				Color color2 = new Color(device, fRGBs[1]);
+				try {
+					gc.setBackground(color1);
+					gc.fillRectangle(0, 0, width, height);
+					if (!color1.equals(color2)) {
+						gc.setForeground(color2);
+						gc.setBackground(color1);
+						gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+					}
+				} finally {
+					color1.dispose();
+					color2.dispose();
+				}
 			};
+			Color background = new Color(device, fRGBs[0]);
 			Image image = new Image(device, imageGcDrawer, 1, fLength);
-			image.setBackground(color1);
+			image.setBackground(background);
+			background.dispose();
 
 			return image;
 		}

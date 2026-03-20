@@ -381,65 +381,80 @@ public class Section extends ExpandableComposite {
 				}
 				iGc.setBackground(getBackground());
 				FormUtil.setAntialias(iGc, SWT.ON);
-				// repair the upper left corner
-				iGc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth, marginHeight + 2, marginWidth + 2,
-						marginHeight });
-				// repair the upper right corner
-				iGc.fillPolygon(new int[] { width - marginWidth - 3, marginHeight, width - marginWidth, marginHeight,
-						width - marginWidth, marginHeight + 3 });
 				iGc.setForeground(border);
 
-				// Draw Lines
-				// top left curve
-				iGc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2, marginHeight);
-				// top edge
-				iGc.drawLine(marginWidth + 2, marginHeight, width - marginWidth - 3, marginHeight);
-				// top right curve
-				iGc.drawLine(width - marginWidth - 3, marginHeight, width - marginWidth - 1,
-						marginHeight + 2);
+				if (border.equals(bg)) {
+					// top edge - draw a straight line across
+					iGc.drawLine(marginWidth, marginHeight, width - marginWidth - 1, marginHeight);
+				} else {
+					// repair the upper left corner
+					iGc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth, marginHeight + 2, marginWidth + 2,
+							marginHeight });
+					// repair the upper right corner
+					iGc.fillPolygon(new int[] { width - marginWidth - 3, marginHeight, width - marginWidth, marginHeight,
+							width - marginWidth, marginHeight + 3 });
 
-				// Expand conditions
-				// left vertical edge gradient
-				iGc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
-				// right vertical edge gradient
-				iGc.fillGradientRectangle(width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+					// Draw Lines
+					// top left curve
+					iGc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2, marginHeight);
+					// top edge
+					iGc.drawLine(marginWidth + 2, marginHeight, width - marginWidth - 3, marginHeight);
+					// top right curve
+					iGc.drawLine(width - marginWidth - 3, marginHeight, width - marginWidth - 1,
+							marginHeight + 2);
 
-				// New in 3.3 - edge treatment
-				iGc.setForeground(getBackground());
-				iGc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
-						marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
-						width - marginWidth - 3, marginHeight + 1, width - marginWidth - 3, marginHeight + 2,
-						width - marginWidth - 2, marginHeight + 2, width - marginWidth - 2,
-						marginHeight + gradientheight + 4 });
+					// left vertical edge gradient
+					iGc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
+					// right vertical edge gradient
+					iGc.fillGradientRectangle(width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+
+					// New in 3.3 - edge treatment
+					iGc.setForeground(getBackground());
+					iGc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
+							marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
+							width - marginWidth - 3, marginHeight + 1, width - marginWidth - 3, marginHeight + 2,
+							width - marginWidth - 2, marginHeight + 2, width - marginWidth - 2,
+							marginHeight + gradientheight + 4 });
+				}
 			};
 
 			buffer = new Image(getDisplay(), imageGcDrawer, bounds.width, bounds.height);
 			buffer.setBackground(getBackground());
 		} else if (isExpanded()) {
 			int theight = 5;
-			gc.setForeground(bg);
-			gc.setBackground(getBackground());
-			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
-					- marginWidth - marginWidth, theight, true);
-			// left vertical edge gradient
-			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
-			// right vertical edge gradient
-			gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+			if (bg.equals(getBackground())) {
+				gc.setBackground(bg);
+				gc.fillRectangle(marginWidth, marginHeight, bounds.width - marginWidth - marginWidth, theight);
+			} else {
+				gc.setForeground(bg);
+				gc.setBackground(getBackground());
+				gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+						- marginWidth - marginWidth, theight, true);
+				// left vertical edge gradient
+				gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
+				// right vertical edge gradient
+				gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+			}
 		} else {
 			gc.setBackground(getBackground());
 			FormUtil.setAntialias(gc, SWT.ON);
-			// repair the upper left corner
-			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
-					marginHeight + 2, marginWidth + 2, marginHeight });
-			// repair the upper right corner
-			gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
-					marginHeight, bounds.width - marginWidth, marginHeight,
-					bounds.width - marginWidth, marginHeight + 3 });
-			gc.setForeground(border);
-			// collapsed short title bar
-			// top edge
-			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
-					marginHeight);
+			if (border.equals(getBackground())) {
+				gc.setForeground(border);
+				gc.drawLine(marginWidth, marginHeight, bounds.width - 1, marginHeight);
+			} else {
+				// repair the upper left corner
+				gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+						marginHeight + 2, marginWidth + 2, marginHeight });
+				// repair the upper right corner
+				gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+						marginHeight, bounds.width - marginWidth, marginHeight,
+						bounds.width - marginWidth, marginHeight + 3 });
+				gc.setForeground(border);
+				// collapsed short title bar
+				// top edge
+				gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
+						marginHeight);
+			}
 		}
 
 		if (buffer != null) {
