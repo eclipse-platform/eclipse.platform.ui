@@ -341,8 +341,17 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 							SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
 						}
 					}
-					match.setOffset(pos.getOffset());
-					match.setLength(pos.getLength());
+					if (match.getOffset() != pos.getOffset() || match.getLength() != pos.getLength()) {
+						AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
+						if (result != null) {
+							result.removeMatch(match);
+						}
+						match.setOffset(pos.getOffset());
+						match.setLength(pos.getLength());
+						if (result != null) {
+							result.addMatch(match);
+						}
+					}
 				}
 			}
 		});

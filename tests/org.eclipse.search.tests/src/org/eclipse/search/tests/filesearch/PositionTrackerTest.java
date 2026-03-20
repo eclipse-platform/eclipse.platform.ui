@@ -16,8 +16,14 @@ package org.eclipse.search.tests.filesearch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -25,6 +31,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -57,12 +66,38 @@ public class PositionTrackerTest {
 
 	public static JUnitSourceSetup junitSource= new JUnitSourceSetup();
 
+	private IFile fManyMatchesFile;
+
 	@BeforeEach
 	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
 
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("JUnitTest");
+		if (!project.exists()) {
+			project.create(null);
+		}
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		fManyMatchesFile = project.getFile("ManyMatches.txt");
+		if (!fManyMatchesFile.exists()) {
+			List<String> lines = new ArrayList<>();
+			for (int i = 0; i < 100; i++) {
+				lines.add("Test Test Test Test Test Test Test Test Test Test");
+			}
+			Files.write(fManyMatchesFile.getLocation().toFile().toPath(), lines);
+			fManyMatchesFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+	}
+
+	@AfterEach
+	public void tearDown() throws Exception {
+		if (fManyMatchesFile != null && fManyMatchesFile.exists()) {
+			fManyMatchesFile.delete(true, null);
+		}
 	}
 
 
@@ -73,7 +108,8 @@ public class PositionTrackerTest {
 		Object[] elements= result.getElements();
 		try {
 			for (Object element : elements) {
-				checkInsertAtZero(result, (IFile) element);
+				if (element instanceof IFile)
+					checkInsertAtZero(result, (IFile) element);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
@@ -88,7 +124,8 @@ public class PositionTrackerTest {
 		Object[] elements= result.getElements();
 		try {
 			for (Object element : elements) {
-				checkInsertInsideMatch(result, (IFile) element);
+				if (element instanceof IFile)
+					checkInsertInsideMatch(result, (IFile) element);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
@@ -146,6 +183,45 @@ public class PositionTrackerTest {
 			}
 		} finally {
 			Job.getJobManager().endRule(file);
+			SearchPlugin.getActivePage().closeAllEditors(false);
+		}
+	}
+
+	@Test
+	public void testSearchResultConsistency() throws Exception {
+		String[] txtPatterns = { "*.txt" };
+		FileTextSearchScope txtScope = FileTextSearchScope.newWorkspaceScope(txtPatterns, false);
+		FileSearchQuery txtQuery = new FileSearchQuery("Test", false, true, txtScope);
+
+		NewSearchUI.runQueryInForeground(null, txtQuery);
+		AbstractTextSearchResult result = (AbstractTextSearchResult) txtQuery.getSearchResult();
+		Match[] matches = result.getMatches(fManyMatchesFile);
+		assertTrue(matches.length >= 10, "Expected many matches in ManyMatches.txt, got " + matches.length);
+
+		try {
+			SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), fManyMatchesFile);
+			ITextFileBuffer fb = FileBuffers.getTextFileBufferManager().getTextFileBuffer(fManyMatchesFile.getFullPath(), LocationKind.IFILE);
+			Job.getJobManager().beginRule(fManyMatchesFile, null);
+			try {
+				IDocument doc = fb.getDocument();
+
+				// Shift all matches
+				doc.replace(0, 0, "Shift all matches");
+
+				// Trigger dirtyStateChanged to update matches
+				InternalSearchUI.getInstance().getPositionTracker().dirtyStateChanged(fb, false);
+
+				// Verify we can still remove all matches.
+				for (Match match : matches) {
+					int countBefore = result.getMatchCount(fManyMatchesFile);
+					result.removeMatch(match);
+					assertEquals(countBefore - 1, result.getMatchCount(fManyMatchesFile), "Match " + match + " was NOT removed! ConcurrentSkipListSet might be corrupted.");
+				}
+				assertEquals(0, result.getMatchCount(fManyMatchesFile));
+			} finally {
+				Job.getJobManager().endRule(fManyMatchesFile);
+			}
+		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
