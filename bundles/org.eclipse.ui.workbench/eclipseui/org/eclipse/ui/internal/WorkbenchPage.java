@@ -3024,8 +3024,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 				return;
 			}
 		}
-		parent.setToBeRendered(false);
-		updateContainerVisibility(parent.getParent());
+		// Do not unrender the last editor stack to avoid collapsing the editor area
+		if (!modelService.isLastEditorStack(parent)) {
+			parent.setToBeRendered(false);
+			updateContainerVisibility(parent.getParent());
+		}
 	}
 
 	/**
