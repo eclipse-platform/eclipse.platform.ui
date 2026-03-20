@@ -15,6 +15,8 @@ package org.eclipse.jface.text;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.text.internal.Activator;
+
 
 /**
  * Copy-on-write <code>ITextStore</code> wrapper.
@@ -135,6 +137,9 @@ public class CopyOnWriteTextStore implements ITextStore {
 
 	@Override
 	public void replace(int offset, int length, String text) {
+		if (Activator.DEBUG) {
+			Activator.trace("CopyOnWriteTextStore.replace() offset={0}" + offset + ", length={1}" + length + ", text={2}" + text); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		if (fTextStore != fModifiableTextStore) {
 			String content= fTextStore.get(0, fTextStore.getLength());
 			fTextStore= fModifiableTextStore;
@@ -145,8 +150,12 @@ public class CopyOnWriteTextStore implements ITextStore {
 
 	@Override
 	public void set(String text) {
+		if (Activator.DEBUG) {
+			Activator.trace("CopyOnWriteTextStore.set() text=" + text); //$NON-NLS-1$
+		}
 		fTextStore= new StringTextStore(text);
 		fModifiableTextStore.set(""); //$NON-NLS-1$
 	}
+
 
 }

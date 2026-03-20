@@ -15,6 +15,8 @@ package org.eclipse.jface.text;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.text.internal.Activator;
+
 
 /**
  * Implements a gap managing text store. The gap text store relies on the assumption that
@@ -186,6 +188,9 @@ public class GapTextStore implements ITextStore {
 
 	@Override
 	public final void replace(int offset, int length, String text) {
+		if (Activator.DEBUG) {
+			Activator.trace("GapTextStore.replace() offset=" + offset + ", length=" + length + ", text=" + text); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		if (text == null) {
 			adjustGap(offset, length, 0);
 		} else {
