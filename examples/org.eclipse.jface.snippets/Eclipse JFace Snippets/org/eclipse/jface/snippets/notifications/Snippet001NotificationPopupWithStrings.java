@@ -4,13 +4,16 @@ import org.eclipse.jface.notifications.NotificationPopup;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Snippet001NotifcationPopupWithStrings {
+public class Snippet001NotificationPopupWithStrings {
 
 	public static void main(String[] args) {
 		Display display = new Display();
+		Shell shell = new Shell(display);
+		shell.setSize(400, 200);
+		shell.open();
 
-		NotificationPopup.forDisplay(display).text("Just a notification").title("Test", true).open();
-		Shell shell = display.getShells()[0];
+		NotificationPopup.forShell(shell).text("Just a notification").title("Test", true).open();
+
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();

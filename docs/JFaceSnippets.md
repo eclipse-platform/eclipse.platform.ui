@@ -43,35 +43,28 @@ The JFace ColorSelector widget is a convenient composition of button and color s
 Notification
 ------------
 
+### [Snippet001 - Simple Notification Popup with Strings](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet001NotificationPopupWithStrings.java)
+
+Demonstrates the simplest usage of the `NotificationPopup` builder API with `forShell()` and plain strings for title and content.
+
 ### [Snippet081 - Notification API](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet081NotificationPopup.java)
 
-*   [Snippet081 - Notication API](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet081NotificationPopup.java)
+Demonstrates usage of the non-blocking notification API with `forShell()`, showing notifications triggered by button clicks.
 
-  
-Demonstrates usage of the non-blocking notification API
-
-  
 ![Snippet081 Shell1.gif](images/Snippet081_Shell1.gif)
 
 ### [Snippet083 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet083NotificationPopupWithFunctions.java)
 
-*   [Snippet083 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet083NotificationPopupWithFunctions.java)
-
-Demonstrates the creation of notification popups that include function callbacks for user interactions.
+Demonstrates the creation of notification popups using `Function<Composite, Control>` for custom title and content creation.
 
 ### [Snippet084 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet084NotificationPopupWithCustomDelayAndFade.java)
 
-*   [Snippet084 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet084NotificationPopupWithCustomDelayAndFade.java)
+Shows how to create notification popups with custom delay and fade-in effects using the `delay()` and `fadeIn()` builder methods.
 
-Shows how to create notification popups with custom delay and fade effects for enhanced visual feedback.
+### [Snippet085 - Notification Popup with User Interaction](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet085NotificationPopupWithUserInteraction.java)
 
-### [Snippet085 - Notification popup with user interaction](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet085NotificationPopupWithUserInteraction.java)
+Demonstrates a `NotificationPopup` with interactive content — a label and a button that opens a confirmation dialog when clicked.
 
-This snippet demonstrates how to create a `NotificationPopup` that includes user interaction with a button. When the button is clicked, a confirmation dialog is shown.
-
-For the full code, please visit the [GitHub repository](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet085NotificationPopupWithUserInteraction.java).
-
- 
 ![Snippet085.png](images/Snippet085NotificationPopupWithUserInteraction.png)
 
 
