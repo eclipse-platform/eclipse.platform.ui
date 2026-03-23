@@ -105,8 +105,8 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ThemeElementCategory) {
-			return getId().equals(((ThemeElementCategory) obj).getId());
+		if (obj instanceof ThemeElementCategory category) {
+			return getId().equals(category.getId());
 		}
 		return false;
 	}

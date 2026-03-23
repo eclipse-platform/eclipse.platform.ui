@@ -137,8 +137,8 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ColorDefinition) {
-			return getId().equals(((ColorDefinition) obj).getId());
+		if (obj instanceof ColorDefinition colorDef) {
+			return getId().equals(colorDef.getId());
 		}
 		return false;
 	}

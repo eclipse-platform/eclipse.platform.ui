@@ -116,8 +116,8 @@ public class FontDefinition extends ThemeElementDefinition implements IHierarcha
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof FontDefinition) {
-			return getId().equals(((FontDefinition) obj).getId());
+		if (obj instanceof FontDefinition fontDef) {
+			return getId().equals(fontDef.getId());
 		}
 		return false;
 	}
