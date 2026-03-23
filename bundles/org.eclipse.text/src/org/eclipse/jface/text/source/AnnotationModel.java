@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +28,10 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
@@ -48,6 +53,45 @@ import org.eclipse.jface.text.Position;
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, IAnnotationModelExtension2, ISynchronizable {
 
+	/**
+	 * This job is replacing the original thread, to make it multi thread safe (fixes the race
+	 * condition of fModelEvent)
+	 */
+	private final class FireModelChangeJob extends Job {
+
+		private LinkedList<AnnotationModelEvent> events= new LinkedList<>();
+
+		private FireModelChangeJob() {
+			super(Messages.AnnotationModel_FireModelChangedEventJobTitle);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			synchronized (events) {
+				AnnotationModelEvent nextEvent= events.poll();
+				while (nextEvent != null) {
+					fireModelChanged(nextEvent);
+					nextEvent= events.poll();
+				}
+			}
+			return Status.OK_STATUS;
+		}
+
+		/**
+		 * Adds a new {@link AnnotationModelEvent} to the events list to fire it in the job
+		 * execution. If job is running
+		 *
+		 * @param event the event to fire.
+		 */
+		public void fireDelayedModelChangedEvent(AnnotationModelEvent event) {
+			if (event != null) {
+				synchronized (events) {
+					events.add(event);
+				}
+				schedule();
+			}
+		}
+	}
 
 	/**
 	 * Iterator that returns the annotations for a given region.
@@ -308,6 +352,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	private Object fModificationStamp= new Object();
 
 	/**
+	 * The job for firing the model changes
+	 * @since 3.14
+	 */
+	private FireModelChangeJob modelChangedEventJob;
+
+	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
 	 * manage any annotations and is not connected to any document.
 	 */
@@ -315,6 +365,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		fAnnotations= new AnnotationMap(10);
 		fPositions= new IdentityHashMap<>(10);
 		fAnnotationModelListeners= new ArrayList<>(2);
+		modelChangedEventJob = new FireModelChangeJob();
 
 		fDocumentListener= new IDocumentListener() {
 
@@ -667,10 +718,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	/**
 	 * Removes all annotations from the model whose associated positions have been
 	 * deleted. If requested inform all model listeners about the change. If requested
-	 * a new thread is created for the notification of the model listeners.
+	 * a new job is created for the notification of the model listeners.
 	 *
 	 * @param fireModelChanged indicates whether to notify all model listeners
-	 * @param forkNotification <code>true</code> iff notification should be done in a new thread
+	 * @param forkNotification <code>true</code> if notification should be done in a new job
 	 * @since 3.0
 	 */
 	private void cleanup(boolean fireModelChanged, boolean forkNotification) {
@@ -692,14 +743,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			if (fireModelChanged && forkNotification) {
 				removeAnnotations(deleted, false, false);
 				synchronized (getLockObject()) {
-					if (fModelEvent != null) {
-						new Thread() {
-							@Override
-							public void run() {
-								fireModelChanged();
-							}
-						}.start();
-					}
+					modelChangedEventJob.fireDelayedModelChangedEvent(fModelEvent);
 				}
 			} else {
 				removeAnnotations(deleted, fireModelChanged, false);
