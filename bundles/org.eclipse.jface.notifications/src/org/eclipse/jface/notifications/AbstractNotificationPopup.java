@@ -449,12 +449,13 @@ public abstract class AbstractNotificationPopup extends Window {
 	private Rectangle getPrimaryClientArea() {
 		Shell parentShell = getParentShell();
 		if (parentShell != null) {
-			// calculate client area in display-relative coordinates
-			// (i.e. without window border / decorations)
-			Rectangle bounds = parentShell.getBounds();
-			Rectangle trim = parentShell.computeTrim(0, 0, 0, 0);
-			return new Rectangle(bounds.x - trim.x, bounds.y - trim.y, bounds.width - trim.width,
-					bounds.height - trim.height);
+			// Use toDisplay(0, 0) to get the client area origin in display coordinates.
+			// This avoids computeTrim() which can return incorrect values on GTK with
+			// client-side decorations (CSD), causing the notification to be positioned
+			// outside the visible bounds of the parent shell.
+			Rectangle clientArea = parentShell.getClientArea();
+			Point clientOrigin = parentShell.toDisplay(0, 0);
+			return new Rectangle(clientOrigin.x, clientOrigin.y, clientArea.width, clientArea.height);
 		}
 		// else display on primary monitor
 		Monitor primaryMonitor = this.shell.getDisplay().getPrimaryMonitor();
