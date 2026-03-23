@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,8 @@ import org.eclipse.jface.notifications.internal.CommonImages;
 import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -133,6 +136,40 @@ class NotificationPopupTest {
 		assertThat(controls, hasItem(aLabelWith("Hello World")));
 		assertThat(controls, hasItem(aLabelWith("This is a test")));
 		notication.close();
+	}
+
+	@Test
+	void forShellPositionsNotificationAtBottomRightOfParentShell() {
+		// Place the parent shell at a non-trivial location so that display-relative
+		// and parent-relative coordinates differ significantly
+		shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLocation(200, 200);
+		shell.setSize(600, 400);
+		shell.open();
+
+		NotificationPopup notification = NotificationPopup.forShell(shell).text("test").delay(1).build();
+		notification.open();
+
+		Shell notifShell = notification.getShell();
+
+		// Convert both to display coordinates to get a platform-independent comparison
+		Point notifOriginDisplay = notifShell.toDisplay(0, 0);
+		Point notifSize = notifShell.getSize();
+		int notifRightDisplay = notifOriginDisplay.x + notifSize.x;
+		int notifBottomDisplay = notifOriginDisplay.y + notifSize.y;
+
+		Rectangle clientArea = shell.getClientArea();
+		Point clientBottomRightDisplay = shell.toDisplay(clientArea.width, clientArea.height);
+
+		// The notification must be flush against the bottom-right corner of the
+		// parent shell's client area, offset only by PADDING_EDGE (5 px)
+		int paddingEdge = 5;
+		assertEquals(clientBottomRightDisplay.x - paddingEdge, notifRightDisplay,
+				"notification right edge must align with parent client area right edge");
+		assertEquals(clientBottomRightDisplay.y - paddingEdge, notifBottomDisplay,
+				"notification bottom edge must align with parent client area bottom edge");
+
+		notification.close();
 	}
 
 	private List<Control> getNotificationPopupControls(NotificationPopup notication) {
