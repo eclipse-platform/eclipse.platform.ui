@@ -27,6 +27,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.jface.text.Position;
+
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
@@ -42,7 +44,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private static final Match[] EMPTY_ARRAY= new Match[0];
 
-	private final ConcurrentMap<Object, Set<Match>> fElementsToMatches;
+	/**
+	 * Maps elements to their sets of matches. A {@link ConcurrentSkipListSet}
+	 * is used as the value type so that matches are kept in a stable sorted
+	 * order at all times, avoiding the need to sort on demand when
+	 * {@link #getMatches(Object)} is called. This is important to avoid
+	 * performance issues when a large number of matches are present.
+	 */
+	private final ConcurrentMap<Object, ConcurrentSkipListSet<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
 	private final AtomicInteger matchCount;
 	private final ConcurrentHashMap<Match, Long> collisionOrder;
@@ -161,6 +170,40 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return fMatchEvent;
 	}
 
+	/**
+	 * Updates the given match with the offset and length of the given position.
+	 *
+	 * @param match
+	 *            the match to update
+	 * @param pos
+	 *            the new position (offset and length) for the match
+	 * @since 3.19
+	 */
+	public void updateMatch(Match match, Position pos) {
+		// The match is first removed from and then re-added to this search
+		// result. This is necessary because matches are stored in a
+		// ConcurrentSkipListSet ordered by offset and length: modifying
+		// a match's position while it is held in the set would corrupt the
+		// set's ordering invariants and cause incorrect lookup or removal
+		// behaviour. Removing the match before modification and re-adding it
+		// afterwards ensures the set remains consistent.
+		removeMatch(match);
+		match.setOffset(pos.getOffset());
+		match.setLength(pos.getLength());
+		addMatch(match);
+	}
+
+	/**
+	 * Adds a match to the internal data structures. Uses a
+	 * {@link ConcurrentSkipListSet} per element so that matches are always kept
+	 * in sorted order (by offset and length), avoiding the need to sort results
+	 * on demand each time {@link #getMatches(Object)} is called.
+	 *
+	 * @param match
+	 *            the match to add
+	 * @return {@code true} if the match was added, {@code false} if it was
+	 *         already present
+	 */
 	private boolean didAddMatch(Match match) {
 		matchCount.set(0);
 		updateFilterState(match);
@@ -168,6 +211,22 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 				k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
 	}
 
+	/**
+	 * Comparator used by the {@link ConcurrentSkipListSet} to order matches by
+	 * offset and then by length. This method assumes that the {@link Match}
+	 * instances are <em>not</em> modified while being held in the set: changing
+	 * the offset or length of a match that is already in the set will corrupt
+	 * the set's ordering invariants and cause incorrect lookup or removal
+	 * behaviour.
+	 *
+	 * @param match2
+	 *            the first match
+	 * @param match1
+	 *            the second match
+	 * @return a negative integer, zero, or a positive integer as the first
+	 *         argument is less than, equal to, or greater than the second
+	 * @see #updateMatch(Match, Position)
+	 */
 	private int compare(Match match2, Match match1) {
 		if (match1 == match2) {
 			return 0;
@@ -353,7 +412,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @since 3.17
 	 */
 	public boolean hasMatches() {
-		for (Entry<Object, Set<Match>> entry : fElementsToMatches.entrySet()) {
+		for (Entry<Object, ConcurrentSkipListSet<Match>> entry : fElementsToMatches.entrySet()) {
 			if (!entry.getValue().isEmpty()) {
 				return true;
 			}

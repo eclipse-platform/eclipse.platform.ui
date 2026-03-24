@@ -15,6 +15,8 @@ package org.eclipse.search.ui.text;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.text.Position;
+
 /**
  * A textual match in a given object. This class may be instantiated and also subclassed (to add
  * additional match state like accuracy, etc). The element a match is reported
@@ -91,6 +93,12 @@ public class Match {
 
 	/**
 	 * Sets the offset of this match.
+	 * <p>
+	 * <b>Warning:</b> This method should only be called from
+	 * {@link AbstractTextSearchResult#updateMatch(Match, Position)} to avoid
+	 * potential corruption of the result internal state if the match is already
+	 * tracked by a search result.
+	 * </p>
 	 *
 	 * @param offset
 	 *            the offset to set
@@ -110,6 +118,12 @@ public class Match {
 
 	/**
 	 * Sets the length.
+	 * <p>
+	 * <b>Warning:</b> This method should only be called from
+	 * {@link AbstractTextSearchResult#updateMatch(Match, Position)} to avoid
+	 * potential corruption of the result internal state if the match is already
+	 * tracked by a search result.
+	 * </p>
 	 *
 	 * @param length
 	 *            the length to set
