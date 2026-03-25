@@ -6,10 +6,6 @@
    height="24"
    id="svg2"
    version="1.1"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-   sodipodi:docname="export_wiz.svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
@@ -41,7 +37,6 @@
          id="stop4917" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#provider-stroke-7"
        id="linearGradient4919"
        x1="1.860189"
@@ -51,7 +46,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.0234842,0,0,1.0234842,-17.402505,-25.185931)" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#provider-bg-6"
        id="linearGradient4927"
        x1="1.860189"
@@ -79,38 +73,8 @@
        gradientTransform="matrix(1.0493833,1.0493833,1.0493833,-1.0493833,-1079.5505,2143.7383)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient3924"
-       xlink:href="#arrow-bg-3"
-       inkscape:collect="always" />
+       xlink:href="#arrow-bg-3" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="12.8125"
-     inkscape:cy="11.09375"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1418"
-     inkscape:window-height="1138"
-     inkscape:window-x="201"
-     inkscape:window-y="100"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:showpageshadow="2"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4039"
-       originx="0"
-       originy="0" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -123,8 +87,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -136,15 +98,12 @@
       <path
          style="fill:url(#linearGradient4927);fill-opacity:1;stroke:url(#linearGradient4919);stroke-width:0.716439;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m -17.306554,1043.8942 v 7.1004 h 7.132406 7.1324058 v -7.1004 H -6.048227 v 2.015 h 0.9275325 v 3.0704 h -5.0534535 -5.053453 v -3.0704 h 0.927532 v -2.015 z"
-         id="path4143"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccccccccccc" />
+         id="path4143" />
     </g>
     <path
        style="display:inline;fill:url(#linearGradient3924);fill-opacity:1;stroke:none;stroke-width:1.45"
        d="m 7.4007052,1050.8732 0.950721,0.9506 9.1130538,-9.113 1.901441,1.9014 0.486902,-5.078 -5.078184,0.4403 1.785501,1.7857 z"
-       id="arrow"
-       inkscape:connector-curvature="0">
+       id="arrow">
       <title
          id="title3208">arrow</title>
     </path>

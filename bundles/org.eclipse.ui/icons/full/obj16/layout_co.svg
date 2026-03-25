@@ -2,26 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="layout_co.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
-       id="linearGradient28634"
-       osb:paint="gradient">
+       id="linearGradient28634">
       <stop
          style="stop-color:#c1d9ee;stop-opacity:1;"
          offset="0"
@@ -43,8 +37,7 @@
        y1="1038.8951"
        x1="-16.963362"
        id="linearGradient8293-6"
-       xlink:href="#linearGradient8287-6"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient8287-6" />
     <linearGradient
        y2="1053.3254"
        x2="8.0137892"
@@ -53,8 +46,7 @@
        gradientTransform="translate(17.072947,-0.956058)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient8887-0"
-       xlink:href="#linearGradient4810-5-87"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4810-5-87" />
     <linearGradient
        y2="1047.3622"
        x2="-15"
@@ -63,8 +55,7 @@
        gradientTransform="matrix(1,0,0,2.1113755,37.016465,-1184.4129)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient8884-0"
-       xlink:href="#linearGradient4910-4-0-6"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4910-4-0-6" />
     <linearGradient
        y2="1041.8765"
        x2="8.0137892"
@@ -73,10 +64,8 @@
        gradientTransform="translate(17.115591,1.008442)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient8878-5"
-       xlink:href="#linearGradient4082-3-1"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4082-3-1" />
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4810-5-87">
       <stop
          style="stop-color:#9d7c2f;stop-opacity:1"
@@ -88,8 +77,7 @@
          id="stop4814-4-5" />
     </linearGradient>
     <linearGradient
-       id="linearGradient4910-4-0-6"
-       inkscape:collect="always">
+       id="linearGradient4910-4-0-6">
       <stop
          id="stop4912-8-5-7"
          offset="0"
@@ -115,8 +103,7 @@
          style="stop-color:#4476aa;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       id="linearGradient8287-6"
-       inkscape:collect="always">
+       id="linearGradient8287-6">
       <stop
          id="stop8289-6"
          offset="0"
@@ -127,8 +114,7 @@
          style="stop-color:#d3e5f4;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       id="linearGradient28634-6"
-       osb:paint="gradient">
+       id="linearGradient28634-6">
       <stop
          style="stop-color:#c1d9ee;stop-opacity:1;"
          offset="0"
@@ -143,8 +129,7 @@
          id="stop28638-5" />
     </linearGradient>
     <linearGradient
-       id="linearGradient28634-6-8"
-       osb:paint="gradient">
+       id="linearGradient28634-6-8">
       <stop
          style="stop-color:#c1d9ee;stop-opacity:1;"
          offset="0"
@@ -159,31 +144,6 @@
          id="stop28638-5-4" />
     </linearGradient>
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="90.509662"
-     inkscape:cx="6.1496285"
-     inkscape:cy="5.4075215"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1-4"
-     showgrid="true"
-     inkscape:window-width="1668"
-     inkscape:window-height="1010"
-     inkscape:window-x="690"
-     inkscape:window-y="394"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="false">
-    <inkscape:grid
-       type="xygrid"
-       id="grid8762" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -197,34 +157,25 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
     <g
        style="display:inline"
        id="layer1-4"
-       inkscape:label="Layer 1"
        transform="translate(-19.001354,-2.0072)">
       <path
          style="display:inline;fill:#f4fcff;fill-opacity:1;stroke:url(#linearGradient8887-0);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
          d="m 21.513406,1040.9049 10.99737,0 0,10.9667 -10.99737,0 z"
-         id="rect3997-9"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccc" />
+         id="rect3997-9" />
       <path
          style="display:inline;fill:url(#linearGradient8884-0);fill-opacity:1;stroke:none"
          d="m 23.01782,1046.0433 -0.0014,5.3245 -1,0 0.0014,-7.4359 z"
-         id="rect4853-82-7"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccc" />
+         id="rect4853-82-7" />
       <path
          style="display:inline;fill:url(#linearGradient8293-6);fill-opacity:1;stroke:url(#linearGradient8878-5);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
          d="m 21.499277,1040.8694 11.02044,0 0,2.0053 -11.02044,0 z"
-         id="rect3997-9-9"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccc" />
+         id="rect3997-9-9" />
       <rect
          style="opacity:1;fill:#d5f3ff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect4179"
@@ -236,23 +187,12 @@
       <path
          style="fill:none;stroke:#757575;stroke-width:1.00184608px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 24.497563,1043.3675 0,8.0075"
-         id="path17673"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cc" />
+         id="path17673" />
       <image
          y="1033.6945"
          x="-0.46692258"
          id="image4176"
-         xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAYJJREFU
-OI2lky+OVEEQh79fVffrHTAQBCcAgUKhMBAusA6QoLgBOAwJjuBICAYFl1g0GFZyAy5A2Nl9r6sQ
-b2aXyUMxrTqdqq+/1B9lJvsc2ysbKNvLrYdvEgrphqkSvkJuYAMqA/iK9AqqBPDj7V3tAOL6HR4d
-3qRRWLXK5cFpLbnilUsHzG8F2jBx+PLb0qD8/Mrnd9+xAhONUgYmG7BSSatQGmJAbqQNS8CzGx+5
-9+KYsAmLwtGH1zx4+pwgAZEGHnPsl1e3geNdQIwOwLVazit7tYFCSBACT0DBOrU0WPe5nY0EzQEO
-oDlJCjILwojpH11Y9wEBhoiNqm1HJA3LjVfCydiWgNNxzip+MVhDSaJrVokN0GE8uzA4H6ST0wYG
-3gUbg0DUMgfZ9rtIfnVfGpxNoAArOUOAg4D0JBHFoGfgZoxjWQLGqTIZmIS2Xg5SUhCWYGZkBr//
-KqK2y/Tk8f1UjKQ7iSE61h2Z0/uIqTJZR4LS4f2nI+0A/vfsvY1/AEi3hpqHbHAAAAAAAElFTkSu
-QmCC
-"
+         xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAYJJREFU OI2lky+OVEEQh79fVffrHTAQBCcAgUKhMBAusA6QoLgBOAwJjuBICAYFl1g0GFZyAy5A2Nl9r6sQ b2aXyUMxrTqdqq+/1B9lJvsc2ysbKNvLrYdvEgrphqkSvkJuYAMqA/iK9AqqBPDj7V3tAOL6HR4d 3qRRWLXK5cFpLbnilUsHzG8F2jBx+PLb0qD8/Mrnd9+xAhONUgYmG7BSSatQGmJAbqQNS8CzGx+5 9+KYsAmLwtGH1zx4+pwgAZEGHnPsl1e3geNdQIwOwLVazit7tYFCSBACT0DBOrU0WPe5nY0EzQEO oDlJCjILwojpH11Y9wEBhoiNqm1HJA3LjVfCydiWgNNxzip+MVhDSaJrVokN0GE8uzA4H6ST0wYG 3gUbg0DUMgfZ9rtIfnVfGpxNoAArOUOAg4D0JBHFoGfgZoxjWQLGqTIZmIS2Xg5SUhCWYGZkBr// KqK2y/Tk8f1UjKQ7iSE61h2Z0/uIqTJZR4LS4f2nI+0A/vfsvY1/AEi3hpqHbHAAAAAAAElFTkSu QmCC "
          style="image-rendering:optimizeSpeed"
          preserveAspectRatio="none"
          height="16"

@@ -2,20 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="paste_edit.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -74,7 +70,6 @@
          id="paper-stroke-stop1" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="paper-lines-2">
       <stop
          style="stop-color:#7795b6;stop-opacity:1;"
@@ -97,7 +92,6 @@
          id="paper-fold-stop1" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#paper-lines-2"
        id="paper-lines"
        gradientTransform="scale(0.98560841,1.0146017)"
@@ -107,7 +101,6 @@
        y2="1032.0781"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#paper-stroke-3"
        id="paper-stroke"
        gradientTransform="scale(0.89262372,1.1202929)"
@@ -117,7 +110,6 @@
        y2="937.90405"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#paper-bg-5"
        id="paper-bg"
        gradientTransform="scale(0.89262372,1.1202929)"
@@ -127,7 +119,6 @@
        y2="937.90405"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#clipboard-bg-3"
        id="clipboard-bg"
        gradientTransform="scale(0.95989664,1.0417788)"
@@ -137,7 +128,6 @@
        y2="1003.3985"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#clasp-stroke-6"
        id="clasp-stroke"
        gradientTransform="scale(1.4438315,0.69260158)"
@@ -147,7 +137,6 @@
        y2="1498.0094"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#clasp-bg-7"
        id="clasp-bg"
        gradientTransform="scale(1.4438315,0.69260158)"
@@ -157,31 +146,6 @@
        y2="1498.0094"
        gradientUnits="userSpaceOnUse" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="-1.625299"
-     inkscape:cy="5.4280558"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1335"
-     inkscape:window-height="996"
-     inkscape:window-x="1052"
-     inkscape:window-y="430"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="false">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4172" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -195,8 +159,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -217,15 +179,11 @@
     <path
        style="display:inline;fill:url(#clasp-bg);fill-opacity:1;stroke:url(#clasp-stroke);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 6.6872685,1037.8674 -1.9237704,3.0156 3.2735126,0 3.2735103,0 -1.923769,-3.0156 -1.3497413,0 z"
-       id="clasp"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccc">
+       id="clasp">
       <title
          id="title3256">clasp</title>
     </path>
     <path
-       sodipodi:nodetypes="ccccccc"
-       inkscape:connector-curvature="0"
        id="paper"
        d="m 7.5294306,1042.8539 0.022097,9.0235 6.9629104,0 -0.0221,-7.0161 -1.972619,0 0.0023,-2.0089 z"
        style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:url(#paper-bg);fill-opacity:1;stroke:url(#paper-stroke);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate">
@@ -235,14 +193,12 @@
     <path
        style="display:inline;fill:url(#paper-fold-bg-6);fill-opacity:1;stroke:none"
        d="m 13.021488,1042.3689 2.01799,2.0018 -2.031854,0 z"
-       id="paper-fold"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc">
+       id="paper-fold">
       <title
          id="title3399">paper-fold</title>
     </path>
     <path
-       id="paper-lines"
+       id="path1"
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#paper-lines);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.51251632;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 8.1401475,1049.3676 0,-0.3002 0,-0.7009 4.8577025,0 0,1.0011 -4.8577025,0 z m 0,-2.0108 0,-0.3002 0,-0.7009 4.8577025,0 0,1.0011 -4.8577025,0 z m 0.1767768,-1.9887 0,-0.3002 0,-0.7009 2.6921877,0 0,1.0011 -2.6921877,0 z">
       <title

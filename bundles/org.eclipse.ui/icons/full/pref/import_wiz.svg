@@ -6,11 +6,7 @@
    height="24"
    id="svg2"
    version="1.1"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-   sodipodi:docname="import_wiz.svg"
    viewBox="0 0 16.551724 16.551724"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
@@ -42,7 +38,6 @@
          id="stop4917" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#receiver-stroke-7"
        id="linearGradient4919"
        x1="1.860189"
@@ -52,7 +47,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.0224167,0,0,1.0224167,-16.732246,-23.887876)" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#receiver-bg-6"
        id="linearGradient4927"
        x1="1.860189"
@@ -80,58 +74,8 @@
        gradientTransform="matrix(0.72295781,-0.72295781,0.72295781,0.72295781,-746.4484,286.79833)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient3924"
-       xlink:href="#arrow-bg-3"
-       inkscape:collect="always" />
+       xlink:href="#arrow-bg-3" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="11.546875"
-     inkscape:cy="11.625"
-     inkscape:document-units="px"
-     inkscape:current-layer="receiver"
-     showgrid="true"
-     inkscape:window-width="1720"
-     inkscape:window-height="1369"
-     inkscape:window-x="-8"
-     inkscape:window-y="-6"
-     inkscape:window-maximized="1"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:showpageshadow="2"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1">
-    <sodipodi:guide
-       position="0,1.6666667e-08"
-       orientation="0,16"
-       id="guide4039"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="11.034483,1.6666667e-08"
-       orientation="-16,0"
-       id="guide4041"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="11.034483,11.034483"
-       orientation="0,-16"
-       id="guide4043"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="0,11.034483"
-       orientation="16,0"
-       id="guide4045"
-       inkscape:locked="false" />
-    <inkscape:grid
-       type="xygrid"
-       id="grid4047"
-       originx="0"
-       originy="0" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -145,8 +89,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -158,15 +100,12 @@
       <path
          style="fill:url(#linearGradient4927);fill-opacity:1;stroke:url(#linearGradient4919);stroke-width:0.715692;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m -16.636395,1044.0772 v 7.0931 h 7.1249663 7.1249674 v -7.0931 h -3.0033491 v 2.013 h 0.9265651 v 3.0672 h -5.0481834 -5.0481823 v -3.0672 h 0.926565 v -2.013 z"
-         id="path4143"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccccccccccc" />
+         id="path4143" />
     </g>
     <path
        style="display:inline;fill:url(#linearGradient3924);fill-opacity:1;stroke:none"
        d="m 2.3913486,1039.7123 0.6549857,-0.6549 6.2783105,6.2782 1.3099712,-1.3099 0.335443,3.4985 -3.4985424,-0.3034 1.2300951,-1.2302 z"
-       id="arrow"
-       inkscape:connector-curvature="0">
+       id="arrow">
       <title
          id="title3212">arrow</title>
     </path>

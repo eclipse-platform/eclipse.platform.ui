@@ -2,20 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="info_tsk.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -41,7 +37,6 @@
          id="stop4894" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4996-4">
       <stop
          style="stop-color:#02468c;stop-opacity:1"
@@ -60,10 +55,8 @@
        gradientTransform="translate(38.469436,55.035191)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient5028"
-       xlink:href="#linearGradient4996-4"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4996-4" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4890"
        id="linearGradient4896"
        x1="14.256123"
@@ -72,7 +65,6 @@
        y2="1056.5471"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4890"
        id="linearGradient4898"
        gradientUnits="userSpaceOnUse"
@@ -82,7 +74,6 @@
        y2="1060.6793" />
     <linearGradient
        gradientTransform="translate(-1.7374361e-7,-6.62e-6)"
-       inkscape:collect="always"
        xlink:href="#linearGradient4172"
        id="linearGradient4898-1"
        gradientUnits="userSpaceOnUse"
@@ -91,31 +82,6 @@
        x2="17.425541"
        y2="1056.7682" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="45.254832"
-     inkscape:cx="9.0523079"
-     inkscape:cy="7.627334"
-     inkscape:document-units="px"
-     inkscape:current-layer="text4140-1-8"
-     showgrid="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="1053"
-     inkscape:window-x="1206"
-     inkscape:window-y="327"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="false">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4099" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -129,8 +95,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -145,26 +109,22 @@
         <path
            d="m 16.245657,1050.9177 c -0.355456,0.01 -0.65062,0.1291 -0.885494,0.3674 -0.234876,0.2383 -0.35671,0.5529 -0.365501,0.9439 0.0088,0.3981 0.130625,0.7172 0.365502,0.9571 0.234873,0.2399 0.530037,0.363 0.885493,0.3692 0.362672,-0.01 0.662232,-0.1293 0.898681,-0.3692 0.236442,-0.2399 0.358903,-0.559 0.367386,-0.9571 -0.0057,-0.3778 -0.122466,-0.6886 -0.35043,-0.9326 -0.227971,-0.244 -0.533183,-0.3702 -0.915637,-0.3787 z m 0.94955,3.3912 c -1.039986,0.4346 -2.019679,0.6808 -2.939084,0.7386 l 0,0.6029 c 0.435838,-0.02 0.70965,0.039 0.821436,0.1771 0.111784,0.1381 0.159513,0.476 0.143187,1.0136 l 0,3.4515 c 0.01539,0.5401 -0.03423,0.888 -0.148838,1.0438 -0.114613,0.1557 -0.386541,0.2248 -0.815785,0.2072 l 0,0.633 4.084573,0 0,-0.633 c -0.386544,0.017 -0.634608,-0.051 -0.744192,-0.2054 -0.109591,-0.1541 -0.157947,-0.4977 -0.145069,-1.0305 l 0,-5.8631 z"
            style="fill:url(#linearGradient4898);fill-opacity:1"
-           id="path5058"
-           inkscape:connector-curvature="0" />
+           id="path5058" />
         <path
            d="m 16.245657,1050.9177 c -0.355456,0.01 -0.65062,0.1291 -0.885494,0.3674 -0.234876,0.2383 -0.35671,0.5529 -0.365501,0.9439 0.0088,0.3981 0.130625,0.7172 0.365502,0.9571 0.234873,0.2399 0.530037,0.363 0.885493,0.3692 0.362672,-0.01 0.662232,-0.1293 0.898681,-0.3692 0.236442,-0.2399 0.358903,-0.559 0.367386,-0.9571 -0.0057,-0.3778 -0.122466,-0.6886 -0.35043,-0.9326 -0.227971,-0.244 -0.533183,-0.3702 -0.915637,-0.3787 z m 0.94955,3.3912 c -1.039986,0.4346 -2.019679,0.6808 -2.939084,0.7386 l 0,0.6029 c 0.435838,-0.02 0.70965,0.039 0.821436,0.1771 0.111784,0.1381 0.159513,0.476 0.143187,1.0136 l 0,3.4515 c 0.01539,0.5401 -0.03423,0.888 -0.148838,1.0438 -0.114613,0.1557 -0.386541,0.2248 -0.815785,0.2072 l 0,0.633 4.084573,0 0,-0.633 c -0.386544,0.017 -0.634608,-0.051 -0.744192,-0.2054 -0.109591,-0.1541 -0.157947,-0.4977 -0.145069,-1.0305 l 0,-5.8631 z"
            style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:15.07241726px;line-height:125%;font-family:'Kozuka Mincho Pr6N H';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4898-1);fill-opacity:1;stroke:none"
-           id="path5058-4"
-           inkscape:connector-curvature="0" />
+           id="path5058-4" />
       </g>
       <text
          xml:space="preserve"
-         style="font-size:15.07241726px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient5028);fill-opacity:1;stroke:none;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;line-height:0%;font-family:'Kozuka Mincho Pr6N H';-inkscape-font-specification:'Kozuka Mincho Pr6N H Heavy';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient5028);fill-opacity:1;stroke:none"
          x="50.288464"
          y="1117.2119"
-         id="text4140-1-8-1"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
+         id="text4140-1-8-1"><tspan
            id="tspan4142-7-8-7"
            x="50.288464"
            y="1117.2119"
-           style="fill:url(#linearGradient5028);fill-opacity:1">Kozuka Mincho Pr6N H</tspan></text>
+           style="font-size:15.0724px;line-height:1.25;fill:url(#linearGradient5028);fill-opacity:1">Kozuka Mincho Pr6N H</tspan></text>
     </g>
   </g>
 </svg>

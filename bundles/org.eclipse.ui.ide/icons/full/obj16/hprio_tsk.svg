@@ -2,20 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="hprio_tsk.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -30,7 +26,6 @@
          id="stop4894" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4996-4">
       <stop
          style="stop-color:#02468c;stop-opacity:1"
@@ -49,10 +44,8 @@
        gradientTransform="translate(38.469436,55.035191)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient5028"
-       xlink:href="#linearGradient4996-4"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4996-4" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4890"
        id="linearGradient4896"
        x1="14.256123"
@@ -61,31 +54,6 @@
        y2="1056.5471"
        gradientUnits="userSpaceOnUse" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="45.254832"
-     inkscape:cx="7.764561"
-     inkscape:cy="7.299881"
-     inkscape:document-units="px"
-     inkscape:current-layer="text4140-1-8"
-     showgrid="true"
-     inkscape:window-width="1171"
-     inkscape:window-height="959"
-     inkscape:window-x="1387"
-     inkscape:window-y="399"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="false">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4099" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -99,8 +67,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -113,13 +79,8 @@
          id="text4140-1-8"
          transform="matrix(1.0865583,0,0,1,-1.7201207,-0.04419418)">
         <path
-           sodipodi:type="arc"
            style="font-size:15.07241726px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fc787a;fill-opacity:1;stroke:#fa3337;stroke-width:0.80000001;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
            id="path4142"
-           sodipodi:cx="7.9660001"
-           sodipodi:cy="11.967281"
-           sodipodi:rx="1.6020389"
-           sodipodi:ry="1.6020389"
            d="m 9.5680389,11.967281 c 0,0.884782 -0.7172572,1.602039 -1.6020388,1.602039 -0.8847817,0 -1.6020389,-0.717257 -1.6020389,-1.602039 0,-0.884781 0.7172572,-1.602039 1.6020389,-1.602039 0.8847816,0 1.6020388,0.717258 1.6020388,1.602039 z"
            transform="matrix(0.92033718,0,0,1,9.1890435,1049.3333)" />
         <rect
@@ -133,16 +94,14 @@
       </g>
       <text
          xml:space="preserve"
-         style="font-size:15.07241726px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient5028);fill-opacity:1;stroke:none;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;line-height:0%;font-family:'Kozuka Mincho Pr6N H';-inkscape-font-specification:'Kozuka Mincho Pr6N H Heavy';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient5028);fill-opacity:1;stroke:none"
          x="50.288464"
          y="1117.2119"
-         id="text4140-1-8-1"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
+         id="text4140-1-8-1"><tspan
            id="tspan4142-7-8-7"
            x="50.288464"
            y="1117.2119"
-           style="fill:url(#linearGradient5028);fill-opacity:1">Kozuka Mincho Pr6N H</tspan></text>
+           style="font-size:15.0724px;line-height:1.25;fill:url(#linearGradient5028);fill-opacity:1">Kozuka Mincho Pr6N H</tspan></text>
     </g>
   </g>
 </svg>

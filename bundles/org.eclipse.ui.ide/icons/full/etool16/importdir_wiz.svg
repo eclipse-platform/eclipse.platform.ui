@@ -2,25 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg25490"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="importdir_wiz.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs25492">
     <linearGradient
-       id="linearGradient3967-5"
-       inkscape:collect="always">
+       id="linearGradient3967-5">
       <stop
          id="stop3969-3"
          offset="0"
@@ -31,8 +26,7 @@
          style="stop-color:#ad6c24;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       id="linearGradient3973-6"
-       inkscape:collect="always">
+       id="linearGradient3973-6">
       <stop
          id="stop3975-0"
          offset="0"
@@ -43,7 +37,6 @@
          style="stop-color:#f8f0c8;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient3949-4">
       <stop
          style="stop-color:#9e6627;stop-opacity:1"
@@ -78,7 +71,6 @@
          style="stop-color:#ba772f;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient3955-1"
        id="linearGradient5310"
        gradientUnits="userSpaceOnUse"
@@ -88,7 +80,6 @@
        x2="543.91406"
        y2="373.2294" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient3973-6"
        id="linearGradient5313"
        gradientUnits="userSpaceOnUse"
@@ -98,7 +89,6 @@
        x2="538.00562"
        y2="374.21222" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient3949-4"
        id="linearGradient5315"
        gradientUnits="userSpaceOnUse"
@@ -108,7 +98,6 @@
        x2="548.45923"
        y2="373.77069" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient3967-5"
        id="linearGradient5318"
        gradientUnits="userSpaceOnUse"
@@ -118,33 +107,6 @@
        x2="531.09253"
        y2="371.17883" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="3.4512977"
-     inkscape:cy="3.9493177"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:snap-global="false"
-     inkscape:window-width="1429"
-     inkscape:window-height="852"
-     inkscape:window-x="175"
-     inkscape:window-y="175"
-     inkscape:window-maximized="0">
-    <inkscape:grid
-       type="xygrid"
-       id="grid26727"
-       empspacing="5"
-       visible="true"
-       enabled="true"
-       snapvisiblegridlinesonly="true" />
-  </sodipodi:namedview>
   <metadata
      id="metadata25495">
     <rdf:RDF>
@@ -158,8 +120,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1036.3622)">
     <rect
@@ -174,14 +134,11 @@
     <path
        style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient5313);fill-opacity:1;stroke:url(#linearGradient5315);stroke-width:0.99999994;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;font-family:AustralianFlyingCorpsStencil;-inkscape-font-specification:AustralianFlyingCorpsStencil"
        d="m 2.3206642,1040.8912 10.2822228,0 c 0.480278,0 0.866929,0.3866 0.866929,0.8669 l 0,6.2808 c 0,0.4803 -0.386654,0.8693 -0.866929,0.8669 l -10.2822228,-0.051 c -0.480272,0 -0.8669289,-0.3866 -0.8669289,-0.8669 l 0,-6.2299 c 0,-0.4803 0.3866503,-0.8669 0.8669289,-0.8669 z"
-       id="rect13693"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssssssss" />
+       id="rect13693" />
     <path
        style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:none;stroke:url(#linearGradient5310);stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:AustralianFlyingCorpsStencil;-inkscape-font-specification:AustralianFlyingCorpsStencil"
        d="m 1.994689,1040.8912 6.6361344,0"
-       id="path13797"
-       inkscape:connector-curvature="0" />
+       id="path13797" />
     <g
        id="g5331"
        transform="translate(33.6875,10.3125)">
@@ -190,12 +147,10 @@
          transform="matrix(1.2381013,0,0,-1.2381013,-36.242649,2317.7976)"
          style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:AustralianFlyingCorpsStencil;-inkscape-font-specification:AustralianFlyingCorpsStencil">
         <path
-           inkscape:connector-curvature="0"
            id="path4047-6"
            d="m 8.5,1030.9873 5.906282,5.9061 0,-5.9061 z"
            style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline" />
         <path
-           inkscape:connector-curvature="0"
            id="path4047"
            d="m 10.09375,1031.2373 4.09375,4.0936 0,-4.0936 z"
            style="fill:#0d5c9a;fill-opacity:1;stroke:none;display:inline" />

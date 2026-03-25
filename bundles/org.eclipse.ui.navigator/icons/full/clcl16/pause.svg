@@ -2,23 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="pause.svg"
-   inkscape:export-filename="C:\Users\jmietling\Documents\rect3997-9-1.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -56,7 +49,6 @@
          id="stop8202" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient8190">
       <stop
          style="stop-color:#a07818;stop-opacity:1;"
@@ -68,7 +60,6 @@
          id="stop8194" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient8190"
        id="linearGradient8196"
        x1="5.7773919"
@@ -78,7 +69,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(10.336754,0)" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient8198"
        id="linearGradient8204"
        x1="7.2620707"
@@ -88,7 +78,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(10.336754,0)" />
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient8190-8">
       <stop
          style="stop-color:#a07818;stop-opacity:1;"
@@ -107,10 +96,8 @@
        x1="5.7773919"
        gradientUnits="userSpaceOnUse"
        id="linearGradient8230"
-       xlink:href="#linearGradient8190-8"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient8190-8" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient8303"
        id="linearGradient8309"
        x1="5.9487009"
@@ -120,14 +107,12 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(10.336754,0)" />
     <filter
-       inkscape:collect="always"
        id="filter8319"
-       x="-0.23011701"
-       width="1.460234"
-       y="-0.081161905"
-       height="1.1623238">
+       x="-0.36955386"
+       width="1.7391077"
+       y="-0.11362706"
+       height="1.2272541">
       <feGaussianBlur
-         inkscape:collect="always"
          stdDeviation="0.32163811"
          id="feGaussianBlur8321" />
     </filter>
@@ -139,10 +124,8 @@
        x1="5.7773919"
        gradientUnits="userSpaceOnUse"
        id="linearGradient8230-17"
-       xlink:href="#linearGradient8190-8-4"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient8190-8-4" />
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient8190-8-4">
       <stop
          style="stop-color:#a07818;stop-opacity:1;"
@@ -154,7 +137,6 @@
          id="stop8194-7-9" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient8303-8"
        id="linearGradient8309-4"
        x1="5.9487009"
@@ -184,14 +166,12 @@
     </linearGradient>
     <filter
        color-interpolation-filters="sRGB"
-       inkscape:collect="always"
        id="filter8319-5"
-       x="-0.23011701"
-       width="1.460234"
-       y="-0.081161901"
-       height="1.1623238">
+       x="-0.36955386"
+       width="1.7391077"
+       y="-0.11362706"
+       height="1.2272541">
       <feGaussianBlur
-         inkscape:collect="always"
          stdDeviation="0.32163811"
          id="feGaussianBlur8321-1" />
     </filter>
@@ -211,7 +191,6 @@
          id="stop8202-2" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient8190-6">
       <stop
          style="stop-color:#a07818;stop-opacity:1;"
@@ -230,8 +209,7 @@
        gradientTransform="translate(18.089319,1.92e-5)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient7447"
-       xlink:href="#linearGradient8198-1"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient8198-1" />
     <linearGradient
        y2="1054.3945"
        x2="5.7773919"
@@ -240,34 +218,8 @@
        gradientTransform="translate(18.089319,1.92e-5)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient7449"
-       xlink:href="#linearGradient8190-6"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient8190-6" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="127.99999"
-     inkscape:cx="4.6536998"
-     inkscape:cy="11.964602"
-     inkscape:document-units="px"
-     inkscape:current-layer="g8159"
-     showgrid="true"
-     inkscape:window-width="1458"
-     inkscape:window-height="814"
-     inkscape:window-x="865"
-     inkscape:window-y="645"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="false">
-    <inkscape:grid
-       type="xygrid"
-       id="grid3999" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -281,15 +233,12 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
     <g
        style="display:inline"
        id="layer1-0"
-       inkscape:label="Layer 1"
        transform="matrix(0.77393739,0,0,0.77393739,-0.808785,233.54106)">
       <g
          transform="translate(-8.2201167,-12.904699)"
