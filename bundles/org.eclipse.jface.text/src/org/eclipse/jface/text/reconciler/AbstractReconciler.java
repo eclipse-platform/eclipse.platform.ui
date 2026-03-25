@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -74,12 +78,16 @@ abstract public class AbstractReconciler implements IReconciler {
 
 		private final String fName;
 
-		private boolean fIsAlive;
+		private volatile boolean fIsAlive;
 
 		private volatile Thread fThread;
 
+		/** A latch to wait on until the background thread finishes. */
+		private final CountDownLatch fFinishLatch;
+
 		public BackgroundWorker(String name) {
 			fName= name;
+			fFinishLatch= new CountDownLatch(1);
 		}
 
 		/**
@@ -116,8 +124,8 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 
 		/**
-		 * Suspends the caller of this method until this background thread has
-		 * emptied the dirty region queue.
+         * Suspends the caller of this method until this background thread has
+         * emptied the dirty region queue.
 		 */
 		public void suspendCallerWhileDirty() {
 			AbstractReconciler.this.signalWaitForFinish();
@@ -216,6 +224,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			} finally {
 				fIsAlive= false;
+				fFinishLatch.countDown();
 			}
 		}
 
@@ -339,6 +348,8 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 	}
 
+	private static final WaitForThreadsJob waitForFinishJob= new WaitForThreadsJob();
+
 	/** Queue to manage the changes applied to the text viewer. */
 	private DirtyRegionQueue fDirtyRegionQueue;
 	/** The background thread. */
@@ -353,6 +364,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	private boolean fIsIncrementalReconciler= true;
 	/** The progress monitor used by this reconciler. */
 	private IProgressMonitor fProgressMonitor;
+
 	/**
 	 * Tells whether this reconciler is allowed to modify the document.
 	 * @since 3.2
@@ -531,6 +543,8 @@ abstract public class AbstractReconciler implements IReconciler {
 				BackgroundWorker bt= fWorker;
 				fWorker= null;
 				bt.cancel();
+				// allow clients (e.g. tests) to wait on the reconciler thread to finish
+				waitForFinishJob.addTask(bt);
 			}
 		}
 	}
@@ -702,6 +716,47 @@ abstract public class AbstractReconciler implements IReconciler {
 		@Override
 		public boolean belongsTo(Object family) {
 			return ReconcilerJobFamilies.FAMILY_RECONCILER == family;
+		}
+	}
+
+	private static class WaitForThreadsJob extends Job {
+
+		private ConcurrentLinkedDeque<BackgroundWorker> aliveThreads= new ConcurrentLinkedDeque<>();
+
+		private WaitForThreadsJob() {
+			super("Waiting for reconciler tasks to finish"); //$NON-NLS-1$
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			BackgroundWorker t;
+			while ((t= aliveThreads.poll()) != null) {
+				while (t.fIsAlive) {
+					if (monitor.isCanceled()) {
+						continue;
+					}
+					try {
+						t.fFinishLatch.await(50, TimeUnit.MILLISECONDS);
+					} catch (InterruptedException e) {
+						Thread.interrupted();
+						return Status.CANCEL_STATUS;
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return ReconcilerJobFamilies.FAMILY_RECONCILER == family;
+		}
+
+		private void addTask(BackgroundWorker t) {
+			boolean shouldSchedule= aliveThreads.isEmpty();
+			aliveThreads.add(t);
+			if (shouldSchedule) {
+				schedule();
+			}
 		}
 	}
 }
