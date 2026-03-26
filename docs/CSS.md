@@ -134,7 +134,6 @@ Note: The following examples assume that you have first set the tab-renderer to 
 | e4Renderer Method | CSS Property Name | CSS Example |
 | --- | --- | --- |
 | setOuterKeyline(Color) | swt-outer-keyline-color | CTabFolder { swt-outer-keyline-color: #B6BCCC; } |
-| setCornerRadius(int) | swt-corner-radius | CTabFolder { swt-corner-radius: 20; } |
 | setShadowVisible(boolean) | swt-shadow-visible | CTabFolder { swt-shadow-visible: false; } |
 | setShadowColor(Color) | swt-shadow-color | CTabFolder { swt-shadow-color: #F79402; } |
 | setSelectedTabFill(Color) | swt-selected-tab-fill | CTabFolder { swt-selected-tab-fill: #F79402; } |
