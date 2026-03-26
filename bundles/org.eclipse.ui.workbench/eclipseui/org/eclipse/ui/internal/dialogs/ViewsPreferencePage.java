@@ -121,6 +121,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private Button hideIconsForViewTabs;
 	private Button showFullTextForViewTabs;
 
+	private Button showDirtyIndicatorForTabs;
+
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
@@ -198,6 +200,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createHideIconsForViewTabs(comp);
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
+		createShowDirtyIndicatorForTabs(comp);
+
 		createRescaleAtRuntimeCheckButton(comp);
 
 		if (currentTheme != null) {
@@ -268,6 +272,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
 		hideIconsForViewTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideIconsForViewTabs,
 				actualValue);
+	}
+
+	protected void createShowDirtyIndicatorForTabs(Composite composite) {
+		boolean actualValue = getSwtRendererPreference(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_dirty_indicator_label);
+		showDirtyIndicatorForTabs = createCheckButton(composite,
+				WorkbenchMessages.ViewsPreference_showDirtyIndicatorForTabs, actualValue);
 	}
 
 	private boolean getSwtRendererPreference(String prefName, boolean defaultValue) {
@@ -455,6 +468,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
 			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
+			prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, showDirtyIndicatorForTabs.getSelection());
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
@@ -605,6 +619,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			showFullTextForViewTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
 					CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT));
 			showFullTextForViewTabs.notifyListeners(SWT.Selection, null);
+			showDirtyIndicatorForTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+					CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT));
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
