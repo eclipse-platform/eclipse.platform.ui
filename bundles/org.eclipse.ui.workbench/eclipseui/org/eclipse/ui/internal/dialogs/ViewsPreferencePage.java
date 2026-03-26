@@ -103,7 +103,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
 	private String defaultTheme;
-	private Button useRoundTabs;
 	private Button enableMru;
 	private Button useColoredLabels;
 
@@ -236,7 +235,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
-		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
 	}
@@ -313,11 +311,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		return label;
 	}
 
-	protected void createUseRoundTabs(Composite composite) {
-		boolean enabled = getSwtRendererPreference(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT);
-		useRoundTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useRoundTabs, enabled);
-	}
-
 	protected void createEnableMruPref(Composite composite) {
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, WorkbenchMessages.ViewsPreference_visibleTabs_description);
@@ -380,7 +373,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 
-		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -468,8 +460,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
-		useRoundTabs.setSelection(
-				defaultPrefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT));
 		enableMru.setSelection(defaultPrefs.getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT));
 		super.performDefaults();
 	}

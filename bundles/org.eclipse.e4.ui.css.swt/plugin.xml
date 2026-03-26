@@ -90,14 +90,6 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCornerRadiusSWTHandler">
-         <property-name
-               name="swt-corner-radius">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabRendererSWTHandler">
          <property-name
                name="swt-tab-renderer">

@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -163,6 +164,8 @@ public class StackRenderer extends LazyStackRenderer {
 	@Inject
 	@Preference(nodePath = CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT)
 	private IEclipsePreferences preferences;
+
+	private IEclipsePreferences.IPreferenceChangeListener dirtyIndicatorListener;
 
 	@Inject
 	@Named(WorkbenchRendererFactory.SHARED_ELEMENTS_STORE)
@@ -443,6 +446,9 @@ public class StackRenderer extends LazyStackRenderer {
 
 		CTabItem newItem = new CTabItem(tabFolder, (showClose ? SWT.CLOSE : SWT.NONE), newIndex);
 		newItem.setText(text);
+		MPart part = (MPart) (movedElement instanceof MPart ? movedElement
+				: ((MPlaceholder) movedElement).getRef());
+		setShowDirty(newItem, part.isDirty() && getShowDirtyIndicatorForTabsFromPreferences());
 		newItem.setImage(image);
 		newItem.setToolTipText(toolTipText);
 		newItem.setFont(font);
@@ -704,6 +710,38 @@ public class StackRenderer extends LazyStackRenderer {
 	@PostConstruct
 	public void init() {
 		super.init(eventBroker);
+		dirtyIndicatorListener = e -> {
+			if (CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS.equals(e.getKey())) {
+				synchronize.asyncExec(this::updateDirtyIndicatorStyle);
+			}
+		};
+		preferences.addPreferenceChangeListener(dirtyIndicatorListener);
+	}
+
+	private void updateDirtyIndicatorStyle() {
+		MApplication app = context.get(MApplication.class);
+		if (app == null) {
+			return;
+		}
+		List<MPartStack> stacks = modelService.findElements(app, null, MPartStack.class, null);
+		for (MPartStack stack : stacks) {
+			Object widget = stack.getWidget();
+			if (widget instanceof CTabFolder tabFolder) {
+				setDirtyIndicatorStyle(tabFolder, getShowDirtyIndicatorForTabsFromPreferences());
+				for (CTabItem item : tabFolder.getItems()) {
+					MUIElement element = (MUIElement) item.getData(OWNING_ME);
+					if (element == null) {
+						continue;
+					}
+					MPart part = (MPart) (element instanceof MPart p ? p : ((MPlaceholder) element).getRef());
+					if (part == null) {
+						continue;
+					}
+					setShowDirty(item, part.isDirty() && getShowDirtyIndicatorForTabsFromPreferences());
+					item.setText(getLabel(part, part.getLocalizedLabel()));
+				}
+			}
+		}
 	}
 
 	protected void updateTab(CTabItem cti, MPart part, String attName, Object newValue) {
@@ -715,6 +753,7 @@ public class StackRenderer extends LazyStackRenderer {
 			break;
 		case UIEvents.Dirtyable.DIRTY:
 			cti.setText(getLabel(part, part.getLocalizedLabel()));
+			setShowDirty(cti, part.isDirty() && getShowDirtyIndicatorForTabsFromPreferences());
 			break;
 		case UIEvents.UILabel.ICONURI:
 			changePartTabImage(part, cti);
@@ -741,6 +780,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	@PreDestroy
 	public void contextDisposed() {
+		preferences.removePreferenceChangeListener(dirtyIndicatorListener);
 		super.contextDisposed(eventBroker);
 	}
 
@@ -751,7 +791,8 @@ public class StackRenderer extends LazyStackRenderer {
 			newName = LegacyActionTools.escapeMnemonics(newName);
 		}
 
-		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
+		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()
+				&& !getShowDirtyIndicatorForTabsFromPreferences()) {
 			newName = '*' + newName;
 		}
 		return newName;
@@ -794,6 +835,7 @@ public class StackRenderer extends LazyStackRenderer {
 			new DropTarget(dropZone, drop);
 		}
 		tabFolder.setMRUVisible(getMRUValue());
+		setDirtyIndicatorStyle(tabFolder, getShowDirtyIndicatorForTabsFromPreferences());
 
 		// Adjust the minimum chars based on the location
 		if (isInSharedArea) {
@@ -895,9 +937,30 @@ public class StackRenderer extends LazyStackRenderer {
 		return preferences.getBoolean(MRU_KEY, initialMRUValue);
 	}
 
+	private boolean getShowDirtyIndicatorForTabsFromPreferences() {
+		return preferences.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
+	}
+
 	private void updateMRUValue(CTabFolder tabFolder) {
 		boolean actualMRUValue = getMRUValue();
 		tabFolder.setMRUVisible(actualMRUValue);
+	}
+
+	private void setDirtyIndicatorStyle(CTabFolder folder, boolean style) {
+		try {
+			folder.getClass().getMethod("setDirtyIndicatorStyle", boolean.class).invoke(folder, style); //$NON-NLS-1$
+		} catch (Exception e) {
+			// ignore
+		}
+	}
+
+	private void setShowDirty(CTabItem item, boolean show) {
+		try {
+			item.getClass().getMethod("setShowDirty", boolean.class).invoke(item, show); //$NON-NLS-1$
+		} catch (Exception e) {
+			// ignore
+		}
 	}
 
 	private void addTopRight(CTabFolder tabFolder) {
@@ -1060,6 +1123,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		tabItem.setData(OWNING_ME, element);
 		tabItem.setText(getLabel(part, part.getLocalizedLabel()));
+		setShowDirty(tabItem, part.isDirty() && getShowDirtyIndicatorForTabsFromPreferences());
 		tabItem.setImage(getImage(part));
 
 		String toolTip = getToolTip(part);

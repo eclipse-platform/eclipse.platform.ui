@@ -38,8 +38,6 @@ public interface ICTabRendering {
 
 	void setOuterKeyline(Color color);
 
-	void setCornerRadius(int radius);
-
 	/**
 	 * Sets whether to use a custom tab background (reusing tab colors and
 	 * gradients), or default one from plain CTabFolder (using widget background
