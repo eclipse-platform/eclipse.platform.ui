@@ -41,7 +41,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 
 	@Override
 	@AfterEach
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		FileTool.delete(fExternalFile);
 		FileTool.delete(fExternalFile.getParentFile());
 		super.tearDown();

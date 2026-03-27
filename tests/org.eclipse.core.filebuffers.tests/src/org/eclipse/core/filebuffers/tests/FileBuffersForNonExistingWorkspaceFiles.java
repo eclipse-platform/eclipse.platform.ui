@@ -44,7 +44,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 
 	@Override
 	@AfterEach
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		FileTool.delete(getPath());
 		super.tearDown();
 	}

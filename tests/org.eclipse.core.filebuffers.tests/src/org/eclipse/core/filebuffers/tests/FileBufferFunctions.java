@@ -37,8 +37,10 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -89,10 +91,11 @@ public abstract class FileBufferFunctions {
 	}
 
 	@AfterEach
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 		assertNull(buffer);
 		ResourceHelper.deleteProject("project");
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 	}
 
 	protected IPath getPath() {
