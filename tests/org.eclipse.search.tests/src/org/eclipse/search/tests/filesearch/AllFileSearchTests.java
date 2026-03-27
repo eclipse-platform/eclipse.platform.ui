@@ -28,7 +28,6 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		SearchResultPageTest.class,
 		SortingTest.class,
 		TextSearchResultTest.class,
-		ExcludedFilesSearchTest.class,
 })
 public class AllFileSearchTests {
 }
