@@ -114,12 +114,17 @@ public class SearchResultPageTest {
 	private void consumeEvents(FileSearchPage page) {
 		IJobManager manager= Job.getJobManager();
 		while (manager.find(page).length > 0) {
-			Display.getDefault().readAndDispatch();
+			consumeEvents();
 		}
+		consumeEvents();
 	}
 
 	private void consumeEvents() {
 		while (Display.getDefault().readAndDispatch()) {
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 
@@ -141,26 +146,27 @@ public class SearchResultPageTest {
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		Table table= ((TableViewer) page.getViewer()).getTable();
 
-		consumeEvents();
+		consumeEvents(page);
 
 		// select the first element.
 		table.setSelection(0);
+		consumeEvents(page);
 		table.showSelection();
 
-		consumeEvents();
+		consumeEvents(page);
 		// back from first match, goto last
 		page.gotoPreviousMatch();
 
-		consumeEvents();
+		consumeEvents(page);
 
-		assertEquals(1, table.getSelectionCount());
-		assertEquals(table.getItemCount()-1, table.getSelectionIndex());
+		assertEquals(1, table.getSelectionCount(), "Selection count is wrong");
+		assertEquals(table.getItemCount() - 1, table.getSelectionIndex(), "Selection index is wrong");
 
 		// and forward again, to the first match.
 		page.gotoNextMatch();
 
-		consumeEvents();
-		assertEquals(1, table.getSelectionCount());
-		assertEquals(0, table.getSelectionIndex());
+		consumeEvents(page);
+		assertEquals(1, table.getSelectionCount(), "Selection count is wrong");
+		assertEquals(0, table.getSelectionIndex(), "Selection index is wrong");
 }
 }
