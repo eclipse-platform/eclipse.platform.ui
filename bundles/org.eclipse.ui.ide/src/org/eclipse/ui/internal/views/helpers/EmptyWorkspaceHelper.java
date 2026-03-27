@@ -93,6 +93,7 @@ public final class EmptyWorkspaceHelper {
 	private Composite emptyArea;
 	private StackLayout layout;
 	private Tree control;
+	private Control nonEmptyStackControl;
 	private boolean controlIsEmpty;
 	private Composite displayArea;
 	private ArrayList<IAction> projectWizardActions;
@@ -131,6 +132,20 @@ public final class EmptyWorkspaceHelper {
 		emptyArea.setBackground(control.getBackground());
 		switchTopControl();
 		registerListeners();
+	}
+
+	/**
+	 * Overrides the control used as the top control in the stack layout. Call this
+	 * after {@link #setNonEmptyControl(Control)} when the tree resides inside a
+	 * wrapper composite (e.g. a {@code FilteredTree}) that should be shown/hidden
+	 * as a whole instead of the bare tree widget.
+	 *
+	 * @param stackControl the direct child of the stack composite to use as the
+	 *                     non-empty top control
+	 */
+	public void setNonEmptyStackControl(Control stackControl) {
+		this.nonEmptyStackControl = stackControl;
+		switchTopControl();
 	}
 
 	private void dispose(Listener listener) {
@@ -309,7 +324,7 @@ public final class EmptyWorkspaceHelper {
 		}
 		Control oldTop = layout.topControl;
 		if (!controlIsEmpty) {
-			layout.topControl = control;
+			layout.topControl = nonEmptyStackControl != null ? nonEmptyStackControl : control;
 			disposeEmptyArea();
 		} else {
 			if (emptyArea == null || emptyArea.isDisposed()) {

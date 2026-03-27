@@ -65,6 +65,7 @@ import org.eclipse.ui.internal.navigator.framelist.Frame;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 import org.eclipse.ui.internal.navigator.framelist.TreeFrame;
 import org.eclipse.ui.internal.navigator.resources.ProjectExplorerActionGroup;
+import org.eclipse.ui.internal.navigator.resources.ProjectExplorerFilteredTree;
 import org.eclipse.ui.internal.navigator.resources.ResourceToItemsMapper;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
@@ -120,6 +121,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 
 	private List<UserFilter> userFilters;
 	private EmptyWorkspaceHelper emptyWorkspaceHelper;
+	private ProjectExplorerFilteredTree filteredTree;
 
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -167,7 +169,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 
 	@Override
 	protected ActionGroup createCommonActionGroup() {
-		return new ProjectExplorerActionGroup(this, getCommonViewer(), getLinkHelperService());
+		return new ProjectExplorerActionGroup(this, getCommonViewer(), getLinkHelperService(), filteredTree);
 	}
 
 	/**
@@ -333,9 +335,16 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	}
 
 	@Override
+	protected CommonViewer createCommonViewerObject(Composite aParent) {
+		filteredTree = new ProjectExplorerFilteredTree(aParent, getViewSite().getId());
+		return filteredTree.getViewer();
+	}
+
+	@Override
 	protected CommonViewer createCommonViewer(Composite aParent) {
 		CommonViewer viewer = super.createCommonViewer(aParent);
 		emptyWorkspaceHelper.setNonEmptyControl(viewer.getControl());
+		emptyWorkspaceHelper.setNonEmptyStackControl(filteredTree);
 		WorkbenchViewerSetup.setupViewer(viewer);
 		return viewer;
 	}

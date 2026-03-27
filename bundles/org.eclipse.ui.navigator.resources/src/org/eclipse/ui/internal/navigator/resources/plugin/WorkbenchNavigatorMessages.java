@@ -66,6 +66,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String ProjectExplorer_toolTip;
 	public static String ProjectExplorer_toolTip2;
 	public static String ProjectExplorer_toolTip3;
+	public static String ProjectExplorer_toggleFilterField;
 
 	public static String ProjectExplorerPart_workspace;
 	public static String ProjectExplorerPart_workingSetModel;

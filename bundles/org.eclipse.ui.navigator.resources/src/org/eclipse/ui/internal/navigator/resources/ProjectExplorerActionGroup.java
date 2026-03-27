@@ -26,15 +26,17 @@ import org.eclipse.ui.navigator.LinkHelperService;
 public class ProjectExplorerActionGroup extends CommonNavigatorActionGroup {
 
 	private ProjectExplorerFilterActionGroup fFilterActionGroup;
+	private final ProjectExplorerFilteredTree fFilteredTree;
 
 	public ProjectExplorerActionGroup(CommonNavigator aNavigator, CommonViewer aViewer,
-			LinkHelperService linkHelperService) {
+			LinkHelperService linkHelperService, ProjectExplorerFilteredTree filteredTree) {
 		super(aNavigator, aViewer, linkHelperService);
+		this.fFilteredTree = filteredTree;
 	}
 
 	@Override
 	protected FilterActionGroup createFilterActionGroup(CommonViewer pCommonViewer) {
-		fFilterActionGroup = new ProjectExplorerFilterActionGroup(pCommonViewer);
+		fFilterActionGroup = new ProjectExplorerFilterActionGroup(pCommonViewer, fFilteredTree);
 		return fFilterActionGroup;
 	}
 
