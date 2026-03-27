@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -101,7 +106,8 @@ public class WorkspaceLock {
 	}
 
 	/**
-	 * Returns the lock file.
+	 * Returns the lock <b>info</b> file (the file where information about last
+	 * workspace lock owner is saved).
 	 *
 	 * @param workspaceUrl the <code>URL</code> of selected workspace
 	 * @return the path to the <code>.lock_info</code> file within the specified
@@ -110,6 +116,25 @@ public class WorkspaceLock {
 	 */
 	public static Path getLockInfoFile(URL workspaceUrl) {
 		Path lockFile = Path.of(".metadata", ".lock_info"); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			return Path.of(URIUtil.toURI(workspaceUrl)).resolve(lockFile);
+		} catch (URISyntaxException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the workspace lock file for given workspace URL (the file which is
+	 * actually <b>locked</b> if an Eclipse application is using this workspace).
+	 *
+	 * @param workspaceUrl the <code>URL</code> of selected workspace
+	 * @return the path to the <code>.lock</code> file within the specified
+	 *         workspace, or <code> null</code> if the workspace URL cannot be
+	 *         converted to a valid URI
+	 */
+	public static Path getLockFile(URL workspaceUrl) {
+		// See org.eclipse.osgi.internal.location.BasicLocation.DEFAULT_LOCK_FILENAME
+		Path lockFile = Path.of(".metadata", ".lock"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			return Path.of(URIUtil.toURI(workspaceUrl)).resolve(lockFile);
 		} catch (URISyntaxException e) {
@@ -133,11 +158,58 @@ public class WorkspaceLock {
 	 */
 	public static void showWorkspaceLockedDialog(Shell shell, String workspacePath, String workspaceLockOwner) {
 		String lockMessage = NLS.bind(WorkbenchMessages.IDEApplication_workspaceCannotLockMessage2, workspacePath);
-		String wsLockedError = lockMessage + System.lineSeparator() + System.lineSeparator()
-				+ NLS.bind(WorkbenchMessages.IDEApplication_workspaceLockMessage, workspaceLockOwner);
-
+		String wsLockedError = lockMessage;
+		if (workspaceLockOwner != null && !workspaceLockOwner.isBlank()) {
+			String lockDetails = NLS.bind(WorkbenchMessages.IDEApplication_workspaceLockMessage, workspaceLockOwner);
+			wsLockedError += System.lineSeparator() + System.lineSeparator() + lockDetails;
+		}
 		MessageDialog.openError(shell,
 				WorkbenchMessages.IDEApplication_workspaceCannotLockTitle, wsLockedError);
+	}
+
+	/**
+	 * Checks if the given workspace path is locked by another Eclipse instance.
+	 *
+	 * @param workspaceUrl the <code>URL</code> of workspace to check for lock
+	 * @return <code>true</code> if the workspace is locked, <code>false</code>
+	 *         otherwise
+	 */
+	public static boolean isWorkspaceLocked(URL workspaceUrl) {
+		Path lockFile = getLockFile(workspaceUrl);
+		if (lockFile == null || !Files.exists(lockFile)) {
+			return false;
+		}
+		return isLocked(lockFile.toFile());
+	}
+
+	/**
+	 * Follows the same strategy as
+	 * <code>org.eclipse.osgi.internal.location.Locker_JavaNio#isLocked()</code>,
+	 * trying to lock a file using Java NIO to check if the file is locked or not
+	 * already.
+	 *
+	 * @return <code>true</code> if the file is definitely locked by any process,
+	 *         <code>false</code> otherwise
+	 */
+	private static boolean isLocked(File lockFile) {
+		try (RandomAccessFile temp = new RandomAccessFile(lockFile, "rw")) { //$NON-NLS-1$
+			try {
+				try (FileLock tempLock = temp.getChannel().tryLock(0, 1, false)) {
+					if (tempLock != null) {
+						// able to lock: it was not locked before
+						return false;
+					}
+					// is locked by some process
+					return true;
+				}
+			} catch (OverlappingFileLockException e) {
+				// is locked by some process
+				return true;
+			}
+		} catch (IOException e) {
+			// assume not locked if we have any troubles getting access to it
+			return false;
+		}
 	}
 
 }

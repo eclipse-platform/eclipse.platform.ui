@@ -108,7 +108,8 @@ import org.junit.platform.suite.api.Suite;
 	WorkbenchDatabindingTest.class,
 	ChooseWorkspaceDialogTests.class,
 	ViewerItemsLimitTest.class,
-	OpenCloseTest.class
+	OpenCloseTest.class,
+	WorkspaceLockTest.class
 })
 public class UiTestSuite {
 }

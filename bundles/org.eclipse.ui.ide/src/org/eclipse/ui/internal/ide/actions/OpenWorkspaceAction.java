@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.ide.actions;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -240,9 +241,15 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	private boolean canRestartWithWorkspace(String workspacePath) throws IllegalStateException {
 		Path selectedWorkspace = Path.of(workspacePath);
 		try {
-			String workspaceLockDetails = WorkspaceLock.getWorkspaceLockDetails(selectedWorkspace.toUri().toURL());
-			if (workspaceLockDetails == null) {
+			URL url = selectedWorkspace.toUri().toURL();
+			if (!WorkspaceLock.isWorkspaceLocked(url)) {
 				return true;
+			}
+			String workspaceLockDetails = WorkspaceLock.getWorkspaceLockDetails(url);
+			if (workspaceLockDetails == null) {
+				// can only happen if the workspace is locked by an older Eclipse
+				// which doesn't write lock details
+				workspaceLockDetails = ""; //$NON-NLS-1$
 			}
 			WorkspaceLock.showWorkspaceLockedDialog(window.getShell(), workspacePath, workspaceLockDetails);
 		} catch (MalformedURLException e) {
