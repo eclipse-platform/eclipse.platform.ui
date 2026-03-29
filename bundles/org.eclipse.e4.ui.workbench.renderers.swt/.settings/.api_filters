@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.workbench.renderers.swt" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="request-minor-update" id="926941240">
+            <message_arguments>
+                <message_argument value="0.18.0"/>
+                <message_argument value="0.17.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/renderers/swt/CSSEngineHelper.java" type="org.eclipse.e4.ui.workbench.renderers.swt.CSSEngineHelper">
         <filter id="640712815">
             <message_arguments>
