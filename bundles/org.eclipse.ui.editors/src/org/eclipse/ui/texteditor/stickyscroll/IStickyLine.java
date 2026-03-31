@@ -14,6 +14,7 @@
 package org.eclipse.ui.texteditor.stickyscroll;
 
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Color;
 
 /**
  * Representation of a sticky line.
@@ -42,5 +43,24 @@ public interface IStickyLine {
 	 * @return the style ranges of the sticky line
 	 */
 	StyleRange[] getStyleRanges();
+
+	/**
+	 * Returns the background color of the sticky line.
+	 * <p>
+	 * The background color is drawn for the full-width of the line. The text
+	 * background color if defined in a StyleRange ({@link #getStyleRanges()})
+	 * overlays the line background color.
+	 * </p>
+	 * <p>
+	 * {@code null} (the default), if the line has no special background color.
+	 * </p>
+	 * 
+	 * @return the background color of the sticky line or {@code null} for no
+	 *         special color
+	 * @since 3.23
+	 */
+	default Color getBackgroundColor() {
+		return null;
+	}
 
 }
