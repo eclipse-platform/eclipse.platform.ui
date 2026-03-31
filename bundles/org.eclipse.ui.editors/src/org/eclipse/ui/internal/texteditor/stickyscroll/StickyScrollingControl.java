@@ -100,6 +100,8 @@ public class StickyScrollingControl {
 
 	private ITextPresentationListener textPresentationListener;
 
+	private int hoveredLineIndex = -1;
+
 	private ControlListener controlListener;
 
 	private StickyScollingCaretListener caretListener;
@@ -247,6 +249,7 @@ public class StickyScrollingControl {
 				}
 			}
 			stickyLineTextOffset+= stickyLine.getText().length() + System.lineSeparator().length();
+			stickyLineText.setLineBackground(i, 1, stickyLine.getBackgroundColor());
 		}
 		stickyLineText.setStyleRanges(stickyLinesStyleRanges.toArray(StyleRange[]::new));
 
@@ -258,6 +261,21 @@ public class StickyScrollingControl {
 		stickyLineText.setForeground(textWidget.getForeground());
 		stickyLineText.setLineSpacing(textWidget.getLineSpacing());
 		stickyLineText.setLeftMargin(textWidget.getLeftMargin());
+
+		hoveredLineIndex= -1;
+		if (stickyLinesCount > 0) {
+			Point cursorLocation= stickyLinesCanvas.getDisplay().getCursorLocation();
+			if (cursorLocation != null) {
+				cursorLocation= stickyLinesCanvas.getDisplay().map(null, stickyLinesCanvas, cursorLocation);
+				if (cursorLocation.x >= 0 && cursorLocation.y >= 0
+						&& cursorLocation.x < stickyLinesCanvas.getParent().getSize().x
+						&& cursorLocation.y < stickyLineText.getLinePixel(stickyLinesCount)) {
+					int lineIndex= stickyLineText.getLineIndex(cursorLocation.y);
+					stickyLineText.setLineBackground(lineIndex, 1, settings.stickyLineHoverColor());
+					hoveredLineIndex= lineIndex;
+				}
+			}
+		}
 	}
 
 	private void layoutStickyLines() {
@@ -331,18 +349,14 @@ public class StickyScrollingControl {
 		StyledText textWidget= sourceViewer.getTextWidget();
 
 		int numberStickyLines= getNumberStickyLines();
-		int lineHeight = 0;
-		for (int i = 0; i < numberStickyLines; i++) {
-			lineHeight += stickyLineText.getLineHeight(stickyLineText.getOffsetAtLine(i));
-		}
-		int spacingHeight= stickyLineText.getLineSpacing() * (numberStickyLines - 1);
+		int textHeight= stickyLineText.getLinePixel(numberStickyLines);
 		int separatorHeight= bottomSeparator.getBounds().height;
 
 		int rulerWidth= verticalRuler != null ? verticalRuler.getWidth() : 0;
 		int textWidth= textWidget.getClientArea().width + 1;
 
 		Rectangle bounds= new Rectangle(0, 0, 0, 0);
-		bounds.height= lineHeight + spacingHeight + separatorHeight;
+		bounds.height= textHeight + separatorHeight;
 		bounds.width= rulerWidth + textWidth;
 		stickyLinesCanvas.setBounds(bounds);
 	}
@@ -483,14 +497,26 @@ public class StickyScrollingControl {
 
 		canvas.addMouseMoveListener(e -> {
 			int affectedStickyLineIndex= stickyLineText.getLineIndex(e.y);
-			stickyLineText.setLineBackground(0, getNumberStickyLines(), null);
+			if (affectedStickyLineIndex != hoveredLineIndex && hoveredLineIndex >= 0
+					&& hoveredLineIndex < stickyLines.size() && hoveredLineIndex < stickyLineText.getLineCount()) {
+				var line= stickyLines.get(hoveredLineIndex);
+				stickyLineText.setLineBackground(hoveredLineIndex, 1, line.getBackgroundColor());
+			}
 			stickyLineText.setLineBackground(affectedStickyLineIndex, 1, settings.stickyLineHoverColor());
+			hoveredLineIndex= affectedStickyLineIndex;
 		});
 
 		canvas.addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
 			public void mouseExit(MouseEvent e) {
-				stickyLineText.setLineBackground(0, getNumberStickyLines(), null);
+				if (hoveredLineIndex < 0) {
+					return;
+				}
+				if (hoveredLineIndex < stickyLines.size() && hoveredLineIndex < stickyLineText.getLineCount()) {
+					var line= stickyLines.get(hoveredLineIndex);
+					stickyLineText.setLineBackground(hoveredLineIndex, 1, line.getBackgroundColor());
+				}
+				hoveredLineIndex= -1;
 			}
 		});
 
