@@ -456,35 +456,29 @@ public class ResourceInitialSelectionTest {
 
 		// The dialog performs async operations (FilterHistoryJob → FilterJob →
 		// RefreshCacheJob → RefreshJob) to filter and populate the table after refresh()
-		// We need to wait for the table to be populated before checking selection state
-
-		// First wait for table to have items (up to 2 seconds)
-		DisplayHelper.waitForCondition(display, 2000, () -> {
+		// We need to wait for the table item count to stabilize before checking
+		// selection state. The count can temporarily be non-zero after the history
+		// refresh, then change again when FilterJob populates actual results.
+		// Selection is applied only in the final refresh, so we must wait for
+		// stability rather than just for any non-zero count.
+		int[] lastCount = { -1 };
+		DisplayHelper.waitForCondition(display, 5000, () -> {
 			processUIEvents();
 			try {
 				Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
 						.getChildren()[0]).getChildren()[0]).getChildren()[3];
-				return table.getItemCount() > 0;
+				int count = table.getItemCount();
+				if (count > 0 && count == lastCount[0]) {
+					return true; // stable non-zero count: all refreshes have completed
+				}
+				lastCount[0] = count;
+				return false;
 			} catch (Exception e) {
 				return false;
 			}
 		});
 
-		// Then wait additional time for selection to be applied
-		// The selection is set asynchronously after table population completes
-		// Previous fix used only 3 × 50ms = 150ms which was insufficient on slow systems
-		// Increased to handle slower machines while minimizing delay on fast ones
-		for (int i = 0; i < 5; i++) {
-			processUIEvents();
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				break;
-			}
-		}
-
-		// Final event loop processing
+		// Final event loop processing to pick up any trailing async tasks
 		processUIEvents();
 	}
 
