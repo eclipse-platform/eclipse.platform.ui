@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
@@ -72,7 +71,7 @@ public class TextSearchVisitor {
 
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.search/perf")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
-	private static final String EXCLUSION_PREFERENCE_NAME = "search_exclusion_property"; //$NON-NLS-1$
+	private static final String DISABLE_RESTRICTED_FILE_SEARCH_PREFERENCE = "disableRestrictedFileSearch"; //$NON-NLS-1$
 
 	/**
 	 * Queue of files to be searched. IFile pointing to the same local file are
@@ -301,7 +300,7 @@ public class TextSearchVisitor {
 	private volatile boolean fIsLightweightAutoRefresh;
 	private final DirtyFileProvider fDirtyDiscovery;
 
-	private final QualifiedName fExclusionProperty;
+	private final boolean fDisableRestrictedFileSearch;
 
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, DirtyFileProvider dirtyDiscovery) {
 		fCollector= collector;
@@ -315,8 +314,8 @@ public class TextSearchVisitor {
 		fileBatches = new ConcurrentLinkedQueue<>();
 
 		IPreferencesService prefs = Platform.getPreferencesService();
-		String exclusionPropertyName = prefs.getString(SearchCorePlugin.PLUGIN_ID, EXCLUSION_PREFERENCE_NAME, "", null); //$NON-NLS-1$
-		fExclusionProperty = exclusionPropertyName.isEmpty() ? null : new QualifiedName(null, exclusionPropertyName);
+		fDisableRestrictedFileSearch = prefs.getBoolean(SearchCorePlugin.PLUGIN_ID,
+				DISABLE_RESTRICTED_FILE_SEARCH_PREFERENCE, false, null);
 	}
 
 	public IStatus search(IFile[] files, IProgressMonitor monitor) {
@@ -557,16 +556,16 @@ public class TextSearchVisitor {
 	}
 
 	private boolean excluded(IFile file) {
-		if (fExclusionProperty != null) {
+		if (fDisableRestrictedFileSearch) {
 			try {
-				return file.getSessionProperty(fExclusionProperty) != null;
+				return file.isContentRestricted();
 			} catch (CoreException e) {
 				/*
-				 * The preference 'search_exclusion_property' indicates we
-				 * should skip files with the respective session property, but
-				 * we ran into an exception while reading the properties of the
-				 * file. Skip the file from the search, since we don't know if
-				 * the property is set or not.
+				 * The preference 'disableRestrictedFileSearch' indicates we
+				 * should skip restricted files, but we ran into an exception
+				 * while checking if the file is restricted. Skip the file from
+				 * the search, since we don't know if the file is restricted or
+				 * not.
 				 */
 				fStatus.add(errorStatusForFile(file, e));
 				return true;

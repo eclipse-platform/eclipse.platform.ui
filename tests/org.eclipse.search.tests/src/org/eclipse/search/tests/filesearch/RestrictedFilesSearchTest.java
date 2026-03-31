@@ -30,7 +30,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -54,13 +53,9 @@ import org.eclipse.search.ui.text.FileTextSearchScope;
  * property {@code search_excluded_file} on some test files and performs a search. Search matches
  * are not expected for the files with the session property.
  */
-public class ExcludedFilesSearchTest {
+public class RestrictedFilesSearchTest {
 
-	private static final String EXCLUSION_PREFERENCE_NAME= "search_exclusion_property";
-
-	private static final QualifiedName SESSION_PROPERTY_QN= new QualifiedName(null, "search_excluded_file");
-
-	private static final String SESSION_PROPERTY= "search_excluded_file";
+	private static final String DISABLE_PREFERENCE_NAME= "disableRestrictedFileSearch";
 
 	private static final String EXCLUDED_FILE_PREFIX= "excluded_";
 
@@ -69,7 +64,7 @@ public class ExcludedFilesSearchTest {
 	@AfterEach
 	public void cleanUp() throws Exception {
 		ResourceHelper.deleteProject(PROJECT_NAME);
-		setExcludedSearchEnabled(null);
+		setDisableRestrictedFileSearch(false);
 	}
 
 	@Test
@@ -102,10 +97,10 @@ public class ExcludedFilesSearchTest {
 			for (int i= 0; i < n; ++i) {
 				IFile link= ResourceHelper.createLinkedFile(project, new Path("link_file_" + i), file);
 				if (i == index) {
-					setExcludedSearchSessionProperty(link);
+					link.setContentRestricted(true);
 				}
 			}
-			setExcludedSearchEnabled(SESSION_PROPERTY);
+			setDisableRestrictedFileSearch(true);
 			TestResultCollector collector= new TestResultCollector(true);
 			doSearch(project, collector, searchString);
 			TestResult[] results= collector.getResults();
@@ -165,7 +160,7 @@ public class ExcludedFilesSearchTest {
 		String searchString= "hello";
 		IProject project= prepareProject(n, m, PROJECT_NAME, searchString);
 		if (sessionProperty) {
-			setExcludedSearchEnabled(SESSION_PROPERTY);
+			setDisableRestrictedFileSearch(true);
 			setSessionProperty(project);
 		}
 		TestResultCollector collector= new TestResultCollector(parallel);
@@ -177,8 +172,9 @@ public class ExcludedFilesSearchTest {
 		project.accept(new IResourceVisitor() {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
-				if (resource.getName().startsWith(EXCLUDED_FILE_PREFIX)) {
-					setExcludedSearchSessionProperty(resource);
+				if (resource.getType() == IResource.FILE && resource.getName().startsWith(EXCLUDED_FILE_PREFIX)) {
+					IFile file= (IFile) resource;
+					file.setContentRestricted(true);
 				}
 				return true;
 			}
@@ -234,16 +230,12 @@ public class ExcludedFilesSearchTest {
 		assertEquals(expectedCount, k, "Wrong number of results in file");
 	}
 
-	private static void setExcludedSearchSessionProperty(IResource resource) throws CoreException {
-		resource.setSessionProperty(SESSION_PROPERTY_QN, "true");
-	}
-
-	private static void setExcludedSearchEnabled(String value) throws BackingStoreException {
+	private static void setDisableRestrictedFileSearch(boolean enabled) throws BackingStoreException {
 		IEclipsePreferences node= InstanceScope.INSTANCE.getNode(SearchCorePlugin.PLUGIN_ID);
-		if (value != null) {
-			node.put(EXCLUSION_PREFERENCE_NAME, value);
+		if (enabled) {
+			node.putBoolean(DISABLE_PREFERENCE_NAME, true);
 		} else {
-			node.remove(EXCLUSION_PREFERENCE_NAME);
+			node.remove(DISABLE_PREFERENCE_NAME);
 		}
 		node.flush();
 	}
