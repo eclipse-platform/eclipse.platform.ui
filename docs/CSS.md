@@ -108,7 +108,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | setMaximizeVisible(boolean) | swt-maximize-visible | CTabFolder { swt-maximize-visible: true } |
 | setMinimizeVisible(boolean) | swt-minimize-visible | CTabFolder {swt-minimize-visible: true } |
 | setMRUVisible(boolean) | swt-mru-visible | CTabFolder { swt-mru-visible: true } |
-| setSimple(boolean) | swt-simple | CTabFolder { swt-simple: true } |
+| setSimple(boolean) | swt-simple | CTabFolder { swt-simple: true } (Deprecated, curved tabs are no longer supported) |
 | setSingle(boolean) | swt-single | CTabFolder { swt-single: true } |
 | setUnselectedCloseVisible(boolean) | swt-unselected-close-visible | CTabFolder { swt-unselected-close-visible: true } |
 | setUnselectedImageVisible(boolean) | swt-unselected-image-visible | CTabFolder { swt-unselected-image-visible: true } |
