@@ -185,8 +185,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-simple", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { swt-simple: false}");
-		assertEquals(false, folderToTest.getSimple());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-simple", null));
+		// Curved tabs are no longer supported, so getSimple() always returns true
+		assertEquals(true, folderToTest.getSimple());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-simple", null));
 	}
 
 	@Test
