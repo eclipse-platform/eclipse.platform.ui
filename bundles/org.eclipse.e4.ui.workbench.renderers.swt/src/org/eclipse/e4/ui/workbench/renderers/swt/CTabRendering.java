@@ -879,7 +879,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 		public Color[] getSelectionGradientColors() {
 			if (selectionGradientColorsField == null) {
-				selectionGradientColorsField = getField("selectionGradientColorsField"); //$NON-NLS-1$
+				selectionGradientColorsField = getField("selectionGradientColors"); //$NON-NLS-1$
 			}
 			return (Color[]) getFieldValue(selectionGradientColorsField);
 		}

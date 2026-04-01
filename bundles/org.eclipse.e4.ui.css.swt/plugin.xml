@@ -285,14 +285,6 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler">
-         <property-name
-               name="swt-simple">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler">
          <property-name
                name="swt-maximize-visible">
