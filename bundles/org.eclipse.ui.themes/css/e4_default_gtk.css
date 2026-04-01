@@ -112,10 +112,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
 	background-color: COLOR-WIDGET-BACKGROUND #f6f5f4 100%;
 }
 
-.MPartStack {
-	swt-simple: false;
-}
-
 CTabFolder.MArea {
 	background-color: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
 	swt-selected-tab-fill: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
