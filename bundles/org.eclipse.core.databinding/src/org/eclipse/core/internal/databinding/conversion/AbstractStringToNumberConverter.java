@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.core.internal.databinding.conversion;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.Format;
@@ -25,8 +23,7 @@ import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 
 /**
  * Converts a String to a Number using <code>Format.parse(...)</code>. This
- * class is thread safe. This class is used to share code between converters
- * that are based on ICU and java.text.
+ * class is thread safe.
  *
  * @param <T> The type to which values are converted.
  */
@@ -74,32 +71,6 @@ public class AbstractStringToNumberConverter<T extends Number> extends NumberFor
 
 	protected static final Byte MIN_BYTE = Byte.valueOf(Byte.MIN_VALUE);
 	protected static final Byte MAX_BYTE = Byte.valueOf(Byte.MAX_VALUE);
-
-	static Class<?> icuBigDecimal = null;
-	static Method icuBigDecimalScale = null;
-	static Method icuBigDecimalUnscaledValue = null;
-
-	{
-		/*
-		 * If the full ICU4J library is available, we use the ICU BigDecimal
-		 * class to support proper formatting and parsing of java.math.BigDecimal.
-		 *
-		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes
-		 * support for java.math.BigDecimal, and if used falls back to converting as
-		 * an unknown Number type via doubleValue(), which is undesirable.
-		 *
-		 * See Bug #180392.
-		 */
-		try {
-			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
-			icuBigDecimalScale = icuBigDecimal.getMethod("scale"); //$NON-NLS-1$
-			icuBigDecimalUnscaledValue = icuBigDecimal.getMethod("unscaledValue"); //$NON-NLS-1$
-/*			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+ //$NON-NLS-1$
-					(icuBigDecimal != null)+", icuBigDecimalScale="+(icuBigDecimalScale != null)+ //$NON-NLS-1$
-					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */
-		}
-		catch(ClassNotFoundException | NoSuchMethodException e) {}
-	}
 
 	/**
 	 * @param numberFormat used to parse the strings numbers.
@@ -194,27 +165,16 @@ public class AbstractStringToNumberConverter<T extends Number> extends NumberFor
 				return (T) new BigDecimal((BigInteger) n);
 			} else if(n instanceof BigDecimal) {
 				return (T) n;
-			} else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
-				try {
-					// Get ICU BigDecimal value and use to construct java.math.BigDecimal
-					int scale = ((Integer) icuBigDecimalScale.invoke(n)).intValue();
-					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n);
-					return (T) new java.math.BigDecimal(unscaledValue, scale);
-				} catch(IllegalAccessException e) {
-					throw new IllegalArgumentException("Error (IllegalAccessException) converting BigDecimal using ICU"); //$NON-NLS-1$
-				} catch(InvocationTargetException e) {
-					throw new IllegalArgumentException("Error (InvocationTargetException) converting BigDecimal using ICU"); //$NON-NLS-1$
-				}
 			} else if(n instanceof Double) {
 				BigDecimal bd = BigDecimal.valueOf(n.doubleValue());
 				if (bd.scale() == 0) {
 					return (T) bd;
 				}
 				throw new IllegalArgumentException("Non-integral Double value returned from NumberFormat " + //$NON-NLS-1$
-						"which cannot be accurately stored in a BigDecimal due to lost precision. " + //$NON-NLS-1$
-						"Consider using ICU4J or Java 5 which can properly format and parse these types."); //$NON-NLS-1$
+						"which cannot be accurately stored in a BigDecimal due to lost precision."); //$NON-NLS-1$
 			}
-		} else if (Short.class.equals(boxedType)) {
+		}
+ else if (Short.class.equals(boxedType)) {
 			if (StringToNumberParser.inShortRange(result.getNumber())) {
 				return (T) Short.valueOf(result.getNumber().shortValue());
 			}

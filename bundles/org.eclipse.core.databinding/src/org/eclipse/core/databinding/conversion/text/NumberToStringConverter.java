@@ -29,12 +29,6 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  * The first type parameter of {@link Converter} is set to {@link Object} to
  * preserve backwards compatibility, but the argument is meant to always be a
  * {@link Number}.
- * <p>
- * This class is a variant of the class with the same name in the parent
- * package, but it uses {@code java.text} instead of {@code com.ibm.icu}.
- * <p>
- * Methods on this class that don't take an argument number format use ICU if it
- * is available on the classpath, otherwise they use {@code java.text}.
  *
  * @since 1.9
  */
