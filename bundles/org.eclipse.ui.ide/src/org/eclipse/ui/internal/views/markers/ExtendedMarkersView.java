@@ -1121,7 +1121,7 @@ public class ExtendedMarkersView extends ViewPart {
 	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = createFilterConfigurationDialog(generator);
 		if (dialog.open() == Window.OK) {
-			generator.updateFilters(dialog.getFilters(), dialog.andFilters());
+			generator.updateFilters(dialog.getFilters());
 		}
 	}
 

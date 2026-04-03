@@ -86,8 +86,6 @@ public class FiltersConfigurationDialog extends TrayDialog {
 
 	private final MarkerContentGenerator generator;
 
-	private boolean andFilters = false;
-
 	private Button removeButton;
 	private Button renameButton;
 
@@ -113,17 +111,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		super(parentShell);
 		filterGroups = makeWorkingCopy(generator.getAllFilters());
 		this.generator = generator;
-		andFilters = false;
 		setHelpAvailable(false);
-	}
-
-	/**
-	 * Return whether or not to AND the filters
-	 *
-	 * @return boolean
-	 */
-	boolean andFilters() {
-		return andFilters;
 	}
 
 	@Override
@@ -693,8 +681,6 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	}
 
 	protected void performDefaults() {
-		andFilters = false;
-
 		filterGroups.clear();
 		List<MarkerFieldFilterGroup> declaredFilters = new ArrayList<>(generator.getDeclaredFilters());
 		filterGroups.addAll(declaredFilters);
