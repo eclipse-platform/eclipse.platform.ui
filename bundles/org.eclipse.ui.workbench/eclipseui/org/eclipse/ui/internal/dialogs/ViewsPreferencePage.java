@@ -20,6 +20,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_COLOR_AND_FONT_ID;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_OS_VERSION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
@@ -61,7 +62,6 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -419,16 +419,49 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		if (showRestartDialog) {
-			showRestartDialog(restartDialogTitle, restartDialogMessage);
+			String themeId = null;
+			if (isThemingPossible()) {
+				ITheme theme = getSelectedTheme();
+				if (theme != null) {
+					themeId = theme.getId();
+				}
+			}
+			showRestartDialog(restartDialogTitle, restartDialogMessage, themeId);
 		}
 
 		return super.performOk();
 	}
 
-	private void showRestartDialog(String title, String warningText) {
-		if (new MessageDialog(null, title, null, warningText, MessageDialog.NONE, 2,
-				WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton)
-						.open() == Window.OK) {
+	private void showRestartDialog(String title, String warningText, String themeId) {
+		boolean[] useAsDefault = { true };
+		MessageDialog dialog = new MessageDialog(null, title, null, warningText, MessageDialog.NONE, 2,
+				WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton) {
+			@Override
+			protected Control createCustomArea(Composite parent) {
+				if (themeId == null) {
+					return null;
+				}
+				Button checkbox = new Button(parent, SWT.CHECK);
+				checkbox.setText(WorkbenchMessages.ThemeChange_useAsDefault);
+				checkbox.setSelection(useAsDefault[0]);
+				checkbox.addSelectionListener(widgetSelectedAdapter(e -> useAsDefault[0] = checkbox.getSelection()));
+				return checkbox;
+			}
+		};
+		int result = dialog.open();
+		if (result == 0 || result == 1) { // 0: Restart, 1: Don't Restart
+			if (themeId != null && useAsDefault[0]) {
+				IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
+						.getNode(E4_THEME_EXTENSION_POINT);
+				configurationScopeNode.put("themeid", themeId); //$NON-NLS-1$
+				try {
+					configurationScopeNode.flush();
+				} catch (BackingStoreException e) {
+					WorkbenchPlugin.log("Failed to set default theme in configuration scope", e); //$NON-NLS-1$
+				}
+			}
+		}
+		if (result == 0) {
 			Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().restart());
 		}
 	}

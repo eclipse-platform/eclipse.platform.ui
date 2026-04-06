@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -85,6 +86,8 @@ public class ThemeEngine implements IThemeEngine {
 	public static final String THEME_PLUGIN_ID = "org.eclipse.e4.ui.css.swt.theme";
 
 	public static final String E4_DARK_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_dark";
+
+	public static final String E4_DEFAULT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 
 	public static final String DISABLE_OS_DARK_THEME_INHERIT = "org.eclipse.e4.ui.css.theme.disableOSDarkThemeInherit";
 
@@ -424,8 +427,14 @@ public class ThemeEngine implements IThemeEngine {
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
 				setTheme(t, restore);
-				break;
+				return;
 			}
+		}
+		// Theme not found (e.g. it was uninstalled); fall back to default
+		Platform.getLog(ThemeEngine.class)
+				.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!E4_DEFAULT_THEME_ID.equals(themeId)) {
+			setTheme(E4_DEFAULT_THEME_ID, restore);
 		}
 	}
 
@@ -556,7 +565,8 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	private String getPreferenceThemeId() {
-		return getPreferences().get(THEMEID_KEY, null);
+		IPreferencesService prefService = Platform.getPreferencesService();
+		return prefService.getString(THEME_PLUGIN_ID, THEMEID_KEY, null, null);
 	}
 
 	private IEclipsePreferences getPreferences() {

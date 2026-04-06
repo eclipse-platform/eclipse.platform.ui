@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -315,7 +317,10 @@ public class E4Application implements IApplication {
 				: getArgValue(E4Application.THEME_ID, applicationContext, false);
 
 		if (!themeId.isPresent() && !cssURI.isPresent()) {
-			context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
+			IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
+					.getNode("org.eclipse.e4.ui.css.swt.theme");
+			String defaultThemeId = configurationScopeNode.get("themeid", DEFAULT_THEME_ID);
+			context.set(E4Application.THEME_ID, defaultThemeId);
 		} else {
 			context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
 		}
