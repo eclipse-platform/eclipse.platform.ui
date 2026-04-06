@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -46,7 +47,9 @@ import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentExtension4;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -56,8 +59,11 @@ import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerLifecycle;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -71,6 +77,8 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.IPresentationReconcilerExtension;
+import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
@@ -1393,4 +1401,77 @@ public class SourceViewer extends TextViewer
 		lifecycles.clear();
 	}
 
+	/**
+	 * Computes syntax-highlighting style ranges for a region of an external document using this
+	 * viewer's configured presentation reconciler and partitioner.
+	 * <p>
+	 * This is useful when you want to syntax-color content that is <em>not</em> the document
+	 * currently displayed in the viewer — for example, to preview or render a snippet with the same
+	 * language rules that are active in this viewer.
+	 * </p>
+	 * <p>
+	 * The viewer's partitioner is temporarily connected to the given document so that its
+	 * presentation repairers can compute the correct highlighting. The viewer's own document is not
+	 * affected.
+	 * </p>
+	 *
+	 * @param document the external document whose content should be highlighted; must not be
+	 *            {@code null} and must use the same language/content type as this viewer
+	 * @param damage the region within {@code document} for which style ranges are computed; must
+	 *            not be {@code null}
+	 * @return the list of {@link org.eclipse.swt.custom.StyleRange}s covering the given region, as
+	 *         produced by this viewer's presentation reconciler; never {@code null}, may be empty
+	 *         if no repairer is registered for the content type
+	 * @throws BadLocationException if {@code damage} is outside the bounds of {@code document}
+	 * @since 3.31
+	 */
+	public List<StyleRange> computeStyleRanges(IDocument document, IRegion damage) throws BadLocationException {
+		String partition= IDocumentExtension3.DEFAULT_PARTITIONING;
+		IPresentationReconciler reconciler= fPresentationReconciler;
+		if (reconciler instanceof IPresentationReconcilerExtension ext) {
+			String extPartition= ext.getDocumentPartitioning();
+			if (extPartition != null && !extPartition.isEmpty()) {
+				partition= extPartition;
+			}
+		}
+		IDocument originalDocument= getDocument();
+		IDocumentPartitioner partitioner= originalDocument.getDocumentPartitioner();
+		document.setDocumentPartitioner(partitioner);
+		IDocumentPartitioner originalDocumentPartitioner= null;
+		if (document instanceof IDocumentExtension3 ext
+				&& originalDocument instanceof IDocumentExtension3 originalExt) {
+			originalDocumentPartitioner= originalExt.getDocumentPartitioner(partition);
+			if (originalDocumentPartitioner != null) {
+				// set temporarily another document in partitioner so that presentation can be
+				// created for given source
+				originalDocumentPartitioner.disconnect();
+				try {
+					originalDocumentPartitioner.connect(document);
+				} finally {
+					ext.setDocumentPartitioner(partition, originalDocumentPartitioner);
+				}
+			}
+		}
+		TextPresentation presentation= new TextPresentation(damage, 1000);
+		ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, partition, damage.getOffset(),
+				damage.getLength(), false);
+		for (ITypedRegion r : partitioning) {
+			IPresentationRepairer repairer= reconciler.getRepairer(r.getType());
+			if (repairer != null) {
+				repairer.setDocument(document);
+				repairer.createPresentation(presentation, r);
+				repairer.setDocument(originalDocument);
+			}
+		}
+		if (originalDocumentPartitioner != null) {
+			originalDocumentPartitioner.connect(originalDocument);
+		}
+		List<StyleRange> result= new ArrayList<>();
+		var it= presentation.getAllStyleRangeIterator();
+		while (it.hasNext()) {
+			StyleRange next= it.next();
+			result.add(next);
+		}
+		return result;
+	}
 }
