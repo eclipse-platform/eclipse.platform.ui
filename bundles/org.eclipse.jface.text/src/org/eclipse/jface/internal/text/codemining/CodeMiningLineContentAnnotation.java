@@ -14,6 +14,7 @@
 package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -215,5 +216,13 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 
 	public final boolean isAfterPosition() {
 		return afterPosition;
+	}
+
+	/**
+	 * @since 3.31
+	 */
+	@Override
+	public List<ICodeMining> getMinings() {
+		return Collections.unmodifiableList(fMinings);
 	}
 }

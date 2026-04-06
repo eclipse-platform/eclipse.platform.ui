@@ -14,6 +14,7 @@
 package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -289,5 +290,13 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	@Override
 	public boolean isInVisibleLines() {
 		return super.isInVisibleLines();
+	}
+
+	/**
+	 * @since 3.31
+	 */
+	@Override
+	public List<ICodeMining> getMinings() {
+		return Collections.unmodifiableList(fMinings);
 	}
 }
