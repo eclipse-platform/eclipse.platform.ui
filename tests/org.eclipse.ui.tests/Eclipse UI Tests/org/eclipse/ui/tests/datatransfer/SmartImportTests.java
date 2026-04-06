@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -71,6 +72,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.TestPlugin;
@@ -512,5 +514,64 @@ public class SmartImportTests {
 			}
 		}
 		return null;
+	}
+
+	@Test
+	public void testSmartImportSkipsDotFolders() throws Exception {
+		// Create a temp directory with a project inside a .git folder
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportSkipDotTest");
+		try {
+			// Create a normal project with ImportMe marker file
+			File normalProject = new File(tempDir.toFile(), "normalProject");
+			normalProject.mkdirs();
+			new File(normalProject, "importme").createNewFile();
+
+			// Create a project inside a .git folder (should be skipped)
+			File dotGitFolder = new File(tempDir.toFile(), ".git");
+			File hiddenProject = new File(dotGitFolder, "hiddenProject");
+			hiddenProject.mkdirs();
+			new File(hiddenProject, "importme").createNewFile();
+
+			SmartImportWizard wizard = new SmartImportWizard();
+			wizard.setInitialImportSource(tempDir.toFile());
+			proceedSmartImportWizard(wizard);
+
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (IProject project : projects) {
+				assertFalse("Project inside .git folder should not be imported",
+						project.getLocation().toFile().getAbsolutePath().contains(".git"));
+			}
+		} finally {
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
+	}
+
+	@Test
+	public void testSmartImportJobSkipsDotFoldersInProposals() throws Exception {
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportProposalTest");
+		try {
+			// Create a normal Eclipse project
+			File normalProject = new File(tempDir.toFile(), "normalProject");
+			normalProject.mkdirs();
+			Files.writeString(new File(normalProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>normalProject</name></projectDescription>");
+
+			// Create an Eclipse project inside a .git folder
+			File dotGitFolder = new File(tempDir.toFile(), ".git");
+			File hiddenProject = new File(dotGitFolder, "modules/hiddenProject");
+			hiddenProject.mkdirs();
+			Files.writeString(new File(hiddenProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>hiddenProject</name></projectDescription>");
+
+			// Default skipDotFolders=true: .git projects should be filtered out
+			SmartImportJob jobSkip = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), true, true);
+			Map<File, ?> proposalsSkip = jobSkip.getImportProposals(new NullProgressMonitor());
+			for (File proposed : proposalsSkip.keySet()) {
+				assertFalse("Proposal inside .git folder should be filtered out by default",
+						proposed.getAbsolutePath().contains(".git"));
+			}
+		} finally {
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
 	}
 }

@@ -120,6 +120,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	private static final String STORE_CONFIGURE_NATURES = "SmartImportRootWizardPage.STORE_CONFIGURE_NATURES"; //$NON-NLS-1$
 
+	private static final String STORE_SKIP_DOT_FOLDERS = "SmartImportRootWizardPage.STORE_SKIP_DOT_FOLDERS"; //$NON-NLS-1$
+
 	// Root
 	private File selection;
 	private Combo rootDirectoryText;
@@ -135,6 +137,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private boolean closeProjectsAfterImport = false;
 	private boolean detectNestedProjects = true;
 	private boolean configureProjects = true;
+	private boolean skipDotFolders = true;
 	// Working sets
 	private Set<IWorkingSet> workingSets;
 	private WorkingSetGroup workingSetsGroup;
@@ -475,6 +478,19 @@ public class SmartImportRootWizardPage extends WizardPage {
 	 * Creates the UI elements for the import options
 	 */
 	private void createConfigurationOptions(Composite parent) {
+		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
+		final Button skipDotFoldersCheckbox = new Button(parent, SWT.CHECK);
+		skipDotFoldersCheckbox.setText(DataTransferMessages.SmartImportWizardPage_skipDotFolders);
+		skipDotFoldersCheckbox.setLayoutData(layoutData);
+		skipDotFoldersCheckbox.setSelection(this.skipDotFolders);
+		skipDotFoldersCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				SmartImportRootWizardPage.this.skipDotFolders = skipDotFoldersCheckbox.getSelection();
+				refreshProposals();
+			}
+		});
+
 		Button closeProjectsCheckbox = new Button(parent, SWT.CHECK);
 		closeProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_closeProjectsAfterImport);
 		closeProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
@@ -508,10 +524,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 						DataTransferMessages.SmartImportWizardPage_availableDetectors_title, message.toString());
 			}
 		});
-		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
 		final Button detectNestedProjectsCheckbox = new Button(parent, SWT.CHECK);
 		detectNestedProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_detectNestedProjects);
-		detectNestedProjectsCheckbox.setLayoutData(layoutData);
+		detectNestedProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		detectNestedProjectsCheckbox.setSelection(this.detectNestedProjects);
 		detectNestedProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -523,7 +538,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		final Button configureProjectsCheckbox = new Button(parent, SWT.CHECK);
 		configureProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_configureProjects);
-		configureProjectsCheckbox.setLayoutData(layoutData);
+		configureProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		configureProjectsCheckbox.setSelection(this.configureProjects);
 		configureProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -825,6 +840,13 @@ public class SmartImportRootWizardPage extends WizardPage {
 		return closeProjectsAfterImport;
 	}
 
+	/**
+	 * @return whether folders starting with '.' should be skipped during scanning
+	 */
+	boolean isSkipDotFolders() {
+		return skipDotFolders;
+	}
+
 	private void refreshProposals() {
 		stopAndDisconnectCurrentWork();
 		this.potentialProjects = Collections.emptyMap();
@@ -956,6 +978,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 			closeProjectsAfterImport = dialogSettings.getBoolean(STORE_CLOSE_IMPORTED);
 			detectNestedProjects = dialogSettings.getBoolean(STORE_NESTED_PROJECTS);
 			configureProjects = dialogSettings.getBoolean(STORE_CONFIGURE_NATURES);
+			if (dialogSettings.get(STORE_SKIP_DOT_FOLDERS) != null) {
+				skipDotFolders = dialogSettings.getBoolean(STORE_SKIP_DOT_FOLDERS);
+			}
 		}
 	}
 
@@ -969,6 +994,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 			dialogSettings.put(STORE_CLOSE_IMPORTED, closeProjectsAfterImport);
 			dialogSettings.put(STORE_NESTED_PROJECTS, detectNestedProjects);
 			dialogSettings.put(STORE_CONFIGURE_NATURES, configureProjects);
+			dialogSettings.put(STORE_SKIP_DOT_FOLDERS, skipDotFolders);
 		}
 	}
 

@@ -44,7 +44,7 @@ public class EclipseProjectConfigurator implements ProjectConfigurator {
 		Set<File> projectFiles = new LinkedHashSet<>();
 		Set<String> visitedDirectories = new HashSet<>();
 		WizardProjectsImportPage.collectProjectFilesFromDirectory(projectFiles, root, visitedDirectories, true,
-				monitor);
+				false, monitor);
 		Set<File> res = new LinkedHashSet<>();
 		for (File projectFile : projectFiles) {
 			res.add(projectFile.getParentFile());

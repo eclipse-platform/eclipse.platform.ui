@@ -74,6 +74,7 @@ public class SmartImportJob extends Job {
 	private boolean deepChildrenDetection;
 	private final boolean configureProjects;
 	private boolean closeProjectsAfterImport;
+	private boolean skipDotFolders = true;
 	private boolean reconfigureEclipseProjects;
 	private IWorkingSet[] workingSets;
 
@@ -347,6 +348,9 @@ public class SmartImportJob extends Job {
 		final Set<IProject> res = Collections.synchronizedSet(new HashSet<>());
 		for (IResource childResource : parentContainer.members()) {
 			if (childResource.getType() == IResource.FOLDER && !childResource.isDerived()) {
+				if (skipDotFolders && childResource.getName().startsWith(".")) { //$NON-NLS-1$
+					continue;
+				}
 				IPath location = childResource.getLocation();
 				if (location == null) {
 					continue;
@@ -530,6 +534,18 @@ public class SmartImportJob extends Job {
 		return res;
 	}
 
+	private static boolean isInsideDotFolder(File file) {
+		File current = file;
+		while (current != null) {
+			String name = current.getName();
+			if (!name.isEmpty() && name.startsWith(".")) { //$NON-NLS-1$
+				return true;
+			}
+			current = current.getParentFile();
+		}
+		return false;
+	}
+
 	/**
 	 * @param refreshMode One {@link IResource#BACKGROUND_REFRESH} for background refresh, or {@link IResource#NONE} for immediate refresh
 	 */
@@ -684,6 +700,9 @@ public class SmartImportJob extends Job {
 			for (ProjectConfigurator configurator : activeConfigurators) {
 				configurator.removeDirtyDirectories(res);
 			}
+			if (this.skipDotFolders) {
+				res.keySet().removeIf(SmartImportJob::isInsideDotFolder);
+			}
 			this.importProposals = res;
 		}
 		return this.importProposals;
@@ -721,6 +740,22 @@ public class SmartImportJob extends Job {
 	 */
 	void setCloseProjectsAfterImport(boolean closeProjectsAfterImport) {
 		this.closeProjectsAfterImport = closeProjectsAfterImport;
+	}
+
+	/**
+	 * @param skipDotFolders
+	 *            if true, folders starting with '.' (e.g. .git) are skipped
+	 *            during project scanning
+	 */
+	void setSkipDotFolders(boolean skipDotFolders) {
+		this.skipDotFolders = skipDotFolders;
+	}
+
+	/**
+	 * @return whether folders starting with '.' are skipped during scanning
+	 */
+	public boolean isSkipDotFolders() {
+		return this.skipDotFolders;
 	}
 
 	/**

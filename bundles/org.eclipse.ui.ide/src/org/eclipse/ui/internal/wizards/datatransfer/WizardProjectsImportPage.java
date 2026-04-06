@@ -321,6 +321,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private static final String STORE_ARCHIVE_SELECTED = "WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"; //$NON-NLS-1$
 
+	private static final String STORE_SKIP_DOT_FOLDERS = "WizardProjectsImportPage.STORE_SKIP_DOT_FOLDERS"; //$NON-NLS-1$
+
 	private Combo directoryPathField;
 
 	private CheckboxTreeViewer projectsList;
@@ -340,6 +342,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	private Button hideConflictingProjectsCheckbox;
 
 	private boolean hideConflictingProjects = false;
+
+	private Button skipDotFoldersCheckbox;
+
+	private boolean skipDotFolders = true;
 
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
@@ -505,6 +511,22 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			}
 		}));
 		Dialog.applyDialogFont(hideConflictingProjectsCheckbox);
+
+		skipDotFoldersCheckbox = new Button(optionsGroup, SWT.CHECK);
+		skipDotFoldersCheckbox.setText(DataTransferMessages.WizardProjectsImportPage_skipDotFolders);
+		skipDotFoldersCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		skipDotFoldersCheckbox.setSelection(skipDotFolders);
+		skipDotFoldersCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				skipDotFolders = skipDotFoldersCheckbox.getSelection();
+				if (projectFromDirectoryRadio.getSelection()) {
+					updateProjectsListAndPreventFocusLostHandling(directoryPathField.getText().trim(), true);
+				} else {
+					updateProjectsListAndPreventFocusLostHandling(archivePathField.getText().trim(), true);
+				}
+			}
+		});
 	}
 
 	/**
@@ -940,7 +962,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 					Collection<File> files = new ArrayList<>();
 					if (!collectProjectFilesFromDirectory(files, directory,
-							null, nestedProjects, monitor)) {
+							null, nestedProjects, skipDotFolders, monitor)) {
 						return;
 					}
 					Iterator<File> filesIterator3 = files.iterator();
@@ -1064,12 +1086,14 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 *            Set of canonical paths of directories, used as recursion guard
 	 * @param nestedProjects
 	 *            whether to look for nested projects
+	 * @param skipDotFolders
+	 *            whether to skip folders starting with '.' (e.g. .git)
 	 * @param monitor
 	 *            The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	static boolean collectProjectFilesFromDirectory(Collection<File> files, File directory,
-			Set<String> directoriesVisited, boolean nestedProjects, IProgressMonitor monitor) {
+			Set<String> directoriesVisited, boolean nestedProjects, boolean skipDotFolders, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
@@ -1110,20 +1134,24 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		// no project description found or search for nested projects enabled,
 		// so recurse into sub-directories
 		for (File dir : directories) {
-			if (!dir.getName().equals(METADATA_FOLDER)) {
-				try {
-					String canonicalPath = dir.getCanonicalPath();
-					if (!directoriesVisited.add(canonicalPath)) {
-						// already been here --> do not recurse
-						continue;
-					}
-				} catch (IOException exception) {
-					StatusManager.getManager().handle(StatusUtil.newError(exception));
-
-				}
-				collectProjectFilesFromDirectory(files, dir,
-						directoriesVisited, nestedProjects, monitor);
+			if (dir.getName().equals(METADATA_FOLDER)) {
+				continue;
 			}
+			if (skipDotFolders && dir.getName().startsWith(".")) { //$NON-NLS-1$
+				continue;
+			}
+			try {
+				String canonicalPath = dir.getCanonicalPath();
+				if (!directoriesVisited.add(canonicalPath)) {
+					// already been here --> do not recurse
+					continue;
+				}
+			} catch (IOException exception) {
+				StatusManager.getManager().handle(StatusUtil.newError(exception));
+
+			}
+			collectProjectFilesFromDirectory(files, dir,
+					directoriesVisited, nestedProjects, skipDotFolders, monitor);
 		}
 		return true;
 	}
@@ -1565,6 +1593,12 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			// trigger a selection event for the button to make sure the filter is set
 			// properly at page creation
 			hideConflictingProjectsCheckbox.notifyListeners(SWT.Selection, new Event());
+
+			// checkbox
+			if (settings.get(STORE_SKIP_DOT_FOLDERS) != null) {
+				skipDotFolders = settings.getBoolean(STORE_SKIP_DOT_FOLDERS);
+			}
+			skipDotFoldersCheckbox.setSelection(skipDotFolders);
 		}
 
 		// Second, check to see if we don't have an initial path,
@@ -1644,6 +1678,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			settings.put(STORE_CLOSE_CREATED_PROJECTS_ID, closeProjectsCheckbox.getSelection());
 
 			settings.put(STORE_HIDE_CONFLICTING_PROJECTS_ID, hideConflictingProjectsCheckbox.getSelection());
+
+			settings.put(STORE_SKIP_DOT_FOLDERS, skipDotFoldersCheckbox.getSelection());
 		}
 	}
 
@@ -1672,6 +1708,15 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 */
 	public Button getNestedProjectsCheckbox() {
 		return nestedProjectsCheckbox;
+	}
+
+	/**
+	 * Method used for test suite.
+	 *
+	 * @return Button skip dot folders checkbox
+	 */
+	public Button getSkipDotFoldersCheckbox() {
+		return skipDotFoldersCheckbox;
 	}
 
 	@Override
