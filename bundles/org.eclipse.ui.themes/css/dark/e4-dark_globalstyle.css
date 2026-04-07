@@ -45,6 +45,11 @@ Group > StyledText {
     color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }
 
+/* Disabled buttons should appear dimmed to distinguish them from enabled buttons */
+Button.disabled {
+    color: #777777;
+}
+
 /* ############################## Toolbar ############################## */
 /* Ensure that the labels in the tabfolder gets updated
    See Bug 552780
