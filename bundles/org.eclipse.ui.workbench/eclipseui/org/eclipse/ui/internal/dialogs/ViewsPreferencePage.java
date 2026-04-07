@@ -51,6 +51,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -149,7 +150,14 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
 
-		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
+		Composite themeComposite = new Composite(comp, SWT.NONE);
+		GridLayout themeLayout = new GridLayout(2, false);
+		themeLayout.marginWidth = 0;
+		themeLayout.marginHeight = 0;
+		themeComposite.setLayout(themeLayout);
+		themeComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		themeIdCombo = new ComboViewer(themeComposite, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
 		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
 		themeIdCombo.setInput(engine.getThemes());
@@ -159,6 +167,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			themeIdCombo.setSelection(new StructuredSelection(currentTheme));
 		}
 		themeComboDecorator = new ControlDecoration(themeIdCombo.getCombo(), SWT.TOP | SWT.LEFT);
+
+		Button manageDefaultButton = new Button(themeComposite, SWT.PUSH);
+		manageDefaultButton.setText(WorkbenchMessages.ThemeDefault_manageButton);
+		manageDefaultButton.addSelectionListener(widgetSelectedAdapter(e -> openManageDefaultThemeDialog()));
+
 		themeIdCombo.addSelectionChangedListener(event -> {
 			ITheme selection = getSelectedTheme();
 			if (!selection.equals(currentTheme)) {
@@ -322,6 +335,62 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	/** @return the currently selected theme or null if there are no themes */
 	private ITheme getSelectedTheme() {
 		return (ITheme) (themeIdCombo.getStructuredSelection().getFirstElement());
+	}
+
+	private void openManageDefaultThemeDialog() {
+		IEclipsePreferences configNode = ConfigurationScope.INSTANCE.getNode(E4_THEME_EXTENSION_POINT);
+		String currentDefaultId = configNode.get("themeid", null); //$NON-NLS-1$
+
+		String currentDefaultLabel = null;
+		if (currentDefaultId != null) {
+			for (ITheme t : engine.getThemes()) {
+				if (t.getId().equals(currentDefaultId)) {
+					currentDefaultLabel = t.getLabel();
+					break;
+				}
+			}
+			if (currentDefaultLabel == null) {
+				currentDefaultLabel = currentDefaultId;
+			}
+		}
+
+		String message;
+		if (currentDefaultLabel != null) {
+			message = NLS.bind(WorkbenchMessages.ThemeDefault_currentDefault, currentDefaultLabel);
+		} else {
+			message = WorkbenchMessages.ThemeDefault_noDefault;
+		}
+		message = WorkbenchMessages.ThemeDefault_description + "\n\n" + message; //$NON-NLS-1$
+
+		ITheme selectedTheme = getSelectedTheme();
+		List<String> buttonLabels = new ArrayList<>();
+		buttonLabels.add(WorkbenchMessages.ThemeDefault_setDefault);
+		if (currentDefaultId != null) {
+			buttonLabels.add(WorkbenchMessages.ThemeDefault_removeDefault);
+		}
+		buttonLabels.add(IDialogConstants.CLOSE_LABEL);
+
+		MessageDialog dialog = new MessageDialog(getShell(), WorkbenchMessages.ThemeDefault_dialogTitle, null, message,
+				MessageDialog.INFORMATION, 0, buttonLabels.toArray(new String[0]));
+
+		int result = dialog.open();
+		if (result == 0 && selectedTheme != null) {
+			// Set as default
+			configNode.put("themeid", selectedTheme.getId()); //$NON-NLS-1$
+			try {
+				configNode.flush();
+			} catch (BackingStoreException e) {
+				WorkbenchPlugin.log("Failed to set default theme in configuration scope", e); //$NON-NLS-1$
+			}
+		} else if (currentDefaultId != null && result == 1) {
+			// Remove default
+			configNode.remove("themeid"); //$NON-NLS-1$
+			try {
+				configNode.flush();
+			} catch (BackingStoreException e) {
+				WorkbenchPlugin.log("Failed to remove default theme from configuration scope", e); //$NON-NLS-1$
+			}
+		}
 	}
 
 	@Override

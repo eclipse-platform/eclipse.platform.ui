@@ -51,6 +51,13 @@ public class WorkbenchMessages extends NLS {
 	public static String ThemeChangeWarningText;
 	public static String ThemeChange_useAsDefault;
 	public static String ThemeChangeWarningTitle;
+	public static String ThemeDefault_manageButton;
+	public static String ThemeDefault_dialogTitle;
+	public static String ThemeDefault_description;
+	public static String ThemeDefault_currentDefault;
+	public static String ThemeDefault_noDefault;
+	public static String ThemeDefault_setDefault;
+	public static String ThemeDefault_removeDefault;
 
 	public static String BundleSigningTray_Cant_Find_Service;
 
