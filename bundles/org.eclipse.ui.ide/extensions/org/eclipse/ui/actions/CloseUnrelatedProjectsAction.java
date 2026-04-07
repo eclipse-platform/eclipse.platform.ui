@@ -133,7 +133,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	/**
 	 * Overrides to avoid calling the expensive
-	 * {@link #computeRelated(List)} during selection changes. Uses only
+	 * {@code computeRelated(List)} during selection changes. Uses only
 	 * the raw selection to determine enablement.
 	 */
 	@Override
