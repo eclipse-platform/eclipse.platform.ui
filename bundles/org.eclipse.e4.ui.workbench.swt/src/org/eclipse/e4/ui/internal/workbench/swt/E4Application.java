@@ -317,9 +317,16 @@ public class E4Application implements IApplication {
 				: getArgValue(E4Application.THEME_ID, applicationContext, false);
 
 		if (!themeId.isPresent() && !cssURI.isPresent()) {
-			IEclipsePreferences userScopeNode = UserScope.INSTANCE
+			IEclipsePreferences themeNode = UserScope.INSTANCE
 					.getNode("org.eclipse.e4.ui.css.swt.theme");
-			String defaultThemeId = userScopeNode.get("themeid", DEFAULT_THEME_ID);
+			String productOrAppId = getProductOrApplicationId();
+			String defaultThemeId = null;
+			if (productOrAppId != null) {
+				defaultThemeId = themeNode.node(productOrAppId).get("themeid", null);
+			}
+			if (defaultThemeId == null) {
+				defaultThemeId = DEFAULT_THEME_ID;
+			}
 			context.set(E4Application.THEME_ID, defaultThemeId);
 		} else {
 			context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
@@ -401,6 +408,19 @@ public class E4Application implements IApplication {
 		}
 		return applicationModelURI;
 
+	}
+
+	/**
+	 * Returns the product ID if a product is configured, otherwise falls back to
+	 * the application ID from the system property. Returns {@code null} if
+	 * neither is available.
+	 */
+	private static String getProductOrApplicationId() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getId();
+		}
+		return System.getProperty("eclipse.application"); //$NON-NLS-1$
 	}
 
 	/**

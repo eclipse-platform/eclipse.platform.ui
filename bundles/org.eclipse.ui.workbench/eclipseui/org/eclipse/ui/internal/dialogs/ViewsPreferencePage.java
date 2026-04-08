@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.core.runtime.RegistryFactory;
@@ -339,8 +340,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void openManageDefaultThemeDialog() {
-		IEclipsePreferences configNode = ConfigurationScope.INSTANCE.getNode(E4_THEME_EXTENSION_POINT);
-		String currentDefaultId = configNode.get("themeid", null); //$NON-NLS-1$
+		String productOrAppId = getProductOrApplicationId();
+		IEclipsePreferences baseNode = UserScope.INSTANCE.getNode(E4_THEME_EXTENSION_POINT);
+		IEclipsePreferences scopedNode = productOrAppId != null ? (IEclipsePreferences) baseNode.node(productOrAppId)
+				: baseNode;
+		String currentDefaultId = scopedNode.get("themeid", null); //$NON-NLS-1$
 
 		String currentDefaultLabel = null;
 		if (currentDefaultId != null) {
@@ -377,21 +381,34 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		int result = dialog.open();
 		if (result == 0 && selectedTheme != null) {
 			// Set as default
-			configNode.put("themeid", selectedTheme.getId()); //$NON-NLS-1$
+			scopedNode.put("themeid", selectedTheme.getId()); //$NON-NLS-1$
 			try {
-				configNode.flush();
+				scopedNode.flush();
 			} catch (BackingStoreException e) {
-				WorkbenchPlugin.log("Failed to set default theme in configuration scope", e); //$NON-NLS-1$
+				WorkbenchPlugin.log("Failed to set default theme in user scope", e); //$NON-NLS-1$
 			}
 		} else if (currentDefaultId != null && result == 1) {
 			// Remove default
-			configNode.remove("themeid"); //$NON-NLS-1$
+			scopedNode.remove("themeid"); //$NON-NLS-1$
 			try {
-				configNode.flush();
+				scopedNode.flush();
 			} catch (BackingStoreException e) {
-				WorkbenchPlugin.log("Failed to remove default theme from configuration scope", e); //$NON-NLS-1$
+				WorkbenchPlugin.log("Failed to remove default theme from user scope", e); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Returns the product ID if a product is configured, otherwise falls back to
+	 * the application ID from the system property. Returns {@code null} if
+	 * neither is available.
+	 */
+	private static String getProductOrApplicationId() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getId();
+		}
+		return System.getProperty("eclipse.application"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -521,11 +538,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		int result = dialog.open();
 		if (result == 0 || result == 1) { // 0: Restart, 1: Don't Restart
 			if (themeId != null && useAsDefault[0]) {
-				IEclipsePreferences userScopeNode = UserScope.INSTANCE
+				IEclipsePreferences baseNode = UserScope.INSTANCE
 						.getNode(E4_THEME_EXTENSION_POINT);
-				userScopeNode.put("themeid", themeId); //$NON-NLS-1$
+				String productOrAppId = getProductOrApplicationId();
+				IEclipsePreferences scopedNode = productOrAppId != null
+						? (IEclipsePreferences) baseNode.node(productOrAppId)
+						: baseNode;
+				scopedNode.put("themeid", themeId); //$NON-NLS-1$
 				try {
-					userScopeNode.flush();
+					scopedNode.flush();
 				} catch (BackingStoreException e) {
 					WorkbenchPlugin.log("Failed to set default theme in user scope", e); //$NON-NLS-1$
 				}
