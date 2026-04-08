@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -451,13 +452,13 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		int result = dialog.open();
 		if (result == 0 || result == 1) { // 0: Restart, 1: Don't Restart
 			if (themeId != null && useAsDefault[0]) {
-				IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
+				IEclipsePreferences userScopeNode = UserScope.INSTANCE
 						.getNode(E4_THEME_EXTENSION_POINT);
-				configurationScopeNode.put("themeid", themeId); //$NON-NLS-1$
+				userScopeNode.put("themeid", themeId); //$NON-NLS-1$
 				try {
-					configurationScopeNode.flush();
+					userScopeNode.flush();
 				} catch (BackingStoreException e) {
-					WorkbenchPlugin.log("Failed to set default theme in configuration scope", e); //$NON-NLS-1$
+					WorkbenchPlugin.log("Failed to set default theme in user scope", e); //$NON-NLS-1$
 				}
 			}
 		}
