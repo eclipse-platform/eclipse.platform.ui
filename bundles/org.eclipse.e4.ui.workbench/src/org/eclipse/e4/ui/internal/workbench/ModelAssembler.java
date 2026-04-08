@@ -39,6 +39,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -208,6 +210,8 @@ public class ModelAssembler {
 	private final AtomicReference<IExtensionRegistry> registry = new AtomicReference<>();
 
 	private final List<ServiceReference<IModelProcessorContribution>> processorContributions = new CopyOnWriteArrayList<>();
+
+	private static final Pattern MESSAGE_FORMAT_BRACKETS_PATTERN = Pattern.compile("\\{\\}"); //$NON-NLS-1$
 
 	private BundleContext bundleContext;
 
@@ -820,7 +824,7 @@ public class ModelAssembler {
 			logMethod.invoke(log, message, args);
 		} else {
 			// fallback if no LogService is available
-			stream.println(MessageFormat.format(message, args));
+			stream.println(MessageFormat.format(addIndex(message), args));
 		}
 	}
 
@@ -844,5 +848,21 @@ public class ModelAssembler {
 			this.factory = null;
 			this.logger = null;
 		}
+	}
+
+	/**
+	 * Adds missing indices to {@code {}} sequences in {@code format}. See:
+	 * {@link com.sun.org.slf4j.internal.Logger#addIndex(String)}
+	 */
+	private static String addIndex(String format) {
+		Matcher matcher = MESSAGE_FORMAT_BRACKETS_PATTERN.matcher(format);
+		StringBuilder sb = new StringBuilder();
+		int index = 0;
+		while (matcher.find()) {
+			String r = "{" + Integer.toString(index++) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+			matcher.appendReplacement(sb, r);
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
 	}
 }
