@@ -55,7 +55,9 @@ public class WorkbenchMessages extends NLS {
 	public static String ThemeDefault_dialogTitle;
 	public static String ThemeDefault_description;
 	public static String ThemeDefault_currentDefault;
+	public static String ThemeDefault_currentDefaultUnscoped;
 	public static String ThemeDefault_noDefault;
+	public static String ThemeDefault_noDefaultUnscoped;
 	public static String ThemeDefault_setDefault;
 	public static String ThemeDefault_removeDefault;
 

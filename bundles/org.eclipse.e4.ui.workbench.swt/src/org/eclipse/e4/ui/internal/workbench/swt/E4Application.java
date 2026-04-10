@@ -317,19 +317,20 @@ public class E4Application implements IApplication {
 				: getArgValue(E4Application.THEME_ID, applicationContext, false);
 
 		if (!themeId.isPresent() && !cssURI.isPresent()) {
-			IEclipsePreferences themeNode = UserScope.INSTANCE
-					.getNode("org.eclipse.e4.ui.css.swt.theme");
-			String productOrAppId = getProductOrApplicationId();
-			String defaultThemeId = null;
-			if (productOrAppId != null) {
-				defaultThemeId = themeNode.node(productOrAppId).get("themeid", null);
+			String defaultThemeId = getProductScopedThemeId();
+			if (defaultThemeId != null) {
+				context.set(E4Application.THEME_ID, defaultThemeId);
+			} else {
+				context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
 			}
-			if (defaultThemeId == null) {
-				defaultThemeId = DEFAULT_THEME_ID;
-			}
-			context.set(E4Application.THEME_ID, defaultThemeId);
 		} else {
-			context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
+			// Check if user has overridden the branding/command-line theme
+			String userThemeId = getProductScopedThemeId();
+			if (userThemeId != null) {
+				context.set(E4Application.THEME_ID, userThemeId);
+			} else {
+				context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
+			}
 		}
 
 
@@ -421,6 +422,20 @@ public class E4Application implements IApplication {
 			return product.getId();
 		}
 		return System.getProperty("eclipse.application"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the user's product-scoped theme preference, or {@code null} if
+	 * none is set.
+	 */
+	private static String getProductScopedThemeId() {
+		String productOrAppId = getProductOrApplicationId();
+		if (productOrAppId != null) {
+			IEclipsePreferences themeNode = UserScope.INSTANCE
+					.getNode("org.eclipse.e4.ui.css.swt.theme");
+			return themeNode.node(productOrAppId).get("themeid", null);
+		}
+		return null;
 	}
 
 	/**

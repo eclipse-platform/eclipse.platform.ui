@@ -359,11 +359,24 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 
+		String productDisplayName = getProductDisplayName();
+
 		String message;
 		if (currentDefaultLabel != null) {
-			message = NLS.bind(WorkbenchMessages.ThemeDefault_currentDefault, currentDefaultLabel);
+			if (productOrAppId != null) {
+				String displayName = productDisplayName != null ? productDisplayName : productOrAppId;
+				message = NLS.bind(WorkbenchMessages.ThemeDefault_currentDefault, new Object[] { currentDefaultLabel,
+						displayName, productOrAppId });
+			} else {
+				message = NLS.bind(WorkbenchMessages.ThemeDefault_currentDefaultUnscoped, currentDefaultLabel);
+			}
 		} else {
-			message = WorkbenchMessages.ThemeDefault_noDefault;
+			if (productOrAppId != null) {
+				String displayName = productDisplayName != null ? productDisplayName : productOrAppId;
+				message = NLS.bind(WorkbenchMessages.ThemeDefault_noDefault, displayName, productOrAppId);
+			} else {
+				message = WorkbenchMessages.ThemeDefault_noDefaultUnscoped;
+			}
 		}
 		message = WorkbenchMessages.ThemeDefault_description + "\n\n" + message; //$NON-NLS-1$
 
@@ -409,6 +422,18 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			return product.getId();
 		}
 		return System.getProperty("eclipse.application"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the product name if a product is configured, or {@code null}
+	 * otherwise.
+	 */
+	private static String getProductDisplayName() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getName();
+		}
+		return null;
 	}
 
 	@Override
