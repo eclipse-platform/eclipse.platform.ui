@@ -40,6 +40,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -71,11 +72,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.Form;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -100,7 +96,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private Map<String, Link> recentWorkspacesLinks;
 
-	private Form recentWorkspacesForm;
+	private Composite recentWorkspacesForm;
 
 	private Button defaultButton;
 
@@ -313,38 +309,61 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * Workspace
 	 */
 	private void createRecentWorkspacesComposite(final Composite composite) {
-		FormToolkit toolkit = new FormToolkit(composite.getDisplay());
-		composite.addDisposeListener(c -> toolkit.dispose());
-		recentWorkspacesForm = toolkit.createForm(composite);
+		recentWorkspacesForm = new Composite(composite, SWT.NONE);
 		recentWorkspacesForm.setBackground(composite.getBackground());
-		recentWorkspacesForm.getBody().setLayout(new GridLayout());
-		ExpandableComposite recentWorkspacesExpandable = toolkit.createExpandableComposite(recentWorkspacesForm.getBody(),
-				ExpandableComposite.TWISTIE);
-		recentWorkspacesExpandable.setTitleBarForeground(composite.getForeground());
-		recentWorkspacesExpandable.setForeground(composite.getForeground());
-		recentWorkspacesExpandable.setToggleColor(composite.getForeground());
-		recentWorkspacesExpandable.setActiveToggleColor(composite.getForeground());
+		recentWorkspacesForm.setLayout(new GridLayout());
 		recentWorkspacesForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		recentWorkspacesExpandable.setBackground(composite.getBackground());
-		recentWorkspacesExpandable.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_recentWorkspaces);
-		recentWorkspacesExpandable.setExpanded(launchData.isShowRecentWorkspaces());
-		recentWorkspacesExpandable.addExpansionListener(new ExpansionAdapter() {
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				launchData.setShowRecentWorkspaces(((ExpandableComposite) e.getSource()).isExpanded());
-				Point size = getInitialSize();
-				Shell shell = getShell();
-				shell.setBounds(getConstrainedShellBounds(
-						new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
-			}
-		});
 
-		Composite panel = new Composite(recentWorkspacesExpandable, SWT.NONE);
-		recentWorkspacesExpandable.setClient(panel);
+		Composite header = new Composite(recentWorkspacesForm, SWT.NONE);
+		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		GridLayout headerLayout = new GridLayout(2, false);
+		headerLayout.marginWidth = 0;
+		headerLayout.marginHeight = 0;
+		header.setLayout(headerLayout);
+		header.setBackground(composite.getBackground());
+
+		Label toggle = new Label(header, SWT.NONE);
+		toggle.setBackground(composite.getBackground());
+		toggle.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+
+		Label label = new Label(header, SWT.NONE);
+		label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_recentWorkspaces);
+		label.setBackground(composite.getBackground());
+		label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		label.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+
+		Composite panel = new Composite(recentWorkspacesForm, SWT.NONE);
+		panel.setBackground(composite.getBackground());
+		GridData panelData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		panel.setLayoutData(panelData);
+
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginLeft = 14;
 		layout.spacing = 6;
 		panel.setLayout(layout);
+
+		boolean expanded = launchData.isShowRecentWorkspaces();
+		panel.setVisible(expanded);
+		panelData.exclude = !expanded;
+		toggle.setText(expanded ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		Listener toggleListener = e -> {
+			boolean newState = !panel.getVisible();
+			panel.setVisible(newState);
+			((GridData) panel.getLayoutData()).exclude = !newState;
+			toggle.setText(newState ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
+			launchData.setShowRecentWorkspaces(newState);
+			recentWorkspacesForm.requestLayout();
+
+			Point size = getInitialSize();
+			Shell shell = getShell();
+			shell.setBounds(getConstrainedShellBounds(
+					new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
+		};
+
+		toggle.addListener(SWT.MouseDown, toggleListener);
+		label.addListener(SWT.MouseDown, toggleListener);
+
 		List<String> recentWorkspaces = getRecentWorkspaces();
 		recentWorkspacesLinks = new HashMap<>(recentWorkspaces.size());
 		Map<String, String> uniqueWorkspaceNames = createUniqueWorkspaceNameMap();
@@ -532,7 +551,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		new DirectoryProposalContentAssist().apply(combo);
 		combo.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
 		combo.setFocus();
-		combo.setLayoutData(new GridData(400, SWT.DEFAULT));
+		combo.setLayoutData(new BorderData(SWT.CENTER));
 		combo.addModifyListener(e -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
@@ -711,9 +730,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	/**
 	 * Get the "Recent Workspaces" form or null if not initialized.
 	 *
-	 * @return Form
+	 * @return Composite
 	 */
-	public Form getRecentWorkspacesForm() {
+	public Composite getRecentWorkspacesForm() {
 		return recentWorkspacesForm;
 	}
 

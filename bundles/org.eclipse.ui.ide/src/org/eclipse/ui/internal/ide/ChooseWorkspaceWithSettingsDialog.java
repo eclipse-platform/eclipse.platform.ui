@@ -33,8 +33,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -46,13 +48,10 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.events.ExpansionEvent;
-import org.eclipse.ui.forms.events.IExpansionListener;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.preferences.SettingsTransfer;
 import org.osgi.framework.FrameworkUtil;
@@ -116,50 +115,64 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 * Create the controls for selecting the controls we are going to export.
 	 */
 	private void createSettingsControls(Composite workArea) {
-		final FormToolkit toolkit = new FormToolkit(workArea.getDisplay());
-		workArea.addDisposeListener(e -> toolkit.dispose());
-		final ScrolledForm form = toolkit.createScrolledForm(workArea);
-		form.getBody().setBackground(workArea.getBackground());
-		form.getBody().setLayout(new GridLayout());
-		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final ScrolledComposite sc = new ScrolledComposite(workArea, SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		final ExpandableComposite copySettingsExpandable =
-				toolkit.createExpandableComposite(form.getBody(), ExpandableComposite.TWISTIE);
+		Composite body = new Composite(sc, SWT.NONE);
+		body.setBackground(workArea.getBackground());
+		body.setLayout(new GridLayout());
+		sc.setContent(body);
 
-		copySettingsExpandable.setText(IDEWorkbenchMessages.ChooseWorkspaceWithSettingsDialog_SettingsGroupName);
-		copySettingsExpandable.setBackground(workArea.getBackground());
-		copySettingsExpandable.setTitleBarForeground(workArea.getForeground());
-		copySettingsExpandable.setToggleColor(workArea.getForeground());
-		copySettingsExpandable.setActiveToggleColor(workArea.getForeground());
-		copySettingsExpandable.setLayout(new GridLayout());
-		copySettingsExpandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		copySettingsExpandable.addExpansionListener(new IExpansionListener() {
+		Composite header = new Composite(body, SWT.NONE);
+		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		GridLayout headerLayout = new GridLayout(2, false);
+		headerLayout.marginWidth = 0;
+		headerLayout.marginHeight = 0;
+		header.setLayout(headerLayout);
+		header.setBackground(workArea.getBackground());
 
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
-				Point size = getInitialSize();
-				Shell shell = getShell();
-				shell.setBounds(getConstrainedShellBounds(
-						new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
-			}
+		Label toggle = new Label(header, SWT.NONE);
+		toggle.setBackground(workArea.getBackground());
+		toggle.setCursor(workArea.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
-			@Override
-			public void expansionStateChanging(ExpansionEvent e) {
-				// Nothing to do here
+		Label label = new Label(header, SWT.NONE);
+		label.setText(IDEWorkbenchMessages.ChooseWorkspaceWithSettingsDialog_SettingsGroupName);
+		label.setBackground(workArea.getBackground());
+		label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		label.setCursor(workArea.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
-			}
-		});
-
-		Composite sectionClient = toolkit.createComposite(copySettingsExpandable);
+		Composite sectionClient = new Composite(body, SWT.NONE);
 		sectionClient.setBackground(workArea.getBackground());
+		GridData clientData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		sectionClient.setLayoutData(clientData);
 
-		if (createButtons(toolkit, sectionClient)) {
-			copySettingsExpandable.setExpanded(true);
-		}
+		boolean expanded = createButtons(sectionClient);
+		sectionClient.setVisible(expanded);
+		clientData.exclude = !expanded;
+		toggle.setText(expanded ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		copySettingsExpandable.setClient(sectionClient);
+		Listener toggleListener = e -> {
+			boolean newState = !sectionClient.getVisible();
+			sectionClient.setVisible(newState);
+			((GridData) sectionClient.getLayoutData()).exclude = !newState;
+			toggle.setText(newState ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
 
+			body.layout(true);
+			sc.setMinSize(body.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+			Point size = getInitialSize();
+			Shell shell = getShell();
+			shell.setBounds(getConstrainedShellBounds(
+					new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
+		};
+
+		toggle.addListener(SWT.MouseDown, toggleListener);
+		label.addListener(SWT.MouseDown, toggleListener);
+
+		body.layout(true);
+		sc.setMinSize(body.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	/**
@@ -167,7 +180,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 *
 	 * @return boolean <code>true</code> if any were selected
 	 */
-	private boolean createButtons(FormToolkit toolkit, Composite sectionClient) {
+	private boolean createButtons(Composite sectionClient) {
 		String[] enabledSettings = getEnabledSettings(
 				PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(ChooseWorkspaceWithSettingsDialog.class))
 						.getDialogSettings()
@@ -179,8 +192,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		sectionClient.setLayout(layout);
 
 		for (final IConfigurationElement settingsTransfer : SettingsTransfer.getSettingsTransfers()) {
-			final Button button = toolkit.createButton(sectionClient,
-					settingsTransfer.getAttribute(ATT_NAME), SWT.CHECK);
+			final Button button = new Button(sectionClient, SWT.CHECK);
+			button.setText(settingsTransfer.getAttribute(ATT_NAME));
+			button.setBackground(sectionClient.getBackground());
 
 			ControlDecoration deco = new ControlDecoration(button, SWT.TOP | SWT.RIGHT);
 			Image image = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING)
@@ -209,7 +223,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 				}
 			}
 
-			button.setBackground(sectionClient.getBackground());
 			button.addSelectionListener(new SelectionAdapter() {
 
 				@Override
