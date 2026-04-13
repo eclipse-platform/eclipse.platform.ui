@@ -13,16 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests.contributions;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class LongRunningBarContentAssistProcessor extends BarContentAssistProcessor {
 
 	public static final String LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL = "bars are also good for soft drink cocktails.";
-	public static final int TIMEOUT_MSEC = 10_000;
-	private static final AtomicBoolean running = new AtomicBoolean();
+	public static final int DELAY = 2000;
 
 	public LongRunningBarContentAssistProcessor() {
 		super(LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL);
@@ -31,22 +28,11 @@ public class LongRunningBarContentAssistProcessor extends BarContentAssistProces
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
-			long startExecutionTime = System.currentTimeMillis();
-			while (running.get() && (System.currentTimeMillis() - startExecutionTime) < TIMEOUT_MSEC) {
-				Thread.sleep(20);
-			}
+			Thread.sleep(DELAY);
 		} catch (InterruptedException e) {
-			// Just finish on unexpected interrupt
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return super.computeCompletionProposals(viewer, offset);
 	}
-
-	public static void enable() {
-		running.set(true);
-	}
-
-	public static void finish() {
-		running.set(false);
-	}
-
 }
