@@ -207,17 +207,25 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		completionProposalList.setSelection(initialProposalItem);
 
 		LongRunningBarContentAssistProcessor.finish();
+		// Check both items' text (not just item 0) to force the virtual SWT Table
+		// to materialize both items via SWT.SetData. Table.clearAll() marks items
+		// as unmaterialized but does not clear Widget.data, so reading getData()
+		// without prior getText() would return stale data from the previous render.
 		waitForProposalRelatedCondition("Proposal list should contain two items", completionProposalList,
-				() -> !isComputingInfoEntry(completionProposalList.getItem(0))
-						&& completionProposalList.getItemCount() == 2,
+				() -> completionProposalList.getItemCount() == 2
+						&& !isComputingInfoEntry(completionProposalList.getItem(0))
+						&& !isComputingInfoEntry(completionProposalList.getItem(1)),
 				5_000);
-		final TableItem firstCompletionProposalItem = completionProposalList.getItem(0);
-		final TableItem secondCompletionProposalItem = completionProposalList.getItem(1);
-		String firstCompletionProposalText = ((ICompletionProposal) firstCompletionProposalItem.getData()).getDisplayString();
-		String secondCompletionProposalText = ((ICompletionProposal) secondCompletionProposalItem.getData()).getDisplayString();
-		assertThat("Unexpected first proposal item", BAR_CONTENT_ASSIST_PROPOSAL, endsWith(firstCompletionProposalText));
-		assertThat("Unexpected second proposal item", LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL,
-				endsWith(secondCompletionProposalText));
+		String firstText = ((ICompletionProposal) completionProposalList.getItem(0).getData()).getDisplayString();
+		String secondText = ((ICompletionProposal) completionProposalList.getItem(1).getData()).getDisplayString();
+		// Async completion processors may return results in any order, so verify
+		// both proposals are present without assuming a specific order
+		boolean barFirst = BAR_CONTENT_ASSIST_PROPOSAL.endsWith(firstText)
+				&& LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL.endsWith(secondText);
+		boolean longRunningFirst = LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL.endsWith(firstText)
+				&& BAR_CONTENT_ASSIST_PROPOSAL.endsWith(secondText);
+		assertTrue(barFirst || longRunningFirst,
+				"Expected both bar and long-running proposals but got: [" + firstText + ", " + secondText + "]");
 		String selectedProposalString = ((ICompletionProposal) completionProposalList.getSelection()[0].getData())
 				.getDisplayString();
 		assertEquals(initialProposalString, selectedProposalString,
