@@ -141,7 +141,7 @@ public class FieldAssistColors {
 		destBlue += (src.getBlue() - destBlue) * alpha / 0xFF;
 
 		// create the color
-		Color color = new Color(display, destRed, destGreen, destBlue);
+		Color color = new Color(destRed, destGreen, destBlue);
 		// record the color in a map using the original color as the key
 		requiredFieldColorMap.put(dest, color);
 		// If we have never created a color on this display before, install

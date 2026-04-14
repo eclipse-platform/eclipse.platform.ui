@@ -174,7 +174,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		if (monitor != null) {
 			return;
 		}
-		this.foreground = new Color(getSplash().getShell().getDisplay(), foregroundRGB);
+		this.foreground = new Color(foregroundRGB);
 	}
 
 	/**

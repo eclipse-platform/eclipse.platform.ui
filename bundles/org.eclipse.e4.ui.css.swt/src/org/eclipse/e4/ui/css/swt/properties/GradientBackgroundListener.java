@@ -157,10 +157,10 @@ public class GradientBackgroundListener implements Listener {
 				List<Color> colors = new ArrayList<>();
 				for (Object rgbObj : grad.getRGBs()) {
 					if (rgbObj instanceof RGBA rgba) {
-						Color color = new Color(control.getDisplay(), rgba);
+						Color color = new Color(rgba);
 						colors.add(color);
 					} else if (rgbObj instanceof RGB rgb) {
-						Color color = new Color(control.getDisplay(), rgb);
+						Color color = new Color(rgb);
 						colors.add(color);
 					}
 				}

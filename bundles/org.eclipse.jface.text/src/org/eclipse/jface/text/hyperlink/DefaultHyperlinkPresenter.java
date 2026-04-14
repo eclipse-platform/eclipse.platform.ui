@@ -180,7 +180,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		} else if (fRGB != null) {
 			StyledText text= fTextViewer.getTextWidget();
 			if (text != null && !text.isDisposed()) {
-				fColor= new Color(text.getDisplay(), fRGB);
+				fColor= new Color(fRGB);
 			}
 		}
 	}
@@ -349,7 +349,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			}
 
 			if (rgb != null) {
-				return new Color(textWidget.getDisplay(), rgb);
+				return new Color(rgb);
 			}
 		}
 

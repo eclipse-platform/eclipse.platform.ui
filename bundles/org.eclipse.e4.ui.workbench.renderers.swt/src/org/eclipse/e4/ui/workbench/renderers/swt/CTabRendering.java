@@ -411,7 +411,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		if (!active && !onBottom) {
 			RGB blendColor = gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB();
 			RGB topGradient = blend(blendColor, tabOutlineColor.getRGB(), 40);
-			gradientLineTop = new Color(gc.getDevice(), topGradient);
+			gradientLineTop = new Color(topGradient);
 			foregroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, gradientLineTop,
 					gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
 			gc.setForegroundPattern(foregroundPattern);

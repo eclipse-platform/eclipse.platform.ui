@@ -122,7 +122,7 @@ public class CSSSerializerSWTTest {
 	}
 
 	private static void createResources(Display display) {
-		COLOR_GREEN = new Color(display, 0, 255, 0);
+		COLOR_GREEN = new Color(0, 255, 0);
 		CURSOR_HELP = new Cursor(display, SWT.CURSOR_HELP);
 
 		display.addListener(SWT.Dispose, event -> disposeResources());

@@ -116,8 +116,8 @@ public class FormImages {
 		@Override
 		public Image createImage(boolean returnMissingImageOnError,	Device device) {
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
-				Color color1 = new Color(device, fRGBs[0]);
-				Color color2 = new Color(device, fRGBs[1]);
+				Color color1 = new Color(fRGBs[0]);
+				Color color2 = new Color(fRGBs[1]);
 				try {
 					gc.setBackground(color1);
 					gc.fillRectangle(0, 0, width, height);
@@ -131,7 +131,7 @@ public class FormImages {
 					color2.dispose();
 				}
 			};
-			Color background = new Color(device, fRGBs[0]);
+			Color background = new Color(fRGBs[0]);
 			Image image = new Image(device, imageGcDrawer, 1, fLength);
 			image.setBackground(background);
 			background.dispose();
@@ -196,9 +196,9 @@ public class FormImages {
 			final ImageGcDrawer imageGcDrawer = (gc, iWidth, iHeight) -> {
 				Color[] colors = new Color[fRGBs.length];
 				for (int i = 0; i < colors.length; i++) {
-					colors[i] = fRGBs[i] == null ? null : new Color(device, fRGBs[i]);
+					colors[i] = fRGBs[i] == null ? null : new Color(fRGBs[i]);
 				}
-				Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
+				Color bg = fBgRGB == null ? null : new Color(fBgRGB);
 				try {
 					drawTextGradient(gc, iWidth, iHeight, colors, fPercents, fVertical, bg);
 				} finally {
@@ -212,7 +212,7 @@ public class FormImages {
 					}
 				}
 			};
-			Color background = fRGBs[0] == null ? null : new Color(device, fRGBs[0]);
+			Color background = fRGBs[0] == null ? null : new Color(fRGBs[0]);
 			Image gradient = new Image(device, imageGcDrawer, Math.max(width, 1), Math
 					.max(height, 1));
 			if (background != null) {
@@ -312,8 +312,8 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
-			Color originalBgColor = new Color(device, fRGBs[0]);
-			Color color1 = new Color(device, fRGBs[1]);
+			Color originalBgColor = new Color(fRGBs[0]);
+			Color color1 = new Color(fRGBs[1]);
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
 				gc.setBackground(color1);
 				gc.fillRectangle(0, fMarginHeight + 2, width, fTheight - fMarginHeight - 3);
@@ -337,8 +337,8 @@ public class FormImages {
 		@Override
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
-				Color color1 = new Color(device, fRGBs[0]);
-				Color color2 = new Color(device, fRGBs[1]);
+				Color color1 = new Color(fRGBs[0]);
+				Color color2 = new Color(fRGBs[1]);
 				try {
 					gc.setBackground(color1);
 					gc.fillRectangle(0, 0, width, height);
@@ -352,7 +352,7 @@ public class FormImages {
 					color2.dispose();
 				}
 			};
-			Color background = new Color(device, fRGBs[0]);
+			Color background = new Color(fRGBs[0]);
 			Image image = new Image(device, imageGcDrawer, 1, fLength);
 			image.setBackground(background);
 			background.dispose();

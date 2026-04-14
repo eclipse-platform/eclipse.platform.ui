@@ -149,7 +149,7 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 
 		Color border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
 		Color background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		Color backgroundHot = new Color(display, new RGB(252, 160, 160));
+		Color backgroundHot = new Color(new RGB(252, 160, 160));
 		normal = new Image(display, createCloseButtonDrawer(background, border), 16, 16);
 		hover = new Image(display, createCloseButtonDrawer(backgroundHot, border), 16, 16);
 	}

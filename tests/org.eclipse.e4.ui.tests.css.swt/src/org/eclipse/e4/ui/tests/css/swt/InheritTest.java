@@ -41,7 +41,7 @@ public class InheritTest extends CSSSWTTestCase {
 		super.setUp();
 
 
-		redColor = new Color(display, RED);
+		redColor = new Color(RED);
 	}
 
 	/**

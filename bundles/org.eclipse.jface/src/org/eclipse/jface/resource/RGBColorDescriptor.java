@@ -72,6 +72,6 @@ class RGBColorDescriptor extends ColorDescriptor {
 			// If we're allocating on the same device as the original color, return the original.
 			return originalColor;
 		}
-		return new Color(device, color);
+		return new Color(color);
 	}
 }

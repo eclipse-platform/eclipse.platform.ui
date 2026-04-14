@@ -137,9 +137,9 @@ public class HeapStatus extends Composite {
 			disabledGcImage = new Image(display, gcImage, SWT.IMAGE_DISABLE);
 		}
 
-		usedMemCol = new Color(display, 160, 160, 160); // gray
-		lowMemCol = new Color(display, 255, 70, 70); // medium red
-		freeMemCol = new Color(display, 255, 190, 125); // light orange
+		usedMemCol = new Color(160, 160, 160); // gray
+		lowMemCol = new Color(255, 70, 70); // medium red
+		freeMemCol = new Color(255, 190, 125); // light orange
 		sepCol = topLeftCol = armCol = usedMemCol;
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);

@@ -329,7 +329,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 */
 	private Image createSeparatorBgImage() {
 		final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
-			gc.setBackground(new Color(dialog.getDisplay(), 127, 127, 127));
+			gc.setBackground(new Color(127, 127, 127));
 			gc.fillRectangle(0, 0, width, height);
 		};
 		return new Image(Display.getDefault(), imageGcDrawer, 1, 1);

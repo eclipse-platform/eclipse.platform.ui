@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -126,8 +125,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 	@Override
 	public void setUp() {
 		super.setUp();
-		red = new Color(Display.getCurrent(), 255, 0, 0);
-		green = new Color(Display.getCurrent(), 0, 255, 0);
+		red = new Color(255, 0, 0);
+		green = new Color(0, 255, 0);
 	}
 
 	@Override

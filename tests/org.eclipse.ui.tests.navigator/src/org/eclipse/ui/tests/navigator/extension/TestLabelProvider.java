@@ -72,7 +72,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	public static Color toForegroundColor(Color backColor) {
 		RGB rgb = backColor.getRGB();
 		RGB newRgb = new RGB(rgb.blue, rgb.red, rgb.green);
-		return new Color(Display.getCurrent(), newRgb);
+		return new Color(newRgb);
 	}
 
 	public Color getTestColor() {

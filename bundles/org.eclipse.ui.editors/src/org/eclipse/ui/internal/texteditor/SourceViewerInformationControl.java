@@ -172,7 +172,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			GridData gd2= new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
-			Color statusTextForegroundColor= new Color(fStatusField.getDisplay(),
+			Color statusTextForegroundColor= new Color(
 					blend(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(), display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56f));
 			fStatusField.setForeground(statusTextForegroundColor);
 

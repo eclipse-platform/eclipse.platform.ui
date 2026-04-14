@@ -119,7 +119,7 @@ public class TextPresentationTest {
 	private Color createColor(int red, int green, int blue) {
 		if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 			return null;
-		Color c= new Color(fDisplay, red, green, blue);
+		Color c= new Color(red, green, blue);
 		fColors.add(c);
 		return c;
 	}

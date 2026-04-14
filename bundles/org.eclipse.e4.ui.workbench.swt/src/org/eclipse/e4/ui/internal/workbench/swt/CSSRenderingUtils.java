@@ -166,7 +166,7 @@ public class CSSRenderingUtils {
 		Image rotatedImage = new Image(display, imageData);
 		GC gc = new GC(rotatedImage);
 		RGB rgb = new RGB(0x7d, 0, 0);
-		Color offRed = new Color(display, rgb);
+		Color offRed = new Color(rgb);
 		gc.setBackground(offRed);
 		gc.fillRectangle(0, 0, bounds.height, bounds.width);
 		Transform t = new Transform(display);

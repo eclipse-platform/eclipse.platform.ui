@@ -58,7 +58,7 @@ class SharedTextColors implements ISharedTextColors {
 
 		Color color= colorTable.get(rgb);
 		if (color == null) {
-			color= new Color(display, rgb);
+			color= new Color(rgb);
 			colorTable.put(rgb, color);
 		}
 

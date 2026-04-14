@@ -142,7 +142,7 @@ public class ColorRegistry extends ResourceRegistry {
 				hookDisplayDispose();
 			}
 		}
-		return new Color(display, rgb);
+		return new Color(rgb);
 	}
 
 	/**

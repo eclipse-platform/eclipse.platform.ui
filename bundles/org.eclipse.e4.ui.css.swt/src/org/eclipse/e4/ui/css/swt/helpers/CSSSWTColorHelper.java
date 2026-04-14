@@ -54,7 +54,7 @@ public class CSSSWTColorHelper {
 
 	public static Color getSWTColor(RGBColor rgbColor, Display display) {
 		RGBA rgb = getRGBA(rgbColor);
-		return new Color(display, rgb);
+		return new Color(rgb);
 	}
 
 	public static Color getSWTColor(CSSValue value, Display display) {
@@ -64,7 +64,7 @@ public class CSSSWTColorHelper {
 		Color color = display.getSystemColor(SWT.COLOR_BLACK);
 		RGBA rgba = getRGBA((CSSPrimitiveValue) value, display);
 		if (rgba != null) {
-			color = new Color(display, rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
+			color = new Color(rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
 		}
 		return color;
 	}

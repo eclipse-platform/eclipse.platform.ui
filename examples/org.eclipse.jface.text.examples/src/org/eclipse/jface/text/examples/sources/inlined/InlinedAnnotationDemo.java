@@ -287,7 +287,7 @@ public class InlinedAnnotationDemo {
 		Matcher m = c.matcher(input);
 		if (m.matches()) {
 			try {
-				return new Color(device, Integer.parseInt(m.group(1)), // r
+				return new Color(Integer.parseInt(m.group(1)), // r
 						Integer.parseInt(m.group(2)), // g
 						Integer.parseInt(m.group(3))); // b
 			} catch (Exception e) {

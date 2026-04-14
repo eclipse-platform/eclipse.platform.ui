@@ -222,7 +222,7 @@ public class TitleAreaDialog extends TrayDialog {
 		Color background;
 		Color foreground;
 		if (titleAreaRGB != null) {
-			titleAreaColor = new Color(display, titleAreaRGB);
+			titleAreaColor = new Color(titleAreaRGB);
 			background = titleAreaColor;
 			foreground = null;
 		} else {
