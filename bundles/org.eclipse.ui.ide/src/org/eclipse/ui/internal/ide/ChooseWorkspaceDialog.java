@@ -39,6 +39,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -319,6 +320,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		recentWorkspacesForm.getBody().setLayout(new GridLayout());
 		ExpandableComposite recentWorkspacesExpandable = toolkit.createExpandableComposite(recentWorkspacesForm.getBody(),
 				ExpandableComposite.TWISTIE);
+		recentWorkspacesExpandable.setTitleBarForeground(composite.getForeground());
+		recentWorkspacesExpandable.setForeground(composite.getForeground());
+		recentWorkspacesExpandable.setToggleColor(composite.getForeground());
+		recentWorkspacesExpandable.setActiveToggleColor(composite.getForeground());
 		recentWorkspacesForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		recentWorkspacesExpandable.setBackground(composite.getBackground());
 		recentWorkspacesExpandable.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_recentWorkspaces);
@@ -352,6 +357,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			final String recentWorkspace = uniqueWorkspaceEntry.getValue();
 
 			Link link = new Link(panel, SWT.WRAP);
+			link.setForeground(JFaceColors.getHyperlinkText(composite.getDisplay()));
 			link.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
 			link.setText("<a>" + uniqueWorkspaceEntry.getKey() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			link.setToolTipText(recentWorkspace);

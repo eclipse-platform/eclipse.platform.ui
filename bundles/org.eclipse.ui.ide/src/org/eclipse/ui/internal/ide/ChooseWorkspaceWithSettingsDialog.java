@@ -128,6 +128,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 		copySettingsExpandable.setText(IDEWorkbenchMessages.ChooseWorkspaceWithSettingsDialog_SettingsGroupName);
 		copySettingsExpandable.setBackground(workArea.getBackground());
+		copySettingsExpandable.setTitleBarForeground(workArea.getForeground());
+		copySettingsExpandable.setToggleColor(workArea.getForeground());
+		copySettingsExpandable.setActiveToggleColor(workArea.getForeground());
 		copySettingsExpandable.setLayout(new GridLayout());
 		copySettingsExpandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		copySettingsExpandable.addExpansionListener(new IExpansionListener() {

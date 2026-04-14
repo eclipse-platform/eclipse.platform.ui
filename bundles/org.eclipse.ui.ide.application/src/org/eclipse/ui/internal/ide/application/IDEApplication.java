@@ -36,12 +36,15 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -52,14 +55,18 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkspaceLock;
@@ -93,6 +100,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 
 	private static final String USER_NAME = "user.name"; //$NON-NLS-1$
+
+	private boolean isDark;
+	private Listener darkThemeShowListener;
 
 	// Use the branding plug-in of the platform feature since this is most likely
 	// to change on an update of the IDE.
@@ -145,6 +155,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		Job.getJobManager().suspend();
 
 		Display display = createDisplay();
+
+		initializeDefaultTheme(display);
+
 		// processor must be created before we start event loop
 		DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
 
@@ -166,6 +179,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				WorkbenchPlugin.unsetSplashShell(display);
 				return instanceLocationCheck;
 			}
+
+			// Reset early dark theme styling before the workbench starts;
+			// the ThemeEngine will apply the correct theme from here on.
+			resetEarlyDarkTheme(display);
 
 			// create the workbench with this advisor and run it until it exits
 			// N.B. createWorkbench remembers the advisor, and also registers
@@ -587,6 +604,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				return null;
 			}
 
+			@Override
+			protected Control createContents(Composite parent) {
+				Control contents = super.createContents(parent);
+				if (isDark) {
+					applyDarkStyles(getShell());
+				}
+				return contents;
+			}
 		}.prompt(force);
 	}
 
@@ -850,6 +875,85 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 */
 	protected static Version toMajorMinorVersion(Version version) {
 		return new Version(version.getMajor(), version.getMinor(), 0);
+	}
+
+	protected void initializeDefaultTheme(Display display) {
+		IEclipsePreferences themeNode = UserScope.INSTANCE.getNode("org.eclipse.e4.ui.css.swt.theme"); //$NON-NLS-1$
+		String productOrAppId = getProductOrApplicationId();
+		String defaultThemeId;
+		if (productOrAppId != null) {
+			defaultThemeId = themeNode.node(productOrAppId).get("themeid", null); //$NON-NLS-1$
+		} else {
+			defaultThemeId = themeNode.get("themeid", null); //$NON-NLS-1$
+		}
+		isDark = defaultThemeId != null && defaultThemeId.contains("dark"); //$NON-NLS-1$
+		if (isDark) {
+			display.setDarkThemePreferred(true);
+			darkThemeShowListener = event -> {
+				if (event.widget instanceof Shell shell) {
+					applyDarkStyles(shell);
+				}
+			};
+			display.addListener(SWT.Show, darkThemeShowListener);
+		}
+	}
+
+	/**
+	 * Removes the early dark theme styling applied for the workspace selection
+	 * dialog. Must be called before the workbench starts so the ThemeEngine can
+	 * manage the theme without interference.
+	 */
+	protected void resetEarlyDarkTheme(Display display) {
+		if (darkThemeShowListener != null) {
+			display.removeListener(SWT.Show, darkThemeShowListener);
+			darkThemeShowListener = null;
+		}
+		if (isDark) {
+			display.setDarkThemePreferred(false);
+		}
+	}
+
+	/**
+	 * Returns the product ID if a product is configured, otherwise falls back to
+	 * the application ID from the system property. Returns {@code null} if neither
+	 * is available.
+	 */
+	private static String getProductOrApplicationId() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getId();
+		}
+		return System.getProperty("eclipse.application"); //$NON-NLS-1$
+	}
+
+	private void applyDarkStyles(Shell shell) {
+		Color bg = new Color(72, 72, 76); // #48484c
+		Color fg = new Color(238, 238, 238); // #eeeeee
+		Color linkColor = new Color(111, 197, 238); // #6FC5EE
+		shell.setBackground(bg);
+		shell.setForeground(fg);
+		applyStylesRecursive(shell, bg, fg, linkColor);
+	}
+
+	private void applyStylesRecursive(Control control, Color bg, Color fg, Color linkColor) {
+		control.setBackground(bg);
+		if (control instanceof Link link) {
+			link.setLinkForeground(linkColor);
+		} else {
+			control.setForeground(fg);
+
+		}
+
+		if (control instanceof ExpandableComposite expandable) {
+			expandable.setTitleBarForeground(fg);
+			expandable.setToggleColor(fg);
+			expandable.setActiveToggleColor(fg);
+		}
+		if (control instanceof Composite composite) {
+			for (Control child : composite.getChildren()) {
+				applyStylesRecursive(child, bg, fg, linkColor);
+			}
+		}
 	}
 
 	@Override

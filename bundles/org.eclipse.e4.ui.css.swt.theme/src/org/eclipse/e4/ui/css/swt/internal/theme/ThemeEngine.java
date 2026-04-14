@@ -510,6 +510,9 @@ public class ThemeEngine implements IThemeEngine {
 				ThemeEngineManager.logError(e.getMessage(), e);
 			}
 		}
+		boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
+		display.setDarkThemePreferred(isDark);
+
 		sendThemeChangeEvent(restore);
 
 		for (CSSEngine engine : cssEngines) {
