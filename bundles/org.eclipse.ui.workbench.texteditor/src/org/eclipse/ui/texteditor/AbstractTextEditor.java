@@ -4222,8 +4222,6 @@ public abstract class AbstractTextEditor extends EditorPart
 		IPreferenceStore store = getPreferenceStore();
 		if (store != null) {
 
-			StyledText styledText = viewer.getTextWidget();
-
 			Color color = createColor(store, PREFERENCE_COLOR_FIND_SCOPE);
 
 			IFindReplaceTarget target = viewer.getFindReplaceTarget();

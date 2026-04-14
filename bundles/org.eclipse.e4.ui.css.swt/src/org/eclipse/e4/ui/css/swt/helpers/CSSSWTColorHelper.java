@@ -52,7 +52,7 @@ public class CSSSWTColorHelper {
 
 	/*--------------- SWT Color Helper -----------------*/
 
-	public static Color getSWTColor(RGBColor rgbColor, Display display) {
+	public static Color getSWTColor(RGBColor rgbColor) {
 		RGBA rgb = getRGBA(rgbColor);
 		return new Color(rgb);
 	}

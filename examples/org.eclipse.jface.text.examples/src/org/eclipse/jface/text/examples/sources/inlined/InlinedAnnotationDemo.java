@@ -41,7 +41,6 @@ import org.eclipse.jface.text.source.inlined.LineHeaderAnnotation;
 import org.eclipse.jface.text.source.inlined.Positions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -195,7 +194,7 @@ public class InlinedAnnotationDemo {
 				String rgb = line.substring(index + "color:".length()).trim();
 				try {
 					String status = "OK!";
-					Color color = parse(rgb, viewer.getTextWidget().getDisplay());
+					Color color = parse(rgb);
 					if (color != null) {
 					} else {
 						status = "ERROR!";
@@ -282,7 +281,7 @@ public class InlinedAnnotationDemo {
 	 *            the rgb string color
 	 * @return the created color and null otherwise.
 	 */
-	private static Color parse(String input, Device device) {
+	private static Color parse(String input) {
 		Pattern c = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
 		Matcher m = c.matcher(input);
 		if (m.matches()) {

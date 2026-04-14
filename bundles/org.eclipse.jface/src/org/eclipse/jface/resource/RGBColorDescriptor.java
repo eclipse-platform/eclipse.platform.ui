@@ -66,10 +66,8 @@ class RGBColorDescriptor extends ColorDescriptor {
 
 	@Override
 	public Color createColor(Device device) {
-		// If this descriptor is wrapping an existing color, then we can return the original color
-		// if this is the same device.
-		if (originalColor != null && originalColor.getDevice() == device) {
-			// If we're allocating on the same device as the original color, return the original.
+		// If this descriptor is wrapping an existing color, return the original.
+		if (originalColor != null) {
 			return originalColor;
 		}
 		return new Color(color);

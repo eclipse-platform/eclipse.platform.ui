@@ -124,7 +124,7 @@ public class ColorRegistry extends ResourceRegistry {
 	}
 
 	/**
-	 * Create a new <code>Color</code> on the receivers <code>Display</code>.
+	 * Create a new <code>Color</code> for the given RGB value.
 	 *
 	 * @param rgb the <code>RGB</code> data for the color.
 	 * @return the new <code>Color</code> object.
