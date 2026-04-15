@@ -56,6 +56,7 @@ import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.TabStateHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ThemeDefinitionChangedHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRendererTest;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolControlRendererTest;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -95,6 +96,7 @@ import org.junit.platform.suite.api.Suite;
 		TabStateHandlerTest.class,
 		ThemeDefinitionChangedHandlerTest.class,
 		ToolBarManagerRendererTest.class,
+		ToolControlRendererTest.class,
 		TopoSortTests.class,
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
