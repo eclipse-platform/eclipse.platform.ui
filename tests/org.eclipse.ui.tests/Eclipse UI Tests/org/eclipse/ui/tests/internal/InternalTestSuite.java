@@ -18,6 +18,7 @@ import org.eclipse.ui.tests.largefile.LargeFileLimitsPreferenceHandlerTest;
 import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
+import org.eclipse.ui.tests.markers.MarkerFieldFilterGroupTest;
 import org.eclipse.ui.tests.markers.MarkerHelpRegistryReaderTest;
 import org.eclipse.ui.tests.markers.MarkerHelpRegistryTest;
 import org.eclipse.ui.tests.markers.MarkerQueryTest;
@@ -70,6 +71,7 @@ import org.junit.platform.suite.api.Suite;
 	LargeFileLimitsPreferenceHandlerTest.class,
 	WorkbookEditorsHandlerTest.class,
 	ScopeAreaTest.class,
+	MarkerFieldFilterGroupTest.class,
 		MarkerTypeTests.class
 })
 public class InternalTestSuite {}

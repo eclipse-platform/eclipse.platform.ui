@@ -649,6 +649,11 @@ public class MarkerFieldFilterGroup {
 
 	public boolean selectByScope(MarkerEntry entry, IResource[] resources) {
 		int scopeVal = getScope();
+		// When no resources are selected and scope depends on selection,
+		// fall back to showing all markers to avoid confusing empty results
+		if (resources.length == 0 && scopeVal != ON_ANY && scopeVal != ON_WORKING_SET) {
+			return true;
+		}
 		switch (scopeVal) {
 		case MarkerFieldFilterGroup.ON_ANY: {
 			return true;
