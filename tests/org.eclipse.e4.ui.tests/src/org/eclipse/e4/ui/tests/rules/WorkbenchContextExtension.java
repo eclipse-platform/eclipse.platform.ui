@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -88,6 +89,15 @@ public class WorkbenchContextExtension implements BeforeEachCallback, AfterEachC
 	protected void dispose() {
 		if (wb != null) {
 			wb.close();
+		}
+
+		// Dispose any remaining shells that were not cleaned up by wb.close(),
+		// such as PartRenderingEngine's limbo shell
+		Display display = Display.getDefault();
+		for (Shell shell : display.getShells()) {
+			if (!shell.isDisposed()) {
+				shell.dispose();
+			}
 		}
 
 		ContextInjectionFactory.setDefault(null);
