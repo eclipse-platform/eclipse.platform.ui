@@ -691,6 +691,15 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					// in the task manager of the OS
 					return null;
 				}
+
+				@Override
+				protected Control createContents(Composite parent) {
+					Control contents = super.createContents(parent);
+					if (isDark) {
+						applyDarkStyles(getShell());
+					}
+					return contents;
+				}
 			};
 			// hide splash if any
 			hideSplash(shell);
