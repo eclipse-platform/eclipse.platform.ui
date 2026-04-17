@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -237,6 +238,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	private boolean isShownForTheFirstTime = true;
 
 	/**
+	 * Job family under which all background filtering and refresh jobs of this
+	 * dialog are grouped. Tests may use this with
+	 * {@link org.eclipse.core.runtime.jobs.IJobManager#join(Object, org.eclipse.core.runtime.IProgressMonitor)}
+	 * to deterministically wait for the filter/refresh pipeline to settle.
+	 *
+	 * @noreference This field is not intended to be referenced by clients.
+	 * @since 3.138
+	 */
+	public static final Object JOB_FAMILY = new Object();
+
+	/**
 	 * Creates a new instance of the class.
 	 *
 	 * @param shell shell to parent the dialog on
@@ -250,8 +262,34 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		filterJob = new FilterJob();
 		contentProvider = new ContentProvider();
 		refreshCacheJob = new RefreshCacheJob();
+		// All three jobs mutate / read the same ContentProvider state (items,
+		// duplicates, lastFilteredItems, ...). Without a common scheduling rule
+		// they can run concurrently on different worker threads, racing
+		// FilterHistoryJob.contentProvider.reset() against FilterJob's
+		// fillContentProvider() and silently emptying or corrupting the visible
+		// items. The rule is per-dialog, so separate dialogs still run in
+		// parallel.
+		ISchedulingRule pipelineRule = new ContentProviderSerialRule();
+		filterHistoryJob.setRule(pipelineRule);
+		filterJob.setRule(pipelineRule);
+		refreshCacheJob.setRule(pipelineRule);
 		itemsListSeparator = new ItemsListSeparator(WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel);
 		selectionMode = NONE;
+	}
+
+	/**
+	 * Per-dialog mutex rule used to serialize the filter/refresh pipeline jobs.
+	 */
+	private static final class ContentProviderSerialRule implements ISchedulingRule {
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
 	}
 
 	/**
@@ -1315,6 +1353,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 		}
 
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JOB_FAMILY;
+		}
+
 	}
 
 	/**
@@ -1418,6 +1461,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		protected void canceling() {
 			super.canceling();
 			contentProvider.stopReloadingCache();
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JOB_FAMILY;
 		}
 
 	}
@@ -1854,6 +1902,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			return Status.OK_STATUS;
 		}
 
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JOB_FAMILY;
+		}
+
 	}
 
 	/**
@@ -1975,6 +2028,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				}
 			}
 
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JOB_FAMILY;
 		}
 
 	}

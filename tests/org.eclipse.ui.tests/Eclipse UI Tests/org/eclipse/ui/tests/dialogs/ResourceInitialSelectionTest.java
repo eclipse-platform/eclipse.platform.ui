@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -125,8 +126,11 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
-		// Don't wait for full refresh - this test checks that invalid initial
-		// selections don't cause a selection before dialog is fully loaded
+		// Intentionally no waitForDialogRefresh: this asserts that during
+		// initial load, the dialog does not pre-select anything for an
+		// invalid initial element. After the refresh pipeline drains the
+		// dialog falls back to selecting row 0, which is a separate
+		// behavior not under test here.
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -167,8 +171,10 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
-		// Don't wait for full refresh - this test checks that filtered initial
-		// selections don't cause a selection before dialog is fully loaded
+		// Intentionally no waitForDialogRefresh: foofoo is filtered out by
+		// the *.txt pattern, so during initial load nothing is selected.
+		// After the refresh pipeline drains the dialog falls back to row 0,
+		// which is a separate behavior not under test here.
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -274,8 +280,11 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
-		// Don't wait for full refresh - this test checks that invalid initial
-		// selections don't cause a selection before dialog is fully loaded
+		// Intentionally no waitForDialogRefresh: this asserts that during
+		// initial load, the dialog does not pre-select anything for invalid
+		// initial elements. After the refresh pipeline drains the dialog
+		// falls back to selecting row 0, which is a separate behavior not
+		// under test here.
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -448,37 +457,21 @@ public class ResourceInitialSelectionTest {
 	}
 
 	/**
-	 * Wait for dialog refresh jobs to complete and process UI events.
-	 * This ensures background jobs finish before assertions are made.
+	 * Wait for the dialog's background filter/refresh jobs to complete.
+	 * <p>
+	 * The dialog schedules a chain of jobs on open/refresh:
+	 * {@code FilterHistoryJob → FilterJob → RefreshCacheJob → RefreshJob}. All
+	 * four are tagged with {@link FilteredItemsSelectionDialog#JOB_FAMILY}, so
+	 * we wait for that family to drain. The 30 s ceiling is a deadlock guard;
+	 * the pipeline usually completes within a few hundred milliseconds.
 	 */
 	private void waitForDialogRefresh() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
-
-		// The dialog performs async operations (FilterHistoryJob → FilterJob →
-		// RefreshCacheJob → RefreshJob) to filter and populate the table after refresh()
-		// We need to wait for the table item count to stabilize before checking
-		// selection state. The count can temporarily be non-zero after the history
-		// refresh, then change again when FilterJob populates actual results.
-		// Selection is applied only in the final refresh, so we must wait for
-		// stability rather than just for any non-zero count.
-		int[] lastCount = { -1 };
-		DisplayHelper.waitForCondition(display, 5000, () -> {
+		DisplayHelper.waitForCondition(display, 30_000L, () -> {
 			processUIEvents();
-			try {
-				Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
-						.getChildren()[0]).getChildren()[0]).getChildren()[3];
-				int count = table.getItemCount();
-				if (count > 0 && count == lastCount[0]) {
-					return true; // stable non-zero count: all refreshes have completed
-				}
-				lastCount[0] = count;
-				return false;
-			} catch (Exception e) {
-				return false;
-			}
+			return Job.getJobManager().find(FilteredItemsSelectionDialog.JOB_FAMILY).length == 0;
 		});
-
-		// Final event loop processing to pick up any trailing async tasks
+		// Final event loop processing to pick up any trailing asyncExecs.
 		processUIEvents();
 	}
 
