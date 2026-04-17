@@ -31,8 +31,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
@@ -1412,20 +1415,28 @@ public class SourceViewer extends TextViewer
 	 * <p>
 	 * The viewer's partitioner is temporarily connected to the given document so that its
 	 * presentation repairers can compute the correct highlighting. The viewer's own document is not
-	 * affected.
+	 * affected. However, if the original document uses a named partitioning (via
+	 * {@link IDocumentExtension3}), its partitioner is briefly disconnected from the original
+	 * document and reconnected to {@code document} for the duration of the call; it is always
+	 * reconnected to the original document before this method returns, even if an exception is
+	 * thrown.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> This method must be called from the SWT UI thread.
 	 * </p>
 	 *
 	 * @param document the external document whose content should be highlighted; must not be
 	 *            {@code null} and must use the same language/content type as this viewer
-	 * @param damage the region within {@code document} for which style ranges are computed; must
+	 * @param region the region within {@code document} for which style ranges are computed; must
 	 *            not be {@code null}
 	 * @return the list of {@link org.eclipse.swt.custom.StyleRange}s covering the given region, as
 	 *         produced by this viewer's presentation reconciler; never {@code null}, may be empty
 	 *         if no repairer is registered for the content type
-	 * @throws BadLocationException if {@code damage} is outside the bounds of {@code document}
+	 * @throws BadLocationException if {@code region} is outside the bounds of {@code document}
 	 * @since 3.31
 	 */
-	public List<StyleRange> computeStyleRanges(IDocument document, IRegion damage) throws BadLocationException {
+	public List<StyleRange> computeStyleRanges(IDocument document, IRegion region) throws BadLocationException {
+		Assert.isTrue(Display.getCurrent() != null, "computeStyleRanges must be called from SWT UI thread"); //$NON-NLS-1$
 		String partition= IDocumentExtension3.DEFAULT_PARTITIONING;
 		IPresentationReconciler reconciler= fPresentationReconciler;
 		if (reconciler instanceof IPresentationReconcilerExtension ext) {
@@ -1435,43 +1446,43 @@ public class SourceViewer extends TextViewer
 			}
 		}
 		IDocument originalDocument= getDocument();
-		IDocumentPartitioner partitioner= originalDocument.getDocumentPartitioner();
-		document.setDocumentPartitioner(partitioner);
 		IDocumentPartitioner originalDocumentPartitioner= null;
-		if (document instanceof IDocumentExtension3 ext
+		if (document instanceof IDocumentExtension3
 				&& originalDocument instanceof IDocumentExtension3 originalExt) {
 			originalDocumentPartitioner= originalExt.getDocumentPartitioner(partition);
+		}
+		try {
 			if (originalDocumentPartitioner != null) {
-				// set temporarily another document in partitioner so that presentation can be
-				// created for given source
+				// Temporarily reconnect the partitioner to the external document so that
+				// presentation repairers compute highlighting against the right content.
+				// The finally block always restores it to the original document.
 				originalDocumentPartitioner.disconnect();
-				try {
-					originalDocumentPartitioner.connect(document);
-				} finally {
-					ext.setDocumentPartitioner(partition, originalDocumentPartitioner);
+				originalDocumentPartitioner.connect(document);
+				((IDocumentExtension3) document).setDocumentPartitioner(partition, originalDocumentPartitioner);
+			} else {
+				document.setDocumentPartitioner(originalDocument.getDocumentPartitioner());
+			}
+			TextPresentation presentation= new TextPresentation(region, 1000);
+			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, partition, region.getOffset(),
+					region.getLength(), false);
+			for (ITypedRegion r : partitioning) {
+				IPresentationRepairer repairer= reconciler.getRepairer(r.getType());
+				if (repairer != null) {
+					repairer.setDocument(document);
+					repairer.createPresentation(presentation, r);
+					repairer.setDocument(originalDocument);
 				}
 			}
-		}
-		TextPresentation presentation= new TextPresentation(damage, 1000);
-		ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, partition, damage.getOffset(),
-				damage.getLength(), false);
-		for (ITypedRegion r : partitioning) {
-			IPresentationRepairer repairer= reconciler.getRepairer(r.getType());
-			if (repairer != null) {
-				repairer.setDocument(document);
-				repairer.createPresentation(presentation, r);
-				repairer.setDocument(originalDocument);
+			List<StyleRange> result= new ArrayList<>();
+			var it= presentation.getAllStyleRangeIterator();
+			while (it.hasNext()) {
+				result.add(it.next());
+			}
+			return result;
+		} finally {
+			if (originalDocumentPartitioner != null) {
+				originalDocumentPartitioner.connect(originalDocument);
 			}
 		}
-		if (originalDocumentPartitioner != null) {
-			originalDocumentPartitioner.connect(originalDocument);
-		}
-		List<StyleRange> result= new ArrayList<>();
-		var it= presentation.getAllStyleRangeIterator();
-		while (it.hasNext()) {
-			StyleRange next= it.next();
-			result.add(next);
-		}
-		return result;
 	}
 }
