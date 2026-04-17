@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -152,6 +153,20 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		sectionClient.setVisible(expanded);
 		clientData.exclude = !expanded;
 		toggle.setText(expanded ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// On macOS Cocoa, setBackground/setForeground on a hidden widget is dropped
+		// once the widget is realized. Re-apply colors to the check buttons when
+		// the section first becomes visible.
+		if (Util.isMac()) {
+			sectionClient.addListener(SWT.Show, e -> {
+				for (Control child : sectionClient.getChildren()) {
+					if (child instanceof Button button && (button.getStyle() & SWT.CHECK) != 0) {
+						button.setBackground(workArea.getBackground());
+						button.setForeground(workArea.getForeground());
+					}
+				}
+			});
+		}
 
 		Listener toggleListener = e -> {
 			boolean newState = !sectionClient.getVisible();
