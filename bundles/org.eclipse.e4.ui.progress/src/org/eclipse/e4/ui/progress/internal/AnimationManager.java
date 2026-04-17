@@ -17,13 +17,15 @@ package org.eclipse.e4.ui.progress.internal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.ui.progress.UIJob;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -38,13 +40,19 @@ import jakarta.inject.Singleton;
 @Singleton
 public class AnimationManager {
 
-	boolean animated = false;
+	private static final int DEBOUNCE_MILLIS = 100;
+
+	volatile boolean animated = false;
 
 	private IJobProgressManagerListener listener;
 
 	IAnimationProcessor animationProcessor;
 
-	Job animationUpdateJob;
+	private Display display;
+
+	private final AtomicBoolean updatePending = new AtomicBoolean();
+
+	private Runnable updateRunnable;
 
 	@Inject
 	ProgressManager progressManager;
@@ -64,15 +72,17 @@ public class AnimationManager {
 	void init() {
 
 		animationProcessor = new ProgressAnimationProcessor(this);
-
-		animationUpdateJob = UIJob.create(ProgressMessages.AnimationManager_AnimationStart, monitor -> {
+		display = Display.getDefault();
+		updateRunnable = () -> {
+			if (display.isDisposed()) {
+				return;
+			}
 			if (animated) {
 				animationProcessor.animationStarted();
 			} else {
 				animationProcessor.animationFinished();
 			}
-		});
-		animationUpdateJob.setSystem(true);
+		};
 
 		listener = getProgressListener();
 		progressManager.addListener(listener);
@@ -114,7 +124,32 @@ public class AnimationManager {
 	 */
 	void setAnimated(final boolean bool) {
 		animated = bool;
-		animationUpdateJob.schedule(100);
+		scheduleUpdate();
+	}
+
+	private void scheduleUpdate() {
+		if (display == null || display.isDisposed()) {
+			return;
+		}
+		// Coalesce bursts: only post one asyncExec at a time. Each posted
+		// runnable calls timerExec with the shared updateRunnable, which
+		// resets any pending timer so the latest call wins (matches the
+		// original Job.schedule(DEBOUNCE_MILLIS) behavior on a sleeping job).
+		if (updatePending.compareAndSet(false, true)) {
+			try {
+				display.asyncExec(() -> {
+					updatePending.set(false);
+					if (!display.isDisposed()) {
+						display.timerExec(DEBOUNCE_MILLIS, updateRunnable);
+					}
+				});
+			} catch (SWTException e) {
+				updatePending.set(false);
+				if (!display.isDisposed()) {
+					throw e;
+				}
+			}
+		}
 	}
 
 	/**

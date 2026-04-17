@@ -15,29 +15,34 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The AnimationManager is the class that keeps track of the animation items to
  * update.
  */
 public class AnimationManager {
+	private static final int DEBOUNCE_MILLIS = 100;
+
 	private static AnimationManager singleton;
 
-	boolean animated = false;
+	volatile boolean animated = false;
 
 	private IJobProgressManagerListener listener;
 
 	IAnimationProcessor animationProcessor;
 
-	WorkbenchJob animationUpdateJob;
+	private final Display display;
+
+	private final AtomicBoolean updatePending = new AtomicBoolean();
+
+	private final Runnable updateRunnable;
 
 	/**
 	 * Returns the singleton {@link AnimationManager} instance
@@ -64,21 +69,17 @@ public class AnimationManager {
 	AnimationManager() {
 
 		animationProcessor = new ProgressAnimationProcessor(this);
-
-		animationUpdateJob = new WorkbenchJob(ProgressMessages.AnimationManager_AnimationStart) {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				if (animated) {
-					animationProcessor.animationStarted();
-				} else {
-					animationProcessor.animationFinished();
-				}
-				return Status.OK_STATUS;
+		display = Display.getDefault();
+		updateRunnable = () -> {
+			if (display.isDisposed()) {
+				return;
+			}
+			if (animated) {
+				animationProcessor.animationStarted();
+			} else {
+				animationProcessor.animationFinished();
 			}
 		};
-		animationUpdateJob.setSystem(true);
 
 		listener = getProgressListener();
 		ProgressManager.getInstance().addListener(listener);
@@ -119,7 +120,32 @@ public class AnimationManager {
 	 */
 	void setAnimated(final boolean bool) {
 		animated = bool;
-		animationUpdateJob.schedule(100);
+		scheduleUpdate();
+	}
+
+	private void scheduleUpdate() {
+		if (display.isDisposed()) {
+			return;
+		}
+		// Coalesce bursts: only post one asyncExec at a time. Each posted
+		// runnable calls timerExec with the shared updateRunnable, which
+		// resets any pending timer so the latest call wins (matches the
+		// original Job.schedule(DEBOUNCE_MILLIS) behavior on a sleeping job).
+		if (updatePending.compareAndSet(false, true)) {
+			try {
+				display.asyncExec(() -> {
+					updatePending.set(false);
+					if (!display.isDisposed()) {
+						display.timerExec(DEBOUNCE_MILLIS, updateRunnable);
+					}
+				});
+			} catch (SWTException e) {
+				updatePending.set(false);
+				if (!display.isDisposed()) {
+					throw e;
+				}
+			}
+		}
 	}
 
 	/**
