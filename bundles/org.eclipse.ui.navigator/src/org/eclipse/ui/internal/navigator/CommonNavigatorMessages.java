@@ -126,6 +126,9 @@ public class CommonNavigatorMessages extends NLS {
 	public static String CommonFilterSelectionDialog_Available_customization_;
 
 	/** */
+	public static String CommonFilterSelectionDialog_Apply;
+
+	/** */
 	public static String CommonSorterDescriptorManager_A_navigatorContent_extension_in_0_;
 
 	/** */
