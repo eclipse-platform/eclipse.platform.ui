@@ -662,12 +662,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return comparator.compare(this, e1, e2);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
 		Object[] result = null;
 		ViewerComparator comparator = getComparator();
 		if (parentElementOrTreePath != null
-				&& comparator instanceof TreePathViewerComparator tpvs) {
+				&& (comparator instanceof TreePathViewerSorter || comparator instanceof TreePathViewerComparator)) {
 			result = getFilteredChildren(parentElementOrTreePath);
 			// be sure we're not modifying the original array from the model
 			result = result.clone();
@@ -682,7 +683,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					path = internalGetSorterParentPath(w, comparator);
 				}
 			}
-			tpvs.sort(this, path, result);
+			if (comparator instanceof TreePathViewerSorter tpvs) {
+				tpvs.sort(this, path, result);
+			} else if (comparator instanceof TreePathViewerComparator tpvc) {
+				tpvc.sort(this, path, result);
+			}
 			result = applyItemsLimit(parentElementOrTreePath, result);
 		} else {
 			return super.getSortedChildren(parentElementOrTreePath);
