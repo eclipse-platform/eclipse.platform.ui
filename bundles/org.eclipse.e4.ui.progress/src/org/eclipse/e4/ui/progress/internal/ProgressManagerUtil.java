@@ -26,7 +26,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.e4.ui.progress.IProgressService;
-import org.eclipse.e4.ui.progress.internal.legacy.StatusUtil;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.viewers.Viewer;
@@ -102,9 +101,8 @@ public class ProgressManagerUtil {
 	 * @return IStatus
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
-		return StatusUtil.newStatus(IStatus.ERROR,
-				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
-				exception);
+		Throwable cause = exception.getCause() != null ? exception.getCause() : exception;
+		return Status.error(exception.getMessage() == null ? "" : exception.getMessage(), cause); //$NON-NLS-1$
 	}
 
 	/**
