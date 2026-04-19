@@ -82,7 +82,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchActivityHelper;
 import org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
@@ -253,8 +252,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		@Override
 		public void accept(Error allocationStack) {
 			IDEWorkbenchPlugin.log(null,
-					StatusUtil.newStatus(IStatus.ERROR, "Not properly disposed SWT resource", //$NON-NLS-1$
-							allocationStack));
+					Status.error("Not properly disposed SWT resource", allocationStack)); //$NON-NLS-1$
 		}
 
 	}
