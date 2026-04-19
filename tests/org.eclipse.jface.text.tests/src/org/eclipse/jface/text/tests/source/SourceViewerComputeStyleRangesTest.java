@@ -129,15 +129,20 @@ public class SourceViewerComputeStyleRangesTest {
 		SourceViewer viewer= createConfiguredViewer();
 		String originalContent= "original content";
 		Document originalDoc= new Document(originalContent);
+		IDocumentPartitioner originalPartitioner= setupPartitioning(originalDoc);
+		assertNotNull(originalPartitioner);
 		viewer.setDocument(originalDoc);
-		IDocumentPartitioner originalPartitioner= originalDoc.getDocumentPartitioner();
 
 		Document externalDoc= new Document("some 'highlighted' text");
+		IDocumentPartitioner externalPartitioner= setupPartitioning(externalDoc);
+		assertNotNull(externalPartitioner);
 		viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
 
 		assertEquals(originalContent, originalDoc.get(), "Original document content must not change");
 		assertEquals(originalPartitioner, originalDoc.getDocumentPartitioner(),
 				"Original document partitioner must be restored");
+		assertEquals(externalPartitioner, externalDoc.getDocumentPartitioner(),
+				"External document partitioner must be restored");
 	}
 
 	@Test
@@ -193,6 +198,10 @@ public class SourceViewerComputeStyleRangesTest {
 
 		Document externalDoc= new Document("short");
 		setupNamedPartitioning(externalDoc);
+		IDocumentPartitioner externalPartitioner= externalDoc
+				.getDocumentPartitioner(NAMED_PARTITIONING);
+		assertNotNull(externalPartitioner, "External document should have a named partitioner");
+
 		try {
 			viewer.computeStyleRanges(externalDoc, new Region(0, 100));
 		} catch (BadLocationException expected) {
@@ -203,17 +212,25 @@ public class SourceViewerComputeStyleRangesTest {
 		IDocumentPartitioner restoredPartitioner= originalDoc
 				.getDocumentPartitioner(NAMED_PARTITIONING);
 		assertNotNull(restoredPartitioner, "Partitioner must be restored to original document after exception");
+		assertEquals(originalPartitioner, restoredPartitioner);
+
+		IDocumentPartitioner restoredExternalPartitioner= externalDoc
+				.getDocumentPartitioner(NAMED_PARTITIONING);
+		assertNotNull(restoredExternalPartitioner, "External partitioner must be restored to original document after exception");
+		assertEquals(externalPartitioner, restoredExternalPartitioner);
 	}
 
 	@Test
 	public void testNamedPartitioning() throws Exception {
 		SourceViewer viewer= createConfiguredViewerWithNamedPartitioning();
 		Document originalDoc= new Document("original 'content' here");
-		setupNamedPartitioning(originalDoc);
+		IDocumentPartitioner originalPartitioner= setupNamedPartitioning(originalDoc);
+		assertNotNull(originalPartitioner);
 		viewer.setDocument(originalDoc);
 
 		Document externalDoc= new Document("external 'styled' text");
-		setupNamedPartitioning(externalDoc);
+		IDocumentPartitioner externalPartitioner= setupNamedPartitioning(externalDoc);
+		assertNotNull(externalPartitioner);
 		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
 
 		assertNotNull(styles);
@@ -223,6 +240,12 @@ public class SourceViewerComputeStyleRangesTest {
 		IDocumentPartitioner restoredPartitioner= originalDoc
 				.getDocumentPartitioner(NAMED_PARTITIONING);
 		assertNotNull(restoredPartitioner, "Partitioner must be restored to original document");
+		assertEquals(originalPartitioner, restoredPartitioner);
+
+		IDocumentPartitioner restoredExternalPartitioner= externalDoc
+				.getDocumentPartitioner(NAMED_PARTITIONING);
+		assertNotNull(restoredExternalPartitioner, "External partitioner must be restored to external document");
+		assertEquals(externalPartitioner, restoredExternalPartitioner);
 	}
 
 	private SourceViewer createConfiguredViewer() {
@@ -266,10 +289,19 @@ public class SourceViewerComputeStyleRangesTest {
 		return scanner;
 	}
 
-	private void setupNamedPartitioning(Document document) {
+	private IDocumentPartitioner setupNamedPartitioning(Document document) {
 		IPartitionTokenScanner partitionScanner= new RuleBasedPartitionScanner();
 		IDocumentPartitioner partitioner= new FastPartitioner(partitionScanner, new String[] {});
 		document.setDocumentPartitioner(NAMED_PARTITIONING, partitioner);
 		partitioner.connect(document);
+		return partitioner;
+	}
+
+	private IDocumentPartitioner setupPartitioning(Document document) {
+		IPartitionTokenScanner partitionScanner= new RuleBasedPartitionScanner();
+		IDocumentPartitioner partitioner= new FastPartitioner(partitionScanner, new String[] {});
+		document.setDocumentPartitioner(partitioner);
+		partitioner.connect(document);
+		return partitioner;
 	}
 }

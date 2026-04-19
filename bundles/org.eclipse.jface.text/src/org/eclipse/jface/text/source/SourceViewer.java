@@ -1437,6 +1437,8 @@ public class SourceViewer extends TextViewer
 	 */
 	public List<StyleRange> computeStyleRanges(IDocument document, IRegion region) throws BadLocationException {
 		Assert.isTrue(Display.getCurrent() != null, "computeStyleRanges must be called from SWT UI thread"); //$NON-NLS-1$
+		IDocument originalDocument= getDocument();
+		Assert.isNotNull(originalDocument, "viewer must have a document before calling computeStyleRanges"); //$NON-NLS-1$
 		String partition= IDocumentExtension3.DEFAULT_PARTITIONING;
 		IPresentationReconciler reconciler= fPresentationReconciler;
 		if (reconciler instanceof IPresentationReconcilerExtension ext) {
@@ -1445,21 +1447,25 @@ public class SourceViewer extends TextViewer
 				partition= extPartition;
 			}
 		}
-		IDocument originalDocument= getDocument();
 		IDocumentPartitioner originalDocumentPartitioner= null;
-		if (document instanceof IDocumentExtension3
+		IDocumentExtension3 documentExt= null;
+		if (document instanceof IDocumentExtension3 docExt
 				&& originalDocument instanceof IDocumentExtension3 originalExt) {
+			documentExt= docExt;
 			originalDocumentPartitioner= originalExt.getDocumentPartitioner(partition);
 		}
+		IDocumentPartitioner externalDocPartitioner= null;
 		try {
-			if (originalDocumentPartitioner != null) {
+			if (originalDocumentPartitioner != null && documentExt != null) {
 				// Temporarily reconnect the partitioner to the external document so that
 				// presentation repairers compute highlighting against the right content.
-				// The finally block always restores it to the original document.
+				// The finally block always restores both documents to their original state.
+				externalDocPartitioner= documentExt.getDocumentPartitioner(partition);
 				originalDocumentPartitioner.disconnect();
 				originalDocumentPartitioner.connect(document);
-				((IDocumentExtension3) document).setDocumentPartitioner(partition, originalDocumentPartitioner);
+				documentExt.setDocumentPartitioner(partition, originalDocumentPartitioner);
 			} else {
+				externalDocPartitioner= document.getDocumentPartitioner();
 				document.setDocumentPartitioner(originalDocument.getDocumentPartitioner());
 			}
 			TextPresentation presentation= new TextPresentation(region, 1000);
@@ -1480,8 +1486,12 @@ public class SourceViewer extends TextViewer
 			}
 			return result;
 		} finally {
-			if (originalDocumentPartitioner != null) {
+			if (originalDocumentPartitioner != null && documentExt != null) {
+				originalDocumentPartitioner.disconnect();
 				originalDocumentPartitioner.connect(originalDocument);
+				documentExt.setDocumentPartitioner(partition, externalDocPartitioner);
+			} else {
+				document.setDocumentPartitioner(externalDocPartitioner);
 			}
 		}
 	}
