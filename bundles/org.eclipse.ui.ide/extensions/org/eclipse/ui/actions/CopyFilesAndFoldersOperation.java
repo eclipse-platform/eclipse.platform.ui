@@ -76,7 +76,6 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
@@ -646,9 +645,9 @@ public class CopyFilesAndFoldersOperation {
 		// CoreExceptions are collected above, but unexpected runtime
 		// exceptions and errors may still occur.
 		IDEWorkbenchPlugin.getDefault().getLog().log(
-				StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format(
+				Status.error(MessageFormat.format(
 						"Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
-						getClass().getName(), e.getTargetException()), null));
+						getClass().getName(), e.getTargetException())));
 		displayError(NLS
 				.bind(
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,

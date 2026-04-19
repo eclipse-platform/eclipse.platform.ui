@@ -180,8 +180,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *            A high level UI message describing when the problem happened.
 	 */
 	public static void log(String message) {
-		getDefault().getLog().log(
-				StatusUtil.newStatus(IStatus.ERROR, message, null));
+		getDefault().getLog().log(Status.error(message));
 	}
 
 	/**
@@ -198,7 +197,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *            The throwable from where the problem actually occurred.
 	 */
 	public static void log(String message, Throwable t) {
-		IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
+		IStatus status = Status.error(message, t);
 		log(message, status);
 	}
 
@@ -240,8 +239,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
 		if (message != null) {
-			getDefault().getLog().log(
-					StatusUtil.newStatus(IStatus.ERROR, message, null));
+			getDefault().getLog().log(Status.error(message));
 		}
 
 		getDefault().getLog().log(status);

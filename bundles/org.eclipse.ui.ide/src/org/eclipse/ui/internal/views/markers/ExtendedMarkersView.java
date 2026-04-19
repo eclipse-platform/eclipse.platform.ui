@@ -104,7 +104,6 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
@@ -1277,9 +1276,8 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 		StatusManager.getManager().handle(
-				StatusUtil.newStatus(IStatus.WARNING,
-						"Sorting by non visible field " //$NON-NLS-1$
-								+ field.getName(), null));
+				Status.warning("Sorting by non visible field " //$NON-NLS-1$
+						+ field.getName()));
 	}
 
 	/**
