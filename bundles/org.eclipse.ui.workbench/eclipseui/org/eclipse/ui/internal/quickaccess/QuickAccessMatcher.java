@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
@@ -34,29 +33,15 @@ public final class QuickAccessMatcher {
 	}
 
 	private static final int[][] EMPTY_INDICES = new int[0][0];
-	private static final String WS_WILD_START = "^\\s*(\\*|\\?)*"; //$NON-NLS-1$
-	private static final String WS_WILD_END = "(\\*|\\?)*\\s*$"; //$NON-NLS-1$
-	private static final String ANY_WS = "\\s+"; //$NON-NLS-1$
-	private static final String EMPTY_STR = ""; //$NON-NLS-1$
-	private static final String PAR_START = "\\("; //$NON-NLS-1$
-	private static final String PAR_END = "\\)"; //$NON-NLS-1$
-	private static final String ONE_CHAR = ".?"; //$NON-NLS-1$
 
 	// whitespaces filter and patterns
 	private String wsFilter;
 	private Pattern wsPattern;
 
-	/**
-	 * Get the existing {@link Pattern} for the given filter, or create a new one.
-	 * The generated pattern will replace whitespace with * to match all.
-	 */
 	private Pattern getWhitespacesPattern(String filter) {
 		if (wsPattern == null || !filter.equals(wsFilter)) {
 			wsFilter = filter;
-			String sFilter = filter.replaceFirst(WS_WILD_START, EMPTY_STR).replaceFirst(WS_WILD_END, EMPTY_STR)
-					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
-			sFilter = String.format(".*(%s).*", sFilter.replaceAll(ANY_WS, ").*(")); //$NON-NLS-1$//$NON-NLS-2$
-			wsPattern = safeCompile(sFilter);
+			wsPattern = QuickAccessMatching.whitespacesPattern(filter);
 		}
 		return wsPattern;
 	}
@@ -65,61 +50,13 @@ public final class QuickAccessMatcher {
 	private String wcFilter;
 	private Pattern wcPattern;
 
-	/**
-	 * Get the existing {@link Pattern} for the given filter, or create a new one.
-	 * The generated pattern will handle '*' and '?' wildcards.
-	 */
 	private Pattern getWildcardsPattern(String filter) {
-		// squash consecutive **** into a single *
-		filter = filter.replaceAll("\\*+", "*"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (wcPattern == null || !filter.equals(wcFilter)) {
-			wcFilter = filter;
-			String sFilter = filter.replaceFirst(WS_WILD_START, EMPTY_STR).replaceFirst(WS_WILD_END, EMPTY_STR)
-					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
-			// replace '*' and '?' with their matchers ").*(" and ").?("
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < sFilter.length(); i++) {
-				char c = sFilter.charAt(i);
-				if (c == '*') {
-					sb.append(").").append(c).append("("); //$NON-NLS-1$ //$NON-NLS-2$
-				} else if (c == '?') {
-					int n = 1;
-					for (; (i + 1) < sFilter.length(); i++) {
-						if (sFilter.charAt(i + 1) != '?') {
-							break;
-						}
-						n++;
-					}
-					sb.append(").").append(n == 1 ? '?' : String.format("{0,%d}", n)).append("("); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				} else {
-					sb.append(c);
-				}
-			}
-			sFilter = String.format(".*(%s).*", sb.toString()); //$NON-NLS-1$
-			// remove empty capturing groups
-			sFilter = sFilter.replace("()", EMPTY_STR); //$NON-NLS-1$
-			//
-			wcPattern = safeCompile(sFilter);
+		String squashed = filter.replaceAll("\\*+", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (wcPattern == null || !squashed.equals(wcFilter)) {
+			wcFilter = squashed;
+			wcPattern = QuickAccessMatching.wildcardsPattern(squashed);
 		}
 		return wcPattern;
-	}
-
-	/**
-	 * A safe way to compile some unknown pattern, avoids possible
-	 * {@link PatternSyntaxException}. If the pattern can't be compiled, some not
-	 * matching pattern will be returned.
-	 *
-	 * @param pattern some pattern to compile, not null
-	 * @return a {@link Pattern} object compiled from given input or a dummy pattern
-	 *         which do not match anything
-	 */
-	private static Pattern safeCompile(String pattern) {
-		try {
-			return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-		} catch (Exception e) {
-			// A "bell" special character: should not match anything we can get
-			return Pattern.compile("\\a"); //$NON-NLS-1$
-		}
 	}
 
 	/**
@@ -134,19 +71,15 @@ public final class QuickAccessMatcher {
 	 */
 	public QuickAccessEntry match(String filter, QuickAccessProvider providerForMatching) {
 		String matchLabel = element.getMatchLabel();
-		// first occurrence of filter
-		int index = matchLabel.toLowerCase().indexOf(filter);
-		if (index != -1) {
-			index = element.getLabel().toLowerCase().indexOf(filter);
-			if (index != -1) { // match actual label
-				int quality = matchLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
-						: (matchLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
-								: QuickAccessEntry.MATCH_GOOD);
-				return new QuickAccessEntry(element, providerForMatching,
-						new int[][] { { index, index + filter.length() - 1 } }, EMPTY_INDICES, quality);
+		String label = element.getLabel();
+		int quality = QuickAccessMatching.substringMatchQuality(matchLabel, label, filter);
+		if (quality != -1) {
+			if (quality == QuickAccessEntry.MATCH_PARTIAL) {
+				return new QuickAccessEntry(element, providerForMatching, EMPTY_INDICES, EMPTY_INDICES, quality);
 			}
-			return new QuickAccessEntry(element, providerForMatching, EMPTY_INDICES, EMPTY_INDICES,
-					QuickAccessEntry.MATCH_PARTIAL);
+			int index = label.toLowerCase().indexOf(filter);
+			return new QuickAccessEntry(element, providerForMatching,
+					new int[][] { { index, index + filter.length() - 1 } }, EMPTY_INDICES, quality);
 		}
 		//
 		Pattern p;
@@ -161,9 +94,8 @@ public final class QuickAccessMatcher {
 		// if matches, return an entry
 		if (m.matches()) {
 			// and highlight match on the label only
-			String label = element.getLabel();
 			if (!matchLabel.equals(label)) {
-				m = p.matcher(element.getLabel());
+				m = p.matcher(label);
 				if (!m.matches()) {
 					return new QuickAccessEntry(element, providerForMatching, EMPTY_INDICES, EMPTY_INDICES,
 							QuickAccessEntry.MATCH_GOOD);
@@ -176,14 +108,13 @@ public final class QuickAccessMatcher {
 				// capturing group
 				indices[i] = new int[] { m.start(nGrp), m.end(nGrp) - 1 };
 			}
-			// return match and list of indices
-			int quality = QuickAccessEntry.MATCH_EXCELLENT;
-			return new QuickAccessEntry(element, providerForMatching, indices, EMPTY_INDICES, quality);
+			return new QuickAccessEntry(element, providerForMatching, indices, EMPTY_INDICES,
+					QuickAccessEntry.MATCH_EXCELLENT);
 		}
 		//
-		String combinedMatchLabel = (providerForMatching.getName() + " " + element.getMatchLabel()); //$NON-NLS-1$
-		String combinedLabel = (providerForMatching.getName() + " " + element.getLabel()); //$NON-NLS-1$
-		index = combinedMatchLabel.toLowerCase().indexOf(filter);
+		String combinedMatchLabel = providerForMatching.getName() + " " + matchLabel; //$NON-NLS-1$
+		String combinedLabel = providerForMatching.getName() + " " + label; //$NON-NLS-1$
+		int index = combinedMatchLabel.toLowerCase().indexOf(filter);
 		if (index != -1) { // match
 			index = combinedLabel.toLowerCase().indexOf(filter);
 			if (index != -1) { // compute highlight on label
@@ -200,7 +131,7 @@ public final class QuickAccessMatcher {
 					QuickAccessEntry.MATCH_PARTIAL);
 		}
 		//
-		String camelCase = CamelUtil.getCamelCase(element.getLabel()); // use actual label for camelcase
+		String camelCase = CamelUtil.getCamelCase(label); // use actual label for camelcase
 		index = camelCase.indexOf(filter);
 		if (index != -1) {
 			int[][] indices = CamelUtil.getCamelCaseIndices(matchLabel, index, filter.length());
