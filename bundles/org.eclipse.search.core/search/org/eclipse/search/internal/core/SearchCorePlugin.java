@@ -16,6 +16,7 @@ package org.eclipse.search.internal.core;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -83,7 +84,7 @@ public class SearchCorePlugin extends Plugin {
 	 *            the status to log
 	 */
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	public static void log(Throwable e) {

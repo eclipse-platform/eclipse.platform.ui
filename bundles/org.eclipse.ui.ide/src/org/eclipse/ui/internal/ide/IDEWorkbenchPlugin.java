@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -180,7 +181,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *            A high level UI message describing when the problem happened.
 	 */
 	public static void log(String message) {
-		getDefault().getLog().log(Status.error(message));
+		ILog.get().log(Status.error(message));
 	}
 
 	/**
@@ -239,10 +240,10 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
 		if (message != null) {
-			getDefault().getLog().log(Status.error(message));
+			ILog.get().log(Status.error(message));
 		}
 
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	@Override

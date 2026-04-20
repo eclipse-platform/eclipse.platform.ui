@@ -18,6 +18,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -55,7 +56,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	public static void logErrorMessage(String message) {

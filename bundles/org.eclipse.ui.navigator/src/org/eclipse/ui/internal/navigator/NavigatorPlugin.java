@@ -88,7 +88,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		protected IStatus run(IProgressMonitor monitor) {
 
 			Object[] mesgs = messages.getListeners();
-			ILog pluginLog = getDefault().getLog();
+			ILog pluginLog = ILog.get();
 			for (Object mesg : mesgs) {
 				pluginLog.log((IStatus)mesg);
 			}
@@ -163,7 +163,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	 */
 	public static void logError(int aCode, String aMessage,
 			Throwable anException) {
-		getDefault().getLog().log(
+		ILog.get().log(
 				createErrorStatus(aCode, aMessage, anException));
 	}
 

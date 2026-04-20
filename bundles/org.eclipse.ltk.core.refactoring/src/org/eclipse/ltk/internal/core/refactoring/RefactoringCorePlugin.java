@@ -22,6 +22,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -71,7 +72,7 @@ public class RefactoringCorePlugin extends Plugin {
 	}
 
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	public static void log(Throwable t) {
