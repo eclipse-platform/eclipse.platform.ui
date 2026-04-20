@@ -29,6 +29,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -375,7 +376,7 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 				// log
 				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.Editor_error_clipboard_copy_failed_message, e);
-				TextEditorPlugin.getDefault().getLog().log(status);
+				ILog.of(TextViewerDeleteLineTarget.class).log(status);
 
 				fClipboard.uninstall();
 				return; // don't delete

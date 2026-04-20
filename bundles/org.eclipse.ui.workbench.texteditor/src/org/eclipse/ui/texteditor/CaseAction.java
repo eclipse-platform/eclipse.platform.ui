@@ -21,8 +21,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IBlockTextSelection;
@@ -35,7 +34,6 @@ import org.eclipse.jface.text.MultiTextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Action that converts the current selection to lower case or upper case.
@@ -131,8 +129,7 @@ public class CaseAction extends TextEditorAction {
 			// don't use the viewer's reveal feature in order to avoid jumping around
 			st.showSelection();
 		} catch (BadLocationException x) {
-			TextEditorPlugin.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, x.getMessage(), x));
+			ILog.of(CaseAction.class).error(x.getMessage(), x);
 		}
 	}
 

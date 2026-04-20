@@ -28,9 +28,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.events.MouseEvent;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -55,10 +54,6 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
-import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Shows <i>info</i>, <i>warning</i>, and <i>error</i> Annotations as line header code minings.
@@ -320,7 +315,7 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 			final String message= quickAssistAssistant.showPossibleQuickAssists();
 
 			if (message != null) {
-				EditorsPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, message));
+				ILog.of(AnnotationCodeMiningProvider.class).error(message);
 			}
 
 		});

@@ -28,9 +28,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.ITextViewer;
 
@@ -222,8 +221,7 @@ public final class CompoundEditExitStrategy {
 			try {
 				listener.endCompoundEdit();
 			} catch (Exception e) {
-				IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "listener notification failed", e); //$NON-NLS-1$
-				TextEditorPlugin.getDefault().getLog().log(status);
+				ILog.of(CompoundEditExitStrategy.class).error("listener notification failed", e); //$NON-NLS-1$
 			}
 		}
 	}

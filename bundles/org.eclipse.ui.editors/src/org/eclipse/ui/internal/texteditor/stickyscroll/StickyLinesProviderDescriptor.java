@@ -22,12 +22,11 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.source.ISourceViewer;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
@@ -122,13 +121,11 @@ public class StickyLinesProviderDescriptor {
 			} else {
 				String message= "Invalid extension to stickyLinesProvider. Must extends IStickyLinesProvider: " //$NON-NLS-1$
 						+ getId();
-				EditorsPlugin.getDefault().getLog()
-						.log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, message));
+				ILog.of(StickyLinesProviderDescriptor.class).error(message);
 				return null;
 			}
 		} catch (CoreException e) {
-			EditorsPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID,
-					"Error while creating stickyLinesProvider: " + getId(), e)); //$NON-NLS-1$
+			ILog.of(StickyLinesProviderDescriptor.class).error("Error while creating stickyLinesProvider: " + getId(), e); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -154,8 +151,7 @@ public class StickyLinesProviderDescriptor {
 		try {
 			return enabledWhen.evaluate(context) == EvaluationResult.TRUE;
 		} catch (CoreException e) {
-			EditorsPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, "Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
+			ILog.of(StickyLinesProviderDescriptor.class).error("Error while 'enabledWhen' evaluation", e); //$NON-NLS-1$
 			return false;
 		}
 	}

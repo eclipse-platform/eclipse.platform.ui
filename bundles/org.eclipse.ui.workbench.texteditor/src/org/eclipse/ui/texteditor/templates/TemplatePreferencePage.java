@@ -63,8 +63,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.expressions.Expression;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.text.templates.TemplateReaderWriter;
@@ -125,7 +124,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.templates.TextViewerAction;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -1491,8 +1489,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @since 3.2
 	 */
 	private void openReadErrorDialog(IOException ex) {
-		IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Failed to read templates.", ex); //$NON-NLS-1$
-		TextEditorPlugin.getDefault().getLog().log(status);
+		ILog.of(TemplatePreferencePage.class).error("Failed to read templates.", ex); //$NON-NLS-1$
 		String title= TemplatesMessages.TemplatePreferencePage_error_read_title;
 		String message= TemplatesMessages.TemplatePreferencePage_error_read_message;
 		MessageDialog.openError(getShell(), title, message);
@@ -1502,8 +1499,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @since 3.2
 	 */
 	private void openWriteErrorDialog(IOException ex) {
-		IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Failed to write templates.", ex); //$NON-NLS-1$
-		TextEditorPlugin.getDefault().getLog().log(status);
+		ILog.of(TemplatePreferencePage.class).error("Failed to write templates.", ex); //$NON-NLS-1$
 		String title= TemplatesMessages.TemplatePreferencePage_error_write_title;
 		String message= TemplatesMessages.TemplatePreferencePage_error_write_message;
 		MessageDialog.openError(getShell(), title, message);

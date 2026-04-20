@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -237,11 +238,11 @@ public final class HyperlinkDetectorDescriptor {
 					result.add(desc);
 				} else {
 					String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_invalidExtension_message, new String[] {desc.getId(), element.getContributor().getName()});
-					TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
+					ILog.of(HyperlinkDetectorDescriptor.class).error(message);
 				}
 			} else {
 				String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_invalidElementName_message, new String[] { element.getContributor().getName(), element.getName() });
-				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
+				ILog.of(HyperlinkDetectorDescriptor.class).error(message);
 			}
 		}
 		return result.toArray(new HyperlinkDetectorDescriptor[result.size()]);

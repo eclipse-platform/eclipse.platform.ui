@@ -21,6 +21,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -63,8 +64,7 @@ public class GenericContentTypeRelatedExtension<T> {
 		try {
 			return (E) extension.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException e) {
-			GenericEditorPlugin.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
+			ILog.of(GenericContentTypeRelatedExtension.class).error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -121,8 +121,7 @@ public class GenericContentTypeRelatedExtension<T> {
 		try {
 			return enabledWhen.evaluate(context) == EvaluationResult.TRUE;
 		} catch (CoreException e) {
-			GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID,
-					"Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
+			ILog.of(GenericContentTypeRelatedExtension.class).error("Error while 'enabledWhen' evaluation", e); //$NON-NLS-1$
 			return false;
 		}
 	}

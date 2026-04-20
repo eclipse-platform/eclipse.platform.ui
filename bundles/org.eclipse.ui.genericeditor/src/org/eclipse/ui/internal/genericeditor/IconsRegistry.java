@@ -22,9 +22,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
@@ -68,7 +67,7 @@ public class IconsRegistry {
 					ResourceLocator.imageDescriptorFromBundle(extension.getNamespaceIdentifier(), icon).ifPresent(imageDescriptor -> this.extensions.put(contentType, imageDescriptor));
 				}
 			} catch (Exception ex) {
-				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+				ILog.of(IconsRegistry.class).error(ex.getMessage(), ex);
 			}
 		}
 

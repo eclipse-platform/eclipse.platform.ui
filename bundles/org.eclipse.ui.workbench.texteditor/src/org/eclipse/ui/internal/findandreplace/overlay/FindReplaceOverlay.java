@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -72,7 +72,6 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.MultiPageEditorSite;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -189,8 +188,7 @@ public class FindReplaceOverlay {
 				method.setAccessible(true);
 				method.invoke(targetPart, Boolean.valueOf(state));
 			} catch (IllegalArgumentException | ReflectiveOperationException ex) {
-				TextEditorPlugin.getDefault().getLog()
-						.log(Status.error("cannot (de-)activate actions for text editor", ex)); //$NON-NLS-1$
+				ILog.of(FindReplaceOverlay.class).error("cannot (de-)activate actions for text editor", ex); //$NON-NLS-1$
 			}
 		}
 

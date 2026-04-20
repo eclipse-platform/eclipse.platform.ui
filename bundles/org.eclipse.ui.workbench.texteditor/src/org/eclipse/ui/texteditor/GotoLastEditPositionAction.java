@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -96,9 +95,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 			try {
 				editor = page.openEditor(editPosition.getEditorInput(), editPosition.getEditorId());
 			} catch (PartInitException ex) {
-				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
-						"Go to Previous Edit Location failed", ex); //$NON-NLS-1$
-				TextEditorPlugin.getDefault().getLog().log(status);
+				ILog.of(GotoLastEditPositionAction.class).error("Go to Previous Edit Location failed", ex); //$NON-NLS-1$
 				return;
 			}
 

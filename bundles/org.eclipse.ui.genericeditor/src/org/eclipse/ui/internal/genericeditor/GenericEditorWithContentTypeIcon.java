@@ -13,9 +13,8 @@
 package org.eclipse.ui.internal.genericeditor;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorMatchingStrategy;
@@ -49,8 +48,7 @@ public class GenericEditorWithContentTypeIcon implements IEditorDescriptor {
 				return image;
 			}
 		} catch (Exception e) {
-			GenericEditorPlugin.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
+			ILog.of(GenericEditorWithContentTypeIcon.class).error(e.getMessage(), e);
 		}
 		return this.editorDescriptor.getImageDescriptor();
 	}

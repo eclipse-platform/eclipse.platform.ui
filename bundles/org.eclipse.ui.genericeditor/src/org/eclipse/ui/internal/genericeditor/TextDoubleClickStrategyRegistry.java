@@ -19,9 +19,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -72,8 +71,7 @@ public class TextDoubleClickStrategyRegistry {
 					this.extensions.put(extension,
 							new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
-					GenericEditorPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+					ILog.of(TextDoubleClickStrategyRegistry.class).error(ex.getMessage(), ex);
 				}
 			}
 		}

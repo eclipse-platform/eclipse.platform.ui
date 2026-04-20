@@ -34,11 +34,8 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Allows to sort an array based on their elements' configuration elements
@@ -157,8 +154,7 @@ public abstract class ConfigurationElementSorter {
 				} catch (BundleException e) {
 					String uid= getExtensionPointUniqueIdentifier(bundle);
 					String message= "ConfigurationElementSorter for '" + uid + "': getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
-					TextEditorPlugin.getDefault().getLog().log(status);
+					ILog.of(ConfigurationElementSorter.class).error(message, e);
 					continue;
 				}
 

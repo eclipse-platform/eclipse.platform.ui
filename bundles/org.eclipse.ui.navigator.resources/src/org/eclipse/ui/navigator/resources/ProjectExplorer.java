@@ -25,6 +25,7 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
@@ -324,7 +325,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 					openProjectCommand.executeWithChecks(new ExecutionEvent());
 				} catch (CommandException ex) {
 					IStatus status = WorkbenchNavigatorPlugin.createErrorStatus("'Open Project' failed", ex); //$NON-NLS-1$
-					WorkbenchNavigatorPlugin.getDefault().getLog().log(status);
+					ILog.of(ProjectExplorer.class).log(status);
 				}
 				return;
 			}

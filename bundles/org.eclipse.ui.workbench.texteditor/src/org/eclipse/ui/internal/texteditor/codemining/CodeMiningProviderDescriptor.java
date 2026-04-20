@@ -22,6 +22,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -154,13 +155,11 @@ class CodeMiningProviderDescriptor {
 			} else {
 				String message = "Invalid extension to codeMiningProviders. Must extends ICodeMiningProvider: " //$NON-NLS-1$
 						+ getId();
-				TextEditorPlugin.getDefault().getLog()
-						.log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, message));
+				ILog.of(CodeMiningProviderDescriptor.class).error(message);
 				return null;
 			}
 		} catch (CoreException e) {
-			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
-					"Error while creating codeMiningProvider: " + getId(), e)); //$NON-NLS-1$
+			ILog.of(CodeMiningProviderDescriptor.class).error("Error while creating codeMiningProvider: " + getId(), e); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -188,8 +187,7 @@ class CodeMiningProviderDescriptor {
 		try {
 			return fEnabledWhen.evaluate(context) == EvaluationResult.TRUE;
 		} catch (CoreException e) {
-			TextEditorPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, "Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
+			ILog.of(CodeMiningProviderDescriptor.class).error("Error while 'enabledWhen' evaluation", e); //$NON-NLS-1$
 			return false;
 		}
 	}

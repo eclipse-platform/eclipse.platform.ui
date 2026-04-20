@@ -24,9 +24,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextHover;
@@ -114,7 +113,7 @@ public final class TextHoverRegistry {
 				try {
 					ext.put(extension, new TextHoverExtension(extension));
 				} catch (Exception ex) {
-					GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+					ILog.of(TextHoverRegistry.class).error(ex.getMessage(), ex);
 				}
 			}
 		}

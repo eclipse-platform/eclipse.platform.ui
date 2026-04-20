@@ -21,13 +21,12 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.source.ISourceViewer;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
@@ -109,7 +108,7 @@ public class StickyLinesProviderRegistry {
 				StickyLinesProviderDescriptor descriptor = descriptorFactory.create(element);
 				descriptors.add(descriptor);
 			} catch (CoreException e) {
-				EditorsPlugin.getDefault().getLog()
+				ILog.of(StickyLinesProviderRegistry.class)
 						.log(new Status(IStatus.ERROR, element.getNamespaceIdentifier(), e.getMessage()));
 			}
 		}
