@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -128,10 +129,9 @@ public class ProjectNaturesPage extends PropertyPage {
 			this.naturesIdsWorkingCopy = new ArrayList<>();
 			this.naturesIdsWorkingCopy.addAll(Arrays.asList(project.getDescription().getNatureIds()));
 		} catch (CoreException ex) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(new Status(IStatus.WARNING,
-					IDEWorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
+			ILog.of(ProjectNaturesPage.class).warn(
 					"Error while loading project description for " + this.project.getName(), //$NON-NLS-1$
-					ex));
+					ex);
 		}
 		this.activeNaturesList.setInput(this.naturesIdsWorkingCopy);
 
@@ -313,10 +313,9 @@ public class ProjectNaturesPage extends PropertyPage {
 		try {
 			originalNatureIds = Arrays.asList(this.project.getDescription().getNatureIds());
 		} catch (CoreException ex) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(new Status(IStatus.WARNING,
-					IDEWorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
+			ILog.of(ProjectNaturesPage.class).warn(
 					"Error while loading project description for " + this.project.getName(), //$NON-NLS-1$
-					ex));
+					ex);
 			originalNatureIds = new ArrayList<>();
 		}
 		if (this.naturesIdsWorkingCopy.size() == originalNatureIds.size()

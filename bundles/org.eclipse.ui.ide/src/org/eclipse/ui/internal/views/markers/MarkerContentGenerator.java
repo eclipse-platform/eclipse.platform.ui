@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -526,7 +527,7 @@ public class MarkerContentGenerator {
 		try {
 			memento.save(writer);
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+			ILog.of(MarkerContentGenerator.class).log(Util.errorStatus(e));
 		}
 		// TODO: We need to migrate this the current class
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(

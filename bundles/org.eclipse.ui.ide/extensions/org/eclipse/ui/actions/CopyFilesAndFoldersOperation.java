@@ -45,6 +45,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -644,10 +645,9 @@ public class CopyFilesAndFoldersOperation {
 	private void display(InvocationTargetException e) {
 		// CoreExceptions are collected above, but unexpected runtime
 		// exceptions and errors may still occur.
-		IDEWorkbenchPlugin.getDefault().getLog().log(
-				Status.error(MessageFormat.format(
-						"Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
-						getClass().getName(), e.getTargetException())));
+		ILog.of(CopyFilesAndFoldersOperation.class).error(MessageFormat.format(
+				"Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
+				getClass().getName(), e.getTargetException()));
 		displayError(NLS
 				.bind(
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,
