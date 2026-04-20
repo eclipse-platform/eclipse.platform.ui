@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -35,7 +36,6 @@ import org.eclipse.ui.internal.progress.JobTreeElement;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.internal.progress.TaskInfo;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.tests.TestPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -168,8 +168,8 @@ public class ProgressViewTests extends ProgressTestCase {
 				job.schedule();
 				scheduleOrder.append(job.getName()).append(", ");
 			}
-			TestPlugin.getDefault().getLog()
-					.log(new Status(IStatus.OK, TestPlugin.PLUGIN_ID, scheduleOrder.toString()));
+			ILog.of(ProgressViewTests.class)
+					.log(new Status(IStatus.OK, ProgressViewTests.class, scheduleOrder.toString()));
 
 			// Wait for all jobs to be running
 			for (DummyJob job : allJobs) {

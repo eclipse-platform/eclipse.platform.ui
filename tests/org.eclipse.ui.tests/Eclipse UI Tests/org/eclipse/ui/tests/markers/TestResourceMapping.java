@@ -22,8 +22,8 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.tests.TestPlugin;
 
 public class TestResourceMapping extends ResourceMapping {
 
@@ -78,7 +78,7 @@ public class TestResourceMapping extends ResourceMapping {
 		try {
 			children = ((IContainer) element).members();
 		} catch (CoreException e) {
-			TestPlugin.getDefault().getLog().log(e.getStatus());
+			ILog.of(TestResourceMapping.class).log(e.getStatus());
 			return new TestResourceMapping[0];
 		}
 		TestResourceMapping[] result = new TestResourceMapping[children.length];
