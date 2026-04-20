@@ -18,9 +18,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
 
@@ -34,7 +33,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -338,7 +336,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 						try {
 							pos= convertToLinePosition(pos, textBuffer.getDocument());
 						} catch (BadLocationException e) {
-							SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
+							ILog.of(PositionTracker.class).error(e.getLocalizedMessage(), e);
 						}
 					}
 					if (match.getOffset() != pos.getOffset() || match.getLength() != pos.getLength()) {

@@ -47,13 +47,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
@@ -75,7 +75,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
@@ -349,8 +348,7 @@ public class SmartImportTests {
 		if (!importRoot.isDirectory()) {
 			importRoot = File.listRoots()[0];
 		}
-		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
-				"Testing job cancel with root: " + importRoot.getAbsolutePath()));
+		ILog.of(SmartImportTests.class).info("Testing job cancel with root: " + importRoot.getAbsolutePath());
 
 		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(importRoot);
