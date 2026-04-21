@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -74,7 +75,7 @@ public class ResourceHelper {
 				i= MAX_RETRY;
 			} catch (CoreException x) {
 				if (i == MAX_RETRY - 1) {
-					FileBuffersTestPlugin.getDefault().getLog().log(x.getStatus());
+					ILog.of(ResourceHelper.class).log(x.getStatus());
 //					throw x;
 				}
 				try {

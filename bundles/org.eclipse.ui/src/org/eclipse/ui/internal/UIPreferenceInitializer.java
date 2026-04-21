@@ -18,6 +18,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -156,7 +157,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 								.getSingleton());
 			}
 		} catch (BackingStoreException e) {
-			UIPlugin.getDefault().getLog().error(e.getLocalizedMessage(), e);
+			ILog.of(UIPreferenceInitializer.class).error(e.getLocalizedMessage(), e);
 		}
 
 		rootNode

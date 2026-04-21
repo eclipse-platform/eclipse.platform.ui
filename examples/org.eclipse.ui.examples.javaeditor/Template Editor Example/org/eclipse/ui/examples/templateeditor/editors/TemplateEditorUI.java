@@ -19,8 +19,7 @@ import java.io.IOException;
 
 import org.osgi.service.prefs.BackingStoreException;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -77,7 +76,7 @@ public class TemplateEditorUI  {
 			try {
 				fStore.load();
 			} catch (IOException e) {
-				JavaEditorExamplePlugin.getDefault().getLog().log(new Status(IStatus.ERROR, "org.eclipse.ui.examples.javaeditor", IStatus.OK, "", e)); //$NON-NLS-1$ //$NON-NLS-2$
+				ILog.of(TemplateEditorUI.class).error("", e); //$NON-NLS-1$
 			}
 		}
 		return fStore;
