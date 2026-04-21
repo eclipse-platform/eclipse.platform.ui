@@ -181,7 +181,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	 * Record a status against this plugin's log.
 	 */
 	public static void log(IStatus aStatus) {
-		//getDefault().getLog().log(aStatus);
 		logJob.log(aStatus);
 		logJob.schedule(LOG_DELAY);
 	}
