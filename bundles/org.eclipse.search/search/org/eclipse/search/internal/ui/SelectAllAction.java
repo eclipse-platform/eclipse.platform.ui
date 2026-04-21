@@ -69,6 +69,7 @@ public class SelectAllAction extends Action {
 			Tree tree= ((TreeViewer) fViewer).getTree();
 			collectExpandedAndVisible(tree.getItems(), allVisible);
 			tree.setSelection(allVisible.toArray(new TreeItem[allVisible.size()]));
+			fViewer.setSelection(fViewer.getSelection());
 		} else if (fViewer instanceof TableViewer) {
 			((TableViewer) fViewer).getTable().selectAll();
 			// force viewer selection change
