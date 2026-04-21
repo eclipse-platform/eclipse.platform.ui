@@ -66,7 +66,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkspaceLock;
@@ -953,11 +952,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 		}
 
-		if (control instanceof ExpandableComposite expandable) {
-			expandable.setTitleBarForeground(fg);
-			expandable.setToggleColor(fg);
-			expandable.setActiveToggleColor(fg);
-		}
 		if (control instanceof Composite composite) {
 			for (Control child : composite.getChildren()) {
 				applyStylesRecursive(child, bg, fg, linkColor);
