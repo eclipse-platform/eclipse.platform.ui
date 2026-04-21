@@ -58,6 +58,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -945,6 +946,15 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	private void applyStylesRecursive(Control control, Color bg, Color fg, Color linkColor) {
+		if (control instanceof Button button) {
+			// On Windows, check buttons need an explicit background; otherwise they
+			// appear white because the parent background is not inherited.
+			if (Platform.OS_WIN32.equals(Platform.getOS()) && (button.getStyle() & SWT.CHECK) != 0) {
+				button.setBackground(bg);
+			}
+			// Leave other buttons unstyled so the native dark appearance is used
+			return;
+		}
 		control.setBackground(bg);
 		if (control instanceof Link link) {
 			link.setLinkForeground(linkColor);
