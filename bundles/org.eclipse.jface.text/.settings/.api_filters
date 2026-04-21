@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface.text" version="2">
+    <resource path="src/org/eclipse/jface/text/Activator.java" type="org.eclipse.jface.text.Activator">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.text.Activator"/>
+                <message_argument value="start(BundleContext)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.text.Activator"/>
+                <message_argument value="stop(BundleContext)"/>
+            </message_arguments>
+        </filter>
+        <filter id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.text.Activator"/>
+                <message_argument value="Activator()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

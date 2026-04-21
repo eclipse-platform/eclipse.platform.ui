@@ -7,47 +7,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 /**
  * @since 3.29
  */
-public class Activator implements BundleActivator {
+public class Activator {
 	/**
 	 * The identifier of the descriptor of this plugin in plugin.xml.
 	 */
 	public static final String ID= "org.eclipse.jface.text"; //$NON-NLS-1$
 
-	private static Activator activator;
-
-	private ExecutorService executor;
-
-	@Override
-	public void start(BundleContext context) {
-		activator= this;
-	}
-
-	@Override
-	public void stop(BundleContext context) {
-		activator= null;
-		if (executor != null) {
-			executor.shutdownNow();
-			executor= null;
-		}
+	private Activator() {
 	}
 
 	public static ExecutorService getExecutor() {
-		activator.createExecutor();
-		return activator.executor;
+		return Holder.EXECUTOR;
 	}
 
-	private void createExecutor() {
-		if (activator.executor != null) {
-			return;
-		}
-
-		executor= new ThreadPoolExecutor(
+	private static final class Holder {
+		static final ExecutorService EXECUTOR= new ThreadPoolExecutor(
 				Runtime.getRuntime().availableProcessors(),
 				Runtime.getRuntime().availableProcessors(),
 				3L, TimeUnit.SECONDS,
