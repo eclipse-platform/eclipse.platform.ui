@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2020 Red Hat Inc., and others
+ * Copyright (c) 2014, 2026 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Rüdiger Herrmann <ruediger.herrmann@gmx.de>
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500836
  *     Lucas Bullen (Red Hat Inc.) - Bug 526490
+ *     IBM Corporation
  ******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -85,6 +86,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -565,7 +567,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		};
 		tree = (CheckboxTreeViewer) filterTree.getViewer();
 		GridData treeGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		treeGridData.heightHint = 90;
+		treeGridData.heightHint = 150;
 		tree.getControl().setLayoutData(treeGridData);
 		tree.setContentProvider(new ITreeContentProvider() {
 			@Override
@@ -589,12 +591,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 
 		});
-		tree.setComparator(new ViewerComparator() {
-			@Override
-			public int compare(Viewer v, Object o1, Object o2) {
-				return ((File) o1).getAbsolutePath().compareTo(((File) o2).getAbsolutePath());
-			}
-		});
+
+		ProjectConfiguratorLabelProvider projectLP = new ProjectConfiguratorLabelProvider();
+		ImportsComparator comparator = new ImportsComparator(projectLP);
+		tree.setComparator(comparator);
 		tree.setCheckStateProvider(new ICheckStateProvider() {
 			@Override
 			public boolean isGrayed(Object element) {
@@ -625,10 +625,33 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.getTree().getColumn(0).setText(DataTransferMessages.SmartImportProposals_folder);
 		tree.getTree().getColumn(0).setWidth(500);
 		ViewerColumn projectTypeColumn = new TreeViewerColumn(tree, SWT.NONE);
-		projectTypeColumn.setLabelProvider(new ProjectConfiguratorLabelProvider());
+		projectTypeColumn.setLabelProvider(projectLP);
 		tree.getTree().getColumn(1).setText(DataTransferMessages.SmartImportProposals_importAs);
 		tree.getTree().getColumn(1).setWidth(150);
+		TreeColumn folderCol = ((TreeViewerColumn) pathColumn).getColumn();
+		folderCol.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(0);
+				tree.getTree().setSortColumn(folderCol);
+				tree.getTree().setSortDirection(comparator.getDirection());
+				tree.refresh();
+			}
+		});
 
+		TreeColumn impAsCol = ((TreeViewerColumn) projectTypeColumn).getColumn();
+		impAsCol.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(1);
+				tree.getTree().setSortColumn(impAsCol);
+				tree.getTree().setSortDirection(comparator.getDirection());
+				tree.refresh();
+			}
+		});
+		comparator.setColumn(0);
+		tree.getTree().setSortColumn(folderCol);
+		tree.getTree().setSortDirection(SWT.UP);
 		this.proposalSelectionDecorator = new ControlDecoration(tree.getTree(), SWT.TOP | SWT.LEFT);
 		Image errorImage = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
 				.getImage();
@@ -715,6 +738,55 @@ public class SmartImportRootWizardPage extends WizardPage {
 		return res;
 	}
 
+	private static final class ImportsComparator extends ViewerComparator {
+		private int column = -1;
+		private int direction = SWT.UP;
+		private final ProjectConfiguratorLabelProvider projectLP;
+
+		public ImportsComparator(ProjectConfiguratorLabelProvider projectLP) {
+			this.projectLP = projectLP;
+		}
+
+		public void setColumn(int column) {
+			if (this.column == column) {
+				direction = (direction == SWT.UP) ? SWT.DOWN : SWT.UP;
+			} else {
+				this.column = column;
+				direction = SWT.UP;
+			}
+		}
+
+		public int getDirection() {
+			return direction;
+		}
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			File f1 = (File) e1;
+			File f2 = (File) e2;
+
+			int res = 0;
+
+			switch (column) {
+			case 0:
+				res = f1.getAbsolutePath().compareToIgnoreCase(f2.getAbsolutePath());
+				break;
+
+			case 1:
+				String t1 = getValue(projectLP.getText(f1));
+				String t2 = getValue(projectLP.getText(f2));
+				res = t1.compareToIgnoreCase(t2);
+				break;
+			}
+
+			return direction == SWT.UP ? res : -res;
+		}
+
+		private String getValue(String s) {
+			return s == null ? "" : s; //$NON-NLS-1$
+		}
+
+	}
 	protected boolean isExistingProject(File element) {
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			IPath location = project.getLocation();
