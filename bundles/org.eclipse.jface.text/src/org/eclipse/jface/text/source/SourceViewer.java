@@ -1426,12 +1426,16 @@ public class SourceViewer extends TextViewer
 	 * </p>
 	 *
 	 * @param document the external document whose content should be highlighted; must not be
-	 *            {@code null} and must use the same language/content type as this viewer
+	 *            {@code null} and must use the same language/content type as this viewer; must
+	 *            implement {@link org.eclipse.jface.text.IDocumentExtension3} — if either
+	 *            {@code document} or the viewer's current document does not implement
+	 *            {@code IDocumentExtension3}, an empty list is returned
 	 * @param region the region within {@code document} for which style ranges are computed; must
 	 *            not be {@code null}
 	 * @return the list of {@link org.eclipse.swt.custom.StyleRange}s covering the given region, as
 	 *         produced by this viewer's presentation reconciler; never {@code null}, may be empty
-	 *         if no repairer is registered for the content type
+	 *         if no repairer is registered for the content type, or if either document does not
+	 *         implement {@code IDocumentExtension3}
 	 * @throws BadLocationException if {@code region} is outside the bounds of {@code document}
 	 * @since 3.31
 	 */
@@ -1439,12 +1443,13 @@ public class SourceViewer extends TextViewer
 		Assert.isTrue(Display.getCurrent() != null, "computeStyleRanges must be called from SWT UI thread"); //$NON-NLS-1$
 		IDocument originalDocument= getDocument();
 		Assert.isNotNull(originalDocument, "viewer must have a document before calling computeStyleRanges"); //$NON-NLS-1$
-		String partition= IDocumentExtension3.DEFAULT_PARTITIONING;
+		List<StyleRange> result= new ArrayList<>();
+		String partitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 		IPresentationReconciler reconciler= fPresentationReconciler;
 		if (reconciler instanceof IPresentationReconcilerExtension ext) {
-			String extPartition= ext.getDocumentPartitioning();
-			if (extPartition != null && !extPartition.isEmpty()) {
-				partition= extPartition;
+			String extPartitioning= ext.getDocumentPartitioning();
+			if (extPartitioning != null && !extPartitioning.isEmpty()) {
+				partitioning= extPartitioning;
 			}
 		}
 		IDocumentPartitioner originalDocumentPartitioner= null;
@@ -1452,46 +1457,42 @@ public class SourceViewer extends TextViewer
 		if (document instanceof IDocumentExtension3 docExt
 				&& originalDocument instanceof IDocumentExtension3 originalExt) {
 			documentExt= docExt;
-			originalDocumentPartitioner= originalExt.getDocumentPartitioner(partition);
+			originalDocumentPartitioner= originalExt.getDocumentPartitioner(partitioning);
+		} else {
+			return result;
 		}
 		IDocumentPartitioner externalDocPartitioner= null;
 		try {
-			if (originalDocumentPartitioner != null && documentExt != null) {
-				// Temporarily reconnect the partitioner to the external document so that
-				// presentation repairers compute highlighting against the right content.
-				// The finally block always restores both documents to their original state.
-				externalDocPartitioner= documentExt.getDocumentPartitioner(partition);
+			// Temporarily reconnect the partitioner to the external document so that
+			// presentation repairers compute highlighting against the right content.
+			// The finally block always restores both documents to their original state.
+			externalDocPartitioner= documentExt.getDocumentPartitioner(partitioning);
+			if (originalDocumentPartitioner != null) {
 				originalDocumentPartitioner.disconnect();
 				originalDocumentPartitioner.connect(document);
-				documentExt.setDocumentPartitioner(partition, originalDocumentPartitioner);
-			} else {
-				externalDocPartitioner= document.getDocumentPartitioner();
-				document.setDocumentPartitioner(originalDocument.getDocumentPartitioner());
+				documentExt.setDocumentPartitioner(partitioning, originalDocumentPartitioner);
 			}
-			TextPresentation presentation= new TextPresentation(region, 1000);
-			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, partition, region.getOffset(),
+			TextPresentation presentation= new TextPresentation(region, Math.max(region.getLength() / 10, 16));
+			ITypedRegion[] partitioningRegions= TextUtilities.computePartitioning(document, partitioning, region.getOffset(),
 					region.getLength(), false);
-			for (ITypedRegion r : partitioning) {
-				IPresentationRepairer repairer= reconciler.getRepairer(r.getType());
+			for (ITypedRegion partitioningRegion : partitioningRegions) {
+				IPresentationRepairer repairer= reconciler.getRepairer(partitioningRegion.getType());
 				if (repairer != null) {
 					repairer.setDocument(document);
-					repairer.createPresentation(presentation, r);
+					repairer.createPresentation(presentation, partitioningRegion);
 					repairer.setDocument(originalDocument);
 				}
 			}
-			List<StyleRange> result= new ArrayList<>();
 			var it= presentation.getAllStyleRangeIterator();
 			while (it.hasNext()) {
 				result.add(it.next());
 			}
 			return result;
 		} finally {
-			if (originalDocumentPartitioner != null && documentExt != null) {
+			if (originalDocumentPartitioner != null) {
 				originalDocumentPartitioner.disconnect();
 				originalDocumentPartitioner.connect(originalDocument);
-				documentExt.setDocumentPartitioner(partition, externalDocPartitioner);
-			} else {
-				document.setDocumentPartitioner(externalDocPartitioner);
+				documentExt.setDocumentPartitioner(partitioning, externalDocPartitioner);
 			}
 		}
 	}

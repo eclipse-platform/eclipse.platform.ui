@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextAttribute;
@@ -74,7 +76,9 @@ public class SourceViewerComputeStyleRangesTest {
 	@Test
 	public void testBasicStyleRanges() throws Exception {
 		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		var document= new Document("original content");
+		setupDefaultPartitioning(document);
+		viewer.setDocument(document);
 
 		Document externalDoc= new Document("some 'highlighted' text");
 		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
@@ -91,7 +95,9 @@ public class SourceViewerComputeStyleRangesTest {
 	@Test
 	public void testNoMatchingContent() throws Exception {
 		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		var document= new Document("original content");
+		setupDefaultPartitioning(document);
+		viewer.setDocument(document);
 
 		Document externalDoc= new Document("no special content here");
 		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
@@ -107,7 +113,9 @@ public class SourceViewerComputeStyleRangesTest {
 	@Test
 	public void testRegionSubset() throws Exception {
 		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		var document= new Document("original content");
+		setupDefaultPartitioning(document);
+		viewer.setDocument(document);
 
 		// Put quoted text at position 10..22
 		Document externalDoc= new Document("0123456789'highlighted'rest");
@@ -129,28 +137,31 @@ public class SourceViewerComputeStyleRangesTest {
 		SourceViewer viewer= createConfiguredViewer();
 		String originalContent= "original content";
 		Document originalDoc= new Document(originalContent);
-		IDocumentPartitioner originalPartitioner= setupPartitioning(originalDoc);
+		IDocumentPartitioner originalPartitioner= setupDefaultPartitioning(originalDoc);
 		assertNotNull(originalPartitioner);
 		viewer.setDocument(originalDoc);
 
 		Document externalDoc= new Document("some 'highlighted' text");
-		IDocumentPartitioner externalPartitioner= setupPartitioning(externalDoc);
+		IDocumentPartitioner externalPartitioner= setupDefaultPartitioning(externalDoc);
 		assertNotNull(externalPartitioner);
 		viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
 
 		assertEquals(originalContent, originalDoc.get(), "Original document content must not change");
-		assertEquals(originalPartitioner, originalDoc.getDocumentPartitioner(),
+		assertEquals(originalPartitioner, originalDoc.getDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING),
 				"Original document partitioner must be restored");
-		assertEquals(externalPartitioner, externalDoc.getDocumentPartitioner(),
+		assertEquals(externalPartitioner, externalDoc.getDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING),
 				"External document partitioner must be restored");
 	}
 
 	@Test
 	public void testEmptyRegion() throws Exception {
-		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		SourceViewer viewer= createConfiguredViewerWithNamedPartitioning();
+		var document= new Document("original content");
+		setupNamedPartitioning(document);
+		viewer.setDocument(document);
 
 		Document externalDoc= new Document("some 'highlighted' text");
+		setupNamedPartitioning(externalDoc);
 		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, 0));
 
 		assertNotNull(styles);
@@ -163,8 +174,10 @@ public class SourceViewerComputeStyleRangesTest {
 
 	@Test
 	public void testMultipleStyleRanges() throws Exception {
-		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		SourceViewer viewer= createConfiguredViewerWithNamedPartitioning();
+		var document= new Document("original content");
+		setupNamedPartitioning(document);
+		viewer.setDocument(document);
 
 		Document externalDoc= new Document("'first' normal 'second' end");
 		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
@@ -179,7 +192,9 @@ public class SourceViewerComputeStyleRangesTest {
 	@Test
 	public void testBadLocationExceptionForOutOfBoundsRegion() throws Exception {
 		SourceViewer viewer= createConfiguredViewer();
-		viewer.setDocument(new Document("original content"));
+		var document= new Document("original content");
+		setupDefaultPartitioning(document);
+		viewer.setDocument(document);
 
 		Document externalDoc= new Document("short");
 		assertThrows(BadLocationException.class,
@@ -248,6 +263,22 @@ public class SourceViewerComputeStyleRangesTest {
 		assertEquals(externalPartitioner, restoredExternalPartitioner);
 	}
 
+	@Test
+	public void testNonDocumentExtension3ReturnsEmpty() throws Exception {
+		SourceViewer viewer= createConfiguredViewer();
+		Document originalDoc= new Document("original content");
+		setupDefaultPartitioning(originalDoc);
+		viewer.setDocument(originalDoc);
+
+		// Create a document that does NOT implement IDocumentExtension3
+		// so that computeStyleRanges takes the early-return path
+		IDocument document= mock(IDocument.class);
+		List<StyleRange> styles= viewer.computeStyleRanges(document, new Region(0, document.getLength()));
+
+		assertNotNull(styles);
+		assertTrue(styles.isEmpty(), "Expected empty style ranges for non-IDocumentExtension3 document");
+	}
+
 	private SourceViewer createConfiguredViewer() {
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
 		viewer.configure(new SourceViewerConfiguration() {
@@ -297,10 +328,10 @@ public class SourceViewerComputeStyleRangesTest {
 		return partitioner;
 	}
 
-	private IDocumentPartitioner setupPartitioning(Document document) {
+	private IDocumentPartitioner setupDefaultPartitioning(Document document) {
 		IPartitionTokenScanner partitionScanner= new RuleBasedPartitionScanner();
 		IDocumentPartitioner partitioner= new FastPartitioner(partitionScanner, new String[] {});
-		document.setDocumentPartitioner(partitioner);
+		document.setDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING, partitioner);
 		partitioner.connect(document);
 		return partitioner;
 	}
