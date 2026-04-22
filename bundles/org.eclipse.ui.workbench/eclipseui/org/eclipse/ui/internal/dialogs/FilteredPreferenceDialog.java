@@ -119,6 +119,18 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			super(parent, treeStyle, filter, true, true);
 		}
 
+		@Override
+		protected Text doCreateFilterText(Composite parent) {
+			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+		}
+
+		@Override
+		public void setInitialText(String text) {
+			if (filterText != null && !filterText.isDisposed()) {
+				filterText.setMessage(text != null ? text : ""); //$NON-NLS-1$
+			}
+		}
+
 		/**
 		 * Add an additional, optional filter to the viewer. If the filter text is
 		 * cleared, this filter will be removed from the TreeViewer.
