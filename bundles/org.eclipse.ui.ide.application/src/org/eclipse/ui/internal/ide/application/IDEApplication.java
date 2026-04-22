@@ -166,11 +166,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// look and see if there's a splash shell we can parent off of
 			Shell shell = WorkbenchPlugin.getSplashShell(display);
 			if (shell != null) {
-				// should should set the icon and message for this shell to be the
-				// same as the chooser dialog - this will be the guy that lives in
-				// the task bar and without these calls you'd have the default icon
-				// with no message.
-				shell.setText(ChooseWorkspaceDialog.getWindowTitle());
+				// Set the taskbar title and icon for the splash shell. The title
+				// is taken from the configured product; if no product is set, the
+				// launcher's default title is kept.
+				IProduct product = Platform.getProduct();
+				if (product != null && product.getName() != null) {
+					shell.setText(product.getName());
+				}
 				shell.setImages(Window.getDefaultImages());
 			}
 
