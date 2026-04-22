@@ -75,7 +75,7 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 			try {
 				scopedStore.save();
 			} catch (IOException e) {
-				ILog.of(getClass()).error("Cannot to save preferences.", e); //$NON-NLS-1$
+				ILog.of(getClass()).error("Cannot save preferences.", e); //$NON-NLS-1$
 				return false;
 			}
 		}
