@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -75,7 +75,7 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 			try {
 				scopedStore.save();
 			} catch (IOException e) {
-				Platform.getLog(getClass()).error("Cannot to save preferences.", e); //$NON-NLS-1$
+				ILog.of(getClass()).error("Cannot to save preferences.", e); //$NON-NLS-1$
 				return false;
 			}
 		}

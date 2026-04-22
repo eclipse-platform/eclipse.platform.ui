@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
@@ -431,7 +432,7 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 		// Theme not found (e.g. it was uninstalled); fall back to default
-		Platform.getLog(ThemeEngine.class)
+		ILog.of(ThemeEngine.class)
 				.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!E4_DEFAULT_THEME_ID.equals(themeId)) {
 			setTheme(E4_DEFAULT_THEME_ID, restore);
