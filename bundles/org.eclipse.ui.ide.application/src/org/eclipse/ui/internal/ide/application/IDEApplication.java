@@ -36,6 +36,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -74,7 +75,6 @@ import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
@@ -836,8 +836,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		try (OutputStream output = new FileOutputStream(versionFile)) {
 			props.store(output, null);
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
-					StatusUtil.newError(e));
+			ILog.of(IDEApplication.class).error("Could not write version file", e); //$NON-NLS-1$
 		}
 	}
 
