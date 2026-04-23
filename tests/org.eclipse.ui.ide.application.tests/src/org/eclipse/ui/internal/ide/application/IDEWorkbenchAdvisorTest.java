@@ -41,6 +41,7 @@ public class IDEWorkbenchAdvisorTest {
 	private static final String PLUGIN_ID = "org.eclipse.ui.ide.application.tests";
 	private Display display = null;
 	private ISchedulingRule rule;
+	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	private static final class SaveHook implements ISaveParticipant, Closeable {
 		public ISaveContext saving = null;
@@ -197,6 +198,64 @@ public class IDEWorkbenchAdvisorTest {
 			assertEquals(expectedLogs, logs.get(), message);
 		} finally {
 			IDEWorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
+		}
+	}
+
+	/**
+	 * Workbench shutdown should complete cleanly when the workspace save takes
+	 * longer than the progress service's long operation time. In that case the
+	 * progress dialog is expected to open after the delay, but the save must
+	 * still run to completion and the save hooks must fire.
+	 *
+	 * Regression test for issue 1269 (flashing shutdown dialog).
+	 */
+	@Test
+	public void testShutdownWithSlowSave() throws CoreException {
+		try (SaveHook saveHook = new SaveHook()) {
+			// Exceeds the default IProgressService#getLongOperationTime (800ms),
+			// so the new code path schedules and opens the progress dialog.
+			final long sleepMillis = 1200L;
+			workspace.addSaveParticipant(PLUGIN_ID + ".slow", new ISaveParticipant() {
+				@Override
+				public void saving(ISaveContext context) {
+					try {
+						Thread.sleep(sleepMillis);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+
+				@Override
+				public void prepareToSave(ISaveContext context) {
+				}
+
+				@Override
+				public void doneSaving(ISaveContext context) {
+				}
+
+				@Override
+				public void rollback(ISaveContext context) {
+				}
+			});
+			try {
+				IDEWorkbenchAdvisor advisor = new IDEWorkbenchAdvisor() {
+					@Override
+					public void postStartup() {
+						super.postStartup();
+						display.asyncExec(() -> PlatformUI.getWorkbench().close());
+					}
+				};
+				int returnCode = PlatformUI.createAndRunWorkbench(display, advisor);
+				assertEquals(PlatformUI.RETURN_OK, returnCode);
+				dispatchDisplay();
+
+				assertNotNull(saveHook.prepareToSave);
+				assertNotNull(saveHook.saving);
+				assertNotNull(saveHook.doneSaving);
+				assertNull(saveHook.rollback);
+			} finally {
+				workspace.removeSaveParticipant(PLUGIN_ID + ".slow");
+			}
 		}
 	}
 
