@@ -165,7 +165,7 @@ public class DirectoryProposalContentAssist {
 			proposalProvider = new FileNameSubstringMatchContentProposalProvider();
 			KeyStroke triggeringKeyStroke = safeKeyStroke("Ctrl+Space"); //$NON-NLS-1$
 			adapter = new OpenableContentProposalAdapter(control, controlContentAdapter, proposalProvider,
-					triggeringKeyStroke, null);
+					triggeringKeyStroke, new char[] { '/', '\\' });
 			adapter.setPropagateKeys(true);
 			adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 		}
