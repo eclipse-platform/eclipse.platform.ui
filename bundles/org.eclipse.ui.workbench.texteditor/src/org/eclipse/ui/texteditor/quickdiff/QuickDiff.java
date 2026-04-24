@@ -139,10 +139,19 @@ public class QuickDiff {
 		IQuickDiffReferenceProvider provider= getReferenceProviderOrDefault(editor, id);
 		if (provider != null) {
 			DocumentLineDiffer differ= new DocumentLineDiffer();
+			differ.setDisplayName(getEditorInputName(editor));
 			differ.setReferenceProvider(provider);
 			return differ;
 		}
 		return null;
+	}
+
+	private static String getEditorInputName(ITextEditor editor) {
+		if (editor == null) {
+			return null;
+		}
+		var input= editor.getEditorInput();
+		return input != null ? input.getName() : null;
 	}
 
 	/**

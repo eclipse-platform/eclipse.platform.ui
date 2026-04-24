@@ -166,6 +166,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		// create if needed
 		if (differ == null && createIfNeeded) {
 			differ= new DocumentLineDiffer();
+			differ.setDisplayName(editorInput.getName());
 			model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		}
 

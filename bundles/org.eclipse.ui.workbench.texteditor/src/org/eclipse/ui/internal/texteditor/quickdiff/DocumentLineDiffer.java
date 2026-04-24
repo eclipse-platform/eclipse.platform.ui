@@ -179,6 +179,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private final List<IAnnotationModelListener> fAnnotationModelListeners= new ArrayList<>();
 	/** The job currently initializing the differ, or <code>null</code> if there is none. */
 	private Job fInitializationJob;
+	/** Optional display name (e.g. editor input name) used to label progress reporting. */
+	private String fDisplayName;
 	/** Stores <code>DocumentEvents</code> while an initialization is going on. */
 	private final List<DocumentEvent> fStoredEvents= new ArrayList<>();
 	/**
@@ -500,6 +502,16 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	}
 
 	/**
+	 * Sets an optional display name used to label this differ's background job in the
+	 * Progress view. Typically the name of the editor input being compared.
+	 *
+	 * @param displayName the display name, or <code>null</code> to use the generic label
+	 */
+	public void setDisplayName(String displayName) {
+		fDisplayName= displayName;
+	}
+
+	/**
 	 * (Re-)initializes the differ using the current reference and <code>DiffInitializer</code>.
 	 *
 	 * @since 3.2 protected for testing reasons, package visible before
@@ -533,7 +545,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			oldJob.cancel();
 		}
 
-		fInitializationJob= new Job(QuickDiffMessages.quickdiff_initialize) {
+		String jobName= fDisplayName != null
+				? NLSUtility.format(QuickDiffMessages.quickdiff_initialize_file, fDisplayName)
+				: QuickDiffMessages.quickdiff_initialize;
+		fInitializationJob= new Job(jobName) {
 
 			/*
 			 * This is run in a different thread. As the documents might be synchronized, never ever
