@@ -153,6 +153,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private final int workspaceWaitDelay;
 
+	/**
+	 * Captured during {@link #initialize(IWorkbenchConfigurer)} so
+	 * {@link #disconnectFromWorkspace()} does not have to reach through
+	 * {@link PlatformUI#getWorkbench()} after the workbench has been shut down.
+	 */
+	private int savedLongOperationTime;
+
 	private final Listener closeListener = event -> {
 		boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
 		event.doit = doExit;
@@ -190,6 +197,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
+
+		savedLongOperationTime = configurer.getWorkbench().getProgressService().getLongOperationTime();
 
 		PluginActionBuilder.setAllowIdeLogging(true);
 
@@ -487,8 +496,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		};
 
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		final int longOperationTime = PlatformUI.getWorkbench().getProgressService().getLongOperationTime();
+		final Display display = Display.getCurrent();
+		final int longOperationTime = savedLongOperationTime;
 		final Runnable openDialog = () -> {
 			if (ProgressManagerUtil.safeToOpen(dialog, null)) {
 				dialog.open();
