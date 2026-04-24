@@ -61,6 +61,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -79,7 +80,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
-import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
@@ -498,12 +498,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		final Display display = Display.getCurrent();
 		final int longOperationTime = savedLongOperationTime;
-		final Runnable openDialog = () -> {
-			if (ProgressManagerUtil.safeToOpen(dialog, null)) {
+		final Runnable openDialogLater = () -> {
+			if (!display.isDisposed() && !hasModalShell(display)) {
 				dialog.open();
 			}
 		};
-		display.timerExec(longOperationTime, openDialog);
+		display.timerExec(longOperationTime, openDialogLater);
 
 		try {
 			BusyIndicator.showWhile(display, () -> {
@@ -518,7 +518,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			});
 		} finally {
-			display.timerExec(-1, openDialog);
+			// Cancel openDialogLater if it is still pending; no-op if it already ran.
+			display.timerExec(-1, openDialogLater);
 		}
 
 		if (!status.isOK()) {
@@ -526,6 +527,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					IStatus.ERROR | IStatus.WARNING);
 			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
 		}
+	}
+
+	private static boolean hasModalShell(Display display) {
+		final int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+		for (Shell shell : display.getShells()) {
+			if (!shell.isDisposed() && shell.isVisible() && (shell.getStyle() & modal) != 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
