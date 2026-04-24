@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.genericeditor
 Bundle-Vendor: Eclipse.org
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.14.0,6.0.0)",
  org.junit.jupiter.api.function;version="[5.14.0,6.0.0)",
  org.junit.jupiter.api.io;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
