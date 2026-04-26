@@ -144,7 +144,7 @@
    <element name="targetContentType">
       <annotation>
          <documentation>
-            Describes a content type that the column is contributed to. See the &lt;tt&gt;org.eclipse.core.runtime.contentTypes&lt;/tt&gt; extension point. Note that the rulerColumns extension point is typically only supported by line based text editors.
+            Describes a content type that the column is contributed to. See the &lt;tt&gt;org.eclipse.core.contenttype.contentTypes&lt;/tt&gt; extension point. Note that the rulerColumns extension point is typically only supported by line based text editors.
          </documentation>
       </annotation>
       <complexType>

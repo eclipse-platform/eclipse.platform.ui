@@ -88,7 +88,7 @@
          <attribute name="contentTypeId" type="string">
             <annotation>
                <documentation>
-                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point for which this factory should be used
+                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.contenttype.contentTypes&lt;/code&gt; extension point for which this factory should be used
                </documentation>
             </annotation>
          </attribute>
