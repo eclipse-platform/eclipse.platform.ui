@@ -1211,7 +1211,7 @@
    </extension>
    
    <extension
-   		point="org.eclipse.core.runtime.contentTypes">
+   		point="org.eclipse.core.contenttype.contentTypes">
    		
       	<!-- ObjectContributionTest: This is the content-type-based object contribution -->
 		<content-type 
