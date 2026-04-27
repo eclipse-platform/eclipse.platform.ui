@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -212,14 +213,16 @@ public class IDEWorkbenchAdvisorTest {
 	@Test
 	public void testShutdownWithSlowSave() throws CoreException {
 		try (SaveHook saveHook = new SaveHook()) {
-			// Exceeds the default IProgressService#getLongOperationTime (800ms),
-			// so the new code path schedules and opens the progress dialog.
-			final long sleepMillis = 1200L;
+			// Sleep duration is derived from the live IProgressService#getLongOperationTime()
+			// value in postStartup(), so the test exercises the delayed-open path even if
+			// the platform default ever changes.
+			final long sleepMarginMillis = 500L;
+			final AtomicLong sleepMillis = new AtomicLong();
 			workspace.addSaveParticipant(PLUGIN_ID + ".slow", new ISaveParticipant() {
 				@Override
 				public void saving(ISaveContext context) {
 					try {
-						Thread.sleep(sleepMillis);
+						Thread.sleep(sleepMillis.get());
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					}
@@ -242,6 +245,9 @@ public class IDEWorkbenchAdvisorTest {
 					@Override
 					public void postStartup() {
 						super.postStartup();
+						long longOperationTime = PlatformUI.getWorkbench().getProgressService()
+								.getLongOperationTime();
+						sleepMillis.set(longOperationTime + sleepMarginMillis);
 						display.asyncExec(() -> PlatformUI.getWorkbench().close());
 					}
 				};
