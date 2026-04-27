@@ -40,7 +40,7 @@ import jakarta.inject.Singleton;
 @Singleton
 public class AnimationManager {
 
-	private static final int DEBOUNCE_MILLIS = 100;
+	private static final int DEBOUNCE_MILLIS = 200;
 
 	volatile boolean animated = false;
 

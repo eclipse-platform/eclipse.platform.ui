@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Display;
  * update.
  */
 public class AnimationManager {
-	private static final int DEBOUNCE_MILLIS = 100;
+	private static final int DEBOUNCE_MILLIS = 200;
 
 	private static AnimationManager singleton;
 
