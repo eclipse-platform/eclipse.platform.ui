@@ -28,13 +28,21 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.StyledStringHighlighter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.BoldStylerProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -46,9 +54,10 @@ import org.eclipse.swt.widgets.Table;
 
 public class BasicPartList extends AbstractTableInformationControl {
 
-	private class BasicStackListLabelProvider extends ColumnLabelProvider {
+	private class BasicStackListLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
 		private final Font boldFont;
+		private BoldStylerProvider boldStylerProvider;
 
 		public BasicStackListLabelProvider() {
 			Font font = Display.getDefault().getSystemFont();
@@ -60,14 +69,45 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 
 		@Override
-		public Font getFont(Object element) {
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			String text = getText(element);
+			cell.setText(text);
+			cell.setImage(getImage(element));
+			cell.setFont(isHidden(element) ? boldFont : null);
+
+			SearchPattern matcher = getMatcher();
+			if (matcher == null || text == null || text.isEmpty()) {
+				cell.setStyleRanges(null);
+			} else {
+				int prefixOffset = text.startsWith("*") ? 1 : 0; //$NON-NLS-1$
+				String unprefixed = text.substring(prefixOffset);
+				StyledString styled = new StyledStringHighlighter().highlight(unprefixed, matcher.getPattern(),
+						getBoldStylerProvider().getBoldStyler());
+				StyleRange[] ranges = styled.getStyleRanges();
+				if (prefixOffset > 0) {
+					for (StyleRange range : ranges) {
+						range.start += prefixOffset;
+					}
+				}
+				cell.setStyleRanges(ranges);
+			}
+			super.update(cell);
+		}
+
+		private boolean isHidden(Object element) {
 			if (element instanceof MPart part) {
 				CTabItem item = renderer.findItemForPart(part);
-				if (item != null && !item.isShowing()) {
-					return boldFont;
-				}
+				return item != null && !item.isShowing();
 			}
-			return super.getFont(element);
+			return false;
+		}
+
+		private BoldStylerProvider getBoldStylerProvider() {
+			if (boldStylerProvider == null) {
+				boldStylerProvider = new BoldStylerProvider(boldFont);
+			}
+			return boldStylerProvider;
 		}
 
 		@Override
@@ -81,7 +121,6 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		@Override
 		public Image getImage(Object element) {
-			// Check if icons should be hidden for view tabs
 			if (shouldHideIcons()) {
 				return null;
 			}
@@ -99,7 +138,27 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 
 		@Override
+		public void addListener(ILabelProviderListener listener) {
+			// no-op
+		}
+
+		@Override
+		public void removeListener(ILabelProviderListener listener) {
+			// no-op
+		}
+
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		@Override
 		public void dispose() {
+			super.dispose();
+			if (boldStylerProvider != null) {
+				boldStylerProvider.dispose();
+				boldStylerProvider = null;
+			}
 			boldFont.dispose();
 		}
 	}
