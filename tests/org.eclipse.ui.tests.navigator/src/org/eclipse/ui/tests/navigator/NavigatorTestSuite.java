@@ -21,6 +21,7 @@ package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.ui.tests.navigator.cdt.CdtTest;
 import org.eclipse.ui.tests.navigator.jst.JstPipelineTest;
+import org.eclipse.ui.tests.navigator.resources.CloseUnrelatedProjectsActionEnablementTest;
 import org.eclipse.ui.tests.navigator.resources.FoldersAsProjectsContributionTest;
 import org.eclipse.ui.tests.navigator.resources.NestedResourcesTests;
 import org.eclipse.ui.tests.navigator.resources.PathComparatorTest;
@@ -36,6 +37,7 @@ import org.junit.platform.suite.api.SelectClasses;
 		LabelProviderTest.class, SorterTest.class, ViewerTest.class, CdtTest.class, M12Tests.class,
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
 		EvaluationCacheTest.class, ResourceMgmtActionProviderTests.class,
+		CloseUnrelatedProjectsActionEnablementTest.class,
 		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class,
 		GoBackForwardsTest.class, CopyPasteActionTest.class
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails

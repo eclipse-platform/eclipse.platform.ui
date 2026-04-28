@@ -19,7 +19,9 @@ package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -63,9 +64,11 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	private List<IResource> projectsToClose = new ArrayList<>();
 
-	private boolean selectionDirty = true;
-
 	private List<? extends IResource> oldSelection = Collections.emptyList();
+
+	// Cached workspace project graph. Built lazily, reused across selection
+	// changes, invalidated when project open state or description changes.
+	private DisjointSet<IProject> projectGraph;
 
 
 	/**
@@ -131,25 +134,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		initAction();
 	}
 
-	/**
-	 * Overrides to avoid calling the expensive
-	 * {@code computeRelated(List)} during selection changes. Uses only
-	 * the raw selection to determine enablement.
-	 */
-	@Override
-	protected boolean updateSelection(IStructuredSelection s) {
-		selectionDirty = true;
-		if (!selectionIsOfType(IResource.PROJECT)) {
-			return false;
-		}
-		for (IResource resource : super.getSelectedResources()) {
-			if (resource instanceof IProject project && project.isOpen()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public void run() {
 		if (promptForConfirmation()) {
@@ -207,46 +191,60 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
-	}
-
-	@Override
-	protected void clearCache() {
-		super.clearCache();
-		oldSelection = Collections.emptyList();
-		selectionDirty = true;
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
-	 * Computes the related projects of the selection.
+	 * Computes the projects unrelated to the given selection.
 	 */
 	private List<IResource> computeRelated(List<? extends IResource> selection) {
 		if (selection.contains(ResourcesPlugin.getWorkspace().getRoot())) {
 			return new ArrayList<>();
 		}
-		//build the connected component set for all projects in the workspace
-		DisjointSet<IProject> set = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		//remove the connected components that the selected projects are in
+		DisjointSet<IProject> set = getProjectGraph();
+		Set<IProject> excludedRoots = new HashSet<>();
 		for (IResource resource : selection) {
 			IProject project = resource.getProject();
 			if (project != null) {
-				set.removeSet(project);
+				IProject root = set.findSet(project);
+				if (root != null) {
+					excludedRoots.add(root);
+				}
 			}
 		}
-		//the remainder of the projects in the disjoint set are unrelated to the selection
+		List<IProject> all = new ArrayList<>();
+		set.toList(all);
 		List<IResource> projects = new ArrayList<>();
-		set.toList(projects);
+		for (IProject project : all) {
+			IProject root = set.findSet(project);
+			if (root != null && !excludedRoots.contains(root)) {
+				projects.add(project);
+			}
+		}
 		return projects;
+	}
+
+	private DisjointSet<IProject> getProjectGraph() {
+		DisjointSet<IProject> graph = projectGraph;
+		if (graph == null) {
+			graph = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+			projectGraph = graph;
+		}
+		return graph;
+	}
+
+	private void invalidateProjectGraph() {
+		projectGraph = null;
+		oldSelection = Collections.emptyList();
+		clearCache();
 	}
 
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
-		if (selectionDirty) {
-			List<? extends IResource> newSelection = super.getSelectedResources();
-			if (!oldSelection.equals(newSelection)) {
-				oldSelection = newSelection;
-				projectsToClose = computeRelated(newSelection);
-			}
-			selectionDirty = false;
+		List<? extends IResource> newSelection = super.getSelectedResources();
+		if (!oldSelection.equals(newSelection)) {
+			oldSelection = newSelection;
+			projectsToClose = computeRelated(newSelection);
 		}
 		return projectsToClose;
 	}
@@ -259,19 +257,22 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * the selection when the open state or description of any project changes.
 	 */
 	@Override
-	public void resourceChanged(IResourceChangeEvent event) {
-		// don't bother looking at delta if selection not applicable
-		if (selectionIsOfType(IResource.PROJECT)) {
-			IResourceDelta delta = event.getDelta();
-			if (delta != null) {
-				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-				for (IResourceDelta projDelta : projDeltas) {
-					//changing either the description or the open state can affect enablement
-					if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
-						selectionChanged(getStructuredSelection());
-						return;
-					}
+	public synchronized void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
+			return;
+		}
+		IResourceDelta[] projDeltas = delta
+				.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED | IResourceDelta.CHANGED);
+		for (IResourceDelta projDelta : projDeltas) {
+			int kind = projDelta.getKind();
+			if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED
+					|| (projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
+				invalidateProjectGraph();
+				if (selectionIsOfType(IResource.PROJECT)) {
+					selectionChanged(getStructuredSelection());
 				}
+				return;
 			}
 		}
 	}
