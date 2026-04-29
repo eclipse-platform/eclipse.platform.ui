@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -129,25 +128,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 				IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text_plural,
 				IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip_plural);
 		initAction();
-	}
-
-	/**
-	 * Overrides to avoid calling the expensive
-	 * {@code computeRelated(List)} during selection changes. Uses only
-	 * the raw selection to determine enablement.
-	 */
-	@Override
-	protected boolean updateSelection(IStructuredSelection s) {
-		selectionDirty = true;
-		if (!selectionIsOfType(IResource.PROJECT)) {
-			return false;
-		}
-		for (IResource resource : super.getSelectedResources()) {
-			if (resource instanceof IProject project && project.isOpen()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
