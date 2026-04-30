@@ -98,13 +98,6 @@ Button  {
     swt-selected-highlight-top: true;
 }
 
-.Editor Form Composite,
-.Editor Form Composite Tree,
-.MPartStack.active .Editor Form Composite Tree
-{
-	background-color: #1E1F22;
-}
-
 #org-eclipse-e4-ui-compatibility-editor Canvas,
 #org-eclipse-e4-ui-compatibility-editor Canvas > *
 {

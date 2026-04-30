@@ -101,8 +101,8 @@ ImageBasedFrame,
 .MPartStack.active .MPart Form DependenciesComposite,
 .MPartStack.active .MPart Form ListEditorComposite,
 .MPartStack.active .MPart Form Text[style~='SWT.READ_ONLY'],
-.MPartStack.active .MPart Form DependenciesComposite > SashForm > Section > * { /* Section > DependenciesComposite$... */ 
-	background-color: #4f5355;
+.MPartStack.active .MPart Form DependenciesComposite > SashForm > Section > * { /* Section > DependenciesComposite$... */
+	background-color: #2F2F2F;
 	color: #f4f7f7;
 }
 #org-eclipse-help-ui-HelpView Form,
@@ -179,13 +179,6 @@ ImageBasedFrame,
     swt-selected-tab-highlight: '#2b79d7';
     swt-selected-highlight-top: true;
 } 
-
-.Editor Form Composite,
-.Editor Form Composite Tree,
-.MPartStack.active .Editor Form Composite Tree
-{
-	background-color: #1E1F22;
-}
 
 #org-eclipse-e4-ui-compatibility-editor Canvas,
 #org-eclipse-e4-ui-compatibility-editor Canvas > *
