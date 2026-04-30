@@ -14,15 +14,13 @@
  *******************************************************************************/
 
 
-Form, FormHeading {
+Form {
 	background-color: #ffffff;
 	background: #ffffff;
 	color: #505050;
-}
 
-Form {
 	/* Bug 465148: Additional styling for the Form */
-	text-background-color: #ffffff;
+	text-background-color: #eaeaea;
 
 	tb-toggle-hover-color: #505050;
 	tb-toggle-color: #505050;
@@ -30,6 +28,12 @@ Form {
 	h-hover-light-color: #505050;
 	h-bottom-keyline-2-color: #eaeaea;
 	h-bottom-keyline-1-color: #eaeaea;
+}
+
+FormHeading {
+	background-color: #eaeaea;
+	background: #eaeaea;
+	color: #505050;
 }
 
 
