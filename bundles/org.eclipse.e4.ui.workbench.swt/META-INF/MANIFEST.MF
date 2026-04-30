@@ -45,7 +45,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.swt;
  org.eclipse.e4.ui.workbench.swt.factories;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.internal.copy;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
  org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench"
-Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
+Import-Package: jakarta.annotation;version="[2.0.0,4.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
  org.eclipse.osgi.service.datalocation;version="1.2.0",
  org.eclipse.osgi.service.debug;version="1.1.0",
