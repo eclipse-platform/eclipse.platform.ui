@@ -464,11 +464,12 @@ public class Section extends ExpandableComposite {
 	}
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight, int realtheight) {
 		Color gradient = getTitleBarGradientBackground() != null ? getTitleBarGradientBackground() : getBackground();
-		if (gradient.equals(bg)) {
-			// Flat look: gradient and background are the same, no image needed
+		if (gradient.equals(bg) && bg.equals(getBackground())) {
+			// Section is uniform; the body background already fills everything.
 			super.setBackgroundImage(null);
 			return;
 		}
+		// Image paints the title bar contrast against the section body.
 		Image image = FormImages.getInstance().getSectionGradientImage(gradient, bg, realtheight,
 				theight, marginHeight, getDisplay());
 		super.setBackgroundImage(image);
