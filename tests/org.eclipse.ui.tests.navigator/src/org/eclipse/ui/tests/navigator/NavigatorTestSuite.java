@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018, 2023 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.ui.tests.navigator.cdt.CdtTest;
 import org.eclipse.ui.tests.navigator.jst.JstPipelineTest;
+import org.eclipse.ui.tests.navigator.resources.CloseUnrelatedProjectsActionTest;
 import org.eclipse.ui.tests.navigator.resources.FoldersAsProjectsContributionTest;
 import org.eclipse.ui.tests.navigator.resources.NestedResourcesTests;
 import org.eclipse.ui.tests.navigator.resources.PathComparatorTest;
@@ -37,7 +38,8 @@ import org.junit.platform.suite.api.SelectClasses;
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
 		EvaluationCacheTest.class, ResourceMgmtActionProviderTests.class,
 		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class,
-		GoBackForwardsTest.class, CopyPasteActionTest.class
+		GoBackForwardsTest.class, CopyPasteActionTest.class,
+		CloseUnrelatedProjectsActionTest.class,
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
 		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })
