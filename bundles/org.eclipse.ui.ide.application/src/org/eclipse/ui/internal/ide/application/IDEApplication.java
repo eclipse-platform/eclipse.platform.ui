@@ -901,9 +901,16 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			darkThemeShowListener = event -> {
 				if (event.widget instanceof Shell shell) {
 					applyDarkStyles(shell);
+					// Re-apply after the current event to cover popup shells (e.g. content
+					// proposal) whose content is populated after the SWT.Show event fires.
+					display.asyncExec(() -> {
+						if (!shell.isDisposed()) {
+							applyDarkStyles(shell);
+						}
+					});
 				}
 			};
-			display.addListener(SWT.Show, darkThemeShowListener);
+			display.addFilter(SWT.Show, darkThemeShowListener);
 		}
 	}
 
@@ -914,7 +921,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 */
 	protected void resetEarlyDarkTheme(Display display) {
 		if (darkThemeShowListener != null) {
-			display.removeListener(SWT.Show, darkThemeShowListener);
+			display.removeFilter(SWT.Show, darkThemeShowListener);
 			darkThemeShowListener = null;
 		}
 		if (isDark) {
