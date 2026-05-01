@@ -58,6 +58,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -686,6 +688,17 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			buttonLabelToId.put(IDEWorkbenchMessages.IDEApplication_version_exit, IDialogConstants.CLOSE_ID);
 			MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, message, severity,
 					buttonLabelToId, 0, IDEWorkbenchMessages.IDEApplication_version_doNotWarnAgain, false) {
+				@Override
+				protected Control createDialogArea(Composite parent) {
+					Composite composite = (Composite) super.createDialogArea(parent);
+					Button toggle = getToggleButton();
+					if (toggle != null && !toggle.isDisposed()) {
+						GridData toggleData = new GridData(SWT.BEGINNING, SWT.TOP, false, false);
+						toggleData.horizontalIndent = 50;
+						toggle.setLayoutData(toggleData);
+					}
+					return composite;
+				}
 				@Override
 				protected Shell getParentShell() {
 					// Bug 429308: Make workspace selection dialog visible
