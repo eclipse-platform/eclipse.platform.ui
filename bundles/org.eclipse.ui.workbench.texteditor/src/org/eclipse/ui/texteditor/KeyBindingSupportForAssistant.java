@@ -136,6 +136,11 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
+		// Do not replace commands twice if several processors are registered. This
+		// method gets called for each processor.
+		if (fReplacedCommands != null && !fReplacedCommands.isEmpty()) {
+			return;
+		}
 		ICommandService commandService= PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandler handler= getHandler(ContentAssistant.SELECT_NEXT_PROPOSAL_COMMAND_ID);
 		fReplacedCommands= new ArrayList<>(10);
