@@ -1016,10 +1016,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_workspaceEntryLabel;
 	public static String ChooseWorkspaceDialog_browseLabel;
 	public static String ChooseWorkspaceDialog_browseTooltip;
+	public static String ChooseWorkspaceDialog_importLabel;
+	public static String ChooseWorkspaceDialog_importTooltip;
 	public static String ChooseWorkspaceDialog_launchLabel;
 	public static String ChooseWorkspaceDialog_directoryBrowserTitle;
 	public static String ChooseWorkspaceDialog_directoryBrowserMessage;
 	public static String ChooseWorkspaceDialog_removeWorkspaceSelection;
+	public static String ChooseWorkspaceDialog_noRecentWorkspaceFound;
+	public static String ChooseWorkspaceDialog_addMoreRecentWorkspaces;
 	public static String ChooseWorkspaceDialog_recentWorkspaces;
 
 	public static String ChooseWorkspaceDialog_ResolvedAbsolutePath;
