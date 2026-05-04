@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
@@ -43,7 +45,7 @@ public class ChooseWorkspaceData {
 	 * configuration area preference store for persistence. The only encoding
 	 * done is to convert the recent workspace list into a comma-separated list.
 	 */
-	private static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
+	public static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
 
 	/**
 	 * This is the second version of the encode/decode protocol that uses the
@@ -53,7 +55,7 @@ public class ChooseWorkspaceData {
 	 *
 	 * @since 3.3.1
 	 */
-	private static final int PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS = 3;
+	public static final int PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS = 3;
 
 	private boolean showDialog = true;
 
@@ -309,14 +311,17 @@ public class ChooseWorkspaceData {
 	 * The the preference for recent workspaces must be converted from the
 	 * storage string into an array.
 	 */
-	private static String[] decodeStoredWorkspacePaths(int protocol, int max, String prefValue) {
-		String[] paths = new String[max];
+	/**
+	 * Decodes stored workspace paths from a preference value into an array
+	 * of paths without length restriction.
+	 */
+	public static String[] decodeStoredWorkspacePaths(int protocol, String prefValue) {
 		if (prefValue == null || prefValue.length() <= 0) {
-			return paths;
+			return new String[0];
 		}
 
 		// if we're using the latest version of the protocol use the newline as a
-		// token.  Otherwise use the older comma.
+		// token. Otherwise use the older comma.
 		String tokens = null;
 		switch (protocol) {
 			case PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS :
@@ -327,16 +332,30 @@ public class ChooseWorkspaceData {
 				break;
 		}
 		if (tokens == null) {
-			// Unknown version? corrupt file? we can't log it because we don't
-			// have a workspace yet...
 			return new String[0];
 		}
 
 		StringTokenizer tokenizer = new StringTokenizer(prefValue, tokens);
-		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i) {
-			paths[i] = tokenizer.nextToken();
+		List<String> paths = new ArrayList<>();
+		while (tokenizer.hasMoreTokens()) {
+			paths.add(tokenizer.nextToken());
 		}
 
+		return paths.toArray(new String[0]);
+	}
+
+	/**
+	 * The preference for recent workspaces must be converted from the
+	 * storage string into an array of size {@code max}.
+	 */
+	public static String[] decodeStoredWorkspacePaths(int protocol, int max, String prefValue) {
+		String[] paths = new String[max];
+		if (prefValue == null || prefValue.length() <= 0) {
+			return paths;
+		}
+
+		String[] decoded = decodeStoredWorkspacePaths(protocol, prefValue);
+		System.arraycopy(decoded, 0, paths, 0, Math.min(decoded.length, max));
 		return paths;
 	}
 
