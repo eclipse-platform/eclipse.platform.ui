@@ -26,6 +26,7 @@ import java.util.Stack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -467,6 +468,25 @@ public class SourceViewer extends TextViewer
 		}
 		if (fOverviewRuler != null) {
 			fOverviewRuler.createControl(fComposite, this);
+		}
+
+		if (fComposite != null) {
+			StyledText textWidget= getTextWidget();
+			if (textWidget != null) {
+				// Match the canvas background to the text widget so the RulerLayout gap blends in.
+				syncCompositeBackground(textWidget);
+				textWidget.addPaintListener(e -> syncCompositeBackground(textWidget));
+			}
+		}
+	}
+
+	private void syncCompositeBackground(StyledText textWidget) {
+		if (fComposite == null || fComposite.isDisposed() || textWidget.isDisposed()) {
+			return;
+		}
+		Color desired= textWidget.getBackground();
+		if (desired != null && !desired.equals(fComposite.getBackground())) {
+			fComposite.setBackground(desired);
 		}
 	}
 
