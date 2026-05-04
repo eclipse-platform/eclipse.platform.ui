@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.DirtyIndicatorPainter;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
@@ -286,17 +287,28 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	}
 
 	/**
-	 * Prepends a {@code *} to the labelText if editorReference is dirty.
+	 * Prepends a {@code *} to the labelText if editorReference is dirty. When the
+	 * {@link CTabRendering#SHOW_DIRTY_INDICATOR_ON_TABS new dirty indicator style}
+	 * is enabled the prefix is omitted, because {@link DirtyIndicatorPainter}
+	 * paints a filled circle next to the title instead.
 	 *
 	 * @param editorReference reference to check for dirty state
 	 * @param labelText       the label text for the editorReference
 	 * @return text with dirty indication when appropriate
 	 */
 	private String prependDirtyIndicationIfDirty(EditorReference editorReference, String labelText) {
-		if (editorReference.isDirty()) {
+		if (editorReference.isDirty() && !DirtyIndicatorPainter.isEnabled()) {
 			return DIRTY_PREFIX + labelText;
 		}
 		return labelText;
+	}
+
+	@Override
+	protected String getWorkbenchPartReferenceText(WorkbenchPartReference ref) {
+		if (DirtyIndicatorPainter.isEnabled()) {
+			return ref.getTitle();
+		}
+		return super.getWorkbenchPartReferenceText(ref);
 	}
 
 	/**
@@ -401,6 +413,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		});
 
 		ColumnViewerToolTipSupport.enableFor(tableViewerColumn.getViewer());
+		DirtyIndicatorPainter.install(((TableViewer) tableViewerColumn.getViewer()).getTable(),
+				data -> data instanceof EditorReference ref && ref.isDirty());
 	}
 
 	/** True if the given model represents the active editor */
