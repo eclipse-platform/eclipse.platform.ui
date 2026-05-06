@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -234,6 +235,33 @@ public class StickyScrollingControlTest {
 		assertEquals(10, stickyLineText.getLineSpacing());
 		assertEquals(font, stickyLineText.getFont());
 		assertEquals(hoverColor, stickyLineText.getForeground());
+	}
+
+	@Test
+	void testCanvasBoundsHeightAdjustsForVariableLineHeights() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+
+		// Step 1: Set 2 plain-text sticky lines and record canvas height
+		List<IStickyLine> plainLines = List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1));
+		stickyScrollingControl.setStickyLines(plainLines);
+		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
+		int heightWithPlainText = stickyControlCanvas.getBounds().height;
+
+		// Step 2: Replace second sticky line with line requiring space
+		Font largerFont = new Font(Display.getDefault(),
+				new FontData(shell.getFont().getFontData()[0].getName(), 40, SWT.NORMAL));
+		String bigText = "line 2 big"; //$NON-NLS-1$
+		StyleRange bigFontRange = new StyleRange(0, bigText.length(), null, null);
+		bigFontRange.font = largerFont;
+		List<IStickyLine> linesWithLargerFont = List.of(new StickyLineStub("line 1", 0),
+				new StickyLineStub(bigText, 1, new StyleRange[] { bigFontRange }));
+		stickyScrollingControl.setStickyLines(linesWithLargerFont);
+		int heightWithLargerFont = getStickyControlCanvas(shell).getBounds().height;
+
+		assertTrue(heightWithLargerFont > heightWithPlainText,
+				"Canvas height must increase when one sticky line has a larger font"); //$NON-NLS-1$
+
+		largerFont.dispose();
 	}
 
 	@Test
