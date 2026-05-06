@@ -39,7 +39,7 @@ public class TestElement extends ElementAdapter {
 	private List<Node> children = null;
 
 	public TestElement(String type, CSSEngine engine) {
-		super(null, engine);
+		super(new Object(), engine);
 		this.typeName = type;
 	}
 
