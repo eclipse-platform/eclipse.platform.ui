@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -116,20 +117,28 @@ public class QuickAccessDialog extends PopupDialog {
 		final MWindow model = workbenchWindow.getModel();
 
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(), () -> {
-			final CommandProvider commandProvider = new CommandProvider();
-			commandProvider.setContext(model.getContext().getActiveLeaf());
+			final IEclipseContext commandContext = model.getContext().getActiveLeaf();
+			final MApplication application = model.getContext().get(MApplication.class);
 			List<QuickAccessProvider> providers = new ArrayList<>();
 			previousPicksProvider = new PreviousPicksProvider(MAXIMUM_NUMBER_OF_ELEMENTS);
 			previousPicksProvider.setElementsInitializer(() -> restorePreviousEntries(providers));
 			providers.add(previousPicksProvider);
-			providers.add(new EditorProvider());
-			providers.add(new ViewProvider(model.getContext().get(MApplication.class), model));
-			providers.add(new PerspectiveProvider());
-			providers.add(commandProvider);
-			providers.add(new ActionProvider());
-			providers.add(new WizardProvider());
-			providers.add(new PreferenceProvider());
-			providers.add(new PropertiesProvider());
+			providers.add(new LazyQuickAccessProvider("org.eclipse.ui.editors", true, EditorProvider::new)); //$NON-NLS-1$
+			providers.add(new LazyQuickAccessProvider("org.eclipse.e4.ui.parts", true, //$NON-NLS-1$
+					() -> new ViewProvider(application, model)));
+			providers.add(
+					new LazyQuickAccessProvider("org.eclipse.ui.perspectives", true, PerspectiveProvider::new)); //$NON-NLS-1$
+			providers.add(new LazyQuickAccessProvider("org.eclipse.ui.commands", true, () -> { //$NON-NLS-1$
+				CommandProvider cp = new CommandProvider();
+				cp.setContext(commandContext);
+				return cp;
+			}));
+			providers.add(new LazyQuickAccessProvider("org.eclipse.ui.actions", true, ActionProvider::new)); //$NON-NLS-1$
+			providers.add(new LazyQuickAccessProvider("org.eclipse.ui.wizards", false, WizardProvider::new)); //$NON-NLS-1$
+			providers.add(
+					new LazyQuickAccessProvider("org.eclipse.ui.preferences", true, PreferenceProvider::new)); //$NON-NLS-1$
+			providers.add(
+					new LazyQuickAccessProvider("org.eclipse.ui.properties", true, PropertiesProvider::new)); //$NON-NLS-1$
 			providers.addAll(QuickAccessExtensionManager.getProviders(() -> {
 				if (display != null) {
 					display.asyncExec(() -> {
@@ -139,7 +148,7 @@ public class QuickAccessDialog extends PopupDialog {
 					});
 				}
 			}));
-			providers.add(new HelpSearchProvider());
+			providers.add(new LazyQuickAccessProvider("search.help", false, HelpSearchProvider::new)); //$NON-NLS-1$
 
 			Collection<String> previousPickProviderIds = getPreviousPickProviderIds(getDialogSettings());
 			previousPicksProvider.setInvolvedProviders(
