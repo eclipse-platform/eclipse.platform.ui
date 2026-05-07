@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.tests.css.core.parser.MediaRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.RGBColorImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.SelectorTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
+import org.eclipse.e4.ui.tests.css.core.parser.StyleSheetStructureTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ValueTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
 import org.junit.platform.suite.api.SelectClasses;
@@ -36,6 +37,7 @@ import org.junit.platform.suite.api.Suite;
 	MediaRulesTest.class,
 	RGBColorImplTest.class,
 	StyleRuleTest.class,
+	StyleSheetStructureTest.class,
 	ViewCSSTest.class,
 	ValueTest.class,
 	SelectorTest.class,

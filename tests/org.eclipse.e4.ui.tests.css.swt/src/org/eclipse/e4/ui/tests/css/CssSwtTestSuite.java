@@ -33,13 +33,16 @@ import org.eclipse.e4.ui.tests.css.swt.Bug459961Test;
 import org.eclipse.e4.ui.tests.css.swt.ButtonTest;
 import org.eclipse.e4.ui.tests.css.swt.ButtonTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTWidgetTest;
+import org.eclipse.e4.ui.tests.css.swt.CTabFolderActiveClassTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabFolderTest;
+import org.eclipse.e4.ui.tests.css.swt.CTabItemSelectionTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabItemTest;
 import org.eclipse.e4.ui.tests.css.swt.ColorDefinitionTest;
 import org.eclipse.e4.ui.tests.css.swt.CompositeTest;
 import org.eclipse.e4.ui.tests.css.swt.DescendentTest;
 import org.eclipse.e4.ui.tests.css.swt.FontDefinitionTest;
 import org.eclipse.e4.ui.tests.css.swt.GradientTest;
+import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesPseudoKeyTest;
 import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesTest;
 import org.eclipse.e4.ui.tests.css.swt.IdClassLabelColorTest;
 import org.eclipse.e4.ui.tests.css.swt.InheritTest;
@@ -65,7 +68,9 @@ import org.junit.platform.suite.api.Suite;
 		SWTResourceRegistryKeyFactoryTest.class, SWTResourcesRegistryTest.class, FontDefinitionTest.class,
 		ColorDefinitionTest.class, ThemesExtensionTest.class, IEclipsePreferencesTest.class,
 		EclipsePreferencesHelperTest.class, CSSSWTWidgetTest.class, LabelTest.class, LinkTest.class,
-		CTabFolderTest.class, CTabItemTest.class, IdClassLabelColorTest.class, ShellTest.class, ButtonTest.class,
+		CTabFolderTest.class, CTabFolderActiveClassTest.class, CTabItemTest.class, CTabItemSelectionTest.class,
+		IEclipsePreferencesPseudoKeyTest.class,
+		IdClassLabelColorTest.class, ShellTest.class, ButtonTest.class,
 		ToolItemTest.class, GradientTest.class, MarginTest.class, InnerClassElementTest.class,
 		EclipsePreferencesHandlerTest.class, PreferenceOverriddenByCssChangeListenerTest.class,
 		ButtonTextTransformTest.class, LabelTextTransformTest.class, TextTextTransformTest.class, DescendentTest.class,

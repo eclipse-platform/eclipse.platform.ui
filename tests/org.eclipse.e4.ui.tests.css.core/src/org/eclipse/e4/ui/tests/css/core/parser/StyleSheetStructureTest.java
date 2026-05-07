@@ -44,7 +44,7 @@ import org.w3c.dom.css.RGBColor;
  * parser introduced during the CSS engine rework must produce an AST these
  * tests still accept.
  */
-class StyleSheetStructureTest {
+public class StyleSheetStructureTest {
 
 	@Test
 	void testEmptyStyleSheet() throws Exception {
