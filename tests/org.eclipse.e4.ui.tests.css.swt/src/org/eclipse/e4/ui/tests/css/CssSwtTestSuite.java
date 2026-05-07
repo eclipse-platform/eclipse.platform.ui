@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.tests.css.swt.CSSSWTWidgetTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabFolderTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabItemTest;
 import org.eclipse.e4.ui.tests.css.swt.ColorDefinitionTest;
+import org.eclipse.e4.ui.tests.css.swt.CompositeTest;
 import org.eclipse.e4.ui.tests.css.swt.DescendentTest;
 import org.eclipse.e4.ui.tests.css.swt.FontDefinitionTest;
 import org.eclipse.e4.ui.tests.css.swt.GradientTest;
@@ -47,6 +48,7 @@ import org.eclipse.e4.ui.tests.css.swt.LabelTest;
 import org.eclipse.e4.ui.tests.css.swt.LabelTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.LinkTest;
 import org.eclipse.e4.ui.tests.css.swt.MarginTest;
+import org.eclipse.e4.ui.tests.css.swt.PaddingTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellActiveTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellTest;
 import org.eclipse.e4.ui.tests.css.swt.TableTest;
@@ -69,7 +71,8 @@ import org.junit.platform.suite.api.Suite;
 		ButtonTextTransformTest.class, LabelTextTransformTest.class, TextTextTransformTest.class, DescendentTest.class,
 		ThemeTest.class, Bug459961Test.class, Bug419482Test.class, ShellActiveTest.class, InheritTest.class,
 		TableTest.class, TreeTest.class, TabbedPropertiesListTest.class, TabbedPropertiesTitleTest.class,
-		ExpandableCompositeTest.class, SectionTest.class })
+		ExpandableCompositeTest.class, SectionTest.class,
+		CompositeTest.class, PaddingTest.class })
 public class CssSwtTestSuite {
 
 }
