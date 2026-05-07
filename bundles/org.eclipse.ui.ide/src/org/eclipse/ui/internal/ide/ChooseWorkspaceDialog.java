@@ -207,18 +207,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			getTitleImageLabel().setVisible(false);
 		}
 
-		// Will create Recent Workspaces Composite always.
-		boolean createRecentWorkspacesComposite = true;
-//		if (launchData.getRecentWorkspaces()[0] != null) {
-//			createRecentWorkspacesComposite = true;
-//		}
 		createWorkspaceBrowseRow(composite);
 		if (!suppressAskAgain) {
 			createShowDialogButton(composite);
 		}
-		if (createRecentWorkspacesComposite) {
-			createRecentWorkspacesComposite(composite);
-		}
+
+		// Will create Recent Workspaces Composite always.
+		createRecentWorkspacesComposite(composite);
 
 		Dialog.applyDialogFont(composite);
 		return composite;
@@ -393,59 +388,19 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		toggle.addListener(SWT.MouseDown, toggleListener);
 		label.addListener(SWT.MouseDown, toggleListener);
 
-		logInfo("[ChooseWorkspaceDialog][createRecentWorkspacesComposite] Before launchData size: " //$NON-NLS-1$
-				+ (launchData.getRecentWorkspaces() != null ? launchData.getRecentWorkspaces().length : 0));
-		String[] workspacesArray = launchData.getRecentWorkspaces();
-		List<String> recentWorkspaces = (workspacesArray != null && workspacesArray.length > 0)
-				? filterDuplicatedPaths(workspacesArray)
-				: new ArrayList<>();
+//		logInfo("[ChooseWorkspaceDialog][createRecentWorkspacesComposite] Before launchData size: " //$NON-NLS-1$
+//				+ (launchData.getRecentWorkspaces() != null ? launchData.getRecentWorkspaces().length : 0));
+		List<String> recentWorkspaces = filterDuplicatedPaths(launchData.getRecentWorkspaces());
 
-		// NEW CODE: Check if recent workspaces list is empty
-//		if (recentWorkspaces == null || recentWorkspaces.isEmpty()) {
-		// Show message in the panel
-		if (recentWorkspaces == null || recentWorkspaces.isEmpty()) {
+		// Check if recent workspaces list is empty
+		if (recentWorkspaces.isEmpty()) {
 			Label emptyLabel = new Label(panel, SWT.WRAP);
 			emptyLabel.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_noRecentWorkspaceFound);
-			emptyLabel.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
 		} else {
 			Label moreLabel = new Label(panel, SWT.WRAP);
 			moreLabel.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_addMoreRecentWorkspaces);
-			moreLabel.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
 		}
-// link kind of logic for "Import..." starts
-//		Link importLink = new Link(panel, SWT.WRAP);
-//		importLink.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
-//		importLink.setText("<a>Import...</a>"); //$NON-NLS-1$
-//		importLink.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				showImportWorkspacesDialog(); // ALWAYS allow manual import
-//			}
-//		});
-//link kind of logic for "Import..." ends
 
-// DO NOT DELETE
-//		// Show a prompt dialog when the dialog opens, but only ONCE
-//		Shell shell = getShell();
-//		if (shell != null && !shell.isDisposed() && !hasShownImportPrompt) {
-//			hasShownImportPrompt = true; // Set flag to prevent showing again
-//			shell.getDisplay().asyncExec(() -> {
-//				// Check again if still empty before showing prompt
-//				// This prevents showing prompt if workspaces were already imported
-//				List<String> currentWorkspaces = getRecentWorkspaces();
-//				if (currentWorkspaces == null || currentWorkspaces.isEmpty()) {
-//					showImportWorkspacesPromptDialog();
-//				}
-//			});
-//		}
-//DO NOT DELETE
-
-		// Force layout BEFORE return (important)
-//		panel.layout(true);
-//		recentWorkspacesForm.layout(true, true);
-//		recentWorkspacesLinks = new HashMap<>();
-//		return;
-//	}
 		recentWorkspacesLinks = new HashMap<>(recentWorkspaces.size());
 		Map<String, String> uniqueWorkspaceNames = createUniqueWorkspaceNameMap();
 
@@ -481,556 +436,135 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			});
 			link.setMenu(menu);
 		}
-		logInfo("[ChooseWorkspaceDialog][createRecentWorkspacesComposite] Before recentWorkspaces size: " //$NON-NLS-1$
-				+ recentWorkspaces.size());
-		panel.layout(true);
-		recentWorkspacesForm.layout(true, true);
+//		logInfo("[ChooseWorkspaceDialog][createRecentWorkspacesComposite] Before recentWorkspaces size: " //$NON-NLS-1$
+//				+ recentWorkspaces.size());
+//		panel.layout(true);
+//		recentWorkspacesForm.layout(true, true);
 	}
 
-// DO NOT DELETE
-//		/**
-//		 * Shows a prompt dialog asking if user wants to import workspaces User can
-//		 * choose to import or cancel and proceed with new workspace
-//		 */
-//		private void showImportWorkspacesPromptDialog() {
-//			Shell shell = getShell();
-//			if (shell == null || shell.isDisposed()) {
-//				return;
-//			}
-//
-//			// Double-check that workspaces are still empty before showing dialog
-//			List<String> recentWorkspaces = getRecentWorkspaces();
-//			if (recentWorkspaces != null && !recentWorkspaces.isEmpty()) {
-//				// Workspaces were imported somehow, don't show the dialog
-//				logInfo("[ChooseWorkspaceDialog][showImportWorkspacesPromptDialog] recentWorkspaces is empty so returning"); //$NON-NLS-1$
-//				return;
-//			}
-//
-//			// Create a confirmation dialog
-//			MessageDialog dialog = new MessageDialog(shell, "No Recent Workspaces", // Title //$NON-NLS-1$
-//					null, // Dialog title image
-//					"No recent workspaces found.\n\nWould you like to import workspaces from a previous Eclipse installation?\n\n", //$NON-NLS-1$
-//					// "No recent workspaces found.\n\nWould you like to import workspaces from a
-//					// previous Eclipse installation?\n\n" / + "• Click 'Import' to browse and
-//					// import workspaces from a previous Eclipse installation\n" / + "• Click
-//					// 'Cancel' to proceed with creating a new workspace", // Message
-//					MessageDialog.QUESTION, // Dialog type
-//					new String[] { "Import...", "Cancel" }, // Button labels //$NON-NLS-1$ //$NON-NLS-2$
-//					1 // Default button index (Cancel) - so Cancel is the default
-//			) {
-//				@Override
-//				protected void buttonPressed(int buttonId) {
-//					if (buttonId == 0) { // Import Workspaces button clicked
-//						close();
-//						// Open directory chooser to select previous Eclipse installation
-//						DirectoryDialog dirDialog = new DirectoryDialog(shell);
-//						dirDialog.setText("Select Previous Eclipse Installation"); //$NON-NLS-1$
-//						dirDialog.setMessage(
-//								"Select the directory of a previous Eclipse installation to import its workspaces:"); //$NON-NLS-1$
-//						String selectedDir = dirDialog.open();
-//
-//						if (selectedDir != null) {
-//							// Import workspaces and refresh
-//							logInfo("[ChooseWorkspaceDialog][showImportWorkspacesPromptDialog] call from importAndRefreshWorkspaces()"); //$NON-NLS-1$
-//							importAndRefreshWorkspaces(selectedDir);
-//						}
-//						// If user cancels the directory dialog, just close it and do nothing
-//						// The main dialog remains open and user can proceed with new workspace
-//					} else {
-//						// Cancel button clicked - just close this dialog and let user proceed
-//						close();
-//					}
-//				}
-//			};
-//			dialog.open();
-//		}
-//
-//		/**
-//		 * Imports workspaces from selected Eclipse installation and refreshes the UI
-//		 */
-//		private void importAndRefreshWorkspaces(String eclipseInstallPath) {
-//			Shell shell = getShell();
-//			if (shell == null || shell.isDisposed()) {
-//				return;
-//			}
-//
-//			shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
-//
-//			try {
-//				// Find and import workspaces from the selected Eclipse installation
-//				List<String> importedWorkspaces = importWorkspacesFromEclipseInstallation(eclipseInstallPath);
-//
-//				System.out.println(
-//						"Found " + (importedWorkspaces != null ? importedWorkspaces.size() : 0) + " workspaces to import"); //$NON-NLS-1$ //$NON-NLS-2$
-//				logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Found " //$NON-NLS-1$
-//						+ (importedWorkspaces != null ? importedWorkspaces.size() : 0) + " workspaces to import"); //$NON-NLS-1$
-//
-//				if (importedWorkspaces != null && !importedWorkspaces.isEmpty()) {
-//					// Get current workspaces using getRecentWorkspaces() (reads from launchData)
-//					List<String> currentWorkspaces = getRecentWorkspaces();
-//					System.out.println("Current workspaces before merge: " //$NON-NLS-1$
-//							+ (currentWorkspaces != null ? currentWorkspaces.size() : 0));
-//					logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Current workspaces before merge: " //$NON-NLS-1$
-//							+ (currentWorkspaces != null ? currentWorkspaces.size() : 0));
-//
-//					// Create a modifiable copy
-//					List<String> mergedWorkspaces = new ArrayList<>();
-//					if (currentWorkspaces != null && !currentWorkspaces.isEmpty()) {
-//						mergedWorkspaces.addAll(currentWorkspaces);
-//					}
-//
-//					// Add imported workspaces that aren't already present
-//					for (String workspace : importedWorkspaces) {
-//						if (!mergedWorkspaces.contains(workspace)) {
-//							mergedWorkspaces.add(0, workspace); // Add at beginning to show as most recent
-//							System.out.println("Added workspace: " + workspace); //$NON-NLS-1$
-//							logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Added workspace: " + workspace); //$NON-NLS-1$
-//						} else {
-//							System.out.println("Workspace already exists: " + workspace); //$NON-NLS-1$
-//							logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Workspace already exists: " //$NON-NLS-1$
-//									+ workspace);
-//						}
-//					}
-//
-//					System.out.println("Merged workspaces count: " + mergedWorkspaces.size()); //$NON-NLS-1$
-//					logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Merged workspaces count: " //$NON-NLS-1$
-//							+ mergedWorkspaces.size());
-//
-//					// Update launchData directly with the string array
-//					updateLaunchDataWorkspaces(mergedWorkspaces);
-//
-//					// Also save to preferences for persistence when Eclipse restarts
-//					saveRecentWorkspacesToPreferences(mergedWorkspaces);
-//
-//					// Verify the update worked by checking getRecentWorkspaces() again
-//					List<String> verifyWorkspaces = getRecentWorkspaces();
-//					System.out.println("Verification - workspaces after update: " //$NON-NLS-1$
-//							+ (verifyWorkspaces != null ? verifyWorkspaces.size() : 0));
-//					logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Verification - workspaces after update: " //$NON-NLS-1$
-//							+ (verifyWorkspaces != null ? verifyWorkspaces.size() : 0));
-//					if (verifyWorkspaces != null) {
-//						for (String ws : verifyWorkspaces) {
-//							System.out.println("  Verified workspace: " + ws); //$NON-NLS-1$
-//							logInfo("[ChooseWorkspaceDialog][importAndRefreshWorkspaces] Verified workspace: " + ws); //$NON-NLS-1$
-//						}
-//					}
-//
-//					// Refresh the UI
-//					refreshRecentWorkspacesComposite();
-//
-//					// Show success message only if workspaces were actually imported
-//					if (verifyWorkspaces != null && !verifyWorkspaces.isEmpty()) {
-//						MessageDialog.openInformation(shell, "Workspaces Imported", String.format( //$NON-NLS-1$
-//								"Successfully imported %d workspace(s) from the previous installation.\n\nYou can now select one of the imported workspaces or continue with a new workspace.", //$NON-NLS-1$
-//								importedWorkspaces.size()));
-//					} else {
-//						MessageDialog.openWarning(shell, "Workspaces Not Saved", //$NON-NLS-1$
-//								"Workspaces were found but could not be saved. Please check the error log."); //$NON-NLS-1$
-//					}
-//				} else {
-//					// Show warning if no workspaces found
-//					MessageDialog.openWarning(shell, "No Workspaces Found", //$NON-NLS-1$
-//							"No workspaces could be found in the selected Eclipse installation.\n\nPlease select a valid Eclipse installation directory or proceed with creating a new workspace."); //$NON-NLS-1$
-//				}
-//			} finally {
-//				shell.setCursor(null);
-//			}
-//		}
-// DO NOT DELETE
-
 	/**
-	 * NEW METHOD: Show dialog to import workspaces from previous installation
+	 * Show dialog to import workspaces from previous installation
 	 */
-// version 2
 	private void showImportWorkspacesDialog() {
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] START"); //$NON-NLS-1$
-
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setText("Select Previous Eclipse Installation"); //$NON-NLS-1$
 		dialog.setMessage("Select the directory of a previous Eclipse installation"); //$NON-NLS-1$
 
 		String selectedDir = dialog.open();
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Selected directory: " + selectedDir); //$NON-NLS-1$
-
 		if (selectedDir == null) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] User cancelled directory selection"); //$NON-NLS-1$
 			return;
 		}
 
-		// Step 1: Detect workspaces
+		// 1. Detect workspaces
 		List<String> detected = importWorkspaces(selectedDir);
-
-		if (detected == null) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] ❌ Detected list is NULL"); //$NON-NLS-1$
-			return;
-		}
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Detected workspaces count: " + detected.size()); //$NON-NLS-1$
-
-		for (String ws : detected) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Detected workspace: " + ws); //$NON-NLS-1$
-		}
-
 		if (detected.isEmpty()) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] ❌ No workspaces found after detection"); //$NON-NLS-1$
 			MessageDialog.openWarning(getShell(), "No Workspaces Found", "No workspaces found in selected directory."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 
-		// Step 2: Open selection dialog
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Opening WorkspaceImportDialog"); //$NON-NLS-1$
+		// 2. Open selection dialog
 		WorkspaceImportDialog selectionDialog = new WorkspaceImportDialog(getShell(), detected, selectedDir, this,
 				Arrays.asList(launchData.getRecentWorkspaces()));
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Dialog created"); //$NON-NLS-1$
 
-		int result = Window.CANCEL;
-		try {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] About to call open()"); //$NON-NLS-1$
-			result = selectionDialog.open();
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Dialog open() returned: " + result); //$NON-NLS-1$
-		} catch (Exception e) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] ❌ Exception while opening dialog: " //$NON-NLS-1$
-					+ e.getMessage());
-			e.printStackTrace();
-		}
-		if (result != Window.OK) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] User cancelled selection dialog"); //$NON-NLS-1$
+//		int result = Window.CANCEL;
+//		try {
+//			result = selectionDialog.open();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		if (result != Window.OK) {
+//			return;
+//		}
+		if (selectionDialog.open() != Window.OK) {
 			return;
 		}
 
 		List<String> selected = selectionDialog.getSelected();
-		if (selected == null) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] ❌ Selected list is NULL"); //$NON-NLS-1$
-			return;
-		}
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Selected count: " + selected.size()); //$NON-NLS-1$
-
-		for (String ws : selected) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Selected workspace: " + ws); //$NON-NLS-1$
-		}
-
 		if (selected.isEmpty()) {
-			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] ❌ No workspaces selected"); //$NON-NLS-1$
 			MessageDialog.openInformation(getShell(), "Nothing Selected", "No workspaces selected."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 
-		// Step 3: Merge
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Merging selected workspaces"); //$NON-NLS-1$
+		// 3. Merge
 		mergeSelectedWorkspaces(selected);
-		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] END"); //$NON-NLS-1$
 	}
 
 	private void mergeSelectedWorkspaces(List<String> selected) {
-
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] START"); //$NON-NLS-1$
-
 		if (selected == null) {
-			logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] ❌ Selected list is NULL"); //$NON-NLS-1$
 			return;
 		}
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Incoming selected size: " + selected.size()); //$NON-NLS-1$
 
 		Set<String> merged = new LinkedHashSet<>();
-
-		// Step 1: Existing workspaces
+		// 1. Existing workspaces
 		String[] existing = launchData.getRecentWorkspaces();
 
-		if (existing == null) {
-			logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Existing workspaces is NULL"); //$NON-NLS-1$
-		} else {
-			logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Existing count: " + existing.length); //$NON-NLS-1$
-
+		if (existing != null) {
 			for (String ws : existing) {
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Checking existing: " + ws); //$NON-NLS-1$
 				if (ws == null) {
-					logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Skipping NULL existing"); //$NON-NLS-1$
 					continue;
 				}
 
 				File f = new File(ws);
 				if (!f.exists()) {
-					logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Skipping invalid existing: " + ws); //$NON-NLS-1$
 					continue;
 				}
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Adding existing: " + ws); //$NON-NLS-1$
 				merged.add(ws);
 			}
 		}
 
-		// Step 2: Add selected
+		// 2. Add selected
 		for (String ws : selected) {
-			logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Processing selected: " + ws); //$NON-NLS-1$
-
 			if (ws == null) {
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Skipping NULL selected"); //$NON-NLS-1$
 				continue;
 			}
 
 			File f = new File(ws);
 			if (!f.exists()) {
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Skipping invalid selected: " + ws); //$NON-NLS-1$
 				continue;
 			}
 
-			if (merged.contains(ws)) {
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Duplicate ignored: " + ws); //$NON-NLS-1$
-			} else {
-				logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Adding selected: " + ws); //$NON-NLS-1$
-				merged.add(ws);
-			}
+			merged.add(ws);
 		}
 
-		// Step 3: Final list
+		// 3. Final list
 		List<String> result = new ArrayList<>(merged);
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Final merged size: " + result.size()); //$NON-NLS-1$
-
-		for (String ws : result) {
-			logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Final workspace: " + ws); //$NON-NLS-1$
-		}
-
-		// Step 4: Persist
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Updating launchData"); //$NON-NLS-1$
+		// 4. Persist
 		launchData.setRecentWorkspaces(result.toArray(new String[0]));
-
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Saving to preferences"); //$NON-NLS-1$
 		saveRecentWorkspacesToPreferences(result);
-
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Refreshing UI"); //$NON-NLS-1$
 		refreshRecentWorkspacesComposite();
-
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] Showing confirmation dialog"); //$NON-NLS-1$
-
 		MessageDialog.openInformation(getShell(), "Workspaces Updated", //$NON-NLS-1$
 				"Imported " + selected.size() + " workspace(s)."); //$NON-NLS-1$ //$NON-NLS-2$
-		logInfo("[ChooseWorkspaceDialog][mergeSelectedWorkspaces] END"); //$NON-NLS-1$
 	}
-// version 2
-// version 1 starts.
-//	private void showImportWorkspacesDialog() {
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] === START ==="); //$NON-NLS-1$
-//
-//		DirectoryDialog dialog = new DirectoryDialog(getShell());
-//		dialog.setText("Select Previous Eclipse Installation"); //$NON-NLS-1$
-//		dialog.setMessage("Select the directory of a previous Eclipse installation to import its workspaces:"); //$NON-NLS-1$
-//		String selectedDir = dialog.open();
-//
-//		if (selectedDir == null) {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] User cancelled directory selection"); //$NON-NLS-1$
-//			return;
-//		}
-//
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Selected directory: " + selectedDir); //$NON-NLS-1$
-//
-//		// Find and import workspaces from the selected Eclipse installation
-//		List<String> importedWorkspaces = importWorkspacesFromEclipseInstallation(selectedDir);
-//
-//		if (importedWorkspaces == null || importedWorkspaces.isEmpty()) {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] No workspaces found in selected installation"); //$NON-NLS-1$
-//			MessageDialog.openWarning(getShell(), "No Workspaces Found", //$NON-NLS-1$
-//					"No workspaces could be found in the selected Eclipse installation."); //$NON-NLS-1$
-//			return;
-//		}
-//
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Imported workspaces count: " //$NON-NLS-1$
-//				+ importedWorkspaces.size());
-//
-//		String[] currentWorkspacesArray = launchData.getRecentWorkspaces();
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Current workspaces count: " //$NON-NLS-1$
-//				+ (currentWorkspacesArray != null ? currentWorkspacesArray.length : 0));
-//
-//		// Quick check if there's anything to add
-//		boolean hasNewWorkspaces = false;
-//		if (currentWorkspacesArray != null) {
-//			for (String imported : importedWorkspaces) {
-//				if (imported != null && imported.length() > 0) {
-//					boolean exists = false;
-//					for (String current : currentWorkspacesArray) {
-//						if (imported.equals(current)) {
-//							exists = true;
-//							break;
-//						}
-//					}
-//					if (!exists && new File(imported).exists()) {
-//						hasNewWorkspaces = true;
-//						logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] New workspace found: " + imported); //$NON-NLS-1$
-//						break;
-//					}
-//				}
-//			}
-//		} else if (!importedWorkspaces.isEmpty()) {
-//			hasNewWorkspaces = true;
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] No current workspaces, all imported are new"); //$NON-NLS-1$
-//		}
-//
-//		// Return early if nothing new to add
-//		if (!hasNewWorkspaces) {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] No new workspaces to add, returning early"); //$NON-NLS-1$
-//			MessageDialog.openInformation(getShell(), "No New Workspaces", //$NON-NLS-1$
-//					"All workspaces from the previous installation are already in your recent workspaces list."); //$NON-NLS-1$
-//			return;
-//		}
-//
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Proceeding with merge, has new workspaces: true"); //$NON-NLS-1$
-//
-//		// Only proceed with merge if there are new workspaces
-//		int initialCapacity = (currentWorkspacesArray != null ? currentWorkspacesArray.length : 0)
-//				+ importedWorkspaces.size();
-//		Set<String> uniqueWorkspacesSet = new LinkedHashSet<>(initialCapacity);
-//
-//		// Add current workspaces
-//		int removedCount = 0;
-//		if (currentWorkspacesArray != null) {
-//			for (int i = 0; i < currentWorkspacesArray.length; i++) {
-//				String ws = currentWorkspacesArray[i];
-//				if (ws != null && ws.length() > 0) {
-//					File wsFile = new File(ws);
-//					if (wsFile.exists()) {
-//						uniqueWorkspacesSet.add(ws);
-//					} else {
-//						removedCount++;
-//						logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Removing non-existent workspace: " //$NON-NLS-1$
-//								+ ws);
-//					}
-//				}
-//			}
-//		}
-//
-//		// Add new imported workspaces
-//		int addedCount = 0;
-//		for (int i = 0; i < importedWorkspaces.size(); i++) {
-//			String ws = importedWorkspaces.get(i);
-//			if (ws != null && ws.length() > 0) {
-//				File wsFile = new File(ws);
-//				if (wsFile.exists() && uniqueWorkspacesSet.add(ws)) {
-//					addedCount++;
-//					logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Adding workspace: " + ws); //$NON-NLS-1$
-//				}
-//			}
-//		}
-//
-//		List<String> mergedWorkspaces = new ArrayList<>(uniqueWorkspacesSet);
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] mergedWorkspaces.size(): " //$NON-NLS-1$
-//				+ mergedWorkspaces.size());
-//
-//		if (mergedWorkspaces.isEmpty()) {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] No valid workspaces after merge"); //$NON-NLS-1$
-//			MessageDialog.openWarning(getShell(), "No Valid Workspaces", "No valid workspaces found."); //$NON-NLS-1$ //$NON-NLS-2$
-//			return;
-//		}
-//
-//		// Update in-memory first
-	//// try { / java.lang.reflect.Field field =
-	/// launchData.getClass().getDeclaredField("recentWorkspaces"); //$NON-NLS-1$ /
-	/// field.setAccessible(true); / field.set(launchData,
-	/// mergedWorkspaces.toArray(new String[0])); /
-	/// logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Updated
-	/// launchData via reflection, launchData.getRecentWorkspaces().length: "
-	/// //$NON-NLS-1$ / + launchData.getRecentWorkspaces().length); / } catch
-	/// (Exception e) { /
-	/// logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Reflection
-	/// failed, using setter: " //$NON-NLS-1$ / + e.getMessage()); /
-	/// launchData.setRecentWorkspaces(mergedWorkspaces.toArray(new String[0])); / }
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Before updating launchData without reflection, launchData.getRecentWorkspaces().length: " //$NON-NLS-1$
-//				+ launchData.getRecentWorkspaces().length);
-//		launchData.setRecentWorkspaces(mergedWorkspaces.toArray(new String[0])); // instead of reflection
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Updated launchData without reflection, launchData.getRecentWorkspaces().length: " //$NON-NLS-1$
-//				+ launchData.getRecentWorkspaces().length);
-//
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] About to save to preferences"); //$NON-NLS-1$
-//		// Single file write
-//		saveRecentWorkspacesToPreferences(mergedWorkspaces);
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Saved preferences"); //$NON-NLS-1$
-//
-//		// Update UI immediately
-//		if (recentWorkspacesForm != null && !recentWorkspacesForm.isDisposed()) {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] Refreshing UI in normal thread"); //$NON-NLS-1$
-//			refreshRecentWorkspacesComposite();
-	//// getShell().getDisplay().asyncExec(() -> { / if (recentWorkspacesForm !=
-	/// null && !recentWorkspacesForm.isDisposed()) { /
-	/// logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] About to enter
-	/// refreshRecentWorkspacesComposite() in UI thread"); //$NON-NLS-1$ /
-	/// refreshRecentWorkspacesComposite(); / } / });
-//		} else {
-//			logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] recentWorkspacesForm is null or disposed, cannot refresh"); //$NON-NLS-1$
-//		}
-//
-//		String message = String.format("Imported %d new workspace(s).", addedCount); //$NON-NLS-1$
-//		if (removedCount > 0) {
-//			message += String.format("\nRemoved %d non-existent workspace(s).", removedCount); //$NON-NLS-1$
-//		}
-//		logInfo("[ChooseWorkspaceDialog][showImportWorkspacesDialog] === END, " + message); //$NON-NLS-1$
-//		MessageDialog.openInformation(getShell(), "Workspaces Updated", message); //$NON-NLS-1$
-//	}
-// version 1 ends
 
 	private List<String> importWorkspaces(File directory) {
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces(File)] START: " + directory); //$NON-NLS-1$
 		// capture return value
 		List<String> result = importWorkspacesFromEclipseInstallation(directory.getAbsolutePath());
 		if (result == null) {
-			logInfo("[ChooseWorkspaceDialog][importWorkspaces(File)] ❌ result is NULL"); //$NON-NLS-1$
 			result = new ArrayList<>();
 		}
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces(File)] END size=" + result.size()); //$NON-NLS-1$
 		return result;
 	}
 
 	public List<String> importWorkspaces(String path) {
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces(String)] path=" + path); //$NON-NLS-1$
 		return importWorkspaces(new File(path)); // ✅ now VALID
 	}
 
 	/**
-	 * NEW METHOD: Method to save workspaces to preferences
+	 * Method to save workspaces to preferences
 	 */
 	private void saveRecentWorkspacesToPreferences(List<String> workspaces) {
-/*		logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Entered saveRecentWorkspacesToPreferences()"); //$NON-NLS-1$
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		if (workspaces == null || workspaces.isEmpty()) {
 			store.setValue(RECENT_WORKSPACES, ""); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] returning..."); //$NON-NLS-1$
 			return;
 		}
 
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < workspaces.size(); i++) {
-			if (i > 0) {
-				sb.append("\n"); //$NON-NLS-1$
-			}
-			sb.append(workspaces.get(i));
-		}
-		store.setValue(RECENT_WORKSPACES, sb.toString());
-		logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Properly exiting saveRecentWorkspacesToPreferences(), sb.toString(): " //$NON-NLS-1$
-				+ sb.toString());
-// original implementation.
-*/
-
-		logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Entered saveRecentWorkspacesToPreferences()"); //$NON-NLS-1$
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		if (workspaces == null || workspaces.isEmpty()) {
-			store.setValue(RECENT_WORKSPACES, ""); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] looks like workspaces is empty or null so returning"); //$NON-NLS-1$
-			return;
-		}
-		logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] About to build sb"); //$NON-NLS-1$
-//		StringBuilder sb = new StringBuilder();
-//		for (int i = 0; i < mergedWorkspaces.size(); i++) {
-//			if (i > 0) {
-//				sb.append("\n"); //$NON-NLS-1$
-//			}
-//			sb.append(mergedWorkspaces.get(i));
-//		}
-//		store.setValue(RECENT_WORKSPACES, sb.toString());
 		try {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < workspaces.size(); i++) {
 				String ws = workspaces.get(i);
-				logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Processing workspace index " + i //$NON-NLS-1$
-						+ ": " //$NON-NLS-1$
-						+ ws);
 				if (ws == null) {
-					logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] NULL workspace found at index " //$NON-NLS-1$
-							+ i);
 					continue;
 				}
 				if (i > 0) {
@@ -1038,47 +572,30 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				}
 				sb.append(ws);
 			}
-//			store.setValue(RECENT_WORKSPACES, sb.toString()); // option 1
-//			IEclipsePreferences prefs = ConfigurationScope.INSTANCE.getNode("org.eclipse.ui.ide"); //$NON-NLS-1$
-//			prefs.put(RECENT_WORKSPACES, sb.toString());
-//			prefs.flush(); // option 2
+
 			if (Platform.getInstanceLocation().isSet()) {
 				store.setValue(RECENT_WORKSPACES, sb.toString());
-				logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] references updated, sb.toString():  " //$NON-NLS-1$
-						+ sb.toString());
 			} else {
 				logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Instance location not set yet. Skipping preference save."); //$NON-NLS-1$
-			} // option 3
-			logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] references updated, sb.toString():  " //$NON-NLS-1$
-					+ sb.toString());
+			}
 		} catch (Exception e) {
-			logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] EXCEPTION in saving preferences: " //$NON-NLS-1$
-					+ e.getMessage());
 			e.printStackTrace();
 		}
-		logInfo("[ChooseWorkspaceDialog][saveRecentWorkspacesToPreferences] Exiting from saveRecentWorkspacesToPreferences()"); //$NON-NLS-1$
 	}
 
 	/**
-	 * NEW METHOD: Method to import workspaces from previous Eclipse installation
+	 * Method to import workspaces from previous Eclipse installation
 	 */
 	private List<String> importWorkspacesFromEclipseInstallation(String eclipseInstallPath) {
 		List<String> workspaces = new ArrayList<>();
 
-		System.out.println("Looking for workspaces in: " + eclipseInstallPath); //$NON-NLS-1$
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces] Looking for workspaces in: " + eclipseInstallPath); //$NON-NLS-1$
 		// Try to find workspaces from the previous installation
 		// Look for the configuration/.settings/org.eclipse.ui.ide.prefs file
 		File configDir = new File(eclipseInstallPath, "configuration"); //$NON-NLS-1$
 		File settingsDir = new File(configDir, ".settings"); //$NON-NLS-1$
 		File recentWorkspacesFile = new File(settingsDir, "org.eclipse.ui.ide.prefs"); //$NON-NLS-1$
 
-		System.out.println("Looking for preferences file at: " + recentWorkspacesFile.getAbsolutePath()); //$NON-NLS-1$
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces] Looking for preferences file at: " //$NON-NLS-1$
-				+ recentWorkspacesFile.getAbsolutePath());
 		if (recentWorkspacesFile.exists()) {
-			System.out.println("Found preferences file"); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][importWorkspaces] Found preferences file"); //$NON-NLS-1$
 			try {
 				// Parse the preferences file to extract recent workspaces
 				Properties props = new Properties();
@@ -1087,8 +604,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				}
 
 				String recentWorkspacesValue = props.getProperty("RECENT_WORKSPACES"); //$NON-NLS-1$
-				System.out.println("RECENT_WORKSPACES value: " + recentWorkspacesValue); //$NON-NLS-1$
-				logInfo("[ChooseWorkspaceDialog][importWorkspaces] RECENT_WORKSPACES value: " + recentWorkspacesValue); //$NON-NLS-1$
 				if (recentWorkspacesValue != null && !recentWorkspacesValue.isEmpty()) {
 					// Parse the workspaces (format is paths separated by newlines)
 					String[] workspacePaths = recentWorkspacesValue.split("\\n"); //$NON-NLS-1$
@@ -1098,54 +613,28 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 							File wsFile = new File(path);
 							if (wsFile.exists()) {
 								workspaces.add(path);
-								System.out.println("Found existing workspace: " + path); //$NON-NLS-1$
-								logInfo("[ChooseWorkspaceDialog][importWorkspaces] Found existing workspace: " + path); //$NON-NLS-1$
-							} else {
-								System.out.println("Workspace path does not exist: " + path); //$NON-NLS-1$
-								logInfo("[ChooseWorkspaceDialog][importWorkspaces] Workspace path does not exist: " //$NON-NLS-1$
-										+ path);
 							}
 						}
 					}
-				} else {
-					System.out.println("RECENT_WORKSPACES property is empty or null"); //$NON-NLS-1$
-					logInfo("[ChooseWorkspaceDialog][importWorkspaces] RECENT_WORKSPACES property is empty or null"); //$NON-NLS-1$
 				}
 			} catch (IOException e) {
-				System.err.println("Error reading preferences file: " + e.getMessage()); //$NON-NLS-1$
-				logError("[ChooseWorkspaceDialog][importWorkspaces] Error reading preferences file: ", e); //$NON-NLS-1$
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Preferences file not found at: " + recentWorkspacesFile.getAbsolutePath()); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][importWorkspaces] Preferences file not found at: " //$NON-NLS-1$
-					+ recentWorkspacesFile.getAbsolutePath());
-
 			// Try alternative location
 			File alternativePrefs = new File(eclipseInstallPath,
 					".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs"); //$NON-NLS-1$
-			System.out.println("Checking alternative location: " + alternativePrefs.getAbsolutePath()); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][importWorkspaces] Checking alternative location: " //$NON-NLS-1$
-					+ alternativePrefs.getAbsolutePath());
 			if (alternativePrefs.exists()) {
-				System.out.println("Found alternative preferences file"); //$NON-NLS-1$
-				logInfo("[ChooseWorkspaceDialog][importWorkspaces] Found alternative preferences file"); //$NON-NLS-1$
 				// Parse it similarly...
 			}
 		}
-
-		System.out.println("Total workspaces found: " + workspaces.size()); //$NON-NLS-1$
-		logInfo("[ChooseWorkspaceDialog][importWorkspaces] Total workspaces found: " + workspaces.size()); //$NON-NLS-1$
 		return workspaces;
 	}
 
 	/**
-	 * NEW METHOD: Method to refresh the recent workspaces composite after import
+	 * Method to refresh the recent workspaces composite after import
 	 */
 	private void refreshRecentWorkspacesComposite() {
-		System.out.println("Entering refreshRecentWorkspacesComposite()"); //$NON-NLS-1$
-		logInfo("[ChooseWorkspaceDialog][refreshRecentWorkspacesComposite] Entering refreshRecentWorkspacesComposite()"); //$NON-NLS-1$
-
 		// Get the parent composite
 		Composite parent = recentWorkspacesForm.getParent();
 		if (parent != null && !parent.isDisposed()) {
@@ -1186,14 +675,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				shell.setBounds(getConstrainedShellBounds(
 						new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
 			}
-
-			System.out.println("Refresh completed"); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][refreshRecentWorkspacesComposite] Refresh completed"); //$NON-NLS-1$
-		} else {
-			System.out.println("Parent composite is null or disposed"); //$NON-NLS-1$
-			logInfo("[ChooseWorkspaceDialog][refreshRecentWorkspacesComposite] Parent composite is null or disposed"); //$NON-NLS-1$
 		}
-		logInfo("[ChooseWorkspaceDialog][refreshRecentWorkspacesComposite] Exiting refreshRecentWorkspacesComposite()"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1545,8 +1027,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	private List<String> getRecentWorkspaces() {
-		String[] workspaces = launchData.getRecentWorkspaces();
-		return filterDuplicatedPaths(workspaces);
+		return filterDuplicatedPaths(launchData.getRecentWorkspaces());
 	}
 
 	/**
@@ -1571,8 +1052,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				if (workspace.startsWith(File.separator)) {
 					normalizedPath = File.separator + normalizedPath;
 				}
-				boolean nonDuplicate = normalizedPaths.add(normalizedPath);
-				if (nonDuplicate) {
+				if (normalizedPaths.add(normalizedPath)) {
 					recentWorkspaces.add(workspace);
 				}
 			}

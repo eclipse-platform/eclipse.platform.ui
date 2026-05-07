@@ -1033,6 +1033,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_NotWriteablePathWarning;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
 
+	public static String WorkspaceImportDialog_browseLabel;
+
 	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;
 	public static String ChooseWorkspaceWithSettingsDialog_ProblemsTransferTitle;
 	public static String ChooseWorkspaceWithSettingsDialog_TransferFailedMessage;
