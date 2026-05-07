@@ -14,11 +14,9 @@
 
 package org.eclipse.jface.text;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 import java.util.Locale;
-
-import com.ibm.icu.text.BreakIterator;
-
 
 
 /**
@@ -223,7 +221,52 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.5
 	 */
 	protected IRegion findWord(IDocument document, int offset) {
+		IRegion identifier= findIdentifierAt(document, offset);
+		if (identifier != null) {
+			return identifier;
+		}
 		return findWord(document, offset, getWordBreakIterator());
+	}
+
+	/**
+	 * If the offset lies on an ASCII identifier character ({@code [A-Za-z0-9_]}), or
+	 * just after one, returns the maximal contiguous identifier run. Otherwise
+	 * returns {@code null} so the caller falls back to the locale-aware
+	 * {@link BreakIterator}. This handles identifier-style words containing runs
+	 * of {@code '_'} (e.g. {@code foo__bar}, {@code __aaaa}) consistently across
+	 * JDK versions, since {@link BreakIterator#getWordInstance()} places word
+	 * boundaries between consecutive underscores while users expect such tokens
+	 * to be selected as a single word.
+	 */
+	private static IRegion findIdentifierAt(IDocument document, int offset) {
+		try {
+			IRegion line= document.getLineInformationOfOffset(offset);
+			int lineStart= line.getOffset();
+			int lineEnd= lineStart + line.getLength();
+			int probe;
+			if (offset < lineEnd && isIdentifierPart(document.getChar(offset))) {
+				probe= offset;
+			} else if (offset > lineStart && isIdentifierPart(document.getChar(offset - 1))) {
+				probe= offset - 1;
+			} else {
+				return null;
+			}
+			int start= probe;
+			while (start > lineStart && isIdentifierPart(document.getChar(start - 1))) {
+				start--;
+			}
+			int end= probe + 1;
+			while (end < lineEnd && isIdentifierPart(document.getChar(end))) {
+				end++;
+			}
+			return new Region(start, end - start);
+		} catch (BadLocationException e) {
+			return null;
+		}
+	}
+
+	private static boolean isIdentifierPart(char c) {
+		return c == '_' || (c < 128 && (c >= '0' && c <= '9' || c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z'));
 	}
 
 	/**
