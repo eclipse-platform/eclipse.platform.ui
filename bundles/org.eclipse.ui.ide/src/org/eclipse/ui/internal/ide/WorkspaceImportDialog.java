@@ -15,10 +15,12 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -27,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,11 +43,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 3.4
- *
+ * Dialog for importing workspaces from a previous Eclipse installation.
+ * Displays valid workspaces and allows users to select workspaces to import
+ * into the launcher.
  */
 public class WorkspaceImportDialog extends TitleAreaDialog {
-
+	private static final String EMPTY = ""; //$NON-NLS-1$
 	private List<String> input;
 	private String baseInstallPath;
 	private CheckboxTableViewer viewer;
@@ -55,6 +59,16 @@ public class WorkspaceImportDialog extends TitleAreaDialog {
 
 	private Set<String> checkedElements = new LinkedHashSet<>();
 
+	/**
+	 * Creates a dialog for importing workspaces from a previous Eclipse
+	 * installation.
+	 *
+	 * @param parentShell        the parent shell
+	 * @param input              the list of valid workspaces
+	 * @param baseInstallPath    the selected Eclipse installation path
+	 * @param parentDialog       the parent workspace launcher dialog
+	 * @param existingWorkspaces the list of already imported workspaces
+	 */
 	public WorkspaceImportDialog(Shell parentShell, List<String> input, String baseInstallPath,
 			ChooseWorkspaceDialog parentDialog, List<String> existingWorkspaces) {
 		super(parentShell);
@@ -62,116 +76,93 @@ public class WorkspaceImportDialog extends TitleAreaDialog {
 		this.baseInstallPath = baseInstallPath;
 		this.parentDialog = parentDialog;
 		this.existingWorkspaces = existingWorkspaces;
-		logInfo("[WorkspaceImportDialog][ctor] Existing count: " + existingWorkspaces.size()); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Import Workspaces"); // Window title //$NON-NLS-1$
-		logInfo("[WorkspaceImportDialog][configureShell] Title set"); //$NON-NLS-1$
+		shell.setText(IDEWorkbenchMessages.WorkspaceImportDialog_dialogName);
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Import Workspaces"); //$NON-NLS-1$
-		setMessage("Select workspaces to import."); //$NON-NLS-1$
-		logInfo("[WorkspaceImportDialog][create] Title + Message set"); //$NON-NLS-1$
-	}
-
-	private void logInfo(String msg) {
-		System.out.println(msg); // or route to your logger
+		setTitle(IDEWorkbenchMessages.WorkspaceImportDialog_dialogTitle);
+		setMessage(IDEWorkbenchMessages.WorkspaceImportDialog_dialogMessage);
 	}
 
 	@Override
+	protected Point getInitialSize() {
+		Point size = super.getInitialSize();
+		return new Point(Math.max(size.x, convertHorizontalDLUsToPixels(500)),
+				Math.max(size.y, convertVerticalDLUsToPixels(350)));
+	}
+
+	/**
+	 * Creates the main dialog area and initializes the workspace import UI
+	 * components.
+	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
-
-		logInfo("[WorkspaceImportDialog][createDialogArea] START"); //$NON-NLS-1$
-
 		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new GridLayout(1, false));
 
-		// FIX ORDER
-		logInfo("[WorkspaceImportDialog] -> createLocationRow()"); //$NON-NLS-1$
 		createLocationRow(container);
-
-		logInfo("[WorkspaceImportDialog] -> createFilter()"); //$NON-NLS-1$
 		createFilter(container);
-
-		logInfo("[WorkspaceImportDialog] -> createTable()"); //$NON-NLS-1$
 		createTable(container);
-
-		logInfo("[WorkspaceImportDialog] -> loadInitialInput()"); //$NON-NLS-1$
 		loadInitialInput();
-
-		logInfo("[WorkspaceImportDialog] -> createButtons()"); //$NON-NLS-1$
 		createButtons(container);
 
-		logInfo("[WorkspaceImportDialog][createDialogArea] END"); //$NON-NLS-1$
 		return container;
 	}
 
+	/**
+	 * Creates the installation path input row with browse support for selecting an
+	 * application installation directory.
+	 */
 	private void createLocationRow(Composite parent) {
-		logInfo("[WorkspaceImportDialog][createLocationRow] START"); //$NON-NLS-1$
-
 	    Composite row = new Composite(parent, SWT.NONE);
 	    row.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	    row.setLayout(new GridLayout(3, false));
 
-		new Label(row, SWT.NONE).setText("Workspace location:"); //$NON-NLS-1$
-
+		new Label(row, SWT.NONE).setText(IDEWorkbenchMessages.WorkspaceImportDialog_installationPath);
 	    locationText = new Text(row, SWT.BORDER);
 	    locationText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-	    if (baseInstallPath != null) {
-	        locationText.setText(baseInstallPath);
-			logInfo("[WorkspaceImportDialog] Using baseInstallPath: " + baseInstallPath); //$NON-NLS-1$
-	    }
+		locationText.setText(baseInstallPath != null ? baseInstallPath : EMPTY);
 
 	    Button browse = new Button(row, SWT.PUSH);
-		browse.setText("Browse..."); //$NON-NLS-1$
+		browse.setText(IDEWorkbenchMessages.WorkspaceImportDialog_browseLabel);
+		browse.setToolTipText(IDEWorkbenchMessages.WorkspaceImportDialog_browseTooltip);
 		browse.addListener(SWT.Selection, e -> {
-
-			logInfo("[WorkspaceImportDialog][Browse] CLICKED"); //$NON-NLS-1$
-
 			DirectoryDialog dlg = new DirectoryDialog(parent.getShell());
-			dlg.setText("Select Eclipse Installation"); //$NON-NLS-1$
-			dlg.setMessage("Select installation directory"); //$NON-NLS-1$
-
-			String selected = dlg.open();
-
-			logInfo("[WorkspaceImportDialog][Browse] Selected: " + selected); //$NON-NLS-1$
-
-			if (selected != null) {
-				locationText.setText(selected);
-
+			dlg.setText(IDEWorkbenchMessages.WorkspaceImportDialog_selectPreviousInstallationText);
+			dlg.setMessage(IDEWorkbenchMessages.WorkspaceImportDialog_selectPreviousInstallationMessage);
+			String selectedPath = dlg.open();
+			if (selectedPath != null) {
+				locationText.setText(selectedPath);
 				// reload workspaces
-				reloadWorkspaces(selected);
+				reloadWorkspaces(selectedPath);
 			}
 		});
-		logInfo("[WorkspaceImportDialog][createLocationRow] END"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Creates the workspace filter text field and applies filtering to the
+	 * workspace table viewer.
+	 */
 	private void createFilter(Composite parent) {
-		logInfo("[WorkspaceImportDialog][createFilter] START"); //$NON-NLS-1$
 		// Add ICON_CANCEL
 		Text filter = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
-		filter.setMessage("type filter text"); //$NON-NLS-1$
+		filter.setMessage(IDEWorkbenchMessages.WorkspaceImportDialog_typeFilterText);
 		filter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		logInfo("[WorkspaceImportDialog][createFilter] Search field with clear icon created"); //$NON-NLS-1$
 
 		// FILTER LOGIC
 		filter.addModifyListener(e -> {
 			String raw = filter.getText();
-			logInfo("[WorkspaceImportDialog][createFilter] Raw: '" + raw + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-
-			if (raw == null || raw.trim().isEmpty()) {
-				logInfo("[WorkspaceImportDialog][createFilter] Clearing filter"); //$NON-NLS-1$
+			if (raw.trim().isEmpty()) {
 				viewer.resetFilters();
 			} else {
-				String txt = raw.toLowerCase().replace("*", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				logInfo("[WorkspaceImportDialog][createFilter] Applying filter: " + txt); //$NON-NLS-1$
+				String txt = raw.toLowerCase().replace("*", EMPTY); //$NON-NLS-1$
 				viewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
 					@Override
 					public boolean select(Viewer v, Object p, Object el) {
@@ -182,258 +173,156 @@ public class WorkspaceImportDialog extends TitleAreaDialog {
 				});
 			}
 			viewer.refresh();
-			// CRITICAL: restore check state AFTER refresh
+			// Restore check state after refresh
 			viewer.setCheckedElements(checkedElements.toArray());
-			logInfo("[WorkspaceImportDialog][createFilter] Check state restored"); //$NON-NLS-1$
 		});
 
-		// HANDLE CLEAR BUTTON CLICK
-		filter.addListener(SWT.DefaultSelection, e -> {
-			logInfo("[WorkspaceImportDialog][createFilter] ❌ Clear (X) clicked"); //$NON-NLS-1$
-			filter.setText(""); // triggers modify listener → resets filter //$NON-NLS-1$
+		// Handle clear button click
+		filter.addListener(SWT.Selection, e -> {
+			if (e.detail == SWT.ICON_CANCEL) {
+				filter.setText(EMPTY);
+			}
 		});
-		logInfo("[WorkspaceImportDialog][createFilter] END"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Loads and filters the initial workspace input into the table viewer and
+	 * selects all entries by default.
+	 */
 	private void loadInitialInput() {
-		logInfo("[WorkspaceImportDialog][loadInitialInput] START"); //$NON-NLS-1$
-
 		if (input == null) {
-			logInfo("[WorkspaceImportDialog][loadInitialInput] ❌ input is NULL"); //$NON-NLS-1$
 			return;
 		}
 
 		List<String> filtered = new ArrayList<>();
 		for (String ws : input) {
 			if (ws == null || ws.trim().isEmpty()) {
-				logInfo("[WorkspaceImportDialog][loadInitialInput] Skipping NULL/empty"); //$NON-NLS-1$
 				continue;
 			}
 
 			if (existingWorkspaces != null && existingWorkspaces.contains(ws)) {
-				logInfo("[WorkspaceImportDialog][loadInitialInput] Skipping already existing: " + ws); //$NON-NLS-1$
 				continue;
 			}
-
 			filtered.add(ws);
 		}
-		logInfo("[WorkspaceImportDialog][loadInitialInput] Final size: " + filtered.size()); //$NON-NLS-1$
 
-		for (String ws : filtered) {
-			logInfo("[WorkspaceImportDialog][loadInitialInput] Adding: " + ws); //$NON-NLS-1$
-		}
-
-		// SET INPUT
+		// Set input
 		viewer.setInput(filtered);
 
 		// CHECK ALL by default
 		checkedElements.clear();
 		checkedElements.addAll(filtered);
-
 		viewer.setCheckedElements(checkedElements.toArray());
-
 		viewer.refresh();
-		logInfo("[WorkspaceImportDialog][loadInitialInput] END"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Creates the workspace table viewer with check-box support and initializes its
+	 * columns and selection handling.
+	 */
 	private void createTable(Composite parent) {
-		logInfo("[WorkspaceImportDialog][createTable] START"); //$NON-NLS-1$
+		viewer = CheckboxTableViewer.newCheckList(parent,
+				SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SHADOW_IN);
 
-		try {
-			viewer = CheckboxTableViewer.newCheckList(parent,
-					SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SHADOW_IN);
-			logInfo("[WorkspaceImportDialog][createTable] Viewer created"); //$NON-NLS-1$
+		Table table = viewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 
-			Table table = viewer.getTable();
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.minimumHeight = 250;
+		table.setLayoutData(gd);
 
-			table.setHeaderVisible(true);
-			table.setLinesVisible(true);
+		// Column 1 - workspace
+		TableViewerColumn col1 = new TableViewerColumn(viewer, SWT.NONE);
+		col1.getColumn().setText(IDEWorkbenchMessages.WorkspaceImportDialog_tableColumn1);
+		col1.getColumn().setWidth(200);
 
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.minimumHeight = 250;
-			table.setLayoutData(gd);
-			logInfo("[WorkspaceImportDialog][createTable] GridData applied with min height"); //$NON-NLS-1$
+		col1.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return new File((String) element).getName();
+			}
+		});
 
-			logInfo("[WorkspaceImportDialog][createTable] Table configured"); //$NON-NLS-1$
+		// Column 2 - path
+		TableViewerColumn col2 = new TableViewerColumn(viewer, SWT.NONE);
+		col2.getColumn().setText(IDEWorkbenchMessages.WorkspaceImportDialog_tableColumn2);
+		col2.getColumn().setWidth(400);
 
-			// Column 1
-			TableViewerColumn col1 = new TableViewerColumn(viewer, SWT.NONE);
-			col1.getColumn().setText("Workspace"); //$NON-NLS-1$
-			col1.getColumn().setWidth(200);
+		col2.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return (String) element;
+			}
+		});
 
-			col1.setLabelProvider(new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					String name = new File((String) element).getName();
-					logInfo("[WorkspaceImportDialog][col1] getText: " + name); //$NON-NLS-1$
-					return name;
-				}
-			});
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		viewer.addCheckStateListener(event -> {
+			String element = (String) event.getElement();
 
-			// Column 2
-			TableViewerColumn col2 = new TableViewerColumn(viewer, SWT.NONE);
-			col2.getColumn().setText("Path"); //$NON-NLS-1$
-			col2.getColumn().setWidth(400);
-
-			col2.setLabelProvider(new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					logInfo("[WorkspaceImportDialog][col2] path: " + element); //$NON-NLS-1$
-					return (String) element;
-				}
-			});
-
-			viewer.setContentProvider(ArrayContentProvider.getInstance());
-			logInfo("[WorkspaceImportDialog][createTable] Content provider set"); //$NON-NLS-1$
-
-			// INPUT LOGGING
-			if (input == null) {
-				logInfo("[WorkspaceImportDialog][createTable] ❌ input is NULL"); //$NON-NLS-1$
+			if (event.getChecked()) {
+				checkedElements.add(element);
 			} else {
-				logInfo("[WorkspaceImportDialog][createTable] input size: " + input.size()); //$NON-NLS-1$
-				for (String s : input) {
-					logInfo("[WorkspaceImportDialog][createTable] input: " + s); //$NON-NLS-1$
-				}
+				checkedElements.remove(element);
+			}
+		});
+	}
+
+	/**
+	 * Creates the Select All and Deselect All buttons for managing workspace
+	 * selections in the table viewer.
+	 */
+	private void createButtons(Composite parent) {
+		Composite bar = new Composite(parent, SWT.NONE);
+		bar.setLayout(new GridLayout(2, false));
+
+		// Select All (VISIBLE ONLY)
+		Button selectAll = new Button(bar, SWT.PUSH);
+		selectAll.setText(IDEWorkbenchMessages.WorkspaceImportDialog_selectAllLabel);
+		selectAll.addListener(SWT.Selection, e -> {
+			if (viewer == null) {
+				return;
 			}
 
-//			// FILTER VALID
-//			Set<String> valid = new LinkedHashSet<>();
-//
-//			if (input != null) {
-//				for (String s : input) {
-//
-//					if (s == null) {
-//						logInfo("[WorkspaceImportDialog][createTable] skipping NULL"); //$NON-NLS-1$
-//						continue;
-//					}
-//
-//					File f = new File(s);
-//
-//					if (!f.exists()) {
-//						logInfo("[WorkspaceImportDialog][createTable] skipping not exists: " + s); //$NON-NLS-1$
-//						continue;
-//					}
-//
-//					if (!f.isDirectory()) {
-//						logInfo("[WorkspaceImportDialog][createTable] skipping not dir: " + s); //$NON-NLS-1$
-//						continue;
-//					}
-//
-//					logInfo("[WorkspaceImportDialog][createTable] VALID: " + s); //$NON-NLS-1$
-//					valid.add(s);
-//				}
-//			}
-//			logInfo("[WorkspaceImportDialog][createTable] valid size: " + valid.size()); //$NON-NLS-1$
-//
-//			List<String> finalList = new ArrayList<>(valid);
-//
-//			for (String s : finalList) {
-//				logInfo("[WorkspaceImportDialog][createTable] FINAL LIST: " + s); //$NON-NLS-1$
-//			}
-
-			viewer.addCheckStateListener(event -> {
-				String element = (String) event.getElement();
-
-				if (event.getChecked()) {
-					checkedElements.add(element);
-					logInfo("[CheckState] CHECKED: " + element); //$NON-NLS-1$
-				} else {
-					checkedElements.remove(element);
-					logInfo("[CheckState] UNCHECKED: " + element); //$NON-NLS-1$
+			TableItem[] items = viewer.getTable().getItems();
+			for (TableItem item : items) {
+				Object data = item.getData();
+				if (data instanceof String) {
+					viewer.setChecked(data, true);
+					checkedElements.add((String) data);
 				}
-			});
-//			viewer.setInput(finalList);
-//			logInfo("[WorkspaceImportDialog][createTable] viewer.setInput DONE"); //$NON-NLS-1$
-//
-//			viewer.refresh();
-//			logInfo("[WorkspaceImportDialog][createTable] viewer.refresh DONE"); //$NON-NLS-1$
-//
-//			viewer.setAllChecked(true);
-//			logInfo("[WorkspaceImportDialog][createTable] viewer.setAllChecked DONE"); //$NON-NLS-1$
-		} catch (Exception e) {
-			logInfo("[WorkspaceImportDialog][createTable] ❌ Exception: " + e.getMessage()); //$NON-NLS-1$
-			e.printStackTrace();
-		}
-		logInfo("[WorkspaceImportDialog][createTable] END"); //$NON-NLS-1$
-	}
+			}
+		});
 
-	private void createButtons(Composite parent) {
-		logInfo("[WorkspaceImportDialog][createButtons] START"); //$NON-NLS-1$
-		try {
-			Composite bar = new Composite(parent, SWT.NONE);
-			bar.setLayout(new GridLayout(2, false));
+		// Deselect All (VISIBLE ONLY)
+		Button deselectAll = new Button(bar, SWT.PUSH);
+		deselectAll.setText(IDEWorkbenchMessages.WorkspaceImportDialog_deselectAllLabel);
+		deselectAll.addListener(SWT.Selection, e -> {
+			if (viewer == null) {
+				return;
+			}
 
-			// Select All (VISIBLE ONLY)
-			Button selectAll = new Button(bar, SWT.PUSH);
-			selectAll.setText("Select All"); //$NON-NLS-1$
-			selectAll.addListener(SWT.Selection, e -> {
-				logInfo("[WorkspaceImportDialog][createButtons] Select All (VISIBLE) clicked"); //$NON-NLS-1$
-				if (viewer == null) {
-					logInfo("[WorkspaceImportDialog][createButtons] ❌ viewer NULL"); //$NON-NLS-1$
-					return;
-				}
-
-				TableItem[] items = viewer.getTable().getItems();
-				logInfo("[SelectAll] Visible items count: " + items.length); //$NON-NLS-1$
-				for (TableItem item : items) {
-					Object data = item.getData();
-					if (data instanceof String) {
-						viewer.setChecked(data, true);
-						checkedElements.add((String) data);
-						logInfo("[SelectAll] CHECKED: " + data); //$NON-NLS-1$
-					}
-				}
-			});
-
-			// Deselect All (VISIBLE ONLY)
-			Button deselectAll = new Button(bar, SWT.PUSH);
-			deselectAll.setText("Deselect All"); //$NON-NLS-1$
-			deselectAll.addListener(SWT.Selection, e -> {
-				logInfo("[WorkspaceImportDialog][createButtons] Deselect All (VISIBLE) clicked"); //$NON-NLS-1$
-				if (viewer == null) {
-					logInfo("[WorkspaceImportDialog][createButtons] ❌ viewer NULL"); //$NON-NLS-1$
-					return;
-				}
-
-				TableItem[] items = viewer.getTable().getItems();
-				logInfo("[DeselectAll] Visible items count: " + items.length); //$NON-NLS-1$
-				for (TableItem item : items) {
-					Object data = item.getData();
-					if (data instanceof String) {
-						viewer.setChecked(data, false);
-						checkedElements.remove(data);
-						logInfo("[DeselectAll] UNCHECKED: " + data); //$NON-NLS-1$
-					}
-				}
-			});
-		} catch (Exception e) {
-			logInfo("[WorkspaceImportDialog][createButtons] ❌ Exception: " + e.getMessage()); //$NON-NLS-1$
-			e.printStackTrace();
-		}
-		logInfo("[WorkspaceImportDialog][createButtons] END"); //$NON-NLS-1$
+			TableItem[] items = viewer.getTable().getItems();
+			for (TableItem item : items) {
+				Object data = item.getData();
+				viewer.setChecked(data, false);
+				checkedElements.remove(data);
+			}
+		});
 	}
 
 	@Override
 	protected void okPressed() {
-		logInfo("[WorkspaceImportDialog][okPressed] START"); //$NON-NLS-1$
-
 		if (viewer == null) {
-			logInfo("[WorkspaceImportDialog][okPressed] ❌ viewer is NULL"); //$NON-NLS-1$
 			super.okPressed();
 			return;
 		}
 
+		selected.clear();
 		Object[] checked = viewer.getCheckedElements();
-
-		logInfo("[WorkspaceImportDialog][okPressed] checked count: " + checked.length); //$NON-NLS-1$
-
 		for (Object o : checked) {
-			logInfo("[WorkspaceImportDialog][okPressed] selected: " + o); //$NON-NLS-1$
 			selected.add((String) o);
 		}
-
-		logInfo("[WorkspaceImportDialog][okPressed] END"); //$NON-NLS-1$
-
 		super.okPressed();
 	}
 
@@ -441,45 +330,62 @@ public class WorkspaceImportDialog extends TitleAreaDialog {
 		return selected;
 	}
 
+	/**
+	 * Reloads and refreshes the workspace list for the selected Eclipse
+	 * installation path.
+	 * <p>
+	 * Displays appropriate messages when:
+	 * <ul>
+	 * <li>no workspaces are found</li>
+	 * <li>all valid workspaces are already imported</li>
+	 * </ul>
+	 * Updates the table viewer with newly detected workspaces and restores checked
+	 * state.
+	 *
+	 * @param newPath the Eclipse installation path to scan for workspaces
+	 */
 	private void reloadWorkspaces(String newPath) {
-	    logInfo("[WorkspaceImportDialog][reloadWorkspaces] START: " + newPath); //$NON-NLS-1$
-
 		if (parentDialog == null) {
-			logInfo("[WorkspaceImportDialog][reloadWorkspaces] ❌ parentDialog NULL"); //$NON-NLS-1$
 			return;
 		}
 
 		List<String> rawList = parentDialog.importWorkspaces(newPath);
-		if (rawList == null) {
-			logInfo("[WorkspaceImportDialog][reloadWorkspaces] ❌ rawList NULL"); //$NON-NLS-1$
-	        return;
-	    }
+		// No prefs file or no valid workspaces
+		if (rawList.isEmpty()) {
+			MessageDialog.openWarning(getShell(), IDEWorkbenchMessages.WorkspaceImportDialog_noWorkspaceFoundTitle,
+					IDEWorkbenchMessages.WorkspaceImportDialog_noWorkspaceFoundMessage);
+			viewer.setInput(Collections.emptyList());
+			viewer.refresh();
+			return;
+		}
 
 		List<String> filtered = new ArrayList<>();
 		for (String ws : rawList) {
-
 			if (ws == null || ws.trim().isEmpty()) {
 				continue;
 			}
 
 			if (existingWorkspaces != null && existingWorkspaces.contains(ws)) {
-				logInfo("[WorkspaceImportDialog][reloadWorkspaces] Skipping existing: " + ws); //$NON-NLS-1$
 				continue;
 			}
-
 			filtered.add(ws);
 		}
 
-		logInfo("[WorkspaceImportDialog][reloadWorkspaces] Filtered size: " + filtered.size()); //$NON-NLS-1$
-		viewer.setInput(filtered);
+		// All valid workspaces are already imported
+		if (filtered.isEmpty()) {
+			MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.WorkspaceImportDialog_noNewWorkspacesTitle,
+					IDEWorkbenchMessages.WorkspaceImportDialog_noNewWorkspacesMessage);
+			viewer.setInput(Collections.emptyList());
+			checkedElements.clear();
+			viewer.refresh();
+			return;
+		}
 
+		viewer.setInput(filtered);
 		// ALWAYS check all after browse
 		checkedElements.clear();
 		checkedElements.addAll(filtered);
-
 		viewer.setCheckedElements(checkedElements.toArray());
-
 		viewer.refresh();
-	    logInfo("[WorkspaceImportDialog][reloadWorkspaces] END"); //$NON-NLS-1$
 	}
 }
