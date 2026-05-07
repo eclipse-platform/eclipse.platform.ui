@@ -21,26 +21,18 @@ import org.eclipse.e4.ui.css.core.sac.SACParserFactory;
 import org.w3c.css.sac.Parser;
 
 /**
- * SAC Parser factory implementation. By default, this SAC FActory support
- * Flute, SteadyState and Batik SAC Parser.
+ * SAC Parser factory implementation. The Batik SAC parser is the only
+ * parser shipped with Eclipse and is registered as the default.
  */
 public class SACParserFactoryImpl extends SACParserFactory {
 
 	private static Map<String, String> parsers = new HashMap<>();
 
 	static {
-		// Register Flute SAC Parser
-		registerSACParser(SACConstants.SACPARSER_FLUTE);
-		// Register Flute SAC CSS3Parser
-		registerSACParser(SACConstants.SACPARSER_FLUTE_CSS3);
-		// Register SteadyState SAC Parser
-		registerSACParser(SACConstants.SACPARSER_STEADYSTATE);
-		// Register Batik SAC Parser
 		registerSACParser(SACConstants.SACPARSER_BATIK);
 	}
 
 	public SACParserFactoryImpl() {
-		// Flute parser is the default SAC Parser to use.
 		super.setPreferredParserName(SACConstants.SACPARSER_BATIK);
 	}
 
