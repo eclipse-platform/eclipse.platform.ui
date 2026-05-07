@@ -53,7 +53,7 @@ public class CSSValueSWTRGBConverterImpl extends AbstractCSSValueConverter {
 			ICSSValueConverterConfig config) throws Exception {
 		RGB color = (RGB) value;
 		RGBColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
-		return CSS2ColorHelper.getColorStringValue(rgbColor, config);
+		return CSS2ColorHelper.getColorStringValue(rgbColor);
 	}
 
 }

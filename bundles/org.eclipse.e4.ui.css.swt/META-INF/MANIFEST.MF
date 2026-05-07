@@ -27,7 +27,6 @@ Export-Package: org.eclipse.e4.ui.css.swt;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.css.swt.properties.definition;x-internal:=true,
  org.eclipse.e4.ui.css.swt.properties.preference;x-internal:=true,
  org.eclipse.e4.ui.css.swt.resources;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.ui.css.swt.serializers;x-internal:=true,
  org.eclipse.e4.ui.internal.css.swt;x-internal:=true,
  org.eclipse.e4.ui.internal.css.swt.definition;x-friends:="org.eclipse.ui.workbench"
 Require-Bundle: org.eclipse.e4.ui.css.core;bundle-version="0.12.200",

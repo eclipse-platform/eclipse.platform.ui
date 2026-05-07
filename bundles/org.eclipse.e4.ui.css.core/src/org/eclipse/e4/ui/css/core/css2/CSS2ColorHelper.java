@@ -16,8 +16,6 @@ package org.eclipse.e4.ui.css.core.css2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterColorConfig;
-import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.RGBColor;
 
@@ -68,33 +66,12 @@ public class CSS2ColorHelper {
 	}
 
 	/**
-	 * Return color string form w3c <code>rgbColor</code> instance. The format
-	 * (Hexa, color name or rgb format) of the color string is managed with
-	 * <code>config</code> {@link ICSSValueConverterConfig}.
+	 * Return the hex string representation of the given w3c {@code rgbColor}.
 	 *
-	 * @param rgbColor the color to get string representation for
-	 * @param config   optional config to influence string format
-	 * @return string representation of rgbColor
+	 * @param rgbColor the color to get a string representation for
+	 * @return the hex string representation of {@code rgbColor}
 	 */
-	public static String getColorStringValue(RGBColor rgbColor, ICSSValueConverterConfig config) {
-		if (config instanceof ICSSValueConverterColorConfig colorConfig) {
-			switch (colorConfig.getFormat()) {
-			case ICSSValueConverterColorConfig.COLOR_HEXA_FORMAT:
-				return getHexaColorStringValue(rgbColor);
-			case ICSSValueConverterColorConfig.COLOR_RGB_FORMAT:
-				return getRGBColorStringValue(rgbColor);
-			case ICSSValueConverterColorConfig.COLOR_NAME_FORMAT:
-				// Get the Hexa color string value
-				String hexaColor = getHexaColorStringValue(rgbColor);
-				// Search into hexa map the color name
-				String colorName = getColorNameFromHexaColor(hexaColor);
-				if (colorName != null) {
-					return colorName;
-				}
-				// Color name is not found, return the Hexa value
-				return hexaColor;
-			}
-		}
+	public static String getColorStringValue(RGBColor rgbColor) {
 		return getHexaColorStringValue(rgbColor);
 	}
 
