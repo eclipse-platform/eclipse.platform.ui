@@ -49,8 +49,6 @@ import org.eclipse.e4.ui.css.core.dom.parsers.CSSParserFactory;
 import org.eclipse.e4.ui.css.core.dom.parsers.ICSSParserFactory;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2Delegate;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.CSSValueBooleanConverterImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
@@ -155,7 +153,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	 */
 	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<>();
 	// for performance hold a map of handlers to singleton list
-	private final Map<ICSSPropertyHandler2, List<ICSSPropertyHandler2>> propertyHandler2InstanceMap = new HashMap<>();
+	private final Map<ICSSPropertyHandler, List<ICSSPropertyHandler>> propertyHandlerInstanceMap = new HashMap<>();
 
 	private Map<String, String> currentCSSPropertiesApplied;
 
@@ -559,31 +557,25 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		if (avoidanceCacheInstalled) {
 			currentCSSPropertiesApplied = new HashMap<>();
 		}
-		List<ICSSPropertyHandler2> handlers2 = Collections.emptyList();
+		List<ICSSPropertyHandler> appliedHandlers = Collections.emptyList();
 		for (int i = 0; i < style.getLength(); i++) {
 			String property = style.item(i);
 			CSSValue value = style.getPropertyCSSValue(property);
 			try {
 				ICSSPropertyHandler handler = this.applyCSSProperty(element, property, value, pseudo);
-				ICSSPropertyHandler2 propertyHandler2 = null;
-				if (handler instanceof ICSSPropertyHandler2) {
-					propertyHandler2 = (ICSSPropertyHandler2) handler;
-				} else if (handler instanceof ICSSPropertyHandler2Delegate) {
-					propertyHandler2 = ((ICSSPropertyHandler2Delegate) handler).getCSSPropertyHandler2();
-				}
-				if (propertyHandler2 != null) {
-					switch (handlers2.size()) {
+				if (handler != null) {
+					switch (appliedHandlers.size()) {
 					case 0:
-						handlers2 = propertyHandler2InstanceMap.computeIfAbsent(propertyHandler2,
+						appliedHandlers = propertyHandlerInstanceMap.computeIfAbsent(handler,
 								Collections::singletonList);
 						break;
 					case 1:
-						handlers2 = new ArrayList<>(handlers2);
-						handlers2.add(propertyHandler2);
+						appliedHandlers = new ArrayList<>(appliedHandlers);
+						appliedHandlers.add(handler);
 						break;
 					default:
-						if (!handlers2.contains(propertyHandler2)) {
-							handlers2.add(propertyHandler2);
+						if (!appliedHandlers.contains(handler)) {
+							appliedHandlers.add(handler);
 						}
 					}
 				}
@@ -593,9 +585,9 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				}
 			}
 		}
-		for (ICSSPropertyHandler2 handler2 : handlers2) {
+		for (ICSSPropertyHandler handler : appliedHandlers) {
 			try {
-				handler2.onAllCSSPropertiesApplyed(element, this, pseudo);
+				handler.onAllCSSPropertiesApplied(element, this, pseudo);
 			} catch (Exception e) {
 				handleExceptions(e);
 			}

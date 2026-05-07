@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
@@ -39,8 +38,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
-implements ICSSPropertyHandler2 {
+public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 
 	public static final ICSSPropertyFontHandler INSTANCE = new CSSPropertyFontSWTHandler();
 
@@ -232,7 +230,7 @@ implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
+	public void onAllCSSPropertiesApplied(Object element, CSSEngine engine)
 			throws Exception {
 		final Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget == null || widget instanceof CTabItem) {

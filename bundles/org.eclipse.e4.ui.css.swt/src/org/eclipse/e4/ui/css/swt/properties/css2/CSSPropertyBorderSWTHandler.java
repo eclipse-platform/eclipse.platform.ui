@@ -14,7 +14,6 @@
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -28,8 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSPropertyBorderSWTHandler extends
-AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
+public class CSSPropertyBorderSWTHandler extends AbstractCSSPropertyBorderHandler {
 
 	public static final ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
 
@@ -70,7 +68,7 @@ AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
+	public void onAllCSSPropertiesApplied(Object element, CSSEngine engine)
 			throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {

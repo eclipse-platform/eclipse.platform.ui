@@ -63,4 +63,23 @@ public interface ICSSPropertyHandler {
 		return null;
 	}
 
+	/**
+	 * Callback method called once after all CSS properties of a single
+	 * declaration have been applied. Handlers that need to perform a final
+	 * step (re-layout, redraw, batched commit, ...) override this method;
+	 * the default is a no-op.
+	 */
+	default void onAllCSSPropertiesApplied(Object element, CSSEngine engine) throws Exception {
+		// do nothing
+	}
+
+	/**
+	 * Variant of {@link #onAllCSSPropertiesApplied(Object, CSSEngine)} that
+	 * also receives the pseudo class. Defaults to delegating to the
+	 * pseudo-less form.
+	 */
+	default void onAllCSSPropertiesApplied(Object element, CSSEngine engine, String pseudo) throws Exception {
+		onAllCSSPropertiesApplied(element, engine);
+	}
+
 }
