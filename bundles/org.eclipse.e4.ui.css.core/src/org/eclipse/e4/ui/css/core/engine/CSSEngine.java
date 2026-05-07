@@ -61,7 +61,7 @@ public interface CSSEngine {
 	/**
 	 * Parse style declaration from String style.
 	 */
-	CSSStyleDeclaration parseStyleDeclaration(String style) throws IOException;
+	CSSStyleDeclaration parseStyleDeclaration(String style);
 
 	/**
 	 * Parse style declaration from Reader reader.
@@ -83,7 +83,7 @@ public interface CSSEngine {
 	/**
 	 * Parse CSSValue from String value.
 	 */
-	CSSValue parsePropertyValue(String value) throws IOException;
+	CSSValue parsePropertyValue(String value);
 
 	/**
 	 * Parse CSSValue from InputStream stream.
@@ -105,7 +105,7 @@ public interface CSSEngine {
 	/**
 	 * Parse Selectors from String value.
 	 */
-	SelectorList parseSelectors(String text) throws IOException;
+	SelectorList parseSelectors(String text);
 
 	/**
 	 * Parse Selectors from InputSource value.

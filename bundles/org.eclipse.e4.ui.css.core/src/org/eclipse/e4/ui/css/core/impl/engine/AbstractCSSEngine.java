@@ -278,9 +278,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Parse style declaration -----------------*/
 
 	@Override
-	public CSSStyleDeclaration parseStyleDeclaration(String style) throws IOException {
-		Reader reader = new StringReader(style);
-		return parseStyleDeclaration(reader);
+	public CSSStyleDeclaration parseStyleDeclaration(String style) {
+		try {
+			return parseStyleDeclaration(new StringReader(style));
+		} catch (IOException e) {
+			throw new IllegalStateException("StringReader cannot throw IOException", e); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -307,9 +310,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Parse CSS Selector -----------------*/
 
 	@Override
-	public SelectorList parseSelectors(String selector) throws IOException {
-		Reader reader = new StringReader(selector);
-		return parseSelectors(reader);
+	public SelectorList parseSelectors(String selector) {
+		try {
+			return parseSelectors(new StringReader(selector));
+		} catch (IOException e) {
+			throw new IllegalStateException("StringReader cannot throw IOException", e); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -350,9 +356,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public CSSValue parsePropertyValue(String value) throws IOException {
-		Reader reader = new StringReader(value);
-		return parsePropertyValue(reader);
+	public CSSValue parsePropertyValue(String value) {
+		try {
+			return parsePropertyValue(new StringReader(value));
+		} catch (IOException e) {
+			throw new IllegalStateException("StringReader cannot throw IOException", e); //$NON-NLS-1$
+		}
 	}
 
 	@Override
