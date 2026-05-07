@@ -189,8 +189,8 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_ELCL_SYNCED, ISharedImages.IMG_ELCL_SYNCED_DISABLED, //
 				PATH_ELOCALTOOL + "synced.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, //
-				PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_EXPANDALL, ISharedImages.IMG_ELCL_EXPANDALL_DISABLED, //
+				PATH_ELOCALTOOL + "expandall.svg", true); //$NON-NLS-1$
 
 		declareImage(ISharedImages.IMG_ELCL_REMOVE, ISharedImages.IMG_ELCL_REMOVE_DISABLED, //
 				PATH_ELOCALTOOL + "remove.svg", true); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -70,6 +70,20 @@ public interface ISharedImages {
 	 * @since 3.4
 	 */
 	String IMG_ELCL_COLLAPSEALL_DISABLED = "IMG_ELCL_COLLAPSEALL_DISABLED"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the expand all image in the enabled state.
+	 *
+	 * @since 3.139
+	 */
+	String IMG_ELCL_EXPANDALL = "IMG_ELCL_EXPANDALL"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the expand all image in the disabled state.
+	 *
+	 * @since 3.139
+	 */
+	String IMG_ELCL_EXPANDALL_DISABLED = "IMG_ELCL_EXPANDALL_DISABLED"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the remove image in the enabled state.

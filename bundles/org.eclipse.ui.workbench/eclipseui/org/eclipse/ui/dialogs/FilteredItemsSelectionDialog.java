@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -244,7 +244,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * to deterministically wait for the filter/refresh pipeline to settle.
 	 *
 	 * @noreference This field is not intended to be referenced by clients.
-	 * @since 3.138
+	 * @since 3.139
 	 */
 	public static final Object JOB_FAMILY = new Object();
 
