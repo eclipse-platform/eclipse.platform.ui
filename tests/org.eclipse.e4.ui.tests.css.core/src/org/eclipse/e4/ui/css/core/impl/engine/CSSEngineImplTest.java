@@ -17,27 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Objects;
 
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 
-public class AbstractCSSEngineTest {
+public class CSSEngineImplTest {
 
-	private AbstractCSSEngine objectUnderTest;
+	private CSSEngineImpl objectUnderTest;
 
 	@BeforeEach
 	public void setUp() {
-		objectUnderTest = new AbstractCSSEngine() {
+		objectUnderTest = new CSSEngineImpl() {
 
 			@Override
 			public void reapply() {
 				// mock does nothing
-			}
-
-			@Override
-			public CSSParser makeCSSParser() {
-				return null;
 			}
 
 		};

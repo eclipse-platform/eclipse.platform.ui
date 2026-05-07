@@ -19,7 +19,7 @@ import java.io.StringReader;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngine;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.css.sac.InputSource;
@@ -51,7 +51,7 @@ public final class ParserTestUtil {
 	 */
 	public static CSSStyleSheet parseCssWithoutImports(String css)
 			throws IOException {
-		CSSParser parser = ((AbstractCSSEngine) createEngine()).makeCSSParser();
+		CSSParser parser = ((CSSEngineImpl) createEngine()).makeCSSParser();
 		InputSource source = new InputSource();
 		source.setCharacterStream(new StringReader(css));
 		return parser.parseStyleSheet(source);
