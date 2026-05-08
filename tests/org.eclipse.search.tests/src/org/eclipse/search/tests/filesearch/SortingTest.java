@@ -18,8 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,15 +58,26 @@ public class SortingTest {
 		// first, collect all matches
 		Object[] elements= result.getElements();
 		for (Object element : elements) {
+			int sizeBefore= allMatches.size();
 			Match[] matches = result.getMatches(element);
 			Collections.addAll(allMatches, matches);
+			int sizeAfter= allMatches.size();
+			assertEquals(sizeBefore + matches.length, sizeAfter, "Failed to add matches:" +
+					Arrays.stream(matches).map(Match::toString).collect(Collectors.joining(System.lineSeparator())));
 		}
+
+		assertEquals(allMatches.size(), originalMatchCount, "Unexpected match count");
+
 		// now remove them and readd them in reverse order
 		result.removeAll();
 		assertEquals(0, result.getMatchCount(), "removed all matches");
 
 		for (int i= allMatches.size()-1; i >= 0; i--) {
-			result.addMatch(allMatches.get(i));
+			Match match= allMatches.get(i);
+			int sizeBefore= result.getMatchCount();
+			result.addMatch(match);
+			int sizeAfter= result.getMatchCount();
+			assertEquals(sizeBefore + 1, sizeAfter, "Failed to add match:" + match);
 		}
 
 		assertEquals(result.getMatchCount(), originalMatchCount, "Test that all matches have been added again");
