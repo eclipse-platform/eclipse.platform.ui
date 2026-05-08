@@ -26,8 +26,6 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.util.ULocale;
-import com.ibm.icu.util.ULocale.Category;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +45,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Category;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -585,11 +585,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			boolean showProgress = PrefUtil.getAPIPreferenceStore()
 					.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
-			final String nlExtensions = Platform.getNLExtensions();
-			if (nlExtensions.length() > 0) {
-				ULocale.setDefault(Category.FORMAT,
-						new ULocale(ULocale.getDefault(Category.FORMAT).getBaseName() + nlExtensions));
-			}
+			applyNlExtensions(Platform.getNLExtensions());
 
 			System.setProperty(org.eclipse.e4.ui.workbench.IWorkbench.XMI_URI_ARG,
 					"org.eclipse.ui.workbench/LegacyIDE.e4xmi"); //$NON-NLS-1$
@@ -1903,10 +1899,71 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	private void initializeNLExtensions() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (!store.isDefault(IPreferenceConstants.NL_EXTENSIONS)) {
-			String nlExtensions = store.getString(IPreferenceConstants.NL_EXTENSIONS);
-			ULocale.setDefault(Category.FORMAT,
-					new ULocale(ULocale.getDefault(Category.FORMAT).getBaseName() + nlExtensions));
+			applyNlExtensions(store.getString(IPreferenceConstants.NL_EXTENSIONS));
 		}
+	}
+
+	/**
+	 * Mapping from ICU-style long keyword names (used in legacy
+	 * {@code @key=value} locale extension strings) to the corresponding two-letter
+	 * BCP 47 Unicode locale extension keys.
+	 */
+	private static final Map<String, String> ICU_TO_BCP47_KEY = Map.ofEntries(
+			Map.entry("calendar", "ca"), //$NON-NLS-1$ //$NON-NLS-2$
+			Map.entry("collation", "co"), //$NON-NLS-1$ //$NON-NLS-2$
+			Map.entry("currency", "cu"), //$NON-NLS-1$ //$NON-NLS-2$
+			Map.entry("numbers", "nu"), //$NON-NLS-1$ //$NON-NLS-2$
+			Map.entry("timezone", "tz")); //$NON-NLS-1$ //$NON-NLS-2$
+
+	/**
+	 * Applies an ICU-style locale extension string (e.g. {@code @calendar=hebrew})
+	 * to the default {@link Category#FORMAT} locale by translating it to a BCP 47
+	 * Unicode locale extension and re-parsing the resulting language tag.
+	 * <p>
+	 * Supports both ICU long keyword names ({@code calendar}, {@code numbers},
+	 * ...) and two-letter BCP 47 keys. Underscores in values are normalized to
+	 * hyphens so legacy compound values such as {@code islamic_civil} are accepted.
+	 * Unknown keys and ill-formed values are silently dropped, matching the
+	 * previous best-effort behavior of {@code com.ibm.icu.util.ULocale}.
+	 * </p>
+	 * <p>
+	 * Note: long IANA timezone IDs (e.g. {@code @timezone=America/New_York}) are
+	 * not translated. BCP 47 Unicode extensions only accept short CLDR timezone
+	 * identifiers (e.g. {@code @tz=usnyc}), and the JDK does not expose the
+	 * IANA-to-CLDR mapping. Such values are dropped.
+	 * </p>
+	 */
+	private static void applyNlExtensions(String nlExtensions) {
+		if (nlExtensions == null || nlExtensions.isEmpty()) {
+			return;
+		}
+		String body = nlExtensions.startsWith("@") ? nlExtensions.substring(1) : nlExtensions; //$NON-NLS-1$
+		StringBuilder uExtension = new StringBuilder();
+		for (String pair : body.split(";")) { //$NON-NLS-1$
+			int eq = pair.indexOf('=');
+			if (eq <= 0) {
+				continue;
+			}
+			String rawKey = pair.substring(0, eq).trim().toLowerCase(Locale.ROOT);
+			String rawValue = pair.substring(eq + 1).trim().toLowerCase(Locale.ROOT).replace('_', '-');
+			if (rawValue.isEmpty()) {
+				continue;
+			}
+			String key = ICU_TO_BCP47_KEY.getOrDefault(rawKey, rawKey.length() == 2 ? rawKey : null);
+			if (key == null) {
+				continue;
+			}
+			if (uExtension.length() > 0) {
+				uExtension.append('-');
+			}
+			uExtension.append(key).append('-').append(rawValue);
+		}
+		if (uExtension.length() == 0) {
+			return;
+		}
+		String baseTag = Locale.getDefault(Category.FORMAT).stripExtensions().toLanguageTag();
+		Locale newDefault = Locale.forLanguageTag(baseTag + "-u-" + uExtension); //$NON-NLS-1$
+		Locale.setDefault(Category.FORMAT, newDefault);
 	}
 
 	/*
