@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
@@ -247,7 +248,12 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 							ccip.parameters.put(menuParam.getName(), menuParam.getValue());
 						}
 					}
-					innerMgr.add(new CommandContributionItem(ccip));
+					CommandContributionItem cci = new CommandContributionItem(ccip);
+					MExpression visibleWhen = menuElement.getVisibleWhen();
+					if (visibleWhen != null) {
+						cci.setVisible(ContributionsAnalyzer.isVisible(visibleWhen, eContext));
+					}
+					innerMgr.add(cci);
 				}
 			}
 		}

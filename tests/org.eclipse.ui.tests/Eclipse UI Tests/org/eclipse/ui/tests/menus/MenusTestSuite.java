@@ -31,6 +31,7 @@ import org.junit.platform.suite.api.Suite;
 		DynamicMenuTest.class,
 		Bug231304Test.class,
 		ShowViewMenuTest.class,
+		ShowInMenuTest.class,
 		Bug264804Test.class,
 		MenuHelperTest.class,
 		Bug410426Test.class,

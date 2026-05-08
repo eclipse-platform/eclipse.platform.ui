@@ -3911,6 +3911,24 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.menus.showInMenu">
+         <command
+               commandId="org.eclipse.ui.tests.menus.showInMenuTestItem"
+               label="Show In Menu Test Item"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
