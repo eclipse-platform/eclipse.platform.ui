@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Iterator;
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -89,6 +91,20 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 		return propertyDialog;
 
+	}
+	
+	@Override
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == IDialogConstants.CLOSE_ID) {
+			cancelPressed();
+			return;
+		}
+		super.buttonPressed(buttonId);
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
 	}
 
 	@Override
@@ -160,6 +176,11 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	@Override
 	protected String getSelectedNodePreference() {
 		return lastPropertyId;
+	}
+
+	@Override
+	public void updateButtons() {
+		// This function is overridden to remove the Apply and close button
 	}
 
 	/**
