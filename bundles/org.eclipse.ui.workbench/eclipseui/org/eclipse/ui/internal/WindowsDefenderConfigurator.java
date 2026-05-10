@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
@@ -389,7 +390,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 				Thread.onSpinWait();
 				Thread.sleep(5);
 			}
-			if (process.isAlive()) {
+			if (!process.waitFor(5, TimeUnit.SECONDS)) {
 				process.destroyForcibly();
 				process.descendants().forEach(ProcessHandle::destroyForcibly);
 				throw new IOException("Process timed-out and it was attempted to forcefully terminate it"); //$NON-NLS-1$
