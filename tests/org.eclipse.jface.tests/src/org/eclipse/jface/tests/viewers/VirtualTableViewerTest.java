@@ -279,7 +279,6 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		IStructuredSelection result = fViewer.getStructuredSelection();
 		assertEquals(children.length, result.size(), "Size was " + result.size() + " expected " + children.length);
 		Set<TestElement> childrenSet = new HashSet<>(Arrays.asList(children));
-		@SuppressWarnings("unchecked")
 		Set<?> selectedSet = new HashSet<Object>(result.toList());
 		assertTrue(childrenSet.equals(selectedSet), "Elements do not match ");
 	}
