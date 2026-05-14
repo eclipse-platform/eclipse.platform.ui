@@ -16,12 +16,6 @@
          point="org.eclipse.ui.perspectives">
  
       <perspective
-            name="UI Test Drag Test Perspective"
-            icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
-            id="org.eclipse.ui.tests.dnd.dragdrop">
-      </perspective>
-      <perspective
             name="UI Test Zoom Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.zoom.ZoomPerspectiveFactory"
@@ -65,10 +59,6 @@
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             name="UI Test Perspective for presentation NPE"/> 
-      <perspective
-            class="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
-            id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
-            name="Standalone View DnD Perspective"/>         
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
@@ -462,11 +452,6 @@
             category="org.eclipse.ui.tests.decoratorCategory"
             name="Table View Test"
             id="org.eclipse.ui.tests.decorator.TableViewTest"/>
-      <view
-            class="org.eclipse.ui.tests.decorators.DecoratorTableTreeView"
-            category="org.eclipse.ui.tests.decoratorCategory"
-            name="Table Tree Test"
-            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>
       <view
             class="org.eclipse.jface.tests.viewers.interactive.VirtualTableView"
             category="org.eclipse.ui.tests.tableViewerViews"
@@ -4739,7 +4724,7 @@
    </extension>
    
    <extension point="org.eclipse.e4.ui.css.swt.theme">
-   		<theme basestylesheeturi="css/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
+   		<theme basestylesheeturi="CSS/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.editorAssociationOverride">
