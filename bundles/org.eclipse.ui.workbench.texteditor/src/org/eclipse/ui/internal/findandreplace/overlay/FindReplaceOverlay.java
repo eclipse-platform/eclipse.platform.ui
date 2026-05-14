@@ -352,7 +352,7 @@ public class FindReplaceOverlay {
 	private void asyncExecIfOpen(Runnable operation) {
 		if (!containerControl.isDisposed()) {
 			containerControl.getDisplay().asyncExec(() -> {
-				if (containerControl != null || containerControl.isDisposed()) {
+				if (containerControl != null && !containerControl.isDisposed()) {
 					operation.run();
 				}
 			});
