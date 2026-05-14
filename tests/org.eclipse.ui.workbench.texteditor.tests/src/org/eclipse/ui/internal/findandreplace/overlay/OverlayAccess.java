@@ -216,6 +216,17 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		};
 	}
 
+	@Override
+	public void selectFindHistoryEntry(int index) {
+		// Clear the field directly (no SWT.Modify, so no incremental search fires),
+		// then step down once per index position. From an empty field ARROW_DOWN
+		// always lands on index 0 (newest); each additional press moves one step older.
+		find.setText("");
+		for (int i = 0; i <= index; i++) {
+			simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
+		}
+	}
+
 	public void pressSearch(boolean forward) {
 		if (forward) {
 			searchForward.notifyListeners(SWT.Selection, null);

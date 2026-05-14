@@ -376,6 +376,80 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertThat(fTextViewer.getDocument().get(), is("abaaefg"));
 	}
 
+	@Test
+	public void testSearchTermStoredInHistoryAfterSearch() {
+		// Performing a search must persist the search term so that the user can
+		// navigate back to it via history in a subsequent session.
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchHistoryContainsAllRecentTermsNewestFirst() {
+		// Multiple searches must all appear in history ordered newest-first, so that
+		// index 0 always yields the most recently used term.
+		initializeTextViewerWithFindReplaceUI("foo bar baz foo bar baz");
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		dialog.setFindText("bar");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("bar", dialog.getFindText());
+
+		dialog.selectFindHistoryEntry(1);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchHistoryDeduplicatesRepeatedSearchTerms() {
+		// Searching for the same term twice must not create a duplicate entry in
+		// history. If it did, index 1 would show "foo" again instead of "bar".
+		initializeTextViewerWithFindReplaceUI("foo bar foo bar");
+		dialog.setFindText("bar");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		// Search "foo" a second time — must not insert a second "foo" entry.
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+		// A duplicate "foo" would appear here instead of "bar".
+		dialog.selectFindHistoryEntry(1);
+		assertEquals("bar", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterReplaceAll() {
+		// A replace-all operation must persist the search term to history so that
+		// it is available for future searches.
+		initializeTextViewerWithFindReplaceUI("foo foo foo");
+		dialog.setFindText("foo");
+		dialog.setReplaceText("bar");
+		dialog.performReplaceAll();
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSingleReplace() {
+		// A single replace operation must also persist the search term to history.
+		initializeTextViewerWithFindReplaceUI("foo bar");
+		dialog.setFindText("foo");
+		dialog.setReplaceText("baz");
+		dialog.performReplace();
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+	}
+
 	protected AccessType getDialog() {
 		return dialog;
 	}

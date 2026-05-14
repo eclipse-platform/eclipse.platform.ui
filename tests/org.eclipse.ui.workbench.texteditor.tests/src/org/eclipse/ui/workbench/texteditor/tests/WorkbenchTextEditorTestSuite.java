@@ -17,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
+import org.eclipse.ui.internal.findandreplace.HistoryStoreTest;
 import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayTest;
 
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapPageTest;
@@ -48,6 +49,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		FindReplaceDialogTest.class,
 		FindReplaceOverlayTest.class,
 		FindReplaceLogicTest.class,
+		HistoryStoreTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SelectClasses

@@ -230,6 +230,11 @@ class DialogAccess implements IFindReplaceUIAccess {
 		}
 	}
 
+	@Override
+	public void selectFindHistoryEntry(int index) {
+		findCombo.select(index);
+	}
+
 	public void performFindNext() {
 		if (findNextButton.getEnabled()) {
 			findNextButton.notifyListeners(SWT.Selection, null);

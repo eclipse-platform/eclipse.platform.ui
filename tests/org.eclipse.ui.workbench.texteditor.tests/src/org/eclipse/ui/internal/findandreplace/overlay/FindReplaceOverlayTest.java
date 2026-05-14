@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -182,6 +183,36 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
 			reopenFindReplaceUIForTextViewer();
 		}
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSearchForward() {
+		// After a forward search, the term must be retrievable from history so that
+		// the user can navigate back to it in a subsequent session.
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		OverlayAccess dialog= getDialog();
+		dialog.setFindText("foo");
+		dialog.pressSearch(true);
+
+		// Down-arrow navigates to the most recently stored entry (index 0).
+		dialog.setFindText("");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
+
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSearchBackward() {
+		// Backward search must persist the term to history just like forward search.
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		OverlayAccess dialog= getDialog();
+		dialog.setFindText("foo");
+		dialog.pressSearch(false);
+
+		dialog.setFindText("");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
+
+		assertEquals("foo", dialog.getFindText());
 	}
 
 }
