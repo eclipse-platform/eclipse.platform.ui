@@ -254,6 +254,7 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.services.IDisposable;
@@ -3690,8 +3691,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 						+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
 				));
 			} else {
-				boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-						.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
+				boolean rescaleAtRuntime = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+						WorkbenchPlugin.PI_WORKBENCH).getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
 				System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 			}
 

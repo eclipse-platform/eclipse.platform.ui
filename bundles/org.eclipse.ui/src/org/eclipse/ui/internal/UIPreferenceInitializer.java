@@ -61,6 +61,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 				false);
 
+		node.putBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 		node.putBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, true);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,

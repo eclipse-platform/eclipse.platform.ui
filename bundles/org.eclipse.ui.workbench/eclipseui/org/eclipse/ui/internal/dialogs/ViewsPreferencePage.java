@@ -26,6 +26,7 @@ import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_O
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ID;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -88,6 +90,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -238,8 +241,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 		createLabel(parent, ""); //$NON-NLS-1$
 
-		boolean initialStateRescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
+		boolean initialStateRescaleAtRuntime = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+				WorkbenchPlugin.PI_WORKBENCH).getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
 		rescaleAtRuntime = createCheckButton(parent, WorkbenchMessages.RescaleAtRuntimeEnabled,
 				initialStateRescaleAtRuntime);
 		if (!DPIUtil.isSetupCompatibleToMonitorSpecificScaling()) {
@@ -486,16 +489,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
-			IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
-					.getNode(WorkbenchPlugin.PI_WORKBENCH);
+			IPersistentPreferenceStore configurationScopeNode = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+					WorkbenchPlugin.PI_WORKBENCH);
 			boolean initialStateRescaleAtRuntime = configurationScopeNode
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
 			isRescaleAtRuntimeChanged = initialStateRescaleAtRuntime != rescaleAtRuntime.getSelection();
-			configurationScopeNode.putBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME,
-					rescaleAtRuntime.getSelection());
+			configurationScopeNode.setValue(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME,
+					Boolean.toString(rescaleAtRuntime.getSelection()));
 			try {
-				configurationScopeNode.flush();
-			} catch (BackingStoreException e) {
+				configurationScopeNode.save();
+			} catch (IOException e) {
+				WorkbenchPlugin.log("Failed to set monitor-specific scaling preference", e); //$NON-NLS-1$
 			}
 		}
 
@@ -626,6 +630,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
+		if (rescaleAtRuntime != null) {
+			IPreferenceStore configurationStore = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+					WorkbenchPlugin.PI_WORKBENCH);
+			rescaleAtRuntime.setSelection(
+					configurationStore.getDefaultBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME));
+		}
 		enableMru.setSelection(defaultPrefs.getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT));
 		super.performDefaults();
 	}
