@@ -16,14 +16,14 @@
 
 package org.eclipse.ui.tests.harness.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.eclipse.ui.tests.harness.util.Mocks;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the Mocks class.
@@ -42,7 +42,7 @@ public class MocksTest  {
 	private static float unitializedFloat;
 	private static double unitializedDouble;
 
-	@Before
+	@BeforeEach
 	public void setUp()  {
 		primitiveMock = (IPrimitive) Mocks.createRelaxedMock(IPrimitive.class);
 	}
