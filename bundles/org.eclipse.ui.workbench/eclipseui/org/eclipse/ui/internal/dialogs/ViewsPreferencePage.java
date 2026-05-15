@@ -508,10 +508,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		boolean showRestartDialog = false;
 		String restartDialogTitle = null;
 		String restartDialogMessage = null;
+		boolean themeChanged = false;
 
 		if (isThemingPossible()) {
 			ITheme theme = getSelectedTheme();
-			boolean themeChanged = theme != null && !theme.equals(currentTheme);
+			themeChanged = theme != null && !theme.equals(currentTheme);
 			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
 					.equals(currentColorsAndFontsTheme.getId());
 
@@ -546,7 +547,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		if (showRestartDialog) {
 			String themeId = null;
-			if (isThemingPossible()) {
+			if (themeChanged) {
 				ITheme theme = getSelectedTheme();
 				if (theme != null) {
 					themeId = theme.getId();
