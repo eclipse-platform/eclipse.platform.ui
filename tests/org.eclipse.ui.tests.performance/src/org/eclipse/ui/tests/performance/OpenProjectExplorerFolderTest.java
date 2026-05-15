@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,14 +28,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.PerformanceTestCaseJunit5;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.Bundle;
 
 
@@ -61,10 +61,10 @@ import org.osgi.framework.Bundle;
  * "sleep" to simulate computations, it only effects Elapsed Time (not CPU
  * Time).
  */
-public class OpenProjectExplorerFolderTest extends PerformanceTestCaseJunit4 {
+public class OpenProjectExplorerFolderTest extends PerformanceTestCaseJunit5 {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	/*
 	 * performance testcase for bug 106158
