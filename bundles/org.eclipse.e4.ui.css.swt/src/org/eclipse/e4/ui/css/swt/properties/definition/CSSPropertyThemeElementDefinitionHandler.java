@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,8 @@ package org.eclipse.e4.ui.css.swt.properties.definition;
 
 import static org.eclipse.e4.ui.css.swt.helpers.ThemeElementDefinitionHelper.normalizeId;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.definition.ThemeDefinitionElement;
-import org.eclipse.e4.ui.css.swt.helpers.URI;
 import org.eclipse.e4.ui.internal.css.swt.definition.IThemeElementDefinitionOverridable;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
@@ -49,12 +48,10 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(element instanceof ThemeDefinitionElement<?>) || property == null) {
+		if (!(element instanceof ThemeDefinitionElement<?> themeDefinition) || property == null) {
 			return false;
 		}
-
-		IThemeElementDefinitionOverridable<?> definition =
-				(IThemeElementDefinitionOverridable<?>) ((ThemeDefinitionElement<?>) element)
+		IThemeElementDefinitionOverridable<?> definition = (IThemeElementDefinitionOverridable<?>) themeDefinition
 				.getNativeWidget();
 
 		switch (property) {
@@ -85,7 +82,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	}
 
 	private String getLabel(CSSValue value) {
-		URL resourceBundleURL = getResourceBundleURL(value);
+		URI resourceBundleURL = getResourceBundleURI(value);
 		if (resourceBundleURL != null) {
 			String messageId = getMessageId(resourceBundleURL);
 			if (messageId != null) {
@@ -99,7 +96,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 		return value.getCssText();
 	}
 
-	private String getMessageId(URL resourceBundleURL) {
+	private String getMessageId(URI resourceBundleURL) {
 		String query = resourceBundleURL.getQuery();
 		if (query != null) {
 			int indexOfMessageParam = query.indexOf(MESSAGE_QUERY_PARAM);
@@ -110,18 +107,22 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 		return null;
 	}
 
-	private Bundle getBundle(URI uri) throws BundleException {
-		Bundle bundle = Platform.getBundle(uri.lastSegment());
+	private static Bundle getBundle(URI uri) throws BundleException {
+		String path = uri.getPath();
+		if (path == null) {
+			return null;
+		}
+		String[] segments = path.split("/");
+		Bundle bundle = Platform.getBundle(segments[segments.length - 1]);
 		if (bundle != null && (bundle.getState() & Bundle.ACTIVE) == 0) {
 			bundle.start(); // Bundle is lazy init
 		}
 		return bundle;
 	}
 
-	private ResourceBundle getResourceBundle(URL resourceBundleURL) {
+	private ResourceBundle getResourceBundle(URI uri) {
 		ResourceBundle resourceBundle = null;
 		try {
-			URI uri = URI.createURI(resourceBundleURL.getPath());
 			if (uri != null) {
 				resourceBundle = getResourceBundle(getBundle(uri));
 			}
@@ -156,20 +157,15 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 		return bundle.getBundleContext().getService(ref);
 	}
 
-	private URL getResourceBundleURL(CSSValue value) {
-		URL url = null;
-		if (hasResourceBundleUrl(value)) {
+	private static URI getResourceBundleURI(CSSValue value) {
+		if (value instanceof CSSPrimitiveValue primitiveValue
+				&& primitiveValue.getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 			try {
-				url = new URL(((CSSPrimitiveValue) value).getStringValue());
-			} catch (MalformedURLException exc) {
+				return new URI(primitiveValue.getStringValue());
+			} catch (URISyntaxException exc) {
 				// do nothing
 			}
 		}
-		return url;
-	}
-
-	private boolean hasResourceBundleUrl(CSSValue value) {
-		return value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE
-				&& ((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI;
+		return null;
 	}
 }

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom;
 
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
@@ -37,10 +36,8 @@ public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl implements CSS
 		// TODO [rst] Optimize: A list of StyleWrapper instances could be sorted
 		// only once after reading the stylesheet(s).
 		this.styleRules.sort(StyleWrapper.COMPARATOR);
-		Iterator<StyleWrapper> iterator = this.styleRules.iterator();
-		while (iterator.hasNext()) {
-			StyleWrapper styleWrapper = iterator.next();
-			addCSSPropertyList(((CSSStyleDeclarationImpl) styleWrapper.style).getCSSPropertyList());
+		for (StyleWrapper styleWrapper : this.styleRules) {
+			addCSSPropertyList(((CSSStyleDeclarationImpl) styleWrapper.style()).getCSSPropertyList());
 		}
 	}
 

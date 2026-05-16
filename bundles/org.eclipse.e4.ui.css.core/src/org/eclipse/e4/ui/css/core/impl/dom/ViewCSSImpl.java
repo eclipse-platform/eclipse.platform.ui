@@ -163,7 +163,7 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 			return new CSSComputedStyleImpl(styleDeclarations);
 		}
 		if (firstStyleDeclaration != null) {
-			return firstStyleDeclaration.style;
+			return firstStyleDeclaration.style();
 		}
 		return null;
 	}
