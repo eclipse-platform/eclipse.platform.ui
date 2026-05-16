@@ -60,7 +60,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	 * @param style style bits for the canvas
 	 * @param itemsToShow the number of items this will show
 	 * @param numChars The number of characters for the width hint.
-	 * @param side the side to display text, this helps determine horizontal vs vertical
+	 * @param orientation the side to display text, this helps determine horizontal vs vertical
 	 */
 	ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars, int orientation) {
 		super();

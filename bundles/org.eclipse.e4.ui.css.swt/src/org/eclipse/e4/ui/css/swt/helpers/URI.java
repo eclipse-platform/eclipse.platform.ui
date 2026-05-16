@@ -1714,8 +1714,7 @@ public final class URI
 	}
 
 	/**
-	 * Returns an unmodifiable list containing the same segments as the array
-	 * returned by {@link #segments segments}.
+	 * Returns an unmodifiable list of {@code segments} of this URI.
 	 */
 	public List<String> segmentsList()
 	{
@@ -1723,8 +1722,7 @@ public final class URI
 	}
 
 	/**
-	 * Returns the number of elements in the segment array that would be
-	 * returned by {@link #segments segments}.
+	 * Returns the number of {@code segments} of this URI.
 	 */
 	public int segmentCount()
 	{
@@ -1867,8 +1865,8 @@ public final class URI
 	}
 
 	/**
-	 * If this URI has a non-null {@link #query query}, returns the URI
-	 * formed by removing it; this URI unchanged, otherwise.
+	 * If this URI has a non-null {@code query}, returns the URI formed by removing
+	 * it; this URI unchanged, otherwise.
 	 */
 	public URI trimQuery()
 	{
@@ -1915,8 +1913,8 @@ public final class URI
 	}
 
 	/**
-	 * If this URI has a non-null {@link #fragment fragment}, returns the URI
-	 * formed by removing it; this URI unchanged, otherwise.
+	 * If this URI has a non-null {@code fragment}, returns the URI formed by
+	 * removing it; this URI unchanged, otherwise.
 	 */
 	public URI trimFragment()
 	{
