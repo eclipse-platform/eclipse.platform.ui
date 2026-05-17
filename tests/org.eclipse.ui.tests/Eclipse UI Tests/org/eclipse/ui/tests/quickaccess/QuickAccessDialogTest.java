@@ -300,7 +300,8 @@ public class QuickAccessDialogTest {
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
 		final Table firstTable = dialog.getQuickAccessContents().getTable();
 		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
-				() -> dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL)));
+				() -> dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL)),
+				"Unexpected dialog contents: " + getAllEntries(dialog.getQuickAccessContents().getTable()));
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		// then try in a new SearchField
