@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IContainer;
@@ -57,12 +58,14 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 
 /**
@@ -293,11 +296,71 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 				openWithButton.setEnabled(getSelectedItems().size() == 1);
 				showInButton.setEnabled(true);
 			} else {
-				okButton.setEnabled(false);
+				// Exactly one non-file resource (typically a project): OK triggers
+				// the first available Show In target. Multiple non-file resources
+				// don't make sense for Show In, so leave OK disabled there.
+				okButton.setEnabled(getSelectedItems().size() == 1);
 				openWithButton.setEnabled(false);
 				showInButton.setEnabled(true);
 			}
 		}
+	}
+
+	@Override
+	protected void okPressed() {
+		IStructuredSelection selected = getSelectedItems();
+		Button okButton = getOkButton();
+		if (selected.size() == 1 && !(selected.getFirstElement() instanceof IFile)
+				&& okButton != null && okButton.isEnabled()) {
+			if (showSelectionInFirstShowInTarget(selected)) {
+				return;
+			}
+		}
+		super.okPressed();
+	}
+
+	/** Shows the selection in the first available Show In target. */
+	private boolean showSelectionInFirstShowInTarget(IStructuredSelection selection) {
+		IWorkbenchPage activePage = getActivePage();
+		if (!(activePage instanceof WorkbenchPage)) {
+			return false;
+		}
+		WorkbenchPage workbenchPage = (WorkbenchPage) activePage;
+
+		ArrayList<String> ids = new ArrayList<>(workbenchPage.getShowInPartIds());
+		if (ids.isEmpty()) {
+			return false;
+		}
+		workbenchPage.sortShowInPartIds(ids);
+
+		IViewRegistry registry = PlatformUI.getWorkbench().getViewRegistry();
+		IViewDescriptor descriptor = null;
+		for (String id : ids) {
+			IViewDescriptor candidate = registry.find(id);
+			if (candidate != null) {
+				descriptor = candidate;
+				break;
+			}
+		}
+		if (descriptor == null) {
+			return false;
+		}
+
+		computeResult();
+		setResult(Collections.EMPTY_LIST);
+		close();
+
+		try {
+			IViewPart view = activePage.showView(descriptor.getId());
+			IShowInTarget target = Adapters.adapt(view, IShowInTarget.class);
+			if (target == null || !target.show(new ShowInContext(null, selection))) {
+				activePage.getWorkbenchWindow().getShell().getDisplay().beep();
+			}
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+					IStatus.ERROR, "", e)); //$NON-NLS-1$
+		}
+		return true;
 	}
 
 	private boolean isButtonReady(Button button) {
