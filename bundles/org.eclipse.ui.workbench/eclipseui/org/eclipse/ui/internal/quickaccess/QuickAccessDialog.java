@@ -229,13 +229,8 @@ public class QuickAccessDialog extends PopupDialog {
 	@Override
 	protected Control createTitleControl(Composite parent) {
 		parent.getShell().setText(QuickAccessMessages.QuickAccessContents_QuickAccess);
-		filterText = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+		filterText = new Text(parent, SWT.NONE);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(filterText);
-		filterText.addListener(SWT.DefaultSelection, event -> {
-			if (event.detail == SWT.ICON_CANCEL) {
-				filterText.setText(""); //$NON-NLS-1$
-			}
-		});
 		contents.hookFilterText(filterText);
 		filterText.addKeyListener(getKeyAdapter());
 		return filterText;
