@@ -295,8 +295,16 @@ public class QuickAccessDialogTest {
 	public void testPreviousChoicesAvailableForExtension() {
 		// add one selection to history
 		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
-		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
+		text.setText("initial test");
+		dialog.open();
+		/*
+		 * wait for the initial dialog contents, to avoid race conditions later on in the test, see:
+		 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/4009
+		 */
+		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
+				() -> dialogContains(dialog, "initial test")),
+				"Unexpected dialog contents: " + getAllEntries(dialog.getQuickAccessContents().getTable()));
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
 		final Table firstTable = dialog.getQuickAccessContents().getTable();
 		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
