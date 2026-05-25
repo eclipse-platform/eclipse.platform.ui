@@ -36,6 +36,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -81,6 +83,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
@@ -183,6 +186,12 @@ public abstract class QuickAccessContents {
 				computingFeedbackJob.cancel();
 				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
 						&& !table.isDisposed()) {
+					if (Policy.DEBUG_QUICK_ACCESS) {
+						Tracing.printTrace(QuickAccessContents.class.getName(),
+								"[" + Thread.currentThread().getName() + "] Setting quick access contents: " + //$NON-NLS-1$ //$NON-NLS-2$
+										Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId())
+												.toList());
+					}
 					display.asyncExec(() -> {
 						computingFeedbackJob.cancel();
 						refreshTable(perfectMatch, entries.get(), filter);

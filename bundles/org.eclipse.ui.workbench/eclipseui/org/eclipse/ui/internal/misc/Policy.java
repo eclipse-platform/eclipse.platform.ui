@@ -113,6 +113,11 @@ public class Policy {
 	public static boolean DEBUG_OPERATIONS = DEFAULT;
 
 	/**
+	 * Whether to print debugging information for quick access processing.
+	 */
+	public static boolean DEBUG_QUICK_ACCESS = DEFAULT;
+
+	/**
 	 * Whether to print out verbose information about the operation histories,
 	 * including all notifications sent.
 	 */
@@ -178,6 +183,7 @@ public class Policy {
 			DEBUG_HANDLERS_PERFORMANCE = getDebugOption("/trace/handlers.performance"); //$NON-NLS-1$
 			DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
 			DEBUG_OPERATIONS = getDebugOption("/trace/operations"); //$NON-NLS-1$
+			DEBUG_QUICK_ACCESS = getDebugOption("/trace/quickaccess"); //$NON-NLS-1$
 			DEBUG_OPERATIONS_VERBOSE = getDebugOption("/trace/operations.verbose"); //$NON-NLS-1$
 			DEBUG_SHOW_ALL_JOBS = getDebugOption("/debug/showAllJobs"); //$NON-NLS-1$
 			DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$

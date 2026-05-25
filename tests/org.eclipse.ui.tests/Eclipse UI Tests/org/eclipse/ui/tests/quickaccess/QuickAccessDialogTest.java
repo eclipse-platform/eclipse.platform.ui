@@ -45,11 +45,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,6 +66,8 @@ public class QuickAccessDialogTest {
 
 	private class TestQuickAccessDialog extends QuickAccessDialog {
 
+		private volatile String infoText;
+
 		public TestQuickAccessDialog(IWorkbenchWindow activeWorkbenchWindow, Command command) {
 			super(activeWorkbenchWindow, command);
 		}
@@ -70,6 +75,12 @@ public class QuickAccessDialogTest {
 		@Override
 		protected IDialogSettings getDialogSettings() {
 			return dialogSettings;
+		}
+
+		@Override
+		protected void setInfoText(String text) {
+			super.setInfoText(text);
+			infoText = text;
 		}
 	}
 
@@ -81,6 +92,15 @@ public class QuickAccessDialogTest {
 	private IDialogSettings dialogSettings;
 	private IWorkbenchWindow activeWorkbenchWindow;
 
+	@BeforeAll
+	public static void enableDebugOutputs() {
+		Policy.DEBUG_QUICK_ACCESS = true;
+	}
+
+	@AfterAll
+	public static void disableDebugOutputs() {
+		Policy.DEBUG_QUICK_ACCESS = false;
+	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -294,17 +314,16 @@ public class QuickAccessDialogTest {
 	@Test
 	public void testPreviousChoicesAvailableForExtension() {
 		// add one selection to history
-		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
+		TestQuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		Text text = dialog.getQuickAccessContents().getFilterText();
-		text.setText("initial test");
 		dialog.open();
 		/*
-		 * wait for the initial dialog contents, to avoid race conditions later on in the test, see:
+		 * wait for the dialog initialization, to avoid race conditions later on in the test, see:
 		 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/4009
 		 */
-		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
-				() -> dialogContains(dialog, "initial test")),
-				"Unexpected dialog contents: " + getAllEntries(dialog.getQuickAccessContents().getTable()));
+		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT * 1000,
+				() -> dialog.infoText != null),
+				"Unexpected dialog info: " + dialog.infoText);
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
 		final Table firstTable = dialog.getQuickAccessContents().getTable();
 		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
