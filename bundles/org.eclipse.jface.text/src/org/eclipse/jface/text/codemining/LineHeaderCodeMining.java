@@ -84,6 +84,8 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 	}
 
 	static Point draw(String label, GC gc, StyledText textWidget, int x, int y, Callable<Point> superDrawCallable) {
+		int lineHeight= textWidget.getLineHeight();
+		int lineSpacing= textWidget.getLineSpacing();
 		String title= label != null ? label : "no command"; //$NON-NLS-1$
 		String[] lines= title.split("\\r?\\n|\\r"); //$NON-NLS-1$
 		if (lines.length > 1) {
@@ -92,8 +94,8 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 				gc.drawString(line, x, y, true);
 				Point ext= gc.stringExtent(line);
 				result.x= Math.max(result.x, ext.x);
-				result.y+= ext.y + textWidget.getLineSpacing();
-				y+= ext.y + textWidget.getLineSpacing();
+				result.y+= lineHeight + lineSpacing;
+				y+= lineHeight + lineSpacing;
 			}
 			return result;
 		} else {

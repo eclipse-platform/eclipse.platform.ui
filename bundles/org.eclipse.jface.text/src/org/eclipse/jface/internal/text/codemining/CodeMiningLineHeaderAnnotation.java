@@ -133,20 +133,28 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	}
 
 	private static int calculateLineHeight(List<ICodeMining> minings, GC gc, StyledText styledText, boolean ignoreFirstLine, int sumLineHeight, int miningIndex, String[] splitted) {
+		int styledTextLineHeight= 0;
+		if (styledText != null) {
+			styledTextLineHeight= styledText.getLineHeight();
+		}
 		for (int j= 0; j < splitted.length; j++) {
 			String line= splitted[j];
 			if (j == 0 && ignoreFirstLine) {
 				continue;
 			}
-			if (j == splitted.length - 1 && miningIndex + 1 < minings.size()) { // last line, take first line from next mining
-				String nextLabel= minings.get(miningIndex + 1).getLabel();
-				if (nextLabel != null) {
-					String firstFromNext= nextLabel.split("\\r?\\n|\\r")[0]; //$NON-NLS-1$
-					line+= firstFromNext;
+			if (styledText != null) {
+				sumLineHeight+= styledTextLineHeight + styledText.getLineSpacing();
+			} else {
+				if (j == splitted.length - 1 && miningIndex + 1 < minings.size()) { // last line, take first line from next mining
+					String nextLabel= minings.get(miningIndex + 1).getLabel();
+					if (nextLabel != null) {
+						String firstFromNext= nextLabel.split("\\r?\\n|\\r")[0]; //$NON-NLS-1$
+						line+= firstFromNext;
+					}
 				}
+				Point ext= gc.textExtent(line);
+				sumLineHeight+= ext.y;
 			}
-			Point ext= gc.textExtent(line);
-			sumLineHeight+= ext.y + (styledText != null ? styledText.getLineSpacing() : 0);
 		}
 		return sumLineHeight;
 	}
