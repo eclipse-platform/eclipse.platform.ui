@@ -241,7 +241,8 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		// don't bother looking at delta if selection not applicable
-		if (selectionIsOfType(IResource.PROJECT)) {
+		List<? extends IResource> selectedResources = super.getSelectedResources();
+		if (selectedResources.stream().anyMatch(IProject.class::isInstance)) {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);

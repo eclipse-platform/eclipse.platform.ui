@@ -139,7 +139,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	private boolean hasOtherClosedProjects() {
 		//count the closed projects in the selection
 		int closedInSelection = 0;
-		for (IResource project : getSelectedResources()) {
+		for (IResource project : getActionResources()) {
 			if (!((IProject) project).isOpen()) {
 				closedInSelection++;
 			}
@@ -152,6 +152,13 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
 		((IProject) resource).open(IResource.BACKGROUND_REFRESH, monitor);
+	}
+
+	@Override
+	protected List<? extends IResource> getActionResources() {
+		// The open operation only ever applies to projects; drop any non-project
+		// elements of a mixed selection so execution does not fail with a cast.
+		return super.getActionResources().stream().filter(IProject.class::isInstance).toList();
 	}
 
 	/**
@@ -190,7 +197,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		// Warning: code duplicated in CloseResourceAction
 		List<? extends IResource> sel = getSelectedResources();
 		// don't bother looking at delta if selection not applicable
-		if (selectionIsOfType(IResource.PROJECT)) {
+		if (sel.stream().anyMatch(IProject.class::isInstance)) {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
@@ -304,13 +311,15 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		// selected.
 		setText(IDEWorkbenchMessages.OpenResourceAction_text);
 		setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
-		if (!selectionIsOfType(IResource.PROJECT)) {
+		List<IProject> projects = getSelectedResources().stream()
+				.filter(IProject.class::isInstance).map(IProject.class::cast).toList();
+		if (projects.isEmpty()) {
 			return false;
 		}
 
 		boolean hasClosedProjects = false;
-		for (IResource currentResource : getSelectedResources()) {
-			if (!((IProject) currentResource).isOpen()) {
+		for (IProject currentResource : projects) {
+			if (!currentResource.isOpen()) {
 				if (hasClosedProjects) {
 					setText(IDEWorkbenchMessages.OpenResourceAction_text_plural);
 					setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip_plural);

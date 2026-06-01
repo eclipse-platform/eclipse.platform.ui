@@ -16,7 +16,6 @@
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -179,8 +178,9 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 */
 	@Override
 	public void run() {
-		// Get the items to close.
-		List<? extends IResource> projects = getSelectedResources();
+		// Get the items to close (only projects: a mixed selection, e.g. Ctrl+A,
+		// may also contain files or non-resource elements).
+		List<? extends IResource> projects = getActionResources();
 		if (projects == null || projects.isEmpty()) {
 			// no action needs to be taken since no projects are selected
 			return;
@@ -229,14 +229,14 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		// don't call super since we want to enable if open project is selected.
 		setText(defaultText);
 		setToolTipText(defaultToolTip);
-		if (!selectionIsOfType(IResource.PROJECT)) {
+		List<IProject> projects = getSelectedResources().stream()
+				.filter(IProject.class::isInstance).map(IProject.class::cast).toList();
+		if (projects.isEmpty()) {
 			return false;
 		}
 
 		boolean hasOpenProjects = false;
-		Iterator<? extends IResource> resources = getSelectedResources().iterator();
-		while (resources.hasNext()) {
-			IProject currentResource = (IProject) resources.next();
+		for (IProject currentResource : projects) {
 			if (currentResource.isOpen()) {
 				if (hasOpenProjects) {
 					setText(pluralText);
@@ -258,7 +258,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		// Warning: code duplicated in OpenResourceAction
 		List<? extends IResource> sel = getSelectedResources();
 		// don't bother looking at delta if selection not applicable
-		if (selectionIsOfType(IResource.PROJECT)) {
+		if (sel.stream().anyMatch(IProject.class::isInstance)) {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
@@ -278,6 +278,13 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	@Override
 	protected synchronized List<? extends IResource> getSelectedResources() {
 		return super.getSelectedResources();
+	}
+
+	@Override
+	protected List<? extends IResource> getActionResources() {
+		// The close operation only ever applies to projects; drop any non-project
+		// elements of a mixed selection so execution does not fail with a cast.
+		return super.getActionResources().stream().filter(IProject.class::isInstance).toList();
 	}
 
 	@Override

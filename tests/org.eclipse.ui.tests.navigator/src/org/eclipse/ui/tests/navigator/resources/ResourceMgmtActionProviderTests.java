@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.List;
+
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -28,6 +32,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.CloseResourceAction;
+import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.extensions.CommonActionExtensionSite;
 import org.eclipse.ui.internal.navigator.resources.actions.ResourceMgmtActionProvider;
@@ -119,6 +125,120 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 	}
 
 	/**
+	 * Test for a file selected together with an open project: Close Project must
+	 * be both present and enabled. Regression test for the bug where
+	 * selectionIsOfType(PROJECT) disabled the action for any mixed selection.
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void testFillContextMenu_fileAndOpenProjectSelection_closeProjectEnabled() throws CoreException {
+		// _p1 is already open; _project has a known 'src' folder + files
+		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
+		openProj.open(null);
+		// Select a file alongside a project (the typical Ctrl+A expanded scenario)
+		ResourceMgmtActionProvider provider = providerForObjects(_p1, openProj.getFile(".project"));
+		provider.fillContextMenu(manager);
+		assertTrue(menuHasContribution("org.eclipse.ui.CloseResourceAction"),
+				"Close Project should be in the menu");
+		assertTrue(isMenuContributionEnabled("org.eclipse.ui.CloseResourceAction"),
+				"Close Project should be enabled when open projects are in the selection");
+		assertTrue(menuHasContribution("org.eclipse.ui.CloseUnrelatedProjectsAction"),
+				"Close Unrelated Projects should be in the menu");
+		assertTrue(isMenuContributionEnabled("org.eclipse.ui.CloseUnrelatedProjectsAction"),
+				"Close Unrelated Projects should be enabled when open projects are in the selection");
+	}
+
+	/**
+	 * Test for mixed selection: an open project alongside a non-adaptable element
+	 * (e.g. a working set header from Ctrl+A in Project Explorer). Close Project
+	 * and Refresh must still appear — regression test for issue #3790.
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void testFillContextMenu_mixedSelectionOpenProjectAndNonAdaptableElement() throws CoreException {
+		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
+		openProj.open(null);
+		// Plain Object does not implement IAdaptable, so it is never resolved to a
+		// project — it counts as a non-project element in the selection.
+		Object nonResource = new Object();
+		ResourceMgmtActionProvider provider = providerForObjects(openProj, nonResource);
+		provider.fillContextMenu(manager);
+		checkMenuHasCorrectContributions(false, true, false, true, true);
+	}
+
+	/**
+	 * Test for a fully expanded selection: two open projects plus child resources
+	 * from both (simulating Ctrl+A when both projects are expanded). Close Project
+	 * must still appear for the open projects in the selection.
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void testFillContextMenu_twoOpenProjectsWithChildResourcesSelection() throws CoreException {
+		// _p1 and _p2 are already opened in setUp()
+		IFolder srcFolder = _project.getFolder("src");
+		IFolder binFolder = _project.getFolder("bin");
+		ResourceMgmtActionProvider provider = providerForObjects(_p1, _p2, srcFolder, binFolder);
+		provider.fillContextMenu(manager);
+		checkMenuHasCorrectContributions(false, true, false, true, true);
+	}
+
+	/**
+	 * Regression test for the ClassCastException that the always-on provider
+	 * enablement could expose: when Close Project is invoked on a mixed selection
+	 * (project plus a file plus a non-resource element, as produced by Ctrl+A),
+	 * the action must reduce the selection to projects only. Otherwise run() casts
+	 * every selected resource to IProject while building the scheduling rule.
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void testCloseResourceAction_actionResourcesContainProjectsOnly() throws CoreException {
+		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
+		openProj.open(null);
+		IFile projectFile = openProj.getFile(".project");
+		StructuredSelection mixed = new StructuredSelection(new Object[] { openProj, projectFile, new Object() });
+
+		var action = new CloseResourceAction(() -> _commonNavigator.getViewSite().getShell()) {
+			List<? extends IResource> exposedActionResources() {
+				return getActionResources();
+			}
+		};
+		action.selectionChanged(mixed);
+
+		assertEquals(List.of(openProj), action.exposedActionResources(),
+				"Close Project must operate on projects only, not files or non-resource elements");
+	}
+
+	/**
+	 * Regression test for the ClassCastException in OpenResourceAction on a mixed
+	 * selection: the action must reduce the selection to projects only, otherwise
+	 * hasOtherClosedProjects() casts a non-project resource to IProject while
+	 * opening projects with their references.
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void testOpenResourceAction_actionResourcesContainProjectsOnly() throws CoreException {
+		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
+		openProj.open(null);
+		IFile projectFile = openProj.getFile(".project");
+		StructuredSelection mixed = new StructuredSelection(new Object[] { openProj, projectFile, new Object() });
+
+		var action = new OpenResourceAction(() -> _commonNavigator.getViewSite().getShell()) {
+			List<? extends IResource> exposedActionResources() {
+				return getActionResources();
+			}
+		};
+		action.selectionChanged(mixed);
+
+		assertEquals(List.of(openProj), action.exposedActionResources(),
+				"Open Project must operate on projects only, not files or non-resource elements");
+	}
+
+	/**
 	 * Test for 'open project' that doesn't have a builder attached - only 'open
 	 * project' should be disabled
 	 *
@@ -156,6 +276,19 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 			desc.setBuildSpec(new ICommand[0]);
 			openProj.setDescription(desc, null);
 		}
+	}
+
+	/*
+	 * Return a provider for a mixed/arbitrary selection (Object[])
+	 */
+	private ResourceMgmtActionProvider providerForObjects(Object... selectedElements) {
+		ICommonActionExtensionSite cfg = new CommonActionExtensionSite("NA", "NA",
+				CommonViewerSiteFactory.createCommonViewerSite(_commonNavigator.getViewSite()),
+				(NavigatorContentService) _contentService, _viewer);
+		ResourceMgmtActionProvider provider = new ResourceMgmtActionProvider();
+		provider.setContext(new ActionContext(new StructuredSelection(selectedElements)));
+		provider.init(cfg);
+		return provider;
 	}
 
 	/*
@@ -201,6 +334,18 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 		for (IContributionItem thisItem : manager.getItems()) {
 			if (thisItem.getId() != null && thisItem.getId().equals(contribution)) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * Check whether the named menu entry is enabled
+	 */
+	private boolean isMenuContributionEnabled(String contribution) {
+		for (IContributionItem thisItem : manager.getItems()) {
+			if (thisItem.getId() != null && thisItem.getId().equals(contribution)) {
+				return thisItem.isEnabled();
 			}
 		}
 		return false;
