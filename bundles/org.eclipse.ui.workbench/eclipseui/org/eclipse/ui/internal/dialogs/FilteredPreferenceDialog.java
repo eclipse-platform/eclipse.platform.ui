@@ -126,8 +126,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 		@Override
 		public void setInitialText(String text) {
+			// Track initialText for the empty-filter check and accessible name, and show it
+			// as the field's placeholder hint. Unlike the base implementation we never write
+			// it into the field, so addFilter() cannot turn the hint into an active pattern.
+			initialText = text != null ? text : ""; //$NON-NLS-1$
 			if (filterText != null && !filterText.isDisposed()) {
-				filterText.setMessage(text != null ? text : ""); //$NON-NLS-1$
+				filterText.setMessage(initialText);
 			}
 		}
 
@@ -140,7 +144,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			getViewer().addFilter(filter);
 
 			if (filterText != null) {
-				setFilterText(WorkbenchMessages.FilteredTree_FilterMessage);
+				// Keep the field empty so the viewer filter narrows the pages; the
+				// hint text would otherwise be applied as a pattern and hide all pages.
 				textChanged();
 			}
 
