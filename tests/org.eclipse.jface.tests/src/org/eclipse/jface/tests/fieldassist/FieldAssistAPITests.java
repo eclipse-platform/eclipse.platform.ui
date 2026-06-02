@@ -14,9 +14,9 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -67,12 +67,9 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 
 	@Test
 	public void testInitializationWithInvalidCursor() {
-		try {
-			proposal = new ContentProposal(content, label, description, 100);
-			fail("4.0");
-		} catch (IllegalArgumentException e) {
-			assertNull(proposal, "It is expected to be null");
-		}
+		assertThrows(IllegalArgumentException.class,
+				() -> proposal = new ContentProposal(content, label, description, 100), "4.0");
+		assertNull(proposal, "It is expected to be null");
 	}
 
 	@Override
