@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -272,6 +273,62 @@ class CSSEngineTest {
 		assertTrue(engine.matches(lower, lowerElement, null));
 		assertFalse(engine.matches(capital, lowerElement, null));
 		assertFalse(engine.matches(lower, capitalElement, null));
+	}
+
+	// --- Selector specificity (cascade ordering depends on this) ---
+
+	@Test
+	void testSimpleSelectorSpecificity() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		assertEquals(0, parse(engine, "*").specificity());
+		assertEquals(1, parse(engine, "Button").specificity());
+		assertEquals(10, parse(engine, ".primary").specificity());
+		assertEquals(100, parse(engine, "#go").specificity());
+	}
+
+	@Test
+	void testAttributeAndPseudoSpecificity() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		// Attribute and pseudo-class selectors weigh the same as a class.
+		assertEquals(11, parse(engine, "Button[style]").specificity());
+		assertEquals(11, parse(engine, "Button[style~='SWT.CHECK']").specificity());
+		assertEquals(11, parse(engine, "Button:selected").specificity());
+	}
+
+	@Test
+	void testCompoundSelectorSpecificitySums() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		// Button + .primary + #go = 1 + 10 + 100.
+		assertEquals(111, parse(engine, "Button.primary#go").specificity());
+	}
+
+	@Test
+	void testCombinatorSpecificitySums() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		// Combinators contribute nothing themselves; the operands sum.
+		assertEquals(2, parse(engine, "Composite Button").specificity());
+		assertEquals(2, parse(engine, "Composite > Button").specificity());
+		assertEquals(11, parse(engine, "Composite .primary").specificity());
+	}
+
+	@Test
+	void testSelectorListSpecificityIsMax() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		// A list reports the highest specificity among its alternatives.
+		assertEquals(100, engine.parseSelectors("Button, .primary, #go").specificity());
+		assertEquals(10, engine.parseSelectors("Button, .primary").specificity());
+	}
+
+	@Test
+	void testSpecificityOrderingIdBeatsClassBeatsType() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		int universal = parse(engine, "*").specificity();
+		int type = parse(engine, "Button").specificity();
+		int clazz = parse(engine, ".primary").specificity();
+		int id = parse(engine, "#go").specificity();
+		assertTrue(universal < type, "universal must rank below a type selector");
+		assertTrue(type < clazz, "a type selector must rank below a class selector");
+		assertTrue(clazz < id, "a class selector must rank below an id selector");
 	}
 
 	private static boolean matchesAny(CSSEngine engine, Selectors.SelectorList list, Element element) {
