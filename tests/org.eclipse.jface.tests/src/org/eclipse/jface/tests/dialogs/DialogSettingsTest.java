@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -455,14 +455,9 @@ public class DialogSettingsTest {
 	}
 
 	@Test
-	@SuppressWarnings("resource")
 	public void testSaveWithIOException() {
 		final DialogSettings settings = new DialogSettings("test");
-		try {
-			settings.save(new BrokenWriter());
-			fail("IOException expected");
-		} catch (IOException e) {
-		}
+		assertThrows(IOException.class, () -> settings.save(new BrokenWriter()));
 	}
 
 	private static class BrokenWriter extends Writer {

@@ -15,8 +15,8 @@ package org.eclipse.jface.text.tests;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1256,23 +1256,17 @@ public class TextPresentationTest {
 	public void testIterator() {
 		// Test read over iterator end
 		Iterator<StyleRange> e= fTextPresentation.getAllStyleRangeIterator();
-		try {
+		assertThrows(NoSuchElementException.class, () -> {
 			for (int i= 0; i < 1000; i++) {
 				e.next();
 			}
-			fail("Iterator has no end.");
-		} catch (NoSuchElementException ex) {
-			// expected
-		}
-		e= fTextPresentation.getNonDefaultStyleRangeIterator();
-		try {
+		});
+		Iterator<StyleRange> e2= fTextPresentation.getNonDefaultStyleRangeIterator();
+		assertThrows(NoSuchElementException.class, () -> {
 			for (int i= 0; i < 1000; i++) {
-				e.next();
+				e2.next();
 			}
-			fail("Iterator has no end.");
-		} catch (NoSuchElementException ex) {
-			// expected
-		}
+		});
 	}
 
 	// helper method required as long as TextPresentation methods manipulate given arguments

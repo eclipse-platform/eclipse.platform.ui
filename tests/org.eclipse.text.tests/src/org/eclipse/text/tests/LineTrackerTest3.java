@@ -17,8 +17,8 @@ package org.eclipse.text.tests;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -335,17 +335,10 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertEquals(lengths[i], line.getLength(), "line: " + i);
 			assertEquals(offsets[i], line.getOffset(), "line: " + i);
 		}
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
+		int numLines1= lengths.length;
+		int outOfRange1= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines1));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange1));
 
 
 		/* phantom last line when the last line is not empty */
@@ -369,18 +362,10 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertEquals(len, line.getLength(), "length of line: " + i);
 			assertEquals(offset, line.getOffset(), "offset of line: " + i);
 		}
-
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
+		int numLines2= lengths.length;
+		int outOfRange2= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines2));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange2));
 
 	}
 
@@ -409,17 +394,10 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertEquals(lengths[i], line.getLength(), "line: " + i);
 			assertEquals(offsets[i], line.getOffset(), "line: " + i);
 		}
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
+		int numLines3= lengths.length;
+		int outOfRange3= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines3));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange3));
 
 
 		/* phantom last line when the last line is not empty */
@@ -444,109 +422,40 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertEquals(offset, line.getOffset(), "offset of line: " + i);
 		}
 
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
+		int numLines4= lengths.length;
+		int outOfRange4= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines4));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange4));
 
 	}
 
 	@Test
 	public void testNegativeOffset() throws Exception {
-		try {
-			assertEquals(-1, fTracker.getLineNumberOfOffset(-1));
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformationOfOffset(-1);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(-1));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(-1));
 
-		try {
-			assertEquals(-1, fTracker.getLineNumberOfOffset(-1000));
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformationOfOffset(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(-1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(-1000));
 
-		try {
-			fTracker.getLineInformationOfOffset(1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineNumberOfOffset(1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineOffset(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformation(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineOffset(-1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformation(-1000));
 	}
+
+	@Test
 	public void testNegativeOffset2() throws Exception {
 		replace(0, 0, "x");
-		try {
-			assertEquals(-1, fTracker.getLineNumberOfOffset(-1));
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformationOfOffset(-1);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(-1));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(-1));
 
-		try {
-			assertEquals(-1, fTracker.getLineNumberOfOffset(-1000));
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformationOfOffset(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(-1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(-1000));
 
-		try {
-			fTracker.getLineInformationOfOffset(1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineNumberOfOffset(1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineOffset(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
-		try {
-			fTracker.getLineInformation(-1000);
-			fail();
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineOffset(-1000));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformation(-1000));
 	}
 
 	/**
@@ -561,36 +470,11 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		set(null);
 		assertEquals(1, fTracker.getNumberOfLines(), "Tracker not empty.");
 		assertEquals(0, fTracker.getLineLength(0), "Tracker not empty.");
-		try {
-			fTracker.getLineInformationOfOffset(5);
-			fail("No exception for bad location.");
-		} catch (BadLocationException e) {
-			// expected
-		}
-		try {
-			fTracker.getLineInformationOfOffset(initialContentLength);
-			fail("No exception for bad location.");
-		} catch (BadLocationException e) {
-			// expected
-		}
-		try {
-			fTracker.getLineNumberOfOffset(5);
-			fail("No exception for bad location.");
-		} catch (BadLocationException e) {
-			// expected
-		}
-		try {
-			fTracker.getLineNumberOfOffset(initialContentLength);
-			fail("No exception for bad location.");
-		} catch (BadLocationException e) {
-			// expected
-		}
-		try {
-			fTracker.getNumberOfLines(5, 3);
-			fail("No exception for bad location.");
-		} catch (BadLocationException e) {
-			// expected
-		}
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(5));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineInformationOfOffset(initialContentLength));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(5));
+		assertThrows(BadLocationException.class, () -> fTracker.getLineNumberOfOffset(initialContentLength));
+		assertThrows(BadLocationException.class, () -> fTracker.getNumberOfLines(5, 3));
 	}
 
 	/**

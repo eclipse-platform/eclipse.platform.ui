@@ -16,6 +16,7 @@ package org.eclipse.text.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
@@ -318,26 +319,9 @@ public class TextUtilitiesTest {
 		assertEquals(-1, result[0]);
 		assertEquals(-1, result[1]);
 
-		try {
-			TextUtilities.indexOf(null, "foobarabcd", 0);
-			fail("Exception not thrown");
-		} catch (NullPointerException ex) {
-			// expected
-		}
-
-		try {
-			TextUtilities.indexOf(new String[] { "abc", null }, "foobarabcd", 0);
-			fail("Exception not thrown");
-		} catch (NullPointerException ex) {
-			// expected
-		}
-
-		try {
-			TextUtilities.indexOf(new String[] { "abc" }, null, 0);
-			fail("Exception not thrown");
-		} catch (NullPointerException ex) {
-			// expected
-		}
+		assertThrows(NullPointerException.class, () -> TextUtilities.indexOf(null, "foobarabcd", 0));
+		assertThrows(NullPointerException.class, () -> TextUtilities.indexOf(new String[] { "abc", null }, "foobarabcd", 0));
+		assertThrows(NullPointerException.class, () -> TextUtilities.indexOf(new String[] { "abc" }, null, 0));
 	}
 
 	@Test

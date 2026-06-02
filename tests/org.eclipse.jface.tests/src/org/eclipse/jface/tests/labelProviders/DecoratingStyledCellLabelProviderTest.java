@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.resource.JFaceResources;
@@ -238,12 +238,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 	@Test
 	public void testSetDecorationContext() {
-		try {
-			getDecoratingStyledLabelProvider().setDecorationContext(null);
-			fail("DecoratingStyledCellLabelProvider.setDecorationContext did not throw an exception when passed null");
-		} catch (AssertionFailedException e) {
-			// A Good Thing.
-		}
+		assertThrows(AssertionFailedException.class, () -> getDecoratingStyledLabelProvider().setDecorationContext(null));
 	}
 
 	@Test

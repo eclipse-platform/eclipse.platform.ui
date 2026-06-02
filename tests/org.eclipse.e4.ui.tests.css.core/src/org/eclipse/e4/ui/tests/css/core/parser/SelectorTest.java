@@ -16,9 +16,7 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
@@ -69,12 +67,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	void testErrorAttributeSelector() throws IOException {
-		try {
-			engine.parseSelectors("*[class='Class1'"); // missing ']'
-			fail("Parser should have errored on missing bracket");
-		} catch (CSSParseException e) {
-			// ignore
-		}
+	void testErrorAttributeSelector() {
+		assertThrows(CSSParseException.class, () -> engine.parseSelectors("*[class='Class1'")); // missing ']'
 	}
 }

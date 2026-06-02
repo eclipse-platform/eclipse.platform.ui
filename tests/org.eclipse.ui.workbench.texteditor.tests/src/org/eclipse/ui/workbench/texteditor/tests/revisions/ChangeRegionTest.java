@@ -14,8 +14,8 @@
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -69,26 +69,9 @@ public class ChangeRegionTest {
 
 	@Test
 	public void testCreation() throws Exception {
-		try {
-			@SuppressWarnings("unused")
-			ChangeRegion changeRegion= new ChangeRegion(fRevision, null);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			@SuppressWarnings("unused")
-			ChangeRegion changeRegion= new ChangeRegion(null, new LineRange(12, 3));
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			@SuppressWarnings("unused")
-			ChangeRegion changeRegion= new ChangeRegion(null, null);
-			fail();
-		} catch (Exception e) {
-		}
+		assertThrows(Exception.class, () -> new ChangeRegion(fRevision, null));
+		assertThrows(Exception.class, () -> new ChangeRegion(null, new LineRange(12, 3)));
+		assertThrows(Exception.class, () -> new ChangeRegion(null, null));
 
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		assertEquals(fRevision, r.getRevision());

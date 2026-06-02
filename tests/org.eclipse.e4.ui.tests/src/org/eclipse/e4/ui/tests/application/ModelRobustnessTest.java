@@ -16,7 +16,7 @@ package org.eclipse.e4.ui.tests.application;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
@@ -41,12 +41,8 @@ public class ModelRobustnessTest {
 		ResourceSet set = new ResourceSetImpl();
 		Resource resource = null;
 
-		try {
-			resource = set.getResource(uri, true);
-			fail("This should have thrown an exception");
-		} catch (Exception e) {
-			resource = set.getResource(uri, false);
-		}
+		assertThrows(Exception.class, () -> set.getResource(uri, true));
+		resource = set.getResource(uri, false);
 
 		assertNotNull(resource);
 		assertEquals(E4XMIResource.class, resource.getClass());
@@ -75,17 +71,10 @@ public class ModelRobustnessTest {
 		MApplication app = MApplicationFactory.INSTANCE.createApplication();
 		List l = app.getChildren();
 		l.add(MBasicFactory.INSTANCE.createWindow());
-		try {
-			l.add(MBasicFactory.INSTANCE.createPart());
-			fail("The adding of this should have failed");
-		} catch (IllegalArgumentException | ArrayStoreException | ClassCastException e) {
-			// EList.add says this is the expected exception, although testing
-			// indicates its one of the two previous exceptions that is really
-			// thrown.
-			// See bug 407539
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		// EList.add says IllegalArgumentException is the expected exception, although
+		// testing indicates ArrayStoreException or ClassCastException may be thrown.
+		// See bug 407539
+		assertThrows(RuntimeException.class, () -> l.add(MBasicFactory.INSTANCE.createPart()));
 
 		l.add(MBasicFactory.INSTANCE.createWindow());
 		assertEquals(2, l.size());
