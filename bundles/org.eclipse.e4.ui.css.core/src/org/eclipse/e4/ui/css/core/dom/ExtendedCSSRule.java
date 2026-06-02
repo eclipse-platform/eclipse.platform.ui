@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.w3c.dom.css.CSSRule;
 
 /**
@@ -28,7 +27,7 @@ public interface ExtendedCSSRule extends CSSRule {
 	public CSSPropertyList getCSSPropertyList();
 
 	/**
-	 * Return the list of {@link Selector} of this {@link CSSRule}.
+	 * Return the list of selectors of this {@link CSSRule}.
 	 */
-	public SelectorList getSelectorList();
+	public Selectors.SelectorList getSelectorList();
 }

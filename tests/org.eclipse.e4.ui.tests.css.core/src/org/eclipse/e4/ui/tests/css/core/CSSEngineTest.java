@@ -23,10 +23,10 @@ import java.util.Date;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.junit.jupiter.api.Test;
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 
 class CSSEngineTest {
@@ -55,7 +55,7 @@ class CSSEngineTest {
 	@Test
 	void testSelectorMatch() throws Exception {
 		TestCSSEngine engine = new TestCSSEngine();
-		SelectorList list = engine.parseSelectors("Date");
+		Selectors.SelectorList list = engine.parseSelectors("Date");
 		engine.setElementProvider((element, engine1) -> new TestElement(element.getClass().getSimpleName(),
 				engine1));
 		assertFalse(engine.matches(list.item(0), new Object(), null));
@@ -249,7 +249,7 @@ class CSSEngineTest {
 	@Test
 	void testSelectorListMatch() throws Exception {
 		TestCSSEngine engine = new TestCSSEngine();
-		SelectorList list = engine.parseSelectors(".a, .b");
+		Selectors.SelectorList list = engine.parseSelectors(".a, .b");
 		TestElement a = createElement(engine, "Button", "a", null);
 		TestElement b = createElement(engine, "Button", "b", null);
 		TestElement c = createElement(engine, "Button", "c", null);
@@ -274,9 +274,9 @@ class CSSEngineTest {
 		assertFalse(engine.matches(lower, capitalElement, null));
 	}
 
-	private static boolean matchesAny(CSSEngine engine, SelectorList list, Element element) {
-		for (int i = 0; i < list.getLength(); i++) {
-			if (engine.matches(list.item(i), element, null)) {
+	private static boolean matchesAny(CSSEngine engine, Selectors.SelectorList list, Element element) {
+		for (Selector selector : list.alternatives()) {
+			if (engine.matches(selector, element, null)) {
 				return true;
 			}
 		}

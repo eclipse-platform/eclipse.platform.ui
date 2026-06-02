@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSUnknownRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueFactory;
 import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.SacTranslator;
 import org.eclipse.e4.ui.css.core.sac.ExtendedDocumentHandler;
 import org.w3c.css.sac.CSSException;
 import org.w3c.css.sac.InputSource;
@@ -165,9 +166,10 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 	@Override
 	public void startSelector(SelectorList selectors) throws CSSException {
 
-		// Create the style rule and add it to the rule list
+		// Translate the SAC selector list into the engine's internal AST at
+		// this boundary so nothing downstream needs to touch SAC types.
 		CSSStyleRuleImpl rule = new CSSStyleRuleImpl(parentStyleSheet, null,
-				selectors);
+				SacTranslator.translate(selectors));
 		if (!getNodeStack().empty()) {
 			((CSSRuleListImpl) getNodeStack().peek()).add(rule);
 		}

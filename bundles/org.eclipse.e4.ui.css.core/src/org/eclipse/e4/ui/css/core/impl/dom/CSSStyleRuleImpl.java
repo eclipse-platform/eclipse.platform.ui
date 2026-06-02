@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,7 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -27,10 +26,10 @@ import org.w3c.dom.css.CSSStyleSheet;
 
 public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, ExtendedCSSRule {
 
-	private final SelectorList selectors;
+	private final Selectors.SelectorList selectors;
 	private CSSStyleDeclaration styleDeclaration;
 
-	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule, SelectorList selectors) {
+	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule, Selectors.SelectorList selectors) {
 		super(parentStyleSheet, parentRule);
 		this.selectors = selectors;
 	}
@@ -55,17 +54,7 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 
 	@Override
 	public String getSelectorText() {
-		StringBuilder sb = new StringBuilder();
-		for (int selID = 0; selID < getSelectorList().getLength(); selID++) {
-			Selector item = getSelectorList().item(selID);
-			sb.append(item.toString());
-			sb.append(", ");
-		}
-		if (getSelectorList().getLength() > 0) {
-			sb.delete(sb.length() - 2, sb.length());
-		}
-
-		return sb.toString();
+		return selectors.text();
 	}
 
 	@Override
@@ -83,7 +72,7 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 	// Additional methods
 
 	@Override
-	public SelectorList getSelectorList() {
+	public Selectors.SelectorList getSelectorList() {
 		return selectors;
 	}
 

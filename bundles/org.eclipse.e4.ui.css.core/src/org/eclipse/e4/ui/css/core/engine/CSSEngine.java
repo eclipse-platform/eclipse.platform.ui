@@ -20,11 +20,10 @@ import java.util.Collection;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.w3c.css.sac.InputSource;
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
@@ -105,27 +104,27 @@ public interface CSSEngine {
 	/**
 	 * Parse Selectors from String value.
 	 */
-	SelectorList parseSelectors(String text);
+	Selectors.SelectorList parseSelectors(String text);
 
 	/**
 	 * Parse Selectors from InputSource value.
 	 */
-	SelectorList parseSelectors(InputSource source) throws IOException;
+	Selectors.SelectorList parseSelectors(InputSource source) throws IOException;
 
 	/**
 	 * Parse Selectors from InputStream.
 	 */
-	SelectorList parseSelectors(InputStream stream) throws IOException;
+	Selectors.SelectorList parseSelectors(InputStream stream) throws IOException;
 
 	/**
 	 * Parse Selectors from String value.
 	 */
-	SelectorList parseSelectors(Reader reader) throws IOException;
+	Selectors.SelectorList parseSelectors(Reader reader) throws IOException;
 
 	/**
 	 * Check if the <code>selector</code> matches the object <code>node</code>.
 	 */
-	boolean matches(Selector selector, Object node, String pseudo);
+	boolean matches(Selectors.Selector selector, Object node, String pseudo);
 
 	/*--------------- Apply styles -----------------*/
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,11 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
-import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -112,47 +110,42 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 	}
 
 	private CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
-		Node parent = elt.getParentNode();
-
-		Node[] hierarchy = null;
-		if (parent != null) {
-			List<Node> hierarchyList = new ArrayList<>();
-			for (Node n = parent; n != null; n = n.getParentNode()) {
-				hierarchyList.add(n);
-			}
-			hierarchy = hierarchyList.toArray(new Node[hierarchyList.size()]);
-		}
-
 		List<StyleWrapper> styleDeclarations = null;
 		StyleWrapper firstStyleDeclaration = null;
 		int position = 0;
+
+		int depth = 0;
+		for (org.w3c.dom.Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			depth++;
+		}
+		Element[] hierarchy = new Element[depth];
+		int idx = 0;
+		for (org.w3c.dom.Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			hierarchy[idx++] = (Element) n;
+		}
+
 		for (CSSRule rule : ruleList) {
 			if (rule.getType() != CSSRule.STYLE_RULE || (!(rule instanceof ExtendedCSSRule)) ) {
 				continue; // we only handle the CSSRule.STYLE_RULE and ExtendedCSSRule case
 			}
 			CSSStyleRule styleRule = (CSSStyleRule) rule;
 			ExtendedCSSRule r = (ExtendedCSSRule) rule;
-			SelectorList selectorList = r.getSelectorList();
-			// Loop for SelectorList
-			int l = selectorList.getLength();
-			for (int j = 0; j < l; j++) {
-				Selector selector = selectorList.item(j);
-				if (selector instanceof ExtendedSelector extendedSelector) {
-					if (extendedSelector.match(elt, hierarchy, 0, pseudoElt)) {
-						CSSStyleDeclaration style = styleRule.getStyle();
-						int specificity = extendedSelector.getSpecificity();
-						StyleWrapper wrapper = new StyleWrapper(style, specificity, position++);
-						if (firstStyleDeclaration == null) {
-							firstStyleDeclaration = wrapper;
-						} else {
-							// There is several Style Declarations which
-							// match the current element
-							if (styleDeclarations == null) {
-								styleDeclarations = new ArrayList<>();
-								styleDeclarations.add(firstStyleDeclaration);
-							}
-							styleDeclarations.add(wrapper);
+			Selectors.SelectorList selectorList = r.getSelectorList();
+			for (Selectors.Selector selector : selectorList.alternatives()) {
+				if (SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0)) {
+					CSSStyleDeclaration style = styleRule.getStyle();
+					int specificity = selector.specificity();
+					StyleWrapper wrapper = new StyleWrapper(style, specificity, position++);
+					if (firstStyleDeclaration == null) {
+						firstStyleDeclaration = wrapper;
+					} else {
+						// There is several Style Declarations which
+						// match the current element
+						if (styleDeclarations == null) {
+							styleDeclarations = new ArrayList<>();
+							styleDeclarations.add(firstStyleDeclaration);
 						}
+						styleDeclarations.add(wrapper);
 					}
 				}
 			}

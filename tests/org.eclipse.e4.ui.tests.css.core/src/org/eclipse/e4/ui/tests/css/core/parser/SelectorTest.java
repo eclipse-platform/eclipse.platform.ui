@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.css.sac.CSSParseException;
-import org.w3c.css.sac.SelectorList;
 
 public class SelectorTest {
 	private CSSEngine engine;
@@ -35,35 +35,37 @@ public class SelectorTest {
 
 	@Test
 	void testSimpleSelector() throws Exception {
-		SelectorList list = engine.parseSelectors("Type1");
+		Selectors.SelectorList list = engine.parseSelectors("Type1");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
-		assertEquals("Type1", list.item(0).toString());
+		assertEquals("Type1", list.item(0).text());
 	}
 
 	@Test
 	void testMultipleSelectors() throws Exception {
-		SelectorList list = engine.parseSelectors("Type1, Type2");
+		Selectors.SelectorList list = engine.parseSelectors("Type1, Type2");
 		assertNotNull(list);
 		assertEquals(2, list.getLength());
-		assertEquals("Type1", list.item(0).toString());
-		assertEquals("Type2", list.item(1).toString());
+		assertEquals("Type1", list.item(0).text());
+		assertEquals("Type2", list.item(1).text());
 	}
 
 	@Test
 	void testClassSelector() throws Exception {
-		SelectorList list = engine.parseSelectors(".Class1");
+		Selectors.SelectorList list = engine.parseSelectors(".Class1");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
-		assertEquals("*[class=\"Class1\"]", list.item(0).toString());
+		assertEquals(".Class1", list.item(0).text());
 	}
 
 	@Test
 	void testAttributeSelector() throws Exception {
-		SelectorList list = engine.parseSelectors("*[class='Class1']");
+		Selectors.SelectorList list = engine.parseSelectors("*[class='Class1']");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
-		assertEquals("*[class=\"Class1\"]", list.item(0).toString());
+		// The Universal selector ('*') is folded away since the AttributeSelector
+		// alone carries the full match condition.
+		assertEquals("[class='Class1']", list.item(0).text());
 	}
 
 	@Test

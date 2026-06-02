@@ -139,17 +139,22 @@ public class CSSSWTEngineImpl extends CSSEngineImpl {
 
 	@Override
 	public void reapply() {
-		Shell[] shells = display.getShells();
-		for (Shell s : shells) {
-			try {
-				s.setRedraw(false);
-				s.reskin(SWT.ALL);
-				applyStyles(s, true);
-			} catch (Exception e) {
-				ILog.of(getClass()).error(e.getMessage(), e);
-			} finally {
-				s.setRedraw(true);
+		startStylingSession();
+		try {
+			Shell[] shells = display.getShells();
+			for (Shell s : shells) {
+				try {
+					s.setRedraw(false);
+					s.reskin(SWT.ALL);
+					applyStyles(s, true);
+				} catch (Exception e) {
+					ILog.of(getClass()).error(e.getMessage(), e);
+				} finally {
+					s.setRedraw(true);
+				}
 			}
+		} finally {
+			stopStylingSession();
 		}
 	}
 }

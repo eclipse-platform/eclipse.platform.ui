@@ -62,23 +62,17 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.CSSConditionFactoryImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.CSSSelectorFactoryImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.SacTranslator;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.resources.ResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
-import org.w3c.css.sac.AttributeCondition;
-import org.w3c.css.sac.CombinatorCondition;
-import org.w3c.css.sac.Condition;
-import org.w3c.css.sac.ConditionFactory;
-import org.w3c.css.sac.ConditionalSelector;
-import org.w3c.css.sac.DescendantSelector;
+import org.apache.batik.css.parser.DefaultConditionFactory;
+import org.apache.batik.css.parser.DefaultSelectorFactory;
 import org.w3c.css.sac.InputSource;
-import org.w3c.css.sac.Selector;
-import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -104,9 +98,6 @@ import org.w3c.dom.stylesheets.StyleSheet;
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
  */
 public abstract class CSSEngineImpl implements CSSEngine {
-
-	public static final ConditionFactory CONDITIONFACTORY_INSTANCE = new CSSConditionFactoryImpl(
-			null, "class", null, "id");
 
 	/**
 	 * Archives are deliberately identified by exclamation mark in URLs
@@ -324,7 +315,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	/*--------------- Parse CSS Selector -----------------*/
 
 	@Override
-	public SelectorList parseSelectors(String selector) {
+	public Selectors.SelectorList parseSelectors(String selector) {
 		try {
 			return parseSelectors(new StringReader(selector));
 		} catch (IOException e) {
@@ -333,24 +324,24 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	}
 
 	@Override
-	public SelectorList parseSelectors(Reader reader) throws IOException {
+	public Selectors.SelectorList parseSelectors(Reader reader) throws IOException {
 		InputSource source = new InputSource();
 		source.setCharacterStream(reader);
 		return parseSelectors(source);
 	}
 
 	@Override
-	public SelectorList parseSelectors(InputStream stream) throws IOException {
+	public Selectors.SelectorList parseSelectors(InputStream stream) throws IOException {
 		InputSource source = new InputSource();
 		source.setByteStream(stream);
 		return parseSelectors(source);
 	}
 
 	@Override
-	public SelectorList parseSelectors(InputSource source) throws IOException {
+	public Selectors.SelectorList parseSelectors(InputSource source) throws IOException {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
-		return parser.parseSelectors(source);
+		return SacTranslator.translate(parser.parseSelectors(source));
 	}
 
 	/*--------------- Parse CSS Property Value-----------------*/
@@ -387,6 +378,28 @@ public abstract class CSSEngineImpl implements CSSEngine {
 
 	/*--------------- Apply styles -----------------*/
 
+	private final ThreadLocal<Set<Object>> styledElements = new ThreadLocal<>();
+
+	public void startStylingSession() {
+		styledElements.set(new HashSet<>());
+	}
+
+	public void stopStylingSession() {
+		styledElements.remove();
+	}
+
+	public boolean isElementStyled(Object element) {
+		Set<Object> set = styledElements.get();
+		return set != null && set.contains(element);
+	}
+
+	public void markElementStyled(Object element) {
+		Set<Object> set = styledElements.get();
+		if (set != null) {
+			set.add(element);
+		}
+	}
+
 	@Override
 	public void applyStyles(Object element, boolean applyStylesToChildNodes) {
 		applyStyles(element, applyStylesToChildNodes, computeDefaultStyle);
@@ -398,6 +411,21 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		if (elt == null || !isVisible(elt)) {
 			return;
 		}
+
+		if (isElementStyled(element)) {
+			if (applyStylesToChildNodes) {
+				NodeList nodes = elt instanceof ChildVisibilityAwareElement c
+						? c.getVisibleChildNodes()
+						: elt.getChildNodes();
+				if (nodes != null) {
+					processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
+					onStylesAppliedToChildNodes(elt, nodes);
+				}
+			}
+			return;
+		}
+
+		markElementStyled(element);
 
 		/*
 		 * Compute new Style to apply.
@@ -491,44 +519,55 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		return true;
 	}
 
-	private void applyConditionalPseudoStyle(ExtendedCSSRule parentRule, String pseudoInstance, Object element, CSSStyleDeclaration styleWithPseudoInstance) {
-		SelectorList selectorList = parentRule.getSelectorList();
-		for (int j = 0; j < selectorList.getLength(); j++) {
-			Selector item = selectorList.item(j);
-			// search for conditional selectors
-			ConditionalSelector conditional = null;
-			if (item instanceof ConditionalSelector) {
-				conditional = (ConditionalSelector) item;
-			} else if (item instanceof DescendantSelector) {
-				if (((DescendantSelector) item).getSimpleSelector() instanceof ConditionalSelector) {
-					conditional = (ConditionalSelector) ((DescendantSelector) item).getSimpleSelector();
-				} else if (((DescendantSelector) item).getAncestorSelector() instanceof ConditionalSelector) {
-					conditional = (ConditionalSelector) ((DescendantSelector) item).getAncestorSelector();
-				}
-			}
-			if (conditional != null) {
-				Condition condition = conditional.getCondition();
-				// we're only interested in attribute selector conditions
-				AttributeCondition attr = null;
-				if (condition instanceof AttributeCondition) {
-					attr = (AttributeCondition) condition;
-				} else if (condition instanceof CombinatorCondition) {
-					if (((CombinatorCondition) condition).getSecondCondition() instanceof AttributeCondition) {
-						attr = (AttributeCondition) ((CombinatorCondition) condition).getSecondCondition();
-					} else if (((CombinatorCondition) condition).getFirstCondition() instanceof AttributeCondition) {
-						attr = (AttributeCondition) ((CombinatorCondition) condition).getFirstCondition();
-					}
-				}
-				if (attr != null) {
-					String value = attr.getValue();
-					if (value.equals(pseudoInstance)) {
-						// if we match the pseudo, apply the style
-						applyStyleDeclaration(element, styleWithPseudoInstance, pseudoInstance);
-						return;
-					}
-				}
+	private void applyConditionalPseudoStyle(ExtendedCSSRule parentRule, String pseudoInstance, Object element,
+			CSSStyleDeclaration styleWithPseudoInstance) {
+		Selectors.SelectorList selectorList = parentRule.getSelectorList();
+		for (Selectors.Selector alternative : selectorList.alternatives()) {
+			if (matchesPseudoInstanceAttribute(alternative, pseudoInstance)) {
+				applyStyleDeclaration(element, styleWithPseudoInstance, pseudoInstance);
+				return;
 			}
 		}
+	}
+
+	/**
+	 * Returns {@code true} if {@code selector} carries a pseudo-class or
+	 * attribute selector (anywhere in a compound or descendant combinator)
+	 * whose target value equals {@code pseudoInstance}. Mirrors the legacy
+	 * SAC walker, which handled both {@code :selected} (a pseudo-class) and
+	 * {@code Shell[active='true']} (an attribute) through SAC's shared
+	 * {@code AttributeCondition} interface.
+	 */
+	private static boolean matchesPseudoInstanceAttribute(Selectors.Selector selector, String pseudoInstance) {
+		if (selector instanceof Selectors.PseudoClass pc) {
+			return pseudoInstance.equals(pc.name());
+		}
+		if (selector instanceof Selectors.AttributeSelector attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.AttributeIncludes attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.AttributeBeginHyphen attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.And and) {
+			return matchesPseudoInstanceAttribute(and.left(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(and.right(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Descendant d) {
+			return matchesPseudoInstanceAttribute(d.descendant(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(d.ancestor(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Child c) {
+			return matchesPseudoInstanceAttribute(c.child(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(c.parent(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Adjacent a) {
+			return matchesPseudoInstanceAttribute(a.second(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(a.first(), pseudoInstance);
+		}
+		return false;
 	}
 
 	protected String[] getStaticPseudoInstances(Element element) {
@@ -933,18 +972,21 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	}
 
 	@Override
-	public boolean matches(Selector selector, Object element, String pseudoElt) {
+	public boolean matches(Selectors.Selector selector, Object element, String pseudoElt) {
 		Element elt = getElement(element);
 		if (elt == null) {
 			return false;
 		}
-		if (selector instanceof ExtendedSelector extendedSelector) {
-			return extendedSelector.match(elt, pseudoElt);
-		} else {
-			// TODO : selector is not batik ExtendedSelector,
-			// Manage this case...
+		int depth = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			depth++;
 		}
-		return false;
+		Element[] hierarchy = new Element[depth];
+		int idx = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			hierarchy[idx++] = (Element) n;
+		}
+		return SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0);
 	}
 
 	/*--------------- Error Handler -----------------*/
@@ -1118,14 +1160,16 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	}
 
 	/**
-	 * Return instance of CSS Parser, configured with the Batik selector
-	 * factory and the platform's class/id condition factory.
+	 * Return instance of CSS Parser, configured with Batik's stock selector
+	 * and condition factories. Selectors flow through {@link SacTranslator}
+	 * before they reach engine code, so we no longer need our vendored copies
+	 * of the SAC factory classes.
 	 */
 	public CSSParser makeCSSParser() {
 		ICSSParserFactory factory = CSSParserFactory.newInstance();
 		CSSParser parser = factory.makeCSSParser();
-		parser.setSelectorFactory(CSSSelectorFactoryImpl.INSTANCE);
-		parser.setConditionFactory(CONDITIONFACTORY_INSTANCE);
+		parser.setSelectorFactory(DefaultSelectorFactory.INSTANCE);
+		parser.setConditionFactory(DefaultConditionFactory.INSTANCE);
 		return parser;
 	}
 
