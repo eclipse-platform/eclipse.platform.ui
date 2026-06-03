@@ -126,7 +126,11 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 					try {
 						view = page.showView(targetId);
 						IShowInTarget target = getShowInTarget(view);
-						if (!(target != null && target.show(getContext(null)))) {
+						if (target != null && target.show(getContext(null))) {
+							if (page instanceof WorkbenchPage workbenchPage) {
+								workbenchPage.performedShowIn(targetId);
+							}
+						} else {
 							page.getWorkbenchWindow().getShell().getDisplay().beep();
 						}
 					} catch (PartInitException e) {
@@ -355,6 +359,8 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			IShowInTarget target = Adapters.adapt(view, IShowInTarget.class);
 			if (target == null || !target.show(new ShowInContext(null, selection))) {
 				activePage.getWorkbenchWindow().getShell().getDisplay().beep();
+			} else {
+				workbenchPage.performedShowIn(descriptor.getId());
 			}
 		} catch (PartInitException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
