@@ -309,9 +309,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	@Override
 	protected void okPressed() {
 		IStructuredSelection selected = getSelectedItems();
-		Button okButton = getOkButton();
-		if (selected.size() == 1 && !(selected.getFirstElement() instanceof IFile)
-				&& okButton != null && okButton.isEnabled()) {
+		if (selected.size() == 1 && !(selected.getFirstElement() instanceof IFile)) {
 			if (showSelectionInFirstShowInTarget(selected)) {
 				return;
 			}
