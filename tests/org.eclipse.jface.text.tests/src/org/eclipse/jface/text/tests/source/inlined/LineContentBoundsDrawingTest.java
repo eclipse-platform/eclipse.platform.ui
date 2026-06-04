@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,16 +57,19 @@ public class LineContentBoundsDrawingTest {
 	}
 
 	public static final class AccessAllAnnoations implements IAnnotationAccess {
+		@Deprecated
 		@Override
 		public Object getType(Annotation annotation) {
 			return annotation.getType();
 		}
 
+		@Deprecated
 		@Override
 		public boolean isMultiLine(Annotation annotation) {
 			return true;
 		}
 
+		@Deprecated
 		@Override
 		public boolean isTemporary(Annotation annotation) {
 			return true;
