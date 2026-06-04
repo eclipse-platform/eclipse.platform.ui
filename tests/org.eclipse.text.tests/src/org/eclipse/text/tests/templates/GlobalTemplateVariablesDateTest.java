@@ -131,7 +131,7 @@ public class GlobalTemplateVariablesDateTest  {
 		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
 		expected.append(
-				new SimpleDateFormat("yyyy-MM-dd", new Locale("this_invalid_locale")).format(new java.util.Date()));
+				new SimpleDateFormat("yyyy-MM-dd", Locale.of("this_invalid_locale")).format(new java.util.Date()));
 		expected.append("!");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
