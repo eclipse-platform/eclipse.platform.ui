@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -214,7 +215,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	// @issue class is workbench internal
 	private StatusLineContributionItem statusLineItem;
 
-	private Preferences.IPropertyChangeListener prefListener;
+	private IEclipsePreferences.IPreferenceChangeListener prefListener;
 
 	// listener for the "close editors automatically"
 	// preference change
@@ -305,13 +306,12 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		getWindow().getPartService().addPartListener(partListener);
 
 		prefListener = event -> {
-			if (event.getProperty().equals(
-					ResourcesPlugin.PREF_AUTO_BUILDING)) {
+			if (event.getKey().equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
 				updateBuildActions(false);
 			}
 		};
-		ResourcesPlugin.getPlugin().getPluginPreferences()
-				.addPropertyChangeListener(prefListener);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES)
+				.addPreferenceChangeListener(prefListener);
 
 		// listener for the "close editors automatically"
 		// preference change
@@ -835,8 +835,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 			partListener = null;
 		}
 		if (prefListener != null) {
-			ResourcesPlugin.getPlugin().getPluginPreferences()
-					.removePropertyChangeListener(prefListener);
+			InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).removePreferenceChangeListener(prefListener);
 			prefListener = null;
 		}
 		if (propPrefListener != null) {
