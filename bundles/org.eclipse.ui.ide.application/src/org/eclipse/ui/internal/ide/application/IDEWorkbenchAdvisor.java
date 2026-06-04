@@ -855,7 +855,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
 		if (disabledSymbolicName != null) {
-			ImageDescriptor disabledDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			ImageDescriptor disabledDescriptor = desc.asDisabledDescriptor();
 			getWorkbenchConfigurer().declareImage(disabledSymbolicName, disabledDescriptor, shared);
 		}
 	}

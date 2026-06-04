@@ -73,7 +73,7 @@ class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider 
 		if (element instanceof DisplayItem item && actual != null) {
 			if (!CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter)) {
 				ImageDescriptor original = ImageDescriptor.createFromImage(actual);
-				ImageDescriptor disable = ImageDescriptor.createWithFlags(original, SWT.IMAGE_DISABLE);
+				ImageDescriptor disable = original.asDisabledDescriptor();
 				Image newImage = disable.createImage();
 				toDispose.add(newImage);
 				return newImage;

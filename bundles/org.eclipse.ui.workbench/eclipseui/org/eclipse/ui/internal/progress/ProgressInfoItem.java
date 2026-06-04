@@ -155,8 +155,7 @@ public class ProgressInfoItem extends Composite {
 	static {
 		ImageDescriptor processStopDescriptor = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_stop.svg"); //$NON-NLS-1$
 		JFaceResources.getImageRegistry().put(STOP_IMAGE_KEY, processStopDescriptor);
-		ImageDescriptor disabledProcessStopDescriptor = ImageDescriptor.createWithFlags(processStopDescriptor,
-				SWT.IMAGE_DISABLE);
+		ImageDescriptor disabledProcessStopDescriptor = processStopDescriptor.asDisabledDescriptor();
 		JFaceResources.getImageRegistry().put(DISABLED_STOP_IMAGE_KEY, disabledProcessStopDescriptor);
 
 		JFaceResources.getImageRegistry().put(DEFAULT_JOB_KEY,

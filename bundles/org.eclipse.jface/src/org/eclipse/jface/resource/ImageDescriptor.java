@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -67,6 +68,8 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * A small red square used to warn that an image cannot be created.
 	 */
 	protected static final ImageData DEFAULT_IMAGE_DATA = new ImageData(6, 6, 1, new PaletteData(new RGB(255, 0, 0)));
+
+	private ImageDescriptor disabledImageDescriptor;
 
 	/**
 	 * Constructs an image descriptor.
@@ -150,13 +153,6 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	/**
 	 * Creates an ImageDescriptor based on the given original descriptor, but with additional
 	 * SWT flags.
-	 *
-	 * <p>
-	 * Note that this sort of ImageDescriptor is slower and consumes more resources than
-	 * a regular image descriptor. It will also never generate results that look as nice as
-	 * a hand-drawn image. Clients are encouraged to supply their own disabled/grayed/etc. images
-	 * rather than using a default image and transforming it.
-	 * </p>
 	 *
 	 * @param originalImage image to transform
 	 * @param swtFlags any flag that can be passed to the flags argument of Image#Image(Device, Image, int)
@@ -349,6 +345,25 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 */
 	public Image createImage(Device device) {
 		return createImage(true, device);
+	}
+
+	/**
+	 * Returns an image descriptor representing a disabled version of the icon of
+	 * this descriptor. The descriptor is shared, i.e., calling this method multiple
+	 * times will return the same descriptor every time. In case the descriptor
+	 * already represents a disabled version of the icon (created using
+	 * {@link #createWithFlags(ImageDescriptor, int)} with the
+	 * {@code SWT.IMAGE_DISABLE} flag), this method returns <code>this</code>.
+	 *
+	 * @since 3.40
+	 * @return a shared image descriptor for a disabled version of the icon for this
+	 *         descriptor
+	 */
+	public ImageDescriptor asDisabledDescriptor() {
+		if (disabledImageDescriptor == null) {
+			disabledImageDescriptor = createWithFlags(this, SWT.IMAGE_DISABLE);
+		}
+		return disabledImageDescriptor;
 	}
 
 	/**

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -106,7 +105,7 @@ public/* final */class WorkbenchImages {
 				() -> BundleUtility.find(PlatformUI.PLUGIN_ID, path));
 		declareImage(key, desc, shared);
 		if (disabledKey != null) {
-			ImageDescriptor disabledImageDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			ImageDescriptor disabledImageDescriptor = desc.asDisabledDescriptor();
 			declareImage(disabledKey, disabledImageDescriptor, shared);
 		}
 	}
