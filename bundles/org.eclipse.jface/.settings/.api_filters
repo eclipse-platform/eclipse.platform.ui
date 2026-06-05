@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.commands.util.Tracing">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.commands.util.Tracing"/>
+                <message_argument value="org.eclipse.jface_3.39.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.commands
-Bundle-Version: 3.12.500.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.commands,
@@ -10,7 +10,6 @@ Export-Package: org.eclipse.core.commands,
  org.eclipse.core.commands.contexts,
  org.eclipse.core.commands.internal.util;x-friends:="org.eclipse.jface, org.eclipse.ui.workbench",
  org.eclipse.core.commands.operations,
- org.eclipse.core.commands.util,
  org.eclipse.core.internal.commands.operations;x-internal:=true,
  org.eclipse.core.internal.commands.util;x-internal:=true
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
