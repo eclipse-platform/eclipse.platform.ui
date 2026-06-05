@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench" version="2">
+    <resource path="eclipseui/org/eclipse/ui/IPageLayout.java" type="org.eclipse.ui.IPageLayout">
+        <filter id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IPageLayout"/>
+                <message_argument value="DEFAULT_FASTVIEW_RATIO"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IPageLayout"/>
+                <message_argument value="getEditorReuseThreshold()"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IPageLayout"/>
+                <message_argument value="setEditorReuseThreshold(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="eclipseui/org/eclipse/ui/ISharedImages.java" type="org.eclipse.ui.ISharedImages">
         <filter id="405864542">
             <message_arguments>

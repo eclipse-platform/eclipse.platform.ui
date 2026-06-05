@@ -177,15 +177,6 @@ public interface IPageLayout {
 	float RATIO_MAX = 0.95f;
 
 	/**
-	 * The default fast view ratio width.
-	 *
-	 * @since 2.0
-	 * @deprecated discontinued support for fast views
-	 */
-	@Deprecated(forRemoval = true, since = "2023-12")
-	float DEFAULT_FASTVIEW_RATIO = 0.3f;
-
-	/**
 	 * The default view ratio width for regular (non-fast) views.
 	 *
 	 * @since 2.0
@@ -395,29 +386,6 @@ public interface IPageLayout {
 	 *                       <code>false</code> to hide the editor area
 	 */
 	void setEditorAreaVisible(boolean showEditorArea);
-
-	/**
-	 * Returns the number of open editors before reusing editors or -1 if the
-	 * preference settings should be used instead.
-	 *
-	 * @return the number of open editors before reusing editors or -1 if the
-	 *         preference settings should be used instead.
-	 *
-	 * @deprecated this always returns -1 as of Eclipse 2.1
-	 */
-	@Deprecated(forRemoval = true, since = "2023-12")
-	int getEditorReuseThreshold();
-
-	/**
-	 * Sets the number of open editors before reusing editors. If &lt; 0 the user
-	 * preference settings will be used.
-	 *
-	 * @param openEditors the number of open editors
-	 *
-	 * @deprecated this method has no effect, as of Eclipse 2.1
-	 */
-	@Deprecated(forRemoval = true, since = "2023-12")
-	void setEditorReuseThreshold(int openEditors);
 
 	/**
 	 * Sets whether this layout is fixed. In a fixed layout, layout parts cannot be
