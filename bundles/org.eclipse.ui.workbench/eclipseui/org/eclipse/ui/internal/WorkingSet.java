@@ -180,8 +180,7 @@ public class WorkingSet extends AbstractWorkingSet {
 					IAdaptable item = factory.createElement(itemMemento);
 					if (item == null) {
 						if (Policy.DEBUG_WORKING_SETS) {
-							WorkbenchPlugin
-									.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
+							WorkbenchPlugin.getDefault().getTrace().trace(Policy.DEBUG_WORKING_SETS_FLAG, "Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
 						}
 					} else {
 						items.add(item);

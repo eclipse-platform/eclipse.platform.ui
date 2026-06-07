@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,11 +16,63 @@
 
 package org.eclipse.ui.internal;
 
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_COMMANDS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_COMMANDS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS_PERFORMANCE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS_PERFORMANCE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS_VERBOSE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTEXTS_VERBOSE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTRIBUTIONS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_CONTRIBUTIONS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_DECLARED_IMAGES;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_DECLARED_IMAGES_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_DRAG_DROP;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_DRAG_DROP_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_PERFORMANCE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_PERFORMANCE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_VERBOSE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_HANDLERS_VERBOSE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_KEY_BINDINGS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_KEY_BINDINGS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_KEY_BINDINGS_VERBOSE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_MPE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_MPE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_OPERATIONS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_OPERATIONS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_OPERATIONS_VERBOSE;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_OPERATIONS_VERBOSE_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SHOW_ALL_JOBS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SHOW_ALL_JOBS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SOURCES;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SOURCES_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_STALE_JOBS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_STALE_JOBS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_DEBUG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_DEBUG_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_DEBUG_GLOBAL;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_DEBUG_GLOBAL_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_GRAPHICS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_GRAPHICS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_TOOLBAR_DISPOSAL;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_TOOLBAR_DISPOSAL_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_WORKING_SETS;
+import static org.eclipse.ui.internal.misc.Policy.DEBUG_WORKING_SETS_FLAG;
+import static org.eclipse.ui.internal.misc.Policy.DEFAULT;
+import static org.eclipse.ui.internal.misc.Policy.EXPERIMENTAL_MENU;
+
 import java.text.Bidi;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -41,8 +93,11 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
@@ -58,6 +113,7 @@ import org.eclipse.ui.internal.help.CommandHelpServiceImpl;
 import org.eclipse.ui.internal.help.HelpServiceImpl;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -85,6 +141,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -103,7 +160,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * createExecutableExtension to create an executable instance of our workbench
  * class.
  */
-public class WorkbenchPlugin extends AbstractUIPlugin {
+public class WorkbenchPlugin extends AbstractUIPlugin implements DebugOptionsListener {
 
 	/**
 	 * Splash shell constant.
@@ -163,6 +220,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	// TODO we should just drop this constant and use PlatformUI.PLUGIN_ID instead
 	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
+	private static final String JFACE = "org.eclipse.jface"; //$NON-NLS-1$
+
 	/**
 	 * The character used to separate preference page category ids
 	 */
@@ -201,6 +260,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EHelpService helpService;
 
 	private ICommandHelpService commandHelpService;
+
+	private ServiceRegistration<DebugOptionsListener> debugRegistration;
+
+	private DebugTrace trace;
 
 	/**
 	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
@@ -762,6 +825,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		parseBidiArguments();
 		Window.setDefaultOrientation(getDefaultOrientation());
 
+		Hashtable<String, String> properties = new Hashtable<>(2);
+		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PlatformUI.PLUGIN_ID);
+		debugRegistration = context.registerService(DebugOptionsListener.class, this, properties);
+
 		// The UI plugin needs to be initialized so that it can install the callback in
 		// PrefUtil,
 		// which needs to be done as early as possible, before the workbench
@@ -1060,6 +1127,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (testableTracker != null) {
 			testableTracker.close();
 			testableTracker = null;
+		}
+		if (debugRegistration != null) {
+			debugRegistration.unregister();
+			debugRegistration = null;
 		}
 		super.stop(context);
 	}
@@ -1435,5 +1506,42 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			testableTracker.open();
 		}
 		return (TestableObject) testableTracker.getService();
+	}
+
+	@Override
+	public void optionsChanged(DebugOptions options) {
+		trace = options.newDebugTrace(PlatformUI.PLUGIN_ID);
+		DEBUG_SWT_GRAPHICS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_SWT_GRAPHICS_FLAG, DEFAULT);
+		DEBUG_SWT_DEBUG = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_SWT_DEBUG_FLAG, DEFAULT);
+		DEBUG_SWT_DEBUG_GLOBAL = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_SWT_DEBUG_GLOBAL_FLAG, DEFAULT);
+		DEBUG_DRAG_DROP = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_DRAG_DROP_FLAG, DEFAULT);
+		DEBUG_SOURCES = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_SOURCES_FLAG, DEFAULT);
+		DEBUG_KEY_BINDINGS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_KEY_BINDINGS_FLAG, DEFAULT);
+		DEBUG_KEY_BINDINGS_VERBOSE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_KEY_BINDINGS_VERBOSE_FLAG, DEFAULT);
+		DEBUG_TOOLBAR_DISPOSAL = options.getBooleanOption(JFACE + DEBUG_TOOLBAR_DISPOSAL_FLAG, DEFAULT);
+		DEBUG_COMMANDS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_COMMANDS_FLAG, DEFAULT);
+		DEBUG_CONTEXTS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_CONTEXTS_FLAG, DEFAULT);
+		DEBUG_CONTEXTS_PERFORMANCE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_CONTEXTS_PERFORMANCE_FLAG, DEFAULT);
+		DEBUG_CONTEXTS_VERBOSE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_CONTEXTS_VERBOSE_FLAG, DEFAULT);
+		DEBUG_HANDLERS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_HANDLERS_FLAG, DEFAULT);
+		DEBUG_HANDLERS_PERFORMANCE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_HANDLERS_PERFORMANCE_FLAG, DEFAULT);
+		DEBUG_HANDLERS_VERBOSE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_HANDLERS_VERBOSE_FLAG, DEFAULT);
+		DEBUG_OPERATIONS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_OPERATIONS_FLAG, DEFAULT);
+		DEBUG_OPERATIONS_VERBOSE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_OPERATIONS_VERBOSE_FLAG, DEFAULT);
+		DEBUG_SHOW_ALL_JOBS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_SHOW_ALL_JOBS_FLAG, DEFAULT);
+		DEBUG_STALE_JOBS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_STALE_JOBS_FLAG, DEFAULT);
+		DEBUG_DECLARED_IMAGES = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_DECLARED_IMAGES_FLAG, DEFAULT);
+		DEBUG_CONTRIBUTIONS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_CONTRIBUTIONS_FLAG, DEFAULT);
+		DEBUG_HANDLERS_VERBOSE_COMMAND_ID = options.getOption(PlatformUI.PLUGIN_ID + DEBUG_HANDLERS_VERBOSE_COMMAND_ID_FLAG, ""); //$NON-NLS-1$
+		EXPERIMENTAL_MENU = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_CONTRIBUTIONS_FLAG, DEFAULT);
+		DEBUG_MPE = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_MPE_FLAG, DEFAULT);
+		DEBUG_WORKING_SETS = options.getBooleanOption(PlatformUI.PLUGIN_ID + DEBUG_WORKING_SETS_FLAG, DEFAULT);
+		if (Policy.DEBUG_SWT_DEBUG_GLOBAL) {
+			Device.DEBUG = true;
+		}
+	}
+
+	public DebugTrace getTrace() {
+		return trace;
 	}
 }

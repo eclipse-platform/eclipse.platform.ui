@@ -309,7 +309,7 @@ public/* final */class WorkbenchImages {
 		if (Policy.DEBUG_DECLARED_IMAGES) {
 			Image image = descriptor.createImage(false);
 			if (image == null) {
-				WorkbenchPlugin.log("Image not found in WorkbenchImages.declaredImage().  symbolicName=" + symbolicName //$NON-NLS-1$
+				WorkbenchPlugin.getDefault().getTrace().trace(Policy.DEBUG_DECLARED_IMAGES_FLAG, "Image not found in WorkbenchImages.declaredImage().  symbolicName=" + symbolicName //$NON-NLS-1$
 						+ " descriptor=" + descriptor, new Exception("stack dump")); //$NON-NLS-1$//$NON-NLS-2$
 			} else {
 				image.dispose();

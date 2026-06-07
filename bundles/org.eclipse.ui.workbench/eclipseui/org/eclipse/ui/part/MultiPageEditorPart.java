@@ -23,7 +23,6 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -123,11 +122,6 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @see #getPageSite(int)
 	 */
 	protected static final int PAGE_CONTAINER_SITE = 65535;
-
-	/**
-	 * Private tracing output.
-	 */
-	private static final String TRACING_COMPONENT = "MPE"; //$NON-NLS-1$
 
 	/**
 	 * The active service locator. This value may be <code>null</code> if there is
@@ -879,7 +873,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 					provider.fireSelectionChanged(event);
 					provider.firePostSelectionChanged(event);
 				} else if (Policy.DEBUG_MPE) {
-					Tracing.printTrace(TRACING_COMPONENT, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$
+					WorkbenchPlugin.getDefault().getTrace().trace(Policy.DEBUG_MPE_FLAG, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$
 							+ " did not propogate selection for " //$NON-NLS-1$
 							+ activeEditor.getTitle());
 				}
