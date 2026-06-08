@@ -30,6 +30,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.expressions.EvaluationResult;
@@ -50,6 +52,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISources;
@@ -62,6 +65,8 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.HandlerPersistence;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
@@ -711,6 +716,98 @@ public class EvaluationServiceTest {
 		}
 	}
 
+	/**
+	 * Regression test for bug #3953 — toolbar items enabled state stays frozen
+	 * when a custom source provider whose variable is not tracked by any evaluation
+	 * expression fires a source change.
+	 * <p>
+	 * When a variable is absent from {@code ratVariables} (because no handler or
+	 * evaluation listener references it), {@code ratUpdater} is not triggered by
+	 * that variable changing. The fix in {@code contextUpdater} sends
+	 * {@code REQUEST_ENABLEMENT_UPDATE_TOPIC} unconditionally so that
+	 * {@code ToolBarManagerRenderer} can re-evaluate toolbar-item expressions.
+	 * <p>
+	 * The variable name used here is intentionally unique and not referenced by any
+	 * handler or expression in this test bundle. This isolates the path in
+	 * {@code contextUpdater.sourceChanged(int, String, Object)} that the fix
+	 * introduced, which {@code ratUpdater} alone cannot cover.
+	 */
+	@Test
+	public void testUntrackedSourceProviderFiresEnablementUpdateEvent() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = window.getService(IEvaluationService.class);
+		assertNotNull(service);
+
+		IEventBroker eventBroker = window.getWorkbench().getService(IEventBroker.class);
+		assertNotNull("IEventBroker service must be available", eventBroker);
+
+		// Variable name guaranteed absent from ratVariables: no plugin.xml handler
+		// or addEvaluationListener call in this bundle references it.
+		TestSourceProvider provider = new TestSourceProvider("test.untracked.singleVar", "initial");
+		service.addSourceProvider(provider);
+
+		final int[] count = { 0 };
+		org.osgi.service.event.EventHandler eventHandler = e -> count[0]++;
+		boolean subscribed = eventBroker.subscribe(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, eventHandler);
+		assertTrue("Should subscribe to REQUEST_ENABLEMENT_UPDATE_TOPIC", subscribed);
+
+		try {
+			processEvents();
+			int before = count[0];
+
+			provider.fireValue("changed");
+			processEvents();
+
+			assertTrue(
+					"fireSourceChanged() with a variable absent from ratVariables must send "
+							+ "REQUEST_ENABLEMENT_UPDATE_TOPIC so toolbar items re-evaluate (bug #3953)",
+					count[0] > before);
+		} finally {
+			eventBroker.unsubscribe(eventHandler);
+			service.removeSourceProvider(provider);
+		}
+	}
+
+	/**
+	 * Verifies that the Map-based {@code sourceChanged} overload also sends
+	 * {@code REQUEST_ENABLEMENT_UPDATE_TOPIC} for variables absent from
+	 * {@code ratVariables}.
+	 */
+	@Test
+	public void testUntrackedSourceProviderMultiVarFiresEnablementUpdateEvent() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = window.getService(IEvaluationService.class);
+		assertNotNull(service);
+
+		IEventBroker eventBroker = window.getWorkbench().getService(IEventBroker.class);
+		assertNotNull(eventBroker);
+
+		TestSourceProvider provider = new TestSourceProvider("test.untracked.multiVar", "initial");
+		service.addSourceProvider(provider);
+
+		final int[] count = { 0 };
+		org.osgi.service.event.EventHandler eventHandler = e -> count[0]++;
+		eventBroker.subscribe(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, eventHandler);
+
+		try {
+			processEvents();
+			int before = count[0];
+
+			Map<String, Object> changes = new HashMap<>();
+			changes.put("test.untracked.multiVar", "changed");
+			provider.fireValues(changes);
+			processEvents();
+
+			assertTrue(
+					"Map-based fireSourceChanged() with an untracked variable must send "
+							+ "REQUEST_ENABLEMENT_UPDATE_TOPIC (bug #3953)",
+					count[0] > before);
+		} finally {
+			eventBroker.unsubscribe(eventHandler);
+			service.removeSourceProvider(provider);
+		}
+	}
+
 	private void assertSelection(final ArrayList<PartSelection> selection, int callIdx, Class<?> clazz, String viewId) {
 		assertEquals(callIdx + 1, selection.size());
 		assertEquals(clazz, getSelection(selection, callIdx)
@@ -724,5 +821,45 @@ public class EvaluationServiceTest {
 
 	private IWorkbenchPart getPart(final ArrayList<PartSelection> selection, int idx) {
 		return selection.get(idx).part;
+	}
+
+	/** Source provider with a configurable variable name for use in isolated tests. */
+	private static class TestSourceProvider extends AbstractSourceProvider {
+		private final String varName;
+		private String value;
+
+		TestSourceProvider(String varName, String initial) {
+			this.varName = varName;
+			this.value = initial;
+		}
+
+		void fireValue(String newValue) {
+			value = newValue;
+			fireSourceChanged(ISources.ACTIVE_CONTEXT << 1, varName, newValue);
+		}
+
+		@SuppressWarnings("rawtypes")
+		void fireValues(Map<String, Object> map) {
+			map.forEach((k, v) -> {
+				if (k.equals(varName)) value = (String) v;
+			});
+			fireSourceChanged(ISources.ACTIVE_CONTEXT << 1, (Map) map);
+		}
+
+		@Override
+		public Map<String, String> getCurrentState() {
+			Map<String, String> m = new HashMap<>();
+			m.put(varName, value);
+			return m;
+		}
+
+		@Override
+		public String[] getProvidedSourceNames() {
+			return new String[] { varName };
+		}
+
+		@Override
+		public void dispose() {
+		}
 	}
 }
