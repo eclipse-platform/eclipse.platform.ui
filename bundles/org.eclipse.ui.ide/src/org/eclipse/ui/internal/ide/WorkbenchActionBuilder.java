@@ -1535,11 +1535,13 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 				.getService(IActionCommandMappingService.class);
 		acms.map(actionId, commandId);
 
-		CommandContributionItemParameter commandParm = new CommandContributionItemParameter(
-				getWindow(), actionId, commandId, null, sharedImages
-						.getImageDescriptor(image), sharedImages
-						.getImageDescriptor(disabledImage), null, label, null,
-				tooltip, CommandContributionItem.STYLE_PUSH, null, false);
+		CommandContributionItemParameter commandParm = new CommandContributionItemParameter(getWindow(), actionId,
+				commandId, CommandContributionItem.STYLE_PUSH);
+
+		commandParm.icon = sharedImages.getImageDescriptor(image);
+		commandParm.disabledIcon = sharedImages.getImageDescriptor(disabledImage);
+		commandParm.label = label;
+		commandParm.tooltip = tooltip;
 		return new CommandContributionItem(commandParm);
 	}
 }
