@@ -22,7 +22,14 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSValueFactory;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssDimension;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssOperator;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
 import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Adjacent;
@@ -40,20 +47,18 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Universal;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Kind;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Token;
-import org.w3c.css.sac.LexicalUnit;
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 
 /**
  * Recursive-descent CSS parser for the Eclipse engine's supported subset. It
- * produces the same model objects the SAC/Batik path produced ({@code
- * CSSStyleSheetImpl} with {@code CSSStyleRuleImpl} / {@code CSSImportRuleImpl}
- * rules, {@code Selectors} selector trees, and {@code CSSValueFactory} values)
- * so it can replace Batik without disturbing the rest of the engine.
+ * builds {@code CSSStyleSheetImpl} with {@code CSSStyleRuleImpl} / {@code
+ * CSSImportRuleImpl} rules, {@code Selectors} selector trees, and
+ * {@link org.eclipse.e4.ui.css.core.impl.dom.CssValues} value records.
  *
  * <p>
- * Not yet wired into {@code CSSEngineImpl}; the cutover happens in a follow-up.
  * {@code @media}, {@code @font-face} and {@code @page} are parsed and discarded;
  * {@code !important} is recorded on the declaration; {@code @import} is kept as
  * an import rule.
@@ -83,9 +88,7 @@ public final class CssParser {
 
 	/** Parse a single property value, e.g. {@code "1px 2px"} or {@code "#fff"}. */
 	public static CSSValue parsePropertyValue(String value) {
-		CssParser parser = new CssParser(CssTokenizer.tokenize(value));
-		LexicalUnitImpl unit = parser.value();
-		return unit == null ? null : CSSValueFactory.newValue(unit);
+		return new CssParser(CssTokenizer.tokenize(value)).value();
 	}
 
 	/** Parse a standalone selector group, e.g. for {@code CSSEngine.parseSelectors}. */
@@ -197,7 +200,7 @@ public final class CssParser {
 		Token name = expect(Kind.IDENT);
 		skipWhitespace();
 		expect(Kind.COLON);
-		LexicalUnitImpl value = value();
+		CssValue value = value();
 
 		boolean important = false;
 		skipWhitespace();
@@ -215,14 +218,14 @@ public final class CssParser {
 			advance();
 		}
 		if (value != null) {
-			declaration.addProperty(new CSSPropertyImpl(name.text, CSSValueFactory.newValue(value), important));
+			declaration.addProperty(new CSSPropertyImpl(name.text, value, important));
 		}
 	}
 
 	// ---------- values ----------
 
-	private LexicalUnitImpl value() {
-		List<LexicalUnitImpl> units = new ArrayList<>();
+	private CssValue value() {
+		List<CssValue> values = new ArrayList<>();
 		while (true) {
 			skipWhitespace();
 			Kind kind = peek().kind;
@@ -231,45 +234,40 @@ public final class CssParser {
 			}
 			if (kind == Kind.COMMA) {
 				advance();
-				units.add(LexicalUnitImpl.comma());
+				values.add(new CssOperator(",")); //$NON-NLS-1$
 				continue;
 			}
-			units.add(primitive());
+			values.add(primitive());
 		}
-		if (units.isEmpty()) {
+		if (values.isEmpty()) {
 			return null;
 		}
-		LexicalUnitImpl head = units.get(0);
-		LexicalUnitImpl tail = head;
-		for (int i = 1; i < units.size(); i++) {
-			tail = tail.append(units.get(i));
-		}
-		return head;
+		return values.size() == 1 ? values.get(0) : new CssList(values);
 	}
 
-	private LexicalUnitImpl primitive() {
+	private CssPrimitive primitive() {
 		Token token = peek();
 		switch (token.kind) {
 		case NUMBER:
 			advance();
-			return token.integer ? LexicalUnitImpl.integer((int) token.number)
-					: LexicalUnitImpl.real((float) token.number);
+			return new CssNumber(token.number, token.integer);
 		case DIMENSION:
 			advance();
-			return LexicalUnitImpl.dimension(dimensionType(token.unit), (float) token.number, token.unit);
+			return new CssDimension(token.number, dimensionType(token.unit), token.unit);
 		case PERCENTAGE:
 			advance();
-			return LexicalUnitImpl.dimension(LexicalUnit.SAC_PERCENTAGE, (float) token.number, "%"); //$NON-NLS-1$
+			return new CssDimension(token.number, CSSPrimitiveValue.CSS_PERCENTAGE, "%"); //$NON-NLS-1$
 		case IDENT:
 			advance();
-			return token.text.equalsIgnoreCase("inherit") ? LexicalUnitImpl.inherit() //$NON-NLS-1$
-					: LexicalUnitImpl.ident(token.text);
+			return token.text.equalsIgnoreCase("inherit") //$NON-NLS-1$
+					? new CssText(CSSPrimitiveValue.CSS_INHERIT, "inherit") //$NON-NLS-1$
+					: new CssText(CSSPrimitiveValue.CSS_IDENT, token.text);
 		case STRING:
 			advance();
-			return LexicalUnitImpl.string(token.text);
+			return new CssText(CSSPrimitiveValue.CSS_STRING, token.text);
 		case URI:
 			advance();
-			return LexicalUnitImpl.uri(token.text);
+			return new CssText(CSSPrimitiveValue.CSS_URI, token.text);
 		case HASH:
 			advance();
 			return hexColor(token.text);
@@ -280,24 +278,23 @@ public final class CssParser {
 		}
 	}
 
-	private LexicalUnitImpl function(Token token) {
+	private CssColor function(Token token) {
 		if (!token.text.equalsIgnoreCase("rgb")) { //$NON-NLS-1$
 			throw error("Unsupported function in value: " + token.text + "()"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		advance(); // FUNCTION consumes the '('
-		LexicalUnitImpl red = component();
-		LexicalUnitImpl green = component();
-		LexicalUnitImpl blue = component();
+		CssPrimitive red = component();
+		CssPrimitive green = component();
+		CssPrimitive blue = component();
 		skipWhitespace();
 		expect(Kind.RPAREN);
-		red.append(LexicalUnitImpl.comma()).append(green).append(LexicalUnitImpl.comma()).append(blue);
-		return LexicalUnitImpl.rgbColor(red);
+		return new CssColor(red, green, blue);
 	}
 
 	/** One numeric component of an {@code rgb(...)} function, with the trailing comma skipped. */
-	private LexicalUnitImpl component() {
+	private CssPrimitive component() {
 		skipWhitespace();
-		LexicalUnitImpl value = primitive();
+		CssPrimitive value = primitive();
 		skipWhitespace();
 		if (peek().kind == Kind.COMMA) {
 			advance();
@@ -305,7 +302,7 @@ public final class CssParser {
 		return value;
 	}
 
-	private LexicalUnitImpl hexColor(String hex) {
+	private CssColor hexColor(String hex) {
 		int r;
 		int g;
 		int b;
@@ -320,10 +317,7 @@ public final class CssParser {
 		} else {
 			throw error("Invalid hex colour #" + hex); //$NON-NLS-1$
 		}
-		LexicalUnitImpl red = LexicalUnitImpl.integer(r);
-		red.append(LexicalUnitImpl.comma()).append(LexicalUnitImpl.integer(g)).append(LexicalUnitImpl.comma())
-				.append(LexicalUnitImpl.integer(b));
-		return LexicalUnitImpl.rgbColor(red);
+		return new CssColor(new CssNumber(r, true), new CssNumber(g, true), new CssNumber(b, true));
 	}
 
 	private int hexPair(char high, char low) {
@@ -332,16 +326,16 @@ public final class CssParser {
 
 	private static short dimensionType(String unit) {
 		return switch (unit.toLowerCase()) {
-		case "px" -> LexicalUnit.SAC_PIXEL; //$NON-NLS-1$
-		case "em" -> LexicalUnit.SAC_EM; //$NON-NLS-1$
-		case "ex" -> LexicalUnit.SAC_EX; //$NON-NLS-1$
-		case "cm" -> LexicalUnit.SAC_CENTIMETER; //$NON-NLS-1$
-		case "mm" -> LexicalUnit.SAC_MILLIMETER; //$NON-NLS-1$
-		case "in" -> LexicalUnit.SAC_INCH; //$NON-NLS-1$
-		case "pt" -> LexicalUnit.SAC_POINT; //$NON-NLS-1$
-		case "pc" -> LexicalUnit.SAC_PICA; //$NON-NLS-1$
-		case "deg" -> LexicalUnit.SAC_DEGREE; //$NON-NLS-1$
-		default -> LexicalUnit.SAC_DIMENSION;
+		case "px" -> CSSPrimitiveValue.CSS_PX; //$NON-NLS-1$
+		case "em" -> CSSPrimitiveValue.CSS_EMS; //$NON-NLS-1$
+		case "ex" -> CSSPrimitiveValue.CSS_EXS; //$NON-NLS-1$
+		case "cm" -> CSSPrimitiveValue.CSS_CM; //$NON-NLS-1$
+		case "mm" -> CSSPrimitiveValue.CSS_MM; //$NON-NLS-1$
+		case "in" -> CSSPrimitiveValue.CSS_IN; //$NON-NLS-1$
+		case "pt" -> CSSPrimitiveValue.CSS_PT; //$NON-NLS-1$
+		case "pc" -> CSSPrimitiveValue.CSS_PC; //$NON-NLS-1$
+		case "deg" -> CSSPrimitiveValue.CSS_DEG; //$NON-NLS-1$
+		default -> CSSPrimitiveValue.CSS_DIMENSION;
 		};
 	}
 
