@@ -80,8 +80,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 * A named preference for setting CTabFolder's to be rendered with dirty
 	 * indicator overlay on close button
 	 * <p>
-	 * The default value for this preference is: <code>false</code> (do not show
-	 * dirty indicator)
+	 * The default value for this preference is: <code>true</code> (show dirty
+	 * indicator)
 	 * </p>
 	 */
 	public static final String SHOW_DIRTY_INDICATOR_ON_TABS = "SHOW_DIRTY_INDICATOR_ON_TABS"; //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	/**
 	 * Default value for "dirty indicator" preference for tabs
 	 */
-	public static final boolean SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT = false;
+	public static final boolean SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT = true;
 
 	private static int MIN_VIEW_CHARS = 1;
 	private static int MAX_VIEW_CHARS = Integer.MAX_VALUE;

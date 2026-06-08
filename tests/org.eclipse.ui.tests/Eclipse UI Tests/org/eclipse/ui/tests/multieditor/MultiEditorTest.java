@@ -35,6 +35,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
@@ -233,6 +236,14 @@ public class MultiEditorTest {
 		MockEditorPart editorA = (MockEditorPart) innerEditors[0];
 		MockEditorPart editorB = (MockEditorPart) innerEditors[0];
 
+		// This test verifies the textual '*' dirty prefix, which is only used
+		// when the graphical dirty indicator is disabled.
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		boolean previous = prefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
+		prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, false);
+
 		char firstChar = item.getText().charAt(0);
 		assertFalse(firstChar == '*');
 
@@ -249,6 +260,7 @@ public class MultiEditorTest {
 			editorB.setDirty(false);
 			assertEquals(firstChar, item.getText().charAt(0));
 		} finally {
+			prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, previous);
 			page.closeAllEditors(false);
 		}
 	}
