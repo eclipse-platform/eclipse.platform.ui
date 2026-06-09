@@ -165,6 +165,9 @@ public abstract class QuickAccessContents {
 		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
 			entries.set(
 					computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor));
+			Tracing.printTrace(QuickAccessContents.class.getName(),
+					"[" + Thread.currentThread() + "] Computed entries: " + //$NON-NLS-1$ //$NON-NLS-2$
+							Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId()).toList());
 			return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 		});
 		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
@@ -183,12 +186,14 @@ public abstract class QuickAccessContents {
 		currentComputeEntriesJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
+				Tracing.printTrace(QuickAccessContents.class.getName(),
+						"[" + Thread.currentThread() + "] Compute entries Job result: " + event.getResult()); //$NON-NLS-1$ //$NON-NLS-2$
 				computingFeedbackJob.cancel();
 				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
 						&& !table.isDisposed()) {
 					if (Policy.DEBUG_QUICK_ACCESS) {
 						Tracing.printTrace(QuickAccessContents.class.getName(),
-								"[" + Thread.currentThread().getName() + "] Setting quick access contents: " + //$NON-NLS-1$ //$NON-NLS-2$
+								"[" + Thread.currentThread() + "] Setting quick access contents: " + //$NON-NLS-1$ //$NON-NLS-2$
 										Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId())
 												.toList());
 					}
