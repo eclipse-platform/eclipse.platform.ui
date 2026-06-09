@@ -615,9 +615,7 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 	@Override
 	protected void textChanged() {
-		narrowingDown = previousFilterText == null
-				|| previousFilterText.equals(WorkbenchMessages.FilteredTree_FilterMessage)
-				|| getFilterString().startsWith(previousFilterText);
+		narrowingDown = previousFilterText == null || getFilterString().startsWith(previousFilterText);
 		previousFilterText = getFilterString();
 		// cancel currently running job first, to prevent unnecessary redraw
 		refreshJob.cancel();
