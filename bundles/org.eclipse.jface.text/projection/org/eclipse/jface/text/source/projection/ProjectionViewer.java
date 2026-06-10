@@ -793,7 +793,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		for (Iterator<Annotation> it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
 			Annotation annotation= it.next();
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
-			if (bordersOrSurroundsRegion(position, region)) {
+			if (position != null && bordersOrSurroundsRegion(position, region)) {
 				fProjectionAnnotationModel.expand(annotation);
 			}
 		}
@@ -808,7 +808,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	private void hideProjectionAnnotationIfPartsAreOutsideOfVisibleRegion(Annotation annotation) throws BadLocationException {
 		Position position= fProjectionAnnotationModel.getPosition(annotation);
-		if (annotation instanceof ProjectionAnnotation a) {
+		if (annotation instanceof ProjectionAnnotation a && position != null) {
 			if (overlapsWithNonVisibleRegions(position.getOffset(), position.getLength())) {
 				a.setHidden(true);
 			} else {
@@ -1355,6 +1355,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @since 3.1
 	 */
 	IRegion[] computeCollapsedRegions(Position position) {
+		if (position == null) {
+			return null;
+		}
 		try {
 			IDocument document= getDocument();
 			if (document == null) {
