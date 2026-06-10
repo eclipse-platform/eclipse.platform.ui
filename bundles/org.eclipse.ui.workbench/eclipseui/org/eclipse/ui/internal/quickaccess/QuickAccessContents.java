@@ -147,6 +147,9 @@ public abstract class QuickAccessContents {
 	 * @param filter The filter text to apply to results
 	 */
 	public void updateProposals(String filter) {
+		if (Policy.DEBUG_QUICK_ACCESS) {
+			trace("Updating proposals with filter: \"" + filter + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (computeProposalsJob != null) {
 			computeProposalsJob.cancel();
 			computeProposalsJob = null;
@@ -165,12 +168,15 @@ public abstract class QuickAccessContents {
 		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
 			entries.set(
 					computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor));
-			Tracing.printTrace(QuickAccessContents.class.getName(),
-					"[" + Thread.currentThread() + "] Computed entries: " + //$NON-NLS-1$ //$NON-NLS-2$
-							Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId()).toList());
+			if (Policy.DEBUG_QUICK_ACCESS) {
+				trace("Computed entries: " + toIds(entries)); //$NON-NLS-1$
+			}
 			return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 		});
 		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
+		if (Policy.DEBUG_QUICK_ACCESS) {
+			trace("Will compute proposals with Job: " + currentComputeEntriesJob); //$NON-NLS-1$
+		}
 		// feedback is delayed in a job as we don't want to show it on every keystroke
 		// but only when user seems to be waiting
 		UIJob computingFeedbackJob = new UIJob(table.getDisplay(), QuickAccessMessages.QuickAccessContents_computeMatchingEntries_displayFeedback_jobName) {
@@ -186,16 +192,17 @@ public abstract class QuickAccessContents {
 		currentComputeEntriesJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
-				Tracing.printTrace(QuickAccessContents.class.getName(),
-						"[" + Thread.currentThread() + "] Compute entries Job result: " + event.getResult()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (Policy.DEBUG_QUICK_ACCESS) {
+					trace("Compute entries Job result: " + event.getResult() + //$NON-NLS-1$
+							", Job: " + currentComputeEntriesJob + //$NON-NLS-1$
+							", last proposals Job: " + computeProposalsJob + //$NON-NLS-1$
+							", entries: " + toIds(entries)); //$NON-NLS-1$
+				}
 				computingFeedbackJob.cancel();
 				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
 						&& !table.isDisposed()) {
 					if (Policy.DEBUG_QUICK_ACCESS) {
-						Tracing.printTrace(QuickAccessContents.class.getName(),
-								"[" + Thread.currentThread() + "] Setting quick access contents: " + //$NON-NLS-1$ //$NON-NLS-2$
-										Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId())
-												.toList());
+						trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
 					}
 					display.asyncExec(() -> {
 						computingFeedbackJob.cancel();
@@ -205,6 +212,9 @@ public abstract class QuickAccessContents {
 			}
 		});
 		this.computeProposalsJob = currentComputeEntriesJob;
+		if (Policy.DEBUG_QUICK_ACCESS) {
+			trace("Set last proposals Job: " + computeProposalsJob); //$NON-NLS-1$
+		}
 		currentComputeEntriesJob.schedule();
 		computingFeedbackJob.schedule(200); // delay a bit so if proposals compute fast enough, we don't show feedback
 	}
@@ -239,6 +249,9 @@ public abstract class QuickAccessContents {
 		if (showAllMatches != showAll) {
 			showAllMatches = showAll;
 			updateInfoLabel();
+			if (Policy.DEBUG_QUICK_ACCESS) {
+				trace("setShowAllMatches triggering proposals update"); //$NON-NLS-1$
+			}
 			updateProposals(filterText.getText().toLowerCase());
 		}
 	}
@@ -689,6 +702,9 @@ public abstract class QuickAccessContents {
 		});
 		filterText.addModifyListener(e -> {
 			String text = ((Text) e.widget).getText();
+			if (Policy.DEBUG_QUICK_ACCESS) {
+				trace("Modify listener triggering proposals update"); //$NON-NLS-1$
+			}
 			updateProposals(text);
 		});
 	}
@@ -759,6 +775,9 @@ public abstract class QuickAccessContents {
 						e.display.timerExec(100, () -> {
 							if (table != null && !table.isDisposed() && filterText != null
 									&& !filterText.isDisposed()) {
+								if (Policy.DEBUG_QUICK_ACCESS) {
+									trace("Resize listener triggering proposals update"); //$NON-NLS-1$
+								}
 								updateProposals(filterText.getText().toLowerCase());
 							}
 							resized = false;
@@ -931,5 +950,13 @@ public abstract class QuickAccessContents {
 
 	public Table getTable() {
 		return table;
+	}
+
+	private static List<String> toIds(AtomicReference<List<QuickAccessEntry>[]> entries) {
+		return Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId()).toList();
+	}
+
+	private static void trace(String message) {
+		Tracing.printTrace(QuickAccessContents.class.getName(), " | " + Thread.currentThread() + " | " + message); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
