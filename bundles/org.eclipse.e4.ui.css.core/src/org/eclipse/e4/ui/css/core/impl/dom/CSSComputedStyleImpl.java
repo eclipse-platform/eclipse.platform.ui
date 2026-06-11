@@ -37,7 +37,7 @@ public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl implements CSS
 		// only once after reading the stylesheet(s).
 		this.styleRules.sort(StyleWrapper.COMPARATOR);
 		for (StyleWrapper styleWrapper : this.styleRules) {
-			addCSSPropertyList(((CSSStyleDeclarationImpl) styleWrapper.style()).getCSSPropertyList());
+			addCSSPropertyList(styleWrapper.style().getCSSPropertyList());
 		}
 	}
 

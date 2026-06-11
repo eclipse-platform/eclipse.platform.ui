@@ -23,13 +23,14 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.css.core.impl.parser.CssParseException;
 import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSImportRule;
+import java.util.List;
+
+import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
 import org.w3c.dom.css.CSSPrimitiveValue;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleRule;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
@@ -45,8 +46,8 @@ public class CssParserTest {
 		return CssParser.parseSelectors(selector).item(0);
 	}
 
-	private static CSSStyleRule firstStyleRule(String css) {
-		return (CSSStyleRule) CssParser.parseStyleSheet(css).getCssRules().item(0);
+	private static CSSStyleRuleImpl firstStyleRule(String css) {
+		return (CSSStyleRuleImpl) CssParser.parseStyleSheet(css).getRules().get(0);
 	}
 
 	// ---------- selectors ----------
@@ -112,7 +113,7 @@ public class CssParserTest {
 
 	@Test
 	void testSingleDeclaration() {
-		CSSStyleRule rule = firstStyleRule("Button { color: red; }");
+		CSSStyleRuleImpl rule = firstStyleRule("Button { color: red; }");
 		assertEquals("Button", rule.getSelectorText());
 		CSSStyleDeclaration style = rule.getStyle();
 		assertEquals(1, style.getLength());
@@ -175,50 +176,50 @@ public class CssParserTest {
 
 	@Test
 	void testCommentsIgnored() {
-		CSSStyleSheet sheet = CssParser.parseStyleSheet("""
+		CSSStyleSheetImpl sheet = CssParser.parseStyleSheet("""
 				/* lead */ Button { /* in */ color: red; } /* tail */
 				""");
-		assertEquals(1, sheet.getCssRules().getLength());
+		assertEquals(1, sheet.getRules().size());
 	}
 
 	// ---------- at-rules ----------
 
 	@Test
 	void testImportRuleKept() {
-		CSSStyleSheet sheet = CssParser.parseStyleSheet("@import url('other.css');");
-		assertEquals(1, sheet.getCssRules().getLength());
-		CSSRule rule = sheet.getCssRules().item(0);
-		assertEquals(CSSRule.IMPORT_RULE, rule.getType());
-		assertEquals("other.css", ((CSSImportRule) rule).getHref());
+		CSSStyleSheetImpl sheet = CssParser.parseStyleSheet("@import url('other.css');");
+		assertEquals(1, sheet.getRules().size());
+		CssRule rule = sheet.getRules().get(0);
+		assertTrue(rule instanceof CSSImportRuleImpl);
+		assertEquals("other.css", ((CSSImportRuleImpl) rule).getHref());
 	}
 
 	@Test
 	void testMediaAndFontFaceDiscardedFollowingRuleKept() {
-		CSSStyleSheet sheet = CssParser.parseStyleSheet("""
+		CSSStyleSheetImpl sheet = CssParser.parseStyleSheet("""
 				@font-face { font-family: x; }
 				@media screen { Hidden { color: red; } }
 				Label { color: blue; }
 				""");
 		// Both at-rules are discarded entirely; only the top-level Label remains.
-		CSSRuleList rules = sheet.getCssRules();
-		assertEquals(1, rules.getLength());
-		CSSStyleRule label = (CSSStyleRule) rules.item(0);
+		List<CssRule> rules = sheet.getRules();
+		assertEquals(1, rules.size());
+		CSSStyleRuleImpl label = (CSSStyleRuleImpl) rules.get(0);
 		assertEquals("Label", label.getSelectorText());
 		assertEquals("blue", label.getStyle().getPropertyCSSValue("color").getCssText());
 	}
 
 	@Test
 	void testMultipleRulesPreserveOrder() {
-		CSSRuleList rules = CssParser.parseStyleSheet("A { color: red; } B { color: green; } C { color: blue; }")
-				.getCssRules();
-		assertEquals(3, rules.getLength());
-		assertEquals("A", ((CSSStyleRule) rules.item(0)).getSelectorText());
-		assertEquals("C", ((CSSStyleRule) rules.item(2)).getSelectorText());
+		List<CssRule> rules = CssParser.parseStyleSheet("A { color: red; } B { color: green; } C { color: blue; }")
+				.getRules();
+		assertEquals(3, rules.size());
+		assertEquals("A", ((CSSStyleRuleImpl) rules.get(0)).getSelectorText());
+		assertEquals("C", ((CSSStyleRuleImpl) rules.get(2)).getSelectorText());
 	}
 
 	@Test
 	void testEmptyStyleSheet() {
-		assertEquals(0, CssParser.parseStyleSheet("").getCssRules().getLength());
-		assertTrue(CssParser.parseStyleSheet("   \n  ").getCssRules().getLength() == 0);
+		assertEquals(0, CssParser.parseStyleSheet("").getRules().size());
+		assertTrue(CssParser.parseStyleSheet("   \n  ").getRules().isEmpty());
 	}
 }

@@ -348,8 +348,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		 */
 		private void styleUnselected(Item[] items) {
 			for (Item item : items) {
-				CSSStyleDeclaration unselectedStyle = engine.getViewCSS()
-						.getComputedStyle(engine.getElement(item), null);
+				CSSStyleDeclaration unselectedStyle = engine.computeStyle(engine.getElement(item), null);
 				if (unselectedStyle == null) {
 					// no styles defined, just reset the font
 					setFont(item, null);
@@ -367,8 +366,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		 *            the item to style
 		 */
 		private boolean styleSelected(Item selection) {
-			CSSStyleDeclaration selectedStyle = engine.getViewCSS()
-					.getComputedStyle(engine.getElement(selection), "selected");
+			CSSStyleDeclaration selectedStyle = engine.computeStyle(engine.getElement(selection), "selected");
 			if (selectedStyle == null) {
 				return false;
 			}

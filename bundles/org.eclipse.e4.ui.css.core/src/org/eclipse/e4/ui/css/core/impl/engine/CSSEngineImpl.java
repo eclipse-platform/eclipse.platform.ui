@@ -41,8 +41,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
-import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
-import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.IStreamingNodeList;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyCompositeHandler;
@@ -56,10 +54,13 @@ import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSComputedStyleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
+import org.eclipse.e4.ui.css.core.impl.dom.StyleWrapper;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
@@ -71,19 +72,12 @@ import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.css.CSSImportRule;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.DocumentCSS;
-import org.w3c.dom.css.ViewCSS;
-import org.w3c.dom.stylesheets.StyleSheet;
 
 /**
- * Abstract CSS Engine manage style sheet parsing and store the
- * {@link CSSStyleSheet} into {@link DocumentCSS}.
+ * Abstract CSS Engine which manages stylesheet parsing, the cascade, and
+ * applying styles.
  *
  * To apply styles, call the {@link #applyStyles(Object, boolean, boolean)}
  * method. This method check if {@link ICSSPropertyHandler} is registered for
@@ -105,15 +99,11 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	 */
 	private static final IResourcesLocatorManager defaultResourcesLocatorManager = ResourcesLocatorManager.INSTANCE;
 
-	/**
-	 * w3c {@link DocumentCSS}.
-	 */
-	private final ExtendedDocumentCSS documentCSS;
+	/** The stylesheets added to this engine, in registration order. */
+	private final List<CSSStyleSheetImpl> styleSheets = new ArrayList<>();
 
-	/**
-	 * w3c {@link ViewCSS}.
-	 */
-	private final ViewCSS viewCSS;
+	/** Cached flat list of style rules over all stylesheets. */
+	private List<CSSStyleRuleImpl> combinedRules;
 
 	/**
 	 * {@link IElementProvider} used to retrieve w3c Element linked to the
@@ -156,12 +146,6 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider;
 
 	public CSSEngineImpl() {
-		this(new DocumentCSSImpl());
-	}
-
-	public CSSEngineImpl(ExtendedDocumentCSS documentCSS) {
-		this.documentCSS = documentCSS;
-		this.viewCSS = new ViewCSSImpl(documentCSS);
 		keyFactory = new ResourceRegistryKeyFactory();
 		registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
 	}
@@ -169,34 +153,31 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	/*--------------- Parse style sheet -----------------*/
 
 	@Override
-	public StyleSheet parseStyleSheet(Reader reader) throws IOException {
+	public CSSStyleSheetImpl parseStyleSheet(Reader reader) throws IOException {
 		return parseStyleSheet(readFully(reader), null);
 	}
 
 	@Override
-	public StyleSheet parseStyleSheet(InputStream stream) throws IOException {
+	public CSSStyleSheetImpl parseStyleSheet(InputStream stream) throws IOException {
 		return parseStyleSheet(stream, null);
 	}
 
 	@Override
-	public StyleSheet parseStyleSheet(InputStream stream, String uri) throws IOException {
+	public CSSStyleSheetImpl parseStyleSheet(InputStream stream, String uri) throws IOException {
 		return parseStyleSheet(readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)), uri);
 	}
 
-	private StyleSheet parseStyleSheet(String content, String uri) throws IOException {
-		CSSStyleSheet styleSheet = CssParser.parseStyleSheet(content);
+	private CSSStyleSheetImpl parseStyleSheet(String content, String uri) throws IOException {
+		CSSStyleSheetImpl styleSheet = CssParser.parseStyleSheet(content);
 
-		CSSRuleList rules = styleSheet.getCssRules();
-		int length = rules.getLength();
-		CSSRuleListImpl masterList = new CSSRuleListImpl();
+		List<CssRule> rules = styleSheet.getRules();
+		List<CssRule> masterList = new ArrayList<>();
 		int counter;
-		for (counter = 0; counter < length; counter++) {
-			CSSRule rule = rules.item(counter);
-			if (rule.getType() != CSSRule.IMPORT_RULE) {
+		for (counter = 0; counter < rules.size(); counter++) {
+			if (!(rules.get(counter) instanceof CSSImportRuleImpl importRule)) {
 				break;
 			}
 			// processing an import CSS
-			CSSImportRule importRule = (CSSImportRule) rule;
 			URL url = null;
 			if (importRule.getHref().startsWith("platform")) {
 				url = FileLocator.resolve(new URL(importRule.getHref()));
@@ -209,7 +190,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				File testFile = new File(url.getFile());
 				if (!isArchive&&!testFile.exists()) {
 					// look in platform default
-					String path = getResourcesLocatorManager().resolve((importRule).getHref());
+					String path = getResourcesLocatorManager().resolve(importRule.getHref());
 					testFile = new File(new URL(path).getFile());
 					if (testFile.exists()) {
 						url = new URL(path);
@@ -218,31 +199,37 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			}
 			try (InputStream stream = url.openStream()) {
 				parseImport++;
+				CSSStyleSheetImpl imported;
 				try {
-					styleSheet = (CSSStyleSheet) parseStyleSheet(
+					imported = parseStyleSheet(
 							readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)), url.toString());
 				} finally {
 					parseImport--;
 				}
-				CSSRuleList tempRules = styleSheet.getCssRules();
-				for (int j = 0; j < tempRules.getLength(); j++) {
-					masterList.add(tempRules.item(j));
-				}
+				masterList.addAll(imported.getRules());
 			}
 		}
 
 		// add remaining non import rules
-		for (int i = counter; i < length; i++) {
-			masterList.add(rules.item(i));
-		}
+		masterList.addAll(rules.subList(counter, rules.size()));
 
 		// final stylesheet
-		CSSStyleSheetImpl s = new CSSStyleSheetImpl();
-		s.setRuleList(masterList);
+		CSSStyleSheetImpl s = new CSSStyleSheetImpl(masterList);
 		if (parseImport == 0) {
-			documentCSS.addStyleSheet(s);
+			addStyleSheet(s);
 		}
 		return s;
+	}
+
+	/** Register a parsed stylesheet with this engine's cascade. */
+	public void addStyleSheet(CSSStyleSheetImpl styleSheet) {
+		styleSheets.add(styleSheet);
+		combinedRules = null;
+	}
+
+	/** The stylesheets registered with this engine, in registration order. */
+	public List<CSSStyleSheetImpl> getStyleSheets() {
+		return Collections.unmodifiableList(styleSheets);
 	}
 
 	private void processNodeList(NodeList nodes, BiConsumer<Node, Boolean> consumer, boolean applyStylesToChildNodes) {
@@ -373,7 +360,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		/*
 		 * Compute new Style to apply.
 		 */
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(elt, null);
+		CSSStyleDeclaration style = computeStyle(elt, null);
 		if (computeDefaultStyle) {
 			if (applyStylesToChildNodes) {
 				this.computeDefaultStyle = computeDefaultStyle;
@@ -392,7 +379,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			// there are static pseudo instances defined, loop for it and
 			// apply styles for each pseudo instance.
 			for (String pseudoInstance : pseudoInstances) {
-				CSSStyleDeclaration styleWithPseudoInstance = viewCSS.getComputedStyle(elt, pseudoInstance);
+				CSSStyleDeclaration styleWithPseudoInstance = computeStyle(elt, pseudoInstance);
 				if (computeDefaultStyle) {
 					/*
 					 * Apply default style for the current pseudo instance.
@@ -401,9 +388,11 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				}
 
 				if (styleWithPseudoInstance != null) {
-					CSSRule parentRule = styleWithPseudoInstance.getParentRule();
-					if (parentRule instanceof ExtendedCSSRule) {
-						applyConditionalPseudoStyle((ExtendedCSSRule) parentRule, pseudoInstance, element, styleWithPseudoInstance);
+					CSSStyleRuleImpl parentRule = styleWithPseudoInstance instanceof CSSStyleDeclarationImpl declaration
+							? declaration.getParentStyleRule()
+							: null;
+					if (parentRule != null) {
+						applyConditionalPseudoStyle(parentRule, pseudoInstance, element, styleWithPseudoInstance);
 					} else {
 						applyStyleDeclaration(elt, styleWithPseudoInstance, pseudoInstance);
 					}
@@ -462,7 +451,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		return true;
 	}
 
-	private void applyConditionalPseudoStyle(ExtendedCSSRule parentRule, String pseudoInstance, Object element,
+	private void applyConditionalPseudoStyle(CSSStyleRuleImpl parentRule, String pseudoInstance, Object element,
 			CSSStyleDeclaration styleWithPseudoInstance) {
 		Selectors.SelectorList selectorList = parentRule.getSelectorList();
 		for (Selectors.Selector alternative : selectorList.alternatives()) {
@@ -967,16 +956,67 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		this.resourcesLocatorManager = resourcesLocatorManager;
 	}
 
-	/*--------------- Document/View CSS -----------------*/
+	/*--------------- Computed style -----------------*/
 
 	@Override
-	public DocumentCSS getDocumentCSS() {
-		return documentCSS;
+	public CSSStyleDeclaration computeStyle(Element elt, String pseudoElt) {
+		List<StyleWrapper> styleDeclarations = null;
+		StyleWrapper firstStyleDeclaration = null;
+		int position = 0;
+
+		int depth = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			depth++;
+		}
+		Element[] hierarchy = new Element[depth];
+		int idx = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			hierarchy[idx++] = (Element) n;
+		}
+
+		for (CSSStyleRuleImpl rule : getCombinedRules()) {
+			for (Selectors.Selector selector : rule.getSelectorList().alternatives()) {
+				if (SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0)) {
+					int specificity = selector.specificity();
+					StyleWrapper wrapper = new StyleWrapper(rule.getStyle(), specificity, position++);
+					if (firstStyleDeclaration == null) {
+						firstStyleDeclaration = wrapper;
+					} else {
+						// There are several style declarations which match
+						// the current element
+						if (styleDeclarations == null) {
+							styleDeclarations = new ArrayList<>();
+							styleDeclarations.add(firstStyleDeclaration);
+						}
+						styleDeclarations.add(wrapper);
+					}
+				}
+			}
+		}
+		if (styleDeclarations != null) {
+			// There are several style declarations which match the element;
+			// merge the CSS property values.
+			return new CSSComputedStyleImpl(styleDeclarations);
+		}
+		if (firstStyleDeclaration != null) {
+			return firstStyleDeclaration.style();
+		}
+		return null;
 	}
 
-	@Override
-	public ViewCSS getViewCSS() {
-		return viewCSS;
+	private List<CSSStyleRuleImpl> getCombinedRules() {
+		if (combinedRules == null) {
+			List<CSSStyleRuleImpl> rules = new ArrayList<>();
+			for (CSSStyleSheetImpl styleSheet : styleSheets) {
+				for (CssRule rule : styleSheet.getRules()) {
+					if (rule instanceof CSSStyleRuleImpl styleRule) {
+						rules.add(styleRule);
+					}
+				}
+			}
+			combinedRules = rules;
+		}
+		return combinedRules;
 	}
 
 	@Override
@@ -1000,8 +1040,8 @@ public abstract class CSSEngineImpl implements CSSEngine {
 
 	@Override
 	public void reset() {
-		// Remove All Style Sheets
-		documentCSS.removeAllStyleSheets();
+		styleSheets.clear();
+		combinedRules = null;
 	}
 
 	/*--------------- Resources Registry -----------------*/

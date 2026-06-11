@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2026 Lars Vogel and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,19 +9,12 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 /**
- * Abstract CSS Node.
+ * A rule in a parsed stylesheet: either a style rule or an {@code @import}.
  */
-public class AbstractCSSNode {
-
-	public AbstractCSSNode() {
-		super();
-	}
-
+public sealed interface CssRule permits CSSStyleRuleImpl, CSSImportRuleImpl {
 }

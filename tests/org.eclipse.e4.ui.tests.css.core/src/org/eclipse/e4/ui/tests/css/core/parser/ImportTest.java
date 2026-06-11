@@ -17,27 +17,25 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
-import org.w3c.dom.css.ViewCSS;
-import org.w3c.dom.stylesheets.StyleSheet;
-import org.w3c.dom.stylesheets.StyleSheetList;
 
 public class ImportTest {
 
@@ -72,7 +70,7 @@ public class ImportTest {
 		String importedFolderPath = importedFile.getParent();
 		String importingUrl = "file:///" + importedFolderPath + "/importing.css";
 
-		ViewCSS viewCSS = createViewCss(importingUrl, importingCss);
+		parseStyleSheet(importingUrl, importingCss);
 
 		TestElement buttonAlpha = new TestElement("Button", engine);
 		buttonAlpha.setClass("ClassAlpha");
@@ -80,10 +78,8 @@ public class ImportTest {
 		TestElement buttonBeta = new TestElement("Button", engine);
 		buttonBeta.setClass("ClassBeta");
 
-		CSSStyleDeclaration styleAlpha = viewCSS.getComputedStyle(buttonAlpha,
-				null);
-		CSSStyleDeclaration styleBeta = viewCSS.getComputedStyle(buttonBeta,
-				null);
+		CSSStyleDeclaration styleAlpha = engine.computeStyle(buttonAlpha, null);
+		CSSStyleDeclaration styleBeta = engine.computeStyle(buttonBeta, null);
 
 		assertEquals("value", styleAlpha.getPropertyCSSValue("property")
 				.getCssText());
@@ -111,25 +107,24 @@ public class ImportTest {
 		String importedFolderPath = importedFile.getParent();
 		String importingUrl = "file:///" + importedFolderPath + "/root.css";
 
-		CSSStyleSheet result = parseStyleSheet(importingUrl, rootCss);
+		CSSStyleSheetImpl result = parseStyleSheet(importingUrl, rootCss);
 
 		// check the parsing result
 		assertNotNull(result);
-		CSSRuleList cssRules = result.getCssRules();
-		assertEquals(3, cssRules.getLength());
+		List<CssRule> cssRules = result.getRules();
+		assertEquals(3, cssRules.size());
 		assertStyle(deepNestedCss, cssRules, 0);
 		assertStyle(childStyle, cssRules, 1);
 		assertStyle(rootStyle, cssRules, 2);
-		// check the full DocumentCSS of the engine
-		StyleSheetList documentStyleSheets = engine.getDocumentCSS().getStyleSheets();
-		assertEquals(1, documentStyleSheets.getLength());
-		StyleSheet documentStyleSheet = documentStyleSheets.item(0);
-		assertEquals(result, documentStyleSheet);
+		// check that the engine's cascade holds exactly this sheet
+		List<CSSStyleSheetImpl> documentStyleSheets = ((CSSEngineImpl) engine).getStyleSheets();
+		assertEquals(1, documentStyleSheets.size());
+		assertEquals(result, documentStyleSheets.get(0));
 	}
 
-	private void assertStyle(String expectedStyleText, CSSRuleList cssRules, int index) {
-		assertEquals(CSSRule.STYLE_RULE, cssRules.item(index).getType());
-		assertEquals(expectedStyleText.trim(), cssRules.item(index).getCssText());
+	private void assertStyle(String expectedStyleText, List<CssRule> cssRules, int index) {
+		assertTrue(cssRules.get(index) instanceof CSSStyleRuleImpl);
+		assertEquals(expectedStyleText.trim(), ((CSSStyleRuleImpl) cssRules.get(index)).getCssText());
 	}
 
 	private File createTempCssFile(String cssString) throws IOException {
@@ -145,17 +140,8 @@ public class ImportTest {
 		return "@import url('" + cssUrl + "');\n";
 	}
 
-	private CSSStyleSheet parseStyleSheet(String sourceUrl, String cssString) throws IOException {
-		return (CSSStyleSheet) engine.parseStyleSheet(
+	private CSSStyleSheetImpl parseStyleSheet(String sourceUrl, String cssString) throws IOException {
+		return engine.parseStyleSheet(
 				new ByteArrayInputStream(cssString.getBytes(StandardCharsets.UTF_8)), sourceUrl);
-	}
-
-	private ViewCSS createViewCss(String sourceUrl, String cssString)
-			throws IOException {
-		StyleSheet styleSheet = parseStyleSheet(sourceUrl, cssString);
-
-		DocumentCSSImpl docCss = new DocumentCSSImpl();
-		docCss.addStyleSheet(styleSheet);
-		return new ViewCSSImpl(docCss);
 	}
 }

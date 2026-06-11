@@ -28,13 +28,12 @@ import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSImportRule;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
 import org.w3c.dom.css.CSSPrimitiveValue;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleRule;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 import org.w3c.dom.css.RGBColor;
@@ -49,23 +48,23 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testEmptyStyleSheet() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("");
 
 		assertNotNull(sheet);
-		assertEquals(0, sheet.getCssRules().getLength());
+		assertEquals(0, sheet.getRules().size());
 	}
 
 	@Test
 	void testSingleRule() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button { color: red; }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button { color: red; }");
 
 		assertNotNull(sheet);
-		assertEquals(1, sheet.getCssRules().getLength());
+		assertEquals(1, sheet.getRules().size());
 
-		CSSRule rule = sheet.getCssRules().item(0);
-		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CssRule rule = sheet.getRules().get(0);
+		assertInstanceOf(CSSStyleRuleImpl.class, rule);
 
-		CSSStyleRule styleRule = (CSSStyleRule) rule;
+		CSSStyleRuleImpl styleRule = (CSSStyleRuleImpl) rule;
 		assertEquals("Button", styleRule.getSelectorText());
 
 		CSSStyleDeclaration style = styleRule.getStyle();
@@ -84,21 +83,21 @@ public class StyleSheetStructureTest {
 				Label { color: green; }
 				Composite { color: blue; }
 				""";
-		CSSStyleSheet sheet = ParserTestUtil.parseCss(css);
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss(css);
 
-		CSSRuleList rules = sheet.getCssRules();
-		assertEquals(3, rules.getLength());
-		assertEquals("Button", ((CSSStyleRule) rules.item(0)).getSelectorText());
-		assertEquals("Label", ((CSSStyleRule) rules.item(1)).getSelectorText());
-		assertEquals("Composite", ((CSSStyleRule) rules.item(2)).getSelectorText());
+		List<CssRule> rules = sheet.getRules();
+		assertEquals(3, rules.size());
+		assertEquals("Button", ((CSSStyleRuleImpl) rules.get(0)).getSelectorText());
+		assertEquals("Label", ((CSSStyleRuleImpl) rules.get(1)).getSelectorText());
+		assertEquals("Composite", ((CSSStyleRuleImpl) rules.get(2)).getSelectorText());
 	}
 
 	@Test
 	void testMultipleSelectorsInOneRule() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button, Label { color: red; }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button, Label { color: red; }");
 
-		assertEquals(1, sheet.getCssRules().getLength());
-		CSSStyleRule rule = (CSSStyleRule) sheet.getCssRules().item(0);
+		assertEquals(1, sheet.getRules().size());
+		CSSStyleRuleImpl rule = (CSSStyleRuleImpl) sheet.getRules().get(0);
 
 		String selectorText = rule.getSelectorText();
 		assertTrue(selectorText.contains("Button"), () -> "expected Button in " + selectorText);
@@ -107,10 +106,10 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testMultipleDeclarations() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil
+		CSSStyleSheetImpl sheet = ParserTestUtil
 				.parseCss("Button { color: red; background-color: blue; font-style: italic; }");
 
-		CSSStyleRule rule = (CSSStyleRule) sheet.getCssRules().item(0);
+		CSSStyleRuleImpl rule = (CSSStyleRuleImpl) sheet.getRules().get(0);
 		CSSStyleDeclaration style = rule.getStyle();
 
 		assertEquals(3, style.getLength());
@@ -125,8 +124,8 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testWhitespaceTolerance() throws Exception {
-		CSSStyleSheet compact = ParserTestUtil.parseCss("Button{color:red;background-color:blue;}");
-		CSSStyleSheet padded = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl compact = ParserTestUtil.parseCss("Button{color:red;background-color:blue;}");
+		CSSStyleSheetImpl padded = ParserTestUtil.parseCss("""
 
 				Button   {
 				    color:           red;
@@ -135,10 +134,10 @@ public class StyleSheetStructureTest {
 
 				""");
 
-		assertEquals(compact.getCssRules().getLength(), padded.getCssRules().getLength());
+		assertEquals(compact.getRules().size(), padded.getRules().size());
 
-		CSSStyleRule compactRule = (CSSStyleRule) compact.getCssRules().item(0);
-		CSSStyleRule paddedRule = (CSSStyleRule) padded.getCssRules().item(0);
+		CSSStyleRuleImpl compactRule = (CSSStyleRuleImpl) compact.getRules().get(0);
+		CSSStyleRuleImpl paddedRule = (CSSStyleRuleImpl) padded.getRules().get(0);
 
 		assertEquals(compactRule.getSelectorText(), paddedRule.getSelectorText());
 		assertEquals(compactRule.getStyle().getLength(), paddedRule.getStyle().getLength());
@@ -150,7 +149,7 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testCommentsIgnored() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("""
 				/* leading comment */
 				Button {
 					/* inside */
@@ -160,69 +159,68 @@ public class StyleSheetStructureTest {
 				Label { color: blue; }
 				""");
 
-		assertEquals(2, sheet.getCssRules().getLength());
-		CSSStyleRule first = (CSSStyleRule) sheet.getCssRules().item(0);
+		assertEquals(2, sheet.getRules().size());
+		CSSStyleRuleImpl first = (CSSStyleRuleImpl) sheet.getRules().get(0);
 		assertEquals("Button", first.getSelectorText());
 		assertEquals("red", first.getStyle().getPropertyCSSValue("color").getCssText());
 	}
 
 	@Test
 	void testImportRuleType() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCssWithoutImports("@import url('other.css');");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCssWithoutImports("@import url('other.css');");
 
-		assertEquals(1, sheet.getCssRules().getLength());
-		CSSRule rule = sheet.getCssRules().item(0);
-		assertEquals(CSSRule.IMPORT_RULE, rule.getType());
-		assertInstanceOf(CSSImportRule.class, rule);
+		assertEquals(1, sheet.getRules().size());
+		CssRule rule = sheet.getRules().get(0);
+		assertInstanceOf(CSSImportRuleImpl.class, rule);
 	}
 
 	@Test
 	void testImportHrefExposed() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil
+		CSSStyleSheetImpl sheet = ParserTestUtil
 				.parseCssWithoutImports("@import url('platform:/plugin/x/style.css');");
 
-		CSSImportRule rule = (CSSImportRule) sheet.getCssRules().item(0);
+		CSSImportRuleImpl rule = (CSSImportRuleImpl) sheet.getRules().get(0);
 		assertEquals("platform:/plugin/x/style.css", rule.getHref());
 	}
 
 	@Test
 	void testStringValues() throws Exception {
-		CSSStyleSheet quoted = ParserTestUtil.parseCss("Button[style~='SWT.CHECK'] { color: red; }");
-		CSSStyleSheet unquoted = ParserTestUtil.parseCss("Button[style~=SWT_CHECK] { color: red; }");
+		CSSStyleSheetImpl quoted = ParserTestUtil.parseCss("Button[style~='SWT.CHECK'] { color: red; }");
+		CSSStyleSheetImpl unquoted = ParserTestUtil.parseCss("Button[style~=SWT_CHECK] { color: red; }");
 
-		assertEquals(1, quoted.getCssRules().getLength());
-		assertEquals(1, unquoted.getCssRules().getLength());
+		assertEquals(1, quoted.getRules().size());
+		assertEquals(1, unquoted.getRules().size());
 
-		assertTrue(((CSSStyleRule) quoted.getCssRules().item(0)).getSelectorText().contains("SWT.CHECK"));
-		assertTrue(((CSSStyleRule) unquoted.getCssRules().item(0)).getSelectorText().contains("SWT_CHECK"));
+		assertTrue(((CSSStyleRuleImpl) quoted.getRules().get(0)).getSelectorText().contains("SWT.CHECK"));
+		assertTrue(((CSSStyleRuleImpl) unquoted.getRules().get(0)).getSelectorText().contains("SWT_CHECK"));
 	}
 
 	@Test
 	void testColorValueForms() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("""
 				A { color: #fff; }
 				B { color: #ffffff; }
 				C { color: rgb(255, 255, 255); }
 				D { color: white; }
 				""");
 
-		assertEquals(4, sheet.getCssRules().getLength());
+		assertEquals(4, sheet.getRules().size());
 		for (int i = 0; i < 4; i++) {
-			CSSStyleRule rule = (CSSStyleRule) sheet.getCssRules().item(i);
+			CSSStyleRuleImpl rule = (CSSStyleRuleImpl) sheet.getRules().get(i);
 			CSSValue value = rule.getStyle().getPropertyCSSValue("color");
 			assertNotNull(value, () -> "rule " + rule.getSelectorText() + " has no color value");
 		}
 
-		CSSValue hex3 = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle().getPropertyCSSValue("color");
-		CSSValue hex6 = ((CSSStyleRule) sheet.getCssRules().item(1)).getStyle().getPropertyCSSValue("color");
-		CSSValue rgb = ((CSSStyleRule) sheet.getCssRules().item(2)).getStyle().getPropertyCSSValue("color");
+		CSSValue hex3 = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle().getPropertyCSSValue("color");
+		CSSValue hex6 = ((CSSStyleRuleImpl) sheet.getRules().get(1)).getStyle().getPropertyCSSValue("color");
+		CSSValue rgb = ((CSSStyleRuleImpl) sheet.getRules().get(2)).getStyle().getPropertyCSSValue("color");
 
 		// All three numeric forms are CSS_RGBCOLOR primitive values resolving to white.
 		assertWhiteRgb((CSSPrimitiveValue) hex3);
 		assertWhiteRgb((CSSPrimitiveValue) hex6);
 		assertWhiteRgb((CSSPrimitiveValue) rgb);
 
-		CSSValue named = ((CSSStyleRule) sheet.getCssRules().item(3)).getStyle().getPropertyCSSValue("color");
+		CSSValue named = ((CSSStyleRuleImpl) sheet.getRules().get(3)).getStyle().getPropertyCSSValue("color");
 		assertEquals("white", named.getCssText());
 	}
 
@@ -250,28 +248,28 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testImportantPriorityPreserved() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button { color: red !important; }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button { color: red !important; }");
 
-		CSSStyleDeclaration style = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle();
+		CSSStyleDeclaration style = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("important", style.getPropertyPriority("color"));
 	}
 
 	@Test
 	void testImportantOnlyMarksItsOwnDeclaration() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil
+		CSSStyleSheetImpl sheet = ParserTestUtil
 				.parseCss("Button { color: red !important; background-color: blue; }");
 
-		CSSStyleDeclaration style = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle();
+		CSSStyleDeclaration style = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
 		assertEquals("important", style.getPropertyPriority("color"));
 		assertEquals("", style.getPropertyPriority("background-color"));
 	}
 
 	@Test
 	void testTrailingSemicolonOptional() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button { color: red }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button { color: red }");
 
-		CSSStyleDeclaration style = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle();
+		CSSStyleDeclaration style = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
 		assertEquals(1, style.getLength());
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("", style.getPropertyPriority("color"));
@@ -279,18 +277,18 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testStraySemicolonsTolerated() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button { ; color: red;; }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button { ; color: red;; }");
 
-		CSSStyleDeclaration style = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle();
+		CSSStyleDeclaration style = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
 		assertEquals(1, style.getLength());
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 	}
 
 	@Test
 	void testMultiValuePropertyIsValueList() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("Button { margin: 1px 2px 3px 4px; }");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("Button { margin: 1px 2px 3px 4px; }");
 
-		CSSValue value = ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle().getPropertyCSSValue("margin");
+		CSSValue value = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle().getPropertyCSSValue("margin");
 		assertEquals(CSSValue.CSS_VALUE_LIST, value.getCssValueType());
 
 		CSSValueList list = (CSSValueList) value;
@@ -304,17 +302,17 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testLengthAndPercentageUnits() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("""
 				A { width: 10px; }
 				B { width: 50%; }
 				""");
 
-		CSSPrimitiveValue px = (CSSPrimitiveValue) ((CSSStyleRule) sheet.getCssRules().item(0)).getStyle()
+		CSSPrimitiveValue px = (CSSPrimitiveValue) ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle()
 				.getPropertyCSSValue("width");
 		assertEquals(CSSPrimitiveValue.CSS_PX, px.getPrimitiveType());
 		assertEquals(10.0f, px.getFloatValue(CSSPrimitiveValue.CSS_PX));
 
-		CSSPrimitiveValue percent = (CSSPrimitiveValue) ((CSSStyleRule) sheet.getCssRules().item(1)).getStyle()
+		CSSPrimitiveValue percent = (CSSPrimitiveValue) ((CSSStyleRuleImpl) sheet.getRules().get(1)).getStyle()
 				.getPropertyCSSValue("width");
 		assertEquals(CSSPrimitiveValue.CSS_PERCENTAGE, percent.getPrimitiveType());
 		assertEquals(50.0f, percent.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE));
@@ -322,30 +320,30 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testUnquotedImportUrlHref() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCssWithoutImports("@import url(other.css);");
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCssWithoutImports("@import url(other.css);");
 
-		CSSImportRule rule = (CSSImportRule) sheet.getCssRules().item(0);
+		CSSImportRuleImpl rule = (CSSImportRuleImpl) sheet.getRules().get(0);
 		assertEquals("other.css", rule.getHref());
 	}
 
 	@Test
 	void testFontFaceRuleDiscarded() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("""
 				@font-face { font-family: x; }
 				Label { color: blue; }
 				""");
 
 		// The engine parses but does not retain @font-face; the regular rule that
 		// follows it must still be present and intact.
-		assertEquals(1, sheet.getCssRules().getLength());
-		CSSStyleRule label = (CSSStyleRule) sheet.getCssRules().item(0);
+		assertEquals(1, sheet.getRules().size());
+		CSSStyleRuleImpl label = (CSSStyleRuleImpl) sheet.getRules().get(0);
 		assertEquals("Label", label.getSelectorText());
 		assertEquals("blue", label.getStyle().getPropertyCSSValue("color").getCssText());
 	}
 
 	@Test
 	void testMediaRuleToleratedAndFollowingRuleParsed() throws Exception {
-		CSSStyleSheet sheet = ParserTestUtil.parseCss("""
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCss("""
 				@media screen { Button { color: red; } }
 				Label { color: blue; }
 				""");
@@ -353,9 +351,9 @@ public class StyleSheetStructureTest {
 		// @media is accepted without applying its block; the top-level rule after
 		// it must remain reachable with its declarations intact.
 		boolean labelFound = false;
-		CSSRuleList rules = sheet.getCssRules();
-		for (int i = 0; i < rules.getLength(); i++) {
-			if (rules.item(i) instanceof CSSStyleRule rule && "Label".equals(rule.getSelectorText())) {
+		List<CssRule> rules = sheet.getRules();
+		for (int i = 0; i < rules.size(); i++) {
+			if (rules.get(i) instanceof CSSStyleRuleImpl rule && "Label".equals(rule.getSelectorText())) {
 				assertEquals("blue", rule.getStyle().getPropertyCSSValue("color").getCssText());
 				labelFound = true;
 			}

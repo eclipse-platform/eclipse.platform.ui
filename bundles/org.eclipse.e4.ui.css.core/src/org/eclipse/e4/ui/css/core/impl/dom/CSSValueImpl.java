@@ -23,7 +23,7 @@ import org.w3c.dom.css.Counter;
 import org.w3c.dom.css.RGBColor;
 import org.w3c.dom.css.Rect;
 
-public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue {
+public abstract class CSSValueImpl implements CSSPrimitiveValue, CSSValue {
 
 	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
 

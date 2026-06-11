@@ -642,7 +642,7 @@ public class ThemeEngine implements IThemeEngine {
 			if (context != null) {
 				Element e = context.getElement();
 				if (e != null) {
-					return engine.getViewCSS().getComputedStyle(e, null);
+					return engine.computeStyle(e, null);
 				}
 			}
 		}

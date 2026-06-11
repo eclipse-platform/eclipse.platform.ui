@@ -18,9 +18,10 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.io.StringReader;
 
-import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
+
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
@@ -28,8 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
-import org.w3c.dom.css.ViewCSS;
 
 /**
  * Test to ensure the that CSS honors the CSS cascading rules, i.e.:
@@ -63,10 +62,10 @@ public class CascadeTest {
 		// precedence because of its position in the stylesheet
 		String css = "Button { color: blue; font-weight: bold; }\n"
 				+ "Button { color: black }\n";
-		ViewCSS viewCSS = createViewCss(css);
+		CSSEngine viewCSS = createViewCss(css);
 
 		TestElement button = new TestElement("Button", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
 	}
@@ -77,14 +76,14 @@ public class CascadeTest {
 		// precedence because of its higher specificity
 		String css = "Label, Button.special { color: black; }\n"
 				+ "Button { color: blue; font-weight: bold; }\n";
-		ViewCSS viewCSS = createViewCss(css);
+		CSSEngine viewCSS = createViewCss(css);
 
 		TestElement button = new TestElement("Button", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
 
 		button.setClass("special");
-		style = viewCSS.getComputedStyle(button, null);
+		style = viewCSS.computeStyle(button, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("bold", style.getPropertyCSSValue("font-weight")
 				.getCssText());
@@ -99,21 +98,21 @@ public class CascadeTest {
 			CTabFolder > Composite > .special { color: blue; font-weight: bold; }
 			CTabFolder > Composite > #special { color: red; font-weight: bold; }
 			""";
-		ViewCSS viewCSS = createViewCss(css);
+		CSSEngine viewCSS = createViewCss(css);
 
 		TestElement tabFolder = new TestElement("CTabFolder", engine);
 		TestElement composite = new TestElement("Composite", tabFolder, engine);
 		TestElement toolbar = new TestElement("Toolbar", composite, engine);
 
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(toolbar, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(toolbar, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 
 		toolbar.setClass("special");
-		style = viewCSS.getComputedStyle(toolbar, null);
+		style = viewCSS.computeStyle(toolbar, null);
 		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
 
 		toolbar.setId("special");
-		style = viewCSS.getComputedStyle(toolbar, null);
+		style = viewCSS.computeStyle(toolbar, null);
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 
 	}
@@ -128,36 +127,35 @@ public class CascadeTest {
 			Button.special { color: green; }
 			Button#myid { color: red; }
 			""";
-		ViewCSS viewCSS = createViewCss(css);
+		CSSEngine viewCSS = createViewCss(css);
 
 		TestElement label = new TestElement("Label", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(label, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(label, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 
 		TestElement button = new TestElement("Button", engine);
-		style = viewCSS.getComputedStyle(button, null);
+		style = viewCSS.computeStyle(button, null);
 		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
 
 		button.setAttribute("BORDER", "true");
-		style = viewCSS.getComputedStyle(button, null);
+		style = viewCSS.computeStyle(button, null);
 		assertEquals("gray", style.getPropertyCSSValue("color").getCssText());
 
 		button.setClass("special");
-		style = viewCSS.getComputedStyle(button, null);
+		style = viewCSS.computeStyle(button, null);
 		assertEquals("green", style.getPropertyCSSValue("color").getCssText());
 
 		button.setId("myid");
-		style = viewCSS.getComputedStyle(button, null);
+		style = viewCSS.computeStyle(button, null);
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 	}
 
-	private static ViewCSS createViewCss(String... css) throws IOException {
-		DocumentCSSImpl docCss = new DocumentCSSImpl();
+	private CSSEngine createViewCss(String... css) throws IOException {
+		CSSEngine cascadeEngine = ParserTestUtil.createEngine();
 		for (String cssString : css) {
-			CSSStyleSheet styleSheet = ParserTestUtil.parseCss(cssString);
-			docCss.addStyleSheet(styleSheet);
+			cascadeEngine.parseStyleSheet(new StringReader(cssString));
 		}
-		return new ViewCSSImpl(docCss);
+		return cascadeEngine;
 	}
 
 	//	public void testImportantRule() throws Exception {
@@ -168,10 +166,10 @@ public class CascadeTest {
 	//		String css = "Button{color:red ! important;}\n"
 	//			+"Button{ color: blue ! important;}\n"
 	//			+ "Button { color: black }\n";
-	//		ViewCSS viewCSS = createViewCss(css);
+	//		CSSEngine viewCSS = createViewCss(css);
 	//
 	//		TestElement button = new TestElement("Button", engine);
-	//		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+	//		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 	//		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
 	//	}
 
@@ -181,10 +179,10 @@ public class CascadeTest {
 		// precedence because of its position in the stylesheet
 		String css = "Button, Label { color: blue; font-weight: bold; }\n"
 				+ "Button { color: black }\n";
-		ViewCSS viewCSS = createViewCss(css);
+		CSSEngine viewCSS = createViewCss(css);
 
 		TestElement button = new TestElement("Button", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
 	}
@@ -195,10 +193,10 @@ public class CascadeTest {
 		String css1 = "Button { color: blue; }";
 		String css2 = "Button { font-weight: bold; }";
 
-		ViewCSS viewCSS = createViewCss(css1, css2);
+		CSSEngine viewCSS = createViewCss(css1, css2);
 
 		TestElement button = new TestElement("Button", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
 	}
@@ -210,10 +208,10 @@ public class CascadeTest {
 		String css1 = "Button { color: blue; font-weight: bold; }";
 		String css2 = "Button { color: black; }";
 
-		ViewCSS viewCSS = createViewCss(css1, css2);
+		CSSEngine viewCSS = createViewCss(css1, css2);
 
 		TestElement button = new TestElement("Button", engine);
-		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		CSSStyleDeclaration style = viewCSS.computeStyle(button, null);
 		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
 	}

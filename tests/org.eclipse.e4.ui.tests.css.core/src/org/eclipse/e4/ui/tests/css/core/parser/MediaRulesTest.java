@@ -19,9 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSStyleSheet;
 
 /**
  * Assert that <code>@media</code> rules are ignored.
@@ -35,12 +36,12 @@ public class MediaRulesTest {
 				BODY { line-height: 1.2 }
 				}
 				Label { background-color: #FF0000 }""";
-		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSStyleSheetImpl styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
 		// The @media block is discarded entirely; only the following top-level
 		// rule remains, with its declaration intact.
-		assertEquals(1, styleSheet.getCssRules().getLength());
-		assertFalse(styleSheet.getCssRules().item(0).getCssText().contains("line-height"));
-		assertTrue(styleSheet.getCssRules().item(0).getCssText().contains("background-color"));
+		assertEquals(1, styleSheet.getRules().size());
+		assertFalse(((CSSStyleRuleImpl) styleSheet.getRules().get(0)).getCssText().contains("line-height"));
+		assertTrue(((CSSStyleRuleImpl) styleSheet.getRules().get(0)).getCssText().contains("background-color"));
 	}
 }

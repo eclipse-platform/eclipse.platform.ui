@@ -18,10 +18,10 @@ import java.util.List;
 
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPropertyImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssDimension;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
@@ -32,7 +32,6 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
-import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Adjacent;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.And;
@@ -50,7 +49,6 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Universal;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Kind;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Token;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -75,7 +73,7 @@ public final class CssParser {
 	}
 
 	/** Parse a complete style sheet. */
-	public static CSSStyleSheet parseStyleSheet(String css) {
+	public static CSSStyleSheetImpl parseStyleSheet(String css) {
 		return new CssParser(CssTokenizer.tokenize(css)).styleSheet();
 	}
 
@@ -106,23 +104,21 @@ public final class CssParser {
 	// ---------- style sheet ----------
 
 	private CSSStyleSheetImpl styleSheet() {
-		CSSStyleSheetImpl sheet = new CSSStyleSheetImpl();
-		CSSRuleListImpl rules = new CSSRuleListImpl();
-		sheet.setRuleList(rules);
+		List<CssRule> rules = new ArrayList<>();
 
 		skipWhitespace();
 		while (peek().kind != Kind.EOF) {
 			if (peek().kind == Kind.AT_KEYWORD) {
-				atRule(sheet, rules);
+				atRule(rules);
 			} else {
-				styleRule(sheet, rules);
+				styleRule(rules);
 			}
 			skipWhitespace();
 		}
-		return sheet;
+		return new CSSStyleSheetImpl(rules);
 	}
 
-	private void atRule(CSSStyleSheetImpl sheet, CSSRuleListImpl rules) {
+	private void atRule(List<CssRule> rules) {
 		Token at = advance(); // AT_KEYWORD
 		String name = at.text.toLowerCase();
 		if (name.equals("import")) { //$NON-NLS-1$
@@ -135,7 +131,7 @@ public final class CssParser {
 			}
 			discardUntilStatementEnd();
 			if (href != null) {
-				rules.add(new CSSImportRuleImpl(sheet, null, href, new MediaListImpl()));
+				rules.add(new CSSImportRuleImpl(href));
 			}
 		} else {
 			// @media / @font-face / @page / unknown: parse and discard.
@@ -168,10 +164,10 @@ public final class CssParser {
 		}
 	}
 
-	private void styleRule(CSSStyleSheetImpl sheet, CSSRuleListImpl rules) {
+	private void styleRule(List<CssRule> rules) {
 		Selectors.SelectorList selectors = selectorList();
 		expect(Kind.LBRACE);
-		CSSStyleRuleImpl rule = new CSSStyleRuleImpl(sheet, null, selectors);
+		CSSStyleRuleImpl rule = new CSSStyleRuleImpl(selectors);
 		CSSStyleDeclarationImpl declaration = new CSSStyleDeclarationImpl(rule);
 		rule.setStyle(declaration);
 		declarations(declaration);

@@ -26,14 +26,14 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyleDeclaration {
+public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 
 	private boolean readOnly;
-	private final CSSRule parentRule;
+	private final CSSStyleRuleImpl parentRule;
 	private final List<CSSProperty> properties = new ArrayList<>();
 	private CSSPropertyList cssPropertyListView;
 
-	public CSSStyleDeclarationImpl(CSSRule parentRule) {
+	public CSSStyleDeclarationImpl(CSSStyleRuleImpl parentRule) {
 		this.parentRule = parentRule;
 	}
 
@@ -61,6 +61,13 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 
 	@Override
 	public CSSRule getParentRule() {
+		// The internal rule model no longer implements the W3C CSSRule type;
+		// use getParentStyleRule() instead.
+		return null;
+	}
+
+	/** The style rule this declaration belongs to, or null for computed styles. */
+	public CSSStyleRuleImpl getParentStyleRule() {
 		return parentRule;
 	}
 

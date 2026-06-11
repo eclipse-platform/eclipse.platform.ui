@@ -213,8 +213,7 @@ public class CSSRenderingUtils {
 			WidgetElement.setCSSClass(styleControl, className);
 		}
 
-		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
-				.getComputedStyle(tempEment, ""); //$NON-NLS-1$
+		CSSStyleDeclaration styleDeclarations = csseng.computeStyle(tempEment, ""); //$NON-NLS-1$
 
 		if (styleDeclarations == null) {
 			return null;
@@ -240,8 +239,7 @@ public class CSSRenderingUtils {
 			WidgetElement.setCSSClass(styleControl, classId);
 		}
 
-		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
-				.getComputedStyle(tempEment, "");
+		CSSStyleDeclaration styleDeclarations = csseng.computeStyle(tempEment, "");
 		if (styleDeclarations == null) {
 			return null;
 		}
