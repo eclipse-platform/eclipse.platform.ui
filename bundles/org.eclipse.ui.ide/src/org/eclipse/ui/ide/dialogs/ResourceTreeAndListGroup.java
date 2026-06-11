@@ -73,6 +73,15 @@ public class ResourceTreeAndListGroup extends EventManager {
 			BusyIndicator.showWhile(treeViewer.getControl().getDisplay(),
 					() -> {
 						if (event.getCheckable().equals(treeViewer)) {
+							/*
+							 * On Windows, checking an item does not automatically update the tree selection
+							 * like on Linux environment. Force the checked element to become the current
+							 * selection so SelectionListener and CheckListener stay in sync together
+							 */
+							Object currentSelection = treeViewer.getStructuredSelection().getFirstElement();
+							if (!Objects.equals(currentSelection, event.getElement())) {
+								treeViewer.setSelection(new StructuredSelection(event.getElement()), true);
+							}
 							treeItemChecked(event.getElement(), event
 									.getChecked());
 						} else {
