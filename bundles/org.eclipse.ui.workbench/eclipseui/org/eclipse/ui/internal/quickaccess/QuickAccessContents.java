@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -836,6 +838,14 @@ public abstract class QuickAccessContents {
 		});
 
 		table.addSelectionListener(SelectionListener.widgetDefaultSelectedAdapter(e -> handleSelection()));
+		if (Policy.DEBUG_QUICK_ACCESS) {
+			table.addDisposeListener(e -> {
+				StringWriter writer = new StringWriter();
+				new Exception("provide stack trace").printStackTrace(new PrintWriter(writer)); //$NON-NLS-1$
+				String stackTrace = writer.toString(); // stack trace as a string
+				trace("Table disposed" + System.lineSeparator() + stackTrace); //$NON-NLS-1$
+			});
+		}
 		return table;
 	}
 
