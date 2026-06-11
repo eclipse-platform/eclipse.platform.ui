@@ -25,7 +25,7 @@ Export-Package: org.eclipse.e4.ui.css.core.css2;x-friends:="org.eclipse.e4.ui.cs
    org.eclipse.ui.views.properties.tabbed,
    org.eclipse.ui.forms",
  org.eclipse.e4.ui.css.core.exceptions;x-friends:="org.eclipse.e4.ui.css.swt",
- org.eclipse.e4.ui.css.core.impl.dom;x-internal:=true,
+ org.eclipse.e4.ui.css.core.impl.dom;x-friends:="org.eclipse.e4.ui.css.swt",
  org.eclipse.e4.ui.css.core.impl.dom.properties;x-friends:="org.eclipse.e4.ui.css.swt",
  org.eclipse.e4.ui.css.core.impl.engine;x-friends:="org.eclipse.e4.ui.css.swt,org.eclipse.e4.ui.workbench.swt",
  org.eclipse.e4.ui.css.core.impl.engine.selector;x-friends:="org.eclipse.e4.ui.tests.css.core",

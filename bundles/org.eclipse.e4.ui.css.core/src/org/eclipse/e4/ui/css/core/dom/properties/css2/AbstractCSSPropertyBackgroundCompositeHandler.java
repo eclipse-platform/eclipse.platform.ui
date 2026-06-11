@@ -15,7 +15,8 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 
 import org.eclipse.e4.ui.css.core.dom.properties.AbstractCSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -35,20 +36,11 @@ public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,
 			CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			short type = primitiveValue.getPrimitiveType();
-			switch (type) {
-			case CSSPrimitiveValue.CSS_IDENT:
-			case CSSPrimitiveValue.CSS_RGBCOLOR:
-				engine.applyCSSProperty(element, "background-color", value,
-						pseudo);
-				break;
-			case CSSPrimitiveValue.CSS_URI:
-				engine.applyCSSProperty(element, "background-image", value,
-						pseudo);
-				break;
-			}
+		if (value instanceof CssColor
+				|| (value instanceof CssText text && text.kind() == CssText.Kind.IDENT)) {
+			engine.applyCSSProperty(element, "background-color", value, pseudo);
+		} else if (value instanceof CssText text && text.kind() == CssText.Kind.URI) {
+			engine.applyCSSProperty(element, "background-image", value, pseudo);
 		}
 	}
 

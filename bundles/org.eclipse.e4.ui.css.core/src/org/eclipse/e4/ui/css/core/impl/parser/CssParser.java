@@ -26,9 +26,11 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssDimension;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssOperator;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
 import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
@@ -47,7 +49,6 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Universal;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Kind;
 import org.eclipse.e4.ui.css.core.impl.parser.CssTokenizer.Token;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
@@ -253,21 +254,21 @@ public final class CssParser {
 			return new CssNumber(token.number, token.integer);
 		case DIMENSION:
 			advance();
-			return new CssDimension(token.number, dimensionType(token.unit), token.unit);
+			return new CssDimension(token.number, dimensionUnit(token.unit), token.unit);
 		case PERCENTAGE:
 			advance();
-			return new CssDimension(token.number, CSSPrimitiveValue.CSS_PERCENTAGE, "%"); //$NON-NLS-1$
+			return new CssDimension(token.number, CssUnit.PERCENT);
 		case IDENT:
 			advance();
 			return token.text.equalsIgnoreCase("inherit") //$NON-NLS-1$
-					? new CssText(CSSPrimitiveValue.CSS_INHERIT, "inherit") //$NON-NLS-1$
-					: new CssText(CSSPrimitiveValue.CSS_IDENT, token.text);
+					? new CssText(CssText.Kind.INHERIT, "inherit") //$NON-NLS-1$
+					: new CssText(CssText.Kind.IDENT, token.text);
 		case STRING:
 			advance();
-			return new CssText(CSSPrimitiveValue.CSS_STRING, token.text);
+			return new CssText(CssText.Kind.STRING, token.text);
 		case URI:
 			advance();
-			return new CssText(CSSPrimitiveValue.CSS_URI, token.text);
+			return new CssText(CssText.Kind.URI, token.text);
 		case HASH:
 			advance();
 			return hexColor(token.text);
@@ -283,23 +284,26 @@ public final class CssParser {
 			throw error("Unsupported function in value: " + token.text + "()"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		advance(); // FUNCTION consumes the '('
-		CssPrimitive red = component();
-		CssPrimitive green = component();
-		CssPrimitive blue = component();
+		CssNumeric red = component();
+		CssNumeric green = component();
+		CssNumeric blue = component();
 		skipWhitespace();
 		expect(Kind.RPAREN);
 		return new CssColor(red, green, blue);
 	}
 
 	/** One numeric component of an {@code rgb(...)} function, with the trailing comma skipped. */
-	private CssPrimitive component() {
+	private CssNumeric component() {
 		skipWhitespace();
 		CssPrimitive value = primitive();
+		if (!(value instanceof CssNumeric numeric)) {
+			throw error("Expected a numeric component in rgb(): " + value.getCssText()); //$NON-NLS-1$
+		}
 		skipWhitespace();
 		if (peek().kind == Kind.COMMA) {
 			advance();
 		}
-		return value;
+		return numeric;
 	}
 
 	private CssColor hexColor(String hex) {
@@ -324,18 +328,18 @@ public final class CssParser {
 		return Character.digit(high, 16) * 16 + Character.digit(low, 16);
 	}
 
-	private static short dimensionType(String unit) {
+	private static CssUnit dimensionUnit(String unit) {
 		return switch (unit.toLowerCase()) {
-		case "px" -> CSSPrimitiveValue.CSS_PX; //$NON-NLS-1$
-		case "em" -> CSSPrimitiveValue.CSS_EMS; //$NON-NLS-1$
-		case "ex" -> CSSPrimitiveValue.CSS_EXS; //$NON-NLS-1$
-		case "cm" -> CSSPrimitiveValue.CSS_CM; //$NON-NLS-1$
-		case "mm" -> CSSPrimitiveValue.CSS_MM; //$NON-NLS-1$
-		case "in" -> CSSPrimitiveValue.CSS_IN; //$NON-NLS-1$
-		case "pt" -> CSSPrimitiveValue.CSS_PT; //$NON-NLS-1$
-		case "pc" -> CSSPrimitiveValue.CSS_PC; //$NON-NLS-1$
-		case "deg" -> CSSPrimitiveValue.CSS_DEG; //$NON-NLS-1$
-		default -> CSSPrimitiveValue.CSS_DIMENSION;
+		case "px" -> CssUnit.PX; //$NON-NLS-1$
+		case "em" -> CssUnit.EM; //$NON-NLS-1$
+		case "ex" -> CssUnit.EX; //$NON-NLS-1$
+		case "cm" -> CssUnit.CM; //$NON-NLS-1$
+		case "mm" -> CssUnit.MM; //$NON-NLS-1$
+		case "in" -> CssUnit.IN; //$NON-NLS-1$
+		case "pt" -> CssUnit.PT; //$NON-NLS-1$
+		case "pc" -> CssUnit.PC; //$NON-NLS-1$
+		case "deg" -> CssUnit.DEG; //$NON-NLS-1$
+		default -> CssUnit.OTHER;
 		};
 	}
 

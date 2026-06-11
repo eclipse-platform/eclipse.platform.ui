@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
@@ -30,7 +31,7 @@ public class CSSPropertye4TabOutline extends AbstractCSSPropertySWTHandler {
 		if (!(control instanceof CTabFolder)) {
 			return;
 		}
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer instanceof ICTabRendering) {

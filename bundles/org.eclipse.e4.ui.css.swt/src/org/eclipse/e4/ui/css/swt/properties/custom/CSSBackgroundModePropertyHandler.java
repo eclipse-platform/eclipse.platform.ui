@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.swt.SWT;
@@ -26,7 +27,7 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE || !(control instanceof Composite composite)) {
+		if (!(value instanceof CssPrimitive) || !(control instanceof Composite composite)) {
 			return;
 		}
 		String stringValue = value.getCssText().toLowerCase();

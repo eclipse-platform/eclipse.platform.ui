@@ -16,9 +16,10 @@ package org.eclipse.e4.ui.css.core.resources;
 
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.RGBColor;
 
 /**
  * CSS Resources Helper to manage {@link IResourcesRegistry}.
@@ -29,8 +30,8 @@ public class CSSResourcesHelpers {
 		if (value instanceof CSS2FontProperties) {
 			return getCSSFontPropertiesKey((CSS2FontProperties) value);
 		}
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			return getCSSPrimitiveValueKey((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			return getCSSPrimitiveValueKey(primitive);
 		}
 		return null;
 	}
@@ -39,35 +40,39 @@ public class CSSResourcesHelpers {
 	 * Return the key of the CSSPrimitiveValue <code>value</code> which is
 	 * used to cache Resource into {@link IResourcesRegistry}.
 	 */
-	public static String getCSSPrimitiveValueKey(CSSPrimitiveValue value) {
-		switch (value.getPrimitiveType()) {
-		case CSSPrimitiveValue.CSS_IDENT:
-		case CSSPrimitiveValue.CSS_URI:
-			String s = value.getStringValue();
-			// Test if s is Color Name
-			if (CSS2ColorHelper.isColorName(s)) {
-				RGBColor rgbColor = CSS2ColorHelper.getRGBColor(s);
-				if (rgbColor != null) {
-					return getCSSRGBColorKey(rgbColor);
+	public static String getCSSPrimitiveValueKey(CssPrimitive value) {
+		if (value instanceof CssText text) {
+			switch (text.kind()) {
+			case IDENT:
+			case URI:
+				String s = text.value();
+				// Test if s is Color Name
+				if (CSS2ColorHelper.isColorName(s)) {
+					CssColor rgbColor = CSS2ColorHelper.getRGBColor(s);
+					if (rgbColor != null) {
+						return getCSSRGBColorKey(rgbColor);
+					}
 				}
+				return text.value();
+			case STRING:
+				return text.getCssText();
+			default:
+				return null;
 			}
-			return value.getStringValue();
-		case CSSPrimitiveValue.CSS_RGBCOLOR:
-			RGBColor rgbColor = value.getRGBColorValue();
-			return getCSSRGBColorKey(rgbColor);
-		case CSSPrimitiveValue.CSS_STRING:
-			return value.getCssText();
+		}
+		if (value instanceof CssColor color) {
+			return getCSSRGBColorKey(color);
 		}
 		return null;
 	}
 
-	public static String getCSSRGBColorKey(RGBColor rgbColor) {
+	public static String getCSSRGBColorKey(CssColor rgbColor) {
 		if (rgbColor == null) {
 			return null;
 		}
-		StringBuilder rgb = new StringBuilder().append((int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("_");
-		rgb.append((int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("_");
-		rgb.append((int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("");
+		StringBuilder rgb = new StringBuilder().append((int) rgbColor.green().value()).append("_");
+		rgb.append((int) rgbColor.red().value()).append("_");
+		rgb.append((int) rgbColor.blue().value()).append("");
 		return rgb.toString();
 	}
 
@@ -76,11 +81,11 @@ public class CSSResourcesHelpers {
 				+ getCssText(fontProperties.getStyle()) + "_" + getCssText(fontProperties.getWeight());
 	}
 
-	private static String getCssText(CSSPrimitiveValue cssPrimitiveValue) {
-		if (cssPrimitiveValue != null) {
-			return cssPrimitiveValue.getCssText();
+	private static String getCssText(CssPrimitive primitive) {
+		if (primitive != null) {
+			return primitive.getCssText();
 		}
-		return String.valueOf(cssPrimitiveValue);
+		return String.valueOf(primitive);
 	}
 
 	/**
@@ -88,7 +93,7 @@ public class CSSResourcesHelpers {
 	 * <code>resourcesRegistry</code> with CSSPrimitiveValue
 	 * <code>value</code> key.
 	 */
-	public static Object getResource(IResourcesRegistry resourcesRegistry, Object type, CSSPrimitiveValue value) {
+	public static Object getResource(IResourcesRegistry resourcesRegistry, Object type, CssPrimitive value) {
 		String key = getCSSPrimitiveValueKey(value);
 		return getResource(resourcesRegistry, type, key);
 	}
@@ -112,7 +117,7 @@ public class CSSResourcesHelpers {
 	 * <code>resourcesRegistry</code> with CSSPrimitiveValue
 	 * <code>value</code> key.
 	 */
-	public static void registerResource(IResourcesRegistry resourcesRegistry, Object type, CSSPrimitiveValue value,
+	public static void registerResource(IResourcesRegistry resourcesRegistry, Object type, CssPrimitive value,
 			Object resource) {
 		if (resourcesRegistry != null) {
 			String key = getCSSPrimitiveValueKey(value);

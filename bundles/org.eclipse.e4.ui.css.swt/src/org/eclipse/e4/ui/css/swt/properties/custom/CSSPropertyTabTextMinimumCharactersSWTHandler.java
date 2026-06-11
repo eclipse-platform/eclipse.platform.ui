@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -36,9 +36,8 @@ public class CSSPropertyTabTextMinimumCharactersSWTHandler extends AbstractCSSPr
 			return;
 		}
 
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE
-				&& (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER)) {
-			int minimumCharacters = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+		if (value instanceof CssNumber number) {
+			int minimumCharacters = (int) number.value();
 			folder.setMinimumCharacters(minimumCharacters);
 		}
 	}

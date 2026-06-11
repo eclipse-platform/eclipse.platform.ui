@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
-import org.eclipse.e4.ui.css.core.css2.CSS2RGBColorImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.ColorAndFontUtil;
@@ -38,10 +37,14 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
-import org.w3c.dom.css.RGBColor;
 
 public class CSSSWTColorHelper {
 	public static final String COLOR_DEFINITION_MARKER = "#";
@@ -52,27 +55,27 @@ public class CSSSWTColorHelper {
 
 	/*--------------- SWT Color Helper -----------------*/
 
-	public static Color getSWTColor(RGBColor rgbColor) {
+	public static Color getSWTColor(CssColor rgbColor) {
 		RGBA rgb = getRGBA(rgbColor);
 		return new Color(rgb);
 	}
 
 	public static Color getSWTColor(CSSValue value, Display display) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (!(value instanceof CssPrimitive primitive)) {
 			return null;
 		}
 		Color color = display.getSystemColor(SWT.COLOR_BLACK);
-		RGBA rgba = getRGBA((CSSPrimitiveValue) value, display);
+		RGBA rgba = getRGBA(primitive, display);
 		if (rgba != null) {
 			color = new Color(rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
 		}
 		return color;
 	}
 
-	private static RGBA getRGBA(CSSPrimitiveValue value, Display display) {
+	private static RGBA getRGBA(CssPrimitive value, Display display) {
 		RGBA rgba = getRGBA(value);
-		if (rgba == null && display != null) {
-			String name = value.getStringValue();
+		if (rgba == null && display != null && value instanceof CssText text) {
+			String name = text.value();
 			if (hasColorDefinitionAsValue(name)) {
 				rgba = findColorByDefinition(name);
 			} else if (name.contains("-")) {
@@ -87,12 +90,8 @@ public class CSSSWTColorHelper {
 	}
 
 	public static boolean hasColorDefinitionAsValue(CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			if (primitiveValue.getPrimitiveType() == CSSPrimitiveValue.CSS_STRING) {
-				return hasColorDefinitionAsValue(primitiveValue
-						.getStringValue());
-			}
+		if (value instanceof CssText text && text.kind() == CssText.Kind.STRING) {
+			return hasColorDefinitionAsValue(text.value());
 		}
 		return false;
 	}
@@ -155,7 +154,7 @@ public class CSSSWTColorHelper {
 	}
 
 	public static RGBA getRGBA(String name) {
-		RGBColor color = CSS2ColorHelper.getRGBColor(name);
+		CssColor color = CSS2ColorHelper.getRGBColor(name);
 		if (color != null) {
 			return getRGBA(color);
 		}
@@ -173,104 +172,87 @@ public class CSSSWTColorHelper {
 		return null;
 	}
 
-	public static RGBA getRGBA(RGBColor color) {
-		return new RGBA((int) color.getRed().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), (int) color.getGreen()
-				.getFloatValue(CSSPrimitiveValue.CSS_NUMBER), (int) color
-				.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-				// for now, we only support solid RGB colors in CSS - our CSS model
-				// as of now does not have an element for RGBAColor.
-				255);
+	public static RGBA getRGBA(CssColor color) {
+		// for now, we only support solid RGB colors in CSS - our CSS model
+		// as of now does not have an element for RGBAColor.
+		return new RGBA((int) color.red().value(), (int) color.green().value(), (int) color.blue().value(), 255);
 	}
 
 	public static RGBA getRGBA(CSSValue value) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (!(value instanceof CssPrimitive primitive)) {
 			return null;
 		}
-		return getRGBA((CSSPrimitiveValue) value);
+		return getRGBA(primitive);
 	}
 
-	public static RGBA getRGBA(CSSPrimitiveValue value) {
-		RGBA rgba = null;
-		switch (value.getPrimitiveType()) {
-		case CSSPrimitiveValue.CSS_IDENT:
-		case CSSPrimitiveValue.CSS_STRING:
-			String string = value.getStringValue();
-			rgba = getRGBA(string);
-			break;
-		case CSSPrimitiveValue.CSS_RGBCOLOR:
-			RGBColor rgbColor = value.getRGBColorValue();
-			rgba = getRGBA(rgbColor);
-			break;
+	public static RGBA getRGBA(CssPrimitive value) {
+		if (value instanceof CssText text
+				&& (text.kind() == CssText.Kind.IDENT || text.kind() == CssText.Kind.STRING)) {
+			return getRGBA(text.value());
 		}
-		return rgba;
+		if (value instanceof CssColor color) {
+			return getRGBA(color);
+		}
+		return null;
 	}
 
-	public static Integer getPercent(CSSPrimitiveValue value) {
+	public static Integer getPercent(CssPrimitive value) {
 		int percent = 0;
-		switch (value.getPrimitiveType()) {
-		case CSSPrimitiveValue.CSS_PERCENTAGE:
-			percent = (int) value
-			.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE);
+		if (value instanceof CssNumeric numeric && numeric.unit() == CssUnit.PERCENT) {
+			percent = (int) numeric.value();
 		}
 		return Integer.valueOf(percent);
 	}
 
-	public static Gradient getGradient(CSSValueList list, Display display) {
+	public static Gradient getGradient(CssList list, Display display) {
 		Gradient gradient = new Gradient();
-		for (int i = 0; i < list.getLength(); i++) {
-			CSSValue value = list.item(i);
-			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				short primType = ((CSSPrimitiveValue) value).getPrimitiveType();
-
-				if (primType == CSSPrimitiveValue.CSS_IDENT) {
-					switch (value.getCssText()) {
-					case "gradient":
-						// Skip the keyword "gradient"
-						continue;
-					case "linear":
-						gradient.setLinear(true);
-						continue;
-					case "radial":
-						gradient.setLinear(false);
-						continue;
-					default:
-						break;
-					}
-				}
-
-				switch (primType) {
-				case CSSPrimitiveValue.CSS_IDENT:
-				case CSSPrimitiveValue.CSS_STRING:
-				case CSSPrimitiveValue.CSS_RGBCOLOR:
-					RGBA rgba = getRGBA((CSSPrimitiveValue) value, display);
-					if (rgba != null) {
-						// note that in this call we lose the RGBA alpha
-						// component - we do currently not support alpha
-						// gradients
-						gradient.addRGB(rgba, (CSSPrimitiveValue) value);
-					} else {
-						//check for vertical gradient
-						gradient.setVertical(!value.getCssText().equals("false"));
-					}
-					break;
-				case CSSPrimitiveValue.CSS_PERCENTAGE:
-					gradient.addPercent(getPercent((CSSPrimitiveValue) value));
+		for (CSSValue value : list.values()) {
+			if (!(value instanceof CssPrimitive primitive)) {
+				continue;
+			}
+			boolean isIdent = primitive instanceof CssText text && text.kind() == CssText.Kind.IDENT;
+			if (isIdent) {
+				switch (value.getCssText()) {
+				case "gradient":
+					// Skip the keyword "gradient"
+					continue;
+				case "linear":
+					gradient.setLinear(true);
+					continue;
+				case "radial":
+					gradient.setLinear(false);
+					continue;
+				default:
 					break;
 				}
+			}
+
+			if (isIdent || primitive instanceof CssColor
+					|| (primitive instanceof CssText text && text.kind() == CssText.Kind.STRING)) {
+				RGBA rgba = getRGBA(primitive, display);
+				if (rgba != null) {
+					// note that in this call we lose the RGBA alpha
+					// component - we do currently not support alpha
+					// gradients
+					gradient.addRGB(rgba, primitive);
+				} else {
+					// check for vertical gradient
+					gradient.setVertical(!value.getCssText().equals("false"));
+				}
+			} else if (primitive instanceof CssNumeric numeric && numeric.unit() == CssUnit.PERCENT) {
+				gradient.addPercent(getPercent(numeric));
 			}
 		}
 		return gradient;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static Color[] getSWTColors(Gradient grad, Display display,
 			CSSEngine engine) throws Exception {
-		List values = grad.getValues();
+		List<CssPrimitive> values = grad.getValues();
 		Color[] colors = new Color[values.size()];
 
 		for (int i = 0; i < values.size(); i++) {
-			CSSPrimitiveValue value = (CSSPrimitiveValue) values.get(i);
+			CssPrimitive value = values.get(i);
 			//We rely on the fact that when a gradient is created, it's colors are converted and in the registry
 			//TODO see bug #278077
 			Color color = (Color) engine.convert(value, Color.class, display);
@@ -325,18 +307,14 @@ public class CSSSWTColorHelper {
 		return percents;
 	}
 
-	public static RGBColor getRGBColor(Color color) {
-		int red = color.getRed();
-		int green = color.getGreen();
-		int blue = color.getBlue();
-		return new CSS2RGBColorImpl(red, green, blue);
+	public static CssColor getRGBColor(Color color) {
+		return new CssColor(new CssNumber(color.getRed(), true), new CssNumber(color.getGreen(), true),
+				new CssNumber(color.getBlue(), true));
 	}
 
-	public static RGBColor getRGBColor(RGB color) {
-		int red = color.red;
-		int green = color.green;
-		int blue = color.blue;
-		return new CSS2RGBColorImpl(red, green, blue);
+	public static CssColor getRGBColor(RGB color) {
+		return new CssColor(new CssNumber(color.red, true), new CssNumber(color.green, true),
+				new CssNumber(color.blue, true));
 	}
 
 	private static RGBA findColorByDefinition(String name) {

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.definition.ThemeDefinitionElement;
@@ -29,7 +30,6 @@ import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHandler {
@@ -158,10 +158,9 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	}
 
 	private static URI getResourceBundleURI(CSSValue value) {
-		if (value instanceof CSSPrimitiveValue primitiveValue
-				&& primitiveValue.getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
+		if (value instanceof CssText text && text.kind() == CssText.Kind.URI) {
 			try {
-				return new URI(primitiveValue.getStringValue());
+				return new URI(text.value());
 			} catch (URISyntaxException exc) {
 				// do nothing
 			}

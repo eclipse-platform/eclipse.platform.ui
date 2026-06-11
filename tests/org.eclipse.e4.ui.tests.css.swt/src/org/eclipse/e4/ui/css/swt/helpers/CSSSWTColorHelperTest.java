@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 	private Display display;
@@ -46,8 +45,7 @@ public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 
 	@Test
 	void testGetSWTColorWhenNotSupportedColorType() {
-		Color result = getSWTColor(colorValue("123213", CSSValue.CSS_CUSTOM),
-				display);
+		Color result = getSWTColor(nonPrimitiveValue("123213"), display);
 
 		assertNull(result);
 	}

@@ -16,12 +16,12 @@ package org.eclipse.e4.ui.css.swt.properties.preference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.preference.EclipsePreferencesElement;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 	public static final String PREFERENCES_PROP = "preferences";
@@ -37,10 +37,9 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 
 		IEclipsePreferences preferences = (IEclipsePreferences) ((EclipsePreferencesElement) element).getNativeWidget();
 
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			CSSValueList list = (CSSValueList) value;
-			for (int i = 0; i < list.getLength(); i++) {
-				overrideProperty(preferences, list.item(i));
+		if (value instanceof CssList list) {
+			for (CSSValue item : list.values()) {
+				overrideProperty(preferences, item);
 			}
 		} else {
 			overrideProperty(preferences, value);

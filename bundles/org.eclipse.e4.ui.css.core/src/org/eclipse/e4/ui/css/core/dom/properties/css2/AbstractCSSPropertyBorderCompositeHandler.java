@@ -16,7 +16,10 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.AbstractCSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -36,29 +39,17 @@ public abstract class AbstractCSSPropertyBorderCompositeHandler extends
 	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,
 			CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			short type = primitiveValue.getPrimitiveType();
-			switch (type) {
-			case CSSPrimitiveValue.CSS_IDENT:
-				if (CSS2ColorHelper
-						.isColorName(primitiveValue.getStringValue())) {
-					engine.applyCSSProperty(element, "border-color", value,
-							pseudo);
-				} else {
-					engine.applyCSSProperty(element, "border-style", value,
-							pseudo);
-				}
-				break;
-			case CSSPrimitiveValue.CSS_RGBCOLOR:
+		if (value instanceof CssText text && text.kind() == CssText.Kind.IDENT) {
+			if (CSS2ColorHelper.isColorName(text.value())) {
 				engine.applyCSSProperty(element, "border-color", value, pseudo);
-				break;
-			case CSSPrimitiveValue.CSS_PT:
-			case CSSPrimitiveValue.CSS_NUMBER:
-			case CSSPrimitiveValue.CSS_PX:
-				engine.applyCSSProperty(element, "border-width", value, pseudo);
-				break;
+			} else {
+				engine.applyCSSProperty(element, "border-style", value, pseudo);
 			}
+		} else if (value instanceof CssColor) {
+			engine.applyCSSProperty(element, "border-color", value, pseudo);
+		} else if (value instanceof CssNumeric numeric && (numeric.unit() == CssUnit.PT
+				|| numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX)) {
+			engine.applyCSSProperty(element, "border-width", value, pseudo);
 		}
 	}
 

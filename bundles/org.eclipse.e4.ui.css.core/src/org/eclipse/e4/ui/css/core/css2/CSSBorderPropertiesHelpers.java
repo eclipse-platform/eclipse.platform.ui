@@ -14,7 +14,9 @@
 package org.eclipse.e4.ui.css.core.css2;
 
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -50,8 +52,8 @@ public class CSSBorderPropertiesHelpers {
 	 * <code>value</code>.
 	 */
 	public static void updateCSSPropertyBorderStyle(CSSBorderProperties borderProperties, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			borderProperties.setStyle(((CSSPrimitiveValue) value).getStringValue());
+		if (value instanceof CssText text) {
+			borderProperties.setStyle(text.value());
 		}
 	}
 
@@ -60,8 +62,8 @@ public class CSSBorderPropertiesHelpers {
 	 * <code>value</code>.
 	 */
 	public static void updateCSSPropertyBorderColor(CSSBorderProperties borderProperties, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			borderProperties.setColor((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			borderProperties.setColor(primitive);
 		}
 	}
 
@@ -70,8 +72,8 @@ public class CSSBorderPropertiesHelpers {
 	 * <code>value</code>.
 	 */
 	public static void updateCSSPropertyBorderWidth(CSSBorderProperties borderProperties, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			borderProperties.setWidth((int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PT));
+		if (value instanceof CssNumeric numeric) {
+			borderProperties.setWidth((int) numeric.value());
 		}
 	}
 

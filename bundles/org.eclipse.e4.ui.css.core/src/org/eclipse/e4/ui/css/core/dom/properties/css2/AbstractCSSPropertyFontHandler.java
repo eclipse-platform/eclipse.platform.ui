@@ -15,7 +15,7 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyFontHandler extends
@@ -105,8 +105,8 @@ ICSSPropertyFontHandler {
 
 	protected void applyCSSPropertyFontFamily(CSS2FontProperties font,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setFamily((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setFamily(primitive);
 		}
 	}
 
@@ -123,8 +123,9 @@ ICSSPropertyFontHandler {
 
 	protected void applyCSSPropertyFontSize(CSS2FontProperties font,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setSize((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setSize(primitive);
+			font.setSizeFromCSS(true);
 		}
 	}
 
@@ -153,8 +154,8 @@ ICSSPropertyFontHandler {
 
 	protected void applyCSSPropertyFontStyle(CSS2FontProperties font,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setStyle((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setStyle(primitive);
 		}
 	}
 
@@ -177,8 +178,8 @@ ICSSPropertyFontHandler {
 
 	protected void applyCSSPropertyFontWeight(CSS2FontProperties font,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setWeight((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setWeight(primitive);
 		}
 	}
 

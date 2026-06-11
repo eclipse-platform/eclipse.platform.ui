@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -72,7 +72,7 @@ public class CSSSWTHelpers {
 				}
 				int width = border.getWidth();
 				GC gc = e.gc;
-				CSSPrimitiveValue value = border.getColor();
+				CssPrimitive value = border.getColor();
 				if (value == null) {
 					return;
 				}

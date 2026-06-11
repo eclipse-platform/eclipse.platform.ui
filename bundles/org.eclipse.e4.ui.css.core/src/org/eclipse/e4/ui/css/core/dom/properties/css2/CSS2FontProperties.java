@@ -13,36 +13,45 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties.css2;
 
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
 
 public interface CSS2FontProperties extends CSSValue {
 
-	CSSPrimitiveValue getFamily();
+	CssPrimitive getFamily();
 
-	void setFamily(CSSPrimitiveValue family);
+	void setFamily(CssPrimitive family);
 
-	CSSPrimitiveValue getSize();
+	CssPrimitive getSize();
 
-	void setSize(CSSPrimitiveValue size);
+	void setSize(CssPrimitive size);
 
-	CSSPrimitiveValue getSizeAdjust();
+	/**
+	 * Whether {@link #getSize()} stems from a parsed CSS declaration rather
+	 * than mirroring the widget's current font. Font definitions only
+	 * override the height when the size was not set by CSS.
+	 */
+	boolean isSizeFromCSS();
 
-	void setSizeAdjust(CSSPrimitiveValue sizeAdjust);
+	void setSizeFromCSS(boolean sizeFromCSS);
 
-	CSSPrimitiveValue getWeight();
+	CssPrimitive getSizeAdjust();
 
-	void setWeight(CSSPrimitiveValue weight);
+	void setSizeAdjust(CssPrimitive sizeAdjust);
 
-	CSSPrimitiveValue getStyle();
+	CssPrimitive getWeight();
 
-	void setStyle(CSSPrimitiveValue style);
+	void setWeight(CssPrimitive weight);
 
-	CSSPrimitiveValue getVariant();
+	CssPrimitive getStyle();
 
-	void setVariant(CSSPrimitiveValue variant);
+	void setStyle(CssPrimitive style);
 
-	CSSPrimitiveValue getStretch();
+	CssPrimitive getVariant();
 
-	void setStretch(CSSPrimitiveValue stretch);
+	void setVariant(CssPrimitive variant);
+
+	CssPrimitive getStretch();
+
+	void setStretch(CssPrimitive stretch);
 }

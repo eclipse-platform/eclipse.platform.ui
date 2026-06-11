@@ -30,11 +30,11 @@ import org.w3c.dom.css.Rect;
  * dependency ({@code LexicalUnit}).
  *
  * <p>
- * The variants still implement the W3C DOM-CSS interfaces so the property
- * handlers and converters that read values through {@link CSSValue} /
- * {@link CSSPrimitiveValue} keep working unchanged. Those consumers move to
- * pattern matching on the records in a later step, after which the W3C
- * interfaces can be dropped.
+ * Consumers pattern-match on the record variants ({@link CssNumber},
+ * {@link CssDimension}, {@link CssText}, {@link CssColor}, {@link CssList})
+ * and read their components. The variants still implement the W3C DOM-CSS
+ * interfaces as a transitional bridge; the bridge goes away once the
+ * computed-style cascade is internal as well.
  * </p>
  */
 public final class CssValues {
@@ -48,13 +48,11 @@ public final class CssValues {
 	}
 
 	/**
-	 * A single CSS value. Provides the W3C boilerplate; concrete variants only
-	 * implement {@link #getPrimitiveType()}, {@link #getCssText()} and whichever
-	 * of {@link #getFloatValue(short)} / {@link #getStringValue()} /
-	 * {@link #getRGBColorValue()} applies.
+	 * A single CSS value. Provides the W3C bridge boilerplate; read the values
+	 * through the record components, not through the W3C accessors.
 	 */
 	public sealed interface CssPrimitive extends CssValue, CSSPrimitiveValue
-			permits CssNumber, CssDimension, CssText, CssColor, CssOperator {
+			permits CssNumeric, CssText, CssColor, CssOperator {
 
 		@Override
 		default short getCssValueType() {
@@ -102,8 +100,40 @@ public final class CssValues {
 		}
 	}
 
+	/** Unit of a {@link CssNumeric} value. {@link #NUMBER} marks a unitless number. */
+	public enum CssUnit {
+		NUMBER(""), PX("px"), EM("em"), EX("ex"), CM("cm"), MM("mm"), IN("in"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		PT("pt"), PC("pc"), DEG("deg"), PERCENT("%"), OTHER(""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+
+		private final String text;
+
+		CssUnit(String text) {
+			this.text = text;
+		}
+
+		/** Canonical unit text, e.g. {@code "px"}; empty for {@link #NUMBER} and {@link #OTHER}. */
+		public String text() {
+			return text;
+		}
+	}
+
+	/** A numeric value: a unitless {@link CssNumber} or a {@link CssDimension} with a unit. */
+	public sealed interface CssNumeric extends CssPrimitive permits CssNumber, CssDimension {
+
+		/** The numeric magnitude, without unit conversion. */
+		double value();
+
+		/** The unit; {@link CssUnit#NUMBER} for a unitless number. */
+		CssUnit unit();
+	}
+
 	/** {@code 34} or {@code 2.0} - a unitless number. */
-	public record CssNumber(double value, boolean integer) implements CssPrimitive {
+	public record CssNumber(double value, boolean integer) implements CssNumeric {
+		@Override
+		public CssUnit unit() {
+			return CssUnit.NUMBER;
+		}
+
 		@Override
 		public short getPrimitiveType() {
 			return CSS_NUMBER;
@@ -120,11 +150,33 @@ public final class CssValues {
 		}
 	}
 
-	/** {@code 26px}, {@code 30%}, {@code 75em} - a number with a unit. */
-	public record CssDimension(double value, short primitiveType, String unit) implements CssPrimitive {
+	/**
+	 * {@code 26px}, {@code 30%}, {@code 75em} - a number with a unit.
+	 * {@code unitText} keeps the source spelling for units the {@link CssUnit}
+	 * enum does not model ({@link CssUnit#OTHER}).
+	 */
+	public record CssDimension(double value, CssUnit unit, String unitText) implements CssNumeric {
+
+		public CssDimension(double value, CssUnit unit) {
+			this(value, unit, unit.text());
+		}
+
 		@Override
 		public short getPrimitiveType() {
-			return primitiveType;
+			return switch (unit) {
+			case NUMBER -> CSS_NUMBER;
+			case PX -> CSS_PX;
+			case EM -> CSS_EMS;
+			case EX -> CSS_EXS;
+			case CM -> CSS_CM;
+			case MM -> CSS_MM;
+			case IN -> CSS_IN;
+			case PT -> CSS_PT;
+			case PC -> CSS_PC;
+			case DEG -> CSS_DEG;
+			case PERCENT -> CSS_PERCENTAGE;
+			case OTHER -> CSS_DIMENSION;
+			};
 		}
 
 		@Override
@@ -134,15 +186,26 @@ public final class CssValues {
 
 		@Override
 		public String getCssText() {
-			return (float) value + unit;
+			return (float) value + unitText;
 		}
 	}
 
 	/** {@code red}, {@code 'a string'}, {@code url(x)}, {@code inherit}. */
-	public record CssText(short primitiveType, String value) implements CssPrimitive {
+	public record CssText(Kind kind, String value) implements CssPrimitive {
+
+		/** What textual form the value had in the source. */
+		public enum Kind {
+			IDENT, STRING, URI, INHERIT
+		}
+
 		@Override
 		public short getPrimitiveType() {
-			return primitiveType;
+			return switch (kind) {
+			case IDENT -> CSS_IDENT;
+			case STRING -> CSS_STRING;
+			case URI -> CSS_URI;
+			case INHERIT -> CSS_INHERIT;
+			};
 		}
 
 		@Override
@@ -152,15 +215,15 @@ public final class CssValues {
 
 		@Override
 		public String getCssText() {
-			return switch (primitiveType) {
-			case CSS_URI -> "url(" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return switch (kind) {
+			case URI -> "url(" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			default -> value;
 			};
 		}
 	}
 
 	/** {@code rgb(...)} or a {@code #rgb} / {@code #rrggbb} colour. */
-	public record CssColor(CssPrimitive red, CssPrimitive green, CssPrimitive blue)
+	public record CssColor(CssNumeric red, CssNumeric green, CssNumeric blue)
 			implements CssPrimitive, RGBColor {
 		@Override
 		public short getPrimitiveType() {

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
@@ -43,7 +45,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			return;
 		}
 
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			Color color = (Color) engine.convert(value, Color.class,
 					control.getDisplay());
 			((ICTabRendering) renderer).setUnselectedTabsColor(color);
@@ -51,7 +53,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			removeResizeEventListener(folder);
 			return;
 		}
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+		if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class, control.getDisplay());
 			if (grad == null) {
 				return;

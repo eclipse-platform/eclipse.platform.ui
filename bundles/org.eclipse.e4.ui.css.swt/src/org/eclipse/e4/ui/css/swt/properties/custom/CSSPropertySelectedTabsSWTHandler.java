@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
@@ -30,7 +31,7 @@ public class CSSPropertySelectedTabsSWTHandler extends AbstractCSSPropertySWTHan
 		if (!(control instanceof CTabFolder folder)) {
 			return;
 		}
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+		if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class, control.getDisplay());
 			if (grad.getValues().isEmpty()) {
 				folder.setSelectionBackground(null, null, true);

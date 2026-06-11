@@ -14,7 +14,7 @@
 package org.eclipse.e4.ui.css.core.dom.properties.converters;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -38,11 +38,8 @@ public class CSSValueBooleanConverterImpl extends AbstractCSSValueConverter {
 	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			if ("true".equals(primitiveValue.getStringValue())) {
-				return Boolean.TRUE;
-			}
+		if (value instanceof CssText text && "true".equals(text.value())) {
+			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
 	}

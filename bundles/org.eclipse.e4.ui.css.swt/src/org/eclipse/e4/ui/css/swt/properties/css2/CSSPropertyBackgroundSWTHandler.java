@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -59,8 +61,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
-		switch (value.getCssValueType()) {
-		case CSSValue.CSS_PRIMITIVE_VALUE:
+		if (value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
 			if (widget instanceof CTabItem) {
@@ -79,8 +80,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				CSSSWTColorHelper.setBackground((Control) widget, newColor);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
-			break;
-		case CSSValue.CSS_VALUE_LIST:
+		} else if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					widget.getDisplay());
 			if (grad == null) {
@@ -102,9 +102,6 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				GradientBackgroundListener.handle((Control) widget, grad);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
-			break;
-		default:
-			break;
 		}
 	}
 

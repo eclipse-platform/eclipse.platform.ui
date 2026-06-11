@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTCursorHelper {
@@ -29,10 +29,10 @@ public class CSSSWTCursorHelper {
 	 *      "http://www.w3schools.com/css/pr_class_cursor.asp">http://www.w3schools.com/css/pr_class_cursor.asp</a>
 	 */
 	public static Cursor getSWTCursor(CSSValue value, Display display) {
-		if (!(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+		if (!(value instanceof CssText text)) {
 			return null;
 		}
-		int i = getSWTCursorId((CSSPrimitiveValue) value);
+		int i = getSWTCursorId(text);
 		if (i == SWT.NONE) {
 			return null;
 		}
@@ -101,8 +101,8 @@ public class CSSSWTCursorHelper {
 		return "auto";
 	}
 
-	public static int getSWTCursorId(CSSPrimitiveValue value) {
-		String cursorName = value.getStringValue();
+	public static int getSWTCursorId(CssText value) {
+		String cursorName = value.value();
 		switch (cursorName) {
 		case "default":
 			// The default cursor (often an arrow)

@@ -23,9 +23,9 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 /**
  * CSS Value converter to convert :
@@ -44,14 +44,13 @@ public class CSSValueSWTGradientConverterImpl extends AbstractCSSValueConverter 
 
 	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+		if (value instanceof CssList list) {
 			Display display = (context instanceof Display d) ? d : null;
-			Gradient grad = CSSSWTColorHelper.getGradient((CSSValueList) value, display);
-			List<?> values = grad.getValues();
-			for (int i = 0; i < values.size(); i++) {
+			Gradient grad = CSSSWTColorHelper.getGradient(list, display);
+			List<CssPrimitive> values = grad.getValues();
+			for (CssPrimitive prim : values) {
 				//Ensure all the colors are already converted and in the registry
 				//TODO see bug #278077
-				CSSPrimitiveValue prim = (CSSPrimitiveValue) values.get(i);
 				engine.convert(prim, Color.class, context);
 			}
 			return grad;

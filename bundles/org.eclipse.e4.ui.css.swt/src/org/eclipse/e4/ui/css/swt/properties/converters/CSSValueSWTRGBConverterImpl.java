@@ -21,8 +21,8 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterCo
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.RGBColor;
 
 /**
  * CSS Value converter to convert :
@@ -52,7 +52,7 @@ public class CSSValueSWTRGBConverterImpl extends AbstractCSSValueConverter {
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		RGB color = (RGB) value;
-		RGBColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
+		CssColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
 		return CSS2ColorHelper.getColorStringValue(rgbColor);
 	}
 

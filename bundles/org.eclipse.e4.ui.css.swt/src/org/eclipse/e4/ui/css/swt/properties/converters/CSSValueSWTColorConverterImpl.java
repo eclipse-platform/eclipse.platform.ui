@@ -23,9 +23,9 @@ import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.RGBColor;
 
 /**
  * CSS Value converter to convert :
@@ -59,7 +59,7 @@ public class CSSValueSWTColorConverterImpl extends AbstractCSSValueConverter {
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		Color color = (Color) value;
-		RGBColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
+		CssColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
 		return CSS2ColorHelper.getColorStringValue(rgbColor);
 	}
 }

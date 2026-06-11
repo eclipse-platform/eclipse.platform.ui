@@ -380,6 +380,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		private void reset(CSS2FontProperties properties) {
 			properties.setFamily(null);
 			properties.setSize(null);
+			properties.setSizeFromCSS(false);
 			properties.setSizeAdjust(null);
 			properties.setWeight(null);
 			properties.setStyle(null);

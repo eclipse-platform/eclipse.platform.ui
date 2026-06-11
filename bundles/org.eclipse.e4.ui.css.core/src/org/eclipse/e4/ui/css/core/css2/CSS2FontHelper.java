@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.css2;
 
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 
 /**
  * CSS2 Font Helper.
@@ -65,14 +68,11 @@ public class CSS2FontHelper {
 
 	/**
 	 * Return the CSS Font Property name (font-style, font-weight, font-size,
-	 * font-family) switch the {@link CSSPrimitiveValue} <code>value</code>.
+	 * font-family) for the given <code>value</code>.
 	 */
-	public static String getCSSFontPropertyName(CSSPrimitiveValue value) {
-		short type = value.getPrimitiveType();
-		switch (type) {
-		case CSSPrimitiveValue.CSS_STRING:
-		case CSSPrimitiveValue.CSS_IDENT:
-			switch (value.getStringValue()) {
+	public static String getCSSFontPropertyName(CssPrimitive value) {
+		if (value instanceof CssText text && (text.kind() == CssText.Kind.STRING || text.kind() == CssText.Kind.IDENT)) {
+			switch (text.value()) {
 			case "italic":
 			case "oblique":
 				return "font-style";
@@ -83,9 +83,9 @@ public class CSS2FontHelper {
 			default:
 				return "font-family";
 			}
-		case CSSPrimitiveValue.CSS_PT:
-		case CSSPrimitiveValue.CSS_NUMBER:
-		case CSSPrimitiveValue.CSS_PX:
+		}
+		if (value instanceof CssNumeric numeric
+				&& (numeric.unit() == CssUnit.PT || numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX)) {
 			return "font-size";
 		}
 		return null;

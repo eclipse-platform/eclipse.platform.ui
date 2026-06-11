@@ -16,8 +16,8 @@ package org.eclipse.e4.ui.css.core.css2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.w3c.dom.css.CSSPrimitiveValue;
-import org.w3c.dom.css.RGBColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
 
 /**
  * CSS2 Color Helper.
@@ -38,20 +38,21 @@ public class CSS2ColorHelper {
 	private static Map<String, String> colorHexasMap = new HashMap<>();
 
 	/**
-	 * Return w3c {@link RGBColor} from string value. Format String value is
+	 * Return a {@link CssColor} from string value. Format String value is
 	 * hexadecimal like #FFFFFF or color name like white.
 	 *
 	 * @param value string representation of color
 	 * @return parsed color
 	 */
-	public static RGBColor getRGBColor(String value) {
+	public static CssColor getRGBColor(String value) {
 		if (value.startsWith("#") && value.length() == 7) {
 			// Color is like #FFFFFF
 			try {
 				int redValue = Integer.decode("0x" + value.substring(1, 3)).intValue();
 				int greenValue = Integer.decode("0x" + value.substring(3, 5)).intValue();
 				int blueValue = Integer.decode("0x" + value.substring(5)).intValue();
-				return new CSS2RGBColorImpl(redValue, greenValue, blueValue);
+				return new CssColor(new CssNumber(redValue, true), new CssNumber(greenValue, true),
+						new CssNumber(blueValue, true));
 			} catch (Exception e) {
 				return null;
 			}
@@ -66,61 +67,53 @@ public class CSS2ColorHelper {
 	}
 
 	/**
-	 * Return the hex string representation of the given w3c {@code rgbColor}.
+	 * Return the hex string representation of the given <code>color</code>.
 	 *
-	 * @param rgbColor the color to get a string representation for
-	 * @return the hex string representation of {@code rgbColor}
+	 * @param color the color to get a string representation for
+	 * @return the hex string representation of {@code color}
 	 */
-	public static String getColorStringValue(RGBColor rgbColor) {
-		return getHexaColorStringValue(rgbColor);
+	public static String getColorStringValue(CssColor color) {
+		return getHexaColorStringValue(color);
 	}
 
 	/**
-	 * Return rgb (ex : rgb(0,0,0)) color string value from w3c
-	 * <code>rgbColor</code> instance.
+	 * Return rgb (ex : rgb(0,0,0)) color string value from the given
+	 * <code>color</code>.
 	 *
-	 * @param rgbColor the color to get string representation for
-	 * @return rgbColor as rgb(r, g, b) string
+	 * @param color the color to get string representation for
+	 * @return color as rgb(r, g, b) string
 	 */
-	public static String getRGBColorStringValue(RGBColor rgbColor) {
+	public static String getRGBColorStringValue(CssColor color) {
 		StringBuilder result = new StringBuilder("rgb(");
-		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result.append(red);
+		result.append((int) color.red().value());
 		result.append(",");
-		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result.append(green);
+		result.append((int) color.green().value());
 		result.append(",");
-		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result.append(blue);
+		result.append((int) color.blue().value());
 		result.append(")");
 		return result.toString();
 	}
 
 	/**
-	 * Return hexadecimal (ex : #FFFFFF) color string value from w3c
-	 * <code>rgbColor</code> instance.
+	 * Return hexadecimal (ex : #FFFFFF) color string value from the given
+	 * <code>color</code>.
 	 *
-	 * @param rgbColor the color to get string representation for
-	 * @return rgbColor as hexa string
+	 * @param color the color to get string representation for
+	 * @return color as hexa string
 	 */
-	public static String getHexaColorStringValue(RGBColor rgbColor) {
+	public static String getHexaColorStringValue(CssColor color) {
 		StringBuilder result = new StringBuilder("#");
-		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		if (red < 16) {
-			result.append("0");
-		}
-		result.append(Integer.toHexString(red));
-		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		if (green < 16) {
-			result.append("0");
-		}
-		result.append(Integer.toHexString(green));
-		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		if (blue < 16) {
-			result.append("0");
-		}
-		result.append(Integer.toHexString(blue));
+		appendHexPair(result, (int) color.red().value());
+		appendHexPair(result, (int) color.green().value());
+		appendHexPair(result, (int) color.blue().value());
 		return result.toString();
+	}
+
+	private static void appendHexPair(StringBuilder result, int component) {
+		if (component < 16) {
+			result.append("0");
+		}
+		result.append(Integer.toHexString(component));
 	}
 
 	/**

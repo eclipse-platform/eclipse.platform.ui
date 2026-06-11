@@ -19,7 +19,10 @@ import static org.eclipse.e4.ui.css.swt.helpers.ThemeElementDefinitionHelper.nor
 
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2FontPropertiesHelpers;
-import org.eclipse.e4.ui.css.core.css2.CSS2PrimitiveValueImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
@@ -32,7 +35,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -107,16 +109,17 @@ public class CSSSWTFontHelper {
 			FontData fontData = getFirstFontData(font);
 			// Update font-family
 			String fontFamily = getFontFamily(font);
-			fontProperties.setFamily(new CSS2PrimitiveValueImpl(fontFamily));
-			// Update font-size
+			fontProperties.setFamily(new CssText(CssText.Kind.IDENT, fontFamily));
+			// Update font-size; mirrors the widget font, not a CSS declaration
 			int fontSize = fontData.getHeight();
-			fontProperties.setSize(new CSS2PrimitiveValueImpl(fontSize));
+			fontProperties.setSize(new CssNumber(fontSize, true));
+			fontProperties.setSizeFromCSS(false);
 			// Update font-weight
 			String fontWeight = getFontWeight(font);
-			fontProperties.setWeight((new CSS2PrimitiveValueImpl(fontWeight)));
+			fontProperties.setWeight(new CssText(CssText.Kind.IDENT, fontWeight));
 			// Update font-style
 			String fontStyle = getFontStyle(font);
-			fontProperties.setStyle((new CSS2PrimitiveValueImpl(fontStyle)));
+			fontProperties.setStyle(new CssText(CssText.Kind.IDENT, fontStyle));
 		}
 		return fontProperties;
 	}
@@ -144,17 +147,17 @@ public class CSSSWTFontHelper {
 		FontData newFontData = new FontData();
 
 		// Family
-		CSSPrimitiveValue cssFontFamily = fontProperties.getFamily();
+		CssPrimitive cssFontFamily = fontProperties.getFamily();
 		FontData[] fontDataByDefinition = new FontData[0];
 		boolean fontDefinitionAsFamily = hasFontDefinitionAsFamily(fontProperties);
 
 		if (fontDefinitionAsFamily) {
-			fontDataByDefinition = findFontDataByDefinition(cssFontFamily);
+			fontDataByDefinition = findFontDataByDefinition((CssText) cssFontFamily);
 			if (fontDataByDefinition.length > 0) {
 				newFontData.setName(fontDataByDefinition[0].getName());
 			}
-		} else if (cssFontFamily != null) {
-			newFontData.setName(cssFontFamily.getStringValue());
+		} else if (cssFontFamily instanceof CssText family) {
+			newFontData.setName(family.value());
 		}
 
 		boolean fontFamilySet = newFontData.getName() != null && newFontData.getName().trim().length() > 0;
@@ -175,16 +178,16 @@ public class CSSSWTFontHelper {
 		newFontData.setStyle(style);
 
 		// Height
-		CSSPrimitiveValue cssFontSize = fontProperties.getSize();
+		CssPrimitive cssFontSize = fontProperties.getSize();
 		boolean fontHeightSet = false;
 
-		if (cssFontSize == null || cssFontSize.getCssText() == null) {
+		if (!(cssFontSize instanceof CssNumeric) || !fontProperties.isSizeFromCSS()) {
 			if (fontDefinitionAsFamily && fontDataByDefinition.length > 0) {
 				newFontData.setHeight(fontDataByDefinition[0].getHeight());
 				fontHeightSet = true;
 			}
 		} else {
-			newFontData.setHeight((int) (cssFontSize).getFloatValue(CSSPrimitiveValue.CSS_PT));
+			newFontData.setHeight((int) ((CssNumeric) cssFontSize).value());
 			fontHeightSet = true;
 		}
 		if (!fontHeightSet && oldFontData != null) {
@@ -196,18 +199,17 @@ public class CSSSWTFontHelper {
 
 	public static boolean hasFontDefinitionAsFamily(CSSValue value) {
 		if (value instanceof CSS2FontProperties props) {
-			return props.getFamily() != null
-					&& props.getFamily().getStringValue()
-					.startsWith(FONT_DEFINITION_MARKER);
+			return props.getFamily() instanceof CssText family
+					&& family.value().startsWith(FONT_DEFINITION_MARKER);
 		}
 		return false;
 	}
 
-	private static FontData[] findFontDataByDefinition(CSSPrimitiveValue cssFontFamily) {
+	private static FontData[] findFontDataByDefinition(CssText cssFontFamily) {
 		IColorAndFontProvider provider = ColorAndFontUtil.getColorAndFontProvider();
 		FontData[] result = new FontData[0];
 		if (provider != null) {
-			FontData[] fontData = provider.getFont(normalizeId(cssFontFamily.getStringValue().substring(1)));
+			FontData[] fontData = provider.getFont(normalizeId(cssFontFamily.value().substring(1)));
 			if (fontData != null) {
 				result = fontData;
 			}
@@ -227,9 +229,9 @@ public class CSSSWTFontHelper {
 		}
 
 		// CSS2 font-style
-		CSSPrimitiveValue cssFontStyle = fontProperties.getStyle();
-		if (cssFontStyle != null) {
-			String style = cssFontStyle.getStringValue();
+		CssPrimitive cssFontStyle = fontProperties.getStyle();
+		if (cssFontStyle instanceof CssText styleText) {
+			String style = styleText.value();
 			if ("italic".equals(style)) {
 				fontStyle = fontStyle | SWT.ITALIC;
 			} else if (fontStyle == (fontStyle | SWT.ITALIC)) {
@@ -237,9 +239,9 @@ public class CSSSWTFontHelper {
 			}
 		}
 		// CSS font-weight
-		CSSPrimitiveValue cssFontWeight = fontProperties.getWeight();
-		if (cssFontWeight != null) {
-			String weight = cssFontWeight.getStringValue();
+		CssPrimitive cssFontWeight = fontProperties.getWeight();
+		if (cssFontWeight instanceof CssText weightText) {
+			String weight = weightText.value();
 			if ("bold".equals(weight.toLowerCase())) {
 				fontStyle = fontStyle | SWT.BOLD;
 			} else if (fontStyle == (fontStyle | SWT.BOLD)) {

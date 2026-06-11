@@ -17,13 +17,14 @@ import java.lang.reflect.Constructor;
 import java.net.URI;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHandler {
@@ -34,9 +35,9 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 		if (!(control instanceof CTabFolder tabFolder)) {
 			return;
 		}
-		if (value instanceof CSSPrimitiveValue primitiveValue) {
-			if (primitiveValue.getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
-				String rendURL = primitiveValue.getStringValue();
+		if (value instanceof CssPrimitive) {
+			if (value instanceof CssText text && text.kind() == CssText.Kind.URI) {
+				String rendURL = text.value();
 				URI uri = new URI(rendURL);
 				Bundle bundle = Platform.getBundle(uri.getAuthority());
 				String[] segments = getPathSegments(uri);

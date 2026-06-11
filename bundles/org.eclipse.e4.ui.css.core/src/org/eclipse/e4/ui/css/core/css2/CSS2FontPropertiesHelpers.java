@@ -16,9 +16,9 @@ package org.eclipse.e4.ui.css.core.css2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 /**
  *
@@ -90,19 +90,15 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update <code>fontProperties</code> instance with the {@link CSSValue}
-	 * <code>value</code>. value can be {@link CSSPrimitiveValue} or
-	 * {@link CSSValueList}.
+	 * <code>value</code>. value can be a single value or a value list.
 	 */
 	public static void updateCSSPropertyFontComposite(CSS2FontProperties font, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			CSSValueList valueList = (CSSValueList) value;
-			int length = valueList.getLength();
-			for (int i = 0; i < length; i++) {
-				CSSValue value2 = valueList.item(i);
-				updateCSSPropertyFontComposite(font, value2);
+		if (value instanceof CssList list) {
+			for (CSSValue item : list.values()) {
+				updateCSSPropertyFontComposite(font, item);
 			}
-		} else if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			String property = CSS2FontHelper.getCSSFontPropertyName((CSSPrimitiveValue) value);
+		} else if (value instanceof CssPrimitive primitive) {
+			String property = CSS2FontHelper.getCSSFontPropertyName(primitive);
 			updateCSSPropertyFont(font, property, value);
 		}
 	}
@@ -111,8 +107,8 @@ public class CSS2FontPropertiesHelpers {
 	 * Update CSS2FontProperties instance with font-family.
 	 */
 	public static void updateCSSPropertyFontFamily(CSS2FontProperties font, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setFamily((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setFamily(primitive);
 		}
 	}
 
@@ -120,8 +116,9 @@ public class CSS2FontPropertiesHelpers {
 	 * Update CSS2FontProperties instance with font-size.
 	 */
 	public static void updateCSSPropertyFontSize(CSS2FontProperties font, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setSize((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setSize(primitive);
+			font.setSizeFromCSS(true);
 		}
 	}
 
@@ -129,8 +126,8 @@ public class CSS2FontPropertiesHelpers {
 	 * Update CSS2FontProperties instance with font-style.
 	 */
 	public static void updateCSSPropertyFontStyle(CSS2FontProperties font, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setStyle((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setStyle(primitive);
 		}
 	}
 
@@ -138,8 +135,8 @@ public class CSS2FontPropertiesHelpers {
 	 * Update CSS2FontProperties instance with font-weight.
 	 */
 	public static void updateCSSPropertyFontWeight(CSS2FontProperties font, CSSValue value) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			font.setWeight((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			font.setWeight(primitive);
 		}
 	}
 }

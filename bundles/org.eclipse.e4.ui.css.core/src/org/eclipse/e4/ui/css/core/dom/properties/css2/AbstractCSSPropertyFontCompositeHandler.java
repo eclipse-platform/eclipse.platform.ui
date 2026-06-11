@@ -16,7 +16,7 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.AbstractCSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -36,9 +36,8 @@ public abstract class AbstractCSSPropertyFontCompositeHandler extends
 	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,
 			CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			String property = CSS2FontHelper
-					.getCSSFontPropertyName((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			String property = CSS2FontHelper.getCSSFontPropertyName(primitive);
 			if (property != null) {
 				engine.applyCSSProperty(element, property, value, pseudo);
 			}

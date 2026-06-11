@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -61,7 +62,7 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		Widget widget = (Widget) element;
 		Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 
-		if (newColor != null && newColor.isDisposed() || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (newColor != null && newColor.isDisposed() || !(value instanceof CssPrimitive)) {
 			return;
 		}
 

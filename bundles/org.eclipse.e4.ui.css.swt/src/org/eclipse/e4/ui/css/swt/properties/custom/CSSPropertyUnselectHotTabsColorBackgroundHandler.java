@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
@@ -29,7 +30,7 @@ public class CSSPropertyUnselectHotTabsColorBackgroundHandler extends AbstractCS
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (!(control instanceof CTabFolder) || !(value instanceof CssPrimitive)) {
 			return;
 		}
 

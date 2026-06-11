@@ -15,6 +15,10 @@
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
 import java.lang.reflect.Method;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2PaddingPropertiesImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyPaddingHandler;
@@ -24,9 +28,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 public class CSSPropertyPaddingSWTHandler extends
 AbstractCSSPropertyPaddingHandler {
@@ -50,14 +52,13 @@ AbstractCSSPropertyPaddingHandler {
 
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		// If single value then assigned to all four paddings
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			padding.top = padding.bottom = padding.left = padding.right = value;
 			setPadding(element, padding);
 			return;
 		}
 
-		if(value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			CSSValueList valueList = (CSSValueList) value;
+		if (value instanceof CssList valueList) {
 			int length = valueList.getLength();
 
 			if(length < 2 || length > 4) {
@@ -97,7 +98,7 @@ AbstractCSSPropertyPaddingHandler {
 	public void applyCSSPropertyPaddingTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			padding.top = value;
 			setPadding(element, padding);
 		}
@@ -107,7 +108,7 @@ AbstractCSSPropertyPaddingHandler {
 	public void applyCSSPropertyPaddingRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			padding.right = value;
 			setPadding(element, padding);
 		}
@@ -117,7 +118,7 @@ AbstractCSSPropertyPaddingHandler {
 	public void applyCSSPropertyPaddingBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			padding.bottom = value;
 			setPadding(element, padding);
 		}
@@ -127,7 +128,7 @@ AbstractCSSPropertyPaddingHandler {
 	public void applyCSSPropertyPaddingLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			padding.left = value;
 			setPadding(element, padding);
 		}
@@ -190,20 +191,20 @@ AbstractCSSPropertyPaddingHandler {
 
 				int top = pad.x, right = pad.y, bottom = pad.width, left = pad.height;
 
-				if (vTop != null && (vTop.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vTop).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					top = (int) ((CSSPrimitiveValue) vTop).getFloatValue(CSSPrimitiveValue.CSS_PX);
+				if (vTop instanceof CssNumeric numeric && numeric.unit() == CssUnit.PX) {
+					top = (int) numeric.value();
 				}
 
-				if (vRight != null && (vRight.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vRight).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					right = (int) ((CSSPrimitiveValue) vRight).getFloatValue(CSSPrimitiveValue.CSS_PX);
+				if (vRight instanceof CssNumeric numeric && numeric.unit() == CssUnit.PX) {
+					right = (int) numeric.value();
 				}
 
-				if (vBottom != null && (vBottom.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vBottom).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					bottom = (int) ((CSSPrimitiveValue) vBottom).getFloatValue(CSSPrimitiveValue.CSS_PX);
+				if (vBottom instanceof CssNumeric numeric && numeric.unit() == CssUnit.PX) {
+					bottom = (int) numeric.value();
 				}
 
-				if (vLeft != null && (vLeft.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vLeft).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					left = (int) ((CSSPrimitiveValue) vLeft).getFloatValue(CSSPrimitiveValue.CSS_PX);
+				if (vLeft instanceof CssNumeric numeric && numeric.unit() == CssUnit.PX) {
+					left = (int) numeric.value();
 				}
 
 				if (top != pad.x || right != pad.y || bottom != pad.width

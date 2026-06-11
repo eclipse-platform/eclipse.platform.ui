@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.LinkElement;
@@ -32,7 +33,7 @@ public class CSSPropertyLinkSWTHandler implements ICSSPropertyHandler {
 		if (!(element instanceof LinkElement)) {
 			return false;
 		}
-		if (!(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+		if (!(value instanceof CssPrimitive)) {
 			return false;
 		}
 

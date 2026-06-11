@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
@@ -41,7 +43,7 @@ AbstractCSSPropertySWTHandler {
 		if (!(renderer instanceof ICTabRendering)) {
 			return;
 		}
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class,
 					control.getDisplay());
 			if (newColor == null) {
@@ -60,7 +62,7 @@ AbstractCSSPropertySWTHandler {
 			} else {
 				((ICTabRendering) renderer).setSelectedTabFill(newColor);
 			}
-		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+		} else if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					control.getDisplay());
 			if (grad == null || grad.getRGBs().isEmpty()) {
