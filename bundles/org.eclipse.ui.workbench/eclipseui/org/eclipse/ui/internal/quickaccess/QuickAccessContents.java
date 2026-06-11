@@ -336,6 +336,10 @@ public abstract class QuickAccessContents {
 					item.setData(entry);
 					item.setText(0, entry.provider.getName());
 					item.setText(1, entry.element.getLabel());
+					if (Policy.DEBUG_QUICK_ACCESS) {
+						trace("Adding table row: name=" + entry.provider.getName() + ", label=" //$NON-NLS-1$ //$NON-NLS-2$
+								+ entry.element.getLabel());
+					}
 					if (Util.isWpf()) {
 						item.setImage(1, entry.getImage(entry.element, resourceManager));
 					}

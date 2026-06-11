@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -34,23 +37,7 @@ public final class TestRunLogUtil {
 	 *
 	 * Note: field must be public or JUnit4 will complain.
 	 */
-	public static TestWatcher LOG_TESTRUN = new TestWatcher() {
-		@Override
-		protected void starting(Description description) {
-			System.out.println(formatTestStartMessage(description.getMethodName()));
-		}
-
-		@Override
-		protected void failed(Throwable e, Description description) {
-			System.out.println(description.getMethodName() + " failed:");
-			e.printStackTrace(System.out);
-		}
-
-		@Override
-		protected void finished(Description description) {
-			System.out.println(formatTestFinishedMessage(description.getMethodName()));
-		}
-	};
+	public static TestWatcher LOG_TESTRUN = new LogTestWatcher();
 
 	/**
 	 * Create message used to log start of a test.
@@ -71,6 +58,34 @@ public final class TestRunLogUtil {
 	public static String formatTestFinishedMessage(String testName) {
 		return testName + ": tearDown...\n"; //$NON-NLS-1$
 	}
+
+	private static class LogTestWatcher extends TestWatcher implements BeforeEachCallback, AfterEachCallback {
+		@Override
+		protected void starting(Description description) {
+			System.out.println(formatTestStartMessage(description.getMethodName()));
+		}
+
+		@Override
+		protected void failed(Throwable e, Description description) {
+			System.out.println(description.getMethodName() + " failed:");
+			e.printStackTrace(System.out);
+		}
+
+		@Override
+		protected void finished(Description description) {
+			System.out.println(formatTestFinishedMessage(description.getMethodName()));
+		}
+
+		@Override
+		public void beforeEach(ExtensionContext context) throws Exception {
+			System.out.println(formatTestStartMessage(context.getDisplayName()));
+		}
+
+		@Override
+		public void afterEach(ExtensionContext context) throws Exception {
+			System.out.println(formatTestFinishedMessage(context.getDisplayName()));
+		}
+	};
 
 	private TestRunLogUtil() {
 	}

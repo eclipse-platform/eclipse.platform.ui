@@ -50,12 +50,14 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests the quick access UI
@@ -91,6 +93,9 @@ public class QuickAccessDialogTest {
 			.equals(QuickAccessMessages.QuickAccessContents_QuickAccess);
 	private IDialogSettings dialogSettings;
 	private IWorkbenchWindow activeWorkbenchWindow;
+
+	@RegisterExtension
+	public final Object TEST_WATCHER = TestRunLogUtil.LOG_TESTRUN;
 
 	@BeforeAll
 	public static void enableDebugOutputs() {
