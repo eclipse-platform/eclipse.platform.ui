@@ -19,7 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,8 @@ import org.eclipse.core.filesystem.EFS;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -66,6 +70,7 @@ public class ResourceRefactoringTests {
 
 	@AfterEach
 	public void tearDown() throws Exception {
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).remove(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
 		fProject.delete();
 	}
 
@@ -393,6 +398,65 @@ public class ResourceRefactoringTests {
 	}
 
 	@Test
+	public void testDeleteRefactoringOutOfSync_noAutoRefresh() throws Exception {
+		setLightweightAutoRefresh(false);
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file= fProject.createFile(testFolder, "myFile.txt", "hello");
+		modifyExternally(file);
+
+		RefactoringContext context= createDeleteRefactoringContext(file);
+		try {
+			RefactoringStatus status= context.getRefactoring().checkAllConditions(new NullProgressMonitor());
+			assertTrue(status.hasWarning(), "expected an out-of-sync warning");
+		} finally {
+			context.dispose();
+		}
+	}
+
+	@Test
+	public void testDeleteRefactoringOutOfSync_autoRefresh() throws Exception {
+		setLightweightAutoRefresh(true);
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file= fProject.createFile(testFolder, "myFile.txt", "hello");
+		File localFile= modifyExternally(file);
+
+		RefactoringContext context= createDeleteRefactoringContext(file);
+		try {
+			Refactoring refactoring= context.getRefactoring();
+			RefactoringStatus status= refactoring.checkAllConditions(new NullProgressMonitor());
+			assertTrue(status.isOK(), () -> "expected no warning but was: " + status);
+
+			perform(refactoring.createChange(new NullProgressMonitor()));
+
+			assertFalse(file.exists());
+			assertFalse(localFile.exists());
+		} finally {
+			context.dispose();
+		}
+	}
+
+	@Test
+	public void testDeleteRefactoringDeletedExternally_autoRefresh() throws Exception {
+		setLightweightAutoRefresh(true);
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file= fProject.createFile(testFolder, "myFile.txt", "hello");
+		Files.delete(file.getLocation().toFile().toPath());
+
+		RefactoringContext context= createDeleteRefactoringContext(file);
+		try {
+			Refactoring refactoring= context.getRefactoring();
+			RefactoringStatus status= refactoring.checkAllConditions(new NullProgressMonitor());
+			assertTrue(status.isOK(), () -> "expected no warning but was: " + status);
+
+			perform(refactoring.createChange(new NullProgressMonitor()));
+
+			assertFalse(file.exists());
+		} finally {
+			context.dispose();
+		}
+	}
+
+	@Test
 	public void testCopyProjectRefactoring() throws Exception {
 		String content1= "hello";
 
@@ -417,6 +481,32 @@ public class ResourceRefactoringTests {
 		perform(undoChange);
 
 		assertFalse(targetProject.exists());
+	}
+
+	private void setLightweightAutoRefresh(boolean enabled) {
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, enabled);
+	}
+
+	/**
+	 * Modifies the file in the local file system without notifying the workspace, so the file is
+	 * out of sync afterwards.
+	 */
+	private File modifyExternally(IFile file) throws IOException {
+		File localFile= file.getLocation().toFile();
+		Files.writeString(localFile.toPath(), "external change");
+		assertTrue(localFile.setLastModified(localFile.lastModified() + 5000));
+		assertFalse(file.isSynchronized(IResource.DEPTH_ZERO));
+		return localFile;
+	}
+
+	private RefactoringContext createDeleteRefactoringContext(IResource... resources) throws CoreException {
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
+		DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor) contribution.createDescriptor();
+		descriptor.setResources(resources);
+		RefactoringStatus status= new RefactoringStatus();
+		RefactoringContext context= descriptor.createRefactoringContext(status);
+		assertTrue(status.isOK());
+		return context;
 	}
 
 	private Change perform(Change change) throws CoreException {
