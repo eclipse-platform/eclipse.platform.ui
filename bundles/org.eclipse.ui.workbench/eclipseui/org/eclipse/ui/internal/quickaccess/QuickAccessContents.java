@@ -102,6 +102,9 @@ public abstract class QuickAccessContents {
 	 */
 	private static final String QUICK_ACCESS_COMMAND_ID = "org.eclipse.ui.window.quickAccess"; //$NON-NLS-1$
 
+	/** Trailing-edge debounce window collapsing a burst of shell resizes. */
+	private static final int RESIZE_DEBOUNCE_MS = 100;
+
 	protected Text filterText;
 
 	private final QuickAccessProvider[] providers;
@@ -123,7 +126,7 @@ public abstract class QuickAccessContents {
 	private Color grayColor;
 	private TextLayout textLayout;
 	private boolean showAllMatches = false;
-	protected boolean resized = false;
+	private int lastComputedItemCount = -1;
 	private TriggerSequence keySequence;
 	private Job computeProposalsJob;
 
@@ -164,6 +167,7 @@ public abstract class QuickAccessContents {
 
 		String computingMessage = NLS.bind(QuickAccessMessages.QuickaAcessContents_computeMatchingEntries, filter);
 		int maxNumberOfItemsInTable = computeNumberOfItems();
+		lastComputedItemCount = maxNumberOfItemsInTable;
 		AtomicReference<List<QuickAccessEntry>[]> entries = new AtomicReference<>();
 		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
 			entries.set(
@@ -766,24 +770,36 @@ public abstract class QuickAccessContents {
 		tableComposite = new Composite(composite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
+		final Runnable resizeUpdate = () -> {
+			if (showAllMatches || table == null || table.isDisposed() || filterText == null
+					|| filterText.isDisposed()) {
+				return;
+			}
+			// Skip when the layout settled back to the row count we already computed for,
+			// so an oscillating burst does not cancel the in-flight compute job.
+			if (computeNumberOfItems() == lastComputedItemCount) {
+				return;
+			}
+			if (Policy.DEBUG_QUICK_ACCESS) {
+				trace("Resize listener triggering proposals update"); //$NON-NLS-1$
+			}
+			updateProposals(filterText.getText().toLowerCase());
+		};
 		table.getShell().addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				if (!showAllMatches) {
-					if (!resized) {
-						resized = true;
-						e.display.timerExec(100, () -> {
-							if (table != null && !table.isDisposed() && filterText != null
-									&& !filterText.isDisposed()) {
-								if (Policy.DEBUG_QUICK_ACCESS) {
-									trace("Resize listener triggering proposals update"); //$NON-NLS-1$
-								}
-								updateProposals(filterText.getText().toLowerCase());
-							}
-							resized = false;
-						});
-					}
+				if (showAllMatches || table == null || table.isDisposed() || filterText == null
+						|| filterText.isDisposed()) {
+					return;
 				}
+				// A resize only matters when the number of visible rows changes. Coalesce a
+				// burst of resizes (e.g. scrollbar oscillation during initial layout) into a
+				// single trailing update, and skip it when the row count is unchanged.
+				if (computeNumberOfItems() == lastComputedItemCount) {
+					return;
+				}
+				e.display.timerExec(-1, resizeUpdate);
+				e.display.timerExec(RESIZE_DEBOUNCE_MS, resizeUpdate);
 			}
 		});
 
