@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.css.sac.CSSException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
@@ -63,7 +62,7 @@ AbstractCSSPropertyMarginHandler {
 			int length = valueList.getLength();
 
 			if(length < 2 || length > 4) {
-				throw new CSSException("Invalid margin property list length");
+				throw new IllegalArgumentException("Invalid margin property list length");
 			}
 
 			switch (length) {
@@ -88,7 +87,7 @@ AbstractCSSPropertyMarginHandler {
 				setMargin(element, LEFT, valueList.item(1));
 			}
 		} else {
-			throw new CSSException("Invalid margin property value");
+			throw new IllegalArgumentException("Invalid margin property value");
 		}
 	}
 

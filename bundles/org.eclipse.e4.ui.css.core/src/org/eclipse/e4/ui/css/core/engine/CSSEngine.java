@@ -23,7 +23,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
-import org.w3c.css.sac.InputSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
@@ -51,9 +50,10 @@ public interface CSSEngine {
 	StyleSheet parseStyleSheet(InputStream stream) throws IOException;
 
 	/**
-	 * Parse style sheet from InputSource source.
+	 * Parse style sheet from InputStream stream, using {@code uri} as the base
+	 * location for resolving relative {@code @import} rules.
 	 */
-	StyleSheet parseStyleSheet(InputSource source) throws IOException;
+	StyleSheet parseStyleSheet(InputStream stream, String uri) throws IOException;
 
 	/*--------------- Parse style declaration -----------------*/
 
@@ -72,11 +72,6 @@ public interface CSSEngine {
 	 */
 	CSSStyleDeclaration parseStyleDeclaration(InputStream stream) throws IOException;
 
-	/**
-	 * Parse style declaration from InputSource source.
-	 */
-	CSSStyleDeclaration parseStyleDeclaration(InputSource source) throws IOException;
-
 	/*--------------- Parse CSS Property Value-----------------*/
 
 	/**
@@ -94,22 +89,12 @@ public interface CSSEngine {
 	 */
 	CSSValue parsePropertyValue(Reader reader) throws IOException;
 
-	/**
-	 * Parse CSSValue from InputSource source.
-	 */
-	CSSValue parsePropertyValue(InputSource source) throws IOException;
-
 	/*--------------- Apply styles -----------------*/
 
 	/**
 	 * Parse Selectors from String value.
 	 */
 	Selectors.SelectorList parseSelectors(String text);
-
-	/**
-	 * Parse Selectors from InputSource value.
-	 */
-	Selectors.SelectorList parseSelectors(InputSource source) throws IOException;
 
 	/**
 	 * Parse Selectors from InputStream.
@@ -161,11 +146,6 @@ public interface CSSEngine {
 	 * Parse and apply style declaration from InputStream stream.
 	 */
 	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputStream stream) throws IOException;
-
-	/**
-	 * Parse and apply style declaration from InputSource source.
-	 */
-	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputSource sourcee) throws IOException;
 
 	/**
 	 * Parse and apply style declaration from String style.

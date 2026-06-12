@@ -24,7 +24,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.css.sac.CSSException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
@@ -62,7 +61,7 @@ AbstractCSSPropertyPaddingHandler {
 			int length = valueList.getLength();
 
 			if(length < 2 || length > 4) {
-				throw new CSSException("Invalid padding property list length");
+				throw new IllegalArgumentException("Invalid padding property list length");
 			}
 
 			switch (length) {
@@ -90,7 +89,7 @@ AbstractCSSPropertyPaddingHandler {
 
 			setPadding(element, padding);
 		} else {
-			throw new CSSException("Invalid padding property value");
+			throw new IllegalArgumentException("Invalid padding property value");
 		}
 	}
 

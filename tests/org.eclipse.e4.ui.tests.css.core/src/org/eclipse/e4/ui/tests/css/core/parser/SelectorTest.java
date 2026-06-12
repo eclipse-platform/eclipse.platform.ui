@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParseException;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.css.sac.CSSParseException;
 
 public class SelectorTest {
 	private CSSEngine engine;
@@ -70,6 +70,6 @@ public class SelectorTest {
 
 	@Test
 	void testErrorAttributeSelector() {
-		assertThrows(CSSParseException.class, () -> engine.parseSelectors("*[class='Class1'")); // missing ']'
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("*[class='Class1'")); // missing ']'
 	}
 }

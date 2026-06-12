@@ -61,7 +61,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.prefs.BackingStoreException;
-import org.w3c.css.sac.InputSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -477,10 +476,7 @@ public class ThemeEngine implements IThemeEngine {
 					for (CSSEngine engine : cssEngines) {
 						try {
 							stream = url.openStream();
-							InputSource source = new InputSource();
-							source.setByteStream(stream);
-							source.setURI(url.toString());
-							engine.parseStyleSheet(source);
+							engine.parseStyleSheet(stream, url.toString());
 						} catch (IOException e) {
 							ThemeEngineManager.logError(e.getMessage(), e);
 						} finally {

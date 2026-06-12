@@ -18,10 +18,11 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
@@ -30,7 +31,6 @@ import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.css.sac.InputSource;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -146,10 +146,8 @@ public class ImportTest {
 	}
 
 	private CSSStyleSheet parseStyleSheet(String sourceUrl, String cssString) throws IOException {
-		InputSource source = new InputSource();
-		source.setURI(sourceUrl); // must not be null
-		source.setCharacterStream(new StringReader(cssString));
-		return (CSSStyleSheet) engine.parseStyleSheet(source);
+		return (CSSStyleSheet) engine.parseStyleSheet(
+				new ByteArrayInputStream(cssString.getBytes(StandardCharsets.UTF_8)), sourceUrl);
 	}
 
 	private ViewCSS createViewCss(String sourceUrl, String cssString)

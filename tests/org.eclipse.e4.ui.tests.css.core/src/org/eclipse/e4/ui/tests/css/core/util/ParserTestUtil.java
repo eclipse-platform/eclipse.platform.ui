@@ -16,13 +16,11 @@ package org.eclipse.e4.ui.tests.css.core.util;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.widgets.Display;
-import org.w3c.css.sac.InputSource;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.StyleSheet;
 
@@ -49,12 +47,8 @@ public final class ParserTestUtil {
 	 * want the AST as the parser produced it; {@link #parseCss(String)} runs
 	 * the engine's import-inlining pass which fails for placeholder URLs.
 	 */
-	public static CSSStyleSheet parseCssWithoutImports(String css)
-			throws IOException {
-		CSSParser parser = ((CSSEngineImpl) createEngine()).makeCSSParser();
-		InputSource source = new InputSource();
-		source.setCharacterStream(new StringReader(css));
-		return parser.parseStyleSheet(source);
+	public static CSSStyleSheet parseCssWithoutImports(String css) {
+		return (CSSStyleSheet) CssParser.parseStyleSheet(css);
 	}
 
 	public static CSSEngine createEngine() {

@@ -262,7 +262,7 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 	@Test
 	void testUnselectedCloseVisible() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-close-visible true}");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-close-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedCloseVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-unselected-close-visible", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-close-visible: false}");

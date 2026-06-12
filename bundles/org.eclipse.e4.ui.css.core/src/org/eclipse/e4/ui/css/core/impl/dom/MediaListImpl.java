@@ -17,7 +17,6 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.w3c.css.sac.SACMediaList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.stylesheets.MediaList;
 
@@ -25,12 +24,8 @@ public class MediaListImpl implements MediaList {
 
 	private final List<String> mediaList;
 
-	public MediaListImpl(SACMediaList media) {
+	public MediaListImpl() {
 		mediaList = new ArrayList<>();
-		for (int i = 0; i < media.getLength(); i++) {
-			mediaList.add(media.item(i));
-		}
-
 	}
 
 	@Override

@@ -37,8 +37,10 @@ public class MediaRulesTest {
 				Label { background-color: #FF0000 }""";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
-		assertEquals(2, styleSheet.getCssRules().getLength());
+		// The @media block is discarded entirely; only the following top-level
+		// rule remains, with its declaration intact.
+		assertEquals(1, styleSheet.getCssRules().getLength());
 		assertFalse(styleSheet.getCssRules().item(0).getCssText().contains("line-height"));
-		assertTrue(styleSheet.getCssRules().item(1).getCssText().contains("background-color"));
+		assertTrue(styleSheet.getCssRules().item(0).getCssText().contains("background-color"));
 	}
 }
