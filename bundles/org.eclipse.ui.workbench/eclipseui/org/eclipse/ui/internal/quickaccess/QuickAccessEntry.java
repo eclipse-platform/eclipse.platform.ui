@@ -56,6 +56,9 @@ public class QuickAccessEntry {
 	 */
 	private final int matchQuality;
 
+	/** Continuous relevance score; higher is better. Set by the matcher. */
+	int matchScore;
+
 	/**
 	 * Indicates the filter string was a perfect match to the label or there is no
 	 * filter applied
@@ -271,6 +274,15 @@ public class QuickAccessEntry {
 	 */
 	public int getMatchQuality() {
 		return matchQuality;
+	}
+
+	/**
+	 * Returns the continuous relevance score; higher is better.
+	 *
+	 * @return the relevance score
+	 */
+	public int getMatchScore() {
+		return matchScore;
 	}
 
 }

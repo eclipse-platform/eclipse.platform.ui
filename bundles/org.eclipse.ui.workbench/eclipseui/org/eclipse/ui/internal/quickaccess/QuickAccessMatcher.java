@@ -26,12 +26,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public final class QuickAccessMatcher {
 
-	private final QuickAccessElement element;
-
-	public QuickAccessMatcher(QuickAccessElement element) {
-		this.element = element;
-	}
-
 	private static final int[][] EMPTY_INDICES = new int[0][0];
 
 	// whitespaces filter and patterns
@@ -60,16 +54,28 @@ public final class QuickAccessMatcher {
 	}
 
 	/**
-	 * If this element is a match (partial, complete, camel case, etc) to the given
-	 * filter, returns a {@link QuickAccessEntry}. Otherwise returns
-	 * <code>null</code>;
+	 * Returns a {@link QuickAccessEntry} carrying highlight regions and a relevance
+	 * score if {@code element} matches the filter, or <code>null</code> otherwise.
 	 *
-	 * @param filter              filter for matching
-	 * @param providerForMatching the provider that will own the entry
-	 * @return a quick access entry or <code>null</code>
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public QuickAccessEntry match(String filter, QuickAccessProvider providerForMatching) {
+	public QuickAccessEntry match(QuickAccessElement element, String filter, QuickAccessProvider providerForMatching) {
+		QuickAccessEntry entry = doMatch(element, filter, providerForMatching);
+		if (entry != null) {
+			entry.matchScore = computeScore(element, filter, providerForMatching);
+		}
+		return entry;
+	}
+
+	private static int computeScore(QuickAccessElement element, String filter, QuickAccessProvider provider) {
+		int score = QuickAccessMatching.score(element.getMatchLabel(), filter);
+		if (score == QuickAccessMatching.SCORE_NONE) {
+			score = QuickAccessMatching.score(provider.getName() + ' ' + element.getMatchLabel(), filter);
+		}
+		return score == QuickAccessMatching.SCORE_NONE ? 0 : score;
+	}
+
+	private QuickAccessEntry doMatch(QuickAccessElement element, String filter, QuickAccessProvider providerForMatching) {
 		String matchLabel = element.getMatchLabel();
 		String label = element.getLabel();
 		int quality = QuickAccessMatching.substringMatchQuality(matchLabel, label, filter);

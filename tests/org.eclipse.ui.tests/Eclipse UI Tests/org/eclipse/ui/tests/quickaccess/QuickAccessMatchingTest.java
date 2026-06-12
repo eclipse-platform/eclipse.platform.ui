@@ -109,4 +109,52 @@ public class QuickAccessMatchingTest {
 		Pattern p = QuickAccessMatching.safeCompile("foo.*");
 		assertTrue(p.matcher("foobar").matches());
 	}
+
+	@Test
+	public void scoreReturnsNoneWhenNotSubsequence() {
+		assertEquals(QuickAccessMatching.SCORE_NONE, QuickAccessMatching.score("Rename", "xyz"));
+	}
+
+	@Test
+	public void scoreReturnsZeroForEmptyFilter() {
+		assertEquals(0, QuickAccessMatching.score("Rename", ""));
+	}
+
+	@Test
+	public void scorePrefersConsecutiveOverScattered() {
+		int consecutive = QuickAccessMatching.score("abcxyz", "abc");
+		int scattered = QuickAccessMatching.score("axbxcx", "abc");
+		assertTrue(consecutive > scattered, "consecutive " + consecutive + " should beat scattered " + scattered);
+	}
+
+	@Test
+	public void scorePrefersPrefixOverMidWord() {
+		int prefix = QuickAccessMatching.score("Rename", "re");
+		int midWord = QuickAccessMatching.score("Score", "re");
+		assertTrue(prefix > midWord, "prefix " + prefix + " should beat mid-word " + midWord);
+	}
+
+	@Test
+	public void scorePrefersShorterOnOtherwiseEqualMatch() {
+		int shorter = QuickAccessMatching.score("Re", "re");
+		int longer = QuickAccessMatching.score("Renew", "re");
+		assertTrue(shorter > longer, "shorter " + shorter + " should beat longer " + longer);
+	}
+
+	@Test
+	public void scoreRewardsWordBoundaryInitials() {
+		int initials = QuickAccessMatching.score("New File", "nf");
+		int midWord = QuickAccessMatching.score("Confirm", "nf");
+		assertTrue(initials > midWord, "word-initial " + initials + " should beat mid-word " + midWord);
+	}
+
+	@Test
+	public void scoreIgnoresWildcardChars() {
+		assertTrue(QuickAccessMatching.score("Rename Resource", "re*ce") > QuickAccessMatching.SCORE_NONE);
+	}
+
+	@Test
+	public void scoreIsCaseInsensitive() {
+		assertTrue(QuickAccessMatching.score("RENAME", "rename") > QuickAccessMatching.SCORE_NONE);
+	}
 }

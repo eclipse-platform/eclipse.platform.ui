@@ -21,8 +21,8 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -129,6 +128,15 @@ public abstract class QuickAccessContents {
 	private int lastComputedItemCount = -1;
 	private TriggerSequence keySequence;
 	private Job computeProposalsJob;
+
+	/**
+	 * Orders entries by descending relevance score, then match quality. Applied
+	 * with a stable sort so each provider's natural order (recency for previous
+	 * picks, alphabetical otherwise) is preserved on ties.
+	 */
+	private static final Comparator<QuickAccessEntry> BY_RELEVANCE = Comparator
+			.comparingInt(QuickAccessEntry::getMatchScore).reversed()
+			.thenComparingInt(QuickAccessEntry::getMatchQuality);
 
 	public QuickAccessContents(QuickAccessProvider[] providers) {
 		this.providers = providers;
@@ -447,9 +455,6 @@ public abstract class QuickAccessContents {
 						elementsToProviders.put(element, provider);
 					}
 				}
-				if (!filter.isEmpty() && !sortedElements.isEmpty()) {
-					sortedElements = putPrefixMatchFirst(sortedElements, filter);
-				}
 				elementsForProviders.put(provider, new ArrayList<>(sortedElements));
 			}
 		}
@@ -482,74 +487,55 @@ public abstract class QuickAccessContents {
 				}
 			}
 		}
+		QuickAccessMatcher matcher = new QuickAccessMatcher();
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessEntry>> entriesPerProvider = new LinkedHashMap<>(
 				elementsForProviders.size());
 		if (showAllMatches) {
-			// Map elements to entries
+			// Map elements to entries, most relevant first within each provider
 			for (Entry<QuickAccessProvider, List<QuickAccessElement>> elementsPerProvider : elementsForProviders
 					.entrySet()) {
 				QuickAccessProvider provider = elementsPerProvider.getKey();
 				List<QuickAccessEntry> entries = elementsPerProvider.getValue().stream() //
-						.map(QuickAccessMatcher::new) //
-						.map(matcher -> matcher.match(finalFilter, provider)) //
+						.map(element -> matcher.match(element, finalFilter, provider)) //
 						.filter(Objects::nonNull) //
+						.sorted(BY_RELEVANCE) //
 						.collect(Collectors.toList());
 				if (!entries.isEmpty()) {
 					entriesPerProvider.put(provider, entries);
 				}
 			}
 		} else {
-			int numberOfSlotsLeft = perfectMatch != null ? maxNumberOfItemsInTable -1 : maxNumberOfItemsInTable;
-			while (!elementsForProviders.isEmpty() && numberOfSlotsLeft > 0) {
-				int nbEntriesPerProvider = numberOfSlotsLeft / elementsForProviders.size();
-				if (nbEntriesPerProvider > 0) {
-					for (Entry<QuickAccessProvider, List<QuickAccessElement>> elementsPerProvider : elementsForProviders
-							.entrySet()) {
-						QuickAccessProvider provider = elementsPerProvider.getKey();
-						List<QuickAccessElement> elements = elementsPerProvider.getValue();
-						int toPickEntries = nbEntriesPerProvider;
-						while (toPickEntries > 0 && !elements.isEmpty()) {
-							QuickAccessElement element = elements.remove(0);
-							QuickAccessEntry entry = new QuickAccessMatcher(element).match(filter, provider);
-							if (entry != null) {
-								numberOfSlotsLeft--;
-								toPickEntries--;
-								if (!entriesPerProvider.containsKey(provider)) {
-									entriesPerProvider.put(provider, new LinkedList<>());
-								}
-								entriesPerProvider.get(provider).add(entry);
-							}
-						}
+			int numberOfSlotsLeft = perfectMatch != null ? maxNumberOfItemsInTable - 1 : maxNumberOfItemsInTable;
+			// Score every candidate and keep the globally highest-ranked entries, so a
+			// strong match wins a slot regardless of which provider produced it
+			List<QuickAccessEntry> matched = new ArrayList<>();
+			for (Entry<QuickAccessProvider, List<QuickAccessElement>> elementsPerProvider : elementsForProviders
+					.entrySet()) {
+				if (aMonitor.isCanceled()) {
+					break;
+				}
+				QuickAccessProvider provider = elementsPerProvider.getKey();
+				for (QuickAccessElement element : elementsPerProvider.getValue()) {
+					if (element == perfectMatch) {
+						continue;
 					}
-				} else {
-					for (Entry<QuickAccessProvider, List<QuickAccessElement>> elementsForProvider : elementsForProviders
-							.entrySet()) {
-						if (numberOfSlotsLeft > 0) {
-							QuickAccessProvider provider = elementsForProvider.getKey();
-							List<QuickAccessElement> elements = elementsForProvider.getValue();
-							boolean entryPicked = false;
-							while (!entryPicked && !elements.isEmpty()) {
-								QuickAccessElement element = elements.remove(0);
-								QuickAccessEntry entry = new QuickAccessMatcher(element).match(filter, provider);
-								if (entry != null) {
-									numberOfSlotsLeft--;
-									entryPicked = true;
-									if (!entriesPerProvider.containsKey(provider)) {
-										entriesPerProvider.put(provider, new LinkedList<>());
-									}
-									entriesPerProvider.get(provider).add(entry);
-								}
-							}
-						}
+					QuickAccessEntry entry = matcher.match(element, finalFilter, provider);
+					if (entry != null) {
+						matched.add(entry);
 					}
 				}
-				Set<QuickAccessProvider> exhaustedProviders = new HashSet<>();
-				elementsForProviders.forEach((provider, elements) -> {
-					if (elements.isEmpty()) {
-						exhaustedProviders.add(provider);
-					}
-				});
-				exhaustedProviders.forEach(elementsForProviders::remove);
+			}
+			matched.sort(BY_RELEVANCE);
+			int slots = Math.max(0, numberOfSlotsLeft);
+			List<QuickAccessEntry> winners = matched.subList(0, Math.min(slots, matched.size()));
+			// Group the winners back per provider for the table, keeping providers in
+			// registration order and entries in relevance order within each provider
+			for (QuickAccessProvider provider : elementsForProviders.keySet()) {
+				List<QuickAccessEntry> group = winners.stream().filter(entry -> entry.provider == provider)
+						.collect(Collectors.toCollection(LinkedList::new));
+				if (!group.isEmpty()) {
+					entriesPerProvider.put(provider, group);
+				}
 			}
 		}
 		//
@@ -561,34 +547,6 @@ public abstract class QuickAccessContents {
 		}
 		res.addAll(entriesPerProvider.values());
 		return (List<QuickAccessEntry>[]) res.toArray(new List<?>[res.size()]);
-	}
-
-	/*
-	 * Consider whether we could directly check the "matchQuality" here, but it
-	 * seems to be a more expensive operation
-	 */
-	private static List<QuickAccessElement> putPrefixMatchFirst(List<QuickAccessElement> elements, String prefix) {
-		List<QuickAccessElement> res = new ArrayList<>(elements);
-		List<Integer> matchingIndexes = new ArrayList<>();
-		for (int i = 0; i < elements.size(); i++) {
-			if (elements.get(i).getLabel().toLowerCase().startsWith(prefix.toLowerCase())) {
-				matchingIndexes.add(Integer.valueOf(i));
-			}
-		}
-		int currentMatchIndex = 0;
-		int currentNonMatchIndex = matchingIndexes.size();
-		for (int i = 0; i < res.size(); i++) {
-			boolean isMatch = !matchingIndexes.isEmpty() && matchingIndexes.iterator().next().intValue() == i;
-			if (isMatch) {
-				matchingIndexes.remove(0);
-				res.set(currentMatchIndex, elements.get(i));
-				currentMatchIndex++;
-			} else {
-				res.set(currentNonMatchIndex, elements.get(i));
-				currentNonMatchIndex++;
-			}
-		}
-		return res;
 	}
 
 	Pattern categoryPattern;

@@ -114,4 +114,82 @@ public final class QuickAccessMatching {
 		}
 		return QuickAccessEntry.MATCH_GOOD;
 	}
+
+	/**
+	 * Sentinel returned by {@link #score} when the filter is not a subsequence of
+	 * the text.
+	 */
+	public static final int SCORE_NONE = Integer.MIN_VALUE / 2;
+
+	private static final int MATCH_BASE = 16;
+	private static final int BOUNDARY_BONUS = 30;
+	private static final int CONSECUTIVE_BONUS = 15;
+	private static final int PREFIX_BONUS = 8;
+	private static final int LEADING_GAP_PENALTY = 3;
+	private static final int MAX_LEADING_GAP = 5;
+	private static final int MAX_LENGTH_PENALTY = 20;
+
+	/**
+	 * Continuous relevance score for ranking; higher is better. Rewards matches at
+	 * word boundaries, consecutive characters and a prefix, and lightly penalises
+	 * leading gaps and longer text. Wildcard and whitespace characters in the
+	 * filter are ignored and matching is case-insensitive.
+	 *
+	 * @param text   the candidate text, in its original case
+	 * @param filter the user filter
+	 * @return the score, or {@link #SCORE_NONE} if the filter is not a subsequence
+	 *         of the text
+	 */
+	public static int score(String text, String filter) {
+		String needle = filter.toLowerCase().replaceAll("[\\s*?]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (needle.isEmpty()) {
+			return 0;
+		}
+		int score = 0;
+		int firstMatch = -1;
+		int prevMatch = -2;
+		int j = 0;
+		for (int i = 0; i < text.length() && j < needle.length(); i++) {
+			if (Character.toLowerCase(text.charAt(i)) != needle.charAt(j)) {
+				continue;
+			}
+			if (firstMatch < 0) {
+				firstMatch = i;
+			}
+			int charScore = MATCH_BASE;
+			if (isBoundary(text, i)) {
+				charScore += BOUNDARY_BONUS;
+			}
+			if (prevMatch == i - 1) {
+				charScore += CONSECUTIVE_BONUS;
+			}
+			score += charScore;
+			prevMatch = i;
+			j++;
+		}
+		if (j < needle.length()) {
+			return SCORE_NONE;
+		}
+		if (firstMatch == 0) {
+			score += PREFIX_BONUS;
+		}
+		score -= Math.min(firstMatch, MAX_LEADING_GAP) * LEADING_GAP_PENALTY;
+		score -= Math.min(text.length(), MAX_LENGTH_PENALTY);
+		return score;
+	}
+
+	private static boolean isBoundary(String text, int i) {
+		if (i == 0) {
+			return true;
+		}
+		char prev = text.charAt(i - 1);
+		char cur = text.charAt(i);
+		if (!Character.isLetterOrDigit(prev)) {
+			return true;
+		}
+		if (Character.isUpperCase(cur) && !Character.isUpperCase(prev)) {
+			return true;
+		}
+		return Character.isDigit(cur) && !Character.isDigit(prev);
+	}
 }
