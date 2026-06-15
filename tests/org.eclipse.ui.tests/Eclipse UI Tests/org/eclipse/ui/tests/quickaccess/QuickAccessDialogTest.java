@@ -243,14 +243,14 @@ public class QuickAccessDialogTest {
 				.getService(IHandlerService.class);
 		// Run the handler to turn on show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() != defaultCount, TIMEOUT);
+		processEventsUntil(() -> table.getItemCount() > defaultCount, TIMEOUT);
 		final int allCount = table.getItemCount();
 		assertTrue(allCount > defaultCount, "Turning on show all should display more items");
 		assertEquals(oldFirstItemText, table.getItem(0).getText(1), "Turning on show all should not change the top item");
 
 		// Run the handler to turn off show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() != allCount, TIMEOUT);
+		processEventsUntil(() -> table.getItemCount() < allCount, TIMEOUT);
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue(table.getItemCount() < allCount, "Turning off show all should limit items shown");
 		assertEquals(oldFirstItemText, table.getItem(0).getText(1), "Turning off show all should not change the top item");
