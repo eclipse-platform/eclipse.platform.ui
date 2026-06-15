@@ -16,6 +16,8 @@
 package org.eclipse.e4.ui.bindings.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -24,7 +26,11 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -195,6 +201,57 @@ public class KeyDispatcherTest {
 		shell.notifyListeners(SWT.KeyDown, event);
 
 		assertTrue(handler.q2);
+	}
+
+	/**
+	 * Regression test for https://github.com/eclipse-platform/eclipse.platform.ui/issues/4080
+	 * <p>
+	 * A handler's enabled state may be stale from a previous UI-refresh cycle and return
+	 * {@code false} even though the handler is capable of handling the command and would execute
+	 * it successfully. {@link KeyBindingDispatcher#executeCommand} must return {@code true}
+	 * whenever the handler is capable of handling the command, so that the caller consumes the key
+	 * event and prevents the OS from also processing it natively — which would cause the command to
+	 * execute twice.
+	 */
+	@Test
+	public void testExecuteCommandReturnsTrueWhenHandlerEnabledStateIsStale() throws Exception {
+		// Spy on an AbstractHandler (IHandler2) whose enabled state starts stale (false) but
+		// refreshes to true when Command.executeWithChecks() calls setEnabled(appContext).
+		AbstractHandler staleHandler = spy(new AbstractHandler() {
+			{
+				setBaseEnabled(false); // stale: disabled without an execution context
+			}
+
+			@Override
+			public void setEnabled(Object evaluationContext) {
+				setBaseEnabled(evaluationContext != null);
+			}
+
+			@Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				return null;
+			}
+		});
+
+		EHandlerService hs = workbenchContext.get(EHandlerService.class);
+		hs.activateHandler(TEST_ID1, staleHandler);
+
+		ECommandService cs = workbenchContext.get(ECommandService.class);
+		ParameterizedCommand paramCmd = cs.createCommand(TEST_ID1, null);
+		Command command = paramCmd.getCommand();
+		command.setHandler(staleHandler);
+
+		assertFalse(command.isEnabled(), "Precondition: command.isEnabled() must be false (stale state)");
+
+		Event event = new Event();
+		event.type = SWT.KeyDown;
+		event.stateMask = SWT.CTRL;
+		event.keyCode = 'A';
+
+		boolean result = dispatcher.executeCommand(paramCmd, event);
+
+		assertTrue(result, "executeCommand() must return true when the handler is capable of execution");
+		verify(staleHandler, times(1)).execute(any(ExecutionEvent.class));
 	}
 
 	@Test
