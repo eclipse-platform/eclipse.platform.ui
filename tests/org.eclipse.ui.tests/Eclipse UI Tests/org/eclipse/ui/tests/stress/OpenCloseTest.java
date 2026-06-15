@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.stress;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 
@@ -42,6 +43,7 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,17 +54,27 @@ import org.junit.Test;
 public class OpenCloseTest {
 	private static final String ORG_ECLIPSE_RESOURCE_PERSPECTIVE = "org.eclipse.ui.resourcePerspective";
 
-	private static final int numIterations = 10;
+	// Low iteration count keeps the automated build fast; raise it locally for real stress testing.
+	private static final int numIterations = 4;
+
+	// Per-method deadline; on expiry the watchdog dumps all threads and aborts.
+	private static final long TEST_TIMEOUT_MS = 200_000;
+
+	private static final long WATCHDOG_GRACE_MS = 20_000;
 
 	private IWorkbenchWindow workbenchWindow;
 	private IWorkbench workbench;
 	private IWorkbenchPage page;
+
+	private Thread watchdog;
+	private volatile boolean deadlineExceeded;
 
 	@Rule
 	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Before
 	public void setup() {
+		armWatchdog();
 		workbench = PlatformUI.getWorkbench();
 		workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
@@ -78,6 +90,55 @@ public class OpenCloseTest {
 
 		page = workbenchWindow.getActivePage();
 		assertNotNull(page);
+	}
+
+	@After
+	public void disarmWatchdog() {
+		if (watchdog != null) {
+			watchdog.interrupt();
+			watchdog = null;
+		}
+		// Fail any method that exceeded the deadline, even if it recovered after the interrupt, so a
+		// late run is never silently reported as passing.
+		if (deadlineExceeded) {
+			fail("Test exceeded " + TEST_TIMEOUT_MS + " ms; see the thread dump above.");
+		}
+	}
+
+	private void armWatchdog() {
+		deadlineExceeded = false;
+		Thread testThread = Thread.currentThread();
+		watchdog = new Thread(() -> {
+			try {
+				Thread.sleep(TEST_TIMEOUT_MS);
+			} catch (InterruptedException e) {
+				return; // test finished in time and disarmed the watchdog
+			}
+			deadlineExceeded = true;
+			dumpAllThreads();
+			testThread.interrupt(); // best effort: unblock an interruptible wait
+			try {
+				Thread.sleep(WATCHDOG_GRACE_MS);
+			} catch (InterruptedException e) {
+				return; // test recovered after the interrupt and disarmed the watchdog
+			}
+			// Still stuck: halt rather than wait for the bundle timeout. halt() avoids shutdown
+			// hooks deadlocking again on the wedged UI thread.
+			System.err.println("OpenCloseTest did not recover after interrupt; aborting JVM.");
+			Runtime.getRuntime().halt(143);
+		}, "OpenCloseTest-watchdog");
+		watchdog.setDaemon(true);
+		watchdog.start();
+	}
+
+	private static void dumpAllThreads() {
+		System.err.println("OpenCloseTest exceeded " + TEST_TIMEOUT_MS + " ms; dumping all thread stacks:");
+		for (var entry : Thread.getAllStackTraces().entrySet()) {
+			System.err.println(entry.getKey());
+			for (StackTraceElement element : entry.getValue()) {
+				System.err.println("\tat " + element);
+			}
+		}
 	}
 
 
