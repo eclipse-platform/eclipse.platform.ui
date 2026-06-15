@@ -45,7 +45,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class MaximizableChildrenTag {
+public class MaximizableChildrenTagTest {
 
 	private static final String MAXIMIZEABLE_CHILDREN = IPresentationEngine.MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG;
 	private Shell shell;
