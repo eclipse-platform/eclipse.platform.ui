@@ -321,7 +321,7 @@ public class QuickAccessDialogTest {
 		 * wait for the dialog initialization, to avoid race conditions later on in the test, see:
 		 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/4009
 		 */
-		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT * 1000,
+		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
 				() -> dialog.infoText != null),
 				"Unexpected dialog info: " + dialog.infoText);
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
