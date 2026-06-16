@@ -147,9 +147,12 @@ public abstract class QuickAccessContents {
 	/**
 	 * Refreshes the contents of the quick access shell
 	 *
-	 * @param filter The filter text to apply to results
+	 * @param filterInput The filter text to apply to results
 	 */
-	public void updateProposals(String filter) {
+	public void updateProposals(String filterInput) {
+		// Lower-case once so all callers share one filter string; the matcher and
+		// previous-pick lookup also require a lower-cased filter.
+		final String filter = filterInput == null ? "" : filterInput.toLowerCase(); //$NON-NLS-1$
 		if (Policy.DEBUG_QUICK_ACCESS) {
 			trace("Updating proposals with filter: \"" + filter + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -168,6 +171,8 @@ public abstract class QuickAccessContents {
 		String computingMessage = NLS.bind(QuickAccessMessages.QuickaAcessContents_computeMatchingEntries, filter);
 		int maxNumberOfItemsInTable = computeNumberOfItems();
 		lastComputedItemCount = maxNumberOfItemsInTable;
+		// Captured to detect a show-all toggle while this compute runs.
+		final boolean requestShowAllMatches = showAllMatches;
 		AtomicReference<List<QuickAccessEntry>[]> entries = new AtomicReference<>();
 		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
 			entries.set(
@@ -203,12 +208,20 @@ public abstract class QuickAccessContents {
 							", entries: " + toIds(entries)); //$NON-NLS-1$
 				}
 				computingFeedbackJob.cancel();
-				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
-						&& !table.isDisposed()) {
-					if (Policy.DEBUG_QUICK_ACCESS) {
-						trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
-					}
+				if (event.getResult().isOK() && !table.isDisposed()) {
 					display.asyncExec(() -> {
+						if (table.isDisposed() || filterText == null || filterText.isDisposed()) {
+							return;
+						}
+						// Apply if the results still match the current filter and show-all,
+						// not only when this is the last scheduled job.
+						if (!filter.equals(filterText.getText().toLowerCase())
+								|| requestShowAllMatches != showAllMatches) {
+							return;
+						}
+						if (Policy.DEBUG_QUICK_ACCESS) {
+							trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
+						}
 						computingFeedbackJob.cancel();
 						refreshTable(perfectMatch, entries.get(), filter);
 					});
