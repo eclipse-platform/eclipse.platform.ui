@@ -85,6 +85,10 @@ public class QuickAccessDialogTest {
 	}
 
 	private static final int TIMEOUT = 5000;
+	// Generous bound for the one-time cold initialization of the lazy providers.
+	private static final int WARMUP_TIMEOUT = 60000;
+	// The lazy providers initialize once per JVM, so warm them only once.
+	private static boolean providersWarmedUp;
 	// As defined in QuickAccessDialog and in SearchField
 	private static final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
 	private static final Predicate<Shell> isQuickAccessShell = shell -> shell.getText()
@@ -109,6 +113,15 @@ public class QuickAccessDialogTest {
 		activeWorkbenchWindow = openTestWindow();
 		QuickAccessDialog warmupDialog = new QuickAccessDialog(activeWorkbenchWindow, null);
 		warmupDialog.open();
+		if (!providersWarmedUp) {
+			// Warm the lazy providers once with a real filter so their slow first query
+			// runs here, not inside a test's timed wait. An empty filter skips them.
+			Text warmupText = warmupDialog.getQuickAccessContents().getFilterText();
+			Table warmupTable = warmupDialog.getQuickAccessContents().getTable();
+			warmupText.setText("t");
+			DisplayHelper.waitForCondition(warmupText.getDisplay(), WARMUP_TIMEOUT, () -> warmupTable.getItemCount() > 0);
+			providersWarmedUp = true;
+		}
 		warmupDialog.close();
 	}
 
