@@ -94,11 +94,6 @@ public interface CSSStylableElement extends Element {
 	public void onStylesApplied(NodeList nodes);
 
 	/**
-	 * Return the {@link CSSExtendedProperties} of the native widget.
-	 */
-	public CSSExtendedProperties getStyle();
-
-	/**
 	 * Method called after the {@link CSSStylableElement} was linked to the
 	 * native widget. You can add UI listener into this method.
 	 */
