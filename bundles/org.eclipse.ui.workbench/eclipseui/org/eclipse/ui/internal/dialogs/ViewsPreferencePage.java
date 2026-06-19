@@ -120,6 +120,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private Button themingEnabled;
 	private Button rescaleAtRuntime;
+	private Button useDesaturatedDisabledIcons;
 
 	private Button hideIconsForViewTabs;
 	private Button showFullTextForViewTabs;
@@ -147,6 +148,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
 			createThemeIndependentComposits(comp);
+			createDisabledIconsButtons(comp);
 			createRescaleAtRuntimeCheckButton(comp);
 			return comp;
 		}
@@ -204,7 +206,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
 		createShowDirtyIndicatorForTabs(comp);
-
+		createDisabledIconsButtons(comp);
 		createRescaleAtRuntimeCheckButton(comp);
 
 		if (currentTheme != null) {
@@ -254,6 +256,18 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		} else {
 			rescaleAtRuntime.setToolTipText(WorkbenchMessages.RescaleAtRuntimeDescription);
 		}
+	}
+
+	private void createDisabledIconsButtons(Composite parent) {
+		createLabel(parent, ""); //$NON-NLS-1$
+		createLabel(parent, WorkbenchMessages.ViewsPreference_disabledIcons_description);
+
+		boolean initialStateDesaturatedDisabledIcons = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS);
+		useDesaturatedDisabledIcons = createCheckButton(parent,
+				WorkbenchMessages.ViewsPreference_useDesaturatedDisabledIcons, initialStateDesaturatedDisabledIcons);
+		useDesaturatedDisabledIcons
+				.setToolTipText(WorkbenchMessages.ViewsPreference_useDesaturatedDisabledIcons_tooltip);
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
@@ -486,6 +500,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 					.getSelection();
 			prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
 		}
+		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS,
+				useDesaturatedDisabledIcons.getSelection());
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
@@ -629,6 +645,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
+		useDesaturatedDisabledIcons
+				.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_DESATURATED_DISABLED_ICONS));
 
 		if (rescaleAtRuntime != null) {
 			IPreferenceStore configurationStore = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
