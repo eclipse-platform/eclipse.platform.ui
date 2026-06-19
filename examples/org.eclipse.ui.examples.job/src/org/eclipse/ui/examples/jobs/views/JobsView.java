@@ -214,21 +214,28 @@ public class JobsView extends ViewPart {
 		join.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		join.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> joinTestJobs()));
 
-		// join the running test jobs
+		// Cancel the job family (all TestJobs have the same family)
+		Button cancelFamily = new Button(group, SWT.PUSH);
+		cancelFamily.setText("Cancel Job family"); //$NON-NLS-1$
+		cancelFamily.setToolTipText("IJobManager.cancel() on test jobs"); //$NON-NLS-1$
+		cancelFamily.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		cancelFamily.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> cancelTestJobs()));
+
+		// Use a runnable context
 		Button window = new Button(group, SWT.PUSH);
 		window.setText("Runnable in Window"); //$NON-NLS-1$
 		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
 		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		window.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> runnableInWindow()));
 
-		// join the running test jobs
+		// Put all jobs to sleep
 		Button sleep = new Button(group, SWT.PUSH);
 		sleep.setText("Sleep"); //$NON-NLS-1$
 		sleep.setToolTipText("Calls sleep() on all TestJobs"); //$NON-NLS-1$
 		sleep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		sleep.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doSleep()));
 
-		// join the running test jobs
+		// Wake up all jobs
 		Button wake = new Button(group, SWT.PUSH);
 		wake.setText("WakeUp"); //$NON-NLS-1$
 		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
@@ -538,6 +545,15 @@ public class JobsView extends ViewPart {
 			// an
 			// exception. This should either be propagated or displayed to the
 			// user
+			e.printStackTrace();
+		}
+	}
+
+	private void cancelTestJobs() {
+		try {
+			PlatformUI.getWorkbench().getProgressService()
+					.busyCursorWhile(monitor -> Job.getJobManager().cancel(TestJob.FAMILY_TEST_JOB));
+		} catch (InterruptedException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}

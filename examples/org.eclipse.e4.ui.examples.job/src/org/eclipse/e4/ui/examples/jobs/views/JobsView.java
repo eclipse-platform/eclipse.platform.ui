@@ -247,7 +247,19 @@ public class JobsView {
 			}
 		});
 
-		// join the running test jobs
+		// Cancel the job family (all TestJobs have the same family)
+		Button cancelFamily = new Button(group, SWT.PUSH);
+		cancelFamily.setText("Cancel Job family"); //$NON-NLS-1$
+		cancelFamily.setToolTipText("IJobManager.cancel() on test jobs"); //$NON-NLS-1$
+		cancelFamily.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		cancelFamily.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				cancelTestJobs();
+			}
+		});
+
+		// Put all jobs to sleep
 		Button sleep = new Button(group, SWT.PUSH);
 		sleep.setText("Sleep"); //$NON-NLS-1$
 		sleep.setToolTipText("Calls sleep() on all TestJobs"); //$NON-NLS-1$
@@ -259,7 +271,7 @@ public class JobsView {
 			}
 		});
 
-		// join the running test jobs
+		// Wake up all jobs
 		Button wake = new Button(group, SWT.PUSH);
 		wake.setText("WakeUp"); //$NON-NLS-1$
 		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
@@ -536,6 +548,14 @@ public class JobsView {
 			// an
 			// exception. This should either be propagated or displayed to the
 			// user
+			e.printStackTrace();
+		}
+	}
+
+	private void cancelTestJobs() {
+		try {
+			progressService.busyCursorWhile(monitor -> Job.getJobManager().cancel(TestJob.FAMILY_TEST_JOB));
+		} catch (InterruptedException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
