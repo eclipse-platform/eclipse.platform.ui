@@ -391,6 +391,45 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
+	 * Queries every provider that requires UI access in a single UI-thread pass and
+	 * returns their sorted elements keyed by provider. Batching the queries avoids a
+	 * blocking worker-to-UI round-trip per provider on each keystroke.
+	 */
+	private Map<QuickAccessProvider, List<QuickAccessElement>> computeUiProviderElements(String filter, String category,
+			IProgressMonitor monitor) {
+		List<QuickAccessProvider> uiProviders = new ArrayList<>();
+		for (QuickAccessProvider provider : providers) {
+			if (!provider.requiresUiAccess()) {
+				continue;
+			}
+			boolean isPreviousPickProvider = provider instanceof PreviousPicksProvider;
+			if (category != null && !category.equalsIgnoreCase(provider.getName()) && !isPreviousPickProvider) {
+				continue;
+			}
+			if (!filter.isEmpty() || isPreviousPickProvider || showAllMatches) {
+				uiProviders.add(provider);
+			}
+		}
+		if (uiProviders.isEmpty() || monitor.isCanceled() || table == null || table.isDisposed()) {
+			return Collections.emptyMap();
+		}
+		Map<QuickAccessProvider, List<QuickAccessElement>> result = new HashMap<>();
+		table.getDisplay().syncExec(() -> {
+			for (QuickAccessProvider provider : uiProviders) {
+				if (monitor.isCanceled()) {
+					return;
+				}
+				try {
+					result.put(provider, Arrays.asList(provider.getElementsSorted(filter, monitor)));
+				} catch (RuntimeException e) {
+					WorkbenchPlugin.log(e);
+				}
+			}
+		});
+		return result;
+	}
+
+	/**
 	 * Returns a list per provider containing matching {@link QuickAccessEntry} that
 	 * should be displayed in the table given a text filter and a perfect match
 	 * entry that should be given priority. The number of items returned is affected
@@ -417,6 +456,11 @@ public abstract class QuickAccessContents {
 		}
 		final String finalFilter = filter;
 
+		// Query providers that must run on the UI thread once, in a single UI pass,
+		// rather than a separate blocking worker-to-UI round-trip per provider.
+		Map<QuickAccessProvider, List<QuickAccessElement>> uiProviderElements = computeUiProviderElements(finalFilter,
+				category, aMonitor);
+
 		// collect matching elements
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
 				providers.length);
@@ -430,28 +474,12 @@ public abstract class QuickAccessContents {
 				continue;
 			}
 			if (!filter.isEmpty() || isPreviousPickProvider || showAllMatches) {
-				AtomicReference<List<QuickAccessElement>> sortedElementRef = new AtomicReference<>();
+				List<QuickAccessElement> sortedElements;
 				if (provider.requiresUiAccess()) {
-					UIJob job = new UIJob(
-							NLS.bind(QuickAccessMessages.QuickAccessContents_processingProviderInUI,
-									provider.getName())) {
-						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							sortedElementRef.set(Arrays.asList(provider.getElementsSorted(finalFilter, monitor)));
-							return Status.OK_STATUS;
-						}
-					};
-					job.setPriority(Job.INTERACTIVE);
-					job.schedule();
-					try {
-						job.join(0, new NullProgressMonitor());
-					} catch (Exception e) {
-						WorkbenchPlugin.log(e);
-					}
+					sortedElements = uiProviderElements.get(provider);
 				} else {
-					sortedElementRef.set(Arrays.asList(provider.getElementsSorted(filter, aMonitor)));
+					sortedElements = Arrays.asList(provider.getElementsSorted(filter, aMonitor));
 				}
-				List<QuickAccessElement> sortedElements = sortedElementRef.get();
 				if (sortedElements == null) {
 					sortedElements = Collections.emptyList();
 				}
