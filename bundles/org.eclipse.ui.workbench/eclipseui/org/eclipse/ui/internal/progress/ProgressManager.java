@@ -955,8 +955,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * Schedules the job that will open the progress monitor dialog.
 	 *
 	 * @param dialog the dialog to open
+	 * @return the job that was scheduled to open the dialog
 	 */
-	private void scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
+	private Job scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
 		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.ProgressManager_openJobName) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -969,7 +970,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		};
 		updateJob.setSystem(true);
 		updateJob.schedule(getLongOperationTime());
-
+		return updateJob;
 	}
 
 	/**
@@ -1072,11 +1073,19 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			// Backward compatible code.
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
 					ProgressManagerUtil.getDefaultParent());
-			dialog.setOpenOnRun(false);
-			if (!shouldRunInBackground()) {
-				scheduleProgressMonitorJob(dialog);
+			if (shouldRunInBackground()) {
+				dialog.setOpenOnRun(false);
+				dialog.run(fork, cancelable, runnable);
+			} else {
+				Job showDialogJob = scheduleProgressMonitorJob(dialog);
+				try {
+					dialog.run(fork, cancelable, runnable);
+				} finally {
+					// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+					// the operation finishes or unwinds with an exception.
+					showDialogJob.cancel();
+				}
 			}
-			dialog.run(fork, cancelable, runnable);
 			return;
 		}
 
