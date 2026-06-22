@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -77,6 +79,14 @@ public class MMenuItemTest {
 
 	@Inject
 	private MApplication application;
+
+	/**
+	 * Strong references to processing add-ons created during a test. The
+	 * dependency injection event subscriptions that activate handlers reference
+	 * these add-ons only weakly, so without a strong reference they can be
+	 * garbage collected before the handler is activated.
+	 */
+	private final List<Object> processingAddons = new ArrayList<>();
 
 	@BeforeEach
 	public void setUp() {
@@ -763,15 +773,8 @@ public class MMenuItemTest {
 		activePart.getContext().set("key", "active");
 		inactivePart.getContext().set("key", "inactive");
 
-		// Ensure all pending UI events are processed before triggering the menu item
-		for (int i = 0; i < 10; i++) {
-			contextRule.spinEventLoop();
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-		}
+		// Process pending UI events before triggering the menu item.
+		contextRule.spinEventLoop();
 
 		assertFalse(executed[0]);
 
@@ -830,10 +833,11 @@ public class MMenuItemTest {
 
 		application.getCommands().add(command);
 		application.getChildren().add(window);
-		// The handler processing addon cannot run until the context
-		// contains the MApplication
-		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
-		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);
+		// The handler processing addon cannot run until the context contains the
+		// MApplication. Keep strong references so the add-ons are not garbage
+		// collected before they activate the handler (see processingAddons).
+		processingAddons.add(ContextInjectionFactory.make(CommandProcessingAddon.class, appContext));
+		processingAddons.add(ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext));
 
 		contextRule.createAndRunWorkbench(window);
 
@@ -846,19 +850,8 @@ public class MMenuItemTest {
 		activePart.getContext().set("key", "active");
 		inactivePart.getContext().set("key", "inactive");
 
-		// Ensure all pending UI events are processed before triggering the menu item
-		// This prevents race conditions where the handler may not be fully registered yet
-		for (int i = 0; i < 50; i++) {
-			contextRule.spinEventLoop();
-			if (((MenuItem) menuItem.getWidget()).getEnabled()) {
-				break;
-			}
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-		}
+		// Process pending UI events before triggering the menu item.
+		contextRule.spinEventLoop();
 
 		assertFalse(executed[0]);
 		assertEquals(activePart, window.getContext().get(EPartService.class)
