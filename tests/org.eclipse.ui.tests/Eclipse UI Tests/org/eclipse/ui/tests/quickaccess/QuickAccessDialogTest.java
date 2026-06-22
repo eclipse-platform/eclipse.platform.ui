@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -46,6 +47,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
@@ -85,6 +87,9 @@ public class QuickAccessDialogTest {
 	}
 
 	private static final int TIMEOUT = 5000;
+	// Generous safety bound for joining the streaming compute job; only consumed if
+	// that job genuinely hangs, never on a healthy run.
+	private static final int COMPUTE_TIMEOUT = 30000;
 	// Generous bound for the one-time cold initialization of the lazy providers.
 	private static final int WARMUP_TIMEOUT = 60000;
 	// The lazy providers initialize once per JVM, so warm them only once.
@@ -165,16 +170,15 @@ public class QuickAccessDialogTest {
 		assertEquals(0, table.getItemCount(), "Quick access table should be empty");
 
 		text.setText("T");
-		processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
+		waitForQuickAccessResults(table.getDisplay());
 		int oldCount = table.getItemCount();
 		assertTrue(oldCount > 3, "Not enough quick access items for simple filter");
 		assertTrue(oldCount < MAXIMUM_NUMBER_OF_ELEMENTS, "Too many quick access items for size of table");
 		final String oldFirstItemText = table.getItem(0).getText(1);
 
 		text.setText("B"); // The letter mustn't be part of the previous 1st proposal
-		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(),
-				TIMEOUT,
-				() -> table.getItemCount() > 1 && !table.getItem(0).getText(1).equals(oldFirstItemText)),
+		waitForQuickAccessResults(table.getDisplay());
+		assertTrue(table.getItemCount() > 1 && !table.getItem(0).getText(1).equals(oldFirstItemText),
 				"The quick access items should have changed");
 		int newCount = table.getItemCount();
 		assertTrue(newCount > 3, "Not enough quick access items for simple filter");
@@ -191,10 +195,9 @@ public class QuickAccessDialogTest {
 		assertEquals(0, table.getItemCount(), "Quick access table should be empty");
 
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
-		assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), TIMEOUT, () ->
-				dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL)),
-				"Missing contributed element"
-		);
+		waitForQuickAccessResults(dialog.getShell().getDisplay());
+		assertTrue(dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL),
+				"Missing contributed element");
 	}
 
 	@Test
@@ -260,7 +263,7 @@ public class QuickAccessDialogTest {
 
 		// Set a filter to get some items
 		text.setText("T");
-		processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
+		waitForQuickAccessResults(table.getDisplay());
 		final int defaultCount = table.getItemCount();
 		assertTrue(defaultCount > 3, "Not enough quick access items for simple filter");
 		assertTrue(defaultCount < MAXIMUM_NUMBER_OF_ELEMENTS, "Too many quick access items for size of table");
@@ -270,21 +273,21 @@ public class QuickAccessDialogTest {
 				.getService(IHandlerService.class);
 		// Run the handler to turn on show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() > defaultCount, TIMEOUT);
+		waitForQuickAccessResults(table.getDisplay());
 		final int allCount = table.getItemCount();
 		assertTrue(allCount > defaultCount, "Turning on show all should display more items");
 		assertEquals(oldFirstItemText, table.getItem(0).getText(1), "Turning on show all should not change the top item");
 
 		// Run the handler to turn off show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() < allCount, TIMEOUT);
+		waitForQuickAccessResults(table.getDisplay());
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue(table.getItemCount() < allCount, "Turning off show all should limit items shown");
 		assertEquals(oldFirstItemText, table.getItem(0).getText(1), "Turning off show all should not change the top item");
 
 		// Run the handler to turn on show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() == allCount, TIMEOUT);
+		waitForQuickAccessResults(table.getDisplay());
 		assertEquals(allCount, table.getItemCount(), "Turning on show all twice shouldn't change the items");
 		assertEquals(oldFirstItemText, table.getItem(0).getText(1), "Turning on show all twice shouldn't change the top item");
 
@@ -295,7 +298,7 @@ public class QuickAccessDialogTest {
 		text = dialog.getQuickAccessContents().getFilterText();
 		Table newTable = dialog.getQuickAccessContents().getTable();
 		text.setText("T");
-		processEventsUntil(() -> newTable.getItemCount() > 1, TIMEOUT);
+		waitForQuickAccessResults(newTable.getDisplay());
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue(newTable.getItemCount() < allCount,
 				"Show all should be turned off when the shell is closed and reopened");
@@ -310,9 +313,8 @@ public class QuickAccessDialogTest {
 		Table firstTable = dialog.getQuickAccessContents().getTable();
 		String quickAccessElementText = "Project Explorer";
 		text.setText(quickAccessElementText);
-		assertTrue(DisplayHelper.waitForCondition(firstTable.getDisplay(),
-				TIMEOUT,
-				() -> dialogContains(dialog, quickAccessElementText)), "Missing entry");
+		waitForQuickAccessResults(firstTable.getDisplay());
+		assertTrue(dialogContains(dialog, quickAccessElementText), "Missing entry");
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		assertNotEquals(0, dialogSettings.getArray("orderedElements").length);
@@ -325,9 +327,8 @@ public class QuickAccessDialogTest {
 		// then try in a new SearchField
 		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
-		assertTrue(DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
-						() -> dialogContains(secondDialog, quickAccessElementText)),
-				"Missing entry in previous pick");
+		waitForQuickAccessResults(secondDialog.getShell().getDisplay());
+		assertTrue(dialogContains(secondDialog, quickAccessElementText), "Missing entry in previous pick");
 	}
 
 	private void activateCurrentElement(QuickAccessDialog dialog) {
@@ -353,17 +354,17 @@ public class QuickAccessDialogTest {
 				"Unexpected dialog info: " + dialog.infoText);
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
 		final Table firstTable = dialog.getQuickAccessContents().getTable();
-		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), TIMEOUT,
-				() -> dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL)),
-				"Unexpected dialog contents: " + getAllEntries(dialog.getQuickAccessContents().getTable()));
+		waitForQuickAccessResults(text.getDisplay());
+		assertTrue(dialogContains(dialog, TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL),
+				"Unexpected dialog contents: " + getAllEntries(firstTable));
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		// then try in a new SearchField
 		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
-		assertTrue(DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
-						() -> getAllEntries(secondDialog.getQuickAccessContents().getTable()).stream()
-								.anyMatch(TestQuickAccessComputer::isContributedItem)),
+		waitForQuickAccessResults(secondDialog.getShell().getDisplay());
+		assertTrue(getAllEntries(secondDialog.getQuickAccessContents().getTable()).stream()
+						.anyMatch(TestQuickAccessComputer::isContributedItem),
 				"Contributed item not found in previous choices");
 	}
 
@@ -374,20 +375,19 @@ public class QuickAccessDialogTest {
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		text.setText(TestIncrementalQuickAccessComputer.ENABLEMENT_QUERY);
 		final Table firstTable = dialog.getQuickAccessContents().getTable();
-		assertTrue(DisplayHelper.waitForCondition(text.getDisplay(), //
-				TIMEOUT, //
-				() -> firstTable.getItemCount() > 0
-						&& TestIncrementalQuickAccessComputer.isContributedItem(getAllEntries(firstTable).get(0))
-		));
+		waitForQuickAccessResults(text.getDisplay());
+		assertTrue(firstTable.getItemCount() > 0
+				&& TestIncrementalQuickAccessComputer.isContributedItem(getAllEntries(firstTable).get(0)),
+				"Contributed item not first in results");
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		// then try in a new SearchField
 		dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		final Table secondTable = dialog.getQuickAccessContents().getTable();
-		assertTrue(DisplayHelper.waitForCondition(secondTable.getDisplay(), TIMEOUT, //
-						() -> getAllEntries(secondTable).stream()
-								.anyMatch(TestIncrementalQuickAccessComputer::isContributedItem)),
+		waitForQuickAccessResults(secondTable.getDisplay());
+		assertTrue(getAllEntries(secondTable).stream()
+						.anyMatch(TestIncrementalQuickAccessComputer::isContributedItem),
 				"Contributed item not found in previous choices");
 	}
 
@@ -398,8 +398,8 @@ public class QuickAccessDialogTest {
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table table = dialog.getQuickAccessContents().getTable();
 		text.setText("P");
-		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> table.getItemCount() > 3),
-				"Not enough quick access items for simple filter");
+		waitForQuickAccessResults(table.getDisplay());
+		assertTrue(table.getItemCount() > 3, "Not enough quick access items for simple filter");
 		assertTrue(table.getItem(0).getText(1).toLowerCase().startsWith("p"), "Non-prefix match first");
 	}
 
@@ -419,8 +419,8 @@ public class QuickAccessDialogTest {
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table table = dialog.getQuickAccessContents().getTable();
 		text.setText("Toggle Split");
-		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> table.getItemCount() > 1),
-				"Not enough quick access items for simple filter");
+		waitForQuickAccessResults(table.getDisplay());
+		assertTrue(table.getItemCount() > 1, "Not enough quick access items for simple filter");
 		assertTrue(table.getItem(0).getText(1).toLowerCase().startsWith("toggle split"), "Non-prefix match first");
 	}
 
@@ -437,6 +437,21 @@ public class QuickAccessDialogTest {
 			}
 			return res.toString();
 		}).toList();
+	}
+
+	/**
+	 * Waits for the streaming Quick Access computation to finish and renders its
+	 * results, so assertions run against settled contents instead of racing a fixed
+	 * timeout. The compute job applies its results through {@code asyncExec}, so once
+	 * the job family is idle the pending render is drained before returning.
+	 */
+	private static void waitForQuickAccessResults(Display display) {
+		boolean computed = DisplayHelper.waitForCondition(display, COMPUTE_TIMEOUT,
+				() -> Job.getJobManager().find(QuickAccessContents.COMPUTE_JOB_FAMILY).length == 0);
+		assertTrue(computed, "Quick Access computation did not finish");
+		while (display.readAndDispatch()) {
+			// drain the asyncExec that renders the streamed results
+		}
 	}
 
 	private boolean dialogContains(QuickAccessDialog dialog, String substring) {

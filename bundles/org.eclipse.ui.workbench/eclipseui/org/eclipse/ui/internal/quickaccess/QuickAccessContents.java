@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,6 +104,12 @@ public abstract class QuickAccessContents {
 
 	/** Trailing-edge debounce window collapsing a burst of shell resizes. */
 	private static final int RESIZE_DEBOUNCE_MS = 100;
+
+	/**
+	 * Family of the background job that computes the matching entries. Lets tests
+	 * join on the streaming compute deterministically instead of polling the table.
+	 */
+	public static final Object COMPUTE_JOB_FAMILY = new Object();
 
 	protected Text filterText;
 
@@ -181,15 +188,49 @@ public abstract class QuickAccessContents {
 		lastComputedItemCount = maxNumberOfItemsInTable;
 		// Captured to detect a show-all toggle while this compute runs.
 		final boolean requestShowAllMatches = showAllMatches;
-		AtomicReference<List<QuickAccessEntry>[]> entries = new AtomicReference<>();
-		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
-			entries.set(
-					computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor));
-			if (Policy.DEBUG_QUICK_ACCESS) {
-				trace("Computed entries: " + toIds(entries)); //$NON-NLS-1$
+		// Set once the first results are rendered, so the "computing" feedback never
+		// flashes over content that has already streamed in.
+		boolean[] rendered = { false };
+		AtomicReference<UIJob> feedbackJobRef = new AtomicReference<>();
+		final Job currentComputeEntriesJob = new Job(computingMessage) {
+			@Override
+			protected IStatus run(IProgressMonitor theMonitor) {
+				// Query providers one at a time and re-render as each returns, so a slow
+				// provider neither holds the UI thread for the whole batch nor delays the
+				// results that are already available.
+				computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor, entries -> {
+					if (table.isDisposed()) {
+						return;
+					}
+					display.asyncExec(() -> {
+						if (table.isDisposed() || filterText == null || filterText.isDisposed()) {
+							return;
+						}
+						// Apply only while the results still match the current filter and
+						// show-all state, and this compute has not been superseded.
+						if (theMonitor.isCanceled() || !filter.equals(filterText.getText().toLowerCase())
+								|| requestShowAllMatches != showAllMatches) {
+							return;
+						}
+						if (Policy.DEBUG_QUICK_ACCESS) {
+							trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
+						}
+						rendered[0] = true;
+						UIJob feedbackJob = feedbackJobRef.get();
+						if (feedbackJob != null) {
+							feedbackJob.cancel();
+						}
+						refreshTable(perfectMatch, entries, filter);
+					});
+				});
+				return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
-			return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-		});
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == COMPUTE_JOB_FAMILY;
+			}
+		};
 		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
 		if (Policy.DEBUG_QUICK_ACCESS) {
 			trace("Will compute proposals with Job: " + currentComputeEntriesJob); //$NON-NLS-1$
@@ -199,41 +240,24 @@ public abstract class QuickAccessContents {
 		UIJob computingFeedbackJob = new UIJob(table.getDisplay(), QuickAccessMessages.QuickAccessContents_computeMatchingEntries_displayFeedback_jobName) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (currentComputeEntriesJob.getResult() == null && !monitor.isCanceled() && !table.isDisposed()) {
+				if (!rendered[0] && currentComputeEntriesJob.getResult() == null && !monitor.isCanceled()
+						&& !table.isDisposed()) {
 					showHintText(computingMessage, grayColor);
 					return Status.OK_STATUS;
 				}
 				return Status.CANCEL_STATUS;
 			}
 		};
+		feedbackJobRef.set(computingFeedbackJob);
 		currentComputeEntriesJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
 				if (Policy.DEBUG_QUICK_ACCESS) {
 					trace("Compute entries Job result: " + event.getResult() + //$NON-NLS-1$
 							", Job: " + currentComputeEntriesJob + //$NON-NLS-1$
-							", last proposals Job: " + computeProposalsJob + //$NON-NLS-1$
-							", entries: " + toIds(entries)); //$NON-NLS-1$
+							", last proposals Job: " + computeProposalsJob); //$NON-NLS-1$
 				}
 				computingFeedbackJob.cancel();
-				if (event.getResult().isOK() && !table.isDisposed()) {
-					display.asyncExec(() -> {
-						if (table.isDisposed() || filterText == null || filterText.isDisposed()) {
-							return;
-						}
-						// Apply if the results still match the current filter and show-all,
-						// not only when this is the last scheduled job.
-						if (!filter.equals(filterText.getText().toLowerCase())
-								|| requestShowAllMatches != showAllMatches) {
-							return;
-						}
-						if (Policy.DEBUG_QUICK_ACCESS) {
-							trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
-						}
-						computingFeedbackJob.cancel();
-						refreshTable(perfectMatch, entries.get(), filter);
-					});
-				}
 			}
 		});
 		this.computeProposalsJob = currentComputeEntriesJob;
@@ -399,59 +423,46 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
-	 * Queries every provider that requires UI access in a single UI-thread pass and
-	 * returns their sorted elements keyed by provider. Batching the queries avoids a
-	 * blocking worker-to-UI round-trip per provider on each keystroke.
+	 * Collects one provider's matching elements. Providers that require UI access are
+	 * queried on the display thread one at a time, so the UI thread is released
+	 * between providers instead of being held for the whole batch.
 	 */
-	private Map<QuickAccessProvider, List<QuickAccessElement>> computeUiProviderElements(String filter, String category,
+	private List<QuickAccessElement> collectProviderElements(QuickAccessProvider provider, String filter,
 			IProgressMonitor monitor) {
-		List<QuickAccessProvider> uiProviders = new ArrayList<>();
-		for (QuickAccessProvider provider : providers) {
-			if (!provider.requiresUiAccess()) {
-				continue;
-			}
-			boolean isPreviousPickProvider = provider instanceof PreviousPicksProvider;
-			if (category != null && !category.equalsIgnoreCase(provider.getName()) && !isPreviousPickProvider) {
-				continue;
-			}
-			if (!filter.isEmpty() || isPreviousPickProvider || showAllMatches) {
-				uiProviders.add(provider);
-			}
+		if (!provider.requiresUiAccess()) {
+			return Arrays.asList(provider.getElementsSorted(filter, monitor));
 		}
-		if (uiProviders.isEmpty() || monitor.isCanceled() || table == null || table.isDisposed()) {
-			return Collections.emptyMap();
+		if (monitor.isCanceled() || table == null || table.isDisposed()) {
+			return Collections.emptyList();
 		}
-		Map<QuickAccessProvider, List<QuickAccessElement>> result = new HashMap<>();
+		AtomicReference<List<QuickAccessElement>> result = new AtomicReference<>(Collections.emptyList());
 		table.getDisplay().syncExec(() -> {
-			for (QuickAccessProvider provider : uiProviders) {
-				if (monitor.isCanceled()) {
-					return;
-				}
-				try {
-					result.put(provider, Arrays.asList(provider.getElementsSorted(filter, monitor)));
-				} catch (RuntimeException e) {
-					WorkbenchPlugin.log(e);
-				}
+			if (monitor.isCanceled() || table.isDisposed()) {
+				return;
+			}
+			try {
+				result.set(Arrays.asList(provider.getElementsSorted(filter, monitor)));
+			} catch (RuntimeException e) {
+				WorkbenchPlugin.log(e);
 			}
 		});
-		return result;
+		return result.get();
 	}
 
 	/**
-	 * Returns a list per provider containing matching {@link QuickAccessEntry} that
-	 * should be displayed in the table given a text filter and a perfect match
-	 * entry that should be given priority. The number of items returned is affected
-	 * by {@link #getShowAllMatches()} and the size of the table's composite.
+	 * Queries each provider in turn and streams the matching entries to {@code render}
+	 * after every provider that contributes, so results appear as they are computed
+	 * rather than only once the slowest provider has finished. The number of entries
+	 * is affected by {@link #getShowAllMatches()} and the size of the table's
+	 * composite.
 	 *
 	 * @param filter       the string text filter to apply, possibly empty
 	 * @param perfectMatch a quick access element that should be given priority or
 	 *                     <code>null</code>
-	 *
-	 * @return the array of lists (one per provider) contains the quick access
-	 *         entries that should be added to the table, possibly empty
+	 * @param render       receives one snapshot (a list per provider) per re-render
 	 */
-	private List<QuickAccessEntry>[] computeMatchingEntries(String filter, QuickAccessElement perfectMatch,
-			int maxNumberOfItemsInTable, IProgressMonitor aMonitor) {
+	private void computeMatchingEntries(String filter, QuickAccessElement perfectMatch, int maxNumberOfItemsInTable,
+			IProgressMonitor aMonitor, Consumer<List<QuickAccessEntry>[]> render) {
 		if (aMonitor == null) {
 			aMonitor = new NullProgressMonitor();
 		}
@@ -464,41 +475,58 @@ public abstract class QuickAccessContents {
 		}
 		final String finalFilter = filter;
 
-		// Query providers that must run on the UI thread once, in a single UI pass,
-		// rather than a separate blocking worker-to-UI round-trip per provider.
-		Map<QuickAccessProvider, List<QuickAccessElement>> uiProviderElements = computeUiProviderElements(finalFilter,
-				category, aMonitor);
-
-		// collect matching elements
+		// Collect elements provider by provider and re-render after each, so results
+		// stream into the table.
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
 				providers.length);
+		boolean anyRendered = false;
 		for (QuickAccessProvider provider : providers) {
 			if (aMonitor.isCanceled()) {
-				break;
+				return;
 			}
 			boolean isPreviousPickProvider = provider instanceof PreviousPicksProvider;
 			// skip if filter contains a category, and current provider isn't this category
 			if (category != null && !category.equalsIgnoreCase(provider.getName()) && !isPreviousPickProvider) {
 				continue;
 			}
-			if (!filter.isEmpty() || isPreviousPickProvider || showAllMatches) {
-				List<QuickAccessElement> sortedElements;
-				if (provider.requiresUiAccess()) {
-					sortedElements = uiProviderElements.get(provider);
-				} else {
-					sortedElements = Arrays.asList(provider.getElementsSorted(filter, aMonitor));
-				}
-				if (sortedElements == null) {
-					sortedElements = Collections.emptyList();
-				}
-				if (!(provider instanceof PreviousPicksProvider)) {
-					for (QuickAccessElement element : sortedElements) {
-						elementsToProviders.put(element, provider);
-					}
-				}
-				elementsForProviders.put(provider, new ArrayList<>(sortedElements));
+			if (finalFilter.isEmpty() && !isPreviousPickProvider && !showAllMatches) {
+				continue;
 			}
+			List<QuickAccessElement> sortedElements = collectProviderElements(provider, finalFilter, aMonitor);
+			if (sortedElements == null) {
+				sortedElements = Collections.emptyList();
+			}
+			if (!isPreviousPickProvider) {
+				for (QuickAccessElement element : sortedElements) {
+					elementsToProviders.put(element, provider);
+				}
+			}
+			elementsForProviders.put(provider, new ArrayList<>(sortedElements));
+			if (sortedElements.isEmpty()) {
+				continue;
+			}
+			render.accept(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
+					aMonitor));
+			anyRendered = true;
 		}
+		// Nothing matched (or only a perfect match exists): render once so the table
+		// reflects the final result rather than stale content.
+		if (!anyRendered && !aMonitor.isCanceled()) {
+			render.accept(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
+					aMonitor));
+		}
+	}
+
+	/**
+	 * Builds the table snapshot (one list per provider, perfect match first) from the
+	 * elements gathered so far. Pure computation, safe to call repeatedly as more
+	 * providers report.
+	 */
+	private List<QuickAccessEntry>[] assembleEntries(
+			LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> collected, String finalFilter,
+			QuickAccessElement perfectMatch, int maxNumberOfItemsInTable, IProgressMonitor aMonitor) {
+		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
+				collected);
 
 		// Sort out the Previous Pick
 		List<String> prevPickIds = new ArrayList<>();
@@ -967,8 +995,8 @@ public abstract class QuickAccessContents {
 		return table;
 	}
 
-	private static List<String> toIds(AtomicReference<List<QuickAccessEntry>[]> entries) {
-		return Stream.of(entries.get()).flatMap(List::stream).map(e -> e.element.getId()).toList();
+	private static List<String> toIds(List<QuickAccessEntry>[] entries) {
+		return Stream.of(entries).filter(Objects::nonNull).flatMap(List::stream).map(e -> e.element.getId()).toList();
 	}
 
 	private static void trace(String message) {
