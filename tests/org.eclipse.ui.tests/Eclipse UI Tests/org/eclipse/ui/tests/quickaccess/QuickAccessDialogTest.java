@@ -216,18 +216,32 @@ public class QuickAccessDialogTest {
 		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
 		assertTrue(System.currentTimeMillis() - duration < TestLongRunningQuickAccessComputer.DELAY);
-		AtomicLong tick = new AtomicLong(System.currentTimeMillis());
+		// Probe UI responsiveness with a self-rescheduling timer: it keeps firing
+		// while the UI thread can dispatch, so only a real freeze yields a large gap.
+		// The waitForCondition tick cannot tell a freeze from an idle Display.sleep().
+		Display display = secondDialog.getShell().getDisplay();
+		AtomicLong lastTick = new AtomicLong(System.currentTimeMillis());
 		AtomicLong maxBlockedUIThread = new AtomicLong();
-		assertTrue(DisplayHelper.waitForCondition(
-				secondDialog.getShell().getDisplay(), TestLongRunningQuickAccessComputer.DELAY + TIMEOUT, () -> {
-							long currentTick = System.currentTimeMillis();
-							long previousTick = tick.getAndSet(currentTick);
-							long currentDelayInUIThread = currentTick - previousTick;
-							maxBlockedUIThread.set(Math.max(maxBlockedUIThread.get(), currentDelayInUIThread));
-							return dialogContains(secondDialog,
-									TestLongRunningQuickAccessComputer.THE_ELEMENT.getLabel());
-						}), "Missing contributed element as previous pick");
-		assertTrue(maxBlockedUIThread.get() < TestLongRunningQuickAccessComputer.DELAY);
+		boolean[] monitoring = { true };
+		Runnable[] responsivenessProbe = new Runnable[1];
+		responsivenessProbe[0] = () -> {
+			long now = System.currentTimeMillis();
+			maxBlockedUIThread.set(Math.max(maxBlockedUIThread.get(), now - lastTick.getAndSet(now)));
+			if (monitoring[0]) {
+				display.timerExec(50, responsivenessProbe[0]);
+			}
+		};
+		display.timerExec(50, responsivenessProbe[0]);
+		try {
+			assertTrue(DisplayHelper.waitForCondition(display, TestLongRunningQuickAccessComputer.DELAY + TIMEOUT,
+					() -> dialogContains(secondDialog, TestLongRunningQuickAccessComputer.THE_ELEMENT.getLabel())),
+					"Missing contributed element as previous pick");
+		} finally {
+			monitoring[0] = false;
+			display.timerExec(-1, responsivenessProbe[0]);
+		}
+		assertTrue(maxBlockedUIThread.get() < TestLongRunningQuickAccessComputer.DELAY,
+				"UI thread blocked for " + maxBlockedUIThread.get() + "ms while restoring a previous pick");
 	}
 
 	/**
