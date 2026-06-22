@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -941,8 +942,10 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private boolean getShowDirtyIndicatorForTabsFromPreferences() {
-		return preferences.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
-				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
+		// Use the preferences service so product customization (default scope) is honored
+		return Platform.getPreferencesService().getBoolean(
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT, null);
 	}
 
 	private void updateMRUValue(CTabFolder tabFolder) {

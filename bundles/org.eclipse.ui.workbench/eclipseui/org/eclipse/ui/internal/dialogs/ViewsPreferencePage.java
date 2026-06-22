@@ -203,8 +203,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createHideIconsForViewTabs(comp);
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
-		createShowDirtyIndicatorForTabs(comp);
-
 		createRescaleAtRuntimeCheckButton(comp);
 
 		if (currentTheme != null) {
@@ -259,6 +257,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private void createThemeIndependentComposits(Composite comp) {
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
+		createShowDirtyIndicatorForTabs(comp);
 	}
 
 	protected void createShowFullTextForViewTabs(Composite composite) {
@@ -471,8 +470,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
 			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
-			prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, showDirtyIndicatorForTabs.getSelection());
 		}
+
+		// Dirty indicator is independent of CSS theming, so always store it
+		prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, showDirtyIndicatorForTabs.getSelection());
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
@@ -624,9 +625,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			showFullTextForViewTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
 					CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT));
 			showFullTextForViewTabs.notifyListeners(SWT.Selection, null);
-			showDirtyIndicatorForTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
-					CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT));
 		}
+		showDirtyIndicatorForTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT));
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
