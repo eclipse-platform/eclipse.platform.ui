@@ -942,13 +942,19 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private void busyCursorWhile(Runnable dialogWaitRunnable, ProgressMonitorJobsDialog dialog) {
 		// Create the job that will open the dialog after a delay.
-		scheduleProgressMonitorJob(dialog);
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		if (display == null) {
-			return;
+		Job showDialogJob = scheduleProgressMonitorJob(dialog);
+		try {
+			final Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display == null) {
+				return;
+			}
+			// Show a busy cursor until the dialog opens.
+			BusyIndicator.showWhile(display, dialogWaitRunnable);
+		} finally {
+			// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+			// the operation finishes or unwinds with an exception.
+			showDialogJob.cancel();
 		}
-		// Show a busy cursor until the dialog opens.
-		BusyIndicator.showWhile(display, dialogWaitRunnable);
 	}
 
 	/**
