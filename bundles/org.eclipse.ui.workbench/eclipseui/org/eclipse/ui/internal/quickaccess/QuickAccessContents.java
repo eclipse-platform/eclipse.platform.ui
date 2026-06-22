@@ -519,12 +519,11 @@ public abstract class QuickAccessContents {
 		QuickAccessProvider perfectMatchProvider = null;
 		if (perfectMatch != null) {
 			for (Entry<QuickAccessProvider, List<QuickAccessElement>> entry : elementsForProviders.entrySet()) {
-				if (perfectMatchProvider != null) {
-					List<QuickAccessElement> filteredElements = new ArrayList<>(entry.getValue());
-					if (filteredElements.removeIf(element -> prevPickIds.contains(element.getId()))) {
-						entry.setValue(filteredElements);
-						perfectMatchProvider = entry.getKey();
-					}
+				List<QuickAccessElement> filteredElements = new ArrayList<>(entry.getValue());
+				if (filteredElements.removeIf(element -> element == perfectMatch)) {
+					entry.setValue(filteredElements);
+					perfectMatchProvider = entry.getKey();
+					break;
 				}
 			}
 		}
