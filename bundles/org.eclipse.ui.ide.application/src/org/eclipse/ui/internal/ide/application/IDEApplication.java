@@ -263,51 +263,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				return EXIT_OK;
 			}
 			if (result == ReturnCode.VALID) {
-				// at this point its valid, so try to lock it and update the
-				// metadata version information if successful
-				try {
-					if (instanceLoc.lock()) {
-						writeWorkspaceVersion();
-						writeWsLockInfo(instanceLoc.getURL());
-						return null;
-					}
-
-					// we failed to create the directory.
-					// Two possibilities:
-					// 1. directory is already in use
-					// 2. directory could not be created
-					File workspaceDirectory = new File(instanceLoc.getURL().getFile());
-					boolean workspaceDirectoryExists = workspaceDirectory.exists();
-
-					// In dev (PDE) launch mode let the launcher report the locked workspace.
-					if (workspaceDirectoryExists && isDevLaunchMode(applicationArguments)) {
-						return EXIT_WORKSPACE_LOCKED;
-					}
-
-					// If the directory exists and carries lock info, show it; otherwise
-					// report that the workspace location could not be set.
-					String lockInfo = workspaceDirectoryExists
-							? WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL())
-							: null;
-					hideSplash(shell);
-					if (lockInfo != null) {
-						WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(), lockInfo);
-					} else {
-						MessageDialog.openError(shell,
-								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-					}
-				} catch (IOException e) {
-					hideSplash(shell);
-					IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", e); //$NON-NLS-1$
-					MessageDialog.openError(
-							shell,
-							IDEWorkbenchMessages.InternalError,
-							e.getMessage());
-				}
-				return EXIT_OK;
+				return lockExistingWorkspace(shell, instanceLoc, applicationArguments);
 			}
 			if (result == ReturnCode.INVALID) {
+				// prompt the user for a different location
 				force = true;
 			}
 		}
@@ -324,6 +283,71 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			}
 		}
 
+		return promptAndSetWorkspace(shell, instanceLoc, launchData, force);
+	}
+
+	/**
+	 * Locks the already-set workspace and updates its metadata version.
+	 *
+	 * @return <code>null</code> if the workspace was locked successfully, or an
+	 *         exit code if locking failed and the application should terminate
+	 */
+	@SuppressWarnings("rawtypes")
+	private Object lockExistingWorkspace(Shell shell, Location instanceLoc, Map applicationArguments) {
+		// at this point its valid, so try to lock it and update the
+		// metadata version information if successful
+		try {
+			if (instanceLoc.lock()) {
+				writeWorkspaceVersion();
+				writeWsLockInfo(instanceLoc.getURL());
+				return null;
+			}
+
+			// we failed to create the directory.
+			// Two possibilities:
+			// 1. directory is already in use
+			// 2. directory could not be created
+			File workspaceDirectory = new File(instanceLoc.getURL().getFile());
+			boolean workspaceDirectoryExists = workspaceDirectory.exists();
+
+			// In dev (PDE) launch mode let the launcher report the locked workspace.
+			if (workspaceDirectoryExists && isDevLaunchMode(applicationArguments)) {
+				return EXIT_WORKSPACE_LOCKED;
+			}
+
+			// If the directory exists and carries lock info, show it; otherwise
+			// report that the workspace location could not be set.
+			String lockInfo = workspaceDirectoryExists
+					? WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL())
+					: null;
+			hideSplash(shell);
+			if (lockInfo != null) {
+				WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(), lockInfo);
+			} else {
+				MessageDialog.openError(shell,
+						IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
+						IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
+			}
+		} catch (IOException e) {
+			hideSplash(shell);
+			IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", e); //$NON-NLS-1$
+			MessageDialog.openError(
+					shell,
+					IDEWorkbenchMessages.InternalError,
+					e.getMessage());
+		}
+		return EXIT_OK;
+	}
+
+	/**
+	 * Repeatedly prompts the user for a workspace location until one is set, the
+	 * user cancels, or a restart is required.
+	 *
+	 * @return <code>null</code> if a workspace was set successfully, or an exit
+	 *         code otherwise
+	 */
+	private Object promptAndSetWorkspace(Shell shell, Location instanceLoc, ChooseWorkspaceData launchData,
+			boolean force) {
 		int returnValue = -1;
 		URL workspaceUrl = null;
 		while (true) {
@@ -381,31 +405,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 			// by this point it has been determined that the workspace is
 			// already in use -- force the user to choose again
-
-			String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
-
-			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
-					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
-					MessageDialog.ERROR, 2, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel) {
-				@Override
-				protected Control createCustomArea(Composite parent) {
-					if (lockInfo == null || lockInfo.isBlank()) {
-						return null;
-					}
-
-					Composite container = new Composite(parent, SWT.NONE);
-					container.setLayout(new FillLayout());
-
-					Label multiLineText = new Label(container, SWT.NONE);
-					multiLineText.setText(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Message, lockInfo));
-
-					return container;
-				}
-			};
-			// the return value influences the next loop's iteration
-			returnValue = dialog.open();
+			returnValue = openWorkspaceInUseDialog(workspaceUrl);
 
 			if (returnValue == CANCEL_LAUNCH || returnValue == CANCEL_LAUNCH_DEFAULT) {
 				return EXIT_OK;
@@ -414,6 +414,36 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// Remember the locked workspace as recent workspace
 			launchData.writePersistedData();
 		}
+	}
+
+	/**
+	 * Opens the "workspace in use" dialog and returns the index of the button the
+	 * user selected.
+	 */
+	private int openWorkspaceInUseDialog(URL workspaceUrl) {
+		String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
+
+		MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
+				null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
+				MessageDialog.ERROR, 2, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
+				IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose,
+				IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel) {
+			@Override
+			protected Control createCustomArea(Composite parent) {
+				if (lockInfo == null || lockInfo.isBlank()) {
+					return null;
+				}
+
+				Composite container = new Composite(parent, SWT.NONE);
+				container.setLayout(new FillLayout());
+
+				Label multiLineText = new Label(container, SWT.NONE);
+				multiLineText.setText(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Message, lockInfo));
+
+				return container;
+			}
+		};
+		return dialog.open();
 	}
 
 	/**
