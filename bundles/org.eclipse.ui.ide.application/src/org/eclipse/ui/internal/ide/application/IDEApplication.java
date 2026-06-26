@@ -277,27 +277,23 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					// 1. directory is already in use
 					// 2. directory could not be created
 					File workspaceDirectory = new File(instanceLoc.getURL().getFile());
-					if (workspaceDirectory.exists()) {
-						if (isDevLaunchMode(applicationArguments)) {
-							return EXIT_WORKSPACE_LOCKED;
-						}
+					boolean workspaceDirectoryExists = workspaceDirectory.exists();
 
-						// check if there is a lock info then append it to error message.
-						String lockInfo = WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL());
-						if (lockInfo != null) {
-							hideSplash(shell);
-							WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(),
-									lockInfo);
-						} else {
-							hideSplash(shell);
-							MessageDialog.openError(shell,
-									IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-									IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-						}
+					// In dev (PDE) launch mode let the launcher report the locked workspace.
+					if (workspaceDirectoryExists && isDevLaunchMode(applicationArguments)) {
+						return EXIT_WORKSPACE_LOCKED;
+					}
+
+					// If the directory exists and carries lock info, show it; otherwise
+					// report that the workspace location could not be set.
+					String lockInfo = workspaceDirectoryExists
+							? WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL())
+							: null;
+					hideSplash(shell);
+					if (lockInfo != null) {
+						WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(), lockInfo);
 					} else {
-						hideSplash(shell);
-						MessageDialog.openError(
-								shell,
+						MessageDialog.openError(shell,
 								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
 								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
 					}
