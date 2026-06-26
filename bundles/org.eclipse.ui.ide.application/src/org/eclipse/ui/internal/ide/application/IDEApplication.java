@@ -592,8 +592,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 	/**
 	 * Show the choose workspace dialog to the user (if needed).
-	 * @param shell      parentShell the parent shell for this dialog
-	 * @param launchData launchData the launch data from past launches
+	 * @param shell      the parent shell for this dialog
+	 * @param launchData the launch data from past launches
 	 * @param force      true if the dialog should be opened regardless of the value
 	 *                   of the show dialog checkbox
 	 */
@@ -741,9 +741,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 *         <ul>
 	 *         <li>A negative integer if the workspace has a version less than that
 	 *         of the IDE.</li>
-	 *         <li>A positive integer if the IDE has a version greater than that of
-	 *         the IDE.</li>
-	 *         <li>{@code 0} if the IDE has version equal to the IDE, or if the
+	 *         <li>A positive integer if the workspace has a version greater than that
+	 *         of the IDE.</li>
+	 *         <li>{@code 0} if the workspace has a version equal to the IDE, or if the
 	 *         workspace has no version at all.</li>
 	 *         </ul>
 	 */
