@@ -91,8 +91,7 @@ public class CssParserTest {
 
 	@Test
 	void testUniversalElementDroppedBeforeConditions() {
-		// '.foo' and '*[a]' carry no element-type contribution, matching the
-		// previous SAC translator.
+		// '.foo' and '*[a]' carry no element-type contribution.
 		assertInstanceOf(Selectors.ClassSelector.class, firstSelector(".foo"));
 		assertInstanceOf(Selectors.AttributeSelector.class, firstSelector("*[a]"));
 	}

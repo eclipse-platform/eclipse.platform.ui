@@ -36,14 +36,14 @@ import org.w3c.dom.Node;
  *
  * <p>
  * Every method is static; the matcher carries no state. Callers pass the
- * element being tested plus an optional pseudo-element string (the same
- * argument the SAC engine carried) so that pseudo-class matching can defer
- * to the existing {@link CSSStylableElement#isPseudoInstanceOf} contract.
+ * element being tested plus an optional pseudo-element string so that
+ * pseudo-class matching can defer to the existing
+ * {@link CSSStylableElement#isPseudoInstanceOf} contract.
  * </p>
  *
  * <p>
- * Tag-name comparison is case sensitive, matching the existing SAC matcher
- * (Phase 1 test {@code testTagNameCaseSensitivity} in {@code CSSEngineTest}
+ * Tag-name comparison is case sensitive, preserving the historical matcher
+ * behaviour (Phase 1 test {@code testTagNameCaseSensitivity} in {@code CSSEngineTest}
  * locks this in). Pseudo-class semantics also follow the existing engine:
  * the static-pseudo-instance carve-out from
  * {@code CSSPseudoClassConditionImpl} is preserved so cascade behaviour

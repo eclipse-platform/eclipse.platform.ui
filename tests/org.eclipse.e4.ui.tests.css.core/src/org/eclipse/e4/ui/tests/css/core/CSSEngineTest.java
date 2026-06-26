@@ -261,9 +261,9 @@ class CSSEngineTest {
 
 	@Test
 	void testTagNameCaseSensitivity() throws Exception {
-		// Locks in current case-sensitive matching of the SAC engine. If the
-		// parser swap moves to case-insensitive (closer to HTML semantics), this
-		// test must be updated together with that change.
+		// Locks in current case-sensitive matching. If the matching ever moves
+		// to case-insensitive (closer to HTML semantics), this test must be
+		// updated together with that change.
 		TestCSSEngine engine = new TestCSSEngine();
 		Selector capital = parse(engine, "Button");
 		Selector lower = parse(engine, "button");

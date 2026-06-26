@@ -26,8 +26,7 @@ import org.w3c.dom.css.Rect;
 /**
  * The internal CSS value model produced by the parser. A small sealed hierarchy
  * of immutable values that replaces the former {@code Measure} / {@code
- * RGBColorImpl} / {@code CSSValueListImpl} wrappers and removes the last SAC
- * dependency ({@code LexicalUnit}).
+ * RGBColorImpl} / {@code CSSValueListImpl} wrappers.
  *
  * <p>
  * Consumers pattern-match on the record variants ({@link CssNumber},
@@ -258,7 +257,7 @@ public final class CssValues {
 
 	/**
 	 * A separator (currently only {@code ,}) carried inside a value list, kept
-	 * for parity with the former SAC behaviour where the comma was a list item.
+	 * for parity with the historical behaviour where the comma was a list item.
 	 */
 	public record CssOperator(String text) implements CssPrimitive {
 		@Override

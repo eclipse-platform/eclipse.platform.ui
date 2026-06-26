@@ -19,14 +19,10 @@ import java.util.List;
  * Internal CSS selector AST.
  *
  * <p>
- * The engine historically exposed W3C SAC selectors
- * ({@code org.w3c.css.sac.Selector} and friends) and matched against them
- * through a hierarchy of vendored Batik wrapper classes under
- * {@code impl/sac/*}. This package replaces both with a small set of records
- * that the engine owns end to end. The W3C SAC types stay only as long as
- * the parser still emits them; a translator turns the SAC selector tree
- * produced by the Batik SAC parser into one of these records before it
- * reaches the engine matcher.
+ * This package is the engine's own selector model: a small set of records
+ * the parser builds directly and the matcher consumes end to end. It
+ * replaced an earlier layer of vendored selector wrapper classes that the
+ * engine no longer depends on.
  * </p>
  *
  * <p>
@@ -312,12 +308,12 @@ public final class Selectors {
 			return alternatives;
 		}
 
-		/** Number of alternatives in the list. SAC-style accessor for callers iterating the list. */
+		/** Number of alternatives in the list. Indexed accessor for callers iterating the list. */
 		public int getLength() {
 			return alternatives.size();
 		}
 
-		/** {@code i}-th alternative. SAC-style accessor for callers iterating the list. */
+		/** {@code i}-th alternative. Indexed accessor for callers iterating the list. */
 		public Selector item(int i) {
 			return alternatives.get(i);
 		}

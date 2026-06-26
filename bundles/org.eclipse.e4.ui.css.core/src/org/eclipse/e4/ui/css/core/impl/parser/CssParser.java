@@ -413,7 +413,7 @@ public final class CssParser {
 			case COLON:
 				advance();
 				if (peek().kind == Kind.COLON) {
-					advance(); // pseudo-element ::, modelled as a pseudo-class like the SAC path
+					advance(); // pseudo-element ::, modelled as a pseudo-class
 				}
 				conditions.add(new PseudoClass(expect(Kind.IDENT).text));
 				break;
@@ -430,8 +430,8 @@ public final class CssParser {
 		for (int i = conditions.size() - 2; i >= 0; i--) {
 			conditionTree = new And(conditions.get(i), conditionTree);
 		}
-		// A universal element before conditions is dropped, matching the SAC
-		// translator: '.foo' and '*[a]' carry no element-type contribution.
+		// A universal element before conditions is dropped: '.foo' and '*[a]'
+		// carry no element-type contribution.
 		return element instanceof ElementType ? new And(element, conditionTree) : conditionTree;
 	}
 

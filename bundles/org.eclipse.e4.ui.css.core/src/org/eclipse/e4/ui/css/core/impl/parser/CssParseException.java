@@ -15,8 +15,7 @@ package org.eclipse.e4.ui.css.core.impl.parser;
 
 /**
  * Thrown by the hand-written CSS parser when the input cannot be parsed.
- * Replaces {@code org.w3c.css.sac.CSSException} for the internal parser, which
- * like its SAC predecessor is unchecked.
+ * Unchecked so it can surface from the parser without checked-exception plumbing.
  */
 public class CssParseException extends RuntimeException {
 

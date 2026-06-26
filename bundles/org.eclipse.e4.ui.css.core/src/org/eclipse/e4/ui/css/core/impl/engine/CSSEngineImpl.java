@@ -477,9 +477,9 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	 * Returns {@code true} if {@code selector} carries a pseudo-class or
 	 * attribute selector (anywhere in a compound or descendant combinator)
 	 * whose target value equals {@code pseudoInstance}. Mirrors the legacy
-	 * SAC walker, which handled both {@code :selected} (a pseudo-class) and
-	 * {@code Shell[active='true']} (an attribute) through SAC's shared
-	 * {@code AttributeCondition} interface.
+	 * walker, which handled both {@code :selected} (a pseudo-class) and
+	 * {@code Shell[active='true']} (an attribute) through a shared
+	 * condition interface.
 	 */
 	private static boolean matchesPseudoInstanceAttribute(Selectors.Selector selector, String pseudoInstance) {
 		if (selector instanceof Selectors.PseudoClass pc) {

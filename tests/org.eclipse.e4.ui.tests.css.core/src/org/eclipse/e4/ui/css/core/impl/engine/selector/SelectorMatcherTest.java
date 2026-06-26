@@ -38,9 +38,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link SelectorMatcher}. The cases mirror those in the
- * Phase 1 {@code CSSEngineTest}, but go through the new internal selector
- * AST instead of SAC. When Phase 3 Step 1 wires the engine to use this
- * matcher, the SAC-based duplicate tests can be retired.
+ * Phase 1 {@code CSSEngineTest}, but go through the internal selector AST.
  */
 class SelectorMatcherTest {
 
