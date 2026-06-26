@@ -105,6 +105,9 @@ public abstract class QuickAccessContents {
 	/** Trailing-edge debounce window collapsing a burst of shell resizes. */
 	private static final int RESIZE_DEBOUNCE_MS = 100;
 
+	/** Trailing-edge debounce window collapsing a burst of keystrokes. */
+	private static final int FILTER_DEBOUNCE_MS = 100;
+
 	/**
 	 * Family of the background job that computes the matching entries. Lets tests
 	 * join on the streaming compute deterministically instead of polling the table.
@@ -165,6 +168,18 @@ public abstract class QuickAccessContents {
 	 * @param filterInput The filter text to apply to results
 	 */
 	public void updateProposals(String filterInput) {
+		updateProposals(filterInput, 0);
+	}
+
+	/**
+	 * Recomputes the proposals, scheduling the background compute job after
+	 * {@code scheduleDelay} milliseconds. A non-zero delay lets a burst of keystrokes
+	 * collapse into a single computation: each keystroke cancels the still-sleeping job
+	 * from the previous one, so only the last keystroke in the window actually computes.
+	 * The job is scheduled (and therefore visible to {@link #COMPUTE_JOB_FAMILY}) for the
+	 * whole delay, so callers waiting on that family still observe the pending compute.
+	 */
+	private void updateProposals(String filterInput, int scheduleDelay) {
 		// Lower-case once so all callers share one filter string; the matcher and
 		// previous-pick lookup also require a lower-cased filter.
 		final String filter = filterInput == null ? "" : filterInput.toLowerCase(); //$NON-NLS-1$
@@ -264,8 +279,10 @@ public abstract class QuickAccessContents {
 		if (Policy.DEBUG_QUICK_ACCESS) {
 			trace("Set last proposals Job: " + computeProposalsJob); //$NON-NLS-1$
 		}
-		currentComputeEntriesJob.schedule();
-		computingFeedbackJob.schedule(200); // delay a bit so if proposals compute fast enough, we don't show feedback
+		currentComputeEntriesJob.schedule(scheduleDelay);
+		// Keep the feedback delay relative to when the compute actually starts, so the
+		// debounce window never flashes the "computing" hint.
+		computingFeedbackJob.schedule(scheduleDelay + 200);
 	}
 
 	/**
@@ -735,7 +752,8 @@ public abstract class QuickAccessContents {
 			if (Policy.DEBUG_QUICK_ACCESS) {
 				trace("Modify listener triggering proposals update"); //$NON-NLS-1$
 			}
-			updateProposals(text);
+			// Coalesce a burst of keystrokes into a single computation.
+			updateProposals(text, FILTER_DEBOUNCE_MS);
 		});
 	}
 
