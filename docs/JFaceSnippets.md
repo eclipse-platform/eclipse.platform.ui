@@ -67,6 +67,10 @@ Demonstrates a `NotificationPopup` with interactive content — a label and a bu
 
 ![Snippet085.png](images/Snippet085NotificationPopupWithUserInteraction.png)
 
+### [Snippet086 - Notification Popup that Follows its Shell](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet086NotificationPopupFollowsShell.java)
+
+Shows how to keep a `NotificationPopup` anchored to the bottom-right corner of a top-level shell by re-positioning it from a `ControlListener` when the shell is moved or resized.
+
 
 Layout
 ------
