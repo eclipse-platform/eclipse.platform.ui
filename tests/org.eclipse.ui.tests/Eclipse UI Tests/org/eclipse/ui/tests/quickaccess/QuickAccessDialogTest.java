@@ -124,7 +124,11 @@ public class QuickAccessDialogTest {
 			Text warmupText = warmupDialog.getQuickAccessContents().getFilterText();
 			Table warmupTable = warmupDialog.getQuickAccessContents().getTable();
 			warmupText.setText("t");
-			DisplayHelper.waitForCondition(warmupText.getDisplay(), WARMUP_TIMEOUT, () -> warmupTable.getItemCount() > 0);
+			// Wait for results AND for the compute job to drain, so the lazy providers'
+			// slow first query completes here rather than leaking into a test's timed wait.
+			DisplayHelper.waitForCondition(warmupText.getDisplay(), WARMUP_TIMEOUT,
+					() -> warmupTable.getItemCount() > 0
+							&& Job.getJobManager().find(QuickAccessContents.COMPUTE_JOB_FAMILY).length == 0);
 			providersWarmedUp = true;
 		}
 		warmupDialog.close();

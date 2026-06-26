@@ -644,6 +644,12 @@ public abstract class QuickAccessContents {
 	}
 
 	private void doDispose() {
+		// Stop any in-flight compute so a closed dialog neither keeps querying providers
+		// nor leaves a job lingering in COMPUTE_JOB_FAMILY.
+		if (computeProposalsJob != null) {
+			computeProposalsJob.cancel();
+			computeProposalsJob = null;
+		}
 		if (textLayout != null && !textLayout.isDisposed()) {
 			textLayout.dispose();
 		}
