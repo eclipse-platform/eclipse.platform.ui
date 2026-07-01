@@ -430,7 +430,12 @@ public class ThemeEngine implements IThemeEngine {
 				return;
 			}
 		}
-		// Theme not found (e.g. it was uninstalled); fall back to default
+		// In OS high-contrast mode keep the native OS colors instead of forcing a theme
+		if (display != null && display.getHighContrast()) {
+			ILog.of(ThemeEngine.class)
+					.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
 		ILog.of(ThemeEngine.class)
 				.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!E4_DEFAULT_THEME_ID.equals(themeId)) {

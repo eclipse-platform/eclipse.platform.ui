@@ -324,8 +324,8 @@ public class E4Application implements IApplication {
 				context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
 			}
 		} else {
-			// Check if user has overridden the branding/command-line theme
-			String userThemeId = getProductScopedThemeId();
+			// Do not let a product/workspace default override the OS high-contrast theme
+			String userThemeId = highContrastMode ? null : getProductScopedThemeId();
 			if (userThemeId != null) {
 				context.set(E4Application.THEME_ID, userThemeId);
 			} else {
