@@ -215,4 +215,21 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		assertEquals("foo", dialog.getFindText());
 	}
 
+	@Test
+	public void testSearchInSelectionButtonIsInverseOfGlobalOption() {
+		// The searchInSelection button is the inverse of the GLOBAL option:
+		// it is NOT selected when searching globally, and IS selected when searching in selection.
+		initializeTextViewerWithFindReplaceUI("text");
+		OverlayAccess dialog= getDialog();
+
+		dialog.assertSelected(SearchOptions.GLOBAL);
+
+		dialog.unselect(SearchOptions.GLOBAL);
+		dialog.assertUnselected(SearchOptions.GLOBAL);
+
+		dialog.select(SearchOptions.GLOBAL);
+		dialog.assertSelected(SearchOptions.GLOBAL);
+	}
+
+
 }

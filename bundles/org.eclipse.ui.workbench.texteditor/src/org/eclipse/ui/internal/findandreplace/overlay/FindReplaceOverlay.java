@@ -71,6 +71,7 @@ import org.eclipse.ui.internal.SearchDecoration;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
+import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.part.MultiPageEditorSite;
 
@@ -113,7 +114,7 @@ public class FindReplaceOverlay {
 	private static final String IDEAL_WIDTH_TEXT = "THIS TEXT HAS A REASONABLE LENGTH FOR SEARCHING"; //$NON-NLS-1$
 	private static final int HISTORY_SIZE = 15;
 
-	private FindReplaceLogic findReplaceLogic;
+	private final IFindReplaceLogic findReplaceLogic;
 	private final IWorkbenchPart targetPart;
 	private boolean replaceBarOpen;
 
@@ -296,7 +297,7 @@ public class FindReplaceOverlay {
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
 		targetControl = getTargetControl(parent, part);
-		createFindReplaceLogic(target);
+		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
 		containerControl.setVisible(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(containerControl,
@@ -315,17 +316,18 @@ public class FindReplaceOverlay {
 		return targetControl instanceof StyledText;
 	}
 
-	private void createFindReplaceLogic(IFindReplaceTarget target) {
-		findReplaceLogic = new FindReplaceLogic();
+	private IFindReplaceLogic createFindReplaceLogic(IFindReplaceTarget target) {
+		IFindReplaceLogic logic = new FindReplaceLogic();
 		boolean isTargetEditable = false;
 		if (target != null) {
 			isTargetEditable = target.isEditable();
 		}
-		findReplaceLogic.updateTarget(target, isTargetEditable);
-		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
-		findReplaceLogic.activate(SearchOptions.GLOBAL);
-		findReplaceLogic.activate(SearchOptions.WRAP);
-		findReplaceLogic.activate(SearchOptions.FORWARD);
+		logic.updateTarget(target, isTargetEditable);
+		logic.activate(SearchOptions.INCREMENTAL);
+		logic.activate(SearchOptions.GLOBAL);
+		logic.activate(SearchOptions.WRAP);
+		logic.activate(SearchOptions.FORWARD);
+		return logic;
 	}
 
 	public Composite getContainerControl() {
@@ -613,7 +615,7 @@ public class FindReplaceOverlay {
 					updateIncrementalSearch();
 				})
 				.withShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION).build();
-		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+		searchInSelectionButton.setSelection(!findReplaceLogic.isActive(SearchOptions.GLOBAL));
 	}
 
 	private void createRegexSearchButton() {
