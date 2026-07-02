@@ -17,6 +17,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.PostConstruct;
@@ -44,6 +45,7 @@ import org.eclipse.e4.ui.internal.workbench.ModelAssembler;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -338,6 +340,54 @@ public class ModelAssemblerTests {
 
 		assertEquals(1, logMessages.size());
 		assertEquals("Could not resolve import for null", logMessages.poll());
+	}
+
+	/**
+	 * Tests that an import resolving to an element of an incompatible type (two
+	 * elements sharing an elementId) is skipped with a warning instead of aborting
+	 * model assembly with a {@link ClassCastException}. See
+	 * <a href="https://github.com/eclipse-platform/eclipse.platform.ui/issues/4148">issue
+	 * 4148</a>.
+	 */
+	@Test
+	public void testImports_typeIncompatibleElement() throws Exception {
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
+
+		final String sharedElementId = "testImports_typeIncompatible_id";
+
+		// The fragment imports a window with the shared id ...
+		MTrimmedWindow importWindow = modelService.createModelElement(MTrimmedWindow.class);
+		importWindow.setElementId(sharedElementId);
+		MModelFragments fragment = MFragmentFactory.INSTANCE.createModelFragments();
+		fragment.getImports().add(importWindow);
+		imports.add(importWindow);
+
+		// ... but the application only contains a command (a different type) that
+		// shares that id, so the id-based lookup resolves to a type-incompatible
+		// element for the MUIElement-typed placeholder reference.
+		MCommand collidingCommand = modelService.createModelElement(MCommand.class);
+		collidingCommand.setElementId(sharedElementId);
+		application.getCommands().add(collidingCommand);
+
+		MPlaceholder placeholder = modelService.createModelElement(MPlaceholder.class);
+		placeholder.setRef(importWindow);
+		addedElements.add(placeholder);
+
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
+		// Must not throw: the incompatible resolution is skipped, the reference is
+		// left untouched, and every other fragment still applies.
+		assembler.resolveImports(imports, addedElements);
+
+		assertNotEquals(collidingCommand, placeholder.getRef());
+		assertEquals(importWindow, placeholder.getRef());
+
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue(completed, "Timeout - no event received");
+		assertEquals(1, logMessages.size());
+		assertTrue(logMessages.poll().startsWith("Skipping import for feature"));
 	}
 
 	/**
