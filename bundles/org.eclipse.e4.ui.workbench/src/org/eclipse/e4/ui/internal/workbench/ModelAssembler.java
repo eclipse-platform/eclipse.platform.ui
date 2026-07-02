@@ -835,22 +835,33 @@ public class ModelAssembler {
 						element = null;
 					}
 					commands.add(() -> {
+						MApplicationElement resolved = element;
+						if (resolved != null && !feature.getEType().isInstance(resolved)) {
+							// a different-typed element sharing the id must not abort model assembly
+							warn("Could not resolve import for {}: incompatible with feature {} of {}", //$NON-NLS-1$
+									resolved.getElementId(), feature.getName(), target);
+							resolved = null;
+						}
 						if (feature.isMany()) {
+							@SuppressWarnings("unchecked")
+							List<Object> l = (List<Object>) target.eGet(feature);
+							if (resolved == null) {
+								l.remove(importObject);
+								return;
+							}
 							error("""
 									Replacing in {}.
 									Feature={}.
 									InternalElement={} contributed by {}.
 									ImportObject={}
-									""", target, feature.getName(), element.getElementId(), element.getContributorURI(), //$NON-NLS-1$
+									""", target, feature.getName(), resolved.getElementId(), resolved.getContributorURI(), //$NON-NLS-1$
 									importObject);
-							@SuppressWarnings("unchecked")
-							List<Object> l = (List<Object>) target.eGet(feature);
 							int index = l.indexOf(importObject);
 							if (index >= 0) {
-								l.set(index, element);
+								l.set(index, resolved);
 							}
 						} else {
-							target.eSet(feature, element);
+							target.eSet(feature, resolved);
 						}
 					});
 				}
