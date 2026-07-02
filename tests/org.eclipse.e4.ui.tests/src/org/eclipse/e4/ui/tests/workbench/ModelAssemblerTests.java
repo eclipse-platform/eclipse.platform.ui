@@ -17,6 +17,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.PostConstruct;
@@ -44,6 +45,7 @@ import org.eclipse.e4.ui.internal.workbench.ModelAssembler;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
@@ -559,6 +561,66 @@ public class ModelAssemblerTests {
 
 		assertEquals(1, logMessages.size());
 		assertEquals("Could not resolve import for null", logMessages.poll());
+	}
+
+	/** Tests that an import resolving to an element of an incompatible type is dropped. */
+	@Test
+	public void testImports_typeIncompatibleElement() throws Exception {
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
+
+		final String sharedElementId = "testImports_typeIncompatible_id";
+		MTrimmedWindow importWindow = modelService.createModelElement(MTrimmedWindow.class);
+		importWindow.setElementId(sharedElementId);
+		MModelFragments fragment = MFragmentFactory.INSTANCE.createModelFragments();
+		fragment.getImports().add(importWindow);
+		imports.add(importWindow);
+		MCommand collidingCommand = modelService.createModelElement(MCommand.class);
+		collidingCommand.setElementId(sharedElementId);
+		application.getCommands().add(collidingCommand);
+
+		MPlaceholder placeholder = modelService.createModelElement(MPlaceholder.class);
+		placeholder.setRef(importWindow);
+		addedElements.add(placeholder);
+
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
+		assembler.resolveImports(imports, addedElements);
+		assertNull(placeholder.getRef());
+
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue(completed, "Timeout - no event received");
+		assertEquals(1, logMessages.size());
+		assertTrue(logMessages.poll().startsWith("Could not resolve import for " + sharedElementId + ": incompatible"));
+	}
+
+	/** Tests that an unresolved import in a many-valued reference is removed. */
+	@Test
+	public void testImports_unresolvedInManyValuedFeature() throws Exception {
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
+
+		MBindingContext importContext = modelService.createModelElement(MBindingContext.class);
+		importContext.setElementId("testImports_unresolvedMany_context");
+		MModelFragments fragment = MFragmentFactory.INSTANCE.createModelFragments();
+		fragment.getImports().add(importContext);
+		imports.add(importContext);
+
+		MPart part = modelService.createModelElement(MPart.class);
+		part.getBindingContexts().add(importContext);
+		addedElements.add(part);
+
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
+		assembler.resolveImports(imports, addedElements);
+		assertTrue(part.getBindingContexts().isEmpty());
+
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue(completed, "Timeout - no event received");
+		assertEquals(1, logMessages.size());
+		assertEquals("Could not resolve import for testImports_unresolvedMany_context", logMessages.poll());
 	}
 
 	/**
