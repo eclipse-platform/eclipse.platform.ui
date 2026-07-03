@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.AbstractCSSValueConv
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -48,8 +47,8 @@ public class CSSValueSWTColorConverterImpl extends AbstractCSSValueConverter {
 		Display display = (Display) context;
 		Color color = CSSSWTColorHelper.getSWTColor(value, display);
 		if (color == null) {
-			throw new DOMExceptionImpl(DOMException.INVALID_ACCESS_ERR,
-					DOMExceptionImpl.RGBCOLOR_ERROR);
+			throw new DOMException(DOMException.INVALID_ACCESS_ERR,
+					"This isn't an RGBColor type");
 		}
 
 		return color;

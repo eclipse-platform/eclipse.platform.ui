@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
-import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -102,8 +101,8 @@ public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 	@Override
 	public String removeProperty(String propertyName) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		for (int i = 0; i < properties.size(); i++) {
 			CSSProperty property = properties.get(i);
@@ -118,8 +117,8 @@ public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 	@Override
 	public void setCssText(String cssText) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		// TODO Auto-generated method stub
 		// TODO throws SYNTAX_ERR if cssText is unparsable
@@ -129,8 +128,8 @@ public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 	@Override
 	public void setProperty(String propertyName, String value, String priority) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		// TODO Auto-generated method stub
 		// TODO throws SYNTAX_ERR if value is unparsable
