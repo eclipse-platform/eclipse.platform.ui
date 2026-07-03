@@ -11,6 +11,12 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -176,6 +182,40 @@ public final class QuickAccessMatching {
 		score -= Math.min(firstMatch, MAX_LEADING_GAP) * LEADING_GAP_PENALTY;
 		score -= Math.min(text.length(), MAX_LENGTH_PENALTY);
 		return score;
+	}
+
+	/**
+	 * Picks up to {@code slots} items from a relevance-sorted list, capping each
+	 * group at its fair share of the slots so a single prolific group cannot flood
+	 * out all the others. Slots a group does not use go to the best remaining
+	 * items regardless of group.
+	 */
+	public static <T> List<T> pickFairly(List<T> sortedByRelevance, Function<T, Object> groupOf, int slots) {
+		if (sortedByRelevance.size() <= slots) {
+			return sortedByRelevance;
+		}
+		long groupCount = sortedByRelevance.stream().map(groupOf).distinct().count();
+		int fairShare = Math.max(1, slots / (int) groupCount);
+		List<T> winners = new ArrayList<>(Math.max(0, slots));
+		List<T> overflow = new ArrayList<>();
+		Map<Object, Integer> taken = new HashMap<>();
+		for (T item : sortedByRelevance) {
+			if (winners.size() >= slots) {
+				return winners;
+			}
+			Object group = groupOf.apply(item);
+			int alreadyTaken = taken.getOrDefault(group, 0);
+			if (alreadyTaken < fairShare) {
+				winners.add(item);
+				taken.put(group, alreadyTaken + 1);
+			} else {
+				overflow.add(item);
+			}
+		}
+		for (Iterator<T> it = overflow.iterator(); winners.size() < slots && it.hasNext();) {
+			winners.add(it.next());
+		}
+		return winners;
 	}
 
 	private static boolean isBoundary(String text, int i) {

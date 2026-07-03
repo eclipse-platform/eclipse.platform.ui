@@ -574,8 +574,7 @@ public abstract class QuickAccessContents {
 			}
 		} else {
 			int numberOfSlotsLeft = perfectMatch != null ? maxNumberOfItemsInTable - 1 : maxNumberOfItemsInTable;
-			// Score every candidate and keep the globally highest-ranked entries, so a
-			// strong match wins a slot regardless of which provider produced it
+			// Score every candidate so the most relevant entries compete for the slots
 			List<QuickAccessEntry> matched = new ArrayList<>();
 			for (Entry<QuickAccessProvider, List<QuickAccessElement>> elementsPerProvider : elementsForProviders
 					.entrySet()) {
@@ -595,7 +594,8 @@ public abstract class QuickAccessContents {
 			}
 			matched.sort(BY_RELEVANCE);
 			int slots = Math.max(0, numberOfSlotsLeft);
-			List<QuickAccessEntry> winners = matched.subList(0, Math.min(slots, matched.size()));
+			// a prolific provider (e.g. workspace files) must not flood out the others
+			List<QuickAccessEntry> winners = QuickAccessMatching.pickFairly(matched, entry -> entry.provider, slots);
 			// Group the winners back per provider for the table, keeping providers in
 			// registration order and entries in relevance order within each provider
 			for (QuickAccessProvider provider : elementsForProviders.keySet()) {

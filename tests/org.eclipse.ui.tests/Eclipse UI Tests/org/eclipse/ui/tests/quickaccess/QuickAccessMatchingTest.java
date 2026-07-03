@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
@@ -156,5 +158,46 @@ public class QuickAccessMatchingTest {
 	@Test
 	public void scoreIsCaseInsensitive() {
 		assertTrue(QuickAccessMatching.score("RENAME", "rename") > QuickAccessMatching.SCORE_NONE);
+	}
+
+	/** Groups items by their prefix up to the first digit, e.g. "file1" -> "file". */
+	private static final Function<String, Object> BY_PREFIX = s -> s.replaceAll("\\d", "");
+
+	@Test
+	public void pickFairlyReturnsAllWhenEnoughSlots() {
+		List<String> ranked = List.of("file1", "file2", "view1");
+		assertEquals(ranked, QuickAccessMatching.pickFairly(ranked, BY_PREFIX, 5));
+	}
+
+	@Test
+	public void pickFairlyCapsFloodingGroup() {
+		// files dominate the top of the relevance ranking, see issue #4155
+		List<String> ranked = List.of("file1", "file2", "file3", "file4", "file5", "view1", "command1");
+		List<String> winners = QuickAccessMatching.pickFairly(ranked, BY_PREFIX, 4);
+		assertEquals(4, winners.size());
+		assertTrue(winners.contains("view1"), "flooded-out view should win a slot: " + winners);
+		assertTrue(winners.contains("command1"), "flooded-out command should win a slot: " + winners);
+	}
+
+	@Test
+	public void pickFairlyGivesUnusedShareToBestRemaining() {
+		List<String> ranked = List.of("file1", "file2", "file3", "file4", "view1");
+		// 2 groups, 4 slots -> fair share is 2 each; the view only needs 1,
+		// so the leftover slot goes to the next best file
+		assertEquals(List.of("file1", "file2", "view1", "file3"),
+				QuickAccessMatching.pickFairly(ranked, BY_PREFIX, 4));
+	}
+
+	@Test
+	public void pickFairlyKeepsRelevanceOrderWithinTheCap() {
+		List<String> ranked = List.of("view1", "file1", "file2", "file3", "command1");
+		List<String> winners = QuickAccessMatching.pickFairly(ranked, BY_PREFIX, 3);
+		assertEquals(List.of("view1", "file1", "command1"), winners);
+	}
+
+	@Test
+	public void pickFairlyHandlesZeroSlots() {
+		List<String> ranked = List.of("file1", "file2");
+		assertTrue(QuickAccessMatching.pickFairly(ranked, BY_PREFIX, 0).isEmpty());
 	}
 }
