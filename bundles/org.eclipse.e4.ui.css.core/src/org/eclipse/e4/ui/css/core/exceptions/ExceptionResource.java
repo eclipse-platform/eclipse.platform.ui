@@ -39,8 +39,6 @@ public class ExceptionResource extends ListResourceBundle {
 		{"s9", "The text does not represent a page rule"},
 		{"s10", "This isn't a Float type"},
 		{"s11", "This isn't a String type"},
-		{"s12", "This isn't a Counter type"},
-		{"s13", "This isn't a Rect type"},
 		{"s14", "This isn't an RGBColor type"},
 		{"s15", "A charset rule must be the first rule"},
 		{"s16", "A charset rule already exists"},

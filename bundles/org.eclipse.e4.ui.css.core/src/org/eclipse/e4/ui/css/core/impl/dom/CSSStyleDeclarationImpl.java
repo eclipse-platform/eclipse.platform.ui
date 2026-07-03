@@ -26,6 +26,11 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
+/**
+ * W3C {@link CSSStyleDeclaration} view over the internal property list; part of
+ * the permanent compatibility facade returned by {@code IStylingEngine.getStyle}
+ * and {@code IThemeEngine.getStyle}.
+ */
 public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 
 	private boolean readOnly;

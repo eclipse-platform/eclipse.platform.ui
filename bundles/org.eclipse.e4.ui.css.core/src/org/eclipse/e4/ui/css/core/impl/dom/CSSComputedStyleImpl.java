@@ -18,15 +18,12 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
-import org.w3c.dom.css.CSSStyleDeclaration;
-
 
 /**
- * CSS computed style which concatenate list of CSSComputedStyleImpl to manage
- * styles coming from Condition Selector (ex : Label#MyId) and other selectors
- * (ex : Label).
+ * Computed style merging the declarations of all rules that match an element,
+ * ordered by specificity and source position.
  */
-public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl implements CSSStyleDeclaration {
+public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl {
 
 	private final List<StyleWrapper> styleRules;
 

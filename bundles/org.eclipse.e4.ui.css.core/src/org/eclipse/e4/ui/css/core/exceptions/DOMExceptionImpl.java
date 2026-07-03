@@ -38,8 +38,6 @@ public class DOMExceptionImpl extends DOMException {
 	public static final int EXPECTING_PAGE_RULE = 9;
 	public static final int FLOAT_ERROR = 10;
 	public static final int STRING_ERROR = 11;
-	public static final int COUNTER_ERROR = 12;
-	public static final int RECT_ERROR = 13;
 	public static final int RGBCOLOR_ERROR = 14;
 	public static final int CHARSET_NOT_FIRST = 15;
 	public static final int CHARSET_NOT_UNIQUE = 16;
