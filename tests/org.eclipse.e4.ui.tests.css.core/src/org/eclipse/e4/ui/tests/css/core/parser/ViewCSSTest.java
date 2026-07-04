@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.RuleIndex;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.eclipse.swt.widgets.Display;
@@ -120,16 +120,15 @@ public class ViewCSSTest {
 		assertEquals("color: blue;", buttonStyle.getCssText());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	void testRuleCaching() throws Exception {
 		String css = "Shell > * > * { color: red; }\n" + "Button { color: blue; }\n";
 		parseStyleSheet(css);
 
-		Field combinedRulesField = CSSEngineImpl.class.getDeclaredField("combinedRules");
-		combinedRulesField.setAccessible(true);
+		Field ruleIndexField = CSSEngineImpl.class.getDeclaredField("ruleIndex");
+		ruleIndexField.setAccessible(true);
 		// before the first computeStyle() call the cache is empty
-		assertNull(combinedRulesField.get(engine));
+		assertNull(ruleIndexField.get(engine));
 
 		final TestElement shell = new TestElement("Shell", engine);
 		final TestElement composite = new TestElement("Composite", shell, engine);
@@ -138,25 +137,25 @@ public class ViewCSSTest {
 		assertNotNull(buttonStyle);
 
 		// now the cache is filled
-		assertNotNull(combinedRulesField.get(engine));
+		assertNotNull(ruleIndexField.get(engine));
 
-		// deeper inspection: check what private method getCombinedRules returns
-		Method getCombinedRulesMethod = CSSEngineImpl.class.getDeclaredMethod("getCombinedRules");
-		getCombinedRulesMethod.setAccessible(true);
-		List<Object> cssRules = (List<Object>) getCombinedRulesMethod.invoke(engine);
+		// deeper inspection: check what private method getRuleIndex returns
+		Method getRuleIndexMethod = CSSEngineImpl.class.getDeclaredMethod("getRuleIndex");
+		getRuleIndexMethod.setAccessible(true);
+		RuleIndex index = (RuleIndex) getRuleIndexMethod.invoke(engine);
 
-		// check caching: a 2nd call retrieves the cached list
-		assertSame(cssRules, getCombinedRulesMethod.invoke(engine));
+		// check caching: a 2nd call retrieves the cached index
+		assertSame(index, getRuleIndexMethod.invoke(engine));
 
 		// add a new stylesheet => flush cache
 		css = "Shell > * > * { color: blue; }\n" + "Label { color: green; }\n";
 		parseStyleSheet(css);
-		assertNull(combinedRulesField.get(engine));
+		assertNull(ruleIndexField.get(engine));
 
-		List<Object> cssRules2 = (List<Object>) getCombinedRulesMethod.invoke(engine);
-		assertNotSame(cssRules, cssRules2);
+		RuleIndex index2 = (RuleIndex) getRuleIndexMethod.invoke(engine);
+		assertNotSame(index, index2);
 		// stylesheet added => more rules
-		assertTrue(cssRules2.size() > cssRules.size());
+		assertTrue(index2.allCandidates().size() > index.allCandidates().size());
 	}
 
 	private void parseStyleSheet(String css) throws IOException {
