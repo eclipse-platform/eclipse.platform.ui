@@ -20,14 +20,18 @@ import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class Bug459961Test extends CSSSWTTestCase {
+public class Bug459961Test {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testRegularColorConstantReference() {
 		String cssString = "Label { background-color: COLOR-GREEN; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGBA expected = Display.getDefault().getSystemColor(SWT.COLOR_GREEN).getRGBA();
 		RGBA actual = label.getBackground().getRGBA();
@@ -38,7 +42,7 @@ public class Bug459961Test extends CSSSWTTestCase {
 	void testTransparentColorConstantReference() {
 		String cssString = "Label { background-color: COLOR-TRANSPARENT; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGBA expected = Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT).getRGBA();
 		RGBA actual = label.getBackground().getRGBA();

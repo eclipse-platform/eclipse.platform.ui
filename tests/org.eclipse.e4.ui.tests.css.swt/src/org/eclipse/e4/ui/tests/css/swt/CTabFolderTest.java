@@ -15,9 +15,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.GREEN;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -30,11 +35,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CTabFolderTest extends CSSSWTTestCase {
+public class CTabFolderTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -55,7 +65,8 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 	protected ToolBar[] createTestToolBars(String styleSheet) {
 
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -84,8 +95,8 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	}
 
 	protected Shell createShell(String styleSheet) {
-		Display display = Display.getDefault();
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.NONE);
@@ -97,7 +108,8 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	}
 
 	protected Label createLabelInCTabFolder(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -172,64 +184,64 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	void testBorderVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { border-visible: true}");
 		assertEquals(true, folderToTest.getBorderVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "border-visible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { border-visible: false}");
 		assertEquals(false, folderToTest.getBorderVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "border-visible", null));
 	}
 	@Test
 	void testSimple() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-simple: true}");
 		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-simple", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { swt-simple: false}");
 		// Curved tabs are no longer supported, so getSimple() always returns true
 		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-simple", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
 	}
 
 	@Test
 	void testMaximizeVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-maximize-visible: true}");
 		assertEquals(true, folderToTest.getMaximizeVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-maximize-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-maximize-visible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { swt-maximize-visible: false}");
 		assertEquals(false, folderToTest.getMaximizeVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-maximize-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-maximize-visible", null));
 	}
 
 	@Test
 	void testMinimizeVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-minimize-visible: true}");
 		assertEquals(true, folderToTest.getMinimizeVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-minimize-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-minimize-visible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { swt-minimize-visible: false}");
 		assertEquals(false, folderToTest.getMinimizeVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-minimize-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-minimize-visible", null));
 	}
 
 	@Test
 	void testMaximized() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-maximized: true}");
 		assertEquals(true, folderToTest.getMaximized());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-maximized", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-maximized", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-maximized: false}");
 		assertEquals(false, folderToTest.getMaximized());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-maximized", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-maximized", null));
 	}
 
 	@Test
 	void testMinimized() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-minimized: true}");
 		assertEquals(true, folderToTest.getMinimized());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-minimized", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-minimized", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-minimized: false}");
 		assertEquals(false, folderToTest.getMinimized());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-minimized", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-minimized", null));
 	}
 
 	@Test
@@ -254,43 +266,43 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	void testSingle() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-single: true}");
 		assertEquals(true, folderToTest.getSingle());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-single", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-single", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-single: false}");
 		assertEquals(false, folderToTest.getSingle());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-single", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-single", null));
 	}
 
 	@Test
 	void testUnselectedCloseVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-close-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedCloseVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-unselected-close-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-unselected-close-visible", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-close-visible: false}");
 		assertEquals(false, folderToTest.getUnselectedCloseVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-unselected-close-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-unselected-close-visible", null));
 	}
 
 	@Test
 	void testUnselectedImageVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-image-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedImageVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-unselected-image-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-unselected-image-visible", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-unselected-image-visible: false}");
 		assertEquals(false, folderToTest.getUnselectedImageVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-unselected-image-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-unselected-image-visible", null));
 	}
 
 	@Test
 	void testRetrievePropertyNull() {
 		Shell shell = createShell("Shell {color:red}");
-		assertEquals(null, engine.retrieveCSSProperty(shell, "border-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximized", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximize-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-minimize-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-simple", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-single", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-unselected-close-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-unselected-image-visible", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "border-visible", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-maximized", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-maximize-visible", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-minimize-visible", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-simple", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-single", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-unselected-close-visible", null));
+		assertEquals(null, css.getEngine().retrieveCSSProperty(shell, "swt-unselected-image-visible", null));
 	}
 
 	@Test
@@ -307,14 +319,14 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		ToolBar barC = toolBars[2];
 
 		WidgetElement.setCSSClass(barA.getParent(), "special");
-		engine.applyStyles(barA.getShell(), true);
+		css.getEngine().applyStyles(barA.getShell(), true);
 
 		assertEquals(RED, barA.getBackground().getRGB());
 		assertEquals(GREEN, barB.getBackground().getRGB());
 		assertEquals(BLUE, barC.getBackground().getRGB());
 
 		WidgetElement.setCSSClass(barA.getParent(), "extraordinary");
-		engine.applyStyles(barA.getShell(), true);
+		css.getEngine().applyStyles(barA.getShell(), true);
 
 		assertEquals(WHITE, barA.getBackground().getRGB());
 	}
@@ -329,19 +341,19 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	void testSelectedImageVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-selected-image-visible: true}");
 		assertEquals(true, folderToTest.getSelectedImageVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
+		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-selected-image-visible: false}");
 		assertEquals(false, folderToTest.getSelectedImageVisible());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
+		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
 	}
 
 	@Test
 	void testMinimumCharacters() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
-		assertEquals("1", engine.retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
 		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
-		assertEquals("1", engine.retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
 	}
 }

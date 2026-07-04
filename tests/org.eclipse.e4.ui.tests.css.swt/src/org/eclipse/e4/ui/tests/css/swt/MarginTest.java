@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.tests.css.swt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -24,10 +25,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class MarginTest extends CSSSWTTestCase {
+public class MarginTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private static final RGB RED = new RGB(255, 0, 0);
 
@@ -37,7 +43,8 @@ public class MarginTest extends CSSSWTTestCase {
 	private static final int LEFT = 3;
 
 	protected Control createTestControl(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -62,7 +69,8 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	protected Control createBadControlNoLayout(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		Composite panel = new Composite(shell, SWT.NONE);
@@ -76,7 +84,8 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	protected Control createBadControlNoComposite(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		//No composite
@@ -88,7 +97,8 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	protected Control createBadControlNoKey(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

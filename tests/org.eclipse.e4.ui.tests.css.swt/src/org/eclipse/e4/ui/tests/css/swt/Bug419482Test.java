@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.RowLayout;
@@ -25,8 +26,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class Bug419482Test extends CSSSWTTestCase {
+public class Bug419482Test {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private static final RGB RGB_BLUE = new RGB(0, 0, 255);
 	private static final RGB RGB_RED = new RGB(255, 0, 0);
@@ -39,7 +44,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	void testTwoLevelsWildcard() {
 		String cssString = "Shell > * > * { color: red; } \n" + "Label { color: blue; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGB rgb = label.getForeground().getRGB();
 		assertEquals(RGB_BLUE, rgb);
@@ -49,7 +54,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	void testOneLevelWildcardOneSpecific() {
 		String cssString = "Shell > * > Label { color: red; } \n" + "Label { color: blue; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGB rgb = label.getForeground().getRGB();
 		assertEquals(RGB_RED, rgb);
@@ -59,7 +64,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	void testDescendentsWildcard() {
 		String cssString = "Shell * { color: red; } \n" + "Label { color: blue; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGB rgb = label.getForeground().getRGB();
 		assertEquals(RGB_BLUE, rgb);
@@ -69,7 +74,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	void testDescendentsSpecific() {
 		String cssString = "Shell Label { color: red; } \n" + "Label { color: blue; }";
 
-		Label label = createTestLabel(cssString);
+		Label label = css.createTestLabel(cssString);
 
 		RGB rgb = label.getForeground().getRGB();
 		assertEquals(RGB_RED, rgb);
@@ -77,7 +82,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	void testOriginalBugReport() {
-		String css = """
+		String cssString = """
 			Shell, Shell > *, Shell > * > * {
 			    background-color: red;
 			}
@@ -85,9 +90,9 @@ public class Bug419482Test extends CSSSWTTestCase {
 			    background-color: blue;
 			}""";
 
-		engine = createEngine(css, display);
+		CSSEngine engine = css.createEngine(cssString);
 
-		Shell shell = createShellWithToolbars(display);
+		Shell shell = createShellWithToolbars(css.getDisplay());
 
 		// Apply styles
 		engine.applyStyles(shell, true);
@@ -99,7 +104,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	void testOriginalBugReportDifferentOrder() {
-		String css = """
+		String cssString = """
 			ToolBar {
 			    background-color: blue;
 			}\
@@ -108,10 +113,10 @@ public class Bug419482Test extends CSSSWTTestCase {
 			}
 			""";
 
-		engine = createEngine(css, display);
+		CSSEngine engine = css.createEngine(cssString);
 
 		// Create widgets
-		Shell shell = createShellWithToolbars(display);
+		Shell shell = createShellWithToolbars(css.getDisplay());
 
 		// Apply styles
 		engine.applyStyles(shell, true);

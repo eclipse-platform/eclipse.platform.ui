@@ -18,23 +18,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class IEclipsePreferencesTest extends CSSSWTTestCase {
+public class IEclipsePreferencesTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testIEclipsePreferences() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.jdt.ui") {};
 
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"""
 					IEclipsePreferences#org-eclipse-jdt-ui{preferences:\
 					'semanticHighlighting.abstractClass.color=128,255,0',\
 					'java_bracket=0,255,255',\
 					'java_bracket_italic=true',\
 					'java_bracket_underline='\
-					}""", display);
+					}""");
 		// when
 		engine.applyStyles(preferences, false);
 

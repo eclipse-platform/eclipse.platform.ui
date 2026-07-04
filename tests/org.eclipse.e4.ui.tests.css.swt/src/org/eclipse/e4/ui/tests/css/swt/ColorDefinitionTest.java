@@ -29,19 +29,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.FrameworkUtil;
 
-public class ColorDefinitionTest extends CSSSWTTestCase {
+public class ColorDefinitionTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testColorDefinition() {
 		//given
-		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
+		CSSEngine engine = css.createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}");
 		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR", "name", "categoryId", "description");
 
 		assertEquals(new RGB(0, 0, 0), definition.getValue());
@@ -62,8 +66,8 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	@Test
 	void testColorDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
 		// given
-		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green;" +
-				"label:'nameOverridden'; category:'#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
+		CSSEngine engine = css.createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green;" +
+				"label:'nameOverridden'; category:'#categoryIdOverridden'; description: 'descriptionOverridden'}");
 		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR","name", "categoryId", "description");
 
 		assertEquals(new RGB(0, 0, 0), definition.getValue());
@@ -84,7 +88,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	@Test
 	void testColorDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
-		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
+		CSSEngine engine = css.createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}");
 		ColorDefinition definition = colorDefinition("color definition uniqueId without matching stylesheet",
 				"name", "categoryId", "description");
 
@@ -105,7 +109,8 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		//given
 		registerColorProviderWith("ACTIVE_HYPERLINK_COLOR", new RGB(255, 0, 0));
 
-		CSSEngine engine = createEngine("Label {background-color: '#ACTIVE_HYPERLINK_COLOR'}", display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {background-color: '#ACTIVE_HYPERLINK_COLOR'}");
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		Label label = new Label(shell, SWT.NONE);
@@ -123,7 +128,8 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 
 	@Test
 	void testUnset() {
-		CSSEngine engine = createEngine("Button {background-color: unset;}", display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Button {background-color: unset;}");
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		Button button = new Button(shell, SWT.NONE);
@@ -147,8 +153,8 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	@Test
 	void testSetColorDefinitionWithSystemColor() {
 		// given
-		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: '#COLOR-LIST-SELECTION'}",
-				display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: '#COLOR-LIST-SELECTION'}");
 		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR", "name", "categoryId", "description");
 
 		assertEquals(new RGB(0, 0, 0), definition.getValue());

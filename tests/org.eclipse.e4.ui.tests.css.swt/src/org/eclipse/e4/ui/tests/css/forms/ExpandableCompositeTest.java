@@ -17,24 +17,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.tests.css.swt.CssSwtEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ToggleHyperlink;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ExpandableCompositeTest extends CSSSWTTestCase {
+public class ExpandableCompositeTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 
 	protected ExpandableComposite createTestExpandableComposite(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -76,7 +83,7 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 		assertNotNull(compositeToTest.getTitleBarForeground());
 		assertEquals(RED, compositeToTest.getTitleBarForeground().getRGB());
 
-		engine.reset();
+		css.getEngine().reset();
 
 		assertNull(compositeToTest.getTitleBarForeground());
 

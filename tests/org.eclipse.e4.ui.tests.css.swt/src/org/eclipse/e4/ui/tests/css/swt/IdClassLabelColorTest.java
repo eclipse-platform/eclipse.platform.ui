@@ -16,20 +16,26 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /*
  * Tests the CSS class and Id rules
  */
 
-public class IdClassLabelColorTest extends CSSSWTTestCase {
+public class IdClassLabelColorTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
@@ -38,9 +44,9 @@ public class IdClassLabelColorTest extends CSSSWTTestCase {
 	static final String CSS_CLASS_NAME = "makeItGreenClass";
 	static final String CSS_ID = "makeItBlueID";
 
-	@Override
 	protected Label createTestLabel(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

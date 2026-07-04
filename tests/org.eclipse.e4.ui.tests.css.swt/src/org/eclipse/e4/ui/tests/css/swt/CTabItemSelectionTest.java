@@ -13,39 +13,45 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Pins {@code CTabItem:selected} pseudo behaviour and the
  * {@code CTabFolderElement} selection listener path.
  */
-public class CTabItemSelectionTest extends CSSSWTTestCase {
+public class CTabItemSelectionTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private Shell shell;
 
-	@Override
 	@AfterEach
 	public void tearDown() {
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();
 			shell = null;
 		}
-		super.tearDown();
 	}
 
 	private void spinEventLoop() {
 		// Drain queued SWT events. Same pattern as CTabItemTest.
+		Display display = css.getDisplay();
 		for (int i = 0; i < 3; i++) {
 			while (display.readAndDispatch()) {
 			}
@@ -57,6 +63,7 @@ public class CTabItemSelectionTest extends CSSSWTTestCase {
 	}
 
 	private CTabFolder createFolderWithTwoItems(String styleSheet) {
+		Display display = css.getDisplay();
 		shell = new Shell(display, SWT.SHELL_TRIM);
 		shell.setLayout(new FillLayout());
 
@@ -67,7 +74,7 @@ public class CTabItemSelectionTest extends CSSSWTTestCase {
 		item1.setText("Item 1");
 		folder.setSelection(0);
 
-		engine = createEngine(styleSheet, display);
+		CSSEngine engine = css.createEngine(styleSheet);
 		engine.applyStyles(shell, true);
 		shell.open();
 		return folder;

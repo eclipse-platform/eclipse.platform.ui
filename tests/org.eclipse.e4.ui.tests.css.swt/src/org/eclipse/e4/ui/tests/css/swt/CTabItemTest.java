@@ -33,29 +33,32 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CTabItemTest extends CSSSWTTestCase {
+public class CTabItemTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private Shell shell;
 
-	@Override
 	@AfterEach
 	public void tearDown() {
 		if (shell != null) {
 			shell.dispose();
 			shell = null;
 		}
-		super.tearDown();
 	}
 
 	private void spinEventLoop() {
 		// Workaround for https://bugs.eclipse.org/418101 and https://bugs.eclipse.org/403234 :
 		// Add some delay to allow asynchronous events to come in, but don't get trapped in an endless Display#sleep().
+		Display display = css.getDisplay();
 		for (int i = 0; i < 3; i++) {
 			while (display.readAndDispatch()) {
 			}
@@ -82,6 +85,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	private CTabFolder createTestTabFolder(boolean open) {
 
 		// Create widgets
+		Display display = css.getDisplay();
 		shell = new Shell(display, SWT.SHELL_TRIM);
 		FillLayout layout = new FillLayout();
 		shell.setLayout(layout);
@@ -101,7 +105,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	protected CTabFolder createTestTabFolder(String styleSheet, boolean open) {
 		CTabFolder folder = createTestTabFolder(open);
 
-		engine = createEngine(styleSheet, folder.getDisplay());
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Apply styles
 		engine.applyStyles(folder.getShell(), true);
@@ -113,6 +117,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	void testFontRegular() {
 		CTabFolder folder = createTestTabFolder("Button { font-family: Verdana; font-size: 12 }\n"
 				+ "CTabItem { font-family: Verdana; font-size: 16 }");
+		CSSEngine engine = css.getEngine();
 		spinEventLoop();
 		folder.getItems();
 		assertEquals(0, folder.getSelectionIndex());
@@ -138,6 +143,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	void testFontBold() {
 		CTabFolder folder = createTestTabFolder("Button { font-weight: bold }\n"
 				+ "CTabItem { font-weight: bold }");
+		CSSEngine engine = css.getEngine();
 		spinEventLoop();
 
 		assertEquals(0, folder.getSelectionIndex());
@@ -158,6 +164,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	void testFontItalic() {
 		CTabFolder folder = createTestTabFolder("Button { font-weight: bold }\n"
 				+ "CTabItem { font-style: italic }");
+		CSSEngine engine = css.getEngine();
 		spinEventLoop();
 
 		assertEquals(0, folder.getSelectionIndex());
@@ -250,11 +257,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
-		engine = createEngine("""
+		CSSEngine engine = css.createEngine("""
 			CTabItem { font-size: 10 }\
 			CTabItem:selected { font-size: 14; font-weight: bold }\
 			CTabFolder.editorStack CTabItem { font-size: 11; }\
-			CTabFolder.editorStack CTabItem:selected { font-size: 13; font-style: italic }""", folder.getDisplay());
+			CTabFolder.editorStack CTabItem:selected { font-size: 13; font-style: italic }""");
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -306,13 +313,12 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"""
 					CTabItem { font-size: 10 }\
 					CTabItem:selected { font-size: 14; font-weight: bold }\
 					CTabFolder.editorStack CTabItem { font-size: 11; }\
-					CTabFolder.editorStack CTabItem:selected { font-size: 13; font-weight: normal; font-style: italic }""",
-						folder.getDisplay());
+					CTabFolder.editorStack CTabItem:selected { font-size: 13; font-weight: normal; font-style: italic }""");
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -364,10 +370,10 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
-		engine = createEngine("""
+		CSSEngine engine = css.createEngine("""
 			CTabItem { show-close: false }\
 			CTabItem:selected { show-close: true }\
-			CTabFolder.editorStack CTabItem { show-close: true }""", folder.getDisplay());
+			CTabFolder.editorStack CTabItem { show-close: true }""");
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -405,11 +411,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "viewStack");
-		engine = createEngine("""
+		CSSEngine engine = css.createEngine("""
 			CTabItem { show-close: false }\
 			CTabItem:selected { show-close: true }\
 			CTabFolder.viewStack CTabItem { show-close: false }\
-			CTabFolder.viewStack CTabItem.selected { show-close: true }""", folder.getDisplay());
+			CTabFolder.viewStack CTabItem.selected { show-close: true }""");
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -448,6 +454,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testBackground() {
 		CTabFolder folder = createTestTabFolder("CTabItem { background-color: #0000ff }", false);
+		CSSEngine engine = css.getEngine();
 		assertEquals(new RGB(0, 0, 255), folder.getBackground().getRGB());
 
 		for (CTabItem item : folder.getItems()) {
@@ -469,7 +476,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			colour = "#00ff00";
 		}
 
-		CSSEngine engine = createEngine("CTabItem { background-color: " + colour + " }", folder.getDisplay());
+		CSSEngine engine = css.createEngine("CTabItem { background-color: " + colour + " }");
 		engine.applyStyles(folder, true);
 
 		assertEquals(rgb, folder.getBackground().getRGB());
@@ -484,6 +491,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testSelectionBackground() {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { background-color: #00ff00 }", false);
+		CSSEngine engine = css.getEngine();
 		assertEquals(new RGB(0, 255, 0), folder.getSelectionBackground().getRGB());
 
 		for (CTabItem item : folder.getItems()) {
@@ -494,6 +502,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testForeground() {
 		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }", false);
+		CSSEngine engine = css.getEngine();
 		assertEquals(new RGB(0, 0, 255), folder.getForeground().getRGB());
 
 		for (CTabItem item : folder.getItems()) {
@@ -516,7 +525,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			colour = "#00ff00";
 		}
 
-		CSSEngine engine = createEngine("CTabItem { color: " + colour + " }", folder.getDisplay());
+		CSSEngine engine = css.createEngine("CTabItem { color: " + colour + " }");
 		engine.applyStyles(folder, true);
 
 		assertEquals(rgb, folder.getForeground().getRGB());
@@ -531,6 +540,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testSelectionForeground() {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
+		CSSEngine engine = css.getEngine();
 		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground().getRGB());
 
 		for (CTabItem item : folder.getItems()) {
@@ -541,6 +551,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testParent() {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
+		CSSEngine engine = css.getEngine();
 		for (CTabItem item : folder.getItems()) {
 			CTabItemElement element = (CTabItemElement) engine.getElement(item);
 			assertNotNull(element.getParentNode());

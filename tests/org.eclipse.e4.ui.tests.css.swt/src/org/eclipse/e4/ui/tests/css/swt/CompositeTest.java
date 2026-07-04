@@ -13,19 +13,27 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CompositeTest extends CSSSWTTestCase {
+public class CompositeTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	protected Composite createTestComposite(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -43,7 +51,8 @@ public class CompositeTest extends CSSSWTTestCase {
 	}
 
 	protected Composite createTestCompositeAsInnerClass(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

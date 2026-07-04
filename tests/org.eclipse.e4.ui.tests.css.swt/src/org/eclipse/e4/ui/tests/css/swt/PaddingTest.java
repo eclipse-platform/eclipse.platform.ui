@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -24,8 +25,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests for {@code CSSPropertyPaddingSWTHandler}. Padding only takes effect
@@ -35,7 +38,10 @@ import org.junit.jupiter.api.Test;
  * reflection. The default {@link CTabFolderRenderer} does not expose those
  * methods, so the test installs a capturing subclass that does.
  */
-public class PaddingTest extends CSSSWTTestCase {
+public class PaddingTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	/**
 	 * Captures arguments passed to the reflective {@code setPadding} call.
@@ -63,7 +69,8 @@ public class PaddingTest extends CSSSWTTestCase {
 	}
 
 	private CapturingRenderer applyToCapturingFolder(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		shell.setLayout(new FillLayout());
 		CTabFolder folder = new CTabFolder(shell, SWT.NONE);
@@ -124,7 +131,8 @@ public class PaddingTest extends CSSSWTTestCase {
 		// setPadding helper only acts on CTabFolder, every other widget is a
 		// no-op.
 		assertDoesNotThrow(() -> {
-			engine = createEngine("Button { padding: 10px }", display);
+			Display display = css.getDisplay();
+			CSSEngine engine = css.createEngine("Button { padding: 10px }");
 			Shell shell = new Shell(display, SWT.SHELL_TRIM);
 			shell.setLayout(new FillLayout());
 			Composite panel = new Composite(shell, SWT.NONE);
@@ -141,7 +149,8 @@ public class PaddingTest extends CSSSWTTestCase {
 		// is caught and swallowed. Locks in this behaviour: applying padding
 		// to a folder with the default renderer must not surface an error.
 		assertDoesNotThrow(() -> {
-			engine = createEngine("CTabFolder { padding: 10px 20px }", display);
+			Display display = css.getDisplay();
+			CSSEngine engine = css.createEngine("CTabFolder { padding: 10px 20px }");
 			Shell shell = new Shell(display, SWT.SHELL_TRIM);
 			shell.setLayout(new FillLayout());
 			new CTabFolder(shell, SWT.NONE);

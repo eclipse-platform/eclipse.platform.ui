@@ -19,20 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemesExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ThemesExtensionTest extends CSSSWTTestCase {
+public class ThemesExtensionTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testThemesExtension() {
 		//given
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"ThemesExtension {font-definition: '#org-eclipse-ui-workbench-FONT_DEF_1',"
 						+
-						"'#org-eclipse-ui-workbench-FONT_DEF_2'; color-definition: '#org-eclipse-ui-workbench-COLOR_DEF_1';}", display);
+						"'#org-eclipse-ui-workbench-FONT_DEF_2'; color-definition: '#org-eclipse-ui-workbench-COLOR_DEF_1';}");
 		ThemesExtension themesExtention = new ThemesExtension();
 
 		//when

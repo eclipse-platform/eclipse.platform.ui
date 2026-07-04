@@ -24,24 +24,29 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Hashtable;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.FrameworkUtil;
 
-public class FontDefinitionTest extends CSSSWTTestCase {
+public class FontDefinitionTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testFontDefinition() {
 		//given
-		engine = createEngine(
-				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;font-weight: bold;}",
-				display);
+		CSSEngine engine = css.createEngine(
+				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;font-weight: bold;}");
 		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont", "name", "categoryId","description");
 
 		assertNull(definition.getValue());
@@ -64,10 +69,10 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 	@Test
 	void testFontDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
 		// given
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic; font-weight: bold;"
 						+
-						" label:'nameOverridden'; category: '#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
+						" label:'nameOverridden'; category: '#categoryIdOverridden'; description: 'descriptionOverridden'}");
 		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont", "name", "categoryId", "description");
 
 		assertNull(definition.getValue());
@@ -90,9 +95,8 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 	@Test
 	void testFontDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
-		engine = createEngine(
-				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}",
-				display);
+		CSSEngine engine = css.createEngine(
+				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}");
 		FontDefinition definition = fontDefinition("font definition uniqueId without matching stylesheet", "name", "categoryId", "description");
 
 		assertNull(definition.getValue());
@@ -111,7 +115,8 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 		//given
 		registerFontProviderWith("org.eclipse.jface.bannerfont", new FontData("Times", 12, SWT.ITALIC));
 
-		engine = createEngine("Label {font-family: '#org-eclipse-jface-bannerfont'}", display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {font-family: '#org-eclipse-jface-bannerfont'}");
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		Label label = new Label(shell, SWT.NONE);

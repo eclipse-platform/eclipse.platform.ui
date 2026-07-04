@@ -16,18 +16,23 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class InheritTest extends CSSSWTTestCase {
+public class InheritTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private Color redColor;
 
@@ -36,11 +41,7 @@ public class InheritTest extends CSSSWTTestCase {
 	static final RGB RED = new RGB(255, 0, 0);
 
 	@BeforeEach
-	@Override
 	public void setUp() {
-		super.setUp();
-
-
 		redColor = new Color(RED);
 	}
 
@@ -102,7 +103,8 @@ public class InheritTest extends CSSSWTTestCase {
 	 */
 	private Label createTestLabel(String styleSheet,
 			boolean setCompositeBackgroundExplicitly) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

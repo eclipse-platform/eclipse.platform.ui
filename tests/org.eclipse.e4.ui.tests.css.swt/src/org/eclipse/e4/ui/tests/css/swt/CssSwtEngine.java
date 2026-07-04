@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2026 Lars Vogel and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
+ *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
@@ -28,20 +27,32 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class CSSSWTTestCase {
+/**
+ * JUnit 5 extension that provides a shared {@link Display}, creates SWT CSS
+ * engines from a style sheet, offers small widget helpers, and disposes any
+ * open shells after each test.
+ */
+public class CssSwtEngine implements AfterEachCallback {
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB WHITE = new RGB(255, 255, 255);
 
+	private final Display display = Display.getDefault();
+	private CSSEngine engine;
 
-	protected Display display;
-	protected CSSEngine engine;
+	public Display getDisplay() {
+		return display;
+	}
 
-	public CSSEngine createEngine(String styleSheet, Display display) {
+	public CSSEngine getEngine() {
+		return engine;
+	}
+
+	public CSSEngine createEngine(String styleSheet) {
 		engine = new CSSSWTEngineImpl(display);
 
 		engine.setErrorHandler(e -> fail(e.getMessage()));
@@ -52,27 +63,11 @@ public class CSSSWTTestCase {
 			fail(e.getMessage());
 		}
 		return engine;
-
 	}
 
-	@BeforeEach
-	public void setUp() {
-		display = Display.getDefault();
-	}
+	public Label createTestLabel(String styleSheet) {
+		engine = createEngine(styleSheet);
 
-	@AfterEach
-	public void tearDown() {
-		if (!display.isDisposed()) {
-			for (Shell shell : display.getShells()) {
-				shell.dispose();
-			}
-		}
-	}
-
-	protected Label createTestLabel(String styleSheet) {
-		engine = createEngine(styleSheet, display);
-
-		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		FillLayout layout = new FillLayout();
 		shell.setLayout(layout);
@@ -83,10 +78,18 @@ public class CSSSWTTestCase {
 		Label labelToTest = new Label(panel, SWT.NONE);
 		labelToTest.setText("Some label text");
 
-		// Apply styles
 		engine.applyStyles(labelToTest, true);
 
 		shell.pack();
 		return labelToTest;
+	}
+
+	@Override
+	public void afterEach(ExtensionContext context) {
+		if (!display.isDisposed()) {
+			for (Shell shell : display.getShells()) {
+				shell.dispose();
+			}
+		}
 	}
 }

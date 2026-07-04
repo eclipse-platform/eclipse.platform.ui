@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -37,15 +38,17 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
-public class ThemeTest extends CSSSWTTestCase {
+public class ThemeTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
+
 	private BundleContext context;
 	private ServiceRegistration<EventHandler> themeListenerRegistration;
 	private ServiceReference<IThemeManager> themeManagerReference;
 
-	@Override
 	@BeforeEach
 	public void setUp() {
-		super.setUp();
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		assertNotNull(b, "Not running in an OSGi environment");
 		context = b.getBundleContext();
@@ -54,11 +57,9 @@ public class ThemeTest extends CSSSWTTestCase {
 				.getServiceReference(IThemeManager.class);
 	}
 
-	@Override
 	@AfterEach
 	public void tearDown() {
 		themeListenerRegistration.unregister();
-		super.tearDown();
 	}
 
 	@Test

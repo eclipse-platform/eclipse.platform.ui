@@ -17,24 +17,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Locks in the {@code IEclipsePreferences#node:pseudo} selector form used by
  * shipped themes. See Bug 466075.
  */
-public class IEclipsePreferencesPseudoKeyTest extends CSSSWTTestCase {
+public class IEclipsePreferencesPseudoKeyTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testPseudoSelectorMatchesAndWritesPreferenceValue() {
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.jdt.ui") {};
 
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"""
 					IEclipsePreferences#org-eclipse-jdt-ui:org-eclipse-ui-themes {\
 					preferences: 'semanticHighlighting.abstractClass.color=128,255,0'\
-					}""",
-				display);
+					}""");
 		engine.applyStyles(preferences, false);
 
 		// Bug 466075
@@ -47,15 +51,14 @@ public class IEclipsePreferencesPseudoKeyTest extends CSSSWTTestCase {
 		// contribute to the same preference node via different pseudo tags.
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.ui.workbench") {};
 
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"""
 					IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-editors {\
 					preferences: 'org.eclipse.ui.editors.inlineAnnotationColor=155,155,155'\
 					}\
 					IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes {\
 					preferences: 'ERROR_COLOR=247,68,117'\
-					}""",
-				display);
+					}""");
 		engine.applyStyles(preferences, false);
 
 		assertEquals("155,155,155", preferences.get("org.eclipse.ui.editors.inlineAnnotationColor", null));
@@ -71,15 +74,14 @@ public class IEclipsePreferencesPseudoKeyTest extends CSSSWTTestCase {
 		// rule wins. This matches standard CSS source-order tiebreak.
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.jdt.ui") {};
 
-		engine = createEngine(
+		CSSEngine engine = css.createEngine(
 				"""
 					IEclipsePreferences#org-eclipse-jdt-ui:org-eclipse-ui-themes {\
 					preferences: 'semanticHighlighting.abstractClass.color=128,255,0'\
 					}\
 					IEclipsePreferences#org-eclipse-jdt-ui:org-eclipse-ui-themes {\
 					preferences: 'semanticHighlighting.abstractClass.color=255,0,0'\
-					}""",
-				display);
+					}""");
 		engine.applyStyles(preferences, false);
 
 		assertEquals("255,0,0", preferences.get("semanticHighlighting.abstractClass.color", null));

@@ -16,16 +16,22 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class DescendentTest extends CSSSWTTestCase {
+public class DescendentTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
@@ -35,7 +41,8 @@ public class DescendentTest extends CSSSWTTestCase {
 
 	protected Button[] createTestWidgets(String styleSheet) {
 
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -68,7 +75,7 @@ public class DescendentTest extends CSSSWTTestCase {
 		Button buttonC = buttons[2];
 
 		WidgetElement.setCSSClass(buttonA.getParent(), "special");
-		engine.applyStyles(buttonA.getShell(), true);
+		css.getEngine().applyStyles(buttonA.getShell(), true);
 
 		assertEquals(RED, buttonA.getBackground().getRGB());
 		assertEquals(GREEN, buttonB.getBackground().getRGB());
@@ -77,7 +84,7 @@ public class DescendentTest extends CSSSWTTestCase {
 		WidgetElement.setCSSClass(buttonA.getParent(), "extraordinary");
 		WidgetElement.setID(buttonB.getParent(), "parent");
 
-		engine.applyStyles(buttonA.getShell(), true);
+		css.getEngine().applyStyles(buttonA.getShell(), true);
 		assertEquals(WHITE, buttonA.getBackground().getRGB());
 		assertEquals(BLACK, buttonB.getBackground().getRGB());
 	}

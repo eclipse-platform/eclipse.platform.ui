@@ -14,18 +14,23 @@ package org.eclipse.e4.ui.tests.css.properties.tabbed;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
+import org.eclipse.e4.ui.tests.css.swt.CssSwtEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
+public class TabbedPropertiesTitleTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	static final RGB RED = new RGB(255, 0, 0);
 	private TabbedPropertySheetWidgetFactory factory;
@@ -39,9 +44,8 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 		} else {
 			s = stylesheet;
 		}
-		engine = createEngine(
-				s,
-				display);
+		Display display = css.getDisplay();
+		css.createEngine(s);
 
 		shell = new Shell(display, SWT.SHELL_TRIM);
 		FillLayout layout = new FillLayout();
@@ -66,7 +70,7 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 	void titleBackgroundColorIsStyled() {
 		createTabbedPropertiesTitle(null);
 
-		engine.applyStyles(shell, true);
+		css.getEngine().applyStyles(shell, true);
 
 		assertColor(RED, IFormColors.H_GRADIENT_START);
 		assertColor(RED, IFormColors.H_GRADIENT_END);
@@ -83,8 +87,8 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 		RGB colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1).getRGB();
 		RGB colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2).getRGB();
 
-		engine.applyStyles(shell, true);
-		engine.reset();
+		css.getEngine().applyStyles(shell, true);
+		css.getEngine().reset();
 		assertColor(colorGradStartBeforStyling, IFormColors.H_GRADIENT_START);
 		assertColor(colorGradEndBeforStyling, IFormColors.H_GRADIENT_END);
 		assertColor(colorBottomKeylineOneBeforStyling, IFormColors.H_BOTTOM_KEYLINE1);
@@ -101,7 +105,7 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 		RGB colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1).getRGB();
 		RGB colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2).getRGB();
 
-		engine.applyStyles(shell, true);
+		css.getEngine().applyStyles(shell, true);
 		assertColor(colorGradStartBeforStyling, IFormColors.H_GRADIENT_START);
 		assertColor(colorGradEndBeforStyling, IFormColors.H_GRADIENT_END);
 		assertColor(colorBottomKeylineOneBeforStyling, IFormColors.H_BOTTOM_KEYLINE1);

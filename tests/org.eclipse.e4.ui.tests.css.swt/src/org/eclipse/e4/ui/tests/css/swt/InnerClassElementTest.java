@@ -17,15 +17,20 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class InnerClassElementTest extends CSSSWTTestCase {
+public class InnerClassElementTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	// create an inner class to address via CSS
 	static class CustomComposite extends Composite {
@@ -34,9 +39,9 @@ public class InnerClassElementTest extends CSSSWTTestCase {
 		}
 	}
 
-	@Override
 	protected Label createTestLabel(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
