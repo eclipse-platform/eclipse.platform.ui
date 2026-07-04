@@ -61,6 +61,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
 import org.eclipse.e4.ui.css.core.impl.dom.StyleWrapper;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.RuleIndex;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
@@ -102,8 +103,8 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	/** The stylesheets added to this engine, in registration order. */
 	private final List<CSSStyleSheetImpl> styleSheets = new ArrayList<>();
 
-	/** Cached flat list of style rules over all stylesheets. */
-	private List<CSSStyleRuleImpl> combinedRules;
+	/** Cached rule index over all stylesheets. */
+	private RuleIndex ruleIndex;
 
 	/**
 	 * {@link IElementProvider} used to retrieve w3c Element linked to the
@@ -224,7 +225,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	/** Register a parsed stylesheet with this engine's cascade. */
 	public void addStyleSheet(CSSStyleSheetImpl styleSheet) {
 		styleSheets.add(styleSheet);
-		combinedRules = null;
+		ruleIndex = null;
 	}
 
 	/** The stylesheets registered with this engine, in registration order. */
@@ -974,22 +975,20 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			hierarchy[idx++] = (Element) n;
 		}
 
-		for (CSSStyleRuleImpl rule : getCombinedRules()) {
-			for (Selectors.Selector selector : rule.getSelectorList().alternatives()) {
-				if (SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0)) {
-					int specificity = selector.specificity();
-					StyleWrapper wrapper = new StyleWrapper(rule.getStyle(), specificity, position++);
-					if (firstStyleDeclaration == null) {
-						firstStyleDeclaration = wrapper;
-					} else {
-						// There are several style declarations which match
-						// the current element
-						if (styleDeclarations == null) {
-							styleDeclarations = new ArrayList<>();
-							styleDeclarations.add(firstStyleDeclaration);
-						}
-						styleDeclarations.add(wrapper);
+		for (RuleIndex.Candidate candidate : getRuleIndex().candidatesFor(elt)) {
+			if (SelectorMatcher.matches(candidate.selector(), elt, pseudoElt, hierarchy, 0)) {
+				int specificity = candidate.selector().specificity();
+				StyleWrapper wrapper = new StyleWrapper(candidate.rule().getStyle(), specificity, position++);
+				if (firstStyleDeclaration == null) {
+					firstStyleDeclaration = wrapper;
+				} else {
+					// There are several style declarations which match
+					// the current element
+					if (styleDeclarations == null) {
+						styleDeclarations = new ArrayList<>();
+						styleDeclarations.add(firstStyleDeclaration);
 					}
+					styleDeclarations.add(wrapper);
 				}
 			}
 		}
@@ -1004,19 +1003,11 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		return null;
 	}
 
-	private List<CSSStyleRuleImpl> getCombinedRules() {
-		if (combinedRules == null) {
-			List<CSSStyleRuleImpl> rules = new ArrayList<>();
-			for (CSSStyleSheetImpl styleSheet : styleSheets) {
-				for (CssRule rule : styleSheet.getRules()) {
-					if (rule instanceof CSSStyleRuleImpl styleRule) {
-						rules.add(styleRule);
-					}
-				}
-			}
-			combinedRules = rules;
+	private RuleIndex getRuleIndex() {
+		if (ruleIndex == null) {
+			ruleIndex = RuleIndex.of(styleSheets);
 		}
-		return combinedRules;
+		return ruleIndex;
 	}
 
 	@Override
@@ -1041,7 +1032,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	@Override
 	public void reset() {
 		styleSheets.clear();
-		combinedRules = null;
+		ruleIndex = null;
 	}
 
 	/*--------------- Resources Registry -----------------*/
