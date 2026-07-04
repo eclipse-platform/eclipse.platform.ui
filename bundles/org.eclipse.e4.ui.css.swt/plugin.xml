@@ -136,10 +136,29 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler">
-         <property-name
-               name="border-visible">
-         </property-name>
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabFolderSWTHandler">
+         <property-name name="border-visible"/>
+         <property-name name="swt-maximize-visible"/>
+         <property-name name="swt-minimize-visible"/>
+         <property-name name="swt-maximized"/>
+         <property-name name="swt-minimized"/>
+         <property-name name="swt-simple"/>
+         <property-name name="swt-single"/>
+         <property-name name="swt-unselected-close-visible"/>
+         <property-name name="swt-unselected-image-visible"/>
+         <property-name name="swt-selected-image-visible"/>
+         <property-name name="swt-tab-height"/>
+         <property-name name="swt-tab-text-minimum-characters"/>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabFolderRendererSWTHandler">
+         <property-name name="swt-inner-keyline-color"/>
+         <property-name name="swt-outer-keyline-color"/>
+         <property-name name="swt-tab-outline"/>
+         <property-name name="swt-unselected-hot-tab-color-background"/>
+         <property-name name="swt-draw-custom-tab-content-background"/>
       </handler>
        <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -147,22 +166,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabPositionSWTHandler">
          <property-name
                name="swt-tab-position">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyOuterKeylineSWTHandler">
-         <property-name
-               name="swt-outer-keyline-color">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyInnerKeylineSWTHandler">
-         <property-name
-               name="swt-inner-keyline-color">
          </property-name>
       </handler>
       <handler
@@ -285,105 +288,9 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler">
-         <property-name
-               name="swt-simple">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler">
-         <property-name
-               name="swt-maximize-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler">
-         <property-name
-               name="swt-minimize-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler">
-         <property-name
-               name="swt-maximized">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler">
-         <property-name
-               name="swt-minimized">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler">
-         <property-name
-               name="swt-tab-height">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabTextMinimumCharactersSWTHandler">
-         <property-name
-               name="swt-tab-text-minimum-characters">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler">
-         <property-name
-               name="swt-single">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler">
-         <property-name
-               name="swt-unselected-close-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler">
-         <property-name
-               name="swt-unselected-image-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectedImageVisibleSWTHandler">
-         <property-name
-               name="swt-selected-image-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectedTabsSWTHandler">
          <property-name
                name="swt-selected-tabs-background">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCustomTabContentBackgroundSWTHandler">
-         <property-name
-               name="swt-draw-custom-tab-content-background">
          </property-name>
       </handler>
       <handler
@@ -398,22 +305,6 @@
          </property-name>
          <property-name
                name="swt-selected-tab-fill">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4TabOutline">
-         <property-name
-               name="swt-tab-outline">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectHotTabsColorBackgroundHandler">
-         <property-name
-               name="swt-unselected-hot-tab-color-background">
          </property-name>
       </handler>
       <handler
