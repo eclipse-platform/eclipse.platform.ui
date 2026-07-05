@@ -28,9 +28,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
  * This class wraps the ToolBar to make it possible to use tabulator-keys to
  * navigate between the buttons of a ToolBar. For this, we simulate a singular
  * ToolBar by putting each ToolItem into it's own ToolBar and composing them
- * into a Composite. Since the "Enter" keypress could not previously trigger
- * activation behavior, we listen for it manually and send according events if
- * necessary.
+ * into a Composite.
  */
 class AccessibleToolBar extends Composite {
 
@@ -45,8 +43,7 @@ class AccessibleToolBar extends Composite {
 	}
 
 	/**
-	 * Creates a ToolItem handled by this ToolBar and returns it. Will add a
-	 * KeyListener which will handle presses of "Enter".
+	 * Creates a ToolItem handled by this ToolBar and returns it.
 	 *
 	 * @param styleBits the StyleBits to apply to the created ToolItem
 	 * @return a newly created ToolItem

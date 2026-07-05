@@ -92,7 +92,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	private void restoreInitialConfiguration() {
-		find.setText("");
+		setFindText("");
 		select(SearchOptions.GLOBAL);
 		unselect(SearchOptions.REGEX);
 		unselect(SearchOptions.CASE_SENSITIVE);
@@ -113,28 +113,24 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void select(SearchOptions option) {
-		ToolItem button= getButtonForSearchOption(option);
-		if (button == null) {
+		if (getSelectedOptions().contains(option)) {
 			return;
 		}
-		button.setSelection(true);
-		if (option == SearchOptions.GLOBAL) {
-			button.setSelection(false);
+		ToolItem button= getButtonForSearchOption(option);
+		if (button != null) {
+			button.notifyListeners(SWT.Selection, null);
 		}
-		button.notifyListeners(SWT.Selection, null);
 	}
 
 	@Override
 	public void unselect(SearchOptions option) {
-		ToolItem button= getButtonForSearchOption(option);
-		if (button == null) {
+		if (!getSelectedOptions().contains(option)) {
 			return;
 		}
-		button.setSelection(false);
-		if (option == SearchOptions.GLOBAL) {
-			button.setSelection(true);
+		ToolItem button= getButtonForSearchOption(option);
+		if (button != null) {
+			button.notifyListeners(SWT.Selection, null);
 		}
-		button.notifyListeners(SWT.Selection, null);
 	}
 
 	@Override
@@ -208,11 +204,15 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	private Predicate<? super SearchOptions> isOptionSelected() {
 		return option -> {
 			ToolItem buttonForSearchOption= getButtonForSearchOption(option);
-			if (option == SearchOptions.GLOBAL) {
-				return !buttonForSearchOption.getSelection();// The "Global" option is mapped to a button that
-				// selects whether to search in the selection, thus inverting the semantic
+			if (buttonForSearchOption == null) {
+				return false;
 			}
-			return buttonForSearchOption != null && buttonForSearchOption.getSelection();
+			if (option == SearchOptions.GLOBAL) {
+				// The "Global" option is mapped to a button that selects whether to search in
+				// the selection, thus inverting the semantic
+				return !buttonForSearchOption.getSelection();
+			}
+			return buttonForSearchOption.getSelection();
 		};
 	}
 

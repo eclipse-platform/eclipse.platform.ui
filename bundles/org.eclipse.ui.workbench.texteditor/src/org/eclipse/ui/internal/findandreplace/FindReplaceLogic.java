@@ -15,10 +15,15 @@
 package org.eclipse.ui.internal.findandreplace;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -58,6 +63,20 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private String findString = ""; //$NON-NLS-1$
 	private String replaceString = ""; //$NON-NLS-1$
 
+	private final Map<SearchOptions, List<Consumer<Boolean>>> searchOptionListeners = new HashMap<>();
+
+	@Override
+	public void addSearchOptionChangedListener(SearchOptions option, Consumer<Boolean> listener) {
+		Objects.requireNonNull(option);
+		Objects.requireNonNull(listener);
+		searchOptionListeners.computeIfAbsent(option, k -> new CopyOnWriteArrayList<>()).add(listener);
+	}
+
+	private void notifySearchOptionChangedListeners(SearchOptions option, boolean newState) {
+		List<Consumer<Boolean>> listeners = searchOptionListeners.getOrDefault(option, Collections.emptyList());
+		listeners.forEach(l -> l.accept(newState));
+	}
+
 	@Override
 	public void setFindString(String findString) {
 		this.findString = Objects.requireNonNull(findString);
@@ -91,6 +110,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		default:
 			break;
 		}
+		notifySearchOptionChangedListeners(searchOption, true);
 	}
 
 	@Override
@@ -106,6 +126,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (searchOption == SearchOptions.FORWARD && shouldInitIncrementalBaseLocation()) {
 			resetIncrementalBaseLocation();
 		}
+		notifySearchOptionChangedListeners(searchOption, false);
 	}
 
 	@Override

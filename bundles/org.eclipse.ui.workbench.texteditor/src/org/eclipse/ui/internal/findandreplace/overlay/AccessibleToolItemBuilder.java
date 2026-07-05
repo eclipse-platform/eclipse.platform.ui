@@ -23,6 +23,9 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
 
+import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
+import org.eclipse.ui.internal.findandreplace.SearchOptions;
+
 /**
  * Builder for ToolItems for {@link AccessibleToolBar}.
  */
@@ -33,6 +36,9 @@ class AccessibleToolItemBuilder {
 	private String toolTipText;
 	private List<KeyStroke> shortcuts = Collections.emptyList();
 	private Runnable operation;
+	private SearchOptions searchOption;
+	private IFindReplaceLogic findReplaceLogic;
+	private boolean invertSearchOption;
 
 	public AccessibleToolItemBuilder(AccessibleToolBar accessibleToolBar) {
 		this.accessibleToolBar = Objects.requireNonNull(accessibleToolBar);
@@ -63,6 +69,31 @@ class AccessibleToolItemBuilder {
 		return this;
 	}
 
+	/**
+	 * Binds a {@link SearchOptions} value to this item. When built, the item's
+	 * selection state is initialized from the logic's current state and kept in
+	 * sync automatically whenever the option changes.
+	 */
+	public AccessibleToolItemBuilder withSearchOption(SearchOptions option, IFindReplaceLogic logic) {
+		this.searchOption = option;
+		this.findReplaceLogic = logic;
+		this.invertSearchOption = false;
+		return this;
+	}
+
+	/**
+	 * Like {@link #withSearchOption(SearchOptions, IFindReplaceLogic)} but inverts
+	 * the mapping: the item is selected when the option is <em>inactive</em>.
+	 * Useful for options like {@link SearchOptions#GLOBAL} where a "search in
+	 * selection" button should be selected when searching globally is turned off.
+	 */
+	public AccessibleToolItemBuilder withInvertedSearchOption(SearchOptions option, IFindReplaceLogic logic) {
+		this.searchOption = option;
+		this.findReplaceLogic = logic;
+		this.invertSearchOption = true;
+		return this;
+	}
+
 	public ToolItem build() {
 		AccessibleToolItem accessibleToolItem = accessibleToolBar.createToolItem(styleBits);
 		if (image != null) {
@@ -74,7 +105,16 @@ class AccessibleToolItemBuilder {
 		if (operation != null) {
 			accessibleToolItem.setOperation(operation, shortcuts);
 		}
-
-		return accessibleToolItem.getToolItem();
+		ToolItem toolItem = accessibleToolItem.getToolItem();
+		if (searchOption != null) {
+			boolean initial = findReplaceLogic.isActive(searchOption);
+			toolItem.setSelection(invertSearchOption ? !initial : initial);
+			findReplaceLogic.addSearchOptionChangedListener(searchOption, state -> {
+				if (!toolItem.isDisposed()) {
+					toolItem.setSelection(invertSearchOption ? !state : state);
+				}
+			});
+		}
+		return toolItem;
 	}
 }

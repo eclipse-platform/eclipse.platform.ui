@@ -31,6 +31,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.AfterEach;
@@ -966,6 +968,67 @@ public class FindReplaceLogicTest {
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.setFindString("hello");
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 5)));
+	}
+
+	@Test
+	public void testSearchOptionListenerCalledOnActivation() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+
+		assertThat(receivedValues, is(List.of(true)));
+	}
+
+	@Test
+	public void testSearchOptionListenerCalledOnDeactivation() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+
+		findReplaceLogic.deactivate(SearchOptions.CASE_SENSITIVE);
+
+		assertThat(receivedValues, is(List.of(false)));
+	}
+
+	@Test
+	public void testSearchOptionListenerNotCalledWhenAlreadyActive() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+
+		assertTrue(receivedValues.isEmpty());
+	}
+
+	@Test
+	public void testSearchOptionListenerNotCalledWhenAlreadyInactive() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		// CASE_SENSITIVE is inactive by default
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+
+		findReplaceLogic.deactivate(SearchOptions.CASE_SENSITIVE);
+
+		assertTrue(receivedValues.isEmpty());
+	}
+
+	@Test
+	public void testMultipleListenersForSameOptionAllNotified() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		List<Boolean> received1= new ArrayList<>();
+		List<Boolean> received2= new ArrayList<>();
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, received1::add);
+		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, received2::add);
+
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+
+		assertThat(received1, is(List.of(true)));
+		assertThat(received2, is(List.of(true)));
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {

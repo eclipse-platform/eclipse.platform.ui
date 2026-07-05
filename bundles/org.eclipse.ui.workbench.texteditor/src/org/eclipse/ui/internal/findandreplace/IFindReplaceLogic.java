@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
+import java.util.function.Consumer;
+
 import org.eclipse.jface.text.IFindReplaceTarget;
 
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
@@ -57,6 +59,22 @@ public interface IFindReplaceLogic {
 	 * @param searchOption option
 	 */
 	public void deactivate(SearchOptions searchOption);
+
+	/**
+	 * Registers a listener that is notified whenever the given search option is
+	 * activated or deactivated. The listener is called with {@code true} when the
+	 * option becomes active and {@code false} when it becomes inactive.
+	 *
+	 * <p>
+	 * Listeners are only notified when the state actually changes — repeated calls
+	 * to {@link #activate} or {@link #deactivate} for an already-active/inactive
+	 * option do not trigger a notification.
+	 * </p>
+	 *
+	 * @param option   the search option to observe
+	 * @param listener the listener to register
+	 */
+	public void addSearchOptionChangedListener(SearchOptions option, Consumer<Boolean> listener);
 
 	/**
 	 * @param searchOption option

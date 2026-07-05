@@ -611,11 +611,12 @@ public class FindReplaceOverlay {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
 				.withOperation(() -> {
-					activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
+					activateInFindReplacerIf(SearchOptions.GLOBAL, !findReplaceLogic.isActive(SearchOptions.GLOBAL));
 					updateIncrementalSearch();
 				})
-				.withShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION).build();
-		searchInSelectionButton.setSelection(!findReplaceLogic.isActive(SearchOptions.GLOBAL));
+				.withShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION)
+				.withInvertedSearchOption(SearchOptions.GLOBAL, findReplaceLogic)
+				.build();
 	}
 
 	private void createRegexSearchButton() {
@@ -623,13 +624,15 @@ public class FindReplaceOverlay {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withOperation(() -> {
-					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
+					activateInFindReplacerIf(SearchOptions.REGEX, !findReplaceLogic.isActive(SearchOptions.REGEX));
 					wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
 					decorate();
-				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
-		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
+				})
+				.withShortcuts(KeyboardShortcuts.OPTION_REGEX)
+				.withSearchOption(SearchOptions.REGEX, findReplaceLogic)
+				.build();
 	}
 
 	private void createCaseSensitiveButton() {
@@ -637,10 +640,12 @@ public class FindReplaceOverlay {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
 				.withOperation(() -> {
-					activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, caseSensitiveSearchButton.getSelection());
+					activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, !findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
 					updateIncrementalSearch();
-				}).withShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE).build();
-		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
+				})
+				.withShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE)
+				.withSearchOption(SearchOptions.CASE_SENSITIVE, findReplaceLogic)
+				.build();
 	}
 
 	private void createWholeWordsButton() {
@@ -648,10 +653,12 @@ public class FindReplaceOverlay {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
 				.withOperation(() -> {
-					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
+					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, !findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
 					updateIncrementalSearch();
-				}).withShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD).build();
-		wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+				})
+				.withShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD)
+				.withSearchOption(SearchOptions.WHOLE_WORD, findReplaceLogic)
+				.build();
 	}
 
 	private void createReplaceTools() {

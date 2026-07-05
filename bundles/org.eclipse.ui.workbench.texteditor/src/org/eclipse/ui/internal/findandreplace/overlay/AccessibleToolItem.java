@@ -33,16 +33,6 @@ class AccessibleToolItem {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(toolbar);
 		toolItem = new ToolItem(toolbar, styleBits);
-		addToolItemTraverseListener(toolbar);
-	}
-
-	private void addToolItemTraverseListener(ToolBar parent) {
-		parent.addTraverseListener(e -> {
-			if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-				action.execute();
-				e.doit = false;
-			}
-		});
 	}
 
 	ToolItem getToolItem() {
@@ -62,15 +52,7 @@ class AccessibleToolItem {
 	}
 
 	void setOperation(Runnable operation, List<KeyStroke> shortcuts) {
-		boolean isCheckbox = (toolItem.getStyle() & SWT.CHECK) != 0;
-		if (isCheckbox) {
-			action = new FindReplaceOverlayAction(() -> {
-				toolItem.setSelection(!toolItem.getSelection());
-				operation.run();
-			});
-		} else {
-			action = new FindReplaceOverlayAction(operation);
-		}
+		action = new FindReplaceOverlayAction(operation);
 		action.addShortcuts(shortcuts);
 		setToolTipText(toolItem.getToolTipText());
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(__ -> operation.run()));
