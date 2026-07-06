@@ -202,6 +202,18 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 	}
 
 	@Test
+	public void testWholeWordButtonEnabledStateImmediatelyReflectsCurrentSearchTerm() {
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		OverlayAccess dialog= getDialog();
+
+		dialog.setFindText("foo ");
+		dialog.assertDisabled(SearchOptions.WHOLE_WORD);
+
+		dialog.setFindText("foo");
+		dialog.assertEnabled(SearchOptions.WHOLE_WORD);
+	}
+
+	@Test
 	public void testSearchTermStoredInHistoryAfterSearchBackward() {
 		// Backward search must persist the term to history just like forward search.
 		initializeTextViewerWithFindReplaceUI("foo bar foo");

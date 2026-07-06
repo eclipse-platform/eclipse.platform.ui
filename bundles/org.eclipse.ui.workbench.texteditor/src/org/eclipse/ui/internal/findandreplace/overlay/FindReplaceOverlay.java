@@ -701,8 +701,8 @@ public class FindReplaceOverlay {
 		searchBar.forceFocus();
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
-			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 			updateIncrementalSearch();
+			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 			decorate();
 		});
 		searchBar.addFocusListener(new FocusListener() {
