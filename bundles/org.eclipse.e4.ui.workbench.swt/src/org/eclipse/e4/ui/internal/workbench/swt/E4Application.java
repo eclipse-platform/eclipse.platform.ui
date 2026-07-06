@@ -26,9 +26,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -120,6 +124,8 @@ public class E4Application implements IApplication {
 	private static final String SHOWLOCATION_ARG_NAME = "showLocation";
 	private static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 	public static final String HIGH_CONTRAST_THEME_ID = "org.eclipse.e4.ui.css.theme.high-contrast";
+	private static final String NL_STATE_FILENAME = "last_nl.properties"; //$NON-NLS-1$
+	private static final String NL_STATE_KEY = "eclipse.last.nl"; //$NON-NLS-1$
 
 	private String[] args;
 
@@ -371,6 +377,10 @@ public class E4Application implements IApplication {
 		// Persisted state
 		Boolean clearPersistedState = getArgValue(IWorkbench.CLEAR_PERSISTED_STATE, appContext, true)
 				.map(Boolean::parseBoolean).orElse(Boolean.FALSE);
+		// If not already clearing, check if NL locale changed since last run
+		if (!clearPersistedState) {
+			clearPersistedState = hasNlChanged(instanceLocation);
+		}
 		eclipseContext.set(IWorkbench.CLEAR_PERSISTED_STATE, clearPersistedState);
 
 		String resourceHandler = getArgValue(IWorkbench.MODEL_RESOURCE_HANDLER, appContext, false)
@@ -383,6 +393,59 @@ public class E4Application implements IApplication {
 
 		Resource resource = handler.loadMostRecentModel();
 		return (MApplication) resource.getContents().get(0);
+	}
+
+	/**
+	 * Checks whether the Eclipse locale (-nl) has changed since the last launch.
+	 * Persists the current locale in a properties file alongside workbench.xmi.
+	 *
+	 * @return true if the locale has changed since the last launch, false otherwise
+	 */
+	private boolean hasNlChanged(Location instanceLocation) {
+		if (instanceLocation == null || instanceLocation.getURL() == null) {
+			return false;
+		}
+
+		Path stateDir;
+		try {
+			stateDir = Path.of(instanceLocation.getURL().toURI()).resolve(".metadata") //$NON-NLS-1$
+					.resolve(".plugins") //$NON-NLS-1$
+					.resolve("org.eclipse.e4.workbench"); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			return false;
+		}
+		Path nlFile = stateDir.resolve(NL_STATE_FILENAME);
+
+		String currentNL = Platform.getNL();
+		Properties props = new Properties();
+		boolean localeChanged = false;
+
+		// Read previously saved locale if file exists
+		if (Files.isRegularFile(nlFile)) {
+			try (InputStream in = Files.newInputStream(nlFile)) {
+				props.load(in);
+				String savedNL = props.getProperty(NL_STATE_KEY);
+				if (!currentNL.equals(savedNL)) {
+					localeChanged = true;
+				}
+			} catch (IOException e) {
+				// Cannot read - file will be rewritten below
+				localeChanged = true;
+			}
+		}
+		// Write current locale - covers first launch, locale change and recovery cases
+		props.setProperty(NL_STATE_KEY, currentNL);
+		try {
+			Files.createDirectories(stateDir); // ensure directory exists before writing
+			try (OutputStream out = Files.newOutputStream(nlFile)) {
+				props.store(out, "Eclipse last used NL locale"); //$NON-NLS-1$
+			}
+		} catch (IOException e) {
+			// Cannot write - non-fatal, skip clearing to be safe
+			return false;
+		}
+
+		return localeChanged;
 	}
 
 	private URI determineApplicationModelURI(IApplicationContext appContext) {
