@@ -13,15 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.bindings.keys.KeyStroke;
 
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
@@ -34,8 +30,7 @@ class AccessibleToolItemBuilder {
 	private int styleBits = SWT.NONE;
 	private Image image;
 	private String toolTipText;
-	private List<KeyStroke> shortcuts = Collections.emptyList();
-	private Runnable operation;
+	private FindReplaceOverlayAction action;
 	private SearchOptions searchOption;
 	private IFindReplaceLogic findReplaceLogic;
 	private boolean invertSearchOption;
@@ -59,13 +54,8 @@ class AccessibleToolItemBuilder {
 		return this;
 	}
 
-	public AccessibleToolItemBuilder withShortcuts(List<KeyStroke> newShortcuts) {
-		this.shortcuts = newShortcuts;
-		return this;
-	}
-
-	public AccessibleToolItemBuilder withOperation(Runnable newOperation) {
-		this.operation = newOperation;
+	public AccessibleToolItemBuilder withAction(FindReplaceOverlayAction newAction) {
+		this.action = newAction;
 		return this;
 	}
 
@@ -102,8 +92,8 @@ class AccessibleToolItemBuilder {
 		if (toolTipText != null) {
 			accessibleToolItem.setToolTipText(toolTipText);
 		}
-		if (operation != null) {
-			accessibleToolItem.setOperation(operation, shortcuts);
+		if (action != null) {
+			accessibleToolItem.setAction(action);
 		}
 		ToolItem toolItem = accessibleToolItem.getToolItem();
 		if (searchOption != null) {

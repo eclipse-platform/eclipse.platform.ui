@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -30,6 +31,10 @@ class FindReplaceOverlayAction {
 
 	void execute() {
 		operation.run();
+	}
+
+	List<KeyStroke> getShortcuts() {
+		return Collections.unmodifiableList(shortcuts);
 	}
 
 	boolean executeIfMatching(KeyStroke keystroke) {

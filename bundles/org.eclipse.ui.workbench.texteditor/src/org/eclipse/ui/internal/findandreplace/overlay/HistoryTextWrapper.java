@@ -57,10 +57,11 @@ public class HistoryTextWrapper extends Composite {
 		textBar = new Text(this, style);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.CENTER).applyTo(textBar);
 		tools = new AccessibleToolBar(this);
+		FindReplaceOverlayAction action = new FindReplaceOverlayAction(this::createHistoryMenuDropdown);
 		dropDown = new AccessibleToolItemBuilder(tools).withStyleBits(SWT.PUSH)
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchHistory_toolTip)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_HISTORY))
-				.withOperation(this::createHistoryMenuDropdown)
+				.withAction(action)
 				.build();
 
 		listenForKeyboardHistoryNavigation();

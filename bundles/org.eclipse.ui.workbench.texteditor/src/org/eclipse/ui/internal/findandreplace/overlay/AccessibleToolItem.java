@@ -10,24 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.layout.GridDataFactory;
 
 class AccessibleToolItem {
 	private final ToolItem toolItem;
 
-	private FindReplaceOverlayAction action = new FindReplaceOverlayAction(null);
+	private FindReplaceOverlayAction action;
 
 	AccessibleToolItem(Composite parent, int styleBits) {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
@@ -48,18 +44,13 @@ class AccessibleToolItem {
 	}
 
 	void setToolTipText(String text) {
-		toolItem.setToolTipText(action.addShortcutHintToTooltipText(text));
+		toolItem.setToolTipText(action != null ? action.addShortcutHintToTooltipText(text) : text);
 	}
 
-	void setOperation(Runnable operation, List<KeyStroke> shortcuts) {
-		action = new FindReplaceOverlayAction(operation);
-		action.addShortcuts(shortcuts);
+	void setAction(FindReplaceOverlayAction newAction) {
+		this.action = newAction;
 		setToolTipText(toolItem.getToolTipText());
-		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(__ -> operation.run()));
-	}
-
-	void registerActionShortcutsAtControl(Control control) {
-		FindReplaceShortcutUtil.registerActionShortcutsAtControl(action, control);
+		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(__ -> action.execute()));
 	}
 
 }

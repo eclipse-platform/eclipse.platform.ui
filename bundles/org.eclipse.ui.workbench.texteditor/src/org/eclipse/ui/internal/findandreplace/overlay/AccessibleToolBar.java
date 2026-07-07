@@ -65,11 +65,6 @@ class AccessibleToolBar extends Composite {
 		}
 	}
 
-	void registerActionShortcutsAtControl(Control control) {
-		for (AccessibleToolItem item : accessibleToolItems) {
-			item.registerActionShortcutsAtControl(control);
-		}
-	}
 
 	Control getFirstControl() {
 		Control[] children = getChildren();
