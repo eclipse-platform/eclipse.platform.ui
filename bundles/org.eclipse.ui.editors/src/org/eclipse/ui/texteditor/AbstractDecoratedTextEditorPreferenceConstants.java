@@ -28,6 +28,7 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer;
+import org.eclipse.ui.internal.texteditor.BlockEndCodeMiningPreferenceConstants;
 
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -882,6 +883,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(EDITOR_STICKY_SCROLLING_ENABLED, false);
 		store.setDefault(EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT, 4);
+
+		store.setDefault(BlockEndCodeMiningPreferenceConstants.SHOW_BLOCK_END_CODE_MINING, false);
+		store.setDefault(BlockEndCodeMiningPreferenceConstants.BLOCK_END_CODE_MINING_MIN_LINES, BlockEndCodeMiningPreferenceConstants.DEFAULT_MIN_LINES);
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 
