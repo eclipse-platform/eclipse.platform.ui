@@ -1554,6 +1554,11 @@
             id="org.eclipse.test.codemining.zswpProvider"
             label="%CodeMining.show.ZWSP">
       </codeMiningProvider>
+      <codeMiningProvider
+            class="org.eclipse.ui.internal.texteditor.codemining.BlockEndCodeMiningProvider"
+            id="org.eclipse.ui.workbench.texteditor.codemining.blockEndProvider"
+            label="%CodeMining.blockEnd">
+      </codeMiningProvider>
    </extension>
 
    <extension
