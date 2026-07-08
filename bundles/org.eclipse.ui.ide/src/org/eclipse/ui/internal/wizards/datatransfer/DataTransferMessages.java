@@ -197,6 +197,14 @@ public class DataTransferMessages extends NLS {
 	public static String SmartImportProposals_hideExistingProjects;
 	public static String SmartImportProposals_inspecitionCanceled;
 	public static String SmartImportProposals_errorWhileInspecting;
+	public static String SmartImportProposals_projectAlreadyOpen_title;
+	public static String SmartImportProposals_projectAlreadyOpen_message;
+	public static String SmartImportProposals_projectAlreadyClosed_title;
+	public static String SmartImportProposals_projectAlreadyClosed_message;
+	public static String SmartImportProposals_showInProjectExplorer;
+	public static String SmartImportProposals_openProject;
+	public static String SmartImportProposals_openProjectFailed;
+	public static String SmartImportProposals_openFailed;
 
 	public static String SmartImportReport_importedProjects;
 	public static String SmartImportReport_importedProjectsWithCount;

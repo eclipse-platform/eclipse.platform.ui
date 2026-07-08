@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -62,6 +64,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -88,7 +91,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -100,6 +107,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManager.JobMonitor;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 import org.osgi.framework.FrameworkUtil;
@@ -607,14 +615,21 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 		});
 		tree.addCheckStateListener(event -> {
-			if (isExistingProject((File) event.getElement()) || isExistingProjectName((File) event.getElement())) {
-				tree.setChecked(event.getElement(), false);
+			File file = (File) event.getElement();
+			IProject existingProject = findExistingProject(file);
+			if (existingProject != null) {
+				tree.setChecked(file, false);
+				promptAlreadyImportedProject(file, existingProject);
+				return;
+			}
+			if (isExistingProjectName(file)) {
+				tree.setChecked(file, false);
 				return;
 			}
 			if (event.getChecked()) {
-				SmartImportRootWizardPage.this.directoriesToImport.add((File) event.getElement());
+				SmartImportRootWizardPage.this.directoriesToImport.add(file);
 			} else {
-				SmartImportRootWizardPage.this.directoriesToImport.remove(event.getElement());
+				SmartImportRootWizardPage.this.directoriesToImport.remove(file);
 			}
 			proposalsSelectionChanged();
 		});
@@ -787,19 +802,90 @@ public class SmartImportRootWizardPage extends WizardPage {
 		}
 
 	}
-	protected boolean isExistingProject(File element) {
+
+	protected IProject findExistingProject(File element) {
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			IPath location = project.getLocation();
 			if (location != null && element.equals(location.toFile())) {
-				return true;
+				return project;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	protected boolean isExistingProject(File element) {
+		return findExistingProject(element) != null;
 	}
 
 	protected boolean isExistingProjectName(File element) {
 		String name = element.getName();
 		return !name.isEmpty() && ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists();
+	}
+
+	private void promptAlreadyImportedProject(File file, IProject project) {
+		tree.setSelection(new StructuredSelection(file), true);
+		boolean isOpen = project.isOpen();
+		String title = isOpen ? DataTransferMessages.SmartImportProposals_projectAlreadyOpen_title
+				: DataTransferMessages.SmartImportProposals_projectAlreadyClosed_title;
+		String message = NLS.bind(isOpen ? DataTransferMessages.SmartImportProposals_projectAlreadyOpen_message
+				: DataTransferMessages.SmartImportProposals_projectAlreadyClosed_message, project.getName());
+		String actionLabel = isOpen ? DataTransferMessages.SmartImportProposals_showInProjectExplorer
+				: DataTransferMessages.SmartImportProposals_openProject;
+
+		MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
+				new String[] { actionLabel, IDialogConstants.CANCEL_LABEL }, 0);
+		if (dialog.open() == 0) {
+			if (isOpen) {
+				showProjectInExplorer(project);
+			} else {
+				openProject(project);
+			}
+			if (tree.getCheckedElements().length == 0) {
+				getContainer().getShell().getDisplay().asyncExec(() -> {
+					if (getContainer() instanceof WizardDialog wizardDialog) {
+						wizardDialog.close();
+					}
+				});
+			}
+		}
+	}
+
+	private void openProject(IProject project) {
+		try {
+			getContainer().run(true, true, monitor -> {
+				try {
+					project.open(monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			StatusManager
+					.getManager().handle(
+							new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+									NLS.bind(DataTransferMessages.SmartImportProposals_openProjectFailed,
+											project.getName()),
+									e.getCause() != null ? e.getCause() : e),
+							StatusManager.LOG | StatusManager.SHOW);
+			return;
+		}
+		showProjectInExplorer(project);
+	}
+
+	private void showProjectInExplorer(IProject project) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null || window.getActivePage() == null) {
+			return;
+		}
+		try {
+			IViewPart view = window.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
+			if (view instanceof ISetSelectionTarget target) {
+				target.selectReveal(new StructuredSelection(project));
+			}
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+					DataTransferMessages.SmartImportProposals_openFailed, e), StatusManager.LOG);
+		}
 	}
 
 	protected void validatePage() {
