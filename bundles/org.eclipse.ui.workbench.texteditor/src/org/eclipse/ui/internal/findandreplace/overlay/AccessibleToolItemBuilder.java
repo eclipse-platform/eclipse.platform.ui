@@ -30,10 +30,6 @@ class AccessibleToolItemBuilder {
 	private int styleBits = SWT.NONE;
 	private Image image;
 	private String toolTipText;
-	private FindReplaceOverlayAction action;
-	private SearchOptions searchOption;
-	private IFindReplaceLogic findReplaceLogic;
-	private boolean invertSearchOption;
 
 	public AccessibleToolItemBuilder(AccessibleToolBar accessibleToolBar) {
 		this.accessibleToolBar = Objects.requireNonNull(accessibleToolBar);
@@ -54,51 +50,53 @@ class AccessibleToolItemBuilder {
 		return this;
 	}
 
-	public AccessibleToolItemBuilder withAction(FindReplaceOverlayAction newAction) {
-		this.action = newAction;
-		return this;
+	public AccessibleToolItemForActionBuilder withAction(FindReplaceOverlayAction action) {
+		return new AccessibleToolItemForActionBuilder(this, action);
 	}
 
-	/**
-	 * Binds a {@link SearchOptions} value to this item. When built, the item's
-	 * selection state is initialized from the logic's current activation state and
-	 * kept in sync automatically. The item's enabled state is also initialized from
-	 * and kept in sync with the option's availability.
-	 */
-	public AccessibleToolItemBuilder withSearchOption(SearchOptions option, IFindReplaceLogic logic) {
-		this.searchOption = option;
-		this.findReplaceLogic = logic;
-		this.invertSearchOption = false;
-		return this;
-	}
+	public class AccessibleToolItemForActionBuilder {
+		private final AccessibleToolItemBuilder parentBuilder;
 
-	/**
-	 * Like {@link #withSearchOption(SearchOptions, IFindReplaceLogic)} but inverts
-	 * the selection mapping: the item is selected when the option is
-	 * <em>inactive</em>. Useful for options like {@link SearchOptions#GLOBAL} where
-	 * a "search in selection" button should be selected when searching globally is
-	 * turned off.
-	 */
-	public AccessibleToolItemBuilder withInvertedSearchOption(SearchOptions option, IFindReplaceLogic logic) {
-		this.searchOption = option;
-		this.findReplaceLogic = logic;
-		this.invertSearchOption = true;
-		return this;
-	}
+		private final FindReplaceOverlayAction action;
 
-	public ToolItem build() {
-		AccessibleToolItem accessibleToolItem = accessibleToolBar.createToolItem(styleBits);
-		if (image != null) {
-			accessibleToolItem.setImage(image);
+		private AccessibleToolItemForActionBuilder(AccessibleToolItemBuilder parentBuilder,
+				FindReplaceOverlayAction action) {
+			this.parentBuilder = parentBuilder;
+			this.action = action;
 		}
-		if (toolTipText != null) {
-			accessibleToolItem.setToolTipText(toolTipText);
-		}
-		if (action != null) {
+
+		public ToolItem build() {
+			AccessibleToolItem accessibleToolItem = parentBuilder.buildAccessibleToolItem();
 			accessibleToolItem.setAction(action);
+			return accessibleToolItem.getToolItem();
 		}
-		ToolItem toolItem = accessibleToolItem.getToolItem();
-		if (searchOption != null) {
+	}
+
+	public AccessibleToolItemForSearchOptionBuilder withAction(FindReplaceOverlaySearchOptionAction action) {
+		return new AccessibleToolItemForSearchOptionBuilder(this, action);
+	}
+
+	public class AccessibleToolItemForSearchOptionBuilder extends AccessibleToolItemForActionBuilder {
+		private final FindReplaceOverlaySearchOptionAction searchOptionAction;
+
+		private boolean invertSearchOption;
+
+		private AccessibleToolItemForSearchOptionBuilder(AccessibleToolItemBuilder parentBuilder,
+				FindReplaceOverlaySearchOptionAction searchOptionAction) {
+			super(parentBuilder, searchOptionAction);
+			this.searchOptionAction = searchOptionAction;
+		}
+
+		public AccessibleToolItemForSearchOptionBuilder displayInverted() {
+			this.invertSearchOption = true;
+			return this;
+		}
+
+		@Override
+		public ToolItem build() {
+			ToolItem toolItem = super.build();
+			IFindReplaceLogic findReplaceLogic = searchOptionAction.getFindReplaceLogic();
+			SearchOptions searchOption = searchOptionAction.getSearchOption();
 			boolean initial = findReplaceLogic.isActive(searchOption);
 			toolItem.setSelection(invertSearchOption ? !initial : initial);
 			findReplaceLogic.addSearchOptionActivationChangedListener(searchOption, state -> {
@@ -107,12 +105,28 @@ class AccessibleToolItemBuilder {
 				}
 			});
 			toolItem.setEnabled(findReplaceLogic.isAvailable(searchOption));
-			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, available -> {
+			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, state -> {
 				if (!toolItem.isDisposed()) {
-					toolItem.setEnabled(available);
+					toolItem.setEnabled(state);
 				}
 			});
+			return toolItem;
 		}
-		return toolItem;
 	}
+
+	public ToolItem build() {
+		return buildAccessibleToolItem().getToolItem();
+	}
+
+	private AccessibleToolItem buildAccessibleToolItem() {
+		AccessibleToolItem accessibleToolItem = accessibleToolBar.createToolItem(styleBits);
+		if (image != null) {
+			accessibleToolItem.setImage(image);
+		}
+		if (toolTipText != null) {
+			accessibleToolItem.setToolTipText(toolTipText);
+		}
+		return accessibleToolItem;
+	}
+
 }

@@ -570,30 +570,25 @@ public class FindReplaceOverlay {
 	}
 
 	private void createAreaSearchButton() {
-		FindReplaceOverlayAction searchInSelectionAction = new FindReplaceOverlayAction(() -> {
-			findReplaceLogic.toggle(SearchOptions.GLOBAL);
-			updateIncrementalSearch();
-		});
+		FindReplaceOverlaySearchOptionAction searchInSelectionAction = new FindReplaceOverlaySearchOptionAction(SearchOptions.GLOBAL, findReplaceLogic);
+		searchInSelectionAction.addExecutionListener(this::updateIncrementalSearch);
 		searchInSelectionAction.addShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION);
 		commonActions.add(searchInSelectionAction);
 		searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
-				.withInvertedSearchOption(SearchOptions.GLOBAL, findReplaceLogic)
-				.withAction(searchInSelectionAction).build();
+				.withAction(searchInSelectionAction).displayInverted().build();
 	}
 
 	private void createRegexSearchButton() {
-		FindReplaceOverlayAction regexAction = new FindReplaceOverlayAction(() -> {
-			findReplaceLogic.toggle(SearchOptions.REGEX);
-			updateIncrementalSearch();
-		});
+		FindReplaceOverlaySearchOptionAction regexAction = new FindReplaceOverlaySearchOptionAction(SearchOptions.REGEX,
+				findReplaceLogic);
+		regexAction.addExecutionListener(this::updateIncrementalSearch);
 		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
 		commonActions.add(regexAction);
 		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
-				.withSearchOption(SearchOptions.REGEX, findReplaceLogic)
 				.withAction(regexAction).build();
 		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.REGEX, activated -> {
 			updateContentAssistAvailability();
@@ -602,30 +597,26 @@ public class FindReplaceOverlay {
 	}
 
 	private void createCaseSensitiveButton() {
-		FindReplaceOverlayAction caseSensitiveAction = new FindReplaceOverlayAction(() -> {
-			findReplaceLogic.toggle(SearchOptions.CASE_SENSITIVE);
-			updateIncrementalSearch();
-		});
+		FindReplaceOverlaySearchOptionAction caseSensitiveAction = new FindReplaceOverlaySearchOptionAction(
+				SearchOptions.CASE_SENSITIVE, findReplaceLogic);
+		caseSensitiveAction.addExecutionListener(this::updateIncrementalSearch);
 		caseSensitiveAction.addShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE);
 		commonActions.add(caseSensitiveAction);
 		caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
-				.withSearchOption(SearchOptions.CASE_SENSITIVE, findReplaceLogic)
 				.withAction(caseSensitiveAction).build();
 	}
 
 	private void createWholeWordsButton() {
-		FindReplaceOverlayAction wholeWordAction = new FindReplaceOverlayAction(() -> {
-			findReplaceLogic.toggle(SearchOptions.WHOLE_WORD);
-			updateIncrementalSearch();
-		});
+		FindReplaceOverlaySearchOptionAction wholeWordAction = new FindReplaceOverlaySearchOptionAction(
+				SearchOptions.WHOLE_WORD, findReplaceLogic);
+		wholeWordAction.addExecutionListener(this::updateIncrementalSearch);
 		wholeWordAction.addShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD);
 		commonActions.add(wholeWordAction);
 		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
-				.withSearchOption(SearchOptions.WHOLE_WORD, findReplaceLogic)
 				.withAction(wholeWordAction).build();
 	}
 

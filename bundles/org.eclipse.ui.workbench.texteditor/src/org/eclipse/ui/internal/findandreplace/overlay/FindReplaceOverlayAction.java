@@ -19,6 +19,8 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 class FindReplaceOverlayAction {
 	private final Runnable operation;
 
+	private final List<Runnable> executionListeners = new ArrayList<>();
+
 	private final List<KeyStroke> shortcuts = new ArrayList<>();
 
 	FindReplaceOverlayAction(Runnable operation) {
@@ -31,6 +33,7 @@ class FindReplaceOverlayAction {
 
 	void execute() {
 		operation.run();
+		notifyExecutionListeners();
 	}
 
 	List<KeyStroke> getShortcuts() {
@@ -50,6 +53,16 @@ class FindReplaceOverlayAction {
 			return originalTooltipText;
 		}
 		return originalTooltipText + " (" + shortcuts.get(0).format() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	void addExecutionListener(Runnable listener) {
+		executionListeners.add(listener);
+	}
+
+	void notifyExecutionListeners() {
+		for (Runnable listener : executionListeners) {
+			listener.run();
+		}
 	}
 
 }
