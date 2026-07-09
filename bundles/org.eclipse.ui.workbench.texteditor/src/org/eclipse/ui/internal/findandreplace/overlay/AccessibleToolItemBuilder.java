@@ -61,8 +61,9 @@ class AccessibleToolItemBuilder {
 
 	/**
 	 * Binds a {@link SearchOptions} value to this item. When built, the item's
-	 * selection state is initialized from the logic's current state and kept in
-	 * sync automatically whenever the option changes.
+	 * selection state is initialized from the logic's current activation state and
+	 * kept in sync automatically. The item's enabled state is also initialized from
+	 * and kept in sync with the option's availability.
 	 */
 	public AccessibleToolItemBuilder withSearchOption(SearchOptions option, IFindReplaceLogic logic) {
 		this.searchOption = option;
@@ -73,9 +74,10 @@ class AccessibleToolItemBuilder {
 
 	/**
 	 * Like {@link #withSearchOption(SearchOptions, IFindReplaceLogic)} but inverts
-	 * the mapping: the item is selected when the option is <em>inactive</em>.
-	 * Useful for options like {@link SearchOptions#GLOBAL} where a "search in
-	 * selection" button should be selected when searching globally is turned off.
+	 * the selection mapping: the item is selected when the option is
+	 * <em>inactive</em>. Useful for options like {@link SearchOptions#GLOBAL} where
+	 * a "search in selection" button should be selected when searching globally is
+	 * turned off.
 	 */
 	public AccessibleToolItemBuilder withInvertedSearchOption(SearchOptions option, IFindReplaceLogic logic) {
 		this.searchOption = option;
@@ -99,9 +101,15 @@ class AccessibleToolItemBuilder {
 		if (searchOption != null) {
 			boolean initial = findReplaceLogic.isActive(searchOption);
 			toolItem.setSelection(invertSearchOption ? !initial : initial);
-			findReplaceLogic.addSearchOptionChangedListener(searchOption, state -> {
+			findReplaceLogic.addSearchOptionActivationChangedListener(searchOption, state -> {
 				if (!toolItem.isDisposed()) {
 					toolItem.setSelection(invertSearchOption ? !state : state);
+				}
+			});
+			toolItem.setEnabled(findReplaceLogic.isAvailable(searchOption));
+			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, available -> {
+				if (!toolItem.isDisposed()) {
+					toolItem.setEnabled(available);
 				}
 			});
 		}

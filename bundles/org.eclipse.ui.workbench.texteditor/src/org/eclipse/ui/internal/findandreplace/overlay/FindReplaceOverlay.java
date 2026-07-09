@@ -646,10 +646,7 @@ public class FindReplaceOverlay {
 	private void createRegexSearchButton() {
 		FindReplaceOverlayAction regexAction = new FindReplaceOverlayAction(() -> {
 			activateInFindReplacerIf(SearchOptions.REGEX, !findReplaceLogic.isActive(SearchOptions.REGEX));
-			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 			updateIncrementalSearch();
-			updateContentAssistAvailability();
-			decorate();
 		});
 		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
 		commonActions.add(regexAction);
@@ -658,6 +655,10 @@ public class FindReplaceOverlay {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withSearchOption(SearchOptions.REGEX, findReplaceLogic)
 				.withAction(regexAction).build();
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.REGEX, activated -> {
+			updateContentAssistAvailability();
+			decorate();
+		});
 	}
 
 	private void createCaseSensitiveButton() {
@@ -744,7 +745,6 @@ public class FindReplaceOverlay {
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
 			updateIncrementalSearch();
-			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 			decorate();
 		});
 		searchBar.addFocusListener(new FocusListener() {

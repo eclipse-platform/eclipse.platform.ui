@@ -74,7 +74,25 @@ public interface IFindReplaceLogic {
 	 * @param option   the search option to observe
 	 * @param listener the listener to register
 	 */
-	public void addSearchOptionChangedListener(SearchOptions option, Consumer<Boolean> listener);
+	public void addSearchOptionActivationChangedListener(SearchOptions option, Consumer<Boolean> listener);
+
+	/**
+	 * Registers a listener that is notified whenever the availability of the given
+	 * search option changes. The listener is called with {@code true} when the
+	 * option becomes available and {@code false} when it becomes unavailable.
+	 *
+	 * <p>
+	 * Availability is determined by {@link #isAvailable(SearchOptions)} and depends
+	 * on the state of the target and the compatibility of active options (e.g.
+	 * {@link SearchOptions#WHOLE_WORD} is unavailable when
+	 * {@link SearchOptions#REGEX} is active or the search string is not a single
+	 * word). Listeners are only notified when availability actually changes.
+	 * </p>
+	 *
+	 * @param option   the search option to observe
+	 * @param listener the listener to register
+	 */
+	public void addSearchOptionAvailabilityChangedListener(SearchOptions option, Consumer<Boolean> listener);
 
 	/**
 	 * @param searchOption option

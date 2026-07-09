@@ -987,7 +987,7 @@ public class FindReplaceLogicTest {
 	public void testSearchOptionListenerCalledOnActivation() {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
 		List<Boolean> receivedValues= new ArrayList<>();
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
 
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 
@@ -999,7 +999,7 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 		List<Boolean> receivedValues= new ArrayList<>();
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
 
 		findReplaceLogic.deactivate(SearchOptions.CASE_SENSITIVE);
 
@@ -1011,7 +1011,7 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 		List<Boolean> receivedValues= new ArrayList<>();
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
 
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 
@@ -1023,7 +1023,7 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
 		// CASE_SENSITIVE is inactive by default
 		List<Boolean> receivedValues= new ArrayList<>();
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, receivedValues::add);
 
 		findReplaceLogic.deactivate(SearchOptions.CASE_SENSITIVE);
 
@@ -1035,13 +1035,79 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
 		List<Boolean> received1= new ArrayList<>();
 		List<Boolean> received2= new ArrayList<>();
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, received1::add);
-		findReplaceLogic.addSearchOptionChangedListener(SearchOptions.CASE_SENSITIVE, received2::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, received1::add);
+		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.CASE_SENSITIVE, received2::add);
 
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 
 		assertThat(received1, is(List.of(true)));
 		assertThat(received2, is(List.of(true)));
+	}
+
+	@Test
+	public void testAvailabilityListenerCalledWhenRegexActivationMakesWholeWordUnavailable() {
+		TextViewer textViewer= setupTextViewer("");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.setFindString("word");
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionAvailabilityChangedListener(SearchOptions.WHOLE_WORD, receivedValues::add);
+
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		assertThat(receivedValues, is(List.of(false)));
+	}
+
+	@Test
+	public void testAvailabilityListenerCalledWhenRegexDeactivationMakesWholeWordAvailable() {
+		TextViewer textViewer= setupTextViewer("");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.setFindString("word");
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionAvailabilityChangedListener(SearchOptions.WHOLE_WORD, receivedValues::add);
+
+		findReplaceLogic.deactivate(SearchOptions.REGEX);
+
+		assertThat(receivedValues, is(List.of(true)));
+	}
+
+	@Test
+	public void testAvailabilityListenerCalledWhenFindStringBecomesNonWord() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		findReplaceLogic.setFindString("word");
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionAvailabilityChangedListener(SearchOptions.WHOLE_WORD, receivedValues::add);
+
+		findReplaceLogic.setFindString("hello world");
+
+		assertThat(receivedValues, is(List.of(false)));
+	}
+
+	@Test
+	public void testAvailabilityListenerCalledWhenFindStringBecomesWord() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		findReplaceLogic.setFindString("hello world");
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionAvailabilityChangedListener(SearchOptions.WHOLE_WORD, receivedValues::add);
+
+		findReplaceLogic.setFindString("word");
+
+		assertThat(receivedValues, is(List.of(true)));
+	}
+
+	@Test
+	public void testAvailabilityListenerNotCalledWhenAvailabilityUnchanged() {
+		TextViewer textViewer= setupTextViewer("");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.setFindString("hello world");
+		List<Boolean> receivedValues= new ArrayList<>();
+		findReplaceLogic.addSearchOptionAvailabilityChangedListener(SearchOptions.WHOLE_WORD, receivedValues::add);
+
+		// WHOLE_WORD is already unavailable due to non-word string; activating REGEX
+		// does not change its availability
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		assertTrue(receivedValues.isEmpty());
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
