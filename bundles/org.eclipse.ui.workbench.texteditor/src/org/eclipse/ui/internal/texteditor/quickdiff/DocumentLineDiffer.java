@@ -134,6 +134,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 
+	/**
+	 * Family for the quick diff initialize job.
+	 */
+	public static final Object QUICKDIFF_INITIALIZE_FAMILY = new Object();
+
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.ui.workbench.texteditor/debug/DocumentLineDiffer"));  //$NON-NLS-1$//$NON-NLS-2$
 
@@ -549,6 +554,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				? NLSUtility.format(QuickDiffMessages.quickdiff_initialize_file, fDisplayName)
 				: QuickDiffMessages.quickdiff_initialize;
 		fInitializationJob= new Job(jobName) {
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == QUICKDIFF_INITIALIZE_FAMILY;
+			}
 
 			/*
 			 * This is run in a different thread. As the documents might be synchronized, never ever
