@@ -104,12 +104,8 @@ class AccessibleToolItemBuilder {
 					toolItem.setSelection(invertSearchOption ? !state : state);
 				}
 			});
-			toolItem.setEnabled(findReplaceLogic.isAvailable(searchOption));
-			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, state -> {
-				if (!toolItem.isDisposed()) {
-					toolItem.setEnabled(state);
-				}
-			});
+			searchOptionAction.setAvailable(findReplaceLogic.isAvailable(searchOption));
+			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, searchOptionAction::setAvailable);
 			return toolItem;
 		}
 	}

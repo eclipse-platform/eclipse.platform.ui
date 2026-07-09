@@ -18,13 +18,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import org.eclipse.core.commands.HandlerEvent;
+import org.eclipse.core.commands.IHandlerListener;
+
 import org.eclipse.jface.layout.GridDataFactory;
 
 class AccessibleToolItem {
 	private final ToolItem toolItem;
 
 	private String baseToolTipText;
-
 
 	AccessibleToolItem(Composite parent, int styleBits) {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
@@ -51,6 +53,15 @@ class AccessibleToolItem {
 
 	void setAction(FindReplaceOverlayAction action) {
 		setToolTipText(toolItem.getToolTipText());
+		toolItem.setEnabled(action.isEnabled());
+		action.addHandlerListener(new IHandlerListener() {
+			@Override
+			public void handlerChanged(HandlerEvent event) {
+				if (event.isEnabledChanged() && !toolItem.isDisposed()) {
+					toolItem.setEnabled(action.isEnabled());
+				}
+			}
+		});
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(__ -> action.execute()));
 		action.addShortcutHintListener(hint -> {
 			if (!toolItem.isDisposed()) {

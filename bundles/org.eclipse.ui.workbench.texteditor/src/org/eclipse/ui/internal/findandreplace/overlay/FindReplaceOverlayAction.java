@@ -15,9 +15,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+
 import org.eclipse.jface.bindings.keys.KeyStroke;
 
-class FindReplaceOverlayAction {
+class FindReplaceOverlayAction extends AbstractHandler {
 	private final Runnable operation;
 
 	private final List<Runnable> executionListeners = new ArrayList<>();
@@ -34,9 +37,19 @@ class FindReplaceOverlayAction {
 		this.shortcuts.addAll(shortcutsToAdd);
 	}
 
+	@Override
+	public Object execute(ExecutionEvent event) {
+		execute();
+		return null;
+	}
+
 	void execute() {
 		operation.run();
 		notifyExecutionListeners();
+	}
+
+	void setAvailable(boolean available) {
+		setBaseEnabled(available);
 	}
 
 	List<KeyStroke> getShortcuts() {
