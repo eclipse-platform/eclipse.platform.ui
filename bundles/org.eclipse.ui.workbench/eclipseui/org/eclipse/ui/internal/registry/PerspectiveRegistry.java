@@ -104,6 +104,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 			}
 		}
 
+		registerModelPerspectives();
+
 		impExpHandlerContext = context.createChild();
 		impExpHandlerContext.set(PerspectiveRegistry.class, this);
 		ContextInjectionFactory.make(ImportExportPespectiveHandler.class, impExpHandlerContext);
@@ -112,6 +114,20 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	public void addPerspective(MPerspective perspective) {
 		application.getSnippets().add(perspective);
 		createDescriptor(perspective);
+	}
+
+	/**
+	 * Registers descriptors for perspectives contributed directly into the model
+	 * (not via the extension point or as snippets), leaving already known ones
+	 * untouched, so they are visible to the "Open Perspective" dialog.
+	 */
+	private void registerModelPerspectives() {
+		for (MPerspective perspective : modelService.findElements(application, null, MPerspective.class)) {
+			String id = perspective.getElementId();
+			if (id != null && !descriptors.containsKey(id)) {
+				createDescriptor(perspective);
+			}
+		}
 	}
 
 	public void createDescriptor(MPerspective perspective) {
@@ -221,6 +237,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	@Override
 	public IPerspectiveDescriptor[] getPerspectives() {
+		// Pick up perspectives contributed into the model after this registry was
+		// created so the returned list stays in sync with what is available.
+		registerModelPerspectives();
 		Collection<?> descs = WorkbenchActivityHelper.restrictCollection(descriptors.values(), new ArrayList<>());
 		return descs.toArray(new IPerspectiveDescriptor[descs.size()]);
 	}
