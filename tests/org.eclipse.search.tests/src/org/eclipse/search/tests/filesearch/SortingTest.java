@@ -52,8 +52,8 @@ public class SortingTest {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
-		int originalMatchCount= result.getMatchCount();
-		List<Match> allMatches= new ArrayList<>(originalMatchCount);
+		List<Match> allMatches= new ArrayList<>(result.getMatchCount());
+		int originalMatchCount= 0;
 
 		// first, collect all matches
 		Object[] elements= result.getElements();
@@ -61,6 +61,7 @@ public class SortingTest {
 			int sizeBefore= allMatches.size();
 			Match[] matches = result.getMatches(element);
 			Collections.addAll(allMatches, matches);
+			originalMatchCount += matches.length;
 			int sizeAfter= allMatches.size();
 			assertEquals(sizeBefore + matches.length, sizeAfter, "Failed to add matches:" +
 					Arrays.stream(matches).map(Match::toString).collect(Collectors.joining(System.lineSeparator())));
@@ -80,7 +81,7 @@ public class SortingTest {
 			assertEquals(sizeBefore + 1, sizeAfter, "Failed to add match:" + match);
 		}
 
-		assertEquals(result.getMatchCount(), originalMatchCount, "Test that all matches have been added again");
+		assertEquals(originalMatchCount, result.getMatchCount(), "Test that all matches have been added again");
 
 		// now check that they're ordered by position.
 		for (Object element : elements) {
