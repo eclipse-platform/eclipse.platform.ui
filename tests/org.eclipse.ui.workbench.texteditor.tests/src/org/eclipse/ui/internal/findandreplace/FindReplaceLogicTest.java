@@ -720,6 +720,19 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
+	public void testWholeWordRemainsAvailableWhenUnavailableRegexIsActivated() {
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(null);
+		findReplaceLogic.setFindString("word");
+		assertFalse(findReplaceLogic.isAvailable(SearchOptions.REGEX)); // null target has no regex support
+		assertTrue(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
+
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		// Activating an unavailable option has no effective impact, so whole-word must remain available
+		assertTrue(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
+	}
+
+	@Test
 	public void testReplaceInScopeStaysInScope() {
 		TextViewer textViewer= setupTextViewer(LINE_STRING + lineSeparator() + LINE_STRING + lineSeparator() + LINE_STRING);
 		int lineSeparatorLength= lineSeparator().length();
