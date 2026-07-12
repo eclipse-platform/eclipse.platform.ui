@@ -13,11 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.FrameworkUtil;
@@ -47,9 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.core.runtime.ILog;
-
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -64,7 +58,6 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewer;
 
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
@@ -74,12 +67,9 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
-import org.eclipse.ui.part.MultiPageEditorSite;
 
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
@@ -159,69 +149,18 @@ public class FindReplaceOverlay {
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
-	private final FocusListener targetActionActivationHandling = new FocusListener() {
-		private DeactivateGlobalActionHandlers globalActionHandlerDeaction;
+	private FindReplaceOverlayCommandSupport commandSupport;
 
+	private final FocusListener targetActionActivationHandling = new FocusListener() {
 		@Override
 		public void focusGained(FocusEvent e) {
-			setTextEditorActionsActivated(false);
+			commandSupport.overlayActivated();
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			setTextEditorActionsActivated(true);
+			commandSupport.overlayDeactivated();
 		}
-
-		/*
-		 * Adapted from
-		 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(
-		 * boolean)
-		 */
-		private void setTextEditorActionsActivated(boolean state) {
-			if (!(targetPart instanceof AbstractTextEditor) || targetPart.getSite().getWorkbenchWindow().isClosing()) {
-				return;
-			}
-			if (targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
-				if (!state && globalActionHandlerDeaction == null) {
-					globalActionHandlerDeaction = new DeactivateGlobalActionHandlers(multiEditorSite.getActionBars());
-				} else if (state && globalActionHandlerDeaction != null) {
-					globalActionHandlerDeaction.reactivate();
-					globalActionHandlerDeaction = null;
-				}
-			}
-			try {
-				Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
-				method.setAccessible(true);
-				method.invoke(targetPart, Boolean.valueOf(state));
-			} catch (IllegalArgumentException | ReflectiveOperationException ex) {
-				ILog.of(FindReplaceOverlay.class).error("cannot (de-)activate actions for text editor", ex); //$NON-NLS-1$
-			}
-		}
-
-		static final class DeactivateGlobalActionHandlers {
-			private final static List<String> ACTIONS = List.of(ITextEditorActionConstants.CUT,
-					ITextEditorActionConstants.COPY, ITextEditorActionConstants.PASTE,
-					ITextEditorActionConstants.DELETE, ITextEditorActionConstants.SELECT_ALL,
-					ITextEditorActionConstants.FIND);
-
-			private final Map<String, IAction> deactivatedActions = new HashMap<>();
-			private final IActionBars actionBars;
-
-			public DeactivateGlobalActionHandlers(IActionBars actionBars) {
-				this.actionBars = actionBars;
-				for (String actionID : ACTIONS) {
-					deactivatedActions.putIfAbsent(actionID, actionBars.getGlobalActionHandler(actionID));
-					actionBars.setGlobalActionHandler(actionID, null);
-				}
-			}
-
-			public void reactivate() {
-				for (String actionID : deactivatedActions.keySet()) {
-					actionBars.setGlobalActionHandler(actionID, deactivatedActions.get(actionID));
-				}
-			}
-		}
-
 	};
 
 	private final CustomFocusOrder customFocusOrder = new CustomFocusOrder();
@@ -301,6 +240,7 @@ public class FindReplaceOverlay {
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
+		commandSupport = new FindReplaceOverlayCommandSupport(targetPart);
 		targetControl = getTargetControl(parent, part);
 		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
