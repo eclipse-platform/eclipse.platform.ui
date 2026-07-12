@@ -631,7 +631,7 @@ public class FindReplaceOverlay {
 
 	private void createAreaSearchButton() {
 		FindReplaceOverlayAction searchInSelectionAction = new FindReplaceOverlayAction(() -> {
-			activateInFindReplacerIf(SearchOptions.GLOBAL, !findReplaceLogic.isActive(SearchOptions.GLOBAL));
+			findReplaceLogic.toggle(SearchOptions.GLOBAL);
 			updateIncrementalSearch();
 		});
 		searchInSelectionAction.addShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION);
@@ -645,7 +645,7 @@ public class FindReplaceOverlay {
 
 	private void createRegexSearchButton() {
 		FindReplaceOverlayAction regexAction = new FindReplaceOverlayAction(() -> {
-			activateInFindReplacerIf(SearchOptions.REGEX, !findReplaceLogic.isActive(SearchOptions.REGEX));
+			findReplaceLogic.toggle(SearchOptions.REGEX);
 			updateIncrementalSearch();
 		});
 		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
@@ -663,7 +663,7 @@ public class FindReplaceOverlay {
 
 	private void createCaseSensitiveButton() {
 		FindReplaceOverlayAction caseSensitiveAction = new FindReplaceOverlayAction(() -> {
-			activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, !findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
+			findReplaceLogic.toggle(SearchOptions.CASE_SENSITIVE);
 			updateIncrementalSearch();
 		});
 		caseSensitiveAction.addShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE);
@@ -677,7 +677,7 @@ public class FindReplaceOverlay {
 
 	private void createWholeWordsButton() {
 		FindReplaceOverlayAction wholeWordAction = new FindReplaceOverlayAction(() -> {
-			activateInFindReplacerIf(SearchOptions.WHOLE_WORD, !findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+			findReplaceLogic.toggle(SearchOptions.WHOLE_WORD);
 			updateIncrementalSearch();
 		});
 		wholeWordAction.addShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD);

@@ -165,6 +165,15 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
+	public void toggle(SearchOptions searchOption) {
+		if (isActive(searchOption)) {
+			deactivate(searchOption);
+		} else {
+			activate(searchOption);
+		}
+	}
+
+	@Override
 	public boolean isActive(SearchOptions searchOption) {
 		return searchOptions.contains(searchOption);
 	}

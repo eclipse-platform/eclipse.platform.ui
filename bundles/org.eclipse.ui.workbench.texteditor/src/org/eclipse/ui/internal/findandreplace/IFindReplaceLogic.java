@@ -61,6 +61,13 @@ public interface IFindReplaceLogic {
 	public void deactivate(SearchOptions searchOption);
 
 	/**
+	 * Toggles a search option
+	 *
+	 * @param searchOption option
+	 */
+	public void toggle(SearchOptions searchOption);
+
+	/**
 	 * Registers a listener that is notified whenever the given search option is
 	 * activated or deactivated. The listener is called with {@code true} when the
 	 * option becomes active and {@code false} when it becomes inactive.
