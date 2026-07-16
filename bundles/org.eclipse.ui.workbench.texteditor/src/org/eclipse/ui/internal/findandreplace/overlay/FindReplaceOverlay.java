@@ -543,7 +543,6 @@ public class FindReplaceOverlay {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
 				.withAction(searchForwardAction).build();
-		searchForwardButton.setSelection(true); // by default, search down
 
 		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll);
 		selectAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
@@ -967,7 +966,6 @@ public class FindReplaceOverlay {
 		String selectionText = findReplaceLogic.getTarget().getSelectionText();
 		if (selectionText.contains("\n")) { //$NON-NLS-1$
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
-			searchInSelectionButton.setSelection(true);
 		} else if (!selectionText.isEmpty()) {
 			if (findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX)) {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
@@ -1024,7 +1022,6 @@ public class FindReplaceOverlay {
 
 	private void removeSearchScope() {
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
-		searchInSelectionButton.setSelection(false);
 	}
 
 	private void setContentAssistsEnablement(boolean enable) {
