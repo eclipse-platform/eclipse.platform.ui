@@ -116,24 +116,13 @@ public class FindReplaceOverlay {
 	private Composite contentGroup;
 
 	private Composite searchContainer;
-	private Composite searchBarContainer;
 	private HistoryTextWrapper searchBar;
 	private AccessibleToolBar searchTools;
-	private ToolItem searchInSelectionButton;
-	private ToolItem wholeWordSearchButton;
-	private ToolItem caseSensitiveSearchButton;
-	private ToolItem regexSearchButton;
-	private ToolItem searchBackwardButton;
-	private ToolItem searchForwardButton;
-	private ToolItem selectAllButton;
 	private AccessibleToolBar closeTools;
 
 	private Composite replaceContainer;
-	private Composite replaceBarContainer;
 	private HistoryTextWrapper replaceBar;
 	private AccessibleToolBar replaceTools;
-	private ToolItem replaceButton;
-	private ToolItem replaceAllButton;
 
 	private Color widgetBackgroundColor;
 	private Color overlayBackgroundColor;
@@ -352,7 +341,6 @@ public class FindReplaceOverlay {
 			bindListeners();
 			restoreOverlaySettings();
 		}
-		assignIDs();
 		containerControl.layout();
 		containerControl.moveAbove(null);
 		updatePlacementAndVisibility();
@@ -369,25 +357,6 @@ public class FindReplaceOverlay {
 	private void restoreOverlaySettings() {
 		Boolean shouldOpenReplaceBar = getDialogSettings().getBoolean(REPLACE_BAR_OPEN_DIALOG_SETTING);
 		setReplaceVisible(shouldOpenReplaceBar);
-	}
-
-	@SuppressWarnings("nls")
-	private void assignIDs() {
-		replaceToggle.setData(ID_DATA_KEY, "replaceToggle");
-		searchBar.setData(ID_DATA_KEY, "searchInput");
-		searchBackwardButton.setData(ID_DATA_KEY, "searchBackward");
-		searchForwardButton.setData(ID_DATA_KEY, "searchForward");
-		selectAllButton.setData(ID_DATA_KEY, "selectAll");
-		searchInSelectionButton.setData(ID_DATA_KEY, "searchInSelection");
-		wholeWordSearchButton.setData(ID_DATA_KEY, "wholeWordSearch");
-		regexSearchButton.setData(ID_DATA_KEY, "regExSearch");
-		caseSensitiveSearchButton.setData(ID_DATA_KEY, "caseSensitiveSearch");
-
-		if (replaceBarOpen) {
-			replaceBar.setData(ID_DATA_KEY, "replaceInput");
-			replaceButton.setData(ID_DATA_KEY, "replaceOne");
-			replaceAllButton.setData(ID_DATA_KEY, "replaceAll");
-		}
 	}
 
 	private void unbindListeners() {
@@ -498,6 +467,7 @@ public class FindReplaceOverlay {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip)
 				.withAction(replaceToggleAction)
 				.build();
+		replaceToggle.setData(ID_DATA_KEY, "replaceToggle"); //$NON-NLS-1$
 	}
 
 	private void createContentsContainer() {
@@ -524,26 +494,29 @@ public class FindReplaceOverlay {
 		FindReplaceOverlayAction searchBackwardAction = new FindReplaceOverlayAction(() -> performSearch(false));
 		searchBackwardAction.addShortcuts(KeyboardShortcuts.SEARCH_BACKWARD);
 		commandSupport.registerSearchAction(searchBackwardAction);
-		searchBackwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+		ToolItem searchBackwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
 				.withAction(searchBackwardAction).build();
+		searchBackwardButton.setData(ID_DATA_KEY, "searchBackward"); //$NON-NLS-1$
 
 		FindReplaceOverlayAction searchForwardAction = new FindReplaceOverlayAction(() -> performSearch(true));
 		searchForwardAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
 		commandSupport.registerSearchAction(searchForwardAction);
-		searchForwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+		ToolItem searchForwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
 				.withAction(searchForwardAction).build();
+		searchForwardButton.setData(ID_DATA_KEY, "searchForward"); //$NON-NLS-1$
 
 		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll);
 		selectAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
 		commandSupport.registerSearchAction(selectAllAction);
-		selectAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+		ToolItem selectAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
 				.withAction(selectAllAction).build();
+		selectAllButton.setData(ID_DATA_KEY, "selectAll"); //$NON-NLS-1$
 	}
 
 	private void createCloseTools() {
@@ -566,10 +539,11 @@ public class FindReplaceOverlay {
 		searchInSelectionAction.addExecutionListener(this::updateIncrementalSearch);
 		searchInSelectionAction.addShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION);
 		commandSupport.registerCommonAction(searchInSelectionAction);
-		searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+		ToolItem searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
 				.withAction(searchInSelectionAction).displayInverted().build();
+		searchInSelectionButton.setData(ID_DATA_KEY, "searchInSelection"); //$NON-NLS-1$
 	}
 
 	private void createRegexSearchButton() {
@@ -578,10 +552,11 @@ public class FindReplaceOverlay {
 		regexAction.addExecutionListener(this::updateIncrementalSearch);
 		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
 		commandSupport.registerCommonAction(regexAction);
-		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+		ToolItem regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withAction(regexAction).build();
+		regexSearchButton.setData(ID_DATA_KEY, "regExSearch"); //$NON-NLS-1$
 		findReplaceLogic.addSearchOptionActivationChangedListener(SearchOptions.REGEX, activated -> {
 			updateContentAssistAvailability();
 			decorate();
@@ -594,10 +569,11 @@ public class FindReplaceOverlay {
 		caseSensitiveAction.addExecutionListener(this::updateIncrementalSearch);
 		caseSensitiveAction.addShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE);
 		commandSupport.registerCommonAction(caseSensitiveAction);
-		caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+		ToolItem caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
 				.withAction(caseSensitiveAction).build();
+		caseSensitiveSearchButton.setData(ID_DATA_KEY, "caseSensitiveSearch"); //$NON-NLS-1$
 	}
 
 	private void createWholeWordsButton() {
@@ -606,10 +582,11 @@ public class FindReplaceOverlay {
 		wholeWordAction.addExecutionListener(this::updateIncrementalSearch);
 		wholeWordAction.addShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD);
 		commandSupport.registerCommonAction(wholeWordAction);
-		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+		ToolItem wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
 				.withAction(wholeWordAction).build();
+		wholeWordSearchButton.setData(ID_DATA_KEY, "wholeWordSearch"); //$NON-NLS-1$
 	}
 
 	private void createReplaceTools() {
@@ -627,10 +604,11 @@ public class FindReplaceOverlay {
 		});
 		replaceAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
 		commandSupport.registerReplaceAction(replaceAction);
-		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
+		ToolItem replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
 				.withAction(replaceAction).build();
+		replaceButton.setData(ID_DATA_KEY, "replaceOne"); //$NON-NLS-1$
 
 		FindReplaceOverlayAction replaceAllAction = new FindReplaceOverlayAction(() -> {
 			if (getFindString().isEmpty()) {
@@ -641,10 +619,11 @@ public class FindReplaceOverlay {
 		});
 		replaceAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
 		commandSupport.registerReplaceAction(replaceAllAction);
-		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
+		ToolItem replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
 				.withAction(replaceAllAction).build();
+		replaceAllButton.setData(ID_DATA_KEY, "replaceAll"); //$NON-NLS-1$
 	}
 
 	private ContentAssistCommandAdapter createContentAssistField(HistoryTextWrapper control, boolean isFind) {
@@ -656,12 +635,13 @@ public class FindReplaceOverlay {
 	}
 
 	private void createSearchBar() {
-		searchBarContainer = new Composite(searchContainer, SWT.NONE);
+		Composite searchBarContainer = new Composite(searchContainer, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBarContainer);
 		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(searchBarContainer);
 		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "findhistory", //$NON-NLS-1$
 				HISTORY_SIZE);
 		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
+		searchBar.setData(ID_DATA_KEY, "searchInput"); //$NON-NLS-1$
 		searchBarDecoration = new ControlDecoration(searchBar, SWT.BOTTOM | SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
 		searchBar.forceFocus();
@@ -692,12 +672,13 @@ public class FindReplaceOverlay {
 	}
 
 	private void createReplaceBar() {
-		replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
+		Composite replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.END).applyTo(replaceBarContainer);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(replaceBarContainer);
 
 		HistoryStore replaceHistory = new HistoryStore(getDialogSettings(), "replacehistory", HISTORY_SIZE); //$NON-NLS-1$
 		replaceBar = new HistoryTextWrapper(replaceHistory, replaceBarContainer, SWT.SINGLE);
+		replaceBar.setData(ID_DATA_KEY, "replaceInput"); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(replaceBar);
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);
 		replaceBar.addModifyListener(e -> {
@@ -763,7 +744,6 @@ public class FindReplaceOverlay {
 		initializeReplaceShortcutHandlers();
 
 		updatePlacementAndVisibility();
-		assignIDs();
 		replaceBar.forceFocus();
 		customFocusOrder.apply();
 	}
