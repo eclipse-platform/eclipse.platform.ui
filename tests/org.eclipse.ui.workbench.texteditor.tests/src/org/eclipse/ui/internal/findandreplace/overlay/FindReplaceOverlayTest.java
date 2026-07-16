@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,7 +30,10 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.text.tests.Accessor;
 
+import org.eclipse.jface.viewers.ISelection;
+
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IMultiTextSelection;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
@@ -220,6 +224,49 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 		dialog.setFindText("foo");
 		dialog.pressSearch(false);
+
+		dialog.setFindText("");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
+
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testReplaceDoesNothingIfSearchStringIsEmpty() {
+		// The overlay refuses replace operations as long as the search string is
+		// empty; the document must remain unchanged.
+		initializeTextViewerWithFindReplaceUI("text text");
+		OverlayAccess dialog= getDialog();
+		dialog.setReplaceText("replacement");
+
+		dialog.performReplace();
+		assertThat(getTextViewer().getDocument().get(), is("text text"));
+
+		dialog.performReplaceAll();
+		assertThat(getTextViewer().getDocument().get(), is("text text"));
+	}
+
+	@Test
+	public void testSelectAllSelectsAllOccurrences() {
+		initializeTextViewerWithFindReplaceUI("foo bar foo bar foo");
+		OverlayAccess dialog= getDialog();
+		dialog.setFindText("foo");
+
+		dialog.pressSelectAll();
+
+		ISelection selection= getTextViewer().getSelection();
+		assertThat(selection, is(instanceOf(IMultiTextSelection.class)));
+		assertEquals(3, ((IMultiTextSelection) selection).getRegions().length);
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSelectAll() {
+		// Selecting all occurrences must persist the search term to history just
+		// like the other search operations.
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		OverlayAccess dialog= getDialog();
+		dialog.setFindText("foo");
+		dialog.pressSelectAll();
 
 		dialog.setFindText("");
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);

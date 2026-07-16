@@ -53,6 +53,8 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private final ToolItem searchBackward;
 
+	private final ToolItem selectAll;
+
 	private final ToolItem openReplaceDialog;
 
 	private HistoryTextWrapper replace;
@@ -74,6 +76,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		inSelection= widgetExtractor.findToolItem("searchInSelection");
 		searchForward= widgetExtractor.findToolItem("searchForward");
 		searchBackward= widgetExtractor.findToolItem("searchBackward");
+		selectAll= widgetExtractor.findToolItem("selectAll");
 		openReplaceDialog= widgetExtractor.findToolItem("replaceToggle");
 		extractReplaceWidgets();
 	}
@@ -225,6 +228,10 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		for (int i = 0; i <= index; i++) {
 			simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
 		}
+	}
+
+	public void pressSelectAll() {
+		selectAll.notifyListeners(SWT.Selection, null);
 	}
 
 	public void pressSearch(boolean forward) {
