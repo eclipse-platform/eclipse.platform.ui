@@ -501,6 +501,8 @@ public class FindReplaceOverlay {
 		// Also close on Ctrl+F: otherwise it would reopen (a duplicate of) this very overlay.
 		commandSupport.registerAction(
 				new FindReplaceOverlayAction(this::close, IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE));
+		commandSupport.registerAction(new FindReplaceOverlayAction(this::triggerContentAssist,
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS));
 
 		// Close button
 		new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
@@ -974,6 +976,14 @@ public class FindReplaceOverlay {
 
 	private void updateContentAssistAvailability() {
 		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
+	}
+
+	private void triggerContentAssist() {
+		if (searchBar.isFocusControl() && contentAssistSearchField.isEnabled()) {
+			contentAssistSearchField.openProposalPopup();
+		} else if (okayToUse(replaceBar) && replaceBar.isFocusControl() && contentAssistReplaceField.isEnabled()) {
+			contentAssistReplaceField.openProposalPopup();
+		}
 	}
 
 	private void decorate() {
