@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
 
@@ -20,6 +21,8 @@ class FindReplaceOverlayAction {
 	private final Runnable operation;
 
 	private final List<Runnable> executionListeners = new ArrayList<>();
+
+	private final List<Consumer<String>> shortcutHintListeners = new ArrayList<>();
 
 	private final List<KeyStroke> shortcuts = new ArrayList<>();
 
@@ -48,13 +51,6 @@ class FindReplaceOverlayAction {
 		return false;
 	}
 
-	String addShortcutHintToTooltipText(String originalTooltipText) {
-		if (shortcuts.isEmpty()) {
-			return originalTooltipText;
-		}
-		return originalTooltipText + " (" + shortcuts.get(0).format() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	void addExecutionListener(Runnable listener) {
 		executionListeners.add(listener);
 	}
@@ -63,6 +59,25 @@ class FindReplaceOverlayAction {
 		for (Runnable listener : executionListeners) {
 			listener.run();
 		}
+	}
+
+	void addShortcutHintListener(Consumer<String> listener) {
+		shortcutHintListeners.add(listener);
+	}
+
+	void activateKeyBinding() {
+		shortcutHintListeners.forEach(listener -> listener.accept(getShortcutHint()));
+	}
+
+	private String getShortcutHint() {
+		if (shortcuts.isEmpty()) {
+			return ""; //$NON-NLS-1$
+		}
+		return shortcuts.get(0).format(); // $NON-NLS-1$
+	}
+
+	void deactivateKeyBinding() {
+		shortcutHintListeners.forEach(listener -> listener.accept("")); //$NON-NLS-1$
 	}
 
 }

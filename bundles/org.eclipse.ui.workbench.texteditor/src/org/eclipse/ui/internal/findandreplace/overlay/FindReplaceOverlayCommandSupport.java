@@ -11,9 +11,12 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.runtime.ILog;
 
@@ -37,15 +40,61 @@ class FindReplaceOverlayCommandSupport {
 	private final IWorkbenchPart targetPart;
 	private DeactivateGlobalActionHandlers globalActionHandlerDeaction;
 
+	private final List<FindReplaceOverlayAction> commonActions = new ArrayList<>();
+	private final List<FindReplaceOverlayAction> searchActions = new ArrayList<>();
+	private final List<FindReplaceOverlayAction> replaceActions = new ArrayList<>();
+
 	FindReplaceOverlayCommandSupport(IWorkbenchPart targetPart) {
 		this.targetPart = targetPart;
 	}
 
-	void overlayActivated() {
-		setTextEditorActionsActivated(false);
+	void registerCommonAction(FindReplaceOverlayAction action) {
+		this.commonActions.add(action);
 	}
 
-	void overlayDeactivated() {
+	void registerSearchAction(FindReplaceOverlayAction action) {
+		this.searchActions.add(action);
+	}
+
+	void registerReplaceAction(FindReplaceOverlayAction action) {
+		this.replaceActions.add(action);
+	}
+
+	void unregisterReplaceActions() {
+		this.replaceActions.clear();
+	}
+
+	void registerCommonActionShortcutsAtControl(Control control) {
+		commonActions.forEach(action -> FindReplaceShortcutUtil.registerActionShortcutsAtControl(action, control));
+	}
+
+	void registerSearchActionShortcutsAtControl(Control control) {
+		searchActions.forEach(action -> FindReplaceShortcutUtil.registerActionShortcutsAtControl(action, control));
+	}
+
+	void registerReplaceActionShortcutsAtControl(Control control) {
+		replaceActions.forEach(action -> FindReplaceShortcutUtil.registerActionShortcutsAtControl(action, control));
+	}
+
+	void searchBarActivated() {
+		searchOrReplaceBarActivated();
+		searchActions.forEach(FindReplaceOverlayAction::activateKeyBinding);
+	}
+
+	void replaceBarActivated() {
+		searchOrReplaceBarActivated();
+		replaceActions.forEach(FindReplaceOverlayAction::activateKeyBinding);
+	}
+
+	private void searchOrReplaceBarActivated() {
+		setTextEditorActionsActivated(false);
+		commonActions.forEach(FindReplaceOverlayAction::activateKeyBinding);
+	}
+
+	void searchOrReplaceBarDeactivated() {
+		commonActions.forEach(FindReplaceOverlayAction::deactivateKeyBinding);
+		searchActions.forEach(FindReplaceOverlayAction::deactivateKeyBinding);
+		replaceActions.forEach(FindReplaceOverlayAction::deactivateKeyBinding);
 		setTextEditorActionsActivated(true);
 	}
 

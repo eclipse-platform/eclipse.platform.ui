@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -136,10 +135,6 @@ public class FindReplaceOverlay {
 	private ToolItem replaceButton;
 	private ToolItem replaceAllButton;
 
-	private final List<FindReplaceOverlayAction> commonActions = new ArrayList<>();
-	private final List<FindReplaceOverlayAction> searchActions = new ArrayList<>();
-	private final List<FindReplaceOverlayAction> replaceActions = new ArrayList<>();
-
 	private Color widgetBackgroundColor;
 	private Color overlayBackgroundColor;
 	private Color normalTextForegroundColor;
@@ -154,12 +149,16 @@ public class FindReplaceOverlay {
 	private final FocusListener targetActionActivationHandling = new FocusListener() {
 		@Override
 		public void focusGained(FocusEvent e) {
-			commandSupport.overlayActivated();
+			if (e.widget == searchBar.getTextBar()) {
+				commandSupport.searchBarActivated();
+			} else if (replaceBar != null && e.widget == replaceBar.getTextBar()) {
+				commandSupport.replaceBarActivated();
+			}
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			commandSupport.overlayDeactivated();
+			commandSupport.searchOrReplaceBarDeactivated();
 		}
 	};
 
@@ -415,14 +414,8 @@ public class FindReplaceOverlay {
 	}
 
 	private void initializeSearchShortcutHandlers() {
-		registerActionShortcutsAtControl(commonActions, searchBar);
-		registerActionShortcutsAtControl(searchActions, searchBar);
-	}
-
-	private void registerActionShortcutsAtControl(List<FindReplaceOverlayAction> actions, Control control) {
-		for (FindReplaceOverlayAction action : actions) {
-			FindReplaceShortcutUtil.registerActionShortcutsAtControl(action, control);
-		}
+		commandSupport.registerCommonActionShortcutsAtControl(searchBar);
+		commandSupport.registerSearchActionShortcutsAtControl(searchBar);
 	}
 
 	/**
@@ -498,7 +491,7 @@ public class FindReplaceOverlay {
 
 		FindReplaceOverlayAction replaceToggleAction = new FindReplaceOverlayAction(() -> setReplaceVisible(!replaceBarOpen));
 		replaceToggleAction.addShortcuts(KeyboardShortcuts.TOGGLE_REPLACE);
-		commonActions.add(replaceToggleAction);
+		commandSupport.registerCommonAction(replaceToggleAction);
 
 		replaceToggle = new AccessibleToolItemBuilder(replaceToggleTools)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA))
@@ -530,7 +523,7 @@ public class FindReplaceOverlay {
 
 		FindReplaceOverlayAction searchBackwardAction = new FindReplaceOverlayAction(() -> performSearch(false));
 		searchBackwardAction.addShortcuts(KeyboardShortcuts.SEARCH_BACKWARD);
-		searchActions.add(searchBackwardAction);
+		commandSupport.registerSearchAction(searchBackwardAction);
 		searchBackwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
@@ -538,7 +531,7 @@ public class FindReplaceOverlay {
 
 		FindReplaceOverlayAction searchForwardAction = new FindReplaceOverlayAction(() -> performSearch(true));
 		searchForwardAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
-		searchActions.add(searchForwardAction);
+		commandSupport.registerSearchAction(searchForwardAction);
 		searchForwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
@@ -546,7 +539,7 @@ public class FindReplaceOverlay {
 
 		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll);
 		selectAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
-		searchActions.add(selectAllAction);
+		commandSupport.registerSearchAction(selectAllAction);
 		selectAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
@@ -559,7 +552,7 @@ public class FindReplaceOverlay {
 
 		FindReplaceOverlayAction closeAction = new FindReplaceOverlayAction(this::close);
 		closeAction.addShortcuts(KeyboardShortcuts.CLOSE);
-		commonActions.add(closeAction);
+		commandSupport.registerCommonAction(closeAction);
 
 		// Close button
 		new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
@@ -572,7 +565,7 @@ public class FindReplaceOverlay {
 		FindReplaceOverlaySearchOptionAction searchInSelectionAction = new FindReplaceOverlaySearchOptionAction(SearchOptions.GLOBAL, findReplaceLogic);
 		searchInSelectionAction.addExecutionListener(this::updateIncrementalSearch);
 		searchInSelectionAction.addShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION);
-		commonActions.add(searchInSelectionAction);
+		commandSupport.registerCommonAction(searchInSelectionAction);
 		searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
@@ -584,7 +577,7 @@ public class FindReplaceOverlay {
 				findReplaceLogic);
 		regexAction.addExecutionListener(this::updateIncrementalSearch);
 		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
-		commonActions.add(regexAction);
+		commandSupport.registerCommonAction(regexAction);
 		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
@@ -600,7 +593,7 @@ public class FindReplaceOverlay {
 				SearchOptions.CASE_SENSITIVE, findReplaceLogic);
 		caseSensitiveAction.addExecutionListener(this::updateIncrementalSearch);
 		caseSensitiveAction.addShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE);
-		commonActions.add(caseSensitiveAction);
+		commandSupport.registerCommonAction(caseSensitiveAction);
 		caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
@@ -612,7 +605,7 @@ public class FindReplaceOverlay {
 				SearchOptions.WHOLE_WORD, findReplaceLogic);
 		wholeWordAction.addExecutionListener(this::updateIncrementalSearch);
 		wholeWordAction.addShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD);
-		commonActions.add(wholeWordAction);
+		commandSupport.registerCommonAction(wholeWordAction);
 		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
@@ -633,7 +626,7 @@ public class FindReplaceOverlay {
 			performSingleReplace();
 		});
 		replaceAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
-		replaceActions.add(replaceAction);
+		commandSupport.registerReplaceAction(replaceAction);
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
@@ -647,7 +640,7 @@ public class FindReplaceOverlay {
 			performReplaceAll();
 		});
 		replaceAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
-		replaceActions.add(replaceAllAction);
+		commandSupport.registerReplaceAction(replaceAllAction);
 		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
@@ -753,6 +746,7 @@ public class FindReplaceOverlay {
 			return;
 		}
 		customFocusOrder.dispose();
+		commandSupport.unregisterReplaceActions();
 		searchBar.forceFocus();
 		contentAssistReplaceField = null;
 		replaceBarOpen = false;
@@ -775,8 +769,8 @@ public class FindReplaceOverlay {
 	}
 
 	private void initializeReplaceShortcutHandlers() {
-		registerActionShortcutsAtControl(commonActions, replaceBar);
-		registerActionShortcutsAtControl(replaceActions, replaceBar);
+		commandSupport.registerCommonActionShortcutsAtControl(replaceBar);
+		commandSupport.registerReplaceActionShortcutsAtControl(replaceBar);
 	}
 
 	private void enableSearchTools(boolean enable) {

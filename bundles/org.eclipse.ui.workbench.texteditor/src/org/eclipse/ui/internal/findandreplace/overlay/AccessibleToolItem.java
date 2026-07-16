@@ -23,7 +23,8 @@ import org.eclipse.jface.layout.GridDataFactory;
 class AccessibleToolItem {
 	private final ToolItem toolItem;
 
-	private FindReplaceOverlayAction action;
+	private String baseToolTipText;
+
 
 	AccessibleToolItem(Composite parent, int styleBits) {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
@@ -44,13 +45,22 @@ class AccessibleToolItem {
 	}
 
 	void setToolTipText(String text) {
-		toolItem.setToolTipText(action != null ? action.addShortcutHintToTooltipText(text) : text);
+		this.baseToolTipText = text;
+		toolItem.setToolTipText(text);
 	}
 
-	void setAction(FindReplaceOverlayAction newAction) {
-		this.action = newAction;
+	void setAction(FindReplaceOverlayAction action) {
 		setToolTipText(toolItem.getToolTipText());
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(__ -> action.execute()));
+		action.addShortcutHintListener(hint -> {
+			if (!toolItem.isDisposed()) {
+				String tooltipWithHint = baseToolTipText;
+				if (!hint.isEmpty()) {
+					tooltipWithHint += " (" + hint + ")"; //$NON-NLS-1$//$NON-NLS-2$
+				}
+				toolItem.setToolTipText(tooltipWithHint);
+			}
+		});
 	}
 
 }
