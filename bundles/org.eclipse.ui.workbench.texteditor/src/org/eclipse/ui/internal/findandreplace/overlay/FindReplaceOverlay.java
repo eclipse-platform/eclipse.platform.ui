@@ -1039,7 +1039,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void decorate() {
-		if (regexSearchButton.getSelection()) {
+		if (findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX)) {
 			SearchDecoration.validateRegex(getFindString(), searchBarDecoration);
 		} else {
 			searchBarDecoration.hide();
