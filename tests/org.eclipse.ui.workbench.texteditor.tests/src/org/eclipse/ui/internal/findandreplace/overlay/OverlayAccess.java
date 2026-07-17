@@ -254,6 +254,14 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		replaceButton.notifyListeners(SWT.Selection, null);
 	}
 
+	public String getSearchForwardToolTipText() {
+		return searchForward.getToolTipText();
+	}
+
+	public String getReplaceToolTipText() {
+		return replaceButton != null ? replaceButton.getToolTipText() : null;
+	}
+
 	public boolean isReplaceDialogOpen() {
 		return replace != null;
 	}

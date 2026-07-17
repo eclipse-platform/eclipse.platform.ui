@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.text.tests.Accessor;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -55,6 +57,27 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess uiAccess= new OverlayAccess(getFindReplaceTarget(), overlay);
 		waitForFocus(uiAccess::hasFocus, testInfo.getTestMethod().get().getName());
 		return uiAccess;
+	}
+
+	@Test
+	public void testShortcutHintReflectsFocusedInputField() {
+		initializeTextViewerWithFindReplaceUI("line");
+		OverlayAccess dialog= getDialog();
+
+		String searchForwardHint= KeyStroke.getInstance(SWT.CR).format();
+
+		// The search bar has focus right after opening: its own shortcut hint is shown.
+		assertTrue(dialog.getSearchForwardToolTipText().contains(searchForwardHint));
+
+		// Opening the replace bar moves focus there: the search-scoped hint disappears and the
+		// replace-scoped hint (which happens to reuse the same shortcut) appears instead.
+		dialog.openReplaceDialog();
+		assertFalse(dialog.getSearchForwardToolTipText().contains(searchForwardHint));
+		assertTrue(dialog.getReplaceToolTipText().contains(searchForwardHint));
+
+		// Closing the replace bar returns focus to the search bar: its hint is shown again.
+		dialog.closeReplaceDialog();
+		assertTrue(dialog.getSearchForwardToolTipText().contains(searchForwardHint));
 	}
 
 	@Test
