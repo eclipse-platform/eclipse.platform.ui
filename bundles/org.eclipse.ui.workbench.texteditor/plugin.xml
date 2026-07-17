@@ -508,6 +508,61 @@
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.open.hyperlink">
       </command>
+      <command
+            name="%command.findReplaceOverlay.searchForward.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchForward">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.searchBackward.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchBackward">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.selectAll.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.selectAll">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.replaceOne.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceOne">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.replaceAll.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceAll">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.close.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.close">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.toggleReplace.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleReplace">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.toggleCaseSensitive.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleCaseSensitive">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.toggleWholeWord.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleWholeWord">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.toggleRegex.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleRegex">
+      </command>
+      <command
+            name="%command.findReplaceOverlay.toggleSearchInSelection.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleSearchInSelection">
+      </command>
 	</extension>
 
 	<extension point="org.eclipse.ui.commandImages">
@@ -1499,5 +1554,83 @@
             id="org.eclipse.test.codemining.zswpProvider"
             label="%CodeMining.show.ZWSP">
       </codeMiningProvider>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            name="%context.findReplaceOverlay.name"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+      <context
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"
+            name="%context.findReplaceOverlay.searchFocused.name"
+            parentId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay">
+      </context>
+      <context
+            id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceFocused"
+            name="%context.findReplaceOverlay.replaceFocused.name"
+            parentId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay">
+      </context>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.close"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="ESC"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleReplace"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+R"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleCaseSensitive"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+C"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleWholeWord"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+D"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleRegex"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+P"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.toggleSearchInSelection"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+I"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchForward"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CR"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchBackward"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+CR"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.selectAll"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+CR"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceOne"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceFocused"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CR"/>
+      <key
+            commandId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceAll"
+            contextId="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceFocused"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+CR"/>
    </extension>
 </plugin>

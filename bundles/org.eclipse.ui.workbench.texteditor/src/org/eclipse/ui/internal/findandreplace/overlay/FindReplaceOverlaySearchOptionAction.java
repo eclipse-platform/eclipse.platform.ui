@@ -19,8 +19,9 @@ class FindReplaceOverlaySearchOptionAction extends FindReplaceOverlayAction {
 
 	private final IFindReplaceLogic findReplaceLogic;
 
-	FindReplaceOverlaySearchOptionAction(SearchOptions searchOption, IFindReplaceLogic findReplaceLogic) {
-		super(() -> findReplaceLogic.toggle(searchOption));
+	FindReplaceOverlaySearchOptionAction(SearchOptions searchOption, IFindReplaceLogic findReplaceLogic,
+			String commandId) {
+		super(() -> findReplaceLogic.toggle(searchOption), commandId);
 		this.searchOption = searchOption;
 		this.findReplaceLogic = findReplaceLogic;
 	}

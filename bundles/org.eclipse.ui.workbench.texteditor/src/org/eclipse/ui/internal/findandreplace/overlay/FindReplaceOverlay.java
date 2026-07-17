@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.FrameworkUtil;
@@ -43,7 +42,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -57,6 +55,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewer;
 
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
@@ -73,27 +72,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 public class FindReplaceOverlay {
-	private static final class KeyboardShortcuts {
-		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
-				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR));
-		private static final List<KeyStroke> SEARCH_BACKWARD = List.of( //
-				KeyStroke.getInstance(SWT.SHIFT, SWT.CR), KeyStroke.getInstance(SWT.SHIFT, SWT.KEYPAD_CR));
-		private static final List<KeyStroke> SEARCH_ALL = List.of( //
-				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR));
-		private static final List<KeyStroke> OPTION_CASE_SENSITIVE = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'));
-		private static final List<KeyStroke> OPTION_WHOLE_WORD = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'D'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'd'));
-		private static final List<KeyStroke> OPTION_REGEX = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'P'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'p'));
-		private static final List<KeyStroke> OPTION_SEARCH_IN_SELECTION = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'I'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'i'));
-		private static final List<KeyStroke> CLOSE = List.of( //
-				KeyStroke.getInstance(SWT.ESC), KeyStroke.getInstance(SWT.MOD1, 'F'),
-				KeyStroke.getInstance(SWT.MOD1, 'f'));
-		private static final List<KeyStroke> TOGGLE_REPLACE = List.of( //
-				KeyStroke.getInstance(SWT.MOD1, 'R'), KeyStroke.getInstance(SWT.MOD1, 'r'));
-	}
 
 	public static final String ID_DATA_KEY = "org.eclipse.ui.internal.findreplace.overlay.FindReplaceOverlay.id"; //$NON-NLS-1$
 
@@ -133,7 +111,7 @@ public class FindReplaceOverlay {
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
-	private FindReplaceOverlayCommandSupport commandSupport;
+	private final FindReplaceOverlayCommandSupport commandSupport;
 
 	private final FocusListener targetActionActivationHandling = new FocusListener() {
 		@Override
@@ -232,6 +210,7 @@ public class FindReplaceOverlay {
 		targetControl = getTargetControl(parent, part);
 		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
+		commandSupport.setContainerControl(containerControl);
 		containerControl.setVisible(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(containerControl,
 				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
@@ -377,14 +356,7 @@ public class FindReplaceOverlay {
 		}
 		retrieveColors();
 		createMainContainer(parent);
-		initializeSearchShortcutHandlers();
-
 		containerControl.layout();
-	}
-
-	private void initializeSearchShortcutHandlers() {
-		commandSupport.registerCommonActionShortcutsAtControl(searchBar);
-		commandSupport.registerSearchActionShortcutsAtControl(searchBar);
 	}
 
 	/**
@@ -458,10 +430,9 @@ public class FindReplaceOverlay {
 				.applyTo(replaceToggleTools);
 		replaceToggleTools.addMouseListener(MouseListener.mouseDownAdapter(__ -> setReplaceVisible(!replaceBarOpen)));
 
-		FindReplaceOverlayAction replaceToggleAction = new FindReplaceOverlayAction(() -> setReplaceVisible(!replaceBarOpen));
-		replaceToggleAction.addShortcuts(KeyboardShortcuts.TOGGLE_REPLACE);
-		commandSupport.registerCommonAction(replaceToggleAction);
-
+		FindReplaceOverlayAction replaceToggleAction = new FindReplaceOverlayAction(
+				() -> setReplaceVisible(!replaceBarOpen), FindReplaceOverlayCommandSupport.CMD_TOGGLE_REPLACE);
+		commandSupport.registerAction(replaceToggleAction);
 		replaceToggle = new AccessibleToolItemBuilder(replaceToggleTools)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip)
@@ -476,6 +447,7 @@ public class FindReplaceOverlay {
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(contentGroup);
 
 		createSearchContainer();
+		commandSupport.trackFocusControl(searchBar.getTextBar());
 	}
 
 	private void createSearchTools() {
@@ -491,27 +463,27 @@ public class FindReplaceOverlay {
 
 		searchTools.createToolItem(SWT.SEPARATOR);
 
-		FindReplaceOverlayAction searchBackwardAction = new FindReplaceOverlayAction(() -> performSearch(false));
-		searchBackwardAction.addShortcuts(KeyboardShortcuts.SEARCH_BACKWARD);
-		commandSupport.registerSearchAction(searchBackwardAction);
+		FindReplaceOverlayAction searchBackwardAction = new FindReplaceOverlayAction(() -> performSearch(false),
+				FindReplaceOverlayCommandSupport.CMD_SEARCH_BACKWARD);
+		commandSupport.registerAction(searchBackwardAction);
 		ToolItem searchBackwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
 				.withAction(searchBackwardAction).build();
 		searchBackwardButton.setData(ID_DATA_KEY, "searchBackward"); //$NON-NLS-1$
 
-		FindReplaceOverlayAction searchForwardAction = new FindReplaceOverlayAction(() -> performSearch(true));
-		searchForwardAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
-		commandSupport.registerSearchAction(searchForwardAction);
+		FindReplaceOverlayAction searchForwardAction = new FindReplaceOverlayAction(() -> performSearch(true),
+				FindReplaceOverlayCommandSupport.CMD_SEARCH_FORWARD);
+		commandSupport.registerAction(searchForwardAction);
 		ToolItem searchForwardButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
 				.withAction(searchForwardAction).build();
 		searchForwardButton.setData(ID_DATA_KEY, "searchForward"); //$NON-NLS-1$
 
-		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll);
-		selectAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
-		commandSupport.registerSearchAction(selectAllAction);
+		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll,
+				FindReplaceOverlayCommandSupport.CMD_SELECT_ALL);
+		commandSupport.registerAction(selectAllAction);
 		ToolItem selectAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
@@ -523,9 +495,12 @@ public class FindReplaceOverlay {
 		closeTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(closeTools);
 
-		FindReplaceOverlayAction closeAction = new FindReplaceOverlayAction(this::close);
-		closeAction.addShortcuts(KeyboardShortcuts.CLOSE);
-		commandSupport.registerCommonAction(closeAction);
+		FindReplaceOverlayAction closeAction = new FindReplaceOverlayAction(this::close,
+				FindReplaceOverlayCommandSupport.CMD_CLOSE);
+		commandSupport.registerAction(closeAction);
+		// Also close on Ctrl+F: otherwise it would reopen (a duplicate of) this very overlay.
+		commandSupport.registerAction(
+				new FindReplaceOverlayAction(this::close, IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE));
 
 		// Close button
 		new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
@@ -535,10 +510,11 @@ public class FindReplaceOverlay {
 	}
 
 	private void createAreaSearchButton() {
-		FindReplaceOverlaySearchOptionAction searchInSelectionAction = new FindReplaceOverlaySearchOptionAction(SearchOptions.GLOBAL, findReplaceLogic);
+		FindReplaceOverlaySearchOptionAction searchInSelectionAction = new FindReplaceOverlaySearchOptionAction(
+				SearchOptions.GLOBAL, findReplaceLogic,
+				FindReplaceOverlayCommandSupport.CMD_TOGGLE_SEARCH_IN_SELECTION);
 		searchInSelectionAction.addExecutionListener(this::updateIncrementalSearch);
-		searchInSelectionAction.addShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION);
-		commandSupport.registerCommonAction(searchInSelectionAction);
+		commandSupport.registerAction(searchInSelectionAction);
 		ToolItem searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
@@ -548,10 +524,9 @@ public class FindReplaceOverlay {
 
 	private void createRegexSearchButton() {
 		FindReplaceOverlaySearchOptionAction regexAction = new FindReplaceOverlaySearchOptionAction(SearchOptions.REGEX,
-				findReplaceLogic);
+				findReplaceLogic, FindReplaceOverlayCommandSupport.CMD_TOGGLE_REGEX);
 		regexAction.addExecutionListener(this::updateIncrementalSearch);
-		regexAction.addShortcuts(KeyboardShortcuts.OPTION_REGEX);
-		commandSupport.registerCommonAction(regexAction);
+		commandSupport.registerAction(regexAction);
 		ToolItem regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
@@ -565,10 +540,10 @@ public class FindReplaceOverlay {
 
 	private void createCaseSensitiveButton() {
 		FindReplaceOverlaySearchOptionAction caseSensitiveAction = new FindReplaceOverlaySearchOptionAction(
-				SearchOptions.CASE_SENSITIVE, findReplaceLogic);
+				SearchOptions.CASE_SENSITIVE, findReplaceLogic,
+				FindReplaceOverlayCommandSupport.CMD_TOGGLE_CASE_SENSITIVE);
 		caseSensitiveAction.addExecutionListener(this::updateIncrementalSearch);
-		caseSensitiveAction.addShortcuts(KeyboardShortcuts.OPTION_CASE_SENSITIVE);
-		commandSupport.registerCommonAction(caseSensitiveAction);
+		commandSupport.registerAction(caseSensitiveAction);
 		ToolItem caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
@@ -578,10 +553,9 @@ public class FindReplaceOverlay {
 
 	private void createWholeWordsButton() {
 		FindReplaceOverlaySearchOptionAction wholeWordAction = new FindReplaceOverlaySearchOptionAction(
-				SearchOptions.WHOLE_WORD, findReplaceLogic);
+				SearchOptions.WHOLE_WORD, findReplaceLogic, FindReplaceOverlayCommandSupport.CMD_TOGGLE_WHOLE_WORD);
 		wholeWordAction.addExecutionListener(this::updateIncrementalSearch);
-		wholeWordAction.addShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD);
-		commandSupport.registerCommonAction(wholeWordAction);
+		commandSupport.registerAction(wholeWordAction);
 		ToolItem wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
@@ -601,8 +575,7 @@ public class FindReplaceOverlay {
 				return;
 			}
 			performSingleReplace();
-		});
-		replaceAction.addShortcuts(KeyboardShortcuts.SEARCH_FORWARD);
+		}, FindReplaceOverlayCommandSupport.CMD_REPLACE_FORWARD);
 		commandSupport.registerReplaceAction(replaceAction);
 		ToolItem replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
@@ -616,8 +589,7 @@ public class FindReplaceOverlay {
 				return;
 			}
 			performReplaceAll();
-		});
-		replaceAllAction.addShortcuts(KeyboardShortcuts.SEARCH_ALL);
+		}, FindReplaceOverlayCommandSupport.CMD_REPLACE_ALL);
 		commandSupport.registerReplaceAction(replaceAllAction);
 		ToolItem replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
@@ -741,16 +713,11 @@ public class FindReplaceOverlay {
 		}
 		replaceBarOpen = true;
 		createReplaceContainer();
-		initializeReplaceShortcutHandlers();
+		commandSupport.trackFocusControl(replaceBar.getTextBar());
 
 		updatePlacementAndVisibility();
 		replaceBar.forceFocus();
 		customFocusOrder.apply();
-	}
-
-	private void initializeReplaceShortcutHandlers() {
-		commandSupport.registerCommonActionShortcutsAtControl(replaceBar);
-		commandSupport.registerReplaceActionShortcutsAtControl(replaceBar);
 	}
 
 	private void enableSearchTools(boolean enable) {

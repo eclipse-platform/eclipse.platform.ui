@@ -11,30 +11,30 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 
-import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
 
 class FindReplaceOverlayAction extends AbstractHandler {
 	private final Runnable operation;
+	private final String commandId;
 
 	private final List<Runnable> executionListeners = new ArrayList<>();
 
 	private final List<Consumer<String>> shortcutHintListeners = new ArrayList<>();
 
-	private final List<KeyStroke> shortcuts = new ArrayList<>();
-
-	FindReplaceOverlayAction(Runnable operation) {
+	FindReplaceOverlayAction(Runnable operation, String commandId) {
 		this.operation = operation;
+		this.commandId = commandId;
 	}
 
-	void addShortcuts(List<KeyStroke> shortcutsToAdd) {
-		this.shortcuts.addAll(shortcutsToAdd);
+	FindReplaceOverlayAction(Runnable operation) {
+		this(operation, null);
 	}
 
 	@Override
@@ -52,18 +52,6 @@ class FindReplaceOverlayAction extends AbstractHandler {
 		setBaseEnabled(available);
 	}
 
-	List<KeyStroke> getShortcuts() {
-		return Collections.unmodifiableList(shortcuts);
-	}
-
-	boolean executeIfMatching(KeyStroke keystroke) {
-		if (shortcuts.stream().anyMatch(keystroke::equals)) {
-			execute();
-			return true;
-		}
-		return false;
-	}
-
 	void addExecutionListener(Runnable listener) {
 		executionListeners.add(listener);
 	}
@@ -78,19 +66,20 @@ class FindReplaceOverlayAction extends AbstractHandler {
 		shortcutHintListeners.add(listener);
 	}
 
-	void activateKeyBinding() {
-		shortcutHintListeners.forEach(listener -> listener.accept(getShortcutHint()));
+	String getCommandId() {
+		return commandId;
 	}
 
-	private String getShortcutHint() {
-		if (shortcuts.isEmpty()) {
-			return ""; //$NON-NLS-1$
+	void updateHint() {
+		if (commandId == null) {
+			return;
 		}
-		return shortcuts.get(0).format(); // $NON-NLS-1$
-	}
-
-	void deactivateKeyBinding() {
-		shortcutHintListeners.forEach(listener -> listener.accept("")); //$NON-NLS-1$
+		IBindingService bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
+		if (bindingService == null) {
+			return;
+		}
+		String hint = bindingService.getBestActiveBindingFormattedFor(commandId);
+		shortcutHintListeners.forEach(l -> l.accept(hint == null ? "" : hint)); //$NON-NLS-1$
 	}
 
 }
