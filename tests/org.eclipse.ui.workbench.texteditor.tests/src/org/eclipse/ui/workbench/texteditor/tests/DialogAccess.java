@@ -175,6 +175,9 @@ class DialogAccess implements IFindReplaceUIAccess {
 		if (shiftPressed) {
 			event.stateMask= SWT.SHIFT;
 		}
+		if (keyCode == SWT.CR | keyCode == SWT.KEYPAD_CR) {
+			event.character= '\r';
+		}
 		event.keyCode= keyCode;
 		findCombo.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();

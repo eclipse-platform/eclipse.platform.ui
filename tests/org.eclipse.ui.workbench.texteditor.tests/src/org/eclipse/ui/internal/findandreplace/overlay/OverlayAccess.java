@@ -143,6 +143,9 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		if (shiftPressed) {
 			event.stateMask= SWT.SHIFT;
 		}
+		if (keyCode == SWT.CR | keyCode == SWT.KEYPAD_CR) {
+			event.character= '\r';
+		}
 		event.keyCode= keyCode;
 		find.getTextBar().notifyListeners(SWT.KeyDown, event);
 		runEventQueue();
