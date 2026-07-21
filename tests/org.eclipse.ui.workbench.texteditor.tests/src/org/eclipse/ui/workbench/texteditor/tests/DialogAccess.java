@@ -132,6 +132,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 		Button button= getButtonForSearchOption(option);
 		button.setSelection(true);
 		button.notifyListeners(SWT.Selection, null);
+		assertSelected(option);
 	}
 
 	@Override
@@ -145,6 +146,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 			button.setSelection(false);
 		}
 		button.notifyListeners(SWT.Selection, null);
+		assertUnselected(option);
 	}
 
 

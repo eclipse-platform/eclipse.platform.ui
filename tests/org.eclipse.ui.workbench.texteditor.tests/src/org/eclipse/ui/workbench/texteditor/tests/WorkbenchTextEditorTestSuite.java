@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
 import org.eclipse.ui.internal.findandreplace.HistoryStoreTest;
@@ -46,9 +46,9 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		MinimapWidgetTest.class,
 		TextEditorPluginTest.class,
 		TextViewerDeleteLineTargetTest.class,
-		FindReplaceDialogTest.class,
-		FindReplaceOverlayTest.class,
 		FindReplaceLogicTest.class,
+		FindReplaceOverlayTest.class,
+		FindReplaceDialogTest.class,
 		HistoryStoreTest.class,
 })
 public class WorkbenchTextEditorTestSuite {

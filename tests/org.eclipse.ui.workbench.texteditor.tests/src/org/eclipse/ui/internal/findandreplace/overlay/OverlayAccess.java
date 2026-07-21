@@ -122,6 +122,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		ToolItem button= getButtonForSearchOption(option);
 		if (button != null) {
 			button.notifyListeners(SWT.Selection, null);
+			assertSelected(option);
 		}
 	}
 
@@ -133,6 +134,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		ToolItem button= getButtonForSearchOption(option);
 		if (button != null) {
 			button.notifyListeners(SWT.Selection, null);
+			assertUnselected(option);
 		}
 	}
 
