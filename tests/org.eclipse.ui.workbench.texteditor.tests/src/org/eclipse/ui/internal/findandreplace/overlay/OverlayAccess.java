@@ -18,7 +18,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,11 +56,11 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private final ToolItem openReplaceDialog;
 
-	private HistoryTextWrapper replace;
+	private final HistoryTextWrapper replace;
 
-	private ToolItem replaceButton;
+	private final ToolItem replaceButton;
 
-	private ToolItem replaceAllButton;
+	private final ToolItem replaceAllButton;
 
 	private final FindReplaceOverlay overlay;
 
@@ -78,16 +77,11 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		searchBackward= widgetExtractor.findToolItem("searchBackward");
 		selectAll= widgetExtractor.findToolItem("selectAll");
 		openReplaceDialog= widgetExtractor.findToolItem("replaceToggle");
-		extractReplaceWidgets();
-	}
-
-	private void extractReplaceWidgets() {
-		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
-			WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, getContainerControl());
-			replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
-			replaceButton= widgetExtractor.findToolItem("replaceOne");
-			replaceAllButton= widgetExtractor.findToolItem("replaceAll");
-		}
+		// The replace bar is created together with the rest of the overlay and merely
+		// hidden while collapsed, so its widgets can be extracted once up front.
+		replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
+		replaceButton= widgetExtractor.findToolItem("replaceOne");
+		replaceAllButton= widgetExtractor.findToolItem("replaceAll");
 	}
 
 	private Composite getContainerControl() {
@@ -264,26 +258,22 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	public String getReplaceToolTipText() {
-		return replaceButton != null ? replaceButton.getToolTipText() : null;
+		return replaceButton.getToolTipText();
 	}
 
 	public boolean isReplaceDialogOpen() {
-		return replace != null;
+		return replace.isVisible();
 	}
 
 	public void openReplaceDialog() {
-		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
+		if (!isReplaceDialogOpen()) {
 			openReplaceDialog.notifyListeners(SWT.Selection, null);
-			extractReplaceWidgets();
 		}
 	}
 
 	public void closeReplaceDialog() {
-		if (isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
+		if (isReplaceDialogOpen()) {
 			openReplaceDialog.notifyListeners(SWT.Selection, null);
-			replace= null;
-			replaceButton= null;
-			replaceAllButton= null;
 		}
 	}
 

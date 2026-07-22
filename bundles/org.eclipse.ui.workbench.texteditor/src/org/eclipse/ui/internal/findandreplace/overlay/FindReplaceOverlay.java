@@ -84,7 +84,6 @@ public class FindReplaceOverlay {
 
 	private final IFindReplaceLogic findReplaceLogic;
 	private final IWorkbenchPart targetPart;
-	private boolean replaceBarOpen;
 
 	private final Composite targetControl;
 	private Composite containerControl;
@@ -118,7 +117,7 @@ public class FindReplaceOverlay {
 		public void focusGained(FocusEvent e) {
 			if (e.widget == searchBar.getTextBar()) {
 				commandSupport.searchBarActivated();
-			} else if (replaceBar != null && e.widget == replaceBar.getTextBar()) {
+			} else if (e.widget == replaceBar.getTextBar()) {
 				commandSupport.replaceBarActivated();
 			}
 		}
@@ -133,7 +132,7 @@ public class FindReplaceOverlay {
 
 	private class CustomFocusOrder {
 		private final Listener searchBarToReplaceBar = e -> {
-			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT && isReplaceVisible()) {
 				e.doit = false;
 				replaceBar.forceFocus();
 			}
@@ -157,6 +156,9 @@ public class FindReplaceOverlay {
 		private final Listener searchToolsToReplaceBar = e -> {
 			switch (e.detail) {
 			case SWT.TRAVERSE_TAB_PREVIOUS:
+				if (!isReplaceVisible()) {
+					break;
+				}
 				e.doit = false;
 				replaceBar.forceFocus();
 				break;
@@ -168,6 +170,9 @@ public class FindReplaceOverlay {
 		private final Listener closeToolsToReplaceTools = e -> {
 			switch (e.detail) {
 			case SWT.TRAVERSE_TAB_NEXT:
+				if (!isReplaceVisible()) {
+					break;
+				}
 				e.doit = false;
 				replaceBar.getDropDownTool().getFirstControl().forceFocus();
 				break;
@@ -187,20 +192,12 @@ public class FindReplaceOverlay {
 			}
 		};
 
-		void apply() {
+		void install() {
 			searchBar.getTextBar().addListener(SWT.Traverse, searchBarToReplaceBar);
 			replaceBar.getTextBar().addListener(SWT.Traverse, replaceBarToSearchBarAndTools);
 			searchBar.getDropDownTool().getFirstControl().addListener(SWT.Traverse, searchToolsToReplaceBar);
 			closeTools.getFirstControl().addListener(SWT.Traverse, closeToolsToReplaceTools);
 			replaceBar.getDropDownTool().getFirstControl().addListener(SWT.Traverse, replaceToolsToCloseTools);
-		}
-
-		void dispose() {
-			searchBar.getTextBar().removeListener(SWT.Traverse, searchBarToReplaceBar);
-			replaceBar.getTextBar().removeListener(SWT.Traverse, replaceBarToSearchBarAndTools);
-			searchBar.getDropDownTool().getFirstControl().removeListener(SWT.Traverse, searchToolsToReplaceBar);
-			closeTools.getFirstControl().removeListener(SWT.Traverse, closeToolsToReplaceTools);
-			replaceBar.getDropDownTool().getFirstControl().removeListener(SWT.Traverse, replaceToolsToCloseTools);
 		}
 	}
 
@@ -211,6 +208,8 @@ public class FindReplaceOverlay {
 		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
 		commandSupport.setContainerControl(containerControl);
+		customFocusOrder.install();
+		updateReplaceVisibility(false);
 		containerControl.setVisible(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(containerControl,
 				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
@@ -330,7 +329,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void storeOverlaySettings() {
-		getDialogSettings().put(REPLACE_BAR_OPEN_DIALOG_SETTING, replaceBarOpen);
+		getDialogSettings().put(REPLACE_BAR_OPEN_DIALOG_SETTING, isReplaceVisible());
 	}
 
 	private void restoreOverlaySettings() {
@@ -428,10 +427,10 @@ public class FindReplaceOverlay {
 		replaceToggleTools = new AccessibleToolBar(containerControl);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.FILL, GridData.FILL)
 				.applyTo(replaceToggleTools);
-		replaceToggleTools.addMouseListener(MouseListener.mouseDownAdapter(__ -> setReplaceVisible(!replaceBarOpen)));
+		replaceToggleTools.addMouseListener(MouseListener.mouseDownAdapter(__ -> setReplaceVisible(!isReplaceVisible())));
 
 		FindReplaceOverlayAction replaceToggleAction = new FindReplaceOverlayAction(
-				() -> setReplaceVisible(!replaceBarOpen), FindReplaceOverlayCommandSupport.CMD_TOGGLE_REPLACE);
+				() -> setReplaceVisible(!isReplaceVisible()), FindReplaceOverlayCommandSupport.CMD_TOGGLE_REPLACE);
 		commandSupport.registerAction(replaceToggleAction);
 		replaceToggle = new AccessibleToolItemBuilder(replaceToggleTools)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA))
@@ -448,6 +447,8 @@ public class FindReplaceOverlay {
 
 		createSearchContainer();
 		commandSupport.trackFocusControl(searchBar.getTextBar());
+		createReplaceContainer();
+		commandSupport.trackFocusControl(replaceBar.getTextBar());
 	}
 
 	private void createSearchTools() {
@@ -578,7 +579,7 @@ public class FindReplaceOverlay {
 			}
 			performSingleReplace();
 		}, FindReplaceOverlayCommandSupport.CMD_REPLACE_FORWARD);
-		commandSupport.registerReplaceAction(replaceAction);
+		commandSupport.registerAction(replaceAction);
 		ToolItem replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
@@ -592,7 +593,7 @@ public class FindReplaceOverlay {
 			}
 			performReplaceAll();
 		}, FindReplaceOverlayCommandSupport.CMD_REPLACE_ALL);
-		commandSupport.registerReplaceAction(replaceAllAction);
+		commandSupport.registerAction(replaceAllAction);
 		ToolItem replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
@@ -618,6 +619,7 @@ public class FindReplaceOverlay {
 		searchBar.setData(ID_DATA_KEY, "searchInput"); //$NON-NLS-1$
 		searchBarDecoration = new ControlDecoration(searchBar, SWT.BOTTOM | SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
+		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		searchBar.forceFocus();
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
@@ -635,9 +637,8 @@ public class FindReplaceOverlay {
 			}
 		});
 		searchBar.addFocusListener(targetActionActivationHandling);
-		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
-		contentAssistSearchField = createContentAssistField(searchBar, true);
 		searchBar.setTabList(null);
+		contentAssistSearchField = createContentAssistField(searchBar, true);
 	}
 
 	private void updateIncrementalSearch() {
@@ -685,41 +686,28 @@ public class FindReplaceOverlay {
 		createReplaceTools();
 	}
 
+	private boolean isReplaceVisible() {
+		return replaceContainer.getVisible();
+	}
+
 	private void setReplaceVisible(boolean visible) {
-		if (findReplaceLogic.getTarget().isEditable() && visible) {
-			createReplaceDialog();
-			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE_REPLACE_AREA));
-		} else {
-			hideReplace();
-			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA));
+		boolean shouldBeVisible = visible && findReplaceLogic.getTarget().isEditable();
+		if (shouldBeVisible == isReplaceVisible()) {
+			return;
 		}
+		replaceToggle.setImage(FindReplaceOverlayImages.get(shouldBeVisible
+				? FindReplaceOverlayImages.KEY_CLOSE_REPLACE_AREA
+				: FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA));
+		updateReplaceVisibility(shouldBeVisible);
+		updatePlacementAndVisibility();
 		updateContentAssistAvailability();
+		Control newFocusControl = shouldBeVisible ? replaceBar : searchBar;
+		newFocusControl.forceFocus();
 	}
 
-	private void hideReplace() {
-		if (!replaceBarOpen) {
-			return;
-		}
-		customFocusOrder.dispose();
-		commandSupport.unregisterReplaceActions();
-		searchBar.forceFocus();
-		contentAssistReplaceField = null;
-		replaceBarOpen = false;
-		replaceContainer.dispose();
-		updatePlacementAndVisibility();
-	}
-
-	private void createReplaceDialog() {
-		if (replaceBarOpen) {
-			return;
-		}
-		replaceBarOpen = true;
-		createReplaceContainer();
-		commandSupport.trackFocusControl(replaceBar.getTextBar());
-
-		updatePlacementAndVisibility();
-		replaceBar.forceFocus();
-		customFocusOrder.apply();
+	private void updateReplaceVisibility(boolean visible) {
+		((GridData) replaceContainer.getLayoutData()).exclude = !visible;
+		replaceContainer.setVisible(visible);
 	}
 
 	private void enableSearchTools(boolean enable) {
@@ -801,7 +789,7 @@ public class FindReplaceOverlay {
 		if (okayToUse(searchBar) && !searchBar.isFocusControl()) {
 			searchBar.setSelection(0, 0);
 		}
-		if (okayToUse(replaceBar) && !replaceBar.isFocusControl()) {
+		if (!replaceBar.isFocusControl()) {
 			replaceBar.setSelection(0, 0);
 		}
 	}
@@ -939,9 +927,7 @@ public class FindReplaceOverlay {
 
 	private void resetErrorColoring() {
 		searchBar.setForeground(normalTextForegroundColor);
-		if (okayToUse(replaceBar)) {
-			replaceBar.setForeground(normalTextForegroundColor);
-		}
+		replaceBar.setForeground(normalTextForegroundColor);
 	}
 
 	private void activateInFindReplacerIf(SearchOptions option, boolean shouldActivate) {
@@ -969,9 +955,7 @@ public class FindReplaceOverlay {
 
 	private void setContentAssistsEnablement(boolean enable) {
 		contentAssistSearchField.setEnabled(enable);
-		if (okayToUse(replaceBar)) {
-			contentAssistReplaceField.setEnabled(enable);
-		}
+		contentAssistReplaceField.setEnabled(enable);
 	}
 
 	private void updateContentAssistAvailability() {
@@ -981,7 +965,7 @@ public class FindReplaceOverlay {
 	private void triggerContentAssist() {
 		if (searchBar.isFocusControl() && contentAssistSearchField.isEnabled()) {
 			contentAssistSearchField.openProposalPopup();
-		} else if (okayToUse(replaceBar) && replaceBar.isFocusControl() && contentAssistReplaceField.isEnabled()) {
+		} else if (replaceBar.isFocusControl() && contentAssistReplaceField.isEnabled()) {
 			contentAssistReplaceField.openProposalPopup();
 		}
 	}
