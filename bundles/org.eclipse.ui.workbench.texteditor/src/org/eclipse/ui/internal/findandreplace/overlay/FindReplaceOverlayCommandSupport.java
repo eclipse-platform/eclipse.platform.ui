@@ -95,10 +95,8 @@ class FindReplaceOverlayCommandSupport {
 	private final List<IContextActivation> contextActivations = new ArrayList<>();
 	private final Expression overlayFocusedExpression;
 
-	private final List<FindReplaceOverlayAction> permanentActions = new ArrayList<>();
-	private final List<IHandlerActivation> permanentActionActivations = new ArrayList<>();
-	private final List<FindReplaceOverlayAction> replaceActions = new ArrayList<>();
-	private final List<IHandlerActivation> replaceActionActivations = new ArrayList<>();
+	private final List<FindReplaceOverlayAction> registeredActions = new ArrayList<>();
+	private final List<IHandlerActivation> actionActivations = new ArrayList<>();
 
 	FindReplaceOverlayCommandSupport(IWorkbenchPart targetPart) {
 		this.targetPart = targetPart;
@@ -152,18 +150,9 @@ class FindReplaceOverlayCommandSupport {
 	void registerAction(FindReplaceOverlayAction action) {
 		IHandlerActivation activation = activateAction(action);
 		if (activation != null) {
-			permanentActionActivations.add(activation);
+			actionActivations.add(activation);
 		}
-		permanentActions.add(action);
-		action.updateHint();
-	}
-
-	void registerReplaceAction(FindReplaceOverlayAction action) {
-		IHandlerActivation activation = activateAction(action);
-		if (activation != null) {
-			replaceActionActivations.add(activation);
-		}
-		replaceActions.add(action);
+		registeredActions.add(action);
 		action.updateHint();
 	}
 
@@ -176,23 +165,12 @@ class FindReplaceOverlayCommandSupport {
 		return handlerService.activateHandler(commandId, action, overlayFocusedExpression);
 	}
 
-	void unregisterReplaceActions() {
-		IHandlerService handlerService = getWorkbenchHandlerService();
-		if (handlerService != null) {
-			handlerService.deactivateHandlers(replaceActionActivations);
-		}
-		replaceActionActivations.clear();
-		replaceActions.clear();
-	}
-
 	private void deregisterActionActivations() {
 		IHandlerService handlerService = getWorkbenchHandlerService();
 		if (handlerService != null) {
-			handlerService.deactivateHandlers(permanentActionActivations);
-			handlerService.deactivateHandlers(replaceActionActivations);
+			handlerService.deactivateHandlers(actionActivations);
 		}
-		permanentActionActivations.clear();
-		replaceActionActivations.clear();
+		actionActivations.clear();
 	}
 
 	private static IHandlerService getWorkbenchHandlerService() {
@@ -246,10 +224,7 @@ class FindReplaceOverlayCommandSupport {
 	}
 
 	private void refreshShortcutHints() {
-		for (FindReplaceOverlayAction action : permanentActions) {
-			action.updateHint();
-		}
-		for (FindReplaceOverlayAction action : replaceActions) {
+		for (FindReplaceOverlayAction action : registeredActions) {
 			action.updateHint();
 		}
 	}
