@@ -61,6 +61,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Throttler;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -1084,22 +1085,35 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
+		final ProgressMonitorJobsDialog dialog;
+		try {
+			dialog = new ProgressMonitorJobsDialog(ProgressManagerUtil.getDefaultParent());
+		} catch (SWTException e) {
+			if (e.code != SWT.ERROR_THREAD_INVALID_ACCESS) {
+				throw e;
+			}
+			throw new IllegalStateException(
+					"IProgressService.run() must be called from the UI thread since it may need to open a progress dialog. Use a Job to run long operations from a background thread.", //$NON-NLS-1$
+					e);
+		}
+		dialog.setOpenOnRun(false);
+		if (shouldRunInBackground()) {
+			// The "Always run in background" preference must suppress the modal
+			// progress dialog for every fork/cancelable combination, not just the
+			// backward compatible (fork==false || cancelable==false) path below.
+			dialog.run(fork, cancelable, runnable);
+			return;
+		}
+
 		if (!fork || !cancelable) {
 			// Backward compatible code.
-			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-					ProgressManagerUtil.getDefaultParent());
-			if (shouldRunInBackground()) {
-				dialog.setOpenOnRun(false);
+			Job showDialogJob = scheduleProgressMonitorJob(dialog);
+			try {
 				dialog.run(fork, cancelable, runnable);
-			} else {
-				Job showDialogJob = scheduleProgressMonitorJob(dialog);
-				try {
-					dialog.run(fork, cancelable, runnable);
-				} finally {
-					// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
-					// the operation finishes or unwinds with an exception.
-					showDialogJob.cancel();
-				}
+			} finally {
+				// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+				// the operation finishes or unwinds with an exception.
+				showDialogJob.cancel();
 			}
 			return;
 		}
