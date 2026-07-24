@@ -200,16 +200,15 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				if (path != null) {
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 					IResource resource = root.findMember(path);
-					if (resource != null && resource instanceof IContainer) {
+					if (resource instanceof IContainer container) {
 						String resourceName = resourceGroup.getResource();
-						if (resourceName.length() > 0) {
+						if (!resourceName.isEmpty()) {
 							try {
-								return ((IContainer) resource).getFolder(IPath.fromOSString(resourceName));
+								return container.getFolder(IPath.fromOSString(resourceName));
 							} catch (IllegalArgumentException e) {
 								// continue below.
 							}
 						}
-						return resource;
 					}
 					return resource;
 				}
@@ -238,7 +237,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					} else {
 						IPath path = URIUtil.toPath(existingLink);
 						if (path != null) {
-							setDefaultLinkValue = path.toPortableString().length() > 0;
+							setDefaultLinkValue = !path.toPortableString().isEmpty();
 						}
 					}
 
@@ -450,10 +449,10 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 			} catch (final ExecutionException e) {
 				getContainer().getShell().getDisplay().syncExec(() -> {
-					if (e.getCause() instanceof CoreException) {
+					if (e.getCause() instanceof CoreException coreException) {
 						ErrorDialog.openError(getContainer().getShell(), // Was Utilities.getFocusShell()
 								IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle, null, // no special message
-								((CoreException) e.getCause()).getStatus());
+								coreException.getStatus());
 					} else {
 						IDEWorkbenchPlugin.log(getClass(), "createNewFolder()", e.getCause()); //$NON-NLS-1$
 						MessageDialog.openError(getContainer().getShell(),
@@ -771,7 +770,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		if (createVirtualFolder) {
 			return false;
 		}
-		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled()) {
+		if (linkedResourceGroup == null || linkedResourceGroup.isEnabled()) {
 			return false;
 		}
 		IPath containerPath = resourceGroup.getContainerFullPath();
@@ -782,7 +781,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		if (resourceName == null) {
 			return false;
 		}
-		if (resourceName.length() > 0) {
+		if (!resourceName.isEmpty()) {
 			IPath newFolderPath = containerPath.append(resourceName);
 			if (newFolderPath.segmentCount() < 2) {
 				return false;
