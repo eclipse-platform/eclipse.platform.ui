@@ -203,6 +203,8 @@ public class MarkerMessages extends NLS {
 	public static String MarkerView_refreshing_counts;
 	public static String MarkerView_queueing_updates;
 	public static String MarkerView_processUpdates;
+	public static String MarkerView_searchFilterInitialText;
+	public static String MarkerView_showFilterText;
 
 	public static String MarkerView_18;
 	public static String MarkerView_19;

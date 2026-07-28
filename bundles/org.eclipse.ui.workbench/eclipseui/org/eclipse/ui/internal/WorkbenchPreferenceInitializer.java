@@ -129,6 +129,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		// Don't show more than 1000 child elements per parent by default
 		node.putInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, 1000);
 
+		node.putBoolean(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS, true);
+
 		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,
 				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE);
 

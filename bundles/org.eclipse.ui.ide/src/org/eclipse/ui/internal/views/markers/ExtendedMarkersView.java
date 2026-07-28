@@ -41,10 +41,14 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -81,6 +85,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
@@ -95,6 +100,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -155,6 +161,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private static final String TAG_COLUMN_WIDTHS = "columnWidths"; //$NON-NLS-1$
 
+	/**
+	 * Memento key to store whether the search text filter box is shown or
+	 * hidden in the view's memento/state.
+	 */
+	private static final String TAG_SHOW_FILTER_TEXT = "showFilterText"; //$NON-NLS-1$
+
 	private final IMarker[] noMarkers = new IMarker[0];
 
 	private MarkerContentGenerator generator;
@@ -165,7 +177,40 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private MarkersTreeViewer viewer;
 
+	/**
+	 * Hosts {@link #viewer} and provides the search box used to filter the shown
+	 * markers.
+	 */
+	private MarkersFilteredTree filteredTree;
+
 	private Action filterAction;
+
+	/**
+	 * Toggles the visibility of the search box provided by
+	 * {@link #filteredTree}.
+	 */
+	private Action showFilterTextAction;
+
+	/**
+	 * Whether the search box used to filter the shown markers is visible.
+	 */
+	private boolean showFilterText;
+
+	/**
+	 * Whether the user has ever toggled the "Show text filter" entry in the
+	 * view menu for this view. If <code>false</code>, the preference value is
+	 * used to decide whether the search filter text box is shown or hidden.
+	 */
+	private boolean showFilterTextSetByUser;
+
+	/**
+	 * Listens to changes of
+	 * {@link IWorkbenchPreferenceConstants#INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS} so
+	 * that they are honored instantly while this view is open, as long as
+	 * {@link #showFilterTextSetByUser} is <code>false</code>, i.e. the user never
+	 * explicitly toggled {@link #showFilterTextAction} for this view instance.
+	 */
+	private IPropertyChangeListener showFilterTextPreferenceListener;
 
 	/**
 	 * The user can set a custom name when opening a new view. This value has to be
@@ -258,8 +303,13 @@ public class ExtendedMarkersView extends ViewPart {
 	private void createViewer(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
-				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		filteredTree = new MarkersFilteredTree(parent,
+				SWT.H_SCROLL /* | SWT.VIRTUAL */ | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION,
+				this, new MarkerPatternFilter(this));
+		filteredTree.setInitialText(MarkerMessages.MarkerView_searchFilterInitialText);
+		filteredTree.setFilterTextVisible(showFilterText);
+
+		viewer = filteredTree.getMarkersTreeViewer();
 		WorkbenchViewerSetup.setupViewer(viewer);
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
@@ -602,6 +652,10 @@ public class ExtendedMarkersView extends ViewPart {
 		getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		getSite().getPage().removePartListener(partListener);
 
+		if (showFilterTextPreferenceListener != null) {
+			getPreferenceStore().removePropertyChangeListener(showFilterTextPreferenceListener);
+		}
+
 		undoAction.dispose();
 		redoAction.dispose();
 
@@ -897,24 +951,17 @@ public class ExtendedMarkersView extends ViewPart {
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = CachedMarkerBuilder.getTotalMarkerCount(markers);
 		int filteredCount = 0;
-		boolean markerLimitsEnabled = generator.isMarkerLimitsEnabled();
-		int markerLimit = generator.getMarkerLimits();
 		MarkerSupportItem[] categories = markers.getCategories();
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
-
 			for (MarkerSupportItem categorie : categories) {
-
-				int childCount = categorie.getChildrenCount();
-				if (markerLimitsEnabled) {
-					childCount = Math.min(childCount, markerLimit);
-				}
-				filteredCount += childCount;
+				// the categories cache their counts, which are needed for their
+				// labels anyway
+				filteredCount += categorie instanceof MarkerCategory category ? category.getShownChildrenCount()
+						: countMatchingSearchFilter(categorie.getChildren());
 			}
-		} else if(markerLimitsEnabled) {
-			filteredCount = markerLimit;
 		} else {
-			filteredCount = -1;
+			filteredCount = countMatchingSearchFilter(markers.getElements());
 		}
 
 		// Any errors or warnings? If not then send the filtering message
@@ -934,6 +981,79 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		return NLS.bind(MarkerMessages.problem_filter_matchedMessage,
 				message, filteredCount, totalCount);
+	}
+
+	/**
+	 * Returns how many of the given items (top-level concrete markers, or the
+	 * concrete children of a category) are actually shown in the tree, i.e. how
+	 * many of them survive both the
+	 * {@link MarkerContentGenerator#getMarkerLimits() marker limit} truncation
+	 * and the search box filter hosted by {@link #filteredTree}.
+	 * <p>
+	 * When the search box is empty or not yet available (view still being
+	 * created), this returns {@code items.length}, truncated to the marker limit
+	 * if that limit is enabled and exceeded.
+	 * </p>
+	 * <p>
+	 * This is O(items) whenever a search filter is active, so callers that are
+	 * asked repeatedly for the same items - like the category labels - should
+	 * cache the result, see {@link MarkerCategory#getShownChildrenCount()}.
+	 * </p>
+	 */
+	int countMatchingSearchFilter(MarkerSupportItem[] items) {
+		MarkerPatternFilter searchFilter = getSearchFilter();
+		if (searchFilter == null) {
+			// No active text filter: the content provider enforces the marker
+			// limit on the full set, so report only up to that many items.
+			return applyMarkerLimit(items.length);
+		}
+		// When a text filter is active the content provider filters first and
+		// then applies the limit to the matching subset, so count all matches
+		// and then apply the same limit to that count.
+		int matching = 0;
+		for (MarkerSupportItem item : items) {
+			if (searchFilter.matches(item)) {
+				matching++;
+			}
+		}
+		return applyMarkerLimit(matching);
+	}
+
+	/**
+	 * Returns the given number of markers truncated to the
+	 * {@link MarkerContentGenerator#getMarkerLimits() marker limit}, if that
+	 * limit is enabled and exceeded.
+	 */
+	int applyMarkerLimit(int count) {
+		if (generator != null && generator.isMarkerLimitsEnabled()) {
+			int limit = generator.getMarkerLimits();
+			if (limit > 0 && limit < count) {
+				return limit;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Returns the pattern currently narrowing down the shown markers, or
+	 * <code>null</code> if the search box is empty or not available (yet).
+	 * Callers can use it to detect that a cached search result went stale.
+	 */
+	String getSearchFilterPattern() {
+		MarkerPatternFilter searchFilter = getSearchFilter();
+		return searchFilter == null ? null : searchFilter.getPatternString();
+	}
+
+	/**
+	 * @return the search box filter, or <code>null</code> if it is empty or not
+	 *         available (yet), i.e. if it currently matches all markers
+	 */
+	MarkerPatternFilter getSearchFilter() {
+		if (isDisposed() || filteredTree == null) {
+			return null;
+		}
+		MarkerPatternFilter searchFilter = (MarkerPatternFilter) filteredTree.getPatternFilter();
+		return searchFilter == null || searchFilter.isFilterEmpty() ? null : searchFilter;
 	}
 
 	/**
@@ -1021,6 +1141,8 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService(service);
 		}
 		this.memento = m;
+		initializeShowFilterText();
+		addShowFilterTextPreferenceListener();
 
 		if (m == null || m.getString(TAG_PART_NAME) == null) {
 			return;
@@ -1213,6 +1335,10 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		if (generator != null) {
 			m.putString(TAG_GENERATOR, builder.getGenerator().getId());
+		}
+
+		if (showFilterTextSetByUser) {
+			m.putBoolean(TAG_SHOW_FILTER_TEXT, showFilterText);
 		}
 
 		if (!getCategoriesToExpand().isEmpty()) {
@@ -1442,6 +1568,88 @@ public class ExtendedMarkersView extends ViewPart {
 		createFilterAction();
 		tm.add(new Separator("FilterGroup")); //$NON-NLS-1$
 		tm.add(filterAction);
+
+		IMenuManager menuManager = bars.getMenuManager();
+		menuManager.add(createShowFilterTextAction());
+		menuManager.add(new Separator());
+	}
+
+	/**
+	 * Creates the view menu action toggling the visibility of the search box
+	 * used to filter the shown markers.
+	 *
+	 * @return the created action
+	 */
+	private Action createShowFilterTextAction() {
+		showFilterTextAction = new Action(MarkerMessages.MarkerView_showFilterText, IAction.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				showSearchFilterText(isChecked());
+				showFilterTextSetByUser = true;
+			}
+		};
+		showFilterTextAction.setChecked(showFilterText);
+		return showFilterTextAction;
+	}
+
+	private void showSearchFilterText(boolean visible) {
+		showFilterText = visible;
+		if (showFilterTextAction.isChecked() != visible) {
+			showFilterTextAction.setChecked(visible);
+		}
+		filteredTree.setFilterTextVisible(visible);
+		// if the filter text is visible, set focus to it, otherwise set focus to the
+		// view.
+		if (visible) {
+			Text filterControl = filteredTree.getFilterControl();
+			if (filterControl != null && !filterControl.isDisposed()) {
+				filterControl.setFocus();
+			}
+		} else {
+			setFocus();
+		}
+	}
+
+	private IPreferenceStore getPreferenceStore() {
+		return WorkbenchPlugin.getDefault().getPreferenceStore();
+	}
+
+	/**
+	 * Listens to
+	 * {@link IWorkbenchPreferenceConstants#INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS}
+	 * preference changes and applies them to the search filter box, but only if
+	 * the user has not explicitly set the visibility of the search box for this
+	 * view instance.
+	 */
+	private void addShowFilterTextPreferenceListener() {
+		showFilterTextPreferenceListener = event -> {
+			if (IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS.equals(event.getProperty())) {
+				if (showFilterTextSetByUser || isDisposed()) {
+					return;
+				}
+				showSearchFilterText(Boolean.parseBoolean(String.valueOf(event.getNewValue())));
+			}
+		};
+		getPreferenceStore().addPropertyChangeListener(showFilterTextPreferenceListener);
+	}
+
+	/**
+	 * If {@link #TAG_SHOW_FILTER_TEXT} Memento is empty then
+	 * {@link IWorkbenchPreferenceConstants#INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS}
+	 * preference value is used.
+	 */
+	private void initializeShowFilterText() {
+		Boolean stored = memento == null ? null : memento.getBoolean(TAG_SHOW_FILTER_TEXT);
+		if (stored != null) {
+			// User explicitly set this before (true or false): honor it as-is.
+			showFilterText = stored.booleanValue();
+			showFilterTextSetByUser = true;
+		} else {
+			// Never explicitly set for this view: follow the preference.
+			IPreferenceStore store = getPreferenceStore();
+			showFilterText = store.getBoolean(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS);
+			showFilterTextSetByUser = false;
+		}
 	}
 
 	/**
@@ -1483,6 +1691,17 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	TreeViewer getViewer() {
 		return viewer;
+	}
+
+	/**
+	 * Returns the {@link MarkersFilteredTree} hosting {@link #getViewer() the
+	 * viewer}, which provides the search box used to filter the shown markers.
+	 *
+	 * @return the filtered tree, or <code>null</code> if the view controls were
+	 *         not created yet
+	 */
+	MarkersFilteredTree getFilteredTree() {
+		return filteredTree;
 	}
 
 	/**
@@ -1714,5 +1933,9 @@ public class ExtendedMarkersView extends ViewPart {
 			return adapter.cast(viewer);
 		}
 		return super.getAdapter(adapter);
+	}
+
+	public boolean isDisposed() {
+		return viewer == null || viewer.getControl().isDisposed();
 	}
 }

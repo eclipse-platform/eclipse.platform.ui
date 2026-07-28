@@ -53,10 +53,10 @@ class UIUpdateJob extends WorkbenchJob {
 		if(monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
 		}
-		TreeViewer viewer = view.getViewer();
-		if (viewer.getControl().isDisposed()) {
+		if (view.isDisposed()) {
 			return Status.CANCEL_STATUS;
 		}
+		TreeViewer viewer = view.getViewer();
 
 		Markers clone = view.getActiveViewerInputClone();
 		try {
