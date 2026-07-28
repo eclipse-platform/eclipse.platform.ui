@@ -52,6 +52,8 @@ public class CachedMarkerBuilder {
 	private final Markers markers;
 	private Markers markersClone;
 
+	private final ExtendedMarkersView view;
+
 	final Object MARKER_INCREMENTAL_UPDATE_FAMILY = new Object();
 	final Object CACHE_UPDATE_FAMILY = new Object();
 	final Object MARKERSVIEW_UPDATE_JOB_FAMILY;
@@ -80,9 +82,17 @@ public class CachedMarkerBuilder {
 		active = false;
 		changeFlags = new boolean[] { true, false, false };
 		MARKERSVIEW_UPDATE_JOB_FAMILY = view.MARKERSVIEW_UPDATE_JOB_FAMILY;
+		this.view = view;
 		markers = new Markers(this);
 		markerListener = new MarkersChangeListener(view, this);
 		scheduler = new MarkerUpdateScheduler(view, this);
+	}
+
+	/**
+	 * @return the view this builder was created for
+	 */
+	ExtendedMarkersView getView() {
+		return view;
 	}
 
 	void restoreState(IMemento m) {

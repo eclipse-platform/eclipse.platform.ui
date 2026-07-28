@@ -80,6 +80,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showInlineRenameButton;
 
+	private Button showFilterTextInMarkerViewsButton;
+
 	protected static int MAX_SAVE_INTERVAL = 9999;
 	protected static int MAX_VIEW_LIMIT = 1_000_000;
 
@@ -311,6 +313,20 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		showInlineRenameButton.setSelection(renameModeInline);
 	}
 
+	/**
+	 * Create the widget controlling whether marker views (Problems, Tasks,
+	 * Bookmarks etc.) should initially show the search box used to filter the shown
+	 * markers.
+	 */
+	protected void createShowFilterTextInMarkerViewsPref(Composite composite) {
+		showFilterTextInMarkerViewsButton = new Button(composite, SWT.CHECK);
+		showFilterTextInMarkerViewsButton.setText(WorkbenchMessages.WorkbenchPreference_showFilterTextInMarkerViews);
+		showFilterTextInMarkerViewsButton
+				.setToolTipText(WorkbenchMessages.WorkbenchPreference_showFilterTextInMarkerViewsToolTip);
+		showFilterTextInMarkerViewsButton.setSelection(getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS));
+	}
+
 	private void selectClickMode(boolean singleClick) {
 		openOnSingleClick = singleClick;
 		selectOnHoverButton.setEnabled(openOnSingleClick);
@@ -428,6 +444,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		renameModeInline = !IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(defaultRenameMode);
 		showInlineRenameButton.setSelection(renameModeInline);
 
+		showFilterTextInMarkerViewsButton.setSelection(
+				store.getDefaultBoolean(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS));
+
 		super.performDefaults();
 	}
 
@@ -452,6 +471,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			renameModeValue = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG;
 		}
 		store.setValue(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE, renameModeValue);
+
+		store.setValue(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS,
+				showFilterTextInMarkerViewsButton.getSelection());
 
 		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR,
 				showHeapStatusButton.getSelection());
