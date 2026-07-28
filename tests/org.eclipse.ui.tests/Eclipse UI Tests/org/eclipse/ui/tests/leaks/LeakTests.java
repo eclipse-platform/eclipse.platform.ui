@@ -17,6 +17,7 @@ package org.eclipse.ui.tests.leaks;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,19 +70,30 @@ public class LeakTests {
 
 	public static void checkRef(ReferenceQueue<?> queue, Reference<?> ref)
 			throws IllegalArgumentException, InterruptedException {
-		boolean flag = false;
-		for (int i = 0; i < 100; i++) {
+		assertTrue(pollForRef(queue, ref, 100), "Reference not enqueued");
+	}
+
+	/**
+	 * Asserts that the given reference is not enqueued. Polls far fewer times than
+	 * {@link #checkRef}, because this case always exhausts every attempt.
+	 */
+	public static void checkRefNotEnqueued(ReferenceQueue<?> queue, Reference<?> ref)
+			throws IllegalArgumentException, InterruptedException {
+		assertFalse(pollForRef(queue, ref, 5), "Reference enqueued");
+	}
+
+	private static boolean pollForRef(ReferenceQueue<?> queue, Reference<?> ref, int attempts)
+			throws InterruptedException {
+		for (int i = 0; i < attempts; i++) {
 			System.gc();
 			Thread.yield();
 			processEvents();
 			Reference<?> checkRef = queue.remove(100);
 			if (checkRef != null && checkRef.equals(ref)) {
-				flag = true;
-				break;
+				return true;
 			}
 		}
-
-		assertTrue(flag, "Reference not enqueued");
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

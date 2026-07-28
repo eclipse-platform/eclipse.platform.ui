@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.dynamicplugins;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -93,7 +92,7 @@ public class DynamicSupportTests {
 		ReferenceQueue<Object> queue = new ReferenceQueue<>();
 		WeakReference<Object> ref = new WeakReference<>(o1, queue);
 		o1 = null;
-		assertThrows(Throwable.class, () -> LeakTests.checkRef(queue, ref));
+		LeakTests.checkRefNotEnqueued(queue, ref);
 		Object [] results = tracker.getObjects(e1);
 		assertNotNull(results);
 		assertEquals(1, results.length);
