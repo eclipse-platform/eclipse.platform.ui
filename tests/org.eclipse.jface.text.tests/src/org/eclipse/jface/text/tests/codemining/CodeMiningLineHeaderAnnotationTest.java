@@ -70,7 +70,6 @@ public class CodeMiningLineHeaderAnnotationTest {
 				return fViewer.getTextWidget().isVisible();
 			}
 		}.waitForCondition(display, 3000));
-		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
 	}
 
 	@AfterEach
