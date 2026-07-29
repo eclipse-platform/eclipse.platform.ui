@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.PreferenceOverriddenByCssChangeListenerTest;
+import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpersTest;
 import org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandlerTest;
 import org.eclipse.e4.ui.tests.css.forms.ExpandableCompositeTest;
 import org.eclipse.e4.ui.tests.css.forms.SectionTest;
@@ -64,7 +65,8 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, CSSResourcesHelpersTest.class,
+@SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, SWTStyleHelpersTest.class,
+		CSSResourcesHelpersTest.class,
 		SWTResourceRegistryKeyFactoryTest.class, SWTResourcesRegistryTest.class, FontDefinitionTest.class,
 		ColorDefinitionTest.class, ThemesExtensionTest.class, IEclipsePreferencesTest.class,
 		EclipsePreferencesHelperTest.class, CSSSWTWidgetTest.class, LabelTest.class, LinkTest.class,
