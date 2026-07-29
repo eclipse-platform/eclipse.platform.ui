@@ -48,8 +48,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.CSSValueBooleanConverterImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
-import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerLazyProviderImpl;
-import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerSimpleProviderImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
@@ -141,10 +139,6 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	private int parseImport;
 
 	private ResourceRegistryKeyFactory keyFactory;
-
-	private CSSPropertyHandlerSimpleProviderImpl handlerProvider;
-
-	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider;
 
 	public CSSEngineImpl() {
 		keyFactory = new ResourceRegistryKeyFactory();
@@ -1124,35 +1118,6 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			return converter.convert(value, this, context);
 		}
 		return null;
-	}
-
-	public void registerCSSPropertyHandler(Class<?> cl, ICSSPropertyHandler handler) {
-		initHandlerProviderIfNeed();
-		handlerProvider.registerCSSPropertyHandler(cl, handler);
-	}
-
-	private void initHandlerProviderIfNeed() {
-		if (handlerProvider == null) {
-			handlerProvider = new CSSPropertyHandlerSimpleProviderImpl();
-			registerCSSPropertyHandlerProvider(handlerProvider);
-		}
-	}
-
-	public void registerCSSProperty(String propertyName, Class<? extends ICSSPropertyHandler> propertyHandlerClass) {
-		initHandlerProviderIfNeed();
-		handlerProvider.registerCSSProperty(propertyName, propertyHandlerClass);
-	}
-
-	private void initLazyHandlerProviderIfNeed() {
-		if (lazyHandlerProvider == null) {
-			lazyHandlerProvider = new CSSPropertyHandlerLazyProviderImpl();
-			registerCSSPropertyHandlerProvider(lazyHandlerProvider);
-		}
-	}
-
-	public void registerPackage(String packageName) {
-		initLazyHandlerProviderIfNeed();
-		lazyHandlerProvider.registerPackage(packageName);
 	}
 
 	protected void setResourceRegistryKeyFactory(ResourceRegistryKeyFactory keyFactory) {
