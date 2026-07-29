@@ -182,9 +182,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		menu.add(new Separator());
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));//$NON-NLS-1$
-		if (toggleLinkingAction != null) {
-			menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS + "-end", toggleLinkingAction); //$NON-NLS-1$
-		}
 	}
 
 	private void updateToolBar(IToolBarManager toolBar) {
