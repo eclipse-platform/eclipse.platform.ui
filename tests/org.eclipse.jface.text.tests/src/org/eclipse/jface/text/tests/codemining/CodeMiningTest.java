@@ -132,10 +132,12 @@ public class CodeMiningTest {
 				return fViewer.getTextWidget().isVisible();
 			}
 		}.waitForCondition(display, 3000));
+		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
 	}
 
 	@AfterEach
 	public void tearDown() {
+		DelayedEchoCodeMiningProvider.DELAY= 0;
 		if (fReconciler != null) {
 			fReconciler.uninstall();
 			fReconciler = null;
