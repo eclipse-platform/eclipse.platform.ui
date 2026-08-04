@@ -72,5 +72,6 @@ import org.junit.platform.suite.api.Suite;
 	ScopeAreaTest.class,
 	MarkerTypeTests.class,
 	MarkersFilteredTreeTest.class,
+	ImageURLModifierTrackerTest.class,
 })
 public class InternalTestSuite {}

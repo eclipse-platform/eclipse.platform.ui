@@ -63,7 +63,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 					// The calling image will do that itself!
 					return getFilePath(tempURL, logIOException);
 				}
-				return getZoomedImageSource(tempURL, url, zoom, u -> getFilePath(u, logIOException));
+				return getZoomedImageSource(tempURL, zoom, u -> getFilePath(u, logIOException));
 			}
 			return null;
 		};
@@ -107,12 +107,12 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (zoom == 100 || canLoadAtZoom(tempURL, zoom)) {
 				return getImageData(tempURL, 100, zoom);
 			}
-			return getZoomedImageSource(tempURL, url, zoom, u -> getImageData(u, zoom, zoom));
+			return getZoomedImageSource(tempURL, zoom, u -> getImageData(u, zoom, zoom));
 		}
 		return null;
 	}
 
-	private static <R> R getZoomedImageSource(URL url, String urlString, int zoom, Function<URL, R> getImage) {
+	private static <R> R getZoomedImageSource(URL url, int zoom, Function<URL, R> getImage) {
 		URL xUrl = getxURL(url, zoom);
 		if (xUrl != null) {
 			R xdata = getImage.apply(xUrl);
@@ -120,9 +120,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				return xdata;
 			}
 		}
-		String xpath = getxPath(urlString, zoom);
+		// derived from the already modified URL, so the modifier must not run again
+		String xpath = getxPath(url.toExternalForm(), zoom);
 		if (xpath != null) {
-			URL xPathUrl = getURL(xpath);
+			URL xPathUrl = toURL(xpath);
 			if (xPathUrl != null) {
 				return getImage.apply(xPathUrl);
 			}
@@ -352,14 +353,29 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 	}
 
+	/**
+	 * Resolves the given URL string, applying the URL modifier. Every code path of
+	 * this descriptor resolves its URL here.
+	 */
 	private static URL getURL(String urlString) {
-		URL result = null;
-		try {
-			result = new URL(urlString);
-		} catch (MalformedURLException e) {
-			Policy.logException(e);
+		URL result = toURL(urlString);
+		IImageURLModifier modifier = urlModifier;
+		if (result != null && modifier != null) {
+			URL modified = modifier.modifyURL(result);
+			if (modified != null) {
+				result = modified;
+			}
 		}
 		return result;
+	}
+
+	private static URL toURL(String urlString) {
+		try {
+			return new URL(urlString);
+		} catch (MalformedURLException e) {
+			Policy.logException(e);
+			return null;
+		}
 	}
 
 	@Override
