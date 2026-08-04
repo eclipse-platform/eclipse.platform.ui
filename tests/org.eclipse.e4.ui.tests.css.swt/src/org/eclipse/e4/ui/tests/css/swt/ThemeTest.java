@@ -14,14 +14,22 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.ui.css.swt.internal.theme.Theme;
+import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -39,6 +47,8 @@ import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
 public class ThemeTest {
+
+	private static final String THEMEID_KEY = "themeid";
 
 	@RegisterExtension
 	CssSwtEngine css = new CssSwtEngine();
@@ -59,7 +69,9 @@ public class ThemeTest {
 
 	@AfterEach
 	public void tearDown() {
-		themeListenerRegistration.unregister();
+		if (themeListenerRegistration != null) {
+			themeListenerRegistration.unregister();
+		}
 	}
 
 	@Test
@@ -87,6 +99,38 @@ public class ThemeTest {
 		assertFalse(success[0]);
 		themer.setTheme(new Theme("test", "Test"), true);
 		assertTrue(success[0]);
+	}
+
+	@Test
+	void testInheritedThemeIsReadableFromPreferenceService() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		IEclipsePreferences[] explicitNodes = { InstanceScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID),
+				ConfigurationScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID),
+				UserScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID) };
+		String[] previousIds = new String[explicitNodes.length];
+
+		// an inherited theme is applied without any scope recording an explicit choice
+		for (int i = 0; i < explicitNodes.length; i++) {
+			previousIds[i] = explicitNodes[i].get(THEMEID_KEY, null);
+			explicitNodes[i].remove(THEMEID_KEY);
+		}
+		try {
+			themer.setTheme(new Theme("inherited.test", "Inherited"), false);
+
+			assertEquals("inherited.test",
+					Platform.getPreferencesService().getString(ThemeEngine.THEME_PLUGIN_ID, THEMEID_KEY, null, null));
+			assertNull(explicitNodes[0].get(THEMEID_KEY, null), "an inherited theme must not be persisted");
+		} finally {
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			for (int i = 0; i < explicitNodes.length; i++) {
+				if (previousIds[i] != null) {
+					explicitNodes[i].put(THEMEID_KEY, previousIds[i]);
+				}
+			}
+		}
 	}
 
 	private IThemeEngine getThemeEngine(Display display) {
