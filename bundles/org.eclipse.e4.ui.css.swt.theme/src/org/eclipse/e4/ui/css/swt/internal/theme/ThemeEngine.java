@@ -41,9 +41,12 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
@@ -61,6 +64,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -72,6 +76,8 @@ public class ThemeEngine implements IThemeEngine {
 	private final Display display;
 
 	private ITheme currentTheme;
+
+	private boolean effectiveThemeIdPublished;
 
 	private final List<String> globalStyles = new ArrayList<>();
 	private final List<IResourceLocator> globalSourceLocators = new ArrayList<>();
@@ -512,6 +518,8 @@ public class ThemeEngine implements IThemeEngine {
 				ThemeEngineManager.logError(e.getMessage(), e);
 			}
 		}
+		publishEffectiveThemeId();
+
 		boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
 		display.setDarkThemePreferred(isDark);
 
@@ -569,9 +577,31 @@ public class ThemeEngine implements IThemeEngine {
 		}
 	}
 
+	/**
+	 * Returns the theme that was selected for this installation, which may come from the
+	 * user, from a product customization, or from nowhere at all.
+	 */
 	private String getPreferenceThemeId() {
 		IPreferencesService prefService = Platform.getPreferencesService();
-		return prefService.getString(THEME_PLUGIN_ID, THEMEID_KEY, null, null);
+		if (!effectiveThemeIdPublished) {
+			return prefService.getString(THEME_PLUGIN_ID, THEMEID_KEY, null, null);
+		}
+		// skip the default scope, it now holds the effective id published below
+		return prefService.get(THEMEID_KEY, null, new Preferences[] { InstanceScope.INSTANCE.getNode(THEME_PLUGIN_ID),
+				ConfigurationScope.INSTANCE.getNode(THEME_PLUGIN_ID), UserScope.INSTANCE.getNode(THEME_PLUGIN_ID) });
+	}
+
+	/**
+	 * Publishes the theme that was actually applied into the default scope, so clients
+	 * asking the preference service for the current theme also get an inherited one. The
+	 * default scope is never persisted, which keeps the instance scope meaning "the user
+	 * chose this" and lets a later start follow the operating system again.
+	 */
+	private void publishEffectiveThemeId() {
+		if (currentTheme != null) {
+			DefaultScope.INSTANCE.getNode(THEME_PLUGIN_ID).put(THEMEID_KEY, currentTheme.getId());
+			effectiveThemeIdPublished = true;
+		}
 	}
 
 	private IEclipsePreferences getPreferences() {
