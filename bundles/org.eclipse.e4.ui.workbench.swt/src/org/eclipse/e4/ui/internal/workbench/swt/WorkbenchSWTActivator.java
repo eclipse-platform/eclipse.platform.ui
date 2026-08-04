@@ -43,6 +43,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.internal.provisional.resource.IImageURLModifier;
+import org.eclipse.jface.internal.provisional.resource.ImageURLModifiers;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -62,6 +64,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 
 	private BundleContext context;
 	private ServiceTracker<?, Location> locationTracker;
+	private ServiceTracker<IImageURLModifier, IImageURLModifier> imageURLModifierTracker;
 	private static WorkbenchSWTActivator activator;
 	private DebugTrace trace;
 
@@ -89,11 +92,25 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RENDERERS);
 		context.registerService(DebugOptionsListener.class, this, props);
+		ServiceTracker<IImageURLModifier, IImageURLModifier> tracker = new ServiceTracker<>(context,
+				IImageURLModifier.class, null);
+		tracker.open();
+		imageURLModifierTracker = tracker;
+		// getService() returns the highest ranked service and follows ranking changes
+		ImageURLModifiers.setURLModifier(url -> {
+			IImageURLModifier modifier = tracker.getService();
+			return modifier == null ? null : modifier.modifyURL(url);
+		});
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		saveDialogSettings();
+		if (imageURLModifierTracker != null) {
+			ImageURLModifiers.setURLModifier(null);
+			imageURLModifierTracker.close();
+			imageURLModifierTracker = null;
+		}
 	}
 
 	public Bundle getBundle() {
