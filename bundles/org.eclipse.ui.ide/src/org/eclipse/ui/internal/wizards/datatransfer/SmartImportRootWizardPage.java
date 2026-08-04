@@ -787,14 +787,19 @@ public class SmartImportRootWizardPage extends WizardPage {
 		}
 
 	}
-	protected boolean isExistingProject(File element) {
+
+	private IProject findExistingProject(File element) {
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			IPath location = project.getLocation();
 			if (location != null && element.equals(location.toFile())) {
-				return true;
+				return project;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	protected boolean isExistingProject(File element) {
+		return findExistingProject(element) != null;
 	}
 
 	protected boolean isExistingProjectName(File element) {
