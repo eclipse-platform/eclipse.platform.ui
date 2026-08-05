@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public final class WidgetExtractor {
 
 	private <T extends Widget> T findWidget(Composite container, Class<T> type, String id) {
 		List<T> widgets= findWidgets(container, type, id);
-		assertFalse("more than one matching widget found for id '" + id + "':" + widgets, widgets.size() > 1);
+		assertFalse(widgets.size() > 1, "more than one matching widget found for id '" + id + "':" + widgets);
 		return widgets.isEmpty() ? null : widgets.get(0);
 	}
 
