@@ -18,14 +18,16 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestRule.getTestProject;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -39,8 +41,24 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+/**
+ * Measures how long it takes to open and to close an editor, and reports the
+ * two phases separately.
+ */
 @RunWith(Parameterized.class)
-public class OpenCloseEditorTest extends PerformanceTestCaseJunit4 {
+public class OpenCloseEditorTest {
+
+	/**
+	 * Enough pairs to get the editor implementation loaded and compiled. Below
+	 * roughly this many, the reported times are dominated by JIT warm-up.
+	 */
+	private static final int WARMUP_PAIRS = 20;
+
+	private static final int MIN_PAIRS = 50;
+
+	private static final int MAX_PAIRS = 300;
+
+	private static final int MAX_MEASURE_TIME_MS = 10000;
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
@@ -68,27 +86,46 @@ public class OpenCloseEditorTest extends PerformanceTestCaseJunit4 {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
 
-		exercise(() -> {
-			startMeasuring();
-			for (int j = 0; j < 10; j++) {
-				IEditorPart part;
-				try {
-					part = IDE.openEditor(activePage, file, true);
-				} catch (PartInitException e) {
-					throw new AssertionError("Can't open editor for " + file.getName());
-				}
-				processEvents();
-				activePage.closeEditor(part, false);
-				processEvents();
-
-			}
-			stopMeasuring();
-		});
-
-		if (extension.equals("perf_text")) {
-			tagAsSummary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
+		// Class loading and JIT warm-up of the editor implementation would otherwise
+		// end up in the reported times.
+		for (int i = 0; i < WARMUP_PAIRS; i++) {
+			openAndClose(activePage, file, null, null);
 		}
-		commitMeasurements();
-		assertPerformance();
+		EditorTestHelper.calmDown(500, 30000, 500);
+
+		List<Long> openTimes = new ArrayList<>();
+		List<Long> closeTimes = new ArrayList<>();
+
+		exercise(() -> openAndClose(activePage, file, openTimes, closeTimes), MIN_PAIRS, MAX_PAIRS,
+				MAX_MEASURE_TIME_MS);
+
+		reportTimings("OpenCloseEditor[" + extension + "] open", openTimes);
+		reportTimings("OpenCloseEditor[" + extension + "] close", closeTimes);
+	}
+
+	/**
+	 * Opens and closes the editor, recording the two phases separately when the
+	 * given lists are not {@code null}.
+	 */
+	private static void openAndClose(IWorkbenchPage page, IFile file, List<Long> openTimes, List<Long> closeTimes) {
+		long beforeOpen = System.nanoTime();
+		IEditorPart part;
+		try {
+			part = IDE.openEditor(page, file, true);
+		} catch (PartInitException e) {
+			throw new AssertionError("Can't open editor for " + file.getName());
+		}
+		processEvents();
+		long afterOpen = System.nanoTime();
+		assertNotNull("No editor opened for " + file.getName(), part);
+
+		page.closeEditor(part, false);
+		processEvents();
+		long afterClose = System.nanoTime();
+
+		if (openTimes != null) {
+			openTimes.add(afterOpen - beforeOpen);
+			closeTimes.add(afterClose - afterOpen);
+		}
 	}
 }
