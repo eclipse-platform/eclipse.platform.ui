@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +30,25 @@ public final class UIPerformanceTestUtil {
 
 	private UIPerformanceTestUtil() {
 
+	}
+
+	/**
+	 * Prints the distribution of the given timings to the test log. Without a
+	 * performance database the measurements are otherwise discarded, so a manual
+	 * run would report nothing at all.
+	 * <p>
+	 * On a machine with background load the minimum is the value to compare, the
+	 * higher percentiles mostly reflect the noise.
+	 */
+	public static void reportTimings(String label, List<Long> nanos) {
+		if (nanos.isEmpty()) {
+			System.out.println(label + ": no measurements");
+			return;
+		}
+		long[] sorted = nanos.stream().mapToLong(Long::longValue).sorted().toArray();
+		System.out.printf(Locale.ROOT, "%-44s n=%-4d min=%8.2f  p50=%8.2f  p90=%8.2f  max=%8.2f (ms)%n", label,
+				sorted.length, sorted[0] / 1e6, sorted[sorted.length / 2] / 1e6,
+				sorted[(int) (sorted.length * 0.9)] / 1e6, sorted[sorted.length - 1] / 1e6);
 	}
 
 	/**
