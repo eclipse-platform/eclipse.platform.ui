@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,6 +80,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showInlineRenameButton;
 
+	private Button enableAutocompleteButton;
+
 	protected static int MAX_SAVE_INTERVAL = 9999;
 	protected static int MAX_VIEW_LIMIT = 1_000_000;
 
@@ -112,6 +114,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createStickyCyclePref(composite);
 		createHeapStatusPref(composite);
 		createLargeViewLimitPref(composite);
+		createAutocompletePref(composite);
 	}
 
 	/**
@@ -388,6 +391,15 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 
+	protected void createAutocompletePref(Composite parent) {
+		enableAutocompleteButton = new Button(parent, SWT.CHECK);
+		enableAutocompleteButton.setText(WorkbenchMessages.Preference_Enable_Autocomplete_ChevronPopUp);
+		enableAutocompleteButton.setToolTipText(WorkbenchMessages.Preference_Enable_Autocomplete_ChevronPopUp_ToolTip);
+		IPreferenceStore store = getPreferenceStore();
+		boolean enabled = store.getBoolean(WorkbenchMessages.Preference_Autocomplete);
+		enableAutocompleteButton.setSelection(enabled);
+	}
+
 	/**
 	 * @see IWorkbenchPreferencePage
 	 */
@@ -423,6 +435,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		showUserDialogButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.RUN_IN_BACKGROUND));
 		showHeapStatusButton.setSelection(
 				PrefUtil.getAPIPreferenceStore().getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR));
+		enableAutocompleteButton.setSelection(store.getDefaultBoolean(WorkbenchMessages.Preference_Autocomplete));
 
 		String defaultRenameMode = store.getDefaultString(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE);
 		renameModeInline = !IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(defaultRenameMode);
@@ -446,6 +459,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND, showUserDialogButton.getSelection());
 		store.setValue(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, saveInterval.getIntValue());
 		store.setValue(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, largeViewLimit.getIntValue());
+		store.setValue(WorkbenchMessages.Preference_Autocomplete, enableAutocompleteButton.getSelection());
 
 		String renameModeValue = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE;
 		if (!renameModeInline) {
