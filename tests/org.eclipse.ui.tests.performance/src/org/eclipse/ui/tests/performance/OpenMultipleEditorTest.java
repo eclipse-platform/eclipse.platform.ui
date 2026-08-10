@@ -55,8 +55,12 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenMultipleEditorTest {
 
-	/** Number of files the {@link UIPerformanceTestRule} creates per extension. */
-	private static final int EDITOR_COUNT = 100;
+	/**
+	 * Stays below the REUSE_EDITORS threshold, which defaults to 99. Above it the
+	 * workbench recycles the oldest editor, so further opens would measure a reuse
+	 * instead of an open.
+	 */
+	private static final int EDITOR_COUNT = 90;
 
 	/**
 	 * How many opens at each end of the batch are reported. The ones in between
@@ -134,6 +138,8 @@ public class OpenMultipleEditorTest {
 				}
 			}
 		}
+		assertEquals("Not all editors stayed open, so an open measured a reuse", EDITOR_COUNT,
+				page.getEditorReferences().length);
 
 		if (closeAll) {
 			long before = System.nanoTime();
