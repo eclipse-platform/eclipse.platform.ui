@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -176,6 +176,7 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchPage_sort_by_label;
 	public static String FileSearchPage_limited_format_files;
 	public static String FileSearchPage_limited_format_matches;
+	public static String FileSearchPage_matches_on_lines_format;
 	public static String FileSearchPage_filtered_message;
 	public static String FileSearchPage_filteredWithCount_message;
 	public static String WorkspaceScope;

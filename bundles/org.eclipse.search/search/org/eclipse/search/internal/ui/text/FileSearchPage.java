@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -450,9 +450,15 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			int itemCount = fContentProvider.getLeafCount(result);
 			if (showLineMatches()) {
 				int matchCount = result.getMatchCount();
-				if (itemCount < matchCount) {
+				int visibleMatchCount = getVisibleMatchCount(result);
+				if (visibleMatchCount < matchCount) {
+					// real truncation happened so some matches are not represented at all
 					msg = Messages.format(SearchMessages.FileSearchPage_limited_format_matches,
-							new Object[] { label, Integer.valueOf(itemCount), Integer.valueOf(matchCount) });
+							new Object[] { label, Integer.valueOf(visibleMatchCount), Integer.valueOf(matchCount) });
+				} else if (itemCount < matchCount) {
+					// all matches shown, just spread across fewer lines
+					msg = Messages.format(SearchMessages.FileSearchPage_matches_on_lines_format,
+							new Object[] { label, Integer.valueOf(itemCount) });
 				}
 			} else {
 				int fileCount = result.getElementsCount();
@@ -474,6 +480,27 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			}
 		}
 		return msg;
+	}
+
+	private int getVisibleMatchCount(AbstractTextSearchResult result) {
+		StructuredViewer viewer = getViewer();
+		if (viewer instanceof TreeViewer treeViewer) {
+			ITreeContentProvider cp = (ITreeContentProvider) treeViewer.getContentProvider();
+			return getVisibleMatchCount(cp, getRootElements(treeViewer), result);
+		}
+		return result.getMatchCount();
+	}
+
+	private int getVisibleMatchCount(ITreeContentProvider cp, Object[] elements, AbstractTextSearchResult result) {
+		int count = 0;
+		for (Object element : elements) {
+			if (element instanceof LineElement lineElement) {
+				count += lineElement.getNumberOfMatches(result);
+			} else {
+				count += getVisibleMatchCount(cp, cp.getChildren(element), result);
+			}
+		}
+		return count;
 	}
 
 	private int getFilteredMatchCount() {
