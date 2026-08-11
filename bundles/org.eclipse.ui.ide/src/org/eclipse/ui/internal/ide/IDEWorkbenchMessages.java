@@ -345,6 +345,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CloseUnrelatedProjectsAction_AlwaysClose;
 	public static String CloseUnrelatedProjectsAction_AlwaysCloseWithoutPrompt;
 
+	public static String ProjectReferenceGraph_jobName;
+
 	public static String BuildAction_text;
 	public static String BuildAction_text_plural;
 	public static String BuildAction_toolTip;

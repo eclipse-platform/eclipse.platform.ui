@@ -1704,7 +1704,17 @@
          </selectionEnablement>
       </linkHelper>
    </extension>
-   
+
+   <extension
+         id="blockingReferenceProvider"
+         point="org.eclipse.core.resources.builders">
+      <builder hasNature="false">
+         <dynamicReference
+               class="org.eclipse.ui.tests.navigator.resources.BlockingReferenceProvider"/>
+         <run
+               class="org.eclipse.ui.tests.navigator.resources.BlockingReferenceProvider"/>
+      </builder>
+   </extension>
 
 
 </plugin>

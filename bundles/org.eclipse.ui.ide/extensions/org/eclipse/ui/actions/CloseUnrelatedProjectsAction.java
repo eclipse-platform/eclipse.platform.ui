@@ -17,21 +17,24 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -39,7 +42,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.misc.DisjointSet;
+import org.eclipse.ui.internal.ide.misc.ProjectReferenceGraph;
 
 /**
  * This action closes all projects that are unrelated to the selected projects. A
@@ -66,38 +69,8 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	private List<? extends IResource> oldSelection = Collections.emptyList();
 
-
-	/**
-	 * Builds the connected component set for the input projects.
-	 * The result is a DisjointSet where all related projects belong
-	 * to the same set.
-	 */
-	private static DisjointSet<IProject> buildConnectedComponents(IProject[] projects) {
-		//initially each vertex is in a set by itself
-		DisjointSet<IProject> set = new DisjointSet<>();
-		for (IProject project : projects) {
-			set.makeSet(project);
-		}
-		for (IProject project : projects) {
-			try {
-				IProject[] references = project.getReferencedProjects();
-				//each reference represents an edge in the project reference
-				//digraph from projects[i] -> references[j]
-				for (IProject reference : references) {
-					IProject setOne = set.findSet(project);
-					//note that referenced projects may not exist in the workspace
-					IProject setTwo = set.findSet(reference);
-					//these two projects are related, so join their sets
-					if (setOne != null && setTwo != null && setOne != setTwo) {
-						set.union(setOne, setTwo);
-					}
-				}
-			} catch (CoreException e) {
-				//assume inaccessible projects have no references
-			}
-		}
-		return set;
-	}
+	/** Kept in a field so repeated requests register the same callback. */
+	private final Runnable enablementRefresher = this::updateEnablementInUIThread;
 
 	/**
 	 * Creates this action.
@@ -132,9 +105,41 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	@Override
 	public void run() {
+		if (!refreshProjectGraph()) {
+			return;
+		}
 		if (promptForConfirmation()) {
 			super.run();
 		}
+	}
+
+	/**
+	 * Rebuilds the project graph before the projects to close are computed from it.
+	 * Enablement may answer from a stale graph, but closing projects should not. A
+	 * workspace that keeps changing can still leave the graph one rebuild behind;
+	 * that graph is used rather than refusing to close anything while a build runs,
+	 * and it is far closer to the current state than the one the action ran on
+	 * before.
+	 *
+	 * @return <code>false</code> if the user cancelled or the rebuild failed
+	 */
+	private boolean refreshProjectGraph() {
+		try {
+			// waits for the background job rather than computing here, so a slow
+			// reference provider cannot freeze the workbench
+			PlatformUI.getWorkbench().getProgressService()
+					.busyCursorWhile(monitor -> ProjectReferenceGraph.getInstance().refresh(monitor));
+		} catch (InterruptedException e) {
+			// how the progress service reports that the user cancelled, so the
+			// calling thread was never interrupted and must not be marked as such
+			return false;
+		} catch (InvocationTargetException e) {
+			IDEWorkbenchPlugin.log("Failed to compute the project reference graph", e); //$NON-NLS-1$
+			return false;
+		}
+		// drop the projects computed from the previous graph
+		clearCache();
+		return true;
 	}
 
 	/**
@@ -203,19 +208,33 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		if (selection.contains(ResourcesPlugin.getWorkspace().getRoot())) {
 			return new ArrayList<>();
 		}
-		//build the connected component set for all projects in the workspace
-		DisjointSet<IProject> set = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		//remove the connected components that the selected projects are in
+		Set<IProject> selectedProjects = new HashSet<>();
 		for (IResource resource : selection) {
 			IProject project = resource.getProject();
 			if (project != null) {
-				set.removeSet(project);
+				selectedProjects.add(project);
 			}
 		}
-		//the remainder of the projects in the disjoint set are unrelated to the selection
+		// a component without a selected project is unrelated, so all of it can be
+		// closed; the components come from the cache and resolve no references here
 		List<IResource> projects = new ArrayList<>();
-		set.toList(projects);
+		for (List<IProject> component : ProjectReferenceGraph.getInstance().getComponents(enablementRefresher)) {
+			if (Collections.disjoint(component, selectedProjects)) {
+				projects.addAll(component);
+			}
+		}
 		return projects;
+	}
+
+	private void updateEnablementInUIThread() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		if (display == null || display.isDisposed()) {
+			return;
+		}
+		display.asyncExec(() -> selectionChanged(getStructuredSelection()));
 	}
 
 	@Override
