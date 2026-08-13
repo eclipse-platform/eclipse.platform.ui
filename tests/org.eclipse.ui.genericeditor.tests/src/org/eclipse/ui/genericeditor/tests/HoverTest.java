@@ -63,7 +63,11 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 public class HoverTest extends AbstratGenericEditorTest {
 
 	private static final int MAXIMUM_HOVER_RETRY_COUNT = 5;
-	
+
+	private static final int FOCUS_RETRY_COUNT = 3;
+
+	private static final int CARET_LOCATION = 2;
+
 	@Test
 	public void testSingleHover(TestInfo info) throws Exception {
 		Shell shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
@@ -212,19 +216,19 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	private AbstractInformationControlManager triggerCompletionAndRetrieveInformationControlManager() {
 		boolean foundHoverData = false;
+		boolean gotFocus = false;
 		int attemptNumber = 0;
-		
+
 		ITextViewer viewer= editor.getAdapter(ITextViewer.class);
 		AbstractInformationControlManager textHoverManager= (AbstractInformationControlManager) new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
-		
+
 		while (!foundHoverData && attemptNumber++ < MAXIMUM_HOVER_RETRY_COUNT) {
-			final int caretLocation= 2;
-			editor.setFocus();
-			this.editor.selectAndReveal(caretLocation, 0);
 			final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
-			DisplayHelper.waitForCondition(editorTextWidget.getDisplay(), 3000, ()->
-					editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
-			assertTrue(editorTextWidget.isFocusControl(), "editor does not have focus");
+			if (!focusEditor(editorTextWidget)) {
+				// the window manager may hand activation to another shell, retry from scratch
+				continue;
+			}
+			gotFocus = true;
 			// sending event to trigger hover computation
 			Event hoverEvent= new Event();
 			hoverEvent.widget= editorTextWidget;
@@ -239,7 +243,35 @@ public class HoverTest extends AbstratGenericEditorTest {
 			foundHoverData = DisplayHelper.waitForCondition(hoverEvent.display, 6000,
 					() -> getHoverData(textHoverManager) != null);
 		}
+		assertTrue(gotFocus, "editor does not have focus");
 		assertTrue(foundHoverData, "hover data not found");
 		return textHoverManager;
+	}
+
+	/**
+	 * Places the caret and waits until the editor widget really owns the keyboard
+	 * focus. Requesting focus once is not enough, activation can still be taken
+	 * away right afterwards, so the request is repeated a few times.
+	 */
+	private boolean focusEditor(StyledText editorTextWidget) {
+		Shell shell= this.editor.getSite().getShell();
+		Display display= shell.getDisplay();
+		for (int attempt= 0; attempt < FOCUS_RETRY_COUNT; attempt++) {
+			// a retry means the previous request was not honored, so re-activate the
+			// window even when SWT still considers its shell to be the active one
+			if (attempt > 0 || display.getActiveShell() != shell) {
+				// forceActive() alone can be a no-op on a window manager that refuses the raise
+				shell.forceActive();
+				shell.forceFocus();
+			}
+			this.editor.getSite().getPage().activate(this.editor);
+			this.editor.setFocus();
+			this.editor.selectAndReveal(CARET_LOCATION, 0);
+			if (DisplayHelper.waitForCondition(display, 1000, () -> editorTextWidget.isFocusControl()
+					&& editorTextWidget.getSelection().x == CARET_LOCATION)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
