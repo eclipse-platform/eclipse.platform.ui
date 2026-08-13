@@ -46,7 +46,7 @@ public final class UIPerformanceTestUtil {
 			return;
 		}
 		long[] sorted = nanos.stream().mapToLong(Long::longValue).sorted().toArray();
-		System.out.printf(Locale.ROOT, "%-44s n=%-4d min=%8.2f  p50=%8.2f  p90=%8.2f  max=%8.2f (ms)%n", label,
+		System.out.printf(Locale.ROOT, "%-48s n=%-4d min=%8.2f  p50=%8.2f  p90=%8.2f  max=%8.2f (ms)%n", label,
 				sorted.length, sorted[0] / 1e6, sorted[sorted.length / 2] / 1e6,
 				sorted[(int) (sorted.length * 0.9)] / 1e6, sorted[sorted.length - 1] / 1e6);
 	}
