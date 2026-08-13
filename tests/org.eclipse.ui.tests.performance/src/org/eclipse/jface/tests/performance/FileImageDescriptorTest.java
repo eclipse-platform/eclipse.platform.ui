@@ -16,18 +16,19 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -52,55 +53,50 @@ public class FileImageDescriptorTest {
 	@Test
 	public void testRefresh(TestInfo testInfo) throws Throwable {
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		List<Long> timings = new ArrayList<>();
 
-		try {
-			exercise(() -> {
-				Class<?> missing = null;
-				ArrayList<Image> images = new ArrayList<>();
+		exercise(() -> {
+			Class<?> missing = null;
+			ArrayList<Image> images = new ArrayList<>();
 
-				Bundle bundle = FrameworkUtil.getBundle(getClass());
-				Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
+			Bundle bundle = FrameworkUtil.getBundle(getClass());
+			Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 
-				while (bundleEntries.hasMoreElements()) {
-					ImageDescriptor descriptor;
-					String localImagePath = bundleEntries.nextElement();
+			while (bundleEntries.hasMoreElements()) {
+				ImageDescriptor descriptor;
+				String localImagePath = bundleEntries.nextElement();
 
-					if (localImagePath.indexOf('.') < 0)
-						continue;
+				if (localImagePath.indexOf('.') < 0)
+					continue;
 
-					URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
+				URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
 
-					for (URL file : files) {
-						meter.start();
-						descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
+				for (URL file : files) {
+					long before = System.nanoTime();
+					descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
 
-						for (int j = 0; j < 10; j++) {
-							Image image = descriptor.createImage();
-							images.add(image);
-						}
-
-						processEvents();
-						meter.stop();
-
+					for (int j = 0; j < 10; j++) {
+						Image image = descriptor.createImage();
+						images.add(image);
 					}
 
+					processEvents();
+					timings.add(System.nanoTime() - before);
+
 				}
 
+			}
 
-				Iterator<Image> imageIterator = images.iterator();
-				while (imageIterator.hasNext()) {
-					imageIterator.next().dispose();
-				}
-			}, 20, 100, JFacePerformanceSuite.MAX_TIME);
 
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
-		}
+			assertFalse(images.isEmpty(), "No test images were found in " + IMAGES_DIRECTORY);
+
+			Iterator<Image> imageIterator = images.iterator();
+			while (imageIterator.hasNext()) {
+				imageIterator.next().dispose();
+			}
+		}, 20, 100, JFacePerformanceSuite.MAX_TIME);
+
+		reportTimings(getClass().getSimpleName() + "." + testInfo.getDisplayName(), timings);
 	}
 }

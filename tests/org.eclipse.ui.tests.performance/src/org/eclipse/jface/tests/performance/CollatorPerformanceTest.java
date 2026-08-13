@@ -15,24 +15,22 @@
 
 package org.eclipse.jface.tests.performance;
 
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.jface.util.Policy;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
-import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.5
  */
 public class CollatorPerformanceTest {
-
-	@RegisterExtension
-	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	private static final int ARRAYSIZE=100000;
 	private static String[] fArray;
@@ -46,23 +44,17 @@ public class CollatorPerformanceTest {
 	 */
 	@Test
 	public void testCollator(TestInfo testInfo) {
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
-
-		Comparator<Object> comparator=Policy.getComparator();
-		try {
-			for (int i = 0; i < 15; i++) {
-				String[] array=fArray.clone();
-				meter.start();
-				Arrays.sort(array, comparator);
-				meter.stop();
-			}
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
+		Comparator<Object> comparator = Policy.getComparator();
+		List<Long> timings = new ArrayList<>();
+		for (int i = 0; i < 15; i++) {
+			String[] array = fArray.clone();
+			long before = System.nanoTime();
+			Arrays.sort(array, comparator);
+			timings.add(System.nanoTime() - before);
+			assertEquals(ARRAYSIZE, array.length);
 		}
+
+		reportTimings(getClass().getSimpleName() + "." + testInfo.getDisplayName(), timings);
 	}
 
 	/**

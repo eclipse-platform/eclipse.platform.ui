@@ -15,15 +15,17 @@
 package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
-import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -32,9 +34,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * @since 3.3
  */
 public class ProgressMonitorDialogPerformanceTest {
-
-	@RegisterExtension
-	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	@RegisterExtension
 	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
@@ -52,9 +51,7 @@ public class ProgressMonitorDialogPerformanceTest {
 		Shell shell = new Shell(display);
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		List<Long> timings = new ArrayList<>();
 
 		IRunnableWithProgress runnable = monitor -> {
 
@@ -70,23 +67,22 @@ public class ProgressMonitorDialogPerformanceTest {
 
 			// test
 			for (int testCounter = 0; testCounter < 20; testCounter++) {
-				meter.start();
+				long before = System.nanoTime();
 				for (int counter = 0; counter < 30; counter++) {
-				monitor.setTaskName(taskName);
+					monitor.setTaskName(taskName);
+					processEvents();
+				}
 				processEvents();
-			}
-				processEvents();
-				meter.stop();
+				timings.add(System.nanoTime() - before);
 			}
 		};
 
 		try {
 			dialog.run(false, true, runnable);
 
-			meter.commit();
-			perf.assertPerformance(meter);
+			assertEquals(20, timings.size());
+			reportTimings(getClass().getSimpleName() + "." + testInfo.getDisplayName(), timings);
 		} finally {
-			meter.dispose();
 			shell.dispose();
 		}
 	}

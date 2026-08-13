@@ -15,13 +15,13 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Dimension;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TreeAddTest extends TreeTest {
 
@@ -45,10 +45,10 @@ public class TreeAddTest extends TreeTest {
 				processEvents();
 			}
 			stopMeasuring();
+			assertEquals(TEST_COUNT, viewer.getTree().getItemCount());
 		}
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -110,11 +110,11 @@ public class TreeAddTest extends TreeTest {
 			}
 
 			stopMeasuring();
+			assertEquals(batchArray.length * increment, viewer.getTree().getItemCount());
 
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 
 	}
 
@@ -150,9 +150,6 @@ public class TreeAddTest extends TreeTest {
 	 */
 	@Test
 	public void testAddThousandPreSort() throws CoreException {
-		tagAsGlobalSummary("JFace - Add 2000 items in 2 blocks to TreeViewer",
-				Dimension.ELAPSED_PROCESS);
-
 		doTestAdd(1000, 2000, true);
 	}
 

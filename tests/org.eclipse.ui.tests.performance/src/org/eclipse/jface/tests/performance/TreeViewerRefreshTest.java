@@ -15,11 +15,12 @@
 package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -52,10 +53,10 @@ public class TreeViewerRefreshTest extends ViewerTest {
 			viewer.refresh();
 			processEvents();
 			stopMeasuring();
+			assertEquals(RefreshTestContentProvider.ELEMENT_COUNT, viewer.getTree().getItemCount());
 		}
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 

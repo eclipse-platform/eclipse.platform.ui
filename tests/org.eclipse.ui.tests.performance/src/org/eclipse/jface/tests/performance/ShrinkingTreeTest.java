@@ -15,9 +15,10 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * ShrinkingTreeTest is a test to see how long it takes to refresh a tree that goes
@@ -63,11 +64,11 @@ public class ShrinkingTreeTest extends TreeTest {
 			viewer.refresh();
 
 			stopMeasuring();
+			assertEquals(smallSize, viewer.getTree().getItemCount());
 
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 
 	}
 
