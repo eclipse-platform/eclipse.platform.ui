@@ -2202,19 +2202,34 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            which are expanded
 	 * @param widget
 	 *            the widget
+	 * @param currentHash
+	 *            the hash {@link TreePath#hashCode(IElementComparer)} would return
+	 *            for <code>currentPath</code>
 	 */
 	private void internalSetExpandedTreePaths(
 			CustomHashtable expandedTreePaths, Widget widget,
-			TreePath currentPath) {
+			TreePath currentPath, int currentHash, IElementComparer comparer) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
+			if (expandedTreePaths.size() == 0) {
+				// Every path that had to be expanded has been found, so the rest of the
+				// tree can only be collapsed, which needs neither a path nor its hash.
+				internalCollapseSubtree(item);
+				continue;
+			}
 			Object data = item.getData();
 			TreePath childPath = data == null ? null : currentPath
 					.createChildPath(data);
+			int childHash = currentHash;
 			if (data != null && childPath != null) {
+				// A tree path hashes as the sum of its segments, so the child's hash
+				// follows from the parent's. Computing it from the path instead would
+				// hash every segment again, which is what makes an element with an
+				// expensive hashCode cost the whole traversal.
+				childHash += comparer == null ? data.hashCode() : comparer.hashCode(data);
 				// remove the element to avoid an infinite loop
 				// if the same element appears on a child item
-				boolean expanded = expandedTreePaths.remove(childPath) != null;
+				boolean expanded = expandedTreePaths.remove(childPath, childHash) != null;
 				if (expanded != getExpanded(item)) {
 					if (expanded) {
 						createChildren(item);
@@ -2222,7 +2237,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					setExpanded(item, expanded);
 				}
 			}
-			internalSetExpandedTreePaths(expandedTreePaths, item, childPath);
+			internalSetExpandedTreePaths(expandedTreePaths, item, childPath, childHash, comparer);
+		}
+	}
+
+	/**
+	 * Collapses the given item and everything below it.
+	 */
+	private void internalCollapseSubtree(Item item) {
+		if (item.getData() != null && getExpanded(item)) {
+			setExpanded(item, false);
+		}
+		for (Item child : getChildren(item)) {
+			internalCollapseSubtree(child);
 		}
 	}
 
@@ -2677,7 +2704,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// equal elements, and those are in the set of elements to be expanded,
 		// only the first item found for each element will be expanded.
 		internalSetExpandedTreePaths(expandedTreePaths, getControl(),
-				new TreePath(new Object[0]));
+				new TreePath(new Object[0]), 0, comparer);
 	}
 
 	/**
