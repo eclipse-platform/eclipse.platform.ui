@@ -13,11 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.IntSupplier;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -25,6 +32,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -33,9 +41,7 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +59,34 @@ import org.junit.Test;
  *
  * @since 3.1
  */
-public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
+public final class CommandsPerformanceTest {
+
+	/**
+	 * A single cached look-up is far too fast to time individually, so the hit
+	 * tests time a batch of them and report the batch.
+	 */
+	private static final int HARD_HIT_BATCH = 100000;
+
+	private static final int SOFT_HIT_BATCH = 1000;
+
+	private static final int WARMUP_ROUNDS = 5;
+
+	private static final int MIN_ROUNDS = 10;
+
+	private static final int MAX_ROUNDS = 200;
+
+	private static final int MAX_MEASURE_TIME_MS = 5000;
+
+	/** Rebuilding the binding set for every sample is what makes the miss real. */
+	private static final int MISS_WARMUP_ROUNDS = 3;
+
+	private static final int MISS_ROUNDS = 20;
+
+	private static final int REVERSE_LOOKUP_COMMANDS = 64;
+
+	/** Keeps the measured look-ups from being optimized away. */
+	@SuppressWarnings("unused")
+	private static volatile long sink;
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
@@ -159,6 +192,12 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	private ContextManager contextManager = null;
 
 	/**
+	 * Commands the reverse look-up cycles through. Looking up a different command
+	 * each time keeps the call from being hoisted out of the measured loop.
+	 */
+	private final List<ParameterizedCommand> boundCommands = new ArrayList<>();
+
+	/**
 	 * <p>
 	 * Sets up a sufficiently complex set of bindings.
 	 * </p>
@@ -186,6 +225,15 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 */
 	@Before
 	public final void setUpBindings() throws NotDefinedException, Exception {
+		buildBindings();
+	}
+
+	/**
+	 * Builds a fresh command, context and binding set. Calling this again discards
+	 * the previous binding manager together with its look-up cache.
+	 */
+	private void buildBindings() throws NotDefinedException, Exception {
+		boundCommands.clear();
 		/*
 		 * The constants to use in creating the various objects. The platform
 		 * locale count must be greater than or equal to the number of deletion
@@ -348,6 +396,9 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 					parameterizedCommand, schemeId, contextId, locale,
 					platform, null, type);
 			bindings[i + deletionMarkers] = binding;
+			if (boundCommands.size() < REVERSE_LOOKUP_COMMANDS) {
+				boundCommands.add(parameterizedCommand);
+			}
 		}
 		bindingManager.setBindings(bindings);
 	}
@@ -365,27 +416,14 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 * changed. It measures how long it takes to look up the computation from
 	 * the cache one million times.
 	 * </p>
-	 *
-	 * @throws ParseException
-	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
 	@Test
-	public final void testBindingCacheHitHard() throws ParseException {
-		// Constants
-		final int cacheHits = 1000000;
+	public final void testBindingCacheHitHard() throws Exception {
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
+		assertNotNull("No partial matches to look up", bindingManager.getPartialMatches(keySequence));
 
-		// Compute once.
-		bindingManager.getPartialMatches(keySequence);
-
-		// Time how long it takes to access the cache;
-		startMeasuring();
-		for (int i = 0; i < cacheHits; i++) {
-			bindingManager.getPartialMatches(keySequence);
-		}
-		stopMeasuring();
-		commitMeasurements();
-		assertPerformance();
+		measureBatched("BindingCache hit hard", HARD_HIT_BATCH,
+				() -> bindingManager.getPartialMatches(keySequence).size());
 	}
 
 	/**
@@ -395,27 +433,17 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 * the cache one million times. In this test, the look-up is done in reverse --
 	 * from command identifier to trigger.
 	 * </p>
-	 *
-	 * @throws ParseException
-	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
 	@Test
-	public final void testBindingCacheHitHardReverse() throws ParseException {
-		// Constants
-		final int cacheHits = 1000000;
+	public final void testBindingCacheHitHardReverse() throws Exception {
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
-
-		// Compute once.
 		bindingManager.getPartialMatches(keySequence);
+		assertFalse("No bound commands to look up", boundCommands.isEmpty());
+		assertNotNull("No reverse look-up result", bindingManager.getActiveBindingsFor(boundCommands.get(0)));
 
-		// Time how long it takes to access the cache;
-		startMeasuring();
-		for (int i = 0; i < cacheHits; i++) {
-			bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
-		}
-		stopMeasuring();
-		commitMeasurements();
-		assertPerformance();
+		final int[] next = { 0 };
+		measureBatched("BindingCache hit hard reverse", HARD_HIT_BATCH, () -> bindingManager
+				.getActiveBindingsFor(boundCommands.get(next[0]++ % boundCommands.size())).length);
 	}
 
 	/**
@@ -424,38 +452,25 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 * changed, but the cache contains a matching entry. It measures how long it
 	 * takes to look up the computation from the cache forty thousand times.
 	 * </p>
-	 *
-	 * @throws ParseException
-	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
 	@Test
-	public final void testBindingCacheHitSoft() throws ParseException {
-		// Constants
-		final int cacheHits = 10000;
+	public final void testBindingCacheHitSoft() throws Exception {
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
 
-		// Compute once for each context set.
+		// Compute once for each context set, so both are in the cache.
 		final Set<?> contextSet1 = contextManager.getActiveContextIds();
 		bindingManager.getPartialMatches(keySequence);
 		final List<?> contextList = new ArrayList<>(contextSet1);
 		contextList.remove(contextList.size() - 1);
 		final Set<?> contextSet2 = new HashSet<>(contextList);
 		contextManager.setActiveContextIds(contextSet2);
-		bindingManager.getPartialMatches(keySequence);
+		assertNotNull("No partial matches to look up", bindingManager.getPartialMatches(keySequence));
 
-		// Time how long it takes to access the cache;
-		startMeasuring();
-		for (int i = 0; i < cacheHits; i++) {
-			if ((i % 2) == 0) {
-				contextManager.setActiveContextIds(contextSet1);
-			} else {
-				contextManager.setActiveContextIds(contextSet2);
-			}
-			bindingManager.getPartialMatches(keySequence);
-		}
-		stopMeasuring();
-		commitMeasurements();
-		assertPerformance();
+		final int[] alternating = { 0 };
+		measureBatched("BindingCache hit soft", SOFT_HIT_BATCH, () -> {
+			contextManager.setActiveContextIds(alternating[0]++ % 2 == 0 ? contextSet1 : contextSet2);
+			return bindingManager.getPartialMatches(keySequence).size();
+		});
 	}
 
 	/**
@@ -464,20 +479,52 @@ public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 	 * an exceptionally large set of bindings. The binding set tries to mimick
 	 * some of the same properties of a "real" binding set.
 	 * </p>
-	 *
-	 * @throws ParseException
-	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
 	@Test
-	public final void testBindingCacheMissLarge() throws ParseException {
-		// Constants
+	public final void testBindingCacheMissLarge() throws Exception {
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
 
-		// Time how long it takes to solve the binding set.
-		startMeasuring();
-		bindingManager.getPartialMatches(keySequence);
-		stopMeasuring();
-		commitMeasurements();
-		assertPerformance();
+		for (int i = 0; i < MISS_WARMUP_ROUNDS; i++) {
+			buildBindings();
+			bindingManager.getPartialMatches(keySequence);
+		}
+
+		List<Long> times = new ArrayList<>();
+		for (int i = 0; i < MISS_ROUNDS; i++) {
+			buildBindings();
+			long before = System.nanoTime();
+			Map<?, ?> matches = bindingManager.getPartialMatches(keySequence);
+			times.add(System.nanoTime() - before);
+			assertNotNull("No partial matches computed", matches);
+		}
+
+		reportTimings("BindingCache miss large", times);
+	}
+
+	/**
+	 * Times the given look-up in batches of the given size and reports the
+	 * distribution over the batches. Warms up first so that class loading and JIT
+	 * stay out of the reported times.
+	 */
+	private static void measureBatched(String label, int batchSize, IntSupplier lookup) throws CoreException {
+		for (int i = 0; i < WARMUP_ROUNDS; i++) {
+			runBatch(batchSize, lookup);
+		}
+
+		List<Long> times = new ArrayList<>();
+		exercise(() -> times.add(runBatch(batchSize, lookup)), MIN_ROUNDS, MAX_ROUNDS, MAX_MEASURE_TIME_MS);
+
+		reportTimings(label + " [per " + batchSize + " look-ups]", times);
+	}
+
+	private static long runBatch(int batchSize, IntSupplier lookup) {
+		long before = System.nanoTime();
+		long accumulated = 0;
+		for (int i = 0; i < batchSize; i++) {
+			accumulated += lookup.getAsInt();
+		}
+		long elapsed = System.nanoTime() - before;
+		sink += accumulated;
+		return elapsed;
 	}
 }
