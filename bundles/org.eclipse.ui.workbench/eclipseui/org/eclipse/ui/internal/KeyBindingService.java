@@ -73,6 +73,15 @@ public final class KeyBindingService implements INestableKeyBindingService {
 	private final Map<IAction, IHandlerActivation> actionToProxy = new HashMap<>();
 
 	/**
+	 * Reverse view of {@link #actionToProxy} keyed by the command id an action was
+	 * registered under, so that registering an action does not have to scan every
+	 * action already registered.
+	 */
+	private final Map<String, IAction> commandIdToAction = new HashMap<>();
+
+	private final Map<IAction, String> actionToCommandId = new HashMap<>();
+
+	/**
 	 * Constructs a new instance of <code>KeyBindingService</code> on a given
 	 * workbench site. This instance is not nested.
 	 *
@@ -247,6 +256,8 @@ public final class KeyBindingService implements INestableKeyBindingService {
 			IHandlerService hs = workbenchPartSite.getService(IHandlerService.class);
 			hs.deactivateHandlers(actionToProxy.values());
 			actionToProxy.clear();
+			commandIdToAction.clear();
+			actionToCommandId.clear();
 		}
 
 	}
@@ -316,17 +327,17 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
 		String commandId = action.getActionDefinitionId();
 		if (commandId != null) {
-			for (IAction registeredAction : actionToProxy.keySet()) {
-				// we also need to unregister any other action that may have
-				// been registered with the same definition id
-				if (commandId.equals(registeredAction.getActionDefinitionId())) {
-					unregisterAction(registeredAction);
-					break;
-				}
+			// we also need to unregister any other action that may have
+			// been registered with the same definition id
+			IAction registeredAction = commandIdToAction.get(commandId);
+			if (registeredAction != null) {
+				unregisterAction(registeredAction);
 			}
 
 			IHandlerService hs = workbenchPartSite.getService(IHandlerService.class);
 			actionToProxy.put(action, hs.activateHandler(commandId, new ActionHandler(action)));
+			commandIdToAction.put(commandId, action);
+			actionToCommandId.put(action, commandId);
 		}
 	}
 
@@ -400,6 +411,10 @@ public final class KeyBindingService implements INestableKeyBindingService {
 		}
 
 		IHandlerActivation activation = actionToProxy.remove(action);
+		String commandId = actionToCommandId.remove(action);
+		if (commandId != null) {
+			commandIdToAction.remove(commandId, action);
+		}
 		if (activation == null) {
 			return;
 		}
