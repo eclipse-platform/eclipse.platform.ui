@@ -32,7 +32,8 @@ import org.junit.platform.suite.api.Suite;
 		Bug256889TableViewerTest.class, Bug287765Test.class, Bug242231Test.class,
 		EditingSupportValueMismatchTest.class, StyledStringBuilderTest.class,
 		TreeViewerWithLimitTest.class, TreeViewerWithLimitCompatibilityTest.class, TableViewerWithLimitTest.class,
-		TableViewerWithLimitCompatibilityTest.class })
+		TableViewerWithLimitCompatibilityTest.class, TreeViewerExpansionStateTest.class,
+		StructuredViewerElementMapTest.class })
 public class AllViewersTests {
 
 }
