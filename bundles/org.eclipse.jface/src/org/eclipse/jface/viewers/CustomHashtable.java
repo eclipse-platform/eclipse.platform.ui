@@ -36,11 +36,19 @@ import java.util.NoSuchElementException;
 	private static class HashMapEntry {
 		Object key, value;
 
+		/**
+		 * The key's hash, kept so that growing the table does not hash the keys again
+		 * and so that a lookup can rule out an entry without comparing the keys. Both
+		 * matter for elements whose hashCode and equals are expensive.
+		 */
+		final int hash;
+
 		HashMapEntry next;
 
-		HashMapEntry(Object theKey, Object theValue) {
+		HashMapEntry(Object theKey, Object theValue, int theHash) {
 			key = theKey;
 			value = theValue;
+			hash = theHash;
 		}
 	}
 
@@ -239,27 +247,27 @@ import java.util.NoSuchElementException;
 	 *				does not exist
 	 */
 	public Object get(Object key) {
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
-		HashMapEntry entry = elementData[index];
+		HashMapEntry entry = getEntry(key);
+		return entry == null ? null : entry.value;
+	}
+
+	private HashMapEntry getEntry(Object key) {
+		int hash = hashCode(key);
+		HashMapEntry entry = elementData[indexFor(hash)];
 		while (entry != null) {
-			if (keyEquals(key, entry.key)) {
-				return entry.value;
+			if (entry.hash == hash && keyEquals(key, entry.key)) {
+				return entry;
 			}
 			entry = entry.next;
 		}
 		return null;
 	}
 
-	private HashMapEntry getEntry(Object key) {
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
-		HashMapEntry entry = elementData[index];
-		while (entry != null) {
-			if (keyEquals(key, entry.key)) {
-				return entry;
-			}
-			entry = entry.next;
-		}
-		return null;
+	/**
+	 * Answers the slot the given hash belongs into.
+	 */
+	private int indexFor(int hash) {
+		return (hash & 0x7FFFFFFF) % elementData.length;
 	}
 
 	/**
@@ -308,15 +316,16 @@ import java.util.NoSuchElementException;
 	 */
 	public Object put(Object key, Object value) {
 		if (key != null && value != null) {
-			int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+			int hash = hashCode(key);
+			int index = indexFor(hash);
 			HashMapEntry entry = elementData[index];
-			while (entry != null && !keyEquals(key, entry.key)) {
+			while (entry != null && !(entry.hash == hash && keyEquals(key, entry.key))) {
 				entry = entry.next;
 			}
 			if (entry == null) {
 				if (++elementCount > threshold) {
 					rehash();
-					index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+					index = indexFor(hash);
 				}
 				if (index < firstSlot) {
 					firstSlot = index;
@@ -324,7 +333,7 @@ import java.util.NoSuchElementException;
 				if (index > lastSlot) {
 					lastSlot = index;
 				}
-				entry = new HashMapEntry(key, value);
+				entry = new HashMapEntry(key, value, hash);
 				entry.next = elementData[index];
 				elementData[index] = entry;
 				return null;
@@ -352,7 +361,7 @@ import java.util.NoSuchElementException;
 		for (int i = elementData.length; --i >= 0;) {
 			HashMapEntry entry = elementData[i];
 			while (entry != null) {
-				int index = (hashCode(entry.key) & 0x7FFFFFFF) % length;
+				int index = (entry.hash & 0x7FFFFFFF) % length;
 				if (index < firstSlot) {
 					firstSlot = index;
 				}
@@ -377,10 +386,30 @@ import java.util.NoSuchElementException;
 	 *				did not exist
 	 */
 	public Object remove(Object key) {
+		if (elementCount == 0) {
+			return null;
+		}
+		return remove(key, hashCode(key));
+	}
+
+	/**
+	 * Removes the key/value pair for the given key, whose hash the caller has
+	 * already computed. The hash must be the one this table's comparer would
+	 * produce for the key.
+	 *
+	 * @param key  the key to remove
+	 * @param hash the key's hash
+	 * @return the value associated with the key, or <code>null</code> if the key
+	 *         did not exist
+	 */
+	public Object remove(Object key, int hash) {
+		if (elementCount == 0) {
+			return null;
+		}
 		HashMapEntry last = null;
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+		int index = indexFor(hash);
 		HashMapEntry entry = elementData[index];
-		while (entry != null && !keyEquals(key, entry.key)) {
+		while (entry != null && !(entry.hash == hash && keyEquals(key, entry.key))) {
 			last = entry;
 			entry = entry.next;
 		}
