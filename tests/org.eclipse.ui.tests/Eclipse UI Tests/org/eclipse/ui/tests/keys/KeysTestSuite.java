@@ -38,7 +38,8 @@ import org.junit.platform.suite.api.Suite;
 	Bug44460Test.class,
 	Bug53489Test.class,
 	Bug189167Test.class,
-	KeysPreferenceModelTest.class
+	KeysPreferenceModelTest.class,
+	KeyBindingServiceTest.class
  })
 public class KeysTestSuite {
 
