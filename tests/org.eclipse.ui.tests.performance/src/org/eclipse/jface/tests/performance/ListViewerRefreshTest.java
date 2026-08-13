@@ -20,7 +20,7 @@ import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The ListViewerRefreshTest is a test of refreshing the list viewer.
@@ -56,8 +56,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 		}, MIN_ITERATIONS, ITERATIONS,
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 }

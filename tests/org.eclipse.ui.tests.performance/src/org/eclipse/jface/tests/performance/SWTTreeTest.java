@@ -15,6 +15,11 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -23,9 +28,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -50,7 +54,14 @@ public class SWTTreeTest {
 		tree = new Tree(browserShell, SWT.NONE);
 		createChildren();
 		browserShell.open();
-		// processEvents();
+	}
+
+	@AfterEach
+	public void closeBrowserShell() {
+		if (browserShell != null) {
+			browserShell.close();
+			browserShell = null;
+		}
 	}
 
 	private void createChildren() {
@@ -69,58 +80,47 @@ public class SWTTreeTest {
 	public void testGetItems(TestInfo testInfo) throws CoreException {
 		openBrowser();
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
-
-		try {
-			exercise(() -> {
+		List<Long> timings = new ArrayList<>();
+		exercise(() -> {
+			processEvents();
+			long before = System.nanoTime();
+			int seen = 0;
+			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+				seen += tree.getItems().length;
 				processEvents();
-				meter.start();
-				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-					tree.getItems();
-					processEvents();
-				}
-				meter.stop();
-			});
+			}
+			timings.add(System.nanoTime() - before);
+			assertEquals(TreeAddTest.TEST_COUNT * TreeAddTest.TEST_COUNT, seen);
+		});
 
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
-			browserShell.close();
-		}
+		reportTimings(scenario(testInfo), timings);
 	}
 
 	/**
-	 * @throws CoreException
 	 * Test the getItem API.
 	 */
 	@Test
 	public void testGetItemAt(TestInfo testInfo) throws CoreException {
 		openBrowser();
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
-
-		try {
-			exercise(() -> {
+		List<Long> timings = new ArrayList<>();
+		exercise(() -> {
+			processEvents();
+			long before = System.nanoTime();
+			int seen = 0;
+			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+				seen += tree.getItem(j) == null ? 0 : 1;
 				processEvents();
-				meter.start();
-				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-					tree.getItem(j);
-					processEvents();
-				}
-				meter.stop();
-			});
+			}
+			timings.add(System.nanoTime() - before);
+			assertEquals(TreeAddTest.TEST_COUNT, seen);
+		});
 
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
-			browserShell.close();
-		}
+		reportTimings(scenario(testInfo), timings);
+	}
+
+	private String scenario(TestInfo testInfo) {
+		return getClass().getSimpleName() + "." + testInfo.getDisplayName();
 	}
 
 }

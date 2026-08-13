@@ -26,6 +26,7 @@ import org.junit.platform.suite.api.SelectClasses;
 		FastTableViewerRefreshTest.class, //
 		FastTreeTest.class, //
 		TreeAddTest.class, //
+		TreeViewerExpansionTest.class, //
 		ProgressMonitorDialogPerformanceTest.class, //
 		ShrinkingTreeTest.class, //
 		CollatorPerformanceTest.class, //

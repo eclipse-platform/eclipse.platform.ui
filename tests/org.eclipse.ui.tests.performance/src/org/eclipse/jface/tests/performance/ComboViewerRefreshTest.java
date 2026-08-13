@@ -20,7 +20,7 @@ import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
@@ -59,8 +59,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 			stopMeasuring();
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -80,8 +79,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 			stopMeasuring();
 		}, MIN_ITERATIONS, slowGTKIterations(), JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 }

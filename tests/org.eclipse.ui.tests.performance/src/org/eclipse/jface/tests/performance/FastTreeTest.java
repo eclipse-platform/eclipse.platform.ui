@@ -15,13 +15,13 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Dimension;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FastTreeTest extends TreeAddTest {
 
@@ -49,9 +49,6 @@ public class FastTreeTest extends TreeAddTest {
 	 */
 	@Test
 	public void testAddHundredTenTimes() throws CoreException {
-		tagAsSummary("JFace - Add 10000 items 100 at a time TreeViewer 10 times",
-				Dimension.ELAPSED_PROCESS);
-
 		doTestAdd(100, TEST_COUNT, false);
 	}
 
@@ -91,11 +88,11 @@ public class FastTreeTest extends TreeAddTest {
 
 
 			stopMeasuring();
+			assertEquals(batchArray.length * increment, viewer.getTree().getItemCount());
 
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 
 	}
 }

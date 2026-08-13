@@ -14,6 +14,9 @@
 
 package org.eclipse.jface.tests.performance;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -21,24 +24,18 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
-import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
+import org.eclipse.ui.tests.performance.UIPerformanceTestUtil;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
- * The LinearViewerTest is a test that tests viewers.
+ * Base class for the JFace viewer performance tests. Times the measured
+ * sections and reports their distribution once the test is done.
  */
-public abstract class ViewerTest implements BeforeEachCallback, AfterEachCallback {
-
-	@RegisterExtension
-	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+public abstract class ViewerTest {
 
 	@RegisterExtension
 	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
@@ -48,45 +45,37 @@ public abstract class ViewerTest implements BeforeEachCallback, AfterEachCallbac
 	public static int ITERATIONS = 100;
 	public static int MIN_ITERATIONS = 20;
 
-	private PerformanceMeter performanceMeter;
+	private final List<Long> timings = new ArrayList<>();
 
-	@Override
-	public void beforeEach(ExtensionContext context) throws Exception {
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + context.getDisplayName();
-		performanceMeter = perf.createPerformanceMeter(scenarioId);
-	}
+	private String scenario;
 
-	@Override
-	public void afterEach(ExtensionContext context) throws Exception {
-		if (performanceMeter != null) {
-			performanceMeter.dispose();
-			performanceMeter = null;
-		}
+	private long measuringSince;
+
+	@BeforeEach
+	public void startScenario(TestInfo testInfo) {
+		scenario = getClass().getSimpleName() + "." + testInfo.getDisplayName();
+		timings.clear();
 	}
 
 	protected void startMeasuring() {
-		if (performanceMeter != null) {
-			performanceMeter.start();
-		}
+		measuringSince = System.nanoTime();
 	}
 
 	protected void stopMeasuring() {
-		if (performanceMeter != null) {
-			performanceMeter.stop();
-		}
+		timings.add(System.nanoTime() - measuringSince);
 	}
 
-	protected void commitMeasurements() {
-		if (performanceMeter != null) {
-			performanceMeter.commit();
-		}
+	/**
+	 * Reports what has been measured so far under the given suffix and drops the
+	 * measurements, so that a test with several phases can report them separately.
+	 */
+	protected void reportTimings(String suffix) {
+		UIPerformanceTestUtil.reportTimings(suffix.isEmpty() ? scenario : scenario + " " + suffix, timings);
+		timings.clear();
 	}
 
-	protected void assertPerformance() {
-		if (performanceMeter != null) {
-			Performance.getDefault().assertPerformance(performanceMeter);
-		}
+	protected void reportTimings() {
+		reportTimings("");
 	}
 
 	protected void openBrowser() {
@@ -101,7 +90,6 @@ public abstract class ViewerTest implements BeforeEachCallback, AfterEachCallbac
 		viewer.setUseHashlookup(true);
 		viewer.setInput(getInitialInput());
 		browserShell.open();
-		// processEvents();
 	}
 
 	/**
@@ -153,14 +141,6 @@ public abstract class ViewerTest implements BeforeEachCallback, AfterEachCallbac
 		if(Util.isWindows())
 			return ITERATIONS / 5;
 		return ITERATIONS;
-	}
-
-	public void tagAsSummary(String shortName, Dimension dimension) {
-		Performance.getDefault().tagAsSummary(performanceMeter, shortName, new Dimension[] { dimension });
-	}
-
-	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		Performance.getDefault().tagAsGlobalSummary(performanceMeter, shortName, new Dimension[] { dimension });
 	}
 
 }
