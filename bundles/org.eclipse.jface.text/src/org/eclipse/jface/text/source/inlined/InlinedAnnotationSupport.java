@@ -31,6 +31,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -344,6 +346,19 @@ public class InlinedAnnotationSupport {
 	private FontMetrics fFontMetrics;
 
 	/**
+	 * The line height the reserved heights of the line header annotations were computed
+	 * with, {@code 0} when none were computed yet.
+	 */
+	private int fReservedHeightsLineHeight;
+
+	private boolean fReservedHeightsRefreshPending;
+
+	/**
+	 * Notices a changed line height of the text widget, as SWT reports none.
+	 */
+	private PaintListener fLineHeightTracker;
+
+	/**
 	 * Install the inlined annotation support for the given viewer.
 	 *
 	 * @param viewer  the source viewer
@@ -376,6 +391,70 @@ public class InlinedAnnotationSupport {
 		gc.setFont(viewer.getTextWidget().getFont());
 		fFontMetrics= gc.getFontMetrics();
 		gc.dispose();
+		fReservedHeightsLineHeight= lineHeight(text);
+		fLineHeightTracker= e -> refreshReservedHeightsOnLineHeightChange();
+		text.addPaintListener(fLineHeightTracker);
+	}
+
+	/**
+	 * The height a line header annotation reserves per line of its label.
+	 */
+	private static int lineHeight(StyledText text) {
+		return text.getLineHeight() + text.getLineSpacing();
+	}
+
+	/**
+	 * A line header annotation reserves its vertical space while it is painted, so an
+	 * annotation that is out of view keeps the space of the font it was last painted
+	 * with. That leaves the lines below it misplaced until they are scrolled into
+	 * view, which is why the reserved heights are refreshed here. SWT reports no font
+	 * change, so the redraw such a change triggers is what this notices.
+	 */
+	private void refreshReservedHeightsOnLineHeightChange() {
+		StyledText text= fViewer != null ? fViewer.getTextWidget() : null;
+		if (text == null || text.isDisposed() || fReservedHeightsRefreshPending
+				|| lineHeight(text) == fReservedHeightsLineHeight) {
+			return;
+		}
+		fReservedHeightsRefreshPending= true;
+		// the widget is painting itself with the new line height right now, so wait
+		text.getDisplay().asyncExec(() -> {
+			fReservedHeightsRefreshPending= false;
+			if (!text.isDisposed()) {
+				refreshReservedHeights(text);
+			}
+		});
+	}
+
+	private void refreshReservedHeights(StyledText text) {
+		fReservedHeightsLineHeight= lineHeight(text);
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations == null) {
+			return;
+		}
+		GC gc= new GC(text);
+		try {
+			for (AbstractInlinedAnnotation annotation : annotations) {
+				if (!(annotation instanceof LineHeaderAnnotation header) || annotation.isMarkedDeleted()) {
+					continue;
+				}
+				// only the lines that already reserve space, the others reserve it as
+				// soon as they are painted
+				int line= header.oldLine;
+				if (line < 0 || line >= text.getLineCount() || text.getLineVerticalIndent(line) <= 0) {
+					continue;
+				}
+				int height= header instanceof CodeMiningLineHeaderAnnotation mining ? mining.getHeight(gc)
+						: header.getHeight();
+				// a height of zero is left to the painting, which can tell an annotation
+				// that lost its content from one that is not resolved yet
+				if (height > 0) {
+					text.setLineVerticalIndent(line, height);
+				}
+			}
+		} finally {
+			gc.dispose();
+		}
 	}
 
 	/**
@@ -403,7 +482,12 @@ public class InlinedAnnotationSupport {
 		if (text != null && !text.isDisposed()) {
 			text.removeMouseListener(this.fMouseTracker);
 			text.removeMouseMoveListener(this.fMouseTracker);
+			if (fLineHeightTracker != null) {
+				text.removePaintListener(fLineHeightTracker);
+			}
 		}
+		fLineHeightTracker= null;
+		fReservedHeightsLineHeight= 0;
 		if (fViewer != null) {
 			if (fViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fViewer).removeTextPresentationListener(updateStylesWidth);

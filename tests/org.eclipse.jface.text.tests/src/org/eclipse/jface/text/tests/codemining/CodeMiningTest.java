@@ -36,6 +36,8 @@ import org.eclipse.test.Screenshots;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -747,6 +749,63 @@ public class CodeMiningTest {
 			}
 
 			return minings;
+		}
+	}
+
+	/**
+	 * A line header annotation reserves its vertical space while it is painted, so
+	 * the lines that are out of view when the font changes must not be left with the
+	 * space of the old font.
+	 */
+	@Test
+	public void testReservedHeightFollowsAFontChange() {
+		StringBuilder text= new StringBuilder();
+		for (int i= 0; i < 200; i++) {
+			text.append("line ").append(i).append('\n');
+		}
+		fViewer.getDocument().set(text.toString());
+		StyledText widget= fViewer.getTextWidget();
+		// let a line far below the view port reserve its space, then scroll back to
+		// the top so that it is out of view when the font changes
+		widget.setTopIndex(150);
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getLineVerticalIndent(151) > 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 3000), "no code mining below the view port");
+		widget.setTopIndex(0);
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getLineVerticalIndent(0) > 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 3000), "no code mining was rendered");
+
+		FontData[] enlarged= widget.getFont().getFontData();
+		for (FontData data : enlarged) {
+			data.setHeight(data.getHeight() * 2);
+		}
+		Font biggerFont= new Font(widget.getDisplay(), enlarged);
+		try {
+			widget.setFont(biggerFont);
+			// a settle time rather than a condition: waiting for a single line to take
+			// the new size lets the ones out of view keep the old one unnoticed
+			DisplayHelper.sleep(widget.getDisplay(), 500);
+
+			int reserving= 0;
+			for (int line= 0; line < widget.getLineCount(); line++) {
+				int reserved= widget.getLineVerticalIndent(line);
+				if (reserved > 0) {
+					reserving++;
+					Assertions.assertEquals(widget.getLineHeight(), reserved,
+							"line " + line + " still reserves the space of the previous font");
+				}
+			}
+			Assertions.assertTrue(reserving > 0, "no line reserved space for a code mining");
+		} finally {
+			widget.setFont(null);
+			biggerFont.dispose();
 		}
 	}
 
