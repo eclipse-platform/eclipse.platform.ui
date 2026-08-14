@@ -61,6 +61,17 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void multipleDisplayDispose_noDisposeOtherThreadFonts() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		Font mainFont = fontRegistry.get("myfont");
+		testMultipleDisplayDispose(fontRegistry::defaultFont);
+		assertFalse(mainFont.isDisposed(), "FontRegistry should not dispose fonts on other displays");
+	}
+
+	@Test
 	public void multipleDisplayDispose() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
@@ -78,12 +89,66 @@ public class FontRegistryTest {
 	}
 
 	@Test
-	public void multipleDisplay_italicFont() {
+	public void multipleDisplayDispose_italicFont() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		FontRegistry fontRegistry = new FontRegistry();
 		fontRegistry.get(JFaceResources.DEFAULT_FONT);
 		testMultipleDisplayDispose(() -> fontRegistry.getItalic(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
+	public void put_invalidatesCachedFont_onAllDisplays() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // cache on main display
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		try {
+			Font fontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+
+			// changing the font data must invalidate the cached font on every display, not just the main one
+			fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 20, SWT.NORMAL) });
+
+			Font updatedFontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+			assertNotEquals(fontOnSecondDisplay, updatedFontOnSecondDisplay,
+					"put() must invalidate the cached font on the second display too");
+			assertEquals(20, updatedFontOnSecondDisplay.getFontData()[0].getHeight());
+		} finally {
+			secondDisplay.syncExec(secondDisplay::dispose);
+		}
+	}
+
+	@Test
+	public void cleanOnDisplayDisposalFalse_cachesFontAcrossRepeatedCalls() {
+		FontRegistry fontRegistry = new FontRegistry(Display.getCurrent(), false);
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		Font first = fontRegistry.get("myfont");
+		Font second = fontRegistry.get("myfont");
+
+		assertEquals(first, second,
+				"repeated get() calls must return the cached font, not a new one, when cleanOnDisplayDisposal is false");
+	}
+
+	@Test
+	public void cleanOnDisplayDisposalFalse_doesNotAutoDisposeFontsOnSecondDisplay() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry(Display.getCurrent(), false);
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		Font fontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+		Font sameFontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+		assertEquals(fontOnSecondDisplay, sameFontOnSecondDisplay,
+				"font must be cached per display even when cleanOnDisplayDisposal is false");
+
+		secondDisplay.syncExec(secondDisplay::dispose);
+		assertFalse(fontOnSecondDisplay.isDisposed(),
+				"fonts must not be disposed automatically when cleanOnDisplayDisposal is false");
 	}
 
 	private static void testMultipleDisplayDispose(Supplier<Font> fontSupplier) {
@@ -94,9 +159,9 @@ public class FontRegistryTest {
 
 		Font fontOnThisDisplayBeforeSecondDisplayDispose = fontSupplier.get();
 		Device displayOfFontOnSecondDisplay = fontOnSecondDisplay.getDevice();
-		// font registry returns same font for every display
+		// font registry returns different font for every display
 		assertEquals(secondDisplay, displayOfFontOnSecondDisplay);
-		assertEquals(fontOnThisDisplayBeforeSecondDisplayDispose, fontOnSecondDisplay);
+		assertNotEquals(fontOnThisDisplayBeforeSecondDisplayDispose, fontOnSecondDisplay);
 
 		// after disposing font's display, registry should reinitialize the font
 		secondDisplay.syncExec(secondDisplay::dispose);
@@ -162,23 +227,43 @@ public class FontRegistryTest {
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
 		Font defaultFont = fontRegistry.get(JFaceResources.DEFAULT_FONT);
 
-		AtomicReference<Font> fontFromNonUIThread = new AtomicReference<>();
-		AtomicReference<Throwable> failureFromNonUIThread = new AtomicReference<>();
+		Font fontFromNonUIThread = callOnNonUIThread(() -> fontRegistry.get("myfont"));
+
+		assertSame(defaultFont, fontFromNonUIThread);
+		assertSame(defaultFont, fontRegistry.get(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
+	public void getBold_fromNonUIThreadFallback_reusesMainDisplaysBoldDefaultFont() throws Throwable {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		// a thread without a display of its own can neither create a font nor scope a
+		// lookup, so the main display's default font record is all it can fall back to
+		Font defaultBold = fontRegistry.getBold(JFaceResources.DEFAULT_FONT);
+
+		Font boldFromNonUIThread = callOnNonUIThread(() -> fontRegistry.getBold("myfont"));
+
+		assertSame(defaultBold, boldFromNonUIThread);
+		assertSame(defaultBold, fontRegistry.getBold(JFaceResources.DEFAULT_FONT));
+	}
+
+	private static Font callOnNonUIThread(Supplier<Font> fontSupplier) throws Throwable {
+		AtomicReference<Font> font = new AtomicReference<>();
+		AtomicReference<Throwable> failure = new AtomicReference<>();
 		Thread nonUiThread = new Thread(() -> {
 			try {
-				fontFromNonUIThread.set(fontRegistry.get("myfont"));
+				font.set(fontSupplier.get());
 			} catch (Throwable t) {
-				failureFromNonUIThread.set(t);
+				failure.set(t);
 			}
-		});
+		}, "non-UI thread font lookup");
 		nonUiThread.start();
 		nonUiThread.join();
 
-		if (failureFromNonUIThread.get() != null) {
-			throw failureFromNonUIThread.get();
+		if (failure.get() != null) {
+			throw failure.get();
 		}
-		assertSame(defaultFont, fontFromNonUIThread.get());
-		assertSame(defaultFont, fontRegistry.get(JFaceResources.DEFAULT_FONT));
+		return font.get();
 	}
 
 	@Test
