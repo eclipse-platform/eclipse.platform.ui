@@ -141,6 +141,22 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void put_onNameOnlyResolvedViaDefaultFallback_doesNotStaleDefaultFontsBoldAndItalic() {
+		FontRegistry fontRegistry = new FontRegistry();
+		Font defaultBold = fontRegistry.getBold(JFaceResources.DEFAULT_FONT);
+		Font defaultItalic = fontRegistry.getItalic(JFaceResources.DEFAULT_FONT);
+
+		// never explicitly registered, so this only ever resolves via the default-font fallback
+		fontRegistry.get("neverRegisteredName");
+
+		// registering data for that name must not disturb the still-live default font record
+		fontRegistry.put("neverRegisteredName", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		assertSame(defaultBold, fontRegistry.getBold(JFaceResources.DEFAULT_FONT));
+		assertSame(defaultItalic, fontRegistry.getItalic(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
 	public void get_fontFromNonUIThreadFallback_doesNotOverwriteDefaultFont() throws Throwable {
 		FontRegistry fontRegistry = new FontRegistry();
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
