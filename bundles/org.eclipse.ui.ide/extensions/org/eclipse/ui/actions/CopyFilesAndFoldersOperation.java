@@ -1242,12 +1242,14 @@ public class CopyFilesAndFoldersOperation {
 	private boolean performCopy(IResource[] resources, IPath destination,
 			IProgressMonitor monitor) {
 		try {
-			IPath[] destPaths = new IPath[resources.length];
-			for (int i = 0; i < resources.length; i++) {
-				destPaths[i] = destination.append(resources[i].getName());
-			}
-			if (tryPerformLTKcopy(resources, destPaths)) {
-				return true;
+			if (!isMove()) {
+				IPath[] destPaths = new IPath[resources.length];
+				for (int i = 0; i < resources.length; i++) {
+					destPaths[i] = destination.append(resources[i].getName());
+				}
+				if (tryPerformLTKcopy(resources, destPaths)) {
+					return true;
+				}
 			}
 
 			AbstractWorkspaceOperation op = getUndoableCopyOrMoveOperation(
