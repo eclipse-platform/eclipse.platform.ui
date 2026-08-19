@@ -196,7 +196,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * (key type: <code>String</code>,
 	 *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
 	 */
-	private final Map<String, FontData[]> stringToFontData = new HashMap<>(7);
+	private final Map<String, FontData[]> stringToFontData = new ConcurrentHashMap<>(7);
 
 	/**
 	 * Collection of Fonts that are now stale to be disposed
@@ -816,14 +816,15 @@ public class FontRegistry extends ResourceRegistry {
 		Assert.isNotNull(symbolicName);
 		Assert.isNotNull(fontData);
 
-		FontData[] existing = stringToFontData.get(symbolicName);
+		// single atomic read-modify-write; replacing an equal mapping with the
+		// given, content-equal one is a no-op for every reader
+		FontData[] existing = stringToFontData.put(symbolicName, fontData);
 		if (Arrays.equals(existing, fontData)) {
 			return;
 		}
 
 		FontRecord oldFont = stringToFontRecord
 				.remove(symbolicName);
-		stringToFontData.put(symbolicName, fontData);
 		if (update) {
 			fireMappingChanged(symbolicName, existing, fontData);
 		}
