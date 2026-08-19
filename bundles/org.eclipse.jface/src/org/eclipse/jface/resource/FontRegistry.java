@@ -497,7 +497,7 @@ public class FontRegistry extends ResourceRegistry {
 		}
 
 		FontData[] validData = filterData(fonts, display);
-		if (validData.length == 0) {
+		if (validData == null || validData.length == 0) {
 			//Nothing specified
 			return null;
 		}
