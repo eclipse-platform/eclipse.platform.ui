@@ -188,6 +188,20 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void get_forNameRegisteredWithoutAnyFontData_returnsDefaultFont() {
+		FontRegistry fontRegistry = new FontRegistry();
+		// an empty array leaves nothing to filter, so filterData() yields no usable data at all
+		fontRegistry.put("fontWithoutData", new FontData[0]);
+
+		Font first = fontRegistry.get("fontWithoutData");
+		Font second = fontRegistry.get("fontWithoutData");
+
+		assertSame(fontRegistry.get(JFaceResources.DEFAULT_FONT), first,
+				"a name that cannot be resolved to any font data must fall back to the default font");
+		assertSame(first, second);
+	}
+
+	@Test
 	public void getBoldAndGetItalic_returnSameInstanceOnRepeatedCalls() {
 		FontRegistry fontRegistry = new FontRegistry();
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
