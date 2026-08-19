@@ -830,7 +830,9 @@ public class FontRegistry extends ResourceRegistry {
 		}
 
 		if (oldFont != null) {
-			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
+			FontRecord defaultRecord = stringToFontRecord.get(JFaceResources.DEFAULT_FONT);
+			Font defaultFont = defaultRecord != null ? defaultRecord.getBaseFont() : null;
+			oldFont.addAllocatedFontsToStale(defaultFont);
 		}
 	}
 

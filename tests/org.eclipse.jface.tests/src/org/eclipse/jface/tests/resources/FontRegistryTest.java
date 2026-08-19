@@ -286,6 +286,22 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void put_replacingRealizedFont_doesNotRegisterDefaultFontAsSideEffect() {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // realize it, so replacing it has fonts to retire
+
+		// retiring those fonts compares them against the default font, which must not
+		// realize and register a default font that nobody has asked for yet
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
+
+		assertFalse(fontRegistry.hasValueFor(JFaceResources.DEFAULT_FONT),
+				"replacing an unrelated font must not register default font data as a side effect");
+		assertFalse(fontRegistry.getKeySet().contains(JFaceResources.DEFAULT_FONT),
+				"replacing an unrelated font must not add the default font to the key set");
+	}
+
+	@Test
 	public void hasValueForAndGetKeySet_reflectOnlyRegisteredNames() {
 		FontRegistry fontRegistry = new FontRegistry();
 		assertFalse(fontRegistry.hasValueFor("myfont"));
