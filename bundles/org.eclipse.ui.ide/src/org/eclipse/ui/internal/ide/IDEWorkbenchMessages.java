@@ -1042,6 +1042,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
 	public static String ChooseWorkspaceDialog_importedWorkspacesTitle;
 	public static String ChooseWorkspaceDialog_importedWorkspacesMessage;
+	public static String ChooseWorkspaceDialog_showMoreLink;
 
 	public static String WorkspaceImportDialog_dialogName;
 	public static String WorkspaceImportDialog_dialogTitle;

@@ -51,10 +51,13 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.BorderData;
@@ -95,6 +98,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private static final String DIALOG_SETTINGS_SECTION = "ChooseWorkspaceDialogSettings"; //$NON-NLS-1$
 
+	private static final int INITIAL_VISIBLE_WORKSPACE_COUNT = 5;
+
 	private final ChooseWorkspaceData launchData;
 
 	private Combo pathCombo;
@@ -102,6 +107,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private boolean suppressAskAgain = false;
 
 	private boolean centerOnMonitor = false;
+
+	private int visibleWorkspaceCount = INITIAL_VISIBLE_WORKSPACE_COUNT;
+
+	private int recentWorkspacesAreaHeight = SWT.DEFAULT;
 
 	private Map<String, Link> recentWorkspacesLinks;
 
@@ -205,15 +214,43 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return composite;
 	}
 
+	/**
+	 * Returns whether the "Import previous workspaces" feature is enabled for
+	 * this product.
+	 * <p>
+	 * Controlled by the <code>workspaceImportEnabled</code> product property
+	 * (set in the product's <code>.product</code> file). Enabled by default
+	 * when unset (including when there is no product, e.g. plain SDK/test
+	 * launches) - set the property to <code>false</code> to explicitly turn
+	 * the feature off for a given product.
+	 * </p>
+	 *
+	 * @return <code>false</code> only if a product explicitly disables
+	 *         workspace import, <code>true</code> otherwise
+	 */
+	private static boolean isWorkspaceImportEnabled() {
+		IProduct product = Platform.getProduct();
+		if (product == null) {
+			return true;
+		}
+		String value = product.getProperty("workspaceImportEnabled"); //$NON-NLS-1$
+		if (value == null) {
+			return true;
+		}
+		return Boolean.parseBoolean(value);
+	}
+
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		// create "Import..." button first followed by Launch, Cancel
-		Button importButton = createButton(parent, IDialogConstants.CLIENT_ID + 1,
-				IDEWorkbenchMessages.ChooseWorkspaceDialog_importLabel, false);
-		importButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_importTooltip);
-		importButton.addListener(SWT.Selection, e -> {
-			showImportWorkspacesDialog();
-		});
+		if (isWorkspaceImportEnabled()) {
+			// create "Import..." button first followed by Launch, Cancel
+			Button importButton = createButton(parent, IDialogConstants.CLIENT_ID + 1,
+					IDEWorkbenchMessages.ChooseWorkspaceDialog_importLabel, false);
+			importButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_importTooltip);
+			importButton.addListener(SWT.Selection, e -> {
+				showImportWorkspacesDialog();
+			});
+		}
 
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDEWorkbenchMessages.ChooseWorkspaceDialog_launchLabel, true);
@@ -341,25 +378,38 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		label.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
-		Composite panel = new Composite(recentWorkspacesForm, SWT.NONE);
+		// Scrollable area: dialog height is locked to whatever the first batch of
+		// entries needs; once content exceeds that, a vertical scrollbar appears
+		// instead of growing the dialog further.
+		ScrolledComposite scrolledPanel = new ScrolledComposite(recentWorkspacesForm, SWT.V_SCROLL);
+		scrolledPanel.setBackground(composite.getBackground());
+		scrolledPanel.setExpandHorizontal(true);
+		scrolledPanel.setExpandVertical(true);
+		GridData scrolledData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		if (recentWorkspacesAreaHeight != SWT.DEFAULT) {
+			scrolledData.heightHint = recentWorkspacesAreaHeight;
+		}
+		scrolledPanel.setLayoutData(scrolledData);
+
+		Composite panel = new Composite(scrolledPanel, SWT.NONE);
 		panel.setBackground(composite.getBackground());
-		GridData panelData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		panel.setLayoutData(panelData);
 
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginLeft = 14;
 		layout.spacing = 6;
 		panel.setLayout(layout);
 
+		scrolledPanel.setContent(panel);
+
 		boolean expanded = launchData.isShowRecentWorkspaces();
-		panel.setVisible(expanded);
-		panelData.exclude = !expanded;
+		scrolledPanel.setVisible(expanded);
+		scrolledData.exclude = !expanded;
 		toggle.setText(expanded ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Listener toggleListener = e -> {
-			boolean newState = !panel.getVisible();
-			panel.setVisible(newState);
-			((GridData) panel.getLayoutData()).exclude = !newState;
+			boolean newState = !scrolledPanel.getVisible();
+			scrolledPanel.setVisible(newState);
+			((GridData) scrolledPanel.getLayoutData()).exclude = !newState;
 			toggle.setText(newState ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
 			launchData.setShowRecentWorkspaces(newState);
 			recentWorkspacesForm.requestLayout();
@@ -391,7 +441,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				.compare(recentWorkspaces.indexOf(e1.getValue()), recentWorkspaces.indexOf(e2.getValue())))
 				.collect(Collectors.toList());
 
-		for (Entry<String, String> uniqueWorkspaceEntry : sortedList) {
+		int shownCount = Math.min(visibleWorkspaceCount, sortedList.size());
+		for (Entry<String, String> uniqueWorkspaceEntry : sortedList.subList(0, shownCount)) {
 			final String recentWorkspace = uniqueWorkspaceEntry.getValue();
 
 			Link link = new Link(panel, SWT.WRAP);
@@ -419,6 +470,40 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			});
 			link.setMenu(menu);
 		}
+
+		if (shownCount < sortedList.size()) {
+			Link showMore = new Link(panel, SWT.WRAP);
+			showMore.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
+			showMore.setText("<a>" + IDEWorkbenchMessages.ChooseWorkspaceDialog_showMoreLink + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			// Italicize while keeping the link's existing font family/size
+			FontData[] fontData = showMore.getFont().getFontData();
+			for (FontData fd : fontData) {
+				fd.setStyle(fd.getStyle() | SWT.ITALIC);
+			}
+			Font showMoreFont = new Font(panel.getDisplay(), fontData);
+			showMore.setFont(showMoreFont);
+			showMore.addDisposeListener(e -> showMoreFont.dispose());
+
+			showMore.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					visibleWorkspaceCount = Math.min(visibleWorkspaceCount + 5, sortedList.size());
+					refreshRecentWorkspacesComposite();
+				}
+			});
+		}
+
+		// Lock in the scroll area's height once we cross the initial batch size
+		// (i.e. once the "Show more" link itself is also present), so the frozen
+		// height includes 5 entries + the link, not 5 bare entries.
+		Point contentSize = panel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if (recentWorkspacesAreaHeight == SWT.DEFAULT && expanded
+				&& sortedList.size() > INITIAL_VISIBLE_WORKSPACE_COUNT) {
+			recentWorkspacesAreaHeight = contentSize.y;
+			scrolledData.heightHint = recentWorkspacesAreaHeight;
+		}
+		scrolledPanel.setMinSize(contentSize);
 	}
 
 	/**
@@ -511,13 +596,15 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 		// Final list
 		List<String> result = new ArrayList<>(merged);
+
 		// Persist
 		launchData.setRecentWorkspaces(result.toArray(new String[0]));
 		launchData.writePersistedData();
-		refreshRecentWorkspacesComposite();
 
 		MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.ChooseWorkspaceDialog_importedWorkspacesTitle,
 				NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_importedWorkspacesMessage, selected.size()));
+
+		refreshRecentWorkspacesComposite();
 	}
 
 	private List<String> importWorkspaces(File directory) {
@@ -587,6 +674,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			return;
 		}
 
+		boolean wasLocked = recentWorkspacesAreaHeight != SWT.DEFAULT;
+
 		recentWorkspacesForm.dispose();
 		createRecentWorkspacesComposite(parent);
 		parent.layout(true, true);
@@ -597,9 +686,16 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			shell.redraw();
 			shell.update();
 
-			Point size = getInitialSize();
-			shell.setBounds(getConstrainedShellBounds(
-					new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
+			boolean justLocked = !wasLocked && recentWorkspacesAreaHeight != SWT.DEFAULT;
+			if (justLocked) {
+				// One-time resize: grow the shell exactly once, right when the
+				// recent-workspaces area height gets locked in (crossing the
+				// initial batch size for the first time). Never resize again
+				// after this - later entries scroll within the now-fixed area.
+				Point size = getInitialSize();
+				shell.setBounds(getConstrainedShellBounds(
+						new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
+			}
 		}
 	}
 
@@ -614,14 +710,16 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		Map<String, String> uniqueWorkspaceNameMap = new HashMap<>();
 
 		// Convert workspace paths to arrays of single path segments
-		List<String[]> splittedWorkspaceNames = getRecentWorkspaces().stream()
+		List<String> recentWorkspacesInput = getRecentWorkspaces();
+
+		List<String[]> splittedWorkspaceNames = recentWorkspacesInput.stream()
 				.filter(s -> s != null && !s.isEmpty()).map(s -> s.split(Pattern.quote(fileSeparator)))
 				.collect(Collectors.toList());
 
 		// bug 531611: prevent endless loops
 		int maxSegmentsCount = 0;
 		for (String[] strings : splittedWorkspaceNames) {
-			maxSegmentsCount = Math.max(0, strings.length);
+			maxSegmentsCount = Math.max(maxSegmentsCount, strings.length);
 		}
 
 		// create and collect unique workspace keys produced from arrays,
