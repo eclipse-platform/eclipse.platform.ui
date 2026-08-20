@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@
 package org.eclipse.ui.internal.ide;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -25,9 +27,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -38,6 +42,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -81,6 +86,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private static final String TILDE = "~"; //$NON-NLS-1$
 
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
+	private static final String RECENT_WORKSPACES = "RECENT_WORKSPACES"; //$NON-NLS-1$
+
 	private static final String OPEN_FOLDER_EMOJI = new String(
 			new byte[] { (byte) 0xF0, (byte) 0x9F, (byte) 0x93, (byte) 0x82 }, StandardCharsets.UTF_8);
 
@@ -99,7 +108,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private Composite recentWorkspacesForm;
 
 	private Button defaultButton;
-
 
 	/**
 	 * Create a modal dialog on the argument shell, using and updating the
@@ -185,19 +193,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			getTitleImageLabel().setVisible(false);
 		}
 
-		// Should only create the Recent Workspaces Composite if Recent
-		// workspaces exist
-		boolean createRecentWorkspacesComposite = false;
-		if (launchData.getRecentWorkspaces()[0] != null) {
-			createRecentWorkspacesComposite = true;
-		}
 		createWorkspaceBrowseRow(composite);
 		if (!suppressAskAgain) {
 			createShowDialogButton(composite);
 		}
-		if (createRecentWorkspacesComposite) {
-			createRecentWorkspacesComposite(composite);
-		}
+
+		// Create Recent Workspaces Composite always.
+		createRecentWorkspacesComposite(composite);
 
 		Dialog.applyDialogFont(composite);
 		return composite;
@@ -205,6 +207,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
+		// create "Import..." button first followed by Launch, Cancel
+		Button importButton = createButton(parent, IDialogConstants.CLIENT_ID + 1,
+				IDEWorkbenchMessages.ChooseWorkspaceDialog_importLabel, false);
+		importButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_importTooltip);
+		importButton.addListener(SWT.Selection, e -> {
+			showImportWorkspacesDialog();
+		});
+
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDEWorkbenchMessages.ChooseWorkspaceDialog_launchLabel, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -273,14 +283,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		recentWorkpaces.remove(workspace);
 		launchData.setRecentWorkspaces(recentWorkpaces.toArray(new String[0]));
 		launchData.writePersistedData();
-		// Remove Workspace Composite
-		recentWorkspacesLinks.get(workspace).dispose();
+
+		// Remove Workspace link
 		recentWorkspacesLinks.remove(workspace);
-		if (recentWorkspacesLinks.isEmpty()) {
-			recentWorkspacesForm.dispose();
-		}
-		getShell().layout();
-		initializeBounds();
+
+		// Refresh Recent Workspaces section
+		refreshRecentWorkspacesComposite();
+
 		// Remove Workspace from combobox
 		combo.remove(workspace);
 		if (combo.getText().equals(workspace) || combo.getText().isEmpty()) {
@@ -304,9 +313,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * The Recent Workspaces area of the dialog is only shown if Recent
-	 * Workspaces are defined. It provides a faster way to launch a specific
-	 * Workspace
+	 * Creates the Recent Workspaces section in the launcher dialog. Displays
+	 * previously used workspaces and provides options to select, remove, and import
+	 * workspaces.
 	 */
 	private void createRecentWorkspacesComposite(final Composite composite) {
 		recentWorkspacesForm = new Composite(composite, SWT.NONE);
@@ -364,7 +373,17 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		toggle.addListener(SWT.MouseDown, toggleListener);
 		label.addListener(SWT.MouseDown, toggleListener);
 
-		List<String> recentWorkspaces = getRecentWorkspaces();
+		List<String> recentWorkspaces = filterDuplicatedPaths(launchData.getRecentWorkspaces());
+
+		// Check if recent workspaces list is empty
+		if (recentWorkspaces.isEmpty()) {
+			Label emptyLabel = new Label(panel, SWT.WRAP);
+			emptyLabel.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_noRecentWorkspaceFound);
+		} else {
+			Label moreLabel = new Label(panel, SWT.WRAP);
+			moreLabel.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_addMoreRecentWorkspaces);
+		}
+
 		recentWorkspacesLinks = new HashMap<>(recentWorkspaces.size());
 		Map<String, String> uniqueWorkspaceNames = createUniqueWorkspaceNameMap();
 
@@ -399,6 +418,188 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				}
 			});
 			link.setMenu(menu);
+		}
+	}
+
+	/**
+	 * Opens a dialog to import workspaces from a previous Eclipse installation.
+	 */
+	private void showImportWorkspacesDialog() {
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_importPreviousInstallationWindowTitle);
+		dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_importPreviousInstallationWindowMessage);
+
+		String selectedDir = dialog.open();
+		if (selectedDir == null) {
+			return;
+		}
+
+		// Detect workspaces
+		List<String> detected = importWorkspaces(selectedDir);
+		if (detected.isEmpty()) {
+			MessageDialog.openWarning(getShell(), IDEWorkbenchMessages.ChooseWorkspaceDialog_noWorkspacesFoundTitle,
+					IDEWorkbenchMessages.ChooseWorkspaceDialog_noWorkspacesFoundMessage);
+			return;
+		}
+
+		// Remove already imported workspaces
+		List<String> existing = filterDuplicatedPaths(launchData.getRecentWorkspaces());
+		List<String> filtered = new ArrayList<>();
+
+		for (String ws : detected) {
+			if (!existing.contains(ws)) {
+				filtered.add(ws);
+			}
+		}
+
+		// All workspaces already imported
+		if (filtered.isEmpty()) {
+			MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.ChooseWorkspaceDialog_noNewWorkspacesTitle,
+					IDEWorkbenchMessages.ChooseWorkspaceDialog_noNewWorkspacesMessage);
+			return;
+		}
+
+		// Open selection dialog
+		WorkspaceImportDialog selectionDialog = new WorkspaceImportDialog(getShell(), filtered, selectedDir, this,
+				existing);
+
+		if (selectionDialog.open() != Window.OK) {
+			return;
+		}
+
+		List<String> selected = selectionDialog.getSelected();
+		if (selected == null || selected.isEmpty()) {
+			MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.ChooseWorkspaceDialog_nothingSelectedTitle,
+					IDEWorkbenchMessages.ChooseWorkspaceDialog_nothingSelectedMessage);
+			return;
+		}
+
+		// Merge
+		mergeSelectedWorkspaces(selected);
+	}
+
+	/**
+	 * Merges selected workspaces with existing recent workspaces, removes
+	 * duplicates, persists the updated list, and refreshes the recent workspaces
+	 * UI.
+	 *
+	 * @param selected the workspaces selected for import
+	 */
+	private void mergeSelectedWorkspaces(List<String> selected) {
+		if (selected == null || selected.isEmpty()) {
+			return;
+		}
+
+		Set<String> merged = new LinkedHashSet<>();
+		// Existing workspaces
+		String[] existing = launchData.getRecentWorkspaces();
+
+		if (existing != null) {
+			for (String ws : existing) {
+				if (ws != null && new File(ws).exists()) {
+					merged.add(ws);
+				}
+			}
+		}
+
+		// Add selected
+		for (String ws : selected) {
+			if (ws != null && new File(ws).exists()) {
+				merged.add(ws);
+			}
+		}
+
+		// Final list
+		List<String> result = new ArrayList<>(merged);
+		// Persist
+		launchData.setRecentWorkspaces(result.toArray(new String[0]));
+		launchData.writePersistedData();
+		refreshRecentWorkspacesComposite();
+
+		MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.ChooseWorkspaceDialog_importedWorkspacesTitle,
+				NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_importedWorkspacesMessage, selected.size()));
+	}
+
+	private List<String> importWorkspaces(File directory) {
+		List<String> result = importWorkspacesFromEclipseInstallation(directory.getAbsolutePath());
+		return result != null ? result : Collections.emptyList();
+	}
+
+	public List<String> importWorkspaces(String path) {
+		return importWorkspaces(new File(path));
+	}
+
+	/**
+	 * Imports recent workspaces from a previous Eclipse installation by reading the
+	 * Eclipse preference file.
+	 *
+	 * @param eclipseInstallPath the Eclipse installation directory
+	 * @return the list of detected workspace paths
+	 */
+	private List<String> importWorkspacesFromEclipseInstallation(String eclipseInstallPath) {
+		List<String> workspaces = new ArrayList<>();
+
+		File recentWorkspacesFile = new File(new File(new File(eclipseInstallPath, "configuration"), ".settings"), //$NON-NLS-1$ //$NON-NLS-2$
+				"org.eclipse.ui.ide.prefs"); //$NON-NLS-1$
+
+		if (!recentWorkspacesFile.exists()) {
+			File alternativePrefs = new File(eclipseInstallPath,
+					".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.ide.prefs"); //$NON-NLS-1$
+			if (!alternativePrefs.exists()) {
+				return workspaces;
+			}
+			recentWorkspacesFile = alternativePrefs;
+		}
+
+		try {
+			Properties props = new Properties();
+			try (FileInputStream fis = new FileInputStream(recentWorkspacesFile)) {
+				props.load(fis);
+			}
+
+			String recentWorkspacesValue = props.getProperty(RECENT_WORKSPACES);
+			if (recentWorkspacesValue == null || recentWorkspacesValue.isEmpty()) {
+				return workspaces;
+			}
+
+			for (String path : recentWorkspacesValue.split("\n")) { //$NON-NLS-1$
+				String trimmedPath = path.trim();
+				if (!trimmedPath.isEmpty() && new File(trimmedPath).exists()) {
+					workspaces.add(trimmedPath);
+				}
+			}
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.log("Failed to read recent workspaces from previous installation.", e); //$NON-NLS-1$
+		}
+		return workspaces;
+	}
+
+	/**
+	 * Refreshes the recent workspaces UI after workspace import and updates the
+	 * dialog layout and size.
+	 */
+	private void refreshRecentWorkspacesComposite() {
+		if (recentWorkspacesForm == null || recentWorkspacesForm.isDisposed()) {
+			return;
+		}
+		Composite parent = recentWorkspacesForm.getParent();
+		if (parent == null || parent.isDisposed()) {
+			return;
+		}
+
+		recentWorkspacesForm.dispose();
+		createRecentWorkspacesComposite(parent);
+		parent.layout(true, true);
+
+		Shell shell = parent.getShell();
+		if (shell != null && !shell.isDisposed()) {
+			shell.layout(true, true);
+			shell.redraw();
+			shell.update();
+
+			Point size = getInitialSize();
+			shell.setBounds(getConstrainedShellBounds(
+					new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
 		}
 	}
 
@@ -510,7 +711,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_NotWriteablePathWarning, normalisedPath);
 			}
 		}
-		return ""; //$NON-NLS-1$
+		return EMPTY;
 	}
 
 	/** the returned value may be wrong **/
@@ -751,8 +952,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	private List<String> getRecentWorkspaces() {
-		String[] workspaces = launchData.getRecentWorkspaces();
-		return filterDuplicatedPaths(workspaces);
+		return filterDuplicatedPaths(launchData.getRecentWorkspaces());
 	}
 
 	/**
@@ -764,6 +964,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * @return The set of paths without duplicates.
 	 */
 	public static List<String> filterDuplicatedPaths(String[] paths) {
+		if (paths == null || paths.length == 0) {
+			return Collections.emptyList();
+		}
+
 		Set<String> normalizedPaths = new HashSet<>();
 		List<String> recentWorkspaces = new ArrayList<>();
 		for (String workspace : paths) {
@@ -773,8 +977,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				if (workspace.startsWith(File.separator)) {
 					normalizedPath = File.separator + normalizedPath;
 				}
-				boolean nonDuplicate = normalizedPaths.add(normalizedPath);
-				if (nonDuplicate) {
+				if (normalizedPaths.add(normalizedPath)) {
 					recentWorkspaces.add(workspace);
 				}
 			}
