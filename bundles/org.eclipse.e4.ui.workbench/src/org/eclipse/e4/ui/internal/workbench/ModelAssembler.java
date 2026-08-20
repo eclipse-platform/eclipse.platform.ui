@@ -775,7 +775,20 @@ public class ModelAssembler {
 						element = null;
 					}
 					commands.add(() -> {
+						if (element != null && !feature.getEType().isInstance(element)) {
+							// An import that resolves to a different-typed element (e.g. two
+							// elements sharing an elementId) is a contribution error, not a
+							// reason to abort assembling the whole application model.
+							warn("Skipping import for feature {} on {}: resolved element {} is not assignable to the feature type", //$NON-NLS-1$
+									feature.getName(), target, element.getElementId());
+							return;
+						}
 						if (feature.isMany()) {
+							if (element == null) {
+								warn("Skipping unresolved import for many-valued feature {} on {}", //$NON-NLS-1$
+										feature.getName(), target);
+								return;
+							}
 							error("""
 									Replacing in {}.
 									Feature={}.
