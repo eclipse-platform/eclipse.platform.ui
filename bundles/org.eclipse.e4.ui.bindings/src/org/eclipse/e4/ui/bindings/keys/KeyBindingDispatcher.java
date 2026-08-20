@@ -268,6 +268,21 @@ public class KeyBindingDispatcher {
 	private Logger logger;
 
 	/**
+	 * The command executed the last time {@link #executeCommand(ParameterizedCommand, Event)} was
+	 * called, together with the native timestamp of the triggering event. On some platforms (e.g.
+	 * GTK on Linux) a single physical key press can be delivered to the dispatcher more than once
+	 * for the same native event (for example, once as an <code>SWT.Traverse</code> event and once
+	 * as a redundant <code>SWT.KeyDown</code> event), which would otherwise execute the resulting
+	 * command twice, e.g. skipping over an extra tab when navigating with Ctrl+PageUp/PageDown.
+	 * These fields are used to detect and suppress such a duplicate re-delivery of the very same
+	 * native key event, identified by its (platform-provided) timestamp.
+	 *
+	 * @see #isDuplicateKeyEvent(ParameterizedCommand, Event)
+	 */
+	private ParameterizedCommand lastExecutedCommand;
+	private int lastExecutedEventTime;
+
+	/**
 	 * Performs the actual execution of the command by looking up the current handler from the
 	 * command manager. If there is a handler and it is enabled, then it tries the actual execution.
 	 * Execution failures are logged. When this method completes, the key binding state is reset.
@@ -290,6 +305,14 @@ public class KeyBindingDispatcher {
 
 		if (!isActive(parameterizedCommand)) {
 			throw new NotEnabledException("Command should have been disabled via activity: " + parameterizedCommand); //$NON-NLS-1$
+		}
+
+		if (isDuplicateKeyEvent(parameterizedCommand, trigger)) {
+			if (isTracingEnabled()) {
+				logger.trace("Suppressed duplicate execution of " + parameterizedCommand + " for the same native event " //$NON-NLS-1$ //$NON-NLS-2$
+						+ "(time=" + trigger.time + ") in " + describe(context)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return true;
 		}
 
 		final EHandlerService handlerService = getHandlerService();
@@ -322,6 +345,37 @@ public class KeyBindingDispatcher {
 			commandHandled &= handleCommandExecution(parameterizedCommand, handlerService, trigger, obj);
 		}
 		return (commandDefined && commandHandled);
+	}
+
+	/**
+	 * Detects whether the given command execution is a duplicate re-delivery of the same native
+	 * key event that was already used to execute this very command. On some platforms (currently
+	 * known to affect GTK on Linux) a single physical key press can reach the dispatcher twice,
+	 * e.g. once via an <code>SWT.Traverse</code> event and once more via a subsequently generated
+	 * <code>SWT.KeyDown</code> event, both carrying the native event's original timestamp. Without
+	 * this guard, such duplicate delivery would execute the resulting command (e.g. "Next Editor"
+	 * bound to Ctrl+PageDown) twice for a single key press, which is, for example, visible as
+	 * navigation skipping over an extra tab.
+	 * <p>
+	 * As a side effect, this method records the given command/trigger pair as the last executed
+	 * one, so that a subsequent call can be compared against it.
+	 *
+	 * @param parameterizedCommand
+	 *            the command about to be executed; must not be <code>null</code>.
+	 * @param trigger
+	 *            the triggering event; may be <code>null</code>, in which case no event was
+	 *            involved and de-duplication does not apply.
+	 * @return <code>true</code> if this looks like a duplicate delivery of the same native event
+	 *         that already triggered the same command; <code>false</code> otherwise.
+	 */
+	private boolean isDuplicateKeyEvent(final ParameterizedCommand parameterizedCommand, final Event trigger) {
+		if (trigger == null) {
+			return false;
+		}
+		boolean duplicate = parameterizedCommand == lastExecutedCommand && trigger.time == lastExecutedEventTime;
+		lastExecutedCommand = parameterizedCommand;
+		lastExecutedEventTime = trigger.time;
+		return duplicate;
 	}
 
 	private boolean handleCommandExecution(final ParameterizedCommand parameterizedCommand,
