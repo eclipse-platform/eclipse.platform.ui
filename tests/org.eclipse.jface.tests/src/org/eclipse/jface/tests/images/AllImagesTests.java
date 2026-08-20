@@ -19,7 +19,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
-		UrlImageDescriptorTest.class, DecorationOverlayIconTest.class, DeferredImageDescriptorTest.class })
+		UrlImageDescriptorTest.class, URLHintProviderTest.class, DecorationOverlayIconTest.class,
+		DeferredImageDescriptorTest.class })
 public class AllImagesTests {
 
 }
