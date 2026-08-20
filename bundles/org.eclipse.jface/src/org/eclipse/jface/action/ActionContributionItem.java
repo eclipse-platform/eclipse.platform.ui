@@ -57,6 +57,12 @@ import org.eclipse.swt.widgets.Widget;
 public class ActionContributionItem extends ContributionItem {
 
 	/**
+	 * System property for specifying whether custom disabled icons for actions
+	 * shall be used or whether all disabled icons shall be generated on-the-fly.
+	 */
+	private static final String SYSTEM_PROPERTY_USE_DISABLED_ICONS = "org.eclipse.jface.action.useDisabledIcons"; //$NON-NLS-1$
+
+	/**
 	 * Mode bit: Show text on tool items or buttons, even if an image is
 	 * present. If this mode bit is not set, text is only shown on tool items if
 	 * there is no image present.
@@ -94,6 +100,32 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	public static void setUseColorIconsInToolbars(boolean useColorIcons) {
 		USE_COLOR_ICONS = useColorIcons;
+	}
+
+	private static boolean USE_DISABLED_ICONS = Boolean.getBoolean(SYSTEM_PROPERTY_USE_DISABLED_ICONS);
+
+	/**
+	 * Returns whether disabled icons assigned to actions shall be used or whether
+	 * all such disabled icons shall be generated on-the-fly.
+	 *
+	 * @return <code>true</code> if disabled icons assigned to actions shall be
+	 *         used, <code>false</code> otherwise
+	 * @since 3.40
+	 */
+	public static boolean getUseDisabledIcons() {
+		return USE_DISABLED_ICONS;
+	}
+
+	/**
+	 * Sets whether disabled icons assigned to actions shall be used or whether all
+	 * such disabled icons shall be generated on-the-fly.
+	 *
+	 * @param useDisabledIcons <code>true</code> if disabled icons set to actions
+	 *                         shall be used, <code>false</code> otherwise
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void setUseDisabledIcons(boolean useDisabledIcons) {
+		USE_DISABLED_ICONS = useDisabledIcons;
 	}
 
 	/**
@@ -988,7 +1020,10 @@ public class ActionContributionItem extends ContributionItem {
 		if (widget instanceof ToolItem) {
 			ImageDescriptor image = action.getImageDescriptor();
 			ImageDescriptor hoverImage = action.getHoverImageDescriptor();
-			ImageDescriptor disabledImage = action.getDisabledImageDescriptor();
+			ImageDescriptor disabledImage = null;
+			if (getUseDisabledIcons()) {
+				disabledImage = action.getDisabledImageDescriptor();
+			}
 			// Make sure there is a valid image in case images are forced.
 			if (image == null && forceImage) {
 				image = ImageDescriptor.getMissingImageDescriptor();
