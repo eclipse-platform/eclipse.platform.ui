@@ -192,24 +192,29 @@ public class SmartImportJob extends Job {
 				SortedMap<File, IProject> leafToRootProjects = new TreeMap<>(Collections.reverseOrder(rootToLeafComparator));
 				final Set<IProject> alreadyConfiguredProjects = new HashSet<>();
 				loopMonitor.worked(1);
-				for (final File directoryToImport : directories) {
-					final boolean alreadyAnEclipseProject = new File(directoryToImport, IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
-					try {
-						IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
-								IResource.BACKGROUND_REFRESH);
-						if (alreadyAnEclipseProject) {
-							alreadyConfiguredProjects.add(newProject);
+				// Create all projects in one workspace operation, so listeners see a single
+				// resource delta instead of one per project. No configurator runs here.
+				workspace.run(creationMonitor -> {
+					for (final File directoryToImport : directories) {
+						final boolean alreadyAnEclipseProject = new File(directoryToImport,
+								IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
+						try {
+							IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
+									IResource.BACKGROUND_REFRESH);
+							if (alreadyAnEclipseProject) {
+								alreadyConfiguredProjects.add(newProject);
+							}
+							leafToRootProjects.put(directoryToImport, newProject);
+							loopMonitor.worked(1);
+						} catch (CouldNotImportProjectException ex) {
+							IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
+							if (listener != null) {
+								listener.errorHappened(path, ex);
+							}
+							this.errors.put(path, ex);
 						}
-						leafToRootProjects.put(directoryToImport, newProject);
-						loopMonitor.worked(1);
-					} catch (CouldNotImportProjectException ex) {
-						IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
-						if (listener != null) {
-							listener.errorHappened(path, ex);
-						}
-						this.errors.put(path, ex);
 					}
-				}
+				}, this.workspaceRoot, IWorkspace.AVOID_UPDATE, null);
 				if (configureProjects) {
 					JobGroup multiDirectoriesJobGroup = new JobGroup(
 							DataTransferMessages.SmartImportJob_configuringSelectedDirectories, 20, 1);
@@ -460,7 +465,9 @@ public class SmartImportJob extends Job {
 			}
 		}
 
-		if (!mainProjectConfigurators.isEmpty()) {
+		// The container was already refreshed above, so refresh again only if the project
+		// is a different resource (nested project created for a child folder).
+		if (!mainProjectConfigurators.isEmpty() && !project.equals(container)) {
 			project.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.split(1));
 		}
 		for (ProjectConfigurator configurator : mainProjectConfigurators) {
