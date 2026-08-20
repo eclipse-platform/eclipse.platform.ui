@@ -168,13 +168,11 @@ public class SmartImportJob extends Job {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		boolean isAutoBuilding = workspace.isAutoBuilding();
 		try {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceDescription description = workspace.getDescription();
-			boolean isAutoBuilding = workspace.isAutoBuilding();
 			if (isAutoBuilding) {
-				description.setAutoBuilding(false);
-				workspace.setDescription(description);
+				setAutoBuilding(workspace, false);
 			}
 
 			if (directoriesToImport != null) {
@@ -270,19 +268,30 @@ public class SmartImportJob extends Job {
 					try {
 						project.close(monitor);
 					} catch (CoreException e) {
-						listener.errorHappened(project.getLocation(), e);
+						if (listener != null) {
+							listener.errorHappened(project.getLocation(), e);
+						}
 					}
 				});
 			}
-
-			if (isAutoBuilding) {
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
 		} catch (Exception ex) {
 			return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, ex.getMessage(), ex);
+		} finally {
+			if (isAutoBuilding) {
+				try {
+					setAutoBuilding(workspace, true);
+				} catch (CoreException ex) {
+					IDEWorkbenchPlugin.log("Could not restore auto-building after import", ex); //$NON-NLS-1$
+				}
+			}
 		}
 		return Status.OK_STATUS;
+	}
+
+	private static void setAutoBuilding(IWorkspace workspace, boolean autoBuilding) throws CoreException {
+		IWorkspaceDescription description = workspace.getDescription();
+		description.setAutoBuilding(autoBuilding);
+		workspace.setDescription(description);
 	}
 
 	protected boolean rootProjectWorthBeingRemoved() {
