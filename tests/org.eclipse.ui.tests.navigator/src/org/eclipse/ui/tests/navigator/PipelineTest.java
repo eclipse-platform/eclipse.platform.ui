@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderNoChildren;
@@ -128,6 +129,22 @@ public class PipelineTest extends NavigatorTestBase {
 		// This will throw, have to look in the log to see the message
 		_viewer.add(_project, new Object[] { f });
 
+	}
+
+	@Test
+	public void testGetParentWithPipelinedOverride() throws Exception {
+		_contentService.bindExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE },
+				false);
+		_contentService.getActivationService()
+				.activateExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE }, true);
+
+		refreshViewer();
+
+		ITreeContentProvider contentProvider = (ITreeContentProvider) _viewer.getContentProvider();
+		IFile file = _project.getFile(".project"); //$NON-NLS-1$
+
+		assertEquals(_project, contentProvider.getParent(file));
+		assertEquals(_project, TestContentProviderPipelined._lastSuggestedParent);
 	}
 
 	// Bug 299661 hasChildren() does not handle overrides correctly
