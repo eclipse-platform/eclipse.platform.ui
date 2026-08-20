@@ -33,7 +33,6 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.junit.jupiter.api.AfterEach;
@@ -114,12 +113,12 @@ public class EventLoopMonitorThreadManualTests {
 
 	@BeforeEach
 	public void setUp() {
-		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
+		MonitoringPlugin.getPreferences().putBoolean(PreferenceConstants.MONITORING_ENABLED, false);
 	}
 
 	@AfterEach
 	public void tearDown() {
-		MonitoringPlugin.getPreferenceStore().setToDefault(PreferenceConstants.MONITORING_ENABLED);
+		MonitoringPlugin.getPreferences().remove(PreferenceConstants.MONITORING_ENABLED);
 	}
 
 	protected static long pn63(long pnSequence) {
@@ -429,19 +428,18 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	protected static EventLoopMonitorThread.Parameters createDefaultParameters() {
-		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		EventLoopMonitorThread.Parameters params = new EventLoopMonitorThread.Parameters();
 
-		params.longEventWarningThreshold =
-				preferences.getInt(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
-		params.longEventErrorThreshold =
-				preferences.getInt(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
-		params.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
-		params.deadlockThreshold =
-				preferences.getInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
-		params.uiThreadFilter = preferences.getString(PreferenceConstants.UI_THREAD_FILTER);
-		params.noninterestingThreadFilter =
-				preferences.getString(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
+		params.longEventWarningThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
+		params.longEventErrorThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
+		params.maxStackSamples = MonitoringPlugin.getIntPreference(PreferenceConstants.MAX_STACK_SAMPLES);
+		params.deadlockThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
+		params.uiThreadFilter = MonitoringPlugin.getStringPreference(PreferenceConstants.UI_THREAD_FILTER);
+		params.noninterestingThreadFilter = MonitoringPlugin
+				.getStringPreference(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
 
 		params.checkParameters();
 		return params;

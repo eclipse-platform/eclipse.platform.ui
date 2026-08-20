@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.monitoring.preferences;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -33,8 +34,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.monitoring.PreferenceConstants;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * Preference page that allows user to toggle plug in settings from Eclipse preferences.
@@ -189,7 +190,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(MonitoringPlugin.getPreferenceStore());
+		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, PreferenceConstants.PLUGIN_ID));
 	}
 
 	@Override
@@ -239,7 +240,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		editor.fillIntoGrid(parent, 2);
 		editors.put(editor, parent);
 		if (!editor.getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
-			boolean enabled = MonitoringPlugin.getPreferenceStore().getBoolean(PreferenceConstants.MONITORING_ENABLED);
+			boolean enabled = getPreferenceStore().getBoolean(PreferenceConstants.MONITORING_ENABLED);
 			editor.setEnabled(enabled, parent);
 		}
 		return editor;

@@ -18,9 +18,7 @@ package org.eclipse.ui.internal.monitoring;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.monitoring.preferences.MonitoringPreferenceListener;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.osgi.service.component.annotations.Component;
@@ -29,7 +27,8 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.service.event.propertytypes.EventTopics;
 
 /**
- * Starts the event loop monitoring thread. Initializes preferences from {@link IPreferenceStore}.
+ * Starts the event loop monitoring thread. Works in a 3.x workbench as well as in a plain E4
+ * application, as it only relies on the E4 startup event and the default {@link Display}.
  */
 @Component(service = EventHandler.class)
 @EventTopics(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
@@ -42,12 +41,13 @@ public class MonitoringStartup implements EventHandler {
 			return;
 		}
 
-		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
-		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED) && !Platform.inDevelopmentMode()) {
+		if (MonitoringPlugin.getBooleanPreference(PreferenceConstants.MONITORING_ENABLED)
+				&& !Platform.inDevelopmentMode()) {
 			monitoringThread = createAndStartMonitorThread();
 		}
 
-		preferences.addPropertyChangeListener(new MonitoringPreferenceListener(monitoringThread));
+		MonitoringPlugin.getPreferences()
+				.addPreferenceChangeListener(new MonitoringPreferenceListener(monitoringThread));
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class MonitoringStartup implements EventHandler {
 		}
 
 		final EventLoopMonitorThread thread = temporaryThread;
-		final Display display = PlatformUI.getWorkbench().getDisplay();
+		final Display display = Display.getDefault();
 		// Final setup and start asynchronously on the display thread.
 		display.asyncExec(() -> {
 			// If we're still running when display gets disposed, shutdown the thread.
@@ -77,20 +77,19 @@ public class MonitoringStartup implements EventHandler {
 	}
 
 	private static EventLoopMonitorThread.Parameters loadPreferences() {
-		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		EventLoopMonitorThread.Parameters args = new EventLoopMonitorThread.Parameters();
 
-		args.longEventWarningThreshold =
-				preferences.getInt(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
-		args.longEventErrorThreshold =
-				preferences.getInt(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
-		args.deadlockThreshold =
-				preferences.getInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
-		args.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
-		args.uiThreadFilter = preferences.getString(PreferenceConstants.UI_THREAD_FILTER);
-		args.noninterestingThreadFilter =
-				preferences.getString(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
-		args.logToErrorLog = preferences.getBoolean(PreferenceConstants.LOG_TO_ERROR_LOG);
+		args.longEventWarningThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
+		args.longEventErrorThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
+		args.deadlockThreshold = MonitoringPlugin
+				.getIntPreference(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
+		args.maxStackSamples = MonitoringPlugin.getIntPreference(PreferenceConstants.MAX_STACK_SAMPLES);
+		args.uiThreadFilter = MonitoringPlugin.getStringPreference(PreferenceConstants.UI_THREAD_FILTER);
+		args.noninterestingThreadFilter = MonitoringPlugin
+				.getStringPreference(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
+		args.logToErrorLog = MonitoringPlugin.getBooleanPreference(PreferenceConstants.LOG_TO_ERROR_LOG);
 
 		return args;
 	}

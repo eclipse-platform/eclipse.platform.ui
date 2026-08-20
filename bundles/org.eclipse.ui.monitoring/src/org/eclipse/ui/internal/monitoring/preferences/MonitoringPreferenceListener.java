@@ -15,12 +15,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.monitoring.EventLoopMonitorThread;
 import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.internal.monitoring.MonitoringStartup;
@@ -29,7 +27,7 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
 /**
  * Listens to preference changes and restarts the monitoring thread when necessary.
  */
-public class MonitoringPreferenceListener implements IPropertyChangeListener {
+public class MonitoringPreferenceListener implements IPreferenceChangeListener {
 	private EventLoopMonitorThread monitoringThread;
 	/**
 	 * A flag to handle the resetting of the {@link EventLoopMonitorThread}. The method
@@ -46,8 +44,8 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();
+	public void preferenceChange(PreferenceChangeEvent event) {
+		String property = event.getKey();
 		if (!property.equals(PreferenceConstants.MONITORING_ENABLED)
 				&& !property.equals(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS)
 				&& !property.equals(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS)
@@ -66,7 +64,7 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 
 			monitorThreadRestartInProgress = true;
 
-			final Display display = PlatformUI.getWorkbench().getDisplay();
+			final Display display = Display.getDefault();
 			// Schedule the event to restart the thread after all preferences have had enough time
 			// to propagate.
 			display.asyncExec(this::refreshMonitoringThread);
@@ -80,13 +78,12 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 		}
 		monitorThreadRestartInProgress = false;
 
-		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
-		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED)) {
+		if (MonitoringPlugin.getBooleanPreference(PreferenceConstants.MONITORING_ENABLED)) {
 			EventLoopMonitorThread thread = MonitoringStartup.createAndStartMonitorThread();
 			// If thread is null, the newly-defined preferences are invalid.
 			if (thread == null) {
 				MessageDialog.openError(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						Display.getDefault().getActiveShell(),
 						Messages.MonitoringPreferenceListener_preference_error_header,
 						Messages.MonitoringPreferenceListener_preference_error);
 				return;
