@@ -414,7 +414,7 @@ public abstract class AbstractTableInformationControl {
 		stringMatcherUpdated();
 	}
 
-	private SearchPattern getMatcher() {
+	protected SearchPattern getMatcher() {
 		return fSearchPattern;
 	}
 
