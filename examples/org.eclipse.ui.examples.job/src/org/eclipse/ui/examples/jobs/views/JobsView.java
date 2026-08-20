@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -43,6 +44,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.TestJobRule;
 import org.eclipse.ui.examples.jobs.UITestJob;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
@@ -79,6 +81,8 @@ public class JobsView extends ViewPart {
 	}
 
 	protected void createJobs() {
+		InstanceScope.INSTANCE.getNode("org.eclipse.ui.workbench").putBoolean(IPreferenceConstants.RUN_IN_BACKGROUND, //$NON-NLS-1$
+				false);
 		int jobCount = Integer.parseInt(quantityField.getText());
 		boolean ui = threadField.getSelection();
 		long duration = getDuration();
