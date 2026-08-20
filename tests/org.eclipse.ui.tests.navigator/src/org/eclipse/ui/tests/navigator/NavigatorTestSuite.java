@@ -41,7 +41,6 @@ import org.junit.platform.suite.api.SelectClasses;
 		GoBackForwardsTest.class, CopyPasteActionTest.class,
 		CloseUnrelatedProjectsActionTest.class,
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
-		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })
 public final class NavigatorTestSuite {
 }
