@@ -65,7 +65,7 @@ public class SWTTreeTest {
 	}
 
 	private void createChildren() {
-		for (int i = 0; i < TreeAddTest.TEST_COUNT; i++) {
+		for (int i = 0; i < TreeViewerPerformanceTest.TEST_COUNT; i++) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
 			item.setText("Element " + i);
 
@@ -85,12 +85,12 @@ public class SWTTreeTest {
 			processEvents();
 			long before = System.nanoTime();
 			int seen = 0;
-			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+			for (int j = 0; j < TreeViewerPerformanceTest.TEST_COUNT; j++) {
 				seen += tree.getItems().length;
 				processEvents();
 			}
 			timings.add(System.nanoTime() - before);
-			assertEquals(TreeAddTest.TEST_COUNT * TreeAddTest.TEST_COUNT, seen);
+			assertEquals(TreeViewerPerformanceTest.TEST_COUNT * TreeViewerPerformanceTest.TEST_COUNT, seen);
 		});
 
 		reportTimings(scenario(testInfo), timings);
@@ -108,12 +108,12 @@ public class SWTTreeTest {
 			processEvents();
 			long before = System.nanoTime();
 			int seen = 0;
-			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+			for (int j = 0; j < TreeViewerPerformanceTest.TEST_COUNT; j++) {
 				seen += tree.getItem(j) == null ? 0 : 1;
 				processEvents();
 			}
 			timings.add(System.nanoTime() - before);
-			assertEquals(TreeAddTest.TEST_COUNT, seen);
+			assertEquals(TreeViewerPerformanceTest.TEST_COUNT, seen);
 		});
 
 		reportTimings(scenario(testInfo), timings);
