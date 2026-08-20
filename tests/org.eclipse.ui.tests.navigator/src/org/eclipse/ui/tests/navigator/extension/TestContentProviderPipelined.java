@@ -26,9 +26,11 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 		IPipelinedTreeContentProvider2 {
 
 	public static boolean _throw;
+	public static Object _lastSuggestedParent;
 
 	public static void resetTest() {
 		_throw = false;
+		_lastSuggestedParent = null;
 	}
 
 	public TestContentProviderPipelined() {
@@ -61,6 +63,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
 		if (_throw)
 			throw new RuntimeException("did not work out");
+		_lastSuggestedParent = aSuggestedParent;
 		return aSuggestedParent;
 	}
 
