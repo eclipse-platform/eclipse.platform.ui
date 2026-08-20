@@ -304,7 +304,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 						overridingExtensions = foundExtension
 								.getOverridingExtensionsForPossibleChild(anElement);
 						if (overridingExtensions.length > 0) {
-							parent[0] = pipelineParent(anElement, overridingExtensions, parent);
+							parent[0] = pipelineParent(anElement, overridingExtensions, parent[0]);
 						}
 					}
 				}
@@ -354,7 +354,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			Object theCurrentParent) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
-		Object aSuggestedParent = null;
+		Object aSuggestedParent = theCurrentParent;
 		for (NavigatorContentExtension theOverridingExtension : theOverridingExtensions) {
 
 			if (theOverridingExtension.internalGetContentProvider().isPipelined()) {
