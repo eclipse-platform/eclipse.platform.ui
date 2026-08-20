@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayInputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -145,6 +147,32 @@ public class PipelineTest extends NavigatorTestBase {
 
 		assertEquals(_project, contentProvider.getParent(file));
 		assertEquals(_project, TestContentProviderPipelined._lastSuggestedParent);
+	}
+
+	@Test
+	public void testRemoveOfUnexpandedElementAsksForParentOnce() throws Exception {
+		_contentService.bindExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE },
+				false);
+		_contentService.getActivationService()
+				.activateExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE }, true);
+
+		IFolder folder = _project.getFolder("a"); //$NON-NLS-1$
+		folder.create(true, true, null);
+		for (String name : new String[] { "b", "c", "d" }) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			folder = folder.getFolder(name);
+			folder.create(true, true, null);
+		}
+		IFile file = folder.getFile("f.txt"); //$NON-NLS-1$
+		file.create(new ByteArrayInputStream(new byte[0]), true, null);
+
+		refreshViewer();
+
+		// the project is collapsed, so the file has no item and the viewer has to ask for its parent
+		TestContentProviderPipelined._pipelinedParentCalls = 0;
+		_viewer.remove(file);
+
+		assertEquals(1, TestContentProviderPipelined._pipelinedParentCalls,
+				"only the immediate parent should be computed, not the whole ancestor chain"); //$NON-NLS-1$
 	}
 
 	// Bug 299661 hasChildren() does not handle overrides correctly
