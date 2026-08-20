@@ -134,6 +134,7 @@ public abstract class AbstractTableInformationControl {
 		fTableViewer = createTableViewer(fComposite, controlStyle);
 
 		final Table table = fTableViewer.getTable();
+		table.setFont(JFaceResources.getDialogFont());
 		table.addKeyListener(KeyListener.keyPressedAdapter(e -> {
 			switch (e.keyCode) {
 			case SWT.ESC:
@@ -314,10 +315,11 @@ public abstract class AbstractTableInformationControl {
 
 	protected Text createFilterText(Composite parent) {
 		fFilterText = new Text(parent, SWT.NONE);
+		fFilterText.setFont(JFaceResources.getDialogFont());
 
 		GridData data = new GridData();
 		GC gc = new GC(parent);
-		gc.setFont(parent.getFont());
+		gc.setFont(fFilterText.getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 
