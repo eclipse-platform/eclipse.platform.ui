@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,13 +13,13 @@
  *     Yves YANG <yves.yang@soyatec.com> -
  *     		Initial Fix for Bug 138078 [Preferences] Preferences Store for i18n support
  *******************************************************************************/
-package org.eclipse.ui.preferences;
+package org.eclipse.jface.preference;
 
 import java.io.IOException;
 import java.util.Objects;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -27,14 +27,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListe
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * The ScopedPreferenceStore is an IPreferenceStore that uses the scopes
@@ -49,9 +47,9 @@ import org.osgi.service.prefs.BackingStoreException;
  * </p>
  *
  * @see org.eclipse.core.runtime.preferences
- * @since 3.1
+ * @since 3.40
  */
-public class ScopedPreferenceStore extends EventManager implements IPreferenceStore, IPersistentPreferenceStore {
+public class ScopedPreferenceStore extends EventManager implements IPersistentPreferenceStore {
 
 	/**
 	 * The storeContext is the context where values will stored with the setValue
@@ -255,7 +253,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		// the end)
 		for (IScopeContext scope : scopes) {
 			if (scope.equals(defaultContext)) {
-				Assert.isTrue(false, WorkbenchMessages.ScopedPreferenceStore_DefaultAddedError);
+				Assert.isTrue(false, JFaceResources.getString("ScopedPreferenceStore_DefaultAddedError")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -265,7 +263,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		if (name == null) {
 			return false;
 		}
-		return (Platform.getPreferencesService().get(name, null, getPreferenceNodes(true))) != null;
+		return internalGet(name, true) != null;
 	}
 
 	@Override
@@ -290,7 +288,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public boolean getBoolean(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		return value == null ? BOOLEAN_DEFAULT_DEFAULT : Boolean.parseBoolean(value);
 	}
 
@@ -326,7 +324,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public double getDouble(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		if (value == null) {
 			return DOUBLE_DEFAULT_DEFAULT;
 		}
@@ -342,16 +340,26 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * specified by this object's list of search scopes. If the value does not exist
 	 * then return <code>null</code>.
 	 *
-	 * @param key the key to search with
+	 * @param key            the key to search with
+	 * @param includeDefault {@code true} if the default context should be included
+	 *                       and {@code true} otherwise
 	 * @return String or <code>null</code> if the value does not exist.
 	 */
-	private String internalGet(String key) {
-		return Platform.getPreferencesService().get(key, null, getPreferenceNodes(true));
+	private String internalGet(String key, boolean includeDefault) {
+		for (Preferences node : getPreferenceNodes(includeDefault)) {
+			if (node != null) {
+				String result = node.get(key, null);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public float getFloat(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		if (value == null) {
 			return FLOAT_DEFAULT_DEFAULT;
 		}
@@ -364,7 +372,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public int getInt(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		if (value == null) {
 			return INT_DEFAULT_DEFAULT;
 		}
@@ -377,7 +385,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public long getLong(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		if (value == null) {
 			return LONG_DEFAULT_DEFAULT;
 		}
@@ -390,7 +398,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public String getString(String name) {
-		String value = internalGet(name);
+		String value = internalGet(name, true);
 		return value == null ? STRING_DEFAULT_DEFAULT : value;
 	}
 
@@ -399,7 +407,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		if (name == null) {
 			return false;
 		}
-		return (Platform.getPreferencesService().get(name, null, getPreferenceNodes(false))) == null;
+		return internalGet(name, false) == null;
 	}
 
 	@Override

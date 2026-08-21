@@ -876,7 +876,6 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredTree_FilteredDialogTitle;
 	public static String FilteredTree_AccessibleListenerFiltered;
 	public static String Workbench_startingPlugins;
-	public static String ScopedPreferenceStore_DefaultAddedError;
 
 	public static String WorkbenchEncoding_invalidCharset;
 

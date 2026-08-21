@@ -21,11 +21,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.PropagatingFontFieldEditor;
-
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 
 /**
