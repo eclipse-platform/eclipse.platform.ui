@@ -505,7 +505,9 @@ public class FontRegistry extends ResourceRegistry {
 		//Do not fire the update from creation as it is not a property change
 		put(symbolicName, validData, false);
 		Font newFont = new Font(display, validData);
-		return new FontRecord(newFont, validData);
+		FontRecord newRecord = new FontRecord(newFont, validData);
+		stringToFontRecord.put(symbolicName, newRecord);
+		return newRecord;
 	}
 
 	private Display getDisplayAndHookForDisposal() {
@@ -582,7 +584,6 @@ public class FontRegistry extends ResourceRegistry {
 			record = createFont(JFaceResources.DEFAULT_FONT, defaultFont.getFontData());
 			defaultFont.dispose();
 		}
-		stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
 		return record;
 	}
 
@@ -698,13 +699,10 @@ public class FontRegistry extends ResourceRegistry {
 			if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
 				String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.logException(new SWTException(msg));
-				return fontRecord; // don't add it to the cache; if later asked from UI thread, a proper font will be created
 			}
 		}
 
-		stringToFontRecord.put(symbolicName, fontRecord);
 		return fontRecord;
-
 	}
 
 	@Override
