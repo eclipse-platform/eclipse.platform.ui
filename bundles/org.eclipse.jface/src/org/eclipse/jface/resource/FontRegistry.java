@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -164,23 +163,22 @@ public class FontRegistry extends ResourceRegistry {
 		}
 
 		/**
-		 * Add any fonts that were allocated for this record to the
-		 * stale fonts. Anything that matches the default font will
-		 * be skipped.
-		 * @param defaultFont The system default.
+		 * Return all of the fonts allocated by the receiver, that is the base
+		 * font and whichever styled variants have been realized so far.
+		 * @return the allocated fonts, never <code>null</code>
 		 */
-		void addAllocatedFontsToStale(Font defaultFont) {
-			//Return all of the fonts allocated by the receiver.
-			//if any of them are the defaultFont then don't bother.
-			if (defaultFont != baseFont && baseFont != null) {
-				staleFonts.add(baseFont);
+		List<Font> getAllocatedFonts() {
+			List<Font> allocatedFonts = new ArrayList<>(3);
+			if (baseFont != null) {
+				allocatedFonts.add(baseFont);
 			}
-			if (defaultFont != boldFont && boldFont != null) {
-				staleFonts.add(boldFont);
+			if (boldFont != null) {
+				allocatedFonts.add(boldFont);
 			}
-			if (defaultFont != italicFont && italicFont != null) {
-				staleFonts.add(italicFont);
+			if (italicFont != null) {
+				allocatedFonts.add(italicFont);
 			}
+			return allocatedFonts;
 		}
 	}
 
@@ -368,7 +366,10 @@ public class FontRegistry extends ResourceRegistry {
 	 *            the <code>Display</code>
 	 * @param cleanOnDisplayDisposal
 	 *            whether all fonts allocated by this <code>FontRegistry</code>
-	 *            should be disposed when the display is disposed
+	 *            should be disposed when the display is disposed. If
+	 *            <code>false</code>, this registry never disposes a font by
+	 *            itself; the fonts it allocated are retained until
+	 *            {@link #clearCaches()} disposes them
 	 * @since 3.1
 	 */
 	public FontRegistry(Display display, boolean cleanOnDisplayDisposal) {
@@ -678,19 +679,19 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	private FontRecord getFontRecord(String symbolicName) {
 		Assert.isNotNull(symbolicName);
-		Object result = stringToFontRecord.get(symbolicName);
-		if (result != null) {
-			return (FontRecord) result;
+		FontRecord existingRecord = stringToFontRecord.get(symbolicName);
+		if (existingRecord != null) {
+			return existingRecord;
 		}
 
-		result = stringToFontData.get(symbolicName);
+		FontData[] existingFontData = stringToFontData.get(symbolicName);
 
 		FontRecord fontRecord;
 
-		if (result == null) {
+		if (existingFontData == null) {
 			fontRecord = defaultFontRecord();
 		} else {
-			fontRecord = createFont(symbolicName, (FontData[]) result);
+			fontRecord = createFont(symbolicName, existingFontData);
 		}
 
 		if (fontRecord == null) {
@@ -719,29 +720,12 @@ public class FontRegistry extends ResourceRegistry {
 
 	@Override
 	protected void clearCaches() {
-
-		Iterator<FontRecord> iterator = stringToFontRecord.values().iterator();
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((FontRecord) next).dispose();
-		}
-
-		disposeFonts(staleFonts.iterator());
+		stringToFontRecord.values().forEach(FontRecord::dispose);
 		stringToFontRecord.clear();
+		staleFonts.forEach(Font::dispose);
 		staleFonts.clear();
 
 		displayDisposeHooked.remove(Display.getCurrent());
-	}
-
-	/**
-	 * Dispose of all of the fonts in this iterator.
-	 * @param iterator over Collection of Font
-	 */
-	private void disposeFonts(Iterator<Font> iterator) {
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((Font) next).dispose();
-		}
 	}
 
 	/**
@@ -821,16 +805,26 @@ public class FontRegistry extends ResourceRegistry {
 			return;
 		}
 
-		FontRecord oldFont = stringToFontRecord
-				.remove(symbolicName);
 		stringToFontData.put(symbolicName, fontData);
+		invalidate(symbolicName);
 		if (update) {
 			fireMappingChanged(symbolicName, existing, fontData);
 		}
+	}
 
-		if (oldFont != null) {
-			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
+	/**
+	 * Drop the realized font record for the given symbolic name, if any, and
+	 * defer disposal of the fonts it had allocated until it is safe to dispose
+	 * them, since they may still be in use. The default font is kept, as it
+	 * stays in use under its own symbolic name.
+	 */
+	private void invalidate(String symbolicName) {
+		FontRecord replacedRecord = stringToFontRecord.remove(symbolicName);
+		if (replacedRecord == null) {
+			return;
 		}
+		Font defaultFont = defaultFontRecord().getBaseFont();
+		replacedRecord.getAllocatedFonts().stream().filter(font -> font != defaultFont).forEach(staleFonts::add);
 	}
 
 	/**

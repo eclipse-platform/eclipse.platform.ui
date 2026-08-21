@@ -215,6 +215,22 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void put_notifiesListenersOnlyAfterTheNewFontIsInEffect() {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		Font originalFont = fontRegistry.get("myfont");
+
+		AtomicReference<Font> fontSeenByListener = new AtomicReference<>();
+		fontRegistry.addListener(event -> fontSeenByListener.set(fontRegistry.get("myfont")));
+
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
+
+		assertNotEquals(originalFont, fontSeenByListener.get(),
+				"a listener must not still see the replaced font when it is notified");
+		assertEquals(18, fontSeenByListener.get().getFontData()[0].getHeight());
+	}
+
+	@Test
 	public void put_withNewData_disposesOldFontOnlyOnDisplayDispose() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
