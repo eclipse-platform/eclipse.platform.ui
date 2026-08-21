@@ -61,6 +61,17 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void multipleDisplayDispose_noDisposeOtherThreadFonts() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		Font mainFont = fontRegistry.get("myfont");
+		testMultipleDisplayDispose(fontRegistry::defaultFont);
+		assertFalse(mainFont.isDisposed(), "FontRegistry should not dispose fonts on other displays");
+	}
+
+	@Test
 	public void multipleDisplayDispose() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
@@ -78,12 +89,66 @@ public class FontRegistryTest {
 	}
 
 	@Test
-	public void multipleDisplay_italicFont() {
+	public void multipleDisplayDispose_italicFont() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		FontRegistry fontRegistry = new FontRegistry();
 		fontRegistry.get(JFaceResources.DEFAULT_FONT);
 		testMultipleDisplayDispose(() -> fontRegistry.getItalic(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
+	public void put_invalidatesCachedFont_onAllDisplays() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // cache on main display
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		try {
+			Font fontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+
+			// changing the font data must invalidate the cached font on every display, not just the main one
+			fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 20, SWT.NORMAL) });
+
+			Font updatedFontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+			assertNotEquals(fontOnSecondDisplay, updatedFontOnSecondDisplay,
+					"put() must invalidate the cached font on the second display too");
+			assertEquals(20, updatedFontOnSecondDisplay.getFontData()[0].getHeight());
+		} finally {
+			secondDisplay.syncExec(secondDisplay::dispose);
+		}
+	}
+
+	@Test
+	public void cleanOnDisplayDisposalFalse_cachesFontAcrossRepeatedCalls() {
+		FontRegistry fontRegistry = new FontRegistry(Display.getCurrent(), false);
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		Font first = fontRegistry.get("myfont");
+		Font second = fontRegistry.get("myfont");
+
+		assertEquals(first, second,
+				"repeated get() calls must return the cached font, not a new one, when cleanOnDisplayDisposal is false");
+	}
+
+	@Test
+	public void cleanOnDisplayDisposalFalse_doesNotAutoDisposeFontsOnSecondDisplay() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry(Display.getCurrent(), false);
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		Font fontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+		Font sameFontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+		assertEquals(fontOnSecondDisplay, sameFontOnSecondDisplay,
+				"font must be cached per display even when cleanOnDisplayDisposal is false");
+
+		secondDisplay.syncExec(secondDisplay::dispose);
+		assertFalse(fontOnSecondDisplay.isDisposed(),
+				"fonts must not be disposed automatically when cleanOnDisplayDisposal is false");
 	}
 
 	private static void testMultipleDisplayDispose(Supplier<Font> fontSupplier) {
@@ -94,9 +159,9 @@ public class FontRegistryTest {
 
 		Font fontOnThisDisplayBeforeSecondDisplayDispose = fontSupplier.get();
 		Device displayOfFontOnSecondDisplay = fontOnSecondDisplay.getDevice();
-		// font registry returns same font for every display
+		// font registry returns different font for every display
 		assertEquals(secondDisplay, displayOfFontOnSecondDisplay);
-		assertEquals(fontOnThisDisplayBeforeSecondDisplayDispose, fontOnSecondDisplay);
+		assertNotEquals(fontOnThisDisplayBeforeSecondDisplayDispose, fontOnSecondDisplay);
 
 		// after disposing font's display, registry should reinitialize the font
 		secondDisplay.syncExec(secondDisplay::dispose);
@@ -141,28 +206,64 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void put_onNameOnlyResolvedViaDefaultFallback_doesNotStaleDefaultFontsBoldAndItalic() {
+		FontRegistry fontRegistry = new FontRegistry();
+		Font defaultBold = fontRegistry.getBold(JFaceResources.DEFAULT_FONT);
+		Font defaultItalic = fontRegistry.getItalic(JFaceResources.DEFAULT_FONT);
+
+		// never explicitly registered, so this only ever resolves via the default-font fallback
+		fontRegistry.get("neverRegisteredName");
+
+		// registering data for that name must not disturb the still-live default font record
+		fontRegistry.put("neverRegisteredName", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		assertSame(defaultBold, fontRegistry.getBold(JFaceResources.DEFAULT_FONT));
+		assertSame(defaultItalic, fontRegistry.getItalic(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
 	public void get_fontFromNonUIThreadFallback_doesNotOverwriteDefaultFont() throws Throwable {
 		FontRegistry fontRegistry = new FontRegistry();
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
 		Font defaultFont = fontRegistry.get(JFaceResources.DEFAULT_FONT);
 
-		AtomicReference<Font> fontFromNonUIThread = new AtomicReference<>();
-		AtomicReference<Throwable> failureFromNonUIThread = new AtomicReference<>();
+		Font fontFromNonUIThread = callOnNonUIThread(() -> fontRegistry.get("myfont"));
+
+		assertSame(defaultFont, fontFromNonUIThread);
+		assertSame(defaultFont, fontRegistry.get(JFaceResources.DEFAULT_FONT));
+	}
+
+	@Test
+	public void getBold_fromNonUIThreadFallback_reusesMainDisplaysBoldDefaultFont() throws Throwable {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		// a thread without a display of its own can neither create a font nor scope a
+		// lookup, so the main display's default font record is all it can fall back to
+		Font defaultBold = fontRegistry.getBold(JFaceResources.DEFAULT_FONT);
+
+		Font boldFromNonUIThread = callOnNonUIThread(() -> fontRegistry.getBold("myfont"));
+
+		assertSame(defaultBold, boldFromNonUIThread);
+		assertSame(defaultBold, fontRegistry.getBold(JFaceResources.DEFAULT_FONT));
+	}
+
+	private static Font callOnNonUIThread(Supplier<Font> fontSupplier) throws Throwable {
+		AtomicReference<Font> font = new AtomicReference<>();
+		AtomicReference<Throwable> failure = new AtomicReference<>();
 		Thread nonUiThread = new Thread(() -> {
 			try {
-				fontFromNonUIThread.set(fontRegistry.get("myfont"));
+				font.set(fontSupplier.get());
 			} catch (Throwable t) {
-				failureFromNonUIThread.set(t);
+				failure.set(t);
 			}
-		});
+		}, "non-UI thread font lookup");
 		nonUiThread.start();
 		nonUiThread.join();
 
-		if (failureFromNonUIThread.get() != null) {
-			throw failureFromNonUIThread.get();
+		if (failure.get() != null) {
+			throw failure.get();
 		}
-		assertSame(defaultFont, fontFromNonUIThread.get());
-		assertSame(defaultFont, fontRegistry.get(JFaceResources.DEFAULT_FONT));
+		return font.get();
 	}
 
 	@Test
@@ -184,6 +285,20 @@ public class FontRegistryTest {
 		Font second = fontRegistry.get("neverRegisteredName");
 
 		assertSame(fontRegistry.get(JFaceResources.DEFAULT_FONT), first);
+		assertSame(first, second);
+	}
+
+	@Test
+	public void get_forNameRegisteredWithoutAnyFontData_returnsDefaultFont() {
+		FontRegistry fontRegistry = new FontRegistry();
+		// an empty array leaves nothing to filter, so filterData() yields no usable data at all
+		fontRegistry.put("fontWithoutData", new FontData[0]);
+
+		Font first = fontRegistry.get("fontWithoutData");
+		Font second = fontRegistry.get("fontWithoutData");
+
+		assertSame(fontRegistry.get(JFaceResources.DEFAULT_FONT), first,
+				"a name that cannot be resolved to any font data must fall back to the default font");
 		assertSame(first, second);
 	}
 
@@ -212,6 +327,22 @@ public class FontRegistryTest {
 
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
 		assertEquals(2, events.size());
+	}
+
+	@Test
+	public void put_notifiesListenersOnlyAfterTheNewFontIsInEffect() {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		Font originalFont = fontRegistry.get("myfont");
+
+		AtomicReference<Font> fontSeenByListener = new AtomicReference<>();
+		fontRegistry.addListener(event -> fontSeenByListener.set(fontRegistry.get("myfont")));
+
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
+
+		assertNotEquals(originalFont, fontSeenByListener.get(),
+				"a listener must not still see the replaced font when it is notified");
+		assertEquals(18, fontSeenByListener.get().getFontData()[0].getHeight());
 	}
 
 	@Test
@@ -269,6 +400,22 @@ public class FontRegistryTest {
 
 		assertNotEquals(original, updated);
 		assertEquals(18, updated.getFontData()[0].getHeight());
+	}
+
+	@Test
+	public void put_replacingRealizedFont_doesNotRegisterDefaultFontAsSideEffect() {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // realize it, so replacing it has fonts to retire
+
+		// retiring those fonts compares them against the default font, which must not
+		// realize and register a default font that nobody has asked for yet
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
+
+		assertFalse(fontRegistry.hasValueFor(JFaceResources.DEFAULT_FONT),
+				"replacing an unrelated font must not register default font data as a side effect");
+		assertFalse(fontRegistry.getKeySet().contains(JFaceResources.DEFAULT_FONT),
+				"replacing an unrelated font must not add the default font to the key set");
 	}
 
 	@Test

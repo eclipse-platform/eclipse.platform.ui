@@ -16,16 +16,16 @@ package org.eclipse.jface.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
@@ -68,7 +68,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * FontRecord is a private helper class that holds onto a font
 	 * and can be used to generate its bold and italic version.
 	 */
-	private class FontRecord {
+	private static class FontRecord {
 
 		Font baseFont;
 
@@ -121,8 +121,7 @@ public class FontRegistry extends ResourceRegistry {
 			}
 
 			FontData[] boldData = getModifiedFontData(SWT.BOLD);
-			Display display = getDisplayAndHookForDisposal();
-			boldFont = new Font(display, boldData);
+			boldFont = new Font(Display.getCurrent(), boldData);
 			return boldFont;
 		}
 
@@ -158,61 +157,107 @@ public class FontRegistry extends ResourceRegistry {
 			}
 
 			FontData[] italicData = getModifiedFontData(SWT.ITALIC);
-			Display display = getDisplayAndHookForDisposal();
-			italicFont = new Font(display, italicData);
+			italicFont = new Font(Display.getCurrent(), italicData);
 			return italicFont;
 		}
 
 		/**
-		 * Add any fonts that were allocated for this record to the
-		 * stale fonts. Anything that matches the default font will
-		 * be skipped.
-		 * @param defaultFont The system default.
+		 * Return all of the fonts allocated by the receiver, that is the base
+		 * font and whichever styled variants have been realized so far.
+		 * @return the allocated fonts, never <code>null</code>
 		 */
-		void addAllocatedFontsToStale(Font defaultFont) {
-			//Return all of the fonts allocated by the receiver.
-			//if any of them are the defaultFont then don't bother.
-			if (defaultFont != baseFont && baseFont != null) {
-				staleFonts.add(baseFont);
+		List<Font> getAllocatedFonts() {
+			List<Font> allocatedFonts = new ArrayList<>(3);
+			if (baseFont != null) {
+				allocatedFonts.add(baseFont);
 			}
-			if (defaultFont != boldFont && boldFont != null) {
-				staleFonts.add(boldFont);
+			if (boldFont != null) {
+				allocatedFonts.add(boldFont);
 			}
-			if (defaultFont != italicFont && italicFont != null) {
-				staleFonts.add(italicFont);
+			if (italicFont != null) {
+				allocatedFonts.add(italicFont);
 			}
+			return allocatedFonts;
 		}
 	}
 
+	private final Map<Display, DisplayFontRecords> displayToFontRecords = new ConcurrentHashMap<>();
+
 	/**
-	 * Table of known fonts, keyed by symbolic font name
-	 * (key type: <code>String</code>,
-	 *  value type: <code>FontRecord</code>.
+	 * Table of known fonts realized on one particular display, keyed by symbolic
+	 * font name (key type: <code>String</code>, value type:
+	 * <code>FontRecord</code>). There is one such table per {@link Display} the
+	 * registry has been used from, since a {@link Font} is only valid on the
+	 * display that created it. Also keeps that display's fonts that were
+	 * replaced by {@link FontRegistry#put(String, FontData[])} but may still be
+	 * in use elsewhere, so their disposal is deferred until the display itself
+	 * is disposed.
+	 * <p>
+	 * Both collections are concurrent: a display's records are read and written
+	 * by its own thread, but {@link FontRegistry#put(String, FontData[])}
+	 * invalidates the records of <em>every</em> display from whichever thread it
+	 * is called on, and may do so while that display is disposing itself.
+	 * </p>
 	 */
-	private final Map<String, FontRecord> stringToFontRecord = new HashMap<>(7);
+	private static class DisplayFontRecords {
+
+		private final Map<String, FontRecord> records = new ConcurrentHashMap<>();
+
+		private final Collection<Font> staleFonts = new ConcurrentLinkedQueue<>();
+
+		FontRecord get(String symbolicName) {
+			return records.get(symbolicName);
+		}
+
+		void put(String symbolicName, FontRecord record) {
+			records.put(symbolicName, record);
+		}
+
+		/**
+		 * Drop the record for the given symbolic name, if any, and defer
+		 * disposal of the fonts it had realized until this display is disposed,
+		 * since they may still be in use. The display's default font is kept,
+		 * as it stays in use under its own symbolic name.
+		 */
+		void invalidate(String symbolicName) {
+			FontRecord replacedRecord = records.remove(symbolicName);
+			if (replacedRecord == null) {
+				return;
+			}
+			FontRecord defaultRecord = records.get(JFaceResources.DEFAULT_FONT);
+			Font defaultFont = defaultRecord != null ? defaultRecord.getBaseFont() : null;
+			replacedRecord.getAllocatedFonts().stream().filter(font -> font != defaultFont).forEach(staleFonts::add);
+		}
+
+		void dispose() {
+			records.values().forEach(FontRecord::dispose);
+			records.clear();
+			staleFonts.forEach(Font::dispose);
+			staleFonts.clear();
+		}
+
+	}
 
 	/**
 	 * Table of known font data, keyed by symbolic font name
 	 * (key type: <code>String</code>,
 	 *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
 	 */
-	private final Map<String, FontData[]> stringToFontData = new HashMap<>(7);
-
-	/**
-	 * Collection of Fonts that are now stale to be disposed
-	 * when it is safe to do so (i.e. on shutdown).
-	 * @see List
-	 */
-	private final List<Font> staleFonts = new ArrayList<>();
+	private final Map<String, FontData[]> stringToFontData = new ConcurrentHashMap<>(7);
 
 	/**
 	 * Runnable that cleans up the manager on disposal of the display.
 	 */
 	protected Runnable displayRunnable = this::clearCaches;
 
-	private final Set<Display> displayDisposeHooked = ConcurrentHashMap.newKeySet();
-
 	private final boolean cleanOnDisplayDisposal;
+
+	/**
+	 * The display this registry was created for. It is assumed to outlive every
+	 * other display the registry is used from, so its fonts can serve as a
+	 * fallback for callers that have no display of their own.
+	 */
+	private final Display mainDisplay;
 
 	/**
 	 * Creates an empty font registry.
@@ -284,14 +329,14 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	public FontRegistry(String location, ClassLoader loader)
 			throws MissingResourceException {
-		Display display = Display.getCurrent();
-		Assert.isNotNull(display);
+		mainDisplay = Display.getCurrent();
+		Assert.isNotNull(mainDisplay);
 		// FIXE: need to respect loader
 		//readResourceBundle(location, loader);
 		readResourceBundle(location);
-
 		cleanOnDisplayDisposal = true;
-		hookDisplayDispose(display);
+		displayToFontRecords.put(mainDisplay, new DisplayFontRecords());
+		hookMainDisplayDispose(mainDisplay);
 	}
 
 	/**
@@ -368,14 +413,19 @@ public class FontRegistry extends ResourceRegistry {
 	 *            the <code>Display</code>
 	 * @param cleanOnDisplayDisposal
 	 *            whether all fonts allocated by this <code>FontRegistry</code>
-	 *            should be disposed when the display is disposed
+	 *            should be disposed when the display is disposed. If
+	 *            <code>false</code>, this registry never disposes a font by
+	 *            itself; the fonts it allocated for any display are retained
+	 *            until {@link #clearCaches()} disposes them
 	 * @since 3.1
 	 */
 	public FontRegistry(Display display, boolean cleanOnDisplayDisposal) {
 		Assert.isNotNull(display);
+		this.mainDisplay = display;
+		displayToFontRecords.put(display, new DisplayFontRecords());
 		this.cleanOnDisplayDisposal = cleanOnDisplayDisposal;
 		if (cleanOnDisplayDisposal) {
-			hookDisplayDispose(display);
+			hookMainDisplayDispose(display);
 		}
 	}
 
@@ -497,26 +547,27 @@ public class FontRegistry extends ResourceRegistry {
 		}
 
 		FontData[] validData = filterData(fonts, display);
-		if (validData.length == 0) {
+		if (validData == null || validData.length == 0) {
 			//Nothing specified
 			return null;
 		}
 
-		//Do not fire the update from creation as it is not a property change
+		// Do not fire the update from creation as it is not a property change.
+		// Note that this drops any record other displays had realized for this
+		// name, should filterData() have narrowed the registered data. That is
+		// intended: the registered data is shared by all displays, so a record
+		// built from outdated data must not survive on any of them.
 		put(symbolicName, validData, false);
 		Font newFont = new Font(display, validData);
-		return new FontRecord(newFont, validData);
-	}
-
-	private Display getDisplayAndHookForDisposal() {
-		Display display = Display.getCurrent();
-		if (display == null) {
-			return null;
+		FontRecord record = new FontRecord(newFont, validData);
+		// the display's records may have been torn down concurrently, e.g. by
+		// clearCaches() running on another display's thread, in which case there is
+		// nothing left to cache the record in and the next lookup realizes it again
+		DisplayFontRecords displayRecords = displayToFontRecords.get(display);
+		if (displayRecords != null) {
+			displayRecords.put(symbolicName, record);
 		}
-		if (cleanOnDisplayDisposal && !displayDisposeHooked.contains(display)) {
-			hookDisplayDispose(display);
-		}
-		return display;
+		return record;
 	}
 
 	/**
@@ -567,7 +618,18 @@ public class FontRegistry extends ResourceRegistry {
 	 * Returns the default font record.
 	 */
 	private FontRecord defaultFontRecord() {
-		FontRecord record = stringToFontRecord.get(JFaceResources.DEFAULT_FONT);
+		FontRecord record = getExistingFontRecord(JFaceResources.DEFAULT_FONT);
+		if (record == null && Display.getCurrent() == null) {
+			// No display for the current thread, so there is none to scope the
+			// lookup to and none to create a font on. Fall back to the default
+			// font already realized on the main display, which outlives every
+			// other display, rather than fail outright. Reached e.g. from
+			// getFontRecord()'s non-UI-thread fallback.
+			DisplayFontRecords mainDisplayRecords = displayToFontRecords.get(mainDisplay);
+			if (mainDisplayRecords != null) {
+				record = mainDisplayRecords.get(JFaceResources.DEFAULT_FONT);
+			}
+		}
 		if (record != null) {
 			return record;
 		}
@@ -582,8 +644,21 @@ public class FontRegistry extends ResourceRegistry {
 			record = createFont(JFaceResources.DEFAULT_FONT, defaultFont.getFontData());
 			defaultFont.dispose();
 		}
-		stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
 		return record;
+	}
+
+	/**
+	 * Looks up an already-realized font record for the given symbolic name on
+	 * the current display. Returns <code>null</code> if there is none, in which
+	 * case the caller is responsible for creating one on the current display.
+	 */
+	private FontRecord getExistingFontRecord(String symbolicName) {
+		Display currentDisplay = Display.getCurrent();
+		if (currentDisplay == null) {
+			return null;
+		}
+		DisplayFontRecords currentDisplayRecords = displayToFontRecords.get(currentDisplay);
+		return currentDisplayRecords != null ? currentDisplayRecords.get(symbolicName) : null;
 	}
 
 	/**
@@ -678,19 +753,19 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	private FontRecord getFontRecord(String symbolicName) {
 		Assert.isNotNull(symbolicName);
-		Object result = stringToFontRecord.get(symbolicName);
-		if (result != null) {
-			return (FontRecord) result;
+		FontRecord existingRecord = getExistingFontRecord(symbolicName);
+		if (existingRecord != null) {
+			return existingRecord;
 		}
 
-		result = stringToFontData.get(symbolicName);
+		FontData[] existingFontData = stringToFontData.get(symbolicName);
 
 		FontRecord fontRecord;
 
-		if (result == null) {
+		if (existingFontData == null) {
 			fontRecord = defaultFontRecord();
 		} else {
-			fontRecord = createFont(symbolicName, (FontData[]) result);
+			fontRecord = createFont(symbolicName, existingFontData);
 		}
 
 		if (fontRecord == null) {
@@ -698,13 +773,10 @@ public class FontRegistry extends ResourceRegistry {
 			if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
 				String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.logException(new SWTException(msg));
-				return fontRecord; // don't add it to the cache; if later asked from UI thread, a proper font will be created
 			}
 		}
 
-		stringToFontRecord.put(symbolicName, fontRecord);
 		return fontRecord;
-
 	}
 
 	@Override
@@ -719,37 +791,42 @@ public class FontRegistry extends ResourceRegistry {
 
 	@Override
 	protected void clearCaches() {
-
-		Iterator<FontRecord> iterator = stringToFontRecord.values().iterator();
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((FontRecord) next).dispose();
-		}
-
-		disposeFonts(staleFonts.iterator());
-		stringToFontRecord.clear();
-		staleFonts.clear();
-
-		displayDisposeHooked.remove(Display.getCurrent());
-	}
-
-	/**
-	 * Dispose of all of the fonts in this iterator.
-	 * @param iterator over Collection of Font
-	 */
-	private void disposeFonts(Iterator<Font> iterator) {
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((Font) next).dispose();
+		// disposes every display's fonts, not only the current display's: the
+		// contract is to dispose all allocated resources, and this also runs on
+		// disposal of the main display, which outlives all other displays
+		for (Display display : displayToFontRecords.keySet()) {
+			unhookDisplayAndDisposeFonts(display);
 		}
 	}
 
 	/**
-	 * Hook a dispose listener on the SWT display.
+	 * Hook a dispose listener on the SWT display this registry was created for.
+	 * Since that display outlives all others, its disposal tears down the whole
+	 * registry, not just its own fonts.
 	 */
-	private void hookDisplayDispose(Display display) {
-		displayDisposeHooked.add(display);
+	private void hookMainDisplayDispose(Display display) {
 		display.disposeExec(displayRunnable);
+	}
+
+	private Display getDisplayAndHookForDisposal() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			return null;
+		}
+		displayToFontRecords.computeIfAbsent(display, newDisplay -> {
+			if (cleanOnDisplayDisposal) {
+				newDisplay.disposeExec(() -> unhookDisplayAndDisposeFonts(newDisplay));
+			}
+			return new DisplayFontRecords();
+		});
+		return display;
+	}
+
+	private void unhookDisplayAndDisposeFonts(Display display) {
+		DisplayFontRecords records = displayToFontRecords.remove(display);
+		if (records != null) {
+			records.dispose();
+		}
 	}
 
 	/**
@@ -807,7 +884,7 @@ public class FontRegistry extends ResourceRegistry {
 	 *
 	 * @param symbolicName the symbolic font name
 	 * @param fontData an Array of FontData
-	 * @param update - fire a font mapping changed if true. False
+	 * @param update - fire a property change if true. False
 	 * 	if this method is called from the get method as no setting
 	 *  has changed.
 	 */
@@ -816,20 +893,23 @@ public class FontRegistry extends ResourceRegistry {
 		Assert.isNotNull(symbolicName);
 		Assert.isNotNull(fontData);
 
-		FontData[] existing = stringToFontData.get(symbolicName);
+		// single atomic read-modify-write; replacing an equal mapping with the
+		// given, content-equal one is a no-op for every reader
+		FontData[] existing = stringToFontData.put(symbolicName, fontData);
 		if (Arrays.equals(existing, fontData)) {
 			return;
 		}
 
-		FontRecord oldFont = stringToFontRecord
-				.remove(symbolicName);
-		stringToFontData.put(symbolicName, fontData);
+		// the font data is shared by all displays, so the font has to be
+		// invalidated on all of them. Stale fonts are queued per display, so
+		// each display disposes its own replaced fonts when it is itself
+		// disposed, instead of every display's replaced fonts only being
+		// disposed together with one particular display
+		for (DisplayFontRecords records : displayToFontRecords.values()) {
+			records.invalidate(symbolicName);
+		}
 		if (update) {
 			fireMappingChanged(symbolicName, existing, fontData);
-		}
-
-		if (oldFont != null) {
-			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
 		}
 	}
 
