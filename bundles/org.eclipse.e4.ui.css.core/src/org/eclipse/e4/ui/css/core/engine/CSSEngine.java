@@ -27,8 +27,6 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.ViewCSS;
-import org.w3c.dom.views.DocumentView;
 
 /**
  * CSS Engine interface used to parse style sheet and apply styles to something
@@ -190,25 +188,6 @@ public interface CSSEngine {
 	 * element from all stylesheets registered with this engine.
 	 */
 	CSSStyleDeclaration computeStyle(Element element, String pseudoElt);
-
-	/**
-	 * Binary-compatibility bridge for callers compiled against the removed
-	 * W3C cascade accessor; use {@link #computeStyle(Element, String)}.
-	 */
-	@Deprecated(forRemoval = true, since = "2026-06")
-	default ViewCSS getViewCSS() {
-		return new ViewCSS() {
-			@Override
-			public DocumentView getDocument() {
-				return null;
-			}
-
-			@Override
-			public CSSStyleDeclaration getComputedStyle(Element elt, String pseudoElt) {
-				return computeStyle(elt, pseudoElt);
-			}
-		};
-	}
 
 	/*--------------- w3c Element -----------------*/
 
