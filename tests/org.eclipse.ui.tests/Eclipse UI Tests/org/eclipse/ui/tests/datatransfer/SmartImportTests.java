@@ -572,4 +572,20 @@ public class SmartImportTests {
 			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
 		}
 	}
+
+	@Test
+	public void testAutoBuildingRestoredAfterFailedImport() throws Exception {
+		assertTrue("Test expects auto-building to be enabled", ResourcesPlugin.getWorkspace().isAutoBuilding());
+		// a regular file as import root makes the project creation fail
+		java.nio.file.Path notADirectory = Files.createTempFile("smartImportFailure", ".txt");
+		try {
+			SmartImportJob job = new SmartImportJob(notADirectory.toFile(), Collections.emptySet(), true, true);
+			IStatus status = job.run(new NullProgressMonitor());
+			assertEquals("Import was expected to fail", IStatus.ERROR, status.getSeverity());
+			assertTrue("Auto-building must be restored after a failed import",
+					ResourcesPlugin.getWorkspace().isAutoBuilding());
+		} finally {
+			Files.deleteIfExists(notADirectory);
+		}
+	}
 }
