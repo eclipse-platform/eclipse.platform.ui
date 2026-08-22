@@ -168,13 +168,11 @@ public class SmartImportJob extends Job {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		boolean isAutoBuilding = workspace.isAutoBuilding();
 		try {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceDescription description = workspace.getDescription();
-			boolean isAutoBuilding = workspace.isAutoBuilding();
 			if (isAutoBuilding) {
-				description.setAutoBuilding(false);
-				workspace.setDescription(description);
+				setAutoBuilding(workspace, false);
 			}
 
 			if (directoriesToImport != null) {
@@ -194,24 +192,29 @@ public class SmartImportJob extends Job {
 				SortedMap<File, IProject> leafToRootProjects = new TreeMap<>(Collections.reverseOrder(rootToLeafComparator));
 				final Set<IProject> alreadyConfiguredProjects = new HashSet<>();
 				loopMonitor.worked(1);
-				for (final File directoryToImport : directories) {
-					final boolean alreadyAnEclipseProject = new File(directoryToImport, IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
-					try {
-						IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
-								IResource.BACKGROUND_REFRESH);
-						if (alreadyAnEclipseProject) {
-							alreadyConfiguredProjects.add(newProject);
+				// Create all projects in one workspace operation, so listeners see a single
+				// resource delta instead of one per project. No configurator runs here.
+				workspace.run(creationMonitor -> {
+					for (final File directoryToImport : directories) {
+						final boolean alreadyAnEclipseProject = new File(directoryToImport,
+								IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
+						try {
+							IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
+									IResource.BACKGROUND_REFRESH);
+							if (alreadyAnEclipseProject) {
+								alreadyConfiguredProjects.add(newProject);
+							}
+							leafToRootProjects.put(directoryToImport, newProject);
+							loopMonitor.worked(1);
+						} catch (CouldNotImportProjectException ex) {
+							IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
+							if (listener != null) {
+								listener.errorHappened(path, ex);
+							}
+							this.errors.put(path, ex);
 						}
-						leafToRootProjects.put(directoryToImport, newProject);
-						loopMonitor.worked(1);
-					} catch (CouldNotImportProjectException ex) {
-						IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
-						if (listener != null) {
-							listener.errorHappened(path, ex);
-						}
-						this.errors.put(path, ex);
 					}
-				}
+				}, this.workspaceRoot, IWorkspace.AVOID_UPDATE, null);
 				if (configureProjects) {
 					JobGroup multiDirectoriesJobGroup = new JobGroup(
 							DataTransferMessages.SmartImportJob_configuringSelectedDirectories, 20, 1);
@@ -270,19 +273,30 @@ public class SmartImportJob extends Job {
 					try {
 						project.close(monitor);
 					} catch (CoreException e) {
-						listener.errorHappened(project.getLocation(), e);
+						if (listener != null) {
+							listener.errorHappened(project.getLocation(), e);
+						}
 					}
 				});
 			}
-
-			if (isAutoBuilding) {
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
 		} catch (Exception ex) {
 			return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, ex.getMessage(), ex);
+		} finally {
+			if (isAutoBuilding) {
+				try {
+					setAutoBuilding(workspace, true);
+				} catch (CoreException ex) {
+					IDEWorkbenchPlugin.log("Could not restore auto-building after import", ex); //$NON-NLS-1$
+				}
+			}
 		}
 		return Status.OK_STATUS;
+	}
+
+	private static void setAutoBuilding(IWorkspace workspace, boolean autoBuilding) throws CoreException {
+		IWorkspaceDescription description = workspace.getDescription();
+		description.setAutoBuilding(autoBuilding);
+		workspace.setDescription(description);
 	}
 
 	protected boolean rootProjectWorthBeingRemoved() {
@@ -451,7 +465,9 @@ public class SmartImportJob extends Job {
 			}
 		}
 
-		if (!mainProjectConfigurators.isEmpty()) {
+		// The container was already refreshed above, so refresh again only if the project
+		// is a different resource (nested project created for a child folder).
+		if (!mainProjectConfigurators.isEmpty() && !project.equals(container)) {
 			project.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.split(1));
 		}
 		for (ProjectConfigurator configurator : mainProjectConfigurators) {

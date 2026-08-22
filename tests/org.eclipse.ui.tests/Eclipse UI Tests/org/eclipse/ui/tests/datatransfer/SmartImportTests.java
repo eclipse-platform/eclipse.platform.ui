@@ -43,6 +43,9 @@ import java.util.function.Consumer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -187,6 +190,42 @@ public class SmartImportTests {
 		File file = new File(url.getFile());
 		runSmartImport(file);
 		assertEquals(6, ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
+	}
+
+	@Test
+	public void testProjectsAreCreatedInASingleWorkspaceOperation() throws Exception {
+		AtomicInteger eventsAddingProjects = new AtomicInteger();
+		IResourceChangeListener listener = event -> {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null && delta.getAffectedChildren(IResourceDelta.ADDED).length > 0) {
+				eventsAddingProjects.incrementAndGet();
+			}
+		};
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportBatch");
+		try {
+			Set<File> directories = new HashSet<>();
+			for (int i = 0; i < 3; i++) {
+				String name = "batchProject" + i;
+				File projectDirectory = new File(tempDir.toFile(), name);
+				projectDirectory.mkdirs();
+				Files.writeString(new File(projectDirectory, ".project").toPath(),
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>" + name
+								+ "</name></projectDescription>");
+				directories.add(projectDirectory);
+			}
+			SmartImportJob job = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), false, false);
+			job.setDirectoriesToImport(directories);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+			IStatus status = job.run(new NullProgressMonitor());
+
+			assertTrue("Import failed: " + status, status.isOK());
+			assertEquals(directories.size(), ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
+			assertEquals("All projects should be created in a single workspace operation", 1,
+					eventsAddingProjects.get());
+		} finally {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
 	}
 
 	@Test
@@ -570,6 +609,22 @@ public class SmartImportTests {
 			}
 		} finally {
 			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
+	}
+
+	@Test
+	public void testAutoBuildingRestoredAfterFailedImport() throws Exception {
+		assertTrue("Test expects auto-building to be enabled", ResourcesPlugin.getWorkspace().isAutoBuilding());
+		// a regular file as import root makes the project creation fail
+		java.nio.file.Path notADirectory = Files.createTempFile("smartImportFailure", ".txt");
+		try {
+			SmartImportJob job = new SmartImportJob(notADirectory.toFile(), Collections.emptySet(), true, true);
+			IStatus status = job.run(new NullProgressMonitor());
+			assertEquals("Import was expected to fail", IStatus.ERROR, status.getSeverity());
+			assertTrue("Auto-building must be restored after a failed import",
+					ResourcesPlugin.getWorkspace().isAutoBuilding());
+		} finally {
+			Files.deleteIfExists(notADirectory);
 		}
 	}
 }
