@@ -23,8 +23,8 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
