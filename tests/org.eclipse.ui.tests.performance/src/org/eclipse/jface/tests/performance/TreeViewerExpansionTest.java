@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -51,6 +52,15 @@ public class TreeViewerExpansionTest extends ViewerTest {
 
 	/** Children per level, from the top level down. */
 	private static final int[] BRANCHING = { 12, 12, 12 };
+
+	/**
+	 * A few large subtrees, the shape of a generated document whose top level is a
+	 * handful of big containers. Restoring one expanded container leaves most of
+	 * the materialized items with nothing left to match against.
+	 */
+	private static final int[] WIDE_BRANCHING = { 3, 600 };
+
+	private int[] branching = BRANCHING;
 
 	private TreeViewer treeViewer;
 
@@ -181,11 +191,11 @@ public class TreeViewerExpansionTest extends ViewerTest {
 		return root;
 	}
 
-	private static void createChildren(DeepHashElement parent, int level) {
-		if (level >= BRANCHING.length) {
+	private void createChildren(DeepHashElement parent, int level) {
+		if (level >= branching.length) {
 			return;
 		}
-		for (int i = 0; i < BRANCHING[level]; i++) {
+		for (int i = 0; i < branching[level]; i++) {
 			DeepHashElement child = new DeepHashElement(parent.name + "." + i, parent);
 			parent.children.add(child);
 			createChildren(child, level + 1);
@@ -210,6 +220,49 @@ public class TreeViewerExpansionTest extends ViewerTest {
 	public void testRestoreExpansionWithComparer() throws CoreException {
 		useComparer = true;
 		measureRestoreExpansion();
+	}
+
+	/**
+	 * Restores a small expanded set on a tree whose items are all materialized, the
+	 * case of a large document the user has opened one container of. The viewer
+	 * still walks every item, but runs out of paths to look for early on.
+	 */
+	@Test
+	public void testRestoreFewExpandedPaths() throws CoreException {
+		branching = WIDE_BRANCHING;
+		openBrowser();
+		treeViewer.expandAll();
+		processEvents();
+
+		TreePath[] all = treeViewer.getExpandedTreePaths();
+		assertTrue(all.length > 2, "Not enough expandable containers");
+		TreePath[] few = Arrays.copyOf(all, 2);
+
+		// Reaching the target state through the viewer keeps the items of the
+		// collapsed containers alive, unlike collapseAll, which prunes them.
+		treeViewer.setExpandedTreePaths(few);
+		processEvents();
+		treeViewer.setExpandedTreePaths(few);
+		processEvents();
+
+		AtomicLong visits = new AtomicLong();
+		exercise(() -> {
+			DeepHashElement.hashVisits.set(0);
+			startMeasuring();
+			treeViewer.setExpandedTreePaths(few);
+			stopMeasuring();
+			visits.set(DeepHashElement.hashVisits.get());
+
+			processEvents();
+			assertEquals(few.length, treeViewer.getExpandedTreePaths().length,
+					"The expansion state was not restored");
+		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
+
+		int elements = root.size() - 1;
+		reportTimings("restore " + few.length + " of " + elements + " elements, all materialized");
+		System.out.printf(Locale.ROOT, "%-48s %d recursive hash visits for %d elements (%.1f per element)%n",
+				getClass().getSimpleName() + " few expanded", visits.get(), elements,
+				visits.get() / (double) elements);
 	}
 
 	private void measureRestoreExpansion() throws CoreException {
