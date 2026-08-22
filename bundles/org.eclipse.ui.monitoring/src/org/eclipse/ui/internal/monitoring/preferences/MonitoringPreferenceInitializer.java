@@ -16,8 +16,8 @@
 package org.eclipse.ui.internal.monitoring.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 
 /**
@@ -26,17 +26,17 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
 public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = MonitoringPlugin.getPreferenceStore();
+		IEclipsePreferences store = DefaultScope.INSTANCE.getNode(PreferenceConstants.PLUGIN_ID);
 
-		store.setDefault(PreferenceConstants.MONITORING_ENABLED, false);
-		store.setDefault(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS, 500); // 0.5 sec
-		store.setDefault(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 100_000); // 100 sec
-		store.setDefault(PreferenceConstants.MAX_STACK_SAMPLES, 3);
-		store.setDefault(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
+		store.putBoolean(PreferenceConstants.MONITORING_ENABLED, false);
+		store.putInt(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS, 500); // 0.5 sec
+		store.putInt(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 100_000); // 100 sec
+		store.putInt(PreferenceConstants.MAX_STACK_SAMPLES, 3);
+		store.putInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				5 * 60 * 1000); // 5 min
-		store.setDefault(PreferenceConstants.LOG_TO_ERROR_LOG, true);
-		store.setDefault(PreferenceConstants.UI_THREAD_FILTER, ""); //$NON-NLS-1$
-		store.setDefault(PreferenceConstants.NONINTERESTING_THREAD_FILTER,
+		store.putBoolean(PreferenceConstants.LOG_TO_ERROR_LOG, true);
+		store.put(PreferenceConstants.UI_THREAD_FILTER, ""); //$NON-NLS-1$
+		store.put(PreferenceConstants.NONINTERESTING_THREAD_FILTER,
 				"java.*" //$NON-NLS-1$
 				+ ",sun.*" //$NON-NLS-1$
 				+ ",org.eclipse.core.internal.jobs.WorkerPool.sleep" //$NON-NLS-1$

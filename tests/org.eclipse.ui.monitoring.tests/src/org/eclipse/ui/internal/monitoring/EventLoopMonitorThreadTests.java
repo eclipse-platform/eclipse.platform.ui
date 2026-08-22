@@ -92,7 +92,7 @@ public class EventLoopMonitorThreadTests {
 
 	@BeforeEach
 	public void setUp() {
-		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
+		MonitoringPlugin.getPreferences().putBoolean(PreferenceConstants.MONITORING_ENABLED, false);
 		logger = new MockUiFreezeEventLogger();
 		loggedEvents = logger.getLoggedEvents();
 		monitorThreadControl = new ThreadControl(MAX_TIMEOUT_MS);
@@ -106,7 +106,7 @@ public class EventLoopMonitorThreadTests {
 			monitoringThread = null;
 		}
 		loggedEvents.clear();
-		MonitoringPlugin.getPreferenceStore().setToDefault(PreferenceConstants.MONITORING_ENABLED);
+		MonitoringPlugin.getPreferences().remove(PreferenceConstants.MONITORING_ENABLED);
 	}
 
 	/**
