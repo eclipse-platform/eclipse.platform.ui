@@ -102,6 +102,93 @@ public class ProjectionViewerTest {
 	}
 
 	@Test
+	void testCollapseAllProjectionAnnotations() {
+		Shell shell= new Shell();
+		try {
+			String content= """
+				before
+				hidden
+				after\
+				""";
+			TestProjectionViewer viewer= setupWithProjections(shell, content);
+			ProjectionAnnotation annotation= new ProjectionAnnotation(false);
+			int start= content.indexOf('\n');
+			viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(start, content.lastIndexOf('\n') + 1 - start));
+			viewer.getTextOperationTarget().doOperation(ProjectionViewer.COLLAPSE_ALL);
+			assertTrue(annotation.isCollapsed());
+			assertEquals("""
+				before
+				after\
+				""", viewer.getVisibleDocument().get());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	void testOptOutOfCollapseAllProjectionAnnotations() {
+		Shell shell= new Shell();
+		try {
+			String content= """
+					before
+					hidden
+					after\
+					""";
+			TestProjectionViewer viewer= setupWithProjections(shell, content);
+			ProjectionAnnotation annotation= new ProjectionAnnotation(false) {
+				@Override
+				protected boolean includeInCollapseAll() {
+					return false;
+				}
+			};
+			int start= content.indexOf('\n');
+			viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(start, content.lastIndexOf('\n') + 1 - start));
+			viewer.getTextOperationTarget().doOperation(ProjectionViewer.COLLAPSE_ALL);
+			assertFalse(annotation.isCollapsed());
+			assertEquals("""
+					before
+					hidden
+					after\
+					""", viewer.getVisibleDocument().get());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	void testExpandAllProjectionAnnotations() {
+		Shell shell= new Shell();
+		try {
+			String content= """
+					before
+					hidden
+					after\
+					""";
+			TestProjectionViewer viewer= setupWithProjections(shell, content);
+			ProjectionAnnotation annotation= new ProjectionAnnotation(true);
+			int start= content.indexOf('\n');
+			viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(start, content.lastIndexOf('\n') + 1 - start));
+			viewer.getTextOperationTarget().doOperation(ProjectionViewer.EXPAND_ALL);
+			assertFalse(annotation.isCollapsed());
+			assertEquals("""
+					before
+					hidden
+					after\
+					""", viewer.getVisibleDocument().get());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	private TestProjectionViewer setupWithProjections(Shell shell, String content) {
+		TestProjectionViewer viewer= new TestProjectionViewer(shell, null, null, false, SWT.NONE);
+		Document document= new Document(content);
+		viewer.setDocument(document, new AnnotationModel());
+		viewer.enableProjection();
+		return viewer;
+	}
+
+	@Test
 	public void testVisibleRegionDoesNotChangeWithProjections() {
 		Shell shell= new Shell();
 		shell.setLayout(new FillLayout());

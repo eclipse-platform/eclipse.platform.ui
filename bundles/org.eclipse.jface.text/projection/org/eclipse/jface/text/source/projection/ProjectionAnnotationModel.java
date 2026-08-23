@@ -116,7 +116,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 		Iterator<Annotation> iterator= getAnnotationIterator();
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-			if (!annotation.isCollapsed()) {
+			if (!annotation.isCollapsed() && annotation.includeInCollapseAll()) {
 				Position position= getPosition(annotation);
 				if (position != null && position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
 					annotation.markCollapsed();
