@@ -299,4 +299,54 @@ public class FontRegistryTest {
 		assertEquals(defaultDescriptor, fallbackDescriptor);
 	}
 
+
+	@Test
+	public void getBold_fromNonUIThread_realizesBoldFontOnTheRegistrysDisplay() throws Throwable {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		// only the plain default font is realized, so the bold variant still has to be created
+		Font defaultFont = fontRegistry.get(JFaceResources.DEFAULT_FONT);
+
+		Font boldFont = callOnNonUIThread(() -> fontRegistry.getBold("myfont"));
+
+		assertEquals(SWT.BOLD, boldFont.getFontData()[0].getStyle() & SWT.BOLD,
+				"a caller without a display of its own must still get a bold font");
+		assertEquals(defaultFont.getDevice(), boldFont.getDevice(),
+				"the bold font must be realized on the display the fallback font belongs to");
+	}
+
+	@Test
+	public void getItalic_fromNonUIThread_realizesItalicFontOnTheRegistrysDisplay() throws Throwable {
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		// only the plain default font is realized, so the italic variant still has to be created
+		Font defaultFont = fontRegistry.get(JFaceResources.DEFAULT_FONT);
+
+		Font italicFont = callOnNonUIThread(() -> fontRegistry.getItalic("myfont"));
+
+		assertEquals(SWT.ITALIC, italicFont.getFontData()[0].getStyle() & SWT.ITALIC,
+				"a caller without a display of its own must still get an italic font");
+		assertEquals(defaultFont.getDevice(), italicFont.getDevice(),
+				"the italic font must be realized on the display the fallback font belongs to");
+	}
+
+	private static Font callOnNonUIThread(Supplier<Font> fontSupplier) throws Throwable {
+		AtomicReference<Font> font = new AtomicReference<>();
+		AtomicReference<Throwable> failure = new AtomicReference<>();
+		Thread nonUiThread = new Thread(() -> {
+			try {
+				font.set(fontSupplier.get());
+			} catch (Throwable t) {
+				failure.set(t);
+			}
+		}, "non-UI thread font lookup");
+		nonUiThread.start();
+		nonUiThread.join();
+
+		if (failure.get() != null) {
+			throw failure.get();
+		}
+		return font.get();
+	}
+
 }
