@@ -22,10 +22,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
 	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
 }
 
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #F8F8F8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
-}
-
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #e5e5e5;
 }
@@ -37,10 +33,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
 	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
 }
 
