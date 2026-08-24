@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettingsProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.ResourceLocator;
@@ -35,6 +34,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -115,7 +115,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	/**
 	 * Storage for preferences.
 	 */
-	private volatile ScopedPreferenceStore preferenceStore;
+	private volatile IPreferenceStore preferenceStore;
 
 	/**
 	 * The registry for all graphic images; <code>null</code> if not yet
@@ -245,7 +245,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		// Create the preference store lazily.
-		ScopedPreferenceStore result = preferenceStore;
+		IPreferenceStore result = preferenceStore;
 		if (result == null) { // First check (no locking)
 			synchronized (this) {
 				result = preferenceStore;
