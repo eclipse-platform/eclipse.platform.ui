@@ -64,6 +64,10 @@ import org.eclipse.swt.widgets.Display;
 @NoExtend
 public class FontRegistry extends ResourceRegistry {
 
+	private enum FontStyle {
+		NORMAL, BOLD, ITALIC
+	}
+
 	/**
 	 * FontRecord is a private helper class that holds onto a font
 	 * and can be used to generate its bold and italic version.
@@ -109,8 +113,21 @@ public class FontRegistry extends ResourceRegistry {
 		 * Return the base Font.
 		 * @return Font
 		 */
-		public Font getBaseFont() {
+		private Font getBaseFont() {
 			return baseFont;
+		}
+
+		/**
+		 * Return the font for the given style, creating it lazily if necessary.
+		 * @param style the requested style
+		 * @return the font
+		 */
+		Font get(FontStyle style) {
+			return switch (style) {
+				case NORMAL -> getBaseFont();
+				case BOLD -> getBoldFont();
+				case ITALIC -> getItalicFont();
+			};
 		}
 
 		/**
@@ -118,7 +135,7 @@ public class FontRegistry extends ResourceRegistry {
 		 * of the base font to get it.
 		 * @return Font
 		 */
-		public Font getBoldFont() {
+		private Font getBoldFont() {
 			if (boldFont != null) {
 				return boldFont;
 			}
@@ -130,6 +147,20 @@ public class FontRegistry extends ResourceRegistry {
 			FontData[] boldData = getModifiedFontData(SWT.BOLD);
 			boldFont = new Font(baseFont.getDevice(), boldData);
 			return boldFont;
+		}
+
+		/**
+		 * Returns whether the given style has already been realized for this
+		 * record.
+		 * @param style the style to check
+		 * @return whether the given style is already available
+		 */
+		boolean has(FontStyle style) {
+			return switch (style) {
+				case NORMAL -> baseFont != null;
+				case BOLD -> boldFont != null;
+				case ITALIC -> italicFont != null;
+			};
 		}
 
 		/**
@@ -158,7 +189,7 @@ public class FontRegistry extends ResourceRegistry {
 		 * base font to get it.
 		 * @return Font
 		 */
-		public Font getItalicFont() {
+		private Font getItalicFont() {
 			if (italicFont != null) {
 				return italicFont;
 			}
@@ -236,7 +267,7 @@ public class FontRegistry extends ResourceRegistry {
 				return;
 			}
 			FontRecord defaultRecord = records.get(JFaceResources.DEFAULT_FONT);
-			Font defaultFont = defaultRecord != null ? defaultRecord.getBaseFont() : null;
+			Font defaultFont = defaultRecord != null ? defaultRecord.get(FontStyle.NORMAL) : null;
 			replacedRecord.getAllocatedFonts().stream().filter(font -> font != defaultFont).forEach(staleFonts::add);
 		}
 
@@ -609,7 +640,16 @@ public class FontRegistry extends ResourceRegistry {
 	 * @return Font
 	 */
 	public Font defaultFont() {
-		return defaultFontRecord().getBaseFont();
+		return defaultFont(FontStyle.NORMAL);
+	}
+
+	/**
+	 * Return the default font in the given style, creating it if necessary.
+	 * @param style the requested style
+	 * @return the font
+	 */
+	private Font defaultFont(FontStyle style) {
+		return defaultFontRecord(style).get(style);
 	}
 
 	/**
@@ -630,16 +670,20 @@ public class FontRegistry extends ResourceRegistry {
 
 
 	/**
-	 * Returns the default font record.
+	 * Return the default font record that can provide the passed style, creating it
+	 * if necessary. The font record may provide fonts for the current or the main
+	 * display. Only the passed style is guaranteed to be available on the returned
+	 * record.
+	 *
+	 * @param style the requested style
+	 * @return the font record, never <code>null</code>
 	 */
-	private FontRecord defaultFontRecord() {
-		FontRecord record = getExistingFontRecord(JFaceResources.DEFAULT_FONT);
+	private FontRecord defaultFontRecord(FontStyle style) {
+		FontRecord record = getExistingFontRecord(JFaceResources.DEFAULT_FONT, style);
 		if (record == null && Display.getCurrent() == null) {
-			// No display for the current thread, so there is none to scope the
-			// lookup to and none to create a font on. Fall back to the default
-			// font already realized on the main display, which outlives every
-			// other display, rather than fail outright. Reached e.g. from
-			// getFontRecord()'s non-UI-thread fallback.
+			// no display to scope the lookup to and none to create a font on: use the
+			// main display's record even if the requested style is not realized there
+			// yet, so the style gets realized on that display rather than failing
 			DisplayFontRecords mainDisplayRecords = displayToFontRecords.get(mainDisplay);
 			if (mainDisplayRecords != null) {
 				record = mainDisplayRecords.get(JFaceResources.DEFAULT_FONT);
@@ -663,24 +707,65 @@ public class FontRegistry extends ResourceRegistry {
 	}
 
 	/**
-	 * Looks up an already-realized font record for the given symbolic name on
-	 * the current display. Returns <code>null</code> if there is none, in which
-	 * case the caller is responsible for creating one on the current display.
+	 * Looks up an already-realized font record for the given symbolic name and
+	 * style. A record the current display has already realized the exact style
+	 * on is used first, so repeated lookups from that display keep returning the
+	 * same font. Otherwise the main display's record is used if it already has
+	 * that style, so callers from any display, including a thread with no
+	 * Display of its own, reuse it instead of allocating a duplicate. Failing
+	 * both, the current display's own record is returned even though it lacks
+	 * the requested style, so that the style gets realized on the display owning
+	 * the record; <code>null</code> is returned only if the current display has
+	 * no record for the name at all, in which case the caller is responsible for
+	 * creating one on it.
+	 * <p>
+	 * Handing out the main display's font to another display is safe because
+	 * the main display is assumed to outlive every other display the registry
+	 * is used from, so the font cannot be disposed while another display is
+	 * still using it.
+	 * </p>
+	 * <p>
+	 * Requiring the exact style to be present is also what keeps the lazy
+	 * creation of styled fonts single-threaded: a record is only ever handed to
+	 * a foreign display once the style it asks for has been realized, so only
+	 * the record's own display ever reaches the creating branch of
+	 * {@link FontRecord#get(FontStyle)}. Note that for {@link FontStyle#NORMAL}
+	 * every existing record matches, since that font is realized when the record
+	 * is created.
+	 * </p>
 	 */
-	private FontRecord getExistingFontRecord(String symbolicName) {
+	private FontRecord getExistingFontRecord(String symbolicName, FontStyle style) {
+		FontRecord recordOnCurrentDisplay = null;
 		Display currentDisplay = Display.getCurrent();
-		if (currentDisplay == null) {
-			return null;
+		if (currentDisplay != null) {
+			DisplayFontRecords currentDisplayRecords = displayToFontRecords.get(currentDisplay);
+			if (currentDisplayRecords != null) {
+				recordOnCurrentDisplay = currentDisplayRecords.get(symbolicName);
+				// a style this display already realized itself stays the one it gets, so
+				// repeated lookups keep returning the same font instance
+				if (recordOnCurrentDisplay != null && recordOnCurrentDisplay.has(style)) {
+					return recordOnCurrentDisplay;
+				}
+			}
 		}
-		DisplayFontRecords currentDisplayRecords = displayToFontRecords.get(currentDisplay);
-		return currentDisplayRecords != null ? currentDisplayRecords.get(symbolicName) : null;
+
+		DisplayFontRecords mainDisplayRecords = displayToFontRecords.get(mainDisplay);
+		if (mainDisplayRecords != null) {
+			FontRecord recordOnMainDisplay = mainDisplayRecords.get(symbolicName);
+			// Only return main display record if exact font style already exists
+			if (recordOnMainDisplay != null && recordOnMainDisplay.has(style)) {
+				return recordOnMainDisplay;
+			}
+		}
+
+		return recordOnCurrentDisplay;
 	}
 
 	/**
 	 * Returns the default font data.  Creates it if necessary.
 	 */
 	private FontData[] defaultFontData() {
-		return defaultFontRecord().baseData;
+		return defaultFontRecord(FontStyle.NORMAL).baseData;
 	}
 
 	/**
@@ -717,8 +802,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * @return the font
 	 */
 	public Font get(String symbolicName) {
-
-		return getFontRecord(symbolicName).getBaseFont();
+		return getFont(symbolicName, FontStyle.NORMAL);
 	}
 
 	/**
@@ -737,8 +821,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * @since 3.0
 	 */
 	public Font getBold(String symbolicName) {
-
-		return getFontRecord(symbolicName).getBoldFont();
+		return getFont(symbolicName, FontStyle.BOLD);
 	}
 
 	/**
@@ -757,20 +840,20 @@ public class FontRegistry extends ResourceRegistry {
 	 * @since 3.0
 	 */
 	public Font getItalic(String symbolicName) {
-
-		return getFontRecord(symbolicName).getItalicFont();
+		return getFont(symbolicName, FontStyle.ITALIC);
 	}
 
 	/**
-	 * Return the font record for the key.
+	 * Return the font for the given key and style.
 	 * @param symbolicName The key for the record.
-	 * @return FontRecord
+	 * @param style the requested style
+	 * @return the font
 	 */
-	private FontRecord getFontRecord(String symbolicName) {
+	private Font getFont(String symbolicName, FontStyle style) {
 		Assert.isNotNull(symbolicName);
-		FontRecord existingRecord = getExistingFontRecord(symbolicName);
+		FontRecord existingRecord = getExistingFontRecord(symbolicName, style);
 		if (existingRecord != null) {
-			return existingRecord;
+			return existingRecord.get(style);
 		}
 
 		FontData[] existingFontData = stringToFontData.get(symbolicName);
@@ -778,20 +861,20 @@ public class FontRegistry extends ResourceRegistry {
 		FontRecord fontRecord;
 
 		if (existingFontData == null) {
-			fontRecord = defaultFontRecord();
+			fontRecord = defaultFontRecord(style);
 		} else {
 			fontRecord = createFont(symbolicName, existingFontData);
 		}
 
 		if (fontRecord == null) {
-			fontRecord = defaultFontRecord();
+			fontRecord = defaultFontRecord(style);
 			if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
 				String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.logException(new SWTException(msg));
 			}
 		}
 
-		return fontRecord;
+		return fontRecord.get(style);
 	}
 
 	@Override
