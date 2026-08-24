@@ -78,7 +78,7 @@ public class FontRegistryTest {
 	}
 
 	@Test
-	public void multipleDisplay_italicFont() {
+	public void multipleDisplayDispose_italicFont() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		FontRegistry fontRegistry = new FontRegistry();
