@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="eclipseui/org/eclipse/ui/preferences/ScopedPreferenceStore.java" type="org.eclipse.ui.preferences.ScopedPreferenceStore">
+        <filter comment="Kept for backwards compatibility" id="571473929">
+            <message_arguments>
+                <message_argument value="ScopedPreferenceStore"/>
+                <message_argument value="ScopedPreferenceStore"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
