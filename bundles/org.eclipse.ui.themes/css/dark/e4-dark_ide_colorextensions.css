@@ -23,7 +23,6 @@ ThemesExtension { color-definition:
     '#org-eclipse-ui-workbench-DARK_BACKGROUND',
     '#org-eclipse-ui-workbench-DARK_FOREGROUND',
 	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START',
-	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END',
     '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START',
     '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END',
 	'#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR',
@@ -33,7 +32,6 @@ ThemesExtension { color-definition:
     '#org-eclipse-ui-workbench-INACTIVE_TAB_UNSELECTED_TEXT_COLOR',
     '#org-eclipse-ui-workbench-INACTIVE_TAB_SELECTED_TEXT_COLOR',
     '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START',
-	'#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END',
     '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START',
     '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END',
 	'#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR',
@@ -66,12 +64,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
 	color: #515658;
 	category: '#org-eclipse-ui-presentation-default';
 	label: url('platform:/plugin/org.eclipse.ui.themes?message=INACTIVE_UNSELECTED_TABS_COLOR_START');
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #464649;
-	category: '#org-eclipse-ui-presentation-default';
-	label: url('platform:/plugin/org.eclipse.ui.themes?message=INACTIVE_UNSELECTED_TABS_COLOR_END');
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
@@ -126,12 +118,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
 	color: #49484C;
 	category: '#org-eclipse-ui-presentation-default';
 	label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_UNSELECTED_TABS_COLOR_START');
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #48484C;
-	category: '#org-eclipse-ui-presentation-default';
-	label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_UNSELECTED_TABS_COLOR_END');
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START {
