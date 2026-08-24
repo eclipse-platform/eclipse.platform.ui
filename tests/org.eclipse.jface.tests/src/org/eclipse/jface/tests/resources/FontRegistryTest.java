@@ -98,6 +98,101 @@ public class FontRegistryTest {
 	}
 
 	@Test
+	public void multipleDisplay_reusesMainDisplayFont_whenStyleAlreadyCached() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		Font mainFont = fontRegistry.get("myfont");
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		try {
+			Font fontFromSecondDisplayThread = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+			assertEquals(mainFont, fontFromSecondDisplayThread,
+					"a font already realized on the main display should be reused from any other display's thread");
+			assertEquals(Display.getCurrent(), fontFromSecondDisplayThread.getDevice(),
+					"the reused font is still owned by the main display");
+		} finally {
+			secondDisplay.syncExec(secondDisplay::dispose);
+		}
+	}
+
+	@Test
+	public void multipleDisplay_createsOwnFont_whenStyleNotYetCachedOnMainDisplay() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // only realizes the NORMAL style on the main display
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		Font boldFontOnSecondDisplay;
+		try {
+			boldFontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.getBold("myfont"));
+
+			assertEquals(secondDisplay, boldFontOnSecondDisplay.getDevice(),
+					"bold style is not yet cached on the main display, so it must be created on the requesting display");
+		} finally {
+			secondDisplay.syncExec(secondDisplay::dispose);
+		}
+		assertTrue(boldFontOnSecondDisplay.isDisposed(),
+				"fonts created for the second display must be disposed together with it");
+	}
+
+	@Test
+	public void multipleDisplay_reusesMainDisplayFont_onceStyleBecomesCachedThere() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+		fontRegistry.get("myfont"); // only realizes the NORMAL style on the main display
+
+		Display firstSecondDisplay = initializeDisplayInSeparateThread();
+		Font boldFontOnFirstSecondDisplay = firstSecondDisplay.syncCall(() -> fontRegistry.getBold("myfont"));
+		assertEquals(firstSecondDisplay, boldFontOnFirstSecondDisplay.getDevice(),
+				"bold style is not yet cached on the main display, so it must be created on the requesting display");
+		firstSecondDisplay.syncExec(firstSecondDisplay::dispose);
+
+		// the main display now also realizes the bold style
+		Font boldFontOnMainDisplay = fontRegistry.getBold("myfont");
+
+		Display secondSecondDisplay = initializeDisplayInSeparateThread();
+		try {
+			Font boldFontOnSecondSecondDisplay = secondSecondDisplay.syncCall(() -> fontRegistry.getBold("myfont"));
+			assertEquals(boldFontOnMainDisplay, boldFontOnSecondSecondDisplay,
+					"once the main display has realized the requested style, later lookups from any display must reuse it");
+		} finally {
+			secondSecondDisplay.syncExec(secondSecondDisplay::dispose);
+		}
+	}
+
+	@Test
+	public void multipleDisplay_keepsOwnFont_whenMainDisplayRealizesItLater() {
+		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
+
+		FontRegistry fontRegistry = new FontRegistry();
+		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 12, SWT.NORMAL) });
+
+		Display secondDisplay = initializeDisplayInSeparateThread();
+		try {
+			// the second display realizes the font before the main display has one to reuse
+			Font fontOnSecondDisplay = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+			assertEquals(secondDisplay, fontOnSecondDisplay.getDevice(),
+					"nothing to reuse yet, so the second display must realize a font of its own");
+
+			// the main display realizing the same font afterwards must not change what
+			// the second display gets, or it would silently switch instances mid-flight
+			fontRegistry.get("myfont");
+
+			Font fontOnSecondDisplayAgain = secondDisplay.syncCall(() -> fontRegistry.get("myfont"));
+			assertSame(fontOnSecondDisplay, fontOnSecondDisplayAgain,
+					"a display that realized a font itself must keep getting that same instance");
+		} finally {
+			secondDisplay.syncExec(secondDisplay::dispose);
+		}
+	}
+
+	@Test
 	public void put_invalidatesCachedFont_onAllDisplays() {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
@@ -160,6 +255,9 @@ public class FontRegistryTest {
 		assumeTrue(OS.isWindows(), "multiple Display instance only allowed on Windows");
 
 		Display secondDisplay = initializeDisplayInSeparateThread();
+		// the second display is asked first on purpose: the requested font is not
+		// realized on the main display yet, so there is nothing to reuse and the
+		// second display has to realize (and own) a font of its own
 		Font fontOnSecondDisplay = secondDisplay.syncCall(fontSupplier::get);
 
 		Font fontOnThisDisplayBeforeSecondDisplayDispose = fontSupplier.get();
