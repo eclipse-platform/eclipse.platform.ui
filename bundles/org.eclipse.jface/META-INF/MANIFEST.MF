@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface;singleton:=true
-Bundle-Version: 3.40.100.qualifier
+Bundle-Version: 3.41.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface,
@@ -40,7 +40,10 @@ Require-Bundle: org.eclipse.swt;bundle-version="[3.126.0,4.0.0)";visibility:=ree
  org.eclipse.equinox.bidi;bundle-version="[0.10.0,2.0.0)";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: javax.xml.parsers,
+ org.eclipse.core.internal.preferences;resolution:=optional,
+ org.eclipse.core.runtime.preferences;version="[3.6.0,4.0.0)";resolution:=optional,
  org.osgi.framework;version="[1.8.0,2.0.0)",
+ org.osgi.service.prefs;version="[1.1.0,2.0.0)";resolution:=optional,
  org.w3c.dom,
  org.xml.sax
 Automatic-Module-Name: org.eclipse.jface

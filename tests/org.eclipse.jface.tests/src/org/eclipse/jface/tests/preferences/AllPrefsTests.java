@@ -21,7 +21,8 @@ import org.junit.platform.suite.api.Suite;
 		BooleanFieldEditorTest.class, //
 		StringFieldEditorTest.class, //
 		IntegerFieldEditorTest.class, //
-		ScaleFieldEditorTest.class //
+		ScaleFieldEditorTest.class, //
+		ScopedPreferenceStoreTest.class //
 })
 public class AllPrefsTests {
 

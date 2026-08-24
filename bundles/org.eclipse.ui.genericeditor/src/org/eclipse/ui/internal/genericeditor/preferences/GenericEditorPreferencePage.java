@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,7 +42,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.genericeditor.Messages;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class GenericEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private final ArrayList<SelectionListener> leadFollowerListeners = new ArrayList<>();
