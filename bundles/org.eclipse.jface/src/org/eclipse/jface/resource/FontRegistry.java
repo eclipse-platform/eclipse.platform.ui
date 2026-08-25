@@ -856,25 +856,27 @@ public class FontRegistry extends ResourceRegistry {
 			return existingRecord.get(style);
 		}
 
-		FontData[] existingFontData = stringToFontData.get(symbolicName);
-
-		FontRecord fontRecord;
-
-		if (existingFontData == null) {
-			fontRecord = defaultFontRecord(style);
-		} else {
-			fontRecord = createFont(symbolicName, existingFontData);
+		FontData[] registeredFontData = stringToFontData.get(symbolicName);
+		if (registeredFontData == null) {
+			return defaultFont(style);
 		}
 
-		if (fontRecord == null) {
-			fontRecord = defaultFontRecord(style);
-			if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
-				String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
-				Policy.logException(new SWTException(msg));
-			}
+		FontRecord createdRecord = createFont(symbolicName, registeredFontData);
+		if (createdRecord != null) {
+			return createdRecord.get(style);
 		}
 
-		return fontRecord.get(style);
+		// If the name is registered, but no font could be realized for it (e.g. there
+		// is no current Display to create it on, or the registered FontData is
+		// empty/invalid), the default font is used as fallback. Resolve the fallback
+		// before logging, so the message is only emitted once a default font is
+		// actually available to return, and not on a path that ends up failing anyway.
+		Font fallbackFont = defaultFont(style);
+		if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
+			String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.logException(new SWTException(msg));
+		}
+		return fallbackFont;
 	}
 
 	@Override
