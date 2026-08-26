@@ -2826,16 +2826,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * @param visible whether the perspective bar should be shown. This is only
-	 *                applicable if the window configurer also wishes either the
-	 *                perspective bar to be visible.
+	 * @param visible whether the status line should be shown
 	 * @since 3.0
 	 */
 	public void setStatusLineVisible(boolean visible) {
 		boolean oldValue = statusLineVisible;
 		statusLineVisible = visible;
 		if (oldValue != statusLineVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, Boolean.toString(visible));
 			updateLayoutDataForContents();
 			firePropertyChanged(PROP_STATUS_LINE_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
 					statusLineVisible ? Boolean.TRUE : Boolean.FALSE);
@@ -2843,9 +2840,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * @return whether the perspective bar should be shown. This is only applicable
-	 *         if the window configurer also wishes either the perspective bar to be
-	 *         visible.
+	 * @return whether the status line should be shown
 	 * @since 3.0
 	 */
 	public boolean getStatusLineVisible() {
