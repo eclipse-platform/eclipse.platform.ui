@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -33,8 +34,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -208,6 +211,32 @@ public class CodeMiningLineHeaderAnnotationTest {
 				consolasFont.dispose();
 			}
 		}
+	}
+
+	/** An update must not modify a mining list a painting reader already holds. */
+	@Test
+	public void testUpdateDoesNotModifyMiningsSeenByReaders() throws Exception {
+		var annotation= new CodeMiningLineHeaderAnnotation(new Position(0, 0), fViewer);
+		annotation.update(List.of(codeMining("first"), codeMining("second")), null);
+
+		List<ICodeMining> minings= annotation.getMinings();
+		Iterator<ICodeMining> iterator= minings.iterator();
+		assertEquals("first", iterator.next().getLabel());
+
+		annotation.update(List.of(codeMining("third")), null);
+
+		assertEquals("second", iterator.next().getLabel());
+		assertEquals(2, minings.size());
+		assertEquals(1, annotation.getMinings().size());
+	}
+
+	private LineHeaderCodeMining codeMining(String label) throws BadLocationException {
+		return new LineHeaderCodeMining(0, document, null) {
+			@Override
+			public String getLabel() {
+				return label;
+			}
+		};
 	}
 
 	private static Font tryCreateConsolasFont(StyledText textWidget, int height) {
