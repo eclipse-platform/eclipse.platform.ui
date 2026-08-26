@@ -690,7 +690,7 @@ public class ModelAssembler {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			warn("Could not run processor: {}", e); //$NON-NLS-1$
+			error("Could not run processor {}", ce.getAttribute("class"), e); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
@@ -731,7 +731,9 @@ public class ModelAssembler {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			warn("Could not run processor: {}", e); //$NON-NLS-1$
+			Class<?> processorClass = processor.getProcessorClass() != null ? processor.getProcessorClass()
+					: processor.getClass();
+			error("Could not run processor {}", processorClass.getName(), e); //$NON-NLS-1$
 		}
 	}
 
@@ -825,6 +827,9 @@ public class ModelAssembler {
 		} else {
 			// fallback if no LogService is available
 			stream.println(MessageFormat.format(addIndex(message), args));
+			if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+				t.printStackTrace(stream);
+			}
 		}
 	}
 
