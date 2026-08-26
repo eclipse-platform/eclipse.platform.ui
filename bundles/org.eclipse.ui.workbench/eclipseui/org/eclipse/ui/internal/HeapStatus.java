@@ -44,6 +44,9 @@ import org.eclipse.ui.internal.util.PrefUtil;
 /**
  * The Heap Status control, which shows the heap usage statistics in the window
  * trim.
+ * <p>
+ * All colors except the low-memory red and the free-memory orange derive from
+ * the control's background and foreground.
  *
  * @since 3.1
  */
@@ -52,16 +55,8 @@ public class HeapStatus extends Composite {
 	private boolean armed;
 	private final Image gcImage;
 	private Image disabledGcImage;
-	private Color bgCol;
-	private final Color usedMemCol;
 	private final Color lowMemCol;
 	private final Color freeMemCol;
-	private Color topLeftCol;
-	private final Color bottomRightCol;
-	private final Color sepCol;
-	private Color textCol;
-	private Color markCol;
-	private Color armCol;
 	private final Canvas canvas;
 	private IPreferenceStore prefStore;
 	private int updateInterval;
@@ -137,13 +132,8 @@ public class HeapStatus extends Composite {
 			disabledGcImage = new Image(display, gcImage, SWT.IMAGE_DISABLE);
 		}
 
-		usedMemCol = new Color(160, 160, 160); // gray
 		lowMemCol = new Color(255, 70, 70); // medium red
 		freeMemCol = new Color(255, 190, 125); // light orange
-		sepCol = topLeftCol = armCol = usedMemCol;
-		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
-		markCol = textCol = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 
 		createContextMenu();
 
@@ -214,31 +204,6 @@ public class HeapStatus extends Composite {
 				getDisplay().timerExec(updateInterval, timer);
 			}
 		});
-	}
-
-	@Override
-	public void setBackground(Color color) {
-		bgCol = color;
-		canvas.redraw();
-	}
-
-	@Override
-	public void setForeground(Color color) {
-		if (color == null) {
-			markCol = textCol = getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		} else {
-			markCol = textCol = color;
-		}
-
-		canvas.redraw();
-	}
-
-	@Override
-	public Color getForeground() {
-		if (usedMemCol != null) {
-			return usedMemCol;
-		}
-		return getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 	}
 
 	private void setUpdateIntervalInMS(int interval) {
@@ -357,13 +322,19 @@ public class HeapStatus extends Composite {
 			return;
 		}
 		if (armed) {
-			gc.setBackground(armCol);
+			gc.setBackground(blend(getForeground(), getBackground()));
 			gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
 		}
 		if (gcImage != null) {
 			int by = (rect.height - imgBounds.height) / 2 + rect.y; // button y
 			gc.drawImage(gcImage, rect.x, by);
 		}
+	}
+
+	private static Color blend(Color c1, Color c2) {
+		return new Color(Math.round((c1.getRed() + c2.getRed()) / 2f),
+				Math.round((c1.getGreen() + c2.getGreen()) / 2f),
+				Math.round((c1.getBlue() + c2.getBlue()) / 2f));
 	}
 
 	private void paintComposite(GC gc) {
@@ -385,21 +356,17 @@ public class HeapStatus extends Composite {
 		int sw = w - bw - 3; // status width
 		int uw = (int) (sw * usedMem / totalMem); // used mem width
 		int ux = x + 1 + uw; // used mem right edge
-		if (bgCol != null) {
-			gc.setBackground(bgCol);
-		}
+		Color bg = getBackground();
+		Color fg = getForeground();
+		Color midCol = blend(fg, bg);
+		gc.setBackground(bg);
 		gc.fillRectangle(rect);
-		gc.setForeground(sepCol);
+		gc.setForeground(midCol);
 		gc.drawLine(dx, y, dx, y + h);
 		gc.drawLine(ux, y, ux, y + h);
-		gc.setForeground(topLeftCol);
-		gc.drawLine(x, y, x + w, y);
-		gc.drawLine(x, y, x, y + h);
-		gc.setForeground(bottomRightCol);
-		gc.drawLine(x + w - 1, y, x + w - 1, y + h);
-		gc.drawLine(x, y + h - 1, x + w, y + h - 1);
+		gc.drawRectangle(x, y, w - 1, h - 1);
 
-		gc.setBackground(usedMemCol);
+		gc.setBackground(midCol);
 		gc.fillRectangle(x + 1, y + 1, uw, h - 2);
 
 		String s = NLS.bind(WorkbenchMessages.HeapStatus_status, convertToMegString(usedMem),
@@ -407,13 +374,13 @@ public class HeapStatus extends Composite {
 		Point p = gc.textExtent(s);
 		int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
 		int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
-		gc.setForeground(textCol);
+		gc.setForeground(fg);
 		gc.drawString(s, sx, sy, true);
 
 		// draw an I-shaped bar in the foreground colour for the mark (if present)
 		if (mark != -1) {
 			int ssx = (int) (sw * mark / totalMem) + x + 1;
-			paintMark(gc, ssx, y, h);
+			paintMark(gc, fg, ssx, y, h);
 		}
 	}
 
@@ -431,25 +398,21 @@ public class HeapStatus extends Composite {
 		int tw = (int) (sw * totalMem / maxMem); // current total mem width
 		int tx = x + 1 + tw; // current total mem right edge
 
-		if (bgCol != null) {
-			gc.setBackground(bgCol);
-		}
+		Color bg = getBackground();
+		Color fg = getForeground();
+		Color midCol = blend(fg, bg);
+		gc.setBackground(bg);
 		gc.fillRectangle(rect);
-		gc.setForeground(sepCol);
+		gc.setForeground(midCol);
 		gc.drawLine(dx, y, dx, y + h);
 		gc.drawLine(ux, y, ux, y + h);
 		gc.drawLine(tx, y, tx, y + h);
-		gc.setForeground(topLeftCol);
-		gc.drawLine(x, y, x + w, y);
-		gc.drawLine(x, y, x, y + h);
-		gc.setForeground(bottomRightCol);
-		gc.drawLine(x + w - 1, y, x + w - 1, y + h);
-		gc.drawLine(x, y + h - 1, x + w, y + h - 1);
+		gc.drawRectangle(x, y, w - 1, h - 1);
 
 		if (lowMemThreshold != 0 && ((double) (maxMem - usedMem) / (double) maxMem < lowMemThreshold)) {
 			gc.setBackground(lowMemCol);
 		} else {
-			gc.setBackground(usedMemCol);
+			gc.setBackground(midCol);
 		}
 		gc.fillRectangle(x + 1, y + 1, uw, h - 2);
 
@@ -468,17 +431,17 @@ public class HeapStatus extends Composite {
 		Point p = gc.textExtent(s);
 		int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
 		int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
-		gc.setForeground(textCol);
+		gc.setForeground(fg);
 		gc.drawString(s, sx, sy, true);
 
 		// draw an I-shaped bar in the foreground colour for the mark (if present)
 		if (mark != -1) {
 			int ssx = (int) (sw * mark / maxMem) + x + 1;
-			paintMark(gc, ssx, y, h);
+			paintMark(gc, fg, ssx, y, h);
 		}
 	}
 
-	private void paintMark(GC gc, int x, int y, int h) {
+	private void paintMark(GC gc, Color markCol, int x, int y, int h) {
 		gc.setForeground(markCol);
 		gc.drawLine(x, y + 1, x, y + h - 2);
 		gc.drawLine(x - 1, y + 1, x + 1, y + 1);
