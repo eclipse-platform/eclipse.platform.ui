@@ -55,6 +55,7 @@ import org.junit.platform.suite.api.Suite;
 	MarkerQueryTest.class,
 	Bug99858Test.class,
 	WorkbenchWindowSubordinateSourcesTests.class,
+	TrimVisibilityPreferenceTest.class,
 	ReopenMenuTest.class,
 	UtilTest.class,
 	MarkerTesterTest.class,
