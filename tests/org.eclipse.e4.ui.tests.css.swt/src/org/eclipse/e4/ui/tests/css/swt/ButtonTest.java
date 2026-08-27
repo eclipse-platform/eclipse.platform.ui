@@ -78,7 +78,7 @@ public class ButtonTest {
 
 	@Test
 	void testFontRegular() {
-		Button buttonToTest = createTestButton("Button { font: Verdana 16px }", SWT.CHECK);
+		Button buttonToTest = createTestButton("Button { font: Verdana 16pt }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
@@ -88,7 +88,7 @@ public class ButtonTest {
 
 	@Test
 	void testFontBold() {
-		Button buttonToTest = createTestButton("Button { font: Arial 12px; font-weight: bold }", SWT.CHECK);
+		Button buttonToTest = createTestButton("Button { font: Arial 12pt; font-weight: bold }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());

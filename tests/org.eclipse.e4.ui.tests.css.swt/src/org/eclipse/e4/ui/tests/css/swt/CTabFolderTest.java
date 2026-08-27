@@ -152,7 +152,7 @@ public class CTabFolderTest {
 
 	@Test
 	void testFontRegular() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Verdana 16px }");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Verdana 16pt }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
@@ -162,7 +162,7 @@ public class CTabFolderTest {
 
 	@Test
 	void testFontBold() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12px; font-weight: bold }");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12pt; font-weight: bold }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
@@ -172,7 +172,7 @@ public class CTabFolderTest {
 
 	@Test
 	void testFontItalic() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12px; font-style: italic }");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12pt; font-style: italic }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());

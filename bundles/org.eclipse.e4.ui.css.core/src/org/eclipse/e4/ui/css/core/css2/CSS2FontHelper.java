@@ -85,7 +85,8 @@ public class CSS2FontHelper {
 			}
 		}
 		if (value instanceof CssNumeric numeric
-				&& (numeric.unit() == CssUnit.PT || numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX)) {
+				&& (numeric.unit() == CssUnit.PT || numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX
+						|| numeric.unit() == CssUnit.EM || numeric.unit() == CssUnit.PERCENT)) {
 			return "font-size";
 		}
 		return null;
