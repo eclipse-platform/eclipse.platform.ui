@@ -17,12 +17,16 @@ package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.ThemeElementDefinitionHelper.normalizeId;
 
+import java.util.OptionalInt;
+
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2FontPropertiesHelpers;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssDimension;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
@@ -49,6 +53,18 @@ public class CSSSWTFontHelper {
 
 	private static final String DEFAULT_FONT = "defaultFont";
 
+	/** Step between two sizes for the 'larger' and 'smaller' keywords. */
+	private static final double RELATIVE_FONT_SIZE_STEP = 1.2;
+
+	/** Lower bound so that repeated 'smaller' cannot shrink a font away. */
+	private static final int MIN_FONT_HEIGHT = 1;
+
+	/** A CSS pixel is 1/96 inch, an SWT font height is 1/72 inch. */
+	private static final double PX_TO_PT = 72d / 96d;
+
+	/** Context key for the font an element had before it was ever styled. */
+	private static final String BASE_FONT_DATA = "org.eclipse.e4.ui.css.swt.baseFontData"; //$NON-NLS-1$
+
 	/**
 	 * Get CSS2FontProperties from Control stored into Data of Control. If
 	 * CSS2FontProperties doesn't exist, create it from Font of Control and
@@ -65,6 +81,7 @@ public class CSSSWTFontHelper {
 			// store into ClientProperty the CSS2FontProperties
 			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
 					context);
+			setBaseFontData(context, getFirstFontData(font));
 		}
 		return fontProperties;
 	}
@@ -95,6 +112,7 @@ public class CSSSWTFontHelper {
 			// store into ClientProperty the CSS2FontProperties
 			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
 					context);
+			setBaseFontData(context, getFirstFontData(font));
 		}
 		return fontProperties;
 	}
@@ -178,16 +196,16 @@ public class CSSSWTFontHelper {
 		newFontData.setStyle(style);
 
 		// Height
-		CssPrimitive cssFontSize = fontProperties.getSize();
+		OptionalInt cssFontHeight = fontProperties.isSizeFromCSS()
+				? getFontHeight(fontProperties.getSize(), oldFontData)
+				: OptionalInt.empty();
 		boolean fontHeightSet = false;
 
-		if (!(cssFontSize instanceof CssNumeric) || !fontProperties.isSizeFromCSS()) {
-			if (fontDefinitionAsFamily && fontDataByDefinition.length > 0) {
-				newFontData.setHeight(fontDataByDefinition[0].getHeight());
-				fontHeightSet = true;
-			}
-		} else {
-			newFontData.setHeight((int) ((CssNumeric) cssFontSize).value());
+		if (cssFontHeight.isPresent()) {
+			newFontData.setHeight(cssFontHeight.getAsInt());
+			fontHeightSet = true;
+		} else if (fontDefinitionAsFamily && fontDataByDefinition.length > 0) {
+			newFontData.setHeight(fontDataByDefinition[0].getHeight());
 			fontHeightSet = true;
 		}
 		if (!fontHeightSet && oldFontData != null) {
@@ -195,6 +213,96 @@ public class CSSSWTFontHelper {
 		}
 
 		return newFontData;
+	}
+
+	/**
+	 * Resolves a CSS font-size to an SWT font height in points, empty if the value
+	 * cannot be resolved. Relative sizes (em, %, larger, smaller) scale the font
+	 * the widget had before styling.
+	 */
+	private static OptionalInt getFontHeight(CssPrimitive cssFontSize, FontData oldFontData) {
+		if (cssFontSize instanceof CssNumeric numeric) {
+			return switch (numeric.unit()) {
+			case EM -> scaleFontHeight(numeric.value(), oldFontData);
+			case PERCENT -> scaleFontHeight(numeric.value() / 100, oldFontData);
+			case PX -> OptionalInt.of(toFontHeight(numeric.value() * PX_TO_PT));
+			// SWT font heights are points, so any other unit is taken as-is
+			default -> OptionalInt.of(toFontHeight(numeric.value()));
+			};
+		}
+		if (cssFontSize instanceof CssText text) {
+			if ("larger".equalsIgnoreCase(text.value())) {
+				return scaleFontHeight(RELATIVE_FONT_SIZE_STEP, oldFontData);
+			}
+			if ("smaller".equalsIgnoreCase(text.value())) {
+				return scaleFontHeight(1 / RELATIVE_FONT_SIZE_STEP, oldFontData);
+			}
+		}
+		return OptionalInt.empty();
+	}
+
+	private static OptionalInt scaleFontHeight(double factor, FontData oldFontData) {
+		if (oldFontData == null) {
+			return OptionalInt.empty();
+		}
+		return OptionalInt.of(toFontHeight(oldFontData.getHeight() * factor));
+	}
+
+	private static int toFontHeight(double size) {
+		return Math.max(MIN_FONT_HEIGHT, (int) Math.round(size));
+	}
+
+	/**
+	 * Remembers the font an element had before any style was applied to it, the
+	 * base that relative font sizes are resolved against.
+	 */
+	public static void setBaseFontData(CSSElementContext context, FontData fontData) {
+		if (context != null && fontData != null) {
+			context.setData(BASE_FONT_DATA, fontData);
+		}
+	}
+
+	/**
+	 * The font an element had before any style was applied to it, or
+	 * <code>null</code> if it was never recorded.
+	 */
+	public static FontData getBaseFontData(CSSElementContext context) {
+		return context != null && context.getData(BASE_FONT_DATA) instanceof FontData fontData ? fontData : null;
+	}
+
+	/**
+	 * Returns font properties whose size is an absolute point size, resolving a
+	 * relative size against <code>baseFontData</code>. Relative sizes have to be
+	 * resolved before the font is converted, because the converted fonts are
+	 * cached by their CSS values alone and 'larger' means a different font for
+	 * every element it is applied to.
+	 */
+	public static CSS2FontProperties resolveRelativeSize(CSS2FontProperties fontProperties, FontData baseFontData) {
+		if (!fontProperties.isSizeFromCSS() || !isRelativeSize(fontProperties.getSize())) {
+			return fontProperties;
+		}
+		OptionalInt height = getFontHeight(fontProperties.getSize(), baseFontData);
+		if (height.isEmpty()) {
+			return fontProperties;
+		}
+		CSS2FontProperties resolved = new CSS2FontPropertiesImpl();
+		resolved.setFamily(fontProperties.getFamily());
+		resolved.setSize(new CssDimension(height.getAsInt(), CssUnit.PT));
+		resolved.setSizeFromCSS(true);
+		resolved.setSizeAdjust(fontProperties.getSizeAdjust());
+		resolved.setWeight(fontProperties.getWeight());
+		resolved.setStyle(fontProperties.getStyle());
+		resolved.setVariant(fontProperties.getVariant());
+		resolved.setStretch(fontProperties.getStretch());
+		return resolved;
+	}
+
+	private static boolean isRelativeSize(CssPrimitive size) {
+		if (size instanceof CssNumeric numeric) {
+			return numeric.unit() == CssUnit.EM || numeric.unit() == CssUnit.PERCENT;
+		}
+		return size instanceof CssText text
+				&& ("larger".equalsIgnoreCase(text.value()) || "smaller".equalsIgnoreCase(text.value()));
 	}
 
 	public static boolean hasFontDefinitionAsFamily(CSSValue value) {

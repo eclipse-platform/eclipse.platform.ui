@@ -19,28 +19,28 @@ ThemesExtension {
 /* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FoldersView */
 FontDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-foldersview-mailbox-name-font {
 	font-family: Times;
-	font-size: 10px;
+	font-size: 10pt;
 }
 
 FontDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-foldersview-folder-type-font {
 	font-family: Tahoma;
-	font-size:8px;
+	font-size:8pt;
 }
 
 /* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FolderPreviewView */
 FontDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-low-imp-mail-font {
 	font-family: Terminal;
-	font-size: 8px;
+	font-size: 8pt;
 }
 
 FontDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-normal-imp-mail-font {
 	font-family: Tahoma;
-	font-size: 8px;
+	font-size: 8pt;
 }
 
 FontDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-high-imp-mail-font {
 	font-family: Times;
-	font-size: 11px;
+	font-size: 11pt;
 	font-style: italic;
 }
 
