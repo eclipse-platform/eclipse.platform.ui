@@ -93,6 +93,22 @@ public class FontDefinitionTest {
 	}
 
 	@Test
+	void testFontDefinitionWithRelativeSizeScalesTheRegisteredFont() {
+		// given
+		CSSEngine engine = css.createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-size: 200%;}");
+		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont", "name", "categoryId",
+				"description");
+		definition.setValue(new FontData[] { new FontData("Arial", 10, SWT.NORMAL) });
+
+		// when
+		engine.applyStyles(definition, true);
+		engine.applyStyles(definition, true);
+
+		// then the registered font is scaled once, not once per styling pass
+		assertEquals(20, definition.getValue()[0].getHeight());
+	}
+
+	@Test
 	void testFontDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
 		CSSEngine engine = css.createEngine(
