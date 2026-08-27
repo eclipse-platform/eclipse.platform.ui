@@ -59,6 +59,11 @@ import org.eclipse.ui.editors.text.IStorageDocumentProvider;
  */
 public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, IElementStateListener {
 
+	/**
+	 * Family for jobs started by {@link LastSaveReferenceProvider}.
+	 */
+	public static final Object JOB_FAMILY = new Object();
+
 	/** <code>true</code> if the document has been read. */
 	private boolean fDocumentRead= false;
 	/**
@@ -116,6 +121,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		protected IStatus run(IProgressMonitor monitor) {
 			readDocument(monitor, false);
 			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JOB_FAMILY;
 		}
 	}
 
