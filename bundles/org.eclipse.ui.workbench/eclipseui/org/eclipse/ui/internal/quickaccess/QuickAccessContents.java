@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,6 +58,7 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -113,6 +116,9 @@ public abstract class QuickAccessContents {
 	 * join on the streaming compute deterministically instead of polling the table.
 	 */
 	public static final Object COMPUTE_JOB_FAMILY = new Object();
+
+	/** How often a compute job re-checks cancellation while waiting for the UI thread. */
+	private static final long UI_ACCESS_POLL_INTERVAL_MS = 100;
 
 	protected Text filterText;
 
@@ -453,17 +459,50 @@ public abstract class QuickAccessContents {
 			return Collections.emptyList();
 		}
 		AtomicReference<List<QuickAccessElement>> result = new AtomicReference<>(Collections.emptyList());
-		table.getDisplay().syncExec(() -> {
-			if (monitor.isCanceled() || table.isDisposed()) {
-				return;
+		CountDownLatch queried = new CountDownLatch(1);
+		try {
+			Display display = table.getDisplay();
+			if (Display.getCurrent() == display) {
+				// Waiting on the latch below would deadlock against our own asyncExec.
+				return queryProvider(provider, filter, monitor);
 			}
-			try {
-				result.set(Arrays.asList(provider.getElementsSorted(filter, monitor)));
-			} catch (RuntimeException e) {
-				WorkbenchPlugin.log(e);
+			display.asyncExec(() -> {
+				try {
+					result.set(queryProvider(provider, filter, monitor));
+				} finally {
+					queried.countDown();
+				}
+			});
+		} catch (SWTException e) { // table or display disposed while the dialog was closing
+			return Collections.emptyList();
+		}
+		// Unlike syncExec, polling lets a cancelled compute give up on a display that
+		// never goes idle.
+		try {
+			while (!queried.await(UI_ACCESS_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS)) {
+				if (monitor.isCanceled() || table.isDisposed()) {
+					return Collections.emptyList();
+				}
 			}
-		});
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return Collections.emptyList();
+		}
 		return result.get();
+	}
+
+	/** Queries one provider on the display thread. */
+	private List<QuickAccessElement> queryProvider(QuickAccessProvider provider, String filter,
+			IProgressMonitor monitor) {
+		if (monitor.isCanceled() || table.isDisposed()) {
+			return Collections.emptyList();
+		}
+		try {
+			return Arrays.asList(provider.getElementsSorted(filter, monitor));
+		} catch (RuntimeException e) {
+			WorkbenchPlugin.log(e);
+			return Collections.emptyList();
+		}
 	}
 
 	/**

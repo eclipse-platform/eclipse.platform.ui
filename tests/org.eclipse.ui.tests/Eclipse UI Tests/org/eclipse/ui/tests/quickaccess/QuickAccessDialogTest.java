@@ -453,9 +453,8 @@ public class QuickAccessDialogTest {
 		boolean computed = DisplayHelper.waitForCondition(display, COMPUTE_TIMEOUT,
 				() -> Job.getJobManager().find(QuickAccessContents.COMPUTE_JOB_FAMILY).length == 0);
 		assertTrue(computed, "Quick Access computation did not finish");
-		while (display.readAndDispatch()) {
-			// drain the asyncExec that renders the streamed results
-		}
+		// drain the asyncExec that renders the streamed results
+		DisplayHelper.runEventLoop(display, 0);
 	}
 
 	private boolean dialogContains(QuickAccessDialog dialog, String substring) {

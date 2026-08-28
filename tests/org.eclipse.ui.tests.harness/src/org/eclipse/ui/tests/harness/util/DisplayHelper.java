@@ -33,6 +33,10 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.1
  */
 public abstract class DisplayHelper {
+
+	/** Upper bound for one drain of the event queue. */
+	private static final long DRAIN_LIMIT_MS= 500;
+
 	/**
 	 * Creates a new instance.
 	 */
@@ -132,7 +136,8 @@ public abstract class DisplayHelper {
 	 * <p>
 	 * If <code>timeout &lt; 0</code>, nothing happens and false is returned.
 	 * If <code>timeout == 0</code>, the event loop is driven exactly once,
-	 * but <code>Display.sleep()</code> is never invoked.
+	 * but <code>Display.sleep()</code> is never invoked, and it dispatches for at
+	 * most {@value #DRAIN_LIMIT_MS} ms.
 	 * </p>
 	 *
 	 * @param display the display to run the event loop of
@@ -177,9 +182,15 @@ public abstract class DisplayHelper {
 	 *         <code>true</code> at least once
 	 */
 	private static boolean driveEventQueue(Display display) {
+		// A display that never stops producing events would never let readAndDispatch
+		// return false, making the caller's own timeout unreachable.
+		long deadline= System.nanoTime() + DRAIN_LIMIT_MS * 1_000_000L;
 		boolean events= false;
 		while (display.readAndDispatch()) {
 			events= true;
+			if (System.nanoTime() - deadline > 0) {
+				break;
+			}
 		}
 		return events;
 	}
