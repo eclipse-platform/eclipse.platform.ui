@@ -18,6 +18,7 @@ import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
 import org.eclipse.ui.internal.findandreplace.HistoryStoreTest;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayInEditorTest;
 import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayTest;
 
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapPageTest;
@@ -48,6 +49,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		TextViewerDeleteLineTargetTest.class,
 		FindReplaceLogicTest.class,
 		FindReplaceOverlayTest.class,
+		FindReplaceOverlayInEditorTest.class,
 		FindReplaceDialogTest.class,
 		HistoryStoreTest.class,
 })
