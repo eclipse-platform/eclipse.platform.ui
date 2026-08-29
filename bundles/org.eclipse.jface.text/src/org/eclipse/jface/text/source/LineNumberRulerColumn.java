@@ -698,18 +698,23 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		if (fBuffer == null) {
-			newFullBufferImage(visibleLines, size);
+			newFullBufferImage(size);
 		} else {
 			doPaint(visibleLines, size);
 		}
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
-	private void newFullBufferImage(ILineRange visibleLines, Point size) {
+	private void newFullBufferImage(Point size) {
 		ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
 			// We redraw everything; paint directly into the buffer
 			initializeGC(gc, 0, 0, imageWidth, imageHeight);
-			doPaint(gc, visibleLines);
+			// SWT may run this again long after the buffer was created, so the range
+			// captured at creation time can be stale by then
+			ILineRange lines= fCachedTextViewer != null ? JFaceTextUtil.getVisibleModelLines(fCachedTextViewer) : null;
+			if (lines != null) {
+				doPaint(gc, lines);
+			}
 		};
 		fBuffer= new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
 	}
@@ -859,10 +864,15 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		boolean isWrapActive= fCachedTextWidget.getWordWrap();
 
 		int lastLine= end(visibleLines);
+		int widgetLineCount= fCachedTextWidget.getLineCount();
 		for (int line= visibleLines.getStartLine(); line < lastLine; line++) {
 			int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 			if (widgetLine == -1) {
 				continue;
+			}
+			if (widgetLine >= widgetLineCount) {
+				// the range predates a document change that removed these lines
+				break;
 			}
 
 			final int offsetAtLine= fCachedTextWidget.getOffsetAtLine(widgetLine);
