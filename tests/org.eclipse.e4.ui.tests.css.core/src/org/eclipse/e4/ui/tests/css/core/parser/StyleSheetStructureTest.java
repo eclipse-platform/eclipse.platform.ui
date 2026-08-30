@@ -14,19 +14,14 @@
 package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.Test;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
@@ -226,24 +221,62 @@ public class StyleSheetStructureTest {
 
 	@Test
 	void testInvalidInputErrorReported() throws Exception {
-		List<Exception> reported = new ArrayList<>();
-		CSSErrorHandler recorder = reported::add;
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCssWithoutImports("@@@ not valid css {");
 
-		CSSEngine engine = new CSSSWTEngineImpl(Display.getDefault());
-		engine.setErrorHandler(recorder);
+		// The contract is "garbage does not silently pass". The parser recovers
+		// rather than throwing, so the skipped input has to surface as a problem.
+		assertFalse(sheet.getProblems().isEmpty(), "expected a reported problem for invalid input");
+	}
 
-		boolean threw = false;
-		try {
-			engine.parseStyleSheet(new StringReader("@@@ not valid css {"));
-		} catch (Exception e) {
-			threw = true;
-		}
+	@Test
+	void testMalformedRuleDoesNotDropTheSheet() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil
+				.parseCssWithoutImports("Button { color: red; } Label[] { color: blue; } Text { color: green; }");
 
-		// The contract is "garbage does not silently pass": either the parser
-		// throws, or the error handler is invoked. Both is also fine. A clean
-		// return with no error reported is the regression we want to catch.
-		assertTrue(threw || !reported.isEmpty(),
-				"expected the parser to throw or invoke the error handler for invalid input");
+		// The malformed rule is dropped whole; its neighbours survive.
+		assertEquals(2, sheet.getRules().size());
+		assertEquals(1, sheet.getProblems().size());
+		assertEquals("Button", ((CSSStyleRuleImpl) sheet.getRules().get(0)).getSelectorList().text());
+		assertEquals("Text", ((CSSStyleRuleImpl) sheet.getRules().get(1)).getSelectorList().text());
+	}
+
+	@Test
+	void testMalformedDeclarationDropsOnlyItself() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil
+				.parseCssWithoutImports("Button { color: red; : bogus; background-color: blue; }");
+
+		CSSStyleDeclaration style = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
+		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
+		assertEquals("blue", style.getPropertyCSSValue("background-color").getCssText());
+		assertEquals(1, sheet.getProblems().size());
+	}
+
+	@Test
+	void testInvalidSelectorInAGroupDropsTheWholeRule() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil
+				.parseCssWithoutImports("Button, Label[ { color: red; } Text { color: green; }");
+
+		// A selector group is valid only as a whole, so the Button half goes
+		// with the malformed Label half.
+		assertEquals(1, sheet.getRules().size());
+		assertEquals("Text", ((CSSStyleRuleImpl) sheet.getRules().get(0)).getSelectorList().text());
+	}
+
+	@Test
+	void testUnknownAtRuleIsSkipped() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil
+				.parseCssWithoutImports("@unknown wat; @weird { a: b; } Text { color: green; }");
+
+		assertEquals(1, sheet.getRules().size());
+		assertTrue(sheet.getProblems().isEmpty(), "an unknown at-rule is skipped, not reported as malformed");
+	}
+
+	@Test
+	void testUnterminatedRuleDoesNotHang() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCssWithoutImports("Button { color: red; ");
+
+		// Unterminated input must terminate parsing, not loop.
+		assertEquals(1, sheet.getRules().size());
 	}
 
 	@Test
