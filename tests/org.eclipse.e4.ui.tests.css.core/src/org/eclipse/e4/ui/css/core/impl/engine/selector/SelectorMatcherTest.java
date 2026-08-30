@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ClassSelector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Descendant;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ElementType;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.IdSelector;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Not;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.PseudoClass;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.SelectorList;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Universal;
@@ -59,6 +60,30 @@ class SelectorMatcherTest {
 			e.setId(id);
 		}
 		return e;
+	}
+
+	@Test
+	void notInvertsItsArgument() {
+		TestElement toolbar = element("Composite", "ToolbarComposite", null);
+		TestElement plain = element("Composite", "other", null);
+
+		assertFalse(SelectorMatcher.matches(new Not(new ClassSelector("ToolbarComposite")), toolbar, null));
+		assertTrue(SelectorMatcher.matches(new Not(new ClassSelector("ToolbarComposite")), plain, null));
+	}
+
+	@Test
+	void notComposesInsideACompound() {
+		Selectors.Selector selector = new And(new ElementType("Composite"),
+				new Not(new ClassSelector("ToolbarComposite")));
+
+		assertTrue(SelectorMatcher.matches(selector, element("Composite", "other", null), null));
+		assertFalse(SelectorMatcher.matches(selector, element("Composite", "ToolbarComposite", null), null));
+		assertFalse(SelectorMatcher.matches(selector, element("Button", "other", null), null));
+	}
+
+	@Test
+	void notOfUniversalNeverMatches() {
+		assertFalse(SelectorMatcher.matches(new Not(new Universal()), element("Button", null, null), null));
 	}
 
 	@Test
