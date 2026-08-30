@@ -67,6 +67,7 @@ public final class CssParser {
 
 	private final List<Token> tokens;
 	private int index;
+	private final List<CssParseException> problems = new ArrayList<>();
 
 	private CssParser(List<Token> tokens) {
 		this.tokens = tokens;
@@ -108,14 +109,42 @@ public final class CssParser {
 
 		skipWhitespace();
 		while (peek().kind != Kind.EOF) {
-			if (peek().kind == Kind.AT_KEYWORD) {
-				atRule(rules);
-			} else {
-				styleRule(rules);
+			try {
+				if (peek().kind == Kind.AT_KEYWORD) {
+					atRule(rules);
+				} else {
+					styleRule(rules);
+				}
+			} catch (CssParseException e) {
+				// CSS 2.1 section 4.2: a malformed rule is dropped and the rest
+				// of the sheet still applies.
+				problems.add(e);
+				skipMalformedRule();
 			}
 			skipWhitespace();
 		}
-		return new CSSStyleSheetImpl(rules);
+		return new CSSStyleSheetImpl(rules, problems);
+	}
+
+	/**
+	 * Consume through the end of the current rule so parsing can resume at the
+	 * next one. Never throws, and always advances unless the input is
+	 * exhausted, so the caller cannot loop.
+	 */
+	private void skipMalformedRule() {
+		int depth = 0;
+		while (peek().kind != Kind.EOF) {
+			Kind kind = advance().kind;
+			if (kind == Kind.LBRACE) {
+				depth++;
+			} else if (kind == Kind.RBRACE) {
+				if (--depth <= 0) {
+					return;
+				}
+			} else if (kind == Kind.SEMICOLON && depth == 0) {
+				return;
+			}
+		}
 	}
 
 	private void atRule(List<CssRule> rules) {
@@ -189,7 +218,37 @@ public final class CssParser {
 				advance(); // tolerate stray and leading semicolons
 				continue;
 			}
-			declaration(declaration);
+			try {
+				declaration(declaration);
+			} catch (CssParseException e) {
+				// A malformed declaration is dropped on its own; the rule keeps
+				// the declarations around it.
+				problems.add(e);
+				skipMalformedDeclaration();
+			}
+		}
+	}
+
+	/**
+	 * Consume through the end of the current declaration. Stops before the
+	 * brace closing the rule so the caller sees it and ends the block.
+	 */
+	private void skipMalformedDeclaration() {
+		int depth = 0;
+		while (true) {
+			Kind kind = peek().kind;
+			if (kind == Kind.EOF || (kind == Kind.RBRACE && depth == 0)) {
+				return;
+			}
+			if (kind == Kind.LBRACE) {
+				depth++;
+			} else if (kind == Kind.RBRACE) {
+				depth--;
+			}
+			advance();
+			if (kind == Kind.SEMICOLON && depth == 0) {
+				return;
+			}
 		}
 	}
 

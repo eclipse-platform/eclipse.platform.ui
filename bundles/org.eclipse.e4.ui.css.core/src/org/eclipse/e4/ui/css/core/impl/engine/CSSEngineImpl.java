@@ -67,6 +67,7 @@ import org.eclipse.e4.ui.css.core.resources.ResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParseException;
 import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -164,9 +165,11 @@ public abstract class CSSEngineImpl implements CSSEngine {
 
 	private CSSStyleSheetImpl parseStyleSheet(String content, String uri) throws IOException {
 		CSSStyleSheetImpl styleSheet = CssParser.parseStyleSheet(content);
+		reportParseProblems(styleSheet);
 
 		List<CssRule> rules = styleSheet.getRules();
 		List<CssRule> masterList = new ArrayList<>();
+		List<CssParseException> problems = new ArrayList<>(styleSheet.getProblems());
 		int counter;
 		for (counter = 0; counter < rules.size(); counter++) {
 			if (!(rules.get(counter) instanceof CSSImportRuleImpl importRule)) {
@@ -202,6 +205,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 					parseImport--;
 				}
 				masterList.addAll(imported.getRules());
+				problems.addAll(imported.getProblems());
 			}
 		}
 
@@ -209,11 +213,18 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		masterList.addAll(rules.subList(counter, rules.size()));
 
 		// final stylesheet
-		CSSStyleSheetImpl s = new CSSStyleSheetImpl(masterList);
+		CSSStyleSheetImpl s = new CSSStyleSheetImpl(masterList, problems);
 		if (parseImport == 0) {
 			addStyleSheet(s);
 		}
 		return s;
+	}
+
+	/** Report the rules and declarations the parser skipped, if any. */
+	private void reportParseProblems(CSSStyleSheetImpl styleSheet) {
+		for (CssParseException problem : styleSheet.getProblems()) {
+			handleExceptions(problem);
+		}
 	}
 
 	/** Register a parsed stylesheet with this engine's cascade. */
