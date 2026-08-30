@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -407,7 +408,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		try {
 			engine.applyStyles(getNativeWidget(), false, true);
 		} catch (Exception ex) {
-			engine.handleExceptions(ex);
+			ILog.of(ElementAdapter.class).error("Failed to apply styles", ex); //$NON-NLS-1$
 		}
 	}
 }

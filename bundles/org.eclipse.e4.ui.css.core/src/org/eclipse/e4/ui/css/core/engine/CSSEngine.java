@@ -159,16 +159,6 @@ public interface CSSEngine {
 	 */
 	void applyInlineStyle(Object node, boolean applyStylesToChildNodes) throws IOException;
 
-	/**
-	 * Return {@link CSSErrorHandler} used to handles exception error.
-	 */
-	CSSErrorHandler getErrorHandler();
-
-	/**
-	 * Register the {@link CSSErrorHandler} used to handles exception error.
-	 */
-	void setErrorHandler(CSSErrorHandler errorHandler);
-
 	/*--------------- Resources -----------------*/
 
 	/**
@@ -321,11 +311,6 @@ public interface CSSEngine {
 	 * Return array of CSS property name of the CSS <code>property</code>.
 	 */
 	String[] getCSSCompositePropertiesNames(String property);
-
-	/**
-	 * Handle exceptions.
-	 */
-	void handleExceptions(Exception e);
 
 	/**
 	 * Reapply the styles to the objects managed by this engine.

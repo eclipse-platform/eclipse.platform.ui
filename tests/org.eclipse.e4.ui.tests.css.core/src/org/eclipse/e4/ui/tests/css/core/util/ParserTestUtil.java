@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
@@ -25,10 +24,6 @@ import org.eclipse.swt.widgets.Display;
 
 
 public final class ParserTestUtil {
-
-	private static final CSSErrorHandler ERROR_HANDLER = e -> {
-		throw new RuntimeException(e);
-	};
 
 	private ParserTestUtil() {
 		// prevent instantiation
@@ -51,8 +46,6 @@ public final class ParserTestUtil {
 
 	public static CSSEngine createEngine() {
 		Display display = Display.getDefault();
-		CSSEngine engine = new CSSSWTEngineImpl(display);
-		engine.setErrorHandler(ERROR_HANDLER);
-		return engine;
+		return new CSSSWTEngineImpl(display);
 	}
 }

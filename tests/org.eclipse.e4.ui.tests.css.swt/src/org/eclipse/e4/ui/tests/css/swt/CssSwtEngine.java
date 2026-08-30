@@ -55,8 +55,6 @@ public class CssSwtEngine implements AfterEachCallback {
 	public CSSEngine createEngine(String styleSheet) {
 		engine = new CSSSWTEngineImpl(display);
 
-		engine.setErrorHandler(e -> fail(e.getMessage()));
-
 		try {
 			engine.parseStyleSheet(new StringReader(styleSheet));
 		} catch (IOException e) {

@@ -32,11 +32,6 @@ The sample code below creates a simple Label within a Shell but the Label's fore
      
     CSSEngine engine = new CSSSWTEngineImpl(display);
     engine.parseStyleSheet(new StringReader("Label { color: blue }"));
-    engine.setErrorHandler(new CSSErrorHandler() {
-      public void error(Exception e) {
-        e.printStackTrace();
-      }
-    });
     // applying styles to the child nodes means that the engine
     // should recurse downwards, in this example, the engine
     // should style the children of the Shell

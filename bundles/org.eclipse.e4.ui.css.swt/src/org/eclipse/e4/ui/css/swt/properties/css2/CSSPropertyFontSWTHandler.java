@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
@@ -324,7 +325,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 									itemElement, fontAttribute, value,
 									pseudo, engine);
 						} catch (Exception e) {
-							engine.handleExceptions(e);
+							ILog.of(CSSPropertyFontSWTHandler.class).error("Failed to apply the font property " + fontAttribute, e); //$NON-NLS-1$
 						}
 					}
 				}
@@ -335,7 +336,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 							Font.class, item);
 					setFont(item, font);
 				} catch (Exception e) {
-					engine.handleExceptions(e);
+					ILog.of(CSSPropertyFontSWTHandler.class).error("Failed to set the font", e); //$NON-NLS-1$
 				}
 			}
 		}
