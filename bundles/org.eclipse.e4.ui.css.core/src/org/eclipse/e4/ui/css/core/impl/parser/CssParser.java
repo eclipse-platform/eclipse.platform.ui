@@ -43,6 +43,7 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ClassSelector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Descendant;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ElementType;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.IdSelector;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Not;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.PseudoClass;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Universal;
@@ -406,13 +407,20 @@ public final class CssParser {
 			case LBRACKET:
 				conditions.add(attribute());
 				break;
-			case COLON:
+			case COLON: {
 				advance();
-				if (peek().kind == Kind.COLON) {
+				boolean pseudoElement = peek().kind == Kind.COLON;
+				if (pseudoElement) {
 					advance(); // pseudo-element ::, modelled as a pseudo-class
 				}
-				conditions.add(new PseudoClass(expect(Kind.IDENT).text));
+				if (!pseudoElement && peek().kind == Kind.FUNCTION && peek().text.equalsIgnoreCase("not")) { //$NON-NLS-1$
+					advance(); // FUNCTION consumes the '('
+					conditions.add(new Not(notArgument()));
+				} else {
+					conditions.add(new PseudoClass(expect(Kind.IDENT).text));
+				}
 				break;
+			}
 			default:
 				reading = false;
 				break;
@@ -429,6 +437,33 @@ public final class CssParser {
 		// A universal element before conditions is dropped: '.foo' and '*[a]'
 		// carry no element-type contribution.
 		return element instanceof ElementType ? new And(element, conditionTree) : conditionTree;
+	}
+
+	/**
+	 * The argument of {@code :not()}: a single simple selector, per CSS3. A
+	 * pseudo-class argument is rejected because negating one would have to
+	 * invert the engine's static-pseudo-instance carve-out, which the cascade
+	 * relies on.
+	 */
+	private Selector notArgument() {
+		skipWhitespace();
+		Selector argument = switch (peek().kind) {
+		case STAR -> {
+			advance();
+			yield new Universal();
+		}
+		case IDENT -> new ElementType(advance().text);
+		case DOT -> {
+			advance();
+			yield new ClassSelector(expect(Kind.IDENT).text);
+		}
+		case HASH -> new IdSelector(advance().text);
+		case LBRACKET -> attribute();
+		default -> throw error("Expected a simple selector in :not(), found " + peek()); //$NON-NLS-1$
+		};
+		skipWhitespace();
+		expect(Kind.RPAREN);
+		return argument;
 	}
 
 	private Selector attribute() {

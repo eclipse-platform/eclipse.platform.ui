@@ -42,6 +42,43 @@ public class SelectorTest {
 	}
 
 	@Test
+	void testNotSelector() throws Exception {
+		Selectors.SelectorList list = engine.parseSelectors("Composite:not(.Toolbar)");
+		assertEquals(1, list.getLength());
+		assertEquals("Composite:not(.Toolbar)", list.item(0).text());
+	}
+
+	@Test
+	void testNotSelectorAcceptsEverySimpleSelector() throws Exception {
+		assertEquals("Button:not(*)", engine.parseSelectors("Button:not(*)").item(0).text());
+		assertEquals("Button:not(Label)", engine.parseSelectors("Button:not(Label)").item(0).text());
+		assertEquals("Button:not(.warning)", engine.parseSelectors("Button:not(.warning)").item(0).text());
+		assertEquals("Button:not(#go)", engine.parseSelectors("Button:not(#go)").item(0).text());
+		assertEquals("Button:not([role='editor'])", engine.parseSelectors("Button:not([role='editor'])").item(0).text());
+	}
+
+	@Test
+	void testNotSelectorSpecificity() throws Exception {
+		// CSS3: :not() adds nothing, its argument counts normally.
+		assertEquals(engine.parseSelectors("Button.warning").item(0).specificity(),
+				engine.parseSelectors("Button:not(.warning)").item(0).specificity());
+		assertEquals(engine.parseSelectors("Button").item(0).specificity(),
+				engine.parseSelectors("Button:not(*)").item(0).specificity());
+	}
+
+	@Test
+	void testNotSelectorRejectsUnsupportedArguments() {
+		// CSS3 allows a pseudo-class here; the engine does not, because
+		// negating one would invert the static-pseudo-instance carve-out.
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("Button:not(:selected)"));
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("Button:not()"));
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("Button:not(.a"));
+		// No combinators and no nesting inside :not().
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("Button:not(Composite Label)"));
+		assertThrows(CssParseException.class, () -> engine.parseSelectors("Button:not(:not(.a))"));
+	}
+
+	@Test
 	void testMultipleSelectors() throws Exception {
 		Selectors.SelectorList list = engine.parseSelectors("Type1, Type2");
 		assertNotNull(list);

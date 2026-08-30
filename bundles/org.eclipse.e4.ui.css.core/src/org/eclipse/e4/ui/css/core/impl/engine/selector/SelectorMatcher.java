@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ClassSelector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Descendant;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.ElementType;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.IdSelector;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Not;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.PseudoClass;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.SelectorList;
@@ -95,6 +96,9 @@ public final class SelectorMatcher {
 		}
 		if (selector instanceof PseudoClass pc) {
 			return matchesPseudoClass(pc, element, pseudoElement);
+		}
+		if (selector instanceof Not not) {
+			return !matches(not.argument(), element, pseudoElement, hierarchy, hierarchyIndex);
 		}
 		if (selector instanceof And and) {
 			return matches(and.left(), element, pseudoElement, hierarchy, hierarchyIndex)

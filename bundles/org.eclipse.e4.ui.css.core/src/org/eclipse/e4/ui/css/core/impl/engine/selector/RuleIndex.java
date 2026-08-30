@@ -100,6 +100,11 @@ public final class RuleIndex {
 			Selector right = rightmostKey(and.right());
 			return rank(left) >= rank(right) ? left : right;
 		}
+		if (selector instanceof Selectors.Not) {
+			// A negation says what the element is not, so it can never key a
+			// bucket: doing so would invert which elements are considered.
+			return null;
+		}
 		if (selector instanceof Selectors.IdSelector || selector instanceof Selectors.ClassSelector) {
 			return selector;
 		}

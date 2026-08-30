@@ -55,6 +55,9 @@ public class RuleIndexTest {
 			Shell Composite Button.warning { p16: v; }
 			Composite > Button#go { p17: v; }
 			.other.warning { p18: v; }
+			Composite:not(.warning) { p19: v; }
+			:not(.warning) { p20: v; }
+			Button:not(#go) { p21: v; }
 			""";
 
 	private CSSEngine engine;
@@ -126,6 +129,16 @@ public class RuleIndexTest {
 		}
 		assertEquals(linearMatches, indexedMatches,
 				"index dropped matching alternatives for " + element.getLocalName());
+	}
+
+	@Test
+	void testNegationIsNeverABucketKey() {
+		// ':not(.warning)' must not land in the 'warning' class bucket: it
+		// applies to elements that do not carry the class at all.
+		TestElement plain = new TestElement("Canvas", engine);
+		boolean found = index.candidatesFor(plain).stream()
+				.anyMatch(candidate -> candidate.selector().text().equals(":not(.warning)"));
+		assertTrue(found, "a bare negation must be a candidate for every element");
 	}
 
 	@Test

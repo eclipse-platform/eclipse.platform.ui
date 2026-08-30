@@ -41,7 +41,7 @@ public final class Selectors {
 	/** A parsed CSS selector. Sealed; pattern-match in the matcher. */
 	public sealed interface Selector
 			permits Universal, ElementType, ClassSelector, IdSelector, AttributeSelector,
-			AttributeIncludes, AttributeBeginHyphen, PseudoClass, And, Descendant, Child, Adjacent, SelectorList {
+			AttributeIncludes, AttributeBeginHyphen, PseudoClass, Not, And, Descendant, Child, Adjacent, SelectorList {
 
 		/** CSS specificity contribution of this selector. */
 		int specificity();
@@ -192,6 +192,29 @@ public final class Selectors {
 		@Override
 		public String text() {
 			return ":" + name; //$NON-NLS-1$
+		}
+
+		@Override
+		public String toString() {
+			return text();
+		}
+	}
+
+	/**
+	 * {@code :not(argument)} — matches when {@code argument} does not match
+	 * the element. The argument is a single simple selector; CSS3 forbids
+	 * combinators and nesting inside {@code :not()}.
+	 */
+	public record Not(Selector argument) implements Selector {
+		@Override
+		public int specificity() {
+			// CSS3: :not() itself contributes nothing, its argument counts.
+			return argument.specificity();
+		}
+
+		@Override
+		public String text() {
+			return ":not(" + argument.text() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
