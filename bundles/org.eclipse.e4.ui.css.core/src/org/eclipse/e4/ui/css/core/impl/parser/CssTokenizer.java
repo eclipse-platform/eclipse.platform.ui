@@ -27,7 +27,7 @@ import java.util.List;
 final class CssTokenizer {
 
 	enum Kind {
-		IDENT, FUNCTION, AT_KEYWORD, HASH, STRING, NUMBER, PERCENTAGE, DIMENSION, URI,
+		IDENT, FUNCTION, AT_KEYWORD, HASH, STRING, BAD_STRING, NUMBER, PERCENTAGE, DIMENSION, URI,
 		COLON, SEMICOLON, COMMA, LBRACE, RBRACE, LBRACKET, RBRACKET, RPAREN,
 		DOT, STAR, GT, PLUS, TILDE, BAR, EQUALS, INCLUDE_MATCH, DASH_MATCH, BANG,
 		WS, EOF
@@ -161,6 +161,11 @@ final class CssTokenizer {
 				advance();
 				break;
 			}
+			if (c == '\n' || c == '\r') {
+				// CSS 2.1 section 4.2: an unescaped newline ends the string and drops
+				// its construct. The newline stays so recovery can resync on it.
+				return new Token(Kind.BAD_STRING, sb.toString(), 0, false, null, startLine, startColumn);
+			}
 			if (c == '\\' && pos + 1 < input.length()) {
 				advance();
 				sb.append(input.charAt(pos));
@@ -170,6 +175,7 @@ final class CssTokenizer {
 			sb.append(c);
 			advance();
 		}
+		// A string still open at the end of the sheet is closed, not dropped.
 		return new Token(Kind.STRING, sb.toString(), 0, false, null, startLine, startColumn);
 	}
 
