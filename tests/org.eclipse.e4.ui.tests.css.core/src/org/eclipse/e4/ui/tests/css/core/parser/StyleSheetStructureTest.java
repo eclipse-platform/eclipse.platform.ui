@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -249,6 +250,25 @@ public class StyleSheetStructureTest {
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 		assertEquals("blue", style.getPropertyCSSValue("background-color").getCssText());
 		assertEquals(1, sheet.getProblems().size());
+	}
+
+	@Test
+	void testUnterminatedStringDropsOnlyItsDeclaration() throws Exception {
+		CSSStyleSheetImpl sheet = ParserTestUtil.parseCssWithoutImports("""
+				Button { color: red; content: "abc
+				background-color: blue; }
+				Text { color: green; }
+				""");
+
+		// The string ends at the newline and takes its declaration with it,
+		// up to the next semicolon. The following rule still applies.
+		assertEquals(2, sheet.getRules().size());
+		CSSStyleDeclaration button = ((CSSStyleRuleImpl) sheet.getRules().get(0)).getStyle();
+		assertEquals("red", button.getPropertyCSSValue("color").getCssText());
+		assertNull(button.getPropertyCSSValue("background-color"));
+		assertEquals("green",
+				((CSSStyleRuleImpl) sheet.getRules().get(1)).getStyle().getPropertyCSSValue("color").getCssText());
+		assertFalse(sheet.getProblems().isEmpty());
 	}
 
 	@Test
