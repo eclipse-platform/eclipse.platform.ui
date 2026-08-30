@@ -946,6 +946,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ProblemSavingWorkbench;
 	public static String ProblemsSavingWorkspace;
+	public static String ShutdownInProgress;
 
 	public static String Problems_Opening_Page;
 
