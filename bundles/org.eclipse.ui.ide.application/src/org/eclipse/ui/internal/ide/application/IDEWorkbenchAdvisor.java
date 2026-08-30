@@ -58,6 +58,7 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
@@ -485,7 +486,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 				IDEWorkbenchMessages.ProblemSavingWorkbench);
 
-		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
+		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null) {
+			@Override
+			protected void configureShell(Shell shell) {
+				super.configureShell(shell);
+				shell.setText(IDEWorkbenchMessages.ShutdownInProgress);
+			}
+
+			@Override
+			protected Image getImage() {
+				return null;
+			}
+		};
 		dialog.setOpenOnRun(false);
 
 		IRunnableWithProgress runnable = monitor -> {
