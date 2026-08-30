@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
@@ -50,7 +51,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.CSSValueBooleanConve
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSComputedStyleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
@@ -88,6 +88,8 @@ import org.w3c.dom.css.CSSValue;
  */
 public abstract class CSSEngineImpl implements CSSEngine {
 
+	private static final ILog LOG = ILog.of(CSSEngineImpl.class);
+
 	/**
 	 * Archives are deliberately identified by exclamation mark in URLs
 	 */
@@ -118,7 +120,6 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	/**
 	 * CSS Error Handler to intercept error while parsing, applying styles.
 	 */
-	private CSSErrorHandler errorHandler;
 
 	private IResourcesLocatorManager resourcesLocatorManager;
 
@@ -165,7 +166,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 
 	private CSSStyleSheetImpl parseStyleSheet(String content, String uri) throws IOException {
 		CSSStyleSheetImpl styleSheet = CssParser.parseStyleSheet(content);
-		reportParseProblems(styleSheet);
+		reportParseProblems(styleSheet, uri);
 
 		List<CssRule> rules = styleSheet.getRules();
 		List<CssRule> masterList = new ArrayList<>();
@@ -221,9 +222,10 @@ public abstract class CSSEngineImpl implements CSSEngine {
 	}
 
 	/** Report the rules and declarations the parser skipped, if any. */
-	private void reportParseProblems(CSSStyleSheetImpl styleSheet) {
+	private void reportParseProblems(CSSStyleSheetImpl styleSheet, String uri) {
+		String source = uri == null ? "" : " of " + uri; //$NON-NLS-1$ //$NON-NLS-2$
 		for (CssParseException problem : styleSheet.getProblems()) {
-			handleExceptions(problem);
+			LOG.error("Skipped malformed CSS" + source + ": " + problem.getMessage(), problem); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -413,7 +415,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			// Apply inline style
 			applyInlineStyle(elt, false);
 		} catch (Exception e) {
-			handleExceptions(e);
+			LOG.error("Failed to apply inline style", e); //$NON-NLS-1$
 		}
 
 		if (applyStylesToChildNodes) {
@@ -558,7 +560,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				}
 			} catch (Exception e) {
 				if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
-					handleExceptions(e);
+					LOG.error("Failed to apply CSS property " + property, e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -566,7 +568,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			try {
 				handler.onAllCSSPropertiesApplied(element, this, pseudo);
 			} catch (Exception e) {
-				handleExceptions(e);
+				LOG.error("A CSS property handler failed after all properties were applied", e); //$NON-NLS-1$
 			}
 		}
 		if (avoidanceCacheInstalled) {
@@ -609,7 +611,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 					try {
 						parseAndApplyStyleDeclaration(stylableElement.getNativeWidget(), style);
 					} catch (IOException e) {
-						handleExceptions(e);
+						LOG.error("Failed to apply inline style", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -638,7 +640,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			try {
 				style = provider.getDefaultCSSStyleDeclaration(this, widget, newStyle, pseudoE);
 			} catch (Exception e) {
-				handleExceptions(e);
+				LOG.error("Failed to compute the default style declaration", e); //$NON-NLS-1$
 			}
 		}
 		return style;
@@ -726,7 +728,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 					}
 				} catch (Exception e) {
 					if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
-						handleExceptions(e);
+						LOG.error("Failed to apply CSS property " + property, e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -752,7 +754,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				}
 			}
 		} catch (Exception e) {
-			handleExceptions(e);
+			LOG.error("Failed to retrieve CSS property " + property, e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -772,7 +774,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 				}
 			}
 		} catch (Exception e) {
-			handleExceptions(e);
+			LOG.error("Failed to resolve the composite CSS property " + property, e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -918,32 +920,6 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			hierarchy[idx++] = (Element) n;
 		}
 		return SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0);
-	}
-
-	/*--------------- Error Handler -----------------*/
-
-	/**
-	 * Handle exceptions thrown while parsing, applying styles. By default this
-	 * method call CSS Error Handler if it is initialized.
-	 */
-	@Override
-	public void handleExceptions(Exception e) {
-		if (errorHandler != null) {
-			errorHandler.error(e);
-		}
-	}
-
-	@Override
-	public CSSErrorHandler getErrorHandler() {
-		return errorHandler;
-	}
-
-	/**
-	 * Set the CSS Error Handler to manage exception.
-	 */
-	@Override
-	public void setErrorHandler(CSSErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
 	}
 
 	/*--------------- Resources Locator Manager -----------------*/

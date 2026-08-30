@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
@@ -58,7 +59,7 @@ public class CSSSWTHelpers {
 				try {
 					return (Color) engine.convert(value, Color.class, control.getDisplay());
 				} catch (Exception e) {
-					engine.handleExceptions(e);
+					ILog.of(CSSSWTHelpers.class).error("Failed to convert a CSS value to a Color", e); //$NON-NLS-1$
 					return null;
 				}
 			}
