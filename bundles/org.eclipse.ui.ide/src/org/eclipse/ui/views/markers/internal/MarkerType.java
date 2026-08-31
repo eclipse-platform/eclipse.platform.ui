@@ -15,7 +15,8 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Represents a marker type.
@@ -82,35 +83,26 @@ public class MarkerType {
 	 * @return the direct subtypes of this type
 	 */
 	public MarkerType[] getSubtypes() {
-		MarkerType[] types = model.getTypes();
-		ArrayList<MarkerType> result = new ArrayList<>();
-		for (MarkerType type : types) {
-			for (String supertypeId : type.getSupertypeIds()) {
-				if (supertypeId.equals(id)) {
-					result.add(type);
-				}
-			}
-		}
-		return result.toArray(new MarkerType[result.size()]);
+		return model.getSubtypes(id).toArray(new MarkerType[0]);
 	}
 
 	/**
 	 * @return never null
 	 */
 	public MarkerType[] getAllSubTypes() {
-		List<MarkerType> subTypes = new ArrayList<>();
+		Set<MarkerType> subTypes = new LinkedHashSet<>();
+		// seed with this type so a supertype cycle cannot list it as its own subtype
+		subTypes.add(this);
 		addSubTypes(subTypes, this);
-		MarkerType[] subs = new MarkerType[subTypes.size()];
-		subTypes.toArray(subs);
-		return subs;
+		subTypes.remove(this);
+		return subTypes.toArray(new MarkerType[0]);
 	}
 
-	private void addSubTypes(List<MarkerType> list, MarkerType superType) {
-		for (MarkerType subType : superType.getSubtypes()) {
-			if (!list.contains(subType)) {
-				list.add(subType);
+	private void addSubTypes(Set<MarkerType> set, MarkerType superType) {
+		for (MarkerType subType : model.getSubtypes(superType.id)) {
+			if (set.add(subType)) {
+				addSubTypes(set, subType);
 			}
-			addSubTypes(list, subType);
 		}
 	}
 
