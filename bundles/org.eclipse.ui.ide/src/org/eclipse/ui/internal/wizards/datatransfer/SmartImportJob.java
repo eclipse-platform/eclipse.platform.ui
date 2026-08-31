@@ -625,7 +625,11 @@ public class SmartImportJob extends Job {
 		desc.setLocation(IPath.fromOSString(directory.getAbsolutePath()));
 		IProject res = this.workspaceRoot.getProject(desc.getName());
 		res.create(desc, progressMonitor);
-		PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);
+		if (this.workingSets != null && this.workingSets.length > 0) {
+			// only touch the workbench if there is something to add, so that the job also
+			// works without a running workbench
+			PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);
+		}
 		return res;
 	}
 
