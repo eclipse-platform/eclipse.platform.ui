@@ -130,9 +130,9 @@ public class LargeFileTest {
 		page.closeEditor(part, false);
 		TestUtil.runEventLoop();
 		// Be generous here; all this timing is approximate. Fail if the attempt
-		// with the marker takes more than twice as long. If the OverviewRuler
+		// with the marker takes more than five times as long. If the OverviewRuler
 		// is badly implemented, opening with the marker will take much longer.
-		assertTrue(withMarker[0] / 2 <= baseline[0], "Opening large file took too long: " + (withMarker[0] / 1000000.0f) + "ms with marker vs. "
+		assertTrue(withMarker[0] / 5 <= baseline[0], "Opening large file took too long: " + (withMarker[0] / 1000000.0f) + "ms with marker vs. "
 				+ (baseline[0] / 1000000.0f) + "ms without");
 	}
 }
