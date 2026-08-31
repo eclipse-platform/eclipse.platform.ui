@@ -167,6 +167,9 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private static final String TAG_SHOW_FILTER_TEXT = "showFilterText"; //$NON-NLS-1$
 
+	private static final MessageFormat SUMMARY_BREAKDOWN = new MessageFormat(
+			MarkerMessages.errorsAndWarningsSummaryBreakdown);
+
 	private final IMarker[] noMarkers = new IMarker[0];
 
 	private MarkerContentGenerator generator;
@@ -973,9 +976,7 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 			return status;
 		}
-		String message= MessageFormat.format(
-				MarkerMessages.errorsAndWarningsSummaryBreakdown,
-				counts[0], counts[1], /* combine infos and others */ counts[2] + counts[3]);
+		String message = formatSummaryBreakdown(counts);
 		if (filteredCount < 0 || filteredCount >= totalCount) {
 			return message;
 		}
@@ -1506,8 +1507,15 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		return MessageFormat.format(MarkerMessages.marker_statusSummarySelected, entries.length,
 				/* combine infos and others */
-				MessageFormat.format(MarkerMessages.errorsAndWarningsSummaryBreakdown, counts[0], counts[1],
-						counts[2] + counts[3]));
+				formatSummaryBreakdown(counts));
+	}
+
+	/**
+	 * Formats the "n errors, n warnings, n others" summary; the parsed pattern is
+	 * reused since it is needed on every update.
+	 */
+	private static String formatSummaryBreakdown(Integer[] counts) {
+		return SUMMARY_BREAKDOWN.format(new Object[] { counts[0], counts[1], counts[2] + counts[3] });
 	}
 
 	/**

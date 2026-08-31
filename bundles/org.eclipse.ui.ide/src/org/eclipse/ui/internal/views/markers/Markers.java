@@ -94,6 +94,8 @@ class Markers {
 			MarkerEntry[] markerArray = new MarkerEntry[markerEntries.size()];
 			markerEntries.toArray(markerArray);
 			markerEntryArray = markerArray;
+			// Count here, off the UI thread; this also primes the severity cache for the sort.
+			markerCounts = getMarkerCounts(markerArray);
 			if (sortAndGroup) {
 				if (monitor.isCanceled()) {
 					return false;
@@ -189,6 +191,9 @@ class Markers {
 			return false;
 		} finally {
 			inChange = initialVal;
+			// Rotate once per complete sort, not per category, so the previous
+			// update's keys are still there for every category of the next one.
+			MarkerEntry.clearCollationCache();
 		}
 	}
 
@@ -304,17 +309,7 @@ class Markers {
 	static Integer[] getMarkerCounts(MarkerEntry[] entries) {
 		int[] ints = new int[] { 0, 0, 0, 0 };
 		for (MarkerEntry entry : entries) {
-			IMarker marker = entry.getMarker();
-			int severity = -1;
-			Object value = null;
-			try {
-				value = marker.getAttribute(IMarker.SEVERITY);
-			} catch (CoreException e) {
-				entry.checkIfMarkerStale();
-			}
-			if (value instanceof Integer) {
-				severity = ((Integer) value).intValue();
-			}
+			int severity = entry.getAttributeValue(IMarker.SEVERITY) instanceof Integer value ? value.intValue() : -1;
 			if (severity >= IMarker.SEVERITY_INFO) {
 				ints[severity]++;
 			} else {
@@ -381,6 +376,7 @@ class Markers {
 		if (!inChange) {
 			markers.markerEntryArray = markerEntryArray.clone();
 			markers.categories = categories.clone();
+			markers.markerCounts = markerCounts;
 		}
 		return markers;
 	}
