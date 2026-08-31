@@ -331,10 +331,19 @@ public class HeapStatus extends Composite {
 		}
 	}
 
-	private static Color blend(Color c1, Color c2) {
-		return new Color(Math.round((c1.getRed() + c2.getRed()) / 2f),
-				Math.round((c1.getGreen() + c2.getGreen()) / 2f),
-				Math.round((c1.getBlue() + c2.getBlue()) / 2f));
+	/** 40% foreground keeps the used-memory bar a light gray on light themes. */
+	private static Color blend(Color fg, Color bg) {
+		return new Color(mix(fg.getRed(), bg.getRed()), mix(fg.getGreen(), bg.getGreen()),
+				mix(fg.getBlue(), bg.getBlue()));
+	}
+
+	private static int mix(int fg, int bg) {
+		return Math.round(bg + (fg - bg) * 0.4f);
+	}
+
+	/** A one pixel separator; drawLine would leave half-covered end pixels. */
+	private static void fillColumn(GC gc, int x, int y, int h) {
+		gc.fillRectangle(x, y + 1, 1, h - 2);
 	}
 
 	private void paintComposite(GC gc) {
@@ -361,10 +370,9 @@ public class HeapStatus extends Composite {
 		Color midCol = blend(fg, bg);
 		gc.setBackground(bg);
 		gc.fillRectangle(rect);
-		gc.setForeground(midCol);
-		gc.drawLine(dx, y, dx, y + h);
-		gc.drawLine(ux, y, ux, y + h);
-		gc.drawRectangle(x, y, w - 1, h - 1);
+		gc.setBackground(midCol);
+		fillColumn(gc, dx, y, h);
+		fillColumn(gc, ux, y, h);
 
 		gc.setBackground(midCol);
 		gc.fillRectangle(x + 1, y + 1, uw, h - 2);
@@ -403,11 +411,10 @@ public class HeapStatus extends Composite {
 		Color midCol = blend(fg, bg);
 		gc.setBackground(bg);
 		gc.fillRectangle(rect);
-		gc.setForeground(midCol);
-		gc.drawLine(dx, y, dx, y + h);
-		gc.drawLine(ux, y, ux, y + h);
-		gc.drawLine(tx, y, tx, y + h);
-		gc.drawRectangle(x, y, w - 1, h - 1);
+		gc.setBackground(midCol);
+		fillColumn(gc, dx, y, h);
+		fillColumn(gc, ux, y, h);
+		fillColumn(gc, tx, y, h);
 
 		if (lowMemThreshold != 0 && ((double) (maxMem - usedMem) / (double) maxMem < lowMemThreshold)) {
 			gc.setBackground(lowMemCol);
