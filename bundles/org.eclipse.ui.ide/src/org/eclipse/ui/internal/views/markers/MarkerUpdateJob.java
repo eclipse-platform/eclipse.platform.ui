@@ -37,7 +37,6 @@ class MarkerUpdateJob extends Job {
 
 	CachedMarkerBuilder builder;
 	private boolean clean;
-	private long lastUpdateTime = -1;
 
 	MarkerUpdateJob(CachedMarkerBuilder builder) {
 		super(MarkerMessages.MarkerView_searching_for_markers);
@@ -84,14 +83,6 @@ class MarkerUpdateJob extends Job {
 			return;
 		}
 		builder.setBuilding(false);
-		updateDone();
-	}
-
-	/**
-	 * Capture the current time into as lastupdate time
-	 */
-	void updateDone() {
-		lastUpdateTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -153,13 +144,6 @@ class MarkerUpdateJob extends Job {
 	 */
 	void setClean() {
 		this.clean = true;
-	}
-
-	/**
-	 * @return last update time
-	 */
-	 long getLastUpdateTime() {
-		return lastUpdateTime;
 	}
 }
 
