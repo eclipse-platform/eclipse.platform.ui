@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -32,7 +36,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 	private final ExtendedMarkersView view;
 	private final CachedMarkerBuilder builder;
 
-	private String[] listeningTypes;
+	private volatile Set<String> listeningTypes;
 	private boolean receiving;
 
 	// The time the build started. A -1 indicates no build in progress.
@@ -48,7 +52,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 	MarkersChangeListener(ExtendedMarkersView view, CachedMarkerBuilder builder) {
 		this.view = view;
 		this.builder = builder;
-		listeningTypes = new String[0];
+		listeningTypes = Set.of();
 	}
 
 	/**
@@ -66,9 +70,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 * Stop listening for changes.
 	 */
 	synchronized void stop() {
-		if (listeningTypes != null) {
-			listeningTypes = new String[0];
-		}
+		listeningTypes = Set.of();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
@@ -92,11 +94,9 @@ class MarkersChangeListener implements IResourceChangeListener {
 		try {
 			// register marker types being gathering
 			if (includeSubTypes) {
-				listeningTypes = MarkerResourceUtil.getAllSubTypesIds(typeIds);
-			} else {
-				// register marker types being gathering
-				listeningTypes = typeIds;
+				typeIds = MarkerResourceUtil.getAllSubTypesIds(typeIds);
 			}
+			listeningTypes = new HashSet<>(Arrays.asList(typeIds));
 		} catch (Exception e) {
 			MarkerSupportInternalUtilities.logViewError(e);
 		}
@@ -151,24 +151,12 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	private boolean hasApplicableTypes(IResourceChangeEvent event) {
 		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
-		String[] types = listeningTypes;
-		if (types.length == 0) {
+		Set<String> types = listeningTypes;
+		if (types.isEmpty()) {
 			return false;
 		}
 		for (IMarkerDelta markerDelta : markerDeltas) {
-			if (isApplicableType(types, markerDelta.getType())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Helper to {@link #hasApplicableTypes(IResourceChangeEvent)}
-	 */
-	private boolean isApplicableType(String[] types, String typeId) {
-		for (String type : types) {
-			if (type.equals(typeId)) {
+			if (types.contains(markerDelta.getType())) {
 				return true;
 			}
 		}

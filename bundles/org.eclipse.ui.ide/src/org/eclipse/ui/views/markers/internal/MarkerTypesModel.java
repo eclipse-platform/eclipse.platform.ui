@@ -16,6 +16,8 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,11 +50,19 @@ public class MarkerTypesModel {
 	 */
 	private final HashMap<String, MarkerType> types;
 
+	// marker type id to its direct subtypes
+	private final Map<String, List<MarkerType>> subtypes = new HashMap<>();
+
 	/**
 	 * Creates a new marker types model.
 	 */
 	private MarkerTypesModel() {
 		types = readTypes();
+		for (MarkerType type : types.values()) {
+			for (String supertypeId : type.getSupertypeIds()) {
+				subtypes.computeIfAbsent(supertypeId, id -> new ArrayList<>()).add(type);
+			}
+		}
 	}
 
 	/**
@@ -70,6 +80,13 @@ public class MarkerTypesModel {
 		MarkerType[] result = new MarkerType[types.size()];
 		types.values().toArray(result);
 		return result;
+	}
+
+	/**
+	 * Returns the direct subtypes of the given type, never null.
+	 */
+	List<MarkerType> getSubtypes(String id) {
+		return subtypes.getOrDefault(id, List.of());
 	}
 
 	/**
