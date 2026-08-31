@@ -73,6 +73,29 @@ public interface ProjectConfigurator {
 	public Set<File> findConfigurableLocations(File root, IProgressMonitor monitor);
 
 	/**
+	 * Same as {@link #findConfigurableLocations(File, IProgressMonitor)}, but
+	 * allows the import to request that folders starting with a dot (such as
+	 * {@code .git}) are not visited at all. Implementations that walk the file
+	 * system should override this method, so that skipped locations are not
+	 * searched in the first place.
+	 *
+	 * <p>
+	 * This method must be stateless.
+	 * </p>
+	 *
+	 * @param root           the root directory on which to start the discovery
+	 * @param skipDotFolders whether folders starting with a dot must not be
+	 *                       visited
+	 * @param monitor        the progress monitor
+	 * @return the children (at any depth) that this configurator suggests to
+	 *         import as project
+	 * @since 3.24
+	 */
+	default Set<File> findConfigurableLocations(File root, boolean skipDotFolders, IProgressMonitor monitor) {
+		return findConfigurableLocations(root, monitor);
+	}
+
+	/**
 	 * Removes from the set of directories those that should not be proposed to
 	 * the user for import. Those are typically dirty volatile directories such
 	 * as build output directories.

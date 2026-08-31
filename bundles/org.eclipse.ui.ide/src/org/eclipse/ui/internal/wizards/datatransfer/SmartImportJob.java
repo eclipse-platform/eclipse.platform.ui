@@ -697,7 +697,7 @@ public class SmartImportJob extends Job {
 			SubMonitor loopMonitor = SubMonitor.convert(monitor, activeConfigurators.size());
 			for (ProjectConfigurator configurator : activeConfigurators) {
 				Set<File> supportedDirectories = configurator.findConfigurableLocations(
-						SmartImportJob.this.rootDirectory,
+						SmartImportJob.this.rootDirectory, this.skipDotFolders,
 						loopMonitor.split(1));
 				if (supportedDirectories != null) {
 					for (File supportedDirectory : supportedDirectories) {

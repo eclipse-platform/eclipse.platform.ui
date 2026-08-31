@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="926941240">
+            <message_arguments>
+                <message_argument value="3.24.0"/>
+                <message_argument value="3.23.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/wizards/datatransfer/ProjectConfigurator.java" type="org.eclipse.ui.wizards.datatransfer.ProjectConfigurator">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.wizards.datatransfer.ProjectConfigurator"/>
+                <message_argument value="findConfigurableLocations(File, boolean, IProgressMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
