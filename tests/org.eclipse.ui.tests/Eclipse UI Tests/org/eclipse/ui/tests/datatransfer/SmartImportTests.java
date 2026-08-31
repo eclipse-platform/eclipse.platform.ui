@@ -35,8 +35,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -583,6 +585,16 @@ public class SmartImportTests {
 		}
 	}
 
+	/** Records the directories the proposal scan reports as sub tasks. */
+	private static final class DirectoryRecordingMonitor extends NullProgressMonitor {
+		final List<String> scanned = new CopyOnWriteArrayList<>();
+
+		@Override
+		public void subTask(String name) {
+			scanned.add(name);
+		}
+	}
+
 	@Test
 	public void testSmartImportJobSkipsDotFoldersInProposals() throws Exception {
 		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportProposalTest");
@@ -602,11 +614,16 @@ public class SmartImportTests {
 
 			// Default skipDotFolders=true: .git projects should be filtered out
 			SmartImportJob jobSkip = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), true, true);
-			Map<File, ?> proposalsSkip = jobSkip.getImportProposals(new NullProgressMonitor());
+			DirectoryRecordingMonitor monitor = new DirectoryRecordingMonitor();
+			Map<File, ?> proposalsSkip = jobSkip.getImportProposals(monitor);
 			for (File proposed : proposalsSkip.keySet()) {
 				assertFalse("Proposal inside .git folder should be filtered out by default",
 						proposed.getAbsolutePath().contains(".git"));
 			}
+			assertTrue("Normal project should have been scanned",
+					monitor.scanned.stream().anyMatch(task -> task.contains("normalProject")));
+			assertFalse("Dot folder should not be scanned at all",
+					monitor.scanned.stream().anyMatch(task -> task.contains(".git")));
 		} finally {
 			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
 		}
