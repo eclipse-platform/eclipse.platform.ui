@@ -29,8 +29,6 @@ public class E4DialogMessages extends NLS {
 	public static String FilteredTree_AccessibleListenerFiltered;
 
 	// --- Help Menu ---
-	public static String AboutDialog_shellTitle;
-	public static String AboutDialog_defaultProductName;
 
 	// ==============================================================================
 	// About Dialog
