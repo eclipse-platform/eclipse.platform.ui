@@ -59,6 +59,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -625,6 +626,38 @@ public class SmartImportTests {
 					ResourcesPlugin.getWorkspace().isAutoBuilding());
 		} finally {
 			Files.deleteIfExists(notADirectory);
+		}
+	}
+
+	/**
+	 * Without working sets the import must not touch the working set manager,
+	 * otherwise the job requires a running workbench for nothing.
+	 */
+	@Test
+	public void testImportWithoutWorkingSetsLeavesWorkingSetManagerUntouched() throws Exception {
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.createWorkingSet("testWorkingSet", new IAdaptable[0]);
+		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+		workingSetManager.addWorkingSet(workingSet);
+		AtomicInteger workingSetEvents = new AtomicInteger();
+		IPropertyChangeListener workingSetListener = event -> workingSetEvents.incrementAndGet();
+		workingSetManager.addPropertyChangeListener(workingSetListener);
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportNoWorkingSets");
+		try {
+			SmartImportJob job = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), false, false);
+			// null and empty both mean "no working set involved"
+			job.setWorkingSets(null);
+			IStatus status = job.run(new NullProgressMonitor());
+
+			assertEquals("Import should have succeeded", IStatus.OK, status.getSeverity());
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(tempDir.toFile().getName());
+			assertTrue("Project should have been imported", project.exists());
+			assertEquals("Working set manager must not be modified without working sets", 0, workingSetEvents.get());
+			assertEquals("Project must not be added to any working set", 0, workingSet.getElements().length);
+		} finally {
+			workingSetManager.removePropertyChangeListener(workingSetListener);
+			workingSetManager.removeWorkingSet(workingSet);
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
 		}
 	}
 }
