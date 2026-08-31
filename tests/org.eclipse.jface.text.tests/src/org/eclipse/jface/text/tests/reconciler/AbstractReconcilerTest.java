@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -35,6 +36,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.internal.text.reconciler.ReconcilerJobFamilies;
 import org.eclipse.jface.text.reconciler.AbstractReconciler;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -367,6 +369,104 @@ public class AbstractReconcilerTest {
 //		fBarrier.await();
 //		assertEquals("process", fCallLog.remove(0));
 //		fBarrier.wakeAll();
+	}
+
+	@Test
+	public void testIdleWorkerWaitsWithoutTimeout() throws InterruptedException {
+		installDocument();
+		Thread thread= workerThread();
+
+		// a timed wait would show up as TIMED_WAITING, i.e. the worker wakes up periodically for nothing
+		long start= System.currentTimeMillis();
+		while (thread.getState() != Thread.State.WAITING) {
+			if (System.currentTimeMillis() > start + 5000)
+				fail("idle reconciler thread is " + thread.getState() + " instead of WAITING");
+			Thread.sleep(10);
+		}
+	}
+
+	@Test
+	public void testUninstallStopsIdleWorker() throws InterruptedException {
+		installDocument();
+		Thread thread= workerThread();
+		assertTrue(thread.isAlive());
+
+		fReconciler.uninstall();
+		thread.join(5000);
+		assertFalse(thread.isAlive());
+	}
+
+	@Test
+	public void testIsIdle() throws InterruptedException, BadLocationException {
+		assertTrue(fReconciler.isIdle());
+
+		fDocument= new Document("foo");
+		fViewer.setDocument(fDocument);
+		assertFalse(fReconciler.isIdle()); // initial process pending
+		fBarrier.await();
+		assertFalse(fReconciler.isIdle()); // initial process running
+		fBarrier.wakeAll();
+		pollUntilIdle();
+
+		dirty();
+		assertFalse(fReconciler.isIdle()); // change queued
+		fBarrier.await();
+		assertFalse(fReconciler.isIdle()); // process running
+		fBarrier.wakeAll();
+		pollUntilIdle();
+
+		fReconciler.uninstall();
+		assertTrue(fReconciler.isIdle());
+	}
+
+	@Test
+	public void testIsIdleAfterUninstallWhileProcessing() throws InterruptedException, BadLocationException {
+		installDocument();
+		dirty();
+		fBarrier.await();
+		fReconciler.uninstall();
+		assertFalse(fReconciler.isIdle()); // the canceled worker is still inside process()
+		fBarrier.wakeAll();
+		pollUntilIdle();
+	}
+
+	@Test
+	public void testIsIdleAfterUninstallWhileInitialProcessing() throws InterruptedException {
+		fDocument= new Document("foo");
+		fViewer.setDocument(fDocument);
+		fBarrier.await();
+		fReconciler.uninstall();
+		assertFalse(fReconciler.isIdle()); // the canceled worker is still inside initialProcess()
+		fBarrier.wakeAll();
+		pollUntilIdle();
+	}
+
+	@Test
+	public void testIsIdleTracksEveryCanceledWorker() throws InterruptedException, BadLocationException {
+		installDocument();
+		dirty();
+		fBarrier.await();
+		fReconciler.uninstall();
+		fReconciler.install(fViewer);
+		fReconciler.uninstall();
+		assertFalse(fReconciler.isIdle()); // the first worker is still inside process()
+		fBarrier.wakeAll();
+		pollUntilIdle();
+	}
+
+	void pollUntilIdle() throws InterruptedException {
+		long start= System.currentTimeMillis();
+		while (!fReconciler.isIdle()) {
+			if (System.currentTimeMillis() > start + 5000)
+				fail("waited > 5s for reconciler to become idle");
+			Thread.sleep(10);
+		}
+	}
+
+	/** The startup job hands over to the worker thread only once it is done. */
+	Thread workerThread() throws InterruptedException {
+		Job.getJobManager().join(ReconcilerJobFamilies.FAMILY_RECONCILER, null);
+		return (Thread) fAccessor.get("fThread");
 	}
 
 	void installDocument() throws InterruptedException {
