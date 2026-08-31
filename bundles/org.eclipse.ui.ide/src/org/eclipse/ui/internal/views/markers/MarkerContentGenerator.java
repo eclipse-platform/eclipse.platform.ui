@@ -670,18 +670,6 @@ public class MarkerContentGenerator {
 		return generatorDescriptor.getType(typeId);
 	}
 
-	/**
-	 * Select the given MarkerEntry
-	 * 	@return <code>true</code> if it matches all enabled filters
-	 */
-	boolean select(MarkerEntry entry) {
-		try {
-			return select(entry, getSelectedResources(), getEnabledFilters());
-		} finally {
-			entry.clearCache();
-		}
-	}
-
 	static boolean select(MarkerEntry entry, IResource[] selResources,
 			Collection<MarkerFieldFilterGroup> enabledFilters) {
 		if (enabledFilters.size() > 0) {

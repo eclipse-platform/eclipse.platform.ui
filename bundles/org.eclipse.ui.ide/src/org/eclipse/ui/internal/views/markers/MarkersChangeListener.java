@@ -14,14 +14,9 @@
 
 package org.eclipse.ui.internal.views.markers;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -129,11 +124,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 				return;
 			}
 
-			if (!builder.isIncremental()) {
-				builder.getUpdateScheduler().scheduleUpdate();
-				return;
-			}
-			handleIncrementalChange(event);
+			builder.getUpdateScheduler().scheduleUpdate();
 		} finally {
 			setReceivingChange(false);
 		}
@@ -152,61 +143,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	void setReceivingChange(boolean receiving) {
 		this.receiving = receiving;
-	}
-
-	/**
-	 * Handle changes incrementally.
-	 * The following performs incremental updation
-	 * of the markers that were gathered initially, and keeps them synched at
-	 * any point with the markers of interest in Workspace. Unfortunately marker
-	 * operations cannot be locked so locking between gathering of markers and
-	 * marker deltas is not possible.
-	 *
-	 * Note : this method of updating is NOT used and tested yet and has holes
-	 * but left out SOLELY for further investigation(*).
-	 */
-	private void handleIncrementalChange(IResourceChangeEvent event) {
-		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
-		if (markerDeltas.length == 0) {
-			return;
-		}
-		Collection<MarkerEntry> removed = new LinkedList<>(), added = new LinkedList<>(), changed = new LinkedList<>();
-		String[] types = listeningTypes;
-		for (IMarkerDelta markerDelta : markerDeltas) {
-			try {
-				String typeId = markerDelta.getType();
-				if (!isApplicableType(types, typeId)) {
-					continue;
-				}
-				IMarker marker = markerDelta.getMarker();
-				MarkerEntry markerEntry = new MarkerEntry(marker);
-				switch (markerDelta.getKind()) {
-				case IResourceDelta.REMOVED: {
-					removed.add(markerEntry);
-					break;
-				}
-				case IResourceDelta.ADDED: {
-					added.add(markerEntry);
-					break;
-				}
-				case IResourceDelta.CHANGED: {
-					changed.add(markerEntry);
-					break;
-				}
-				default:{
-					break;
-				}
-				}
-			} catch (Exception e) {
-				// log exception
-				MarkerSupportInternalUtilities.logViewError(e);
-			}
-		}
-		if (removed.size() > 0 || added.size() > 0 || changed.size() > 0) {
-			MarkerUpdate update = new MarkerUpdate(added, removed, changed);
-			builder.incrementalUpdate(update);
-			builder.getUpdateScheduler().scheduleUpdate();
-		}
 	}
 
 	/**
@@ -269,22 +205,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 }
 
 ///////////helpers/////////////
-
-/**
- * For Incremental updating
- * @since 3.6
- */
-class MarkerUpdate {
-	Collection<MarkerEntry> added;
-	Collection<MarkerEntry> removed;
-	Collection<MarkerEntry> changed;
-
-	MarkerUpdate(Collection<MarkerEntry> added, Collection<MarkerEntry> removed, Collection<MarkerEntry> changed) {
-		this.added = added;
-		this.removed = removed;
-		this.changed = changed;
-	}
-}
 
 /**
  * Manages scheduling of marker updates and the view ,also various other methods
