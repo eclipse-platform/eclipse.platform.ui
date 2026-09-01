@@ -7,7 +7,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 public class TestLongRunningQuickAccessComputer implements IQuickAccessComputerExtension {
 
-	public static final int DELAY = 3000;
+	public static final int DELAY = 1500;
 	public static final QuickAccessElement THE_ELEMENT = new QuickAccessElement() {
 		@Override
 		public String getLabel() {
