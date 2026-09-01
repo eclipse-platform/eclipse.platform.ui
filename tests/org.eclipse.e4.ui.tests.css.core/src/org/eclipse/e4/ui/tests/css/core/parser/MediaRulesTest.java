@@ -38,6 +38,10 @@ public class MediaRulesTest {
 	private static final Media.Context WINDOWS = new Media.Context("win32", "win32", "10.0");
 	private static final Media.Context MACOS = new Media.Context("macosx", "cocoa", "10.15.7");
 
+	/** A workbench with one optional bundle installed. */
+	private static final Media.Context WITH_UI = new Media.Context("linux", "gtk", "6.14.0",
+			name -> "org.eclipse.ui".equals(name) ? "3.2.0.v20260101" : null);
+
 	private static CSSMediaRuleImpl parseMediaRule(String css) {
 		CSSStyleSheetImpl styleSheet = ParserTestUtil.parseCssWithoutImports(css);
 		assertTrue(styleSheet.getProblems().isEmpty(), "unexpected parse problems: " + styleSheet.getProblems());
@@ -173,6 +177,42 @@ public class MediaRulesTest {
 	@Test
 	void testUnquotedTwoSegmentVersionIsAccepted() {
 		assertTrue(parseMediaRule("@media (-eclipse-min-os-version: 10.15) { Label { color: red } }").matches(MACOS));
+	}
+
+	@Test
+	void testBundleFeatureTestsForInstallation() {
+		CSSMediaRuleImpl rule = parseMediaRule("@media (-eclipse-bundle: \"org.eclipse.ui\") { Label { color: red } }");
+		assertTrue(rule.matches(WITH_UI));
+		assertFalse(rule.matches(LINUX));
+		assertFalse(parseMediaRule("@media (-eclipse-bundle: \"org.eclipse.absent\") { Label { color: red } }")
+				.matches(WITH_UI));
+	}
+
+	@Test
+	void testBundleVersionBounds() {
+		assertTrue(parseMediaRule("@media (-eclipse-min-bundle-version: \"org.eclipse.ui 3.2\") { Label { color: red } }")
+				.matches(WITH_UI));
+		assertFalse(parseMediaRule("@media (-eclipse-min-bundle-version: \"org.eclipse.ui 4.0\") { Label { color: red } }")
+				.matches(WITH_UI));
+		assertTrue(parseMediaRule("@media (-eclipse-max-bundle-version: \"org.eclipse.ui 3.2\") { Label { color: red } }")
+				.matches(WITH_UI));
+		assertTrue(parseMediaRule("@media (-eclipse-bundle-version: \"org.eclipse.ui 3.2\") { Label { color: red } }")
+				.matches(WITH_UI));
+		assertFalse(parseMediaRule("@media (-eclipse-bundle-version: \"org.eclipse.ui 3.3\") { Label { color: red } }")
+				.matches(WITH_UI));
+	}
+
+	@Test
+	void testBundleVersionOfAnAbsentBundleNeverMatches() {
+		assertFalse(parseMediaRule("@media (-eclipse-max-bundle-version: \"org.eclipse.absent 9.9\") { Label { color: red } }")
+				.matches(WITH_UI));
+	}
+
+	@Test
+	void testBundleFeatureNeedsASubject() {
+		assertFalse(parseMediaRule("@media (-eclipse-bundle) { Label { color: red } }").matches(WITH_UI));
+		assertFalse(parseMediaRule("@media (-eclipse-min-bundle-version: \"org.eclipse.ui\") { Label { color: red } }")
+				.matches(WITH_UI));
 	}
 
 	@Test

@@ -18,15 +18,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /**
  * Media query model for {@code @media} rules.
  *
  * <p>
  * The media types {@code all} and {@code screen} match, plus vendor features
- * for the operating system, the windowing system and the operating system
- * version. Unknown types, features and values evaluate to false, as Media
- * Queries requires.
+ * for the operating system, the windowing system, the operating system version
+ * and the installed bundles. Unknown types, features and values evaluate to
+ * false, as Media Queries requires.
  * </p>
  */
 public final class Media {
@@ -46,7 +47,24 @@ public final class Media {
 	/** Upper bound on the operating system version, inclusive. */
 	public static final String FEATURE_MAX_OS_VERSION = "-eclipse-max-os-version"; //$NON-NLS-1$
 
+	/** Feature naming a bundle that has to be installed. */
+	public static final String FEATURE_BUNDLE = "-eclipse-bundle"; //$NON-NLS-1$
+
+	/** Feature naming a bundle and its version, e.g. {@code "org.eclipse.ui 3.2"}. */
+	public static final String FEATURE_BUNDLE_VERSION = "-eclipse-bundle-version"; //$NON-NLS-1$
+
+	/** Lower bound on a bundle's version, inclusive. */
+	public static final String FEATURE_MIN_BUNDLE_VERSION = "-eclipse-min-bundle-version"; //$NON-NLS-1$
+
+	/** Upper bound on a bundle's version, inclusive. */
+	public static final String FEATURE_MAX_BUNDLE_VERSION = "-eclipse-max-bundle-version"; //$NON-NLS-1$
+
+	private static final List<String> BUNDLE_FEATURES = List.of(FEATURE_BUNDLE, FEATURE_BUNDLE_VERSION,
+			FEATURE_MIN_BUNDLE_VERSION, FEATURE_MAX_BUNDLE_VERSION);
+
 	private static final Pattern NON_DIGITS = Pattern.compile("[^0-9]+"); //$NON-NLS-1$
+
+	private static final Pattern WHITESPACE = Pattern.compile("\\s+"); //$NON-NLS-1$
 
 	private static final List<String> SUPPORTED_TYPES = List.of("all", "screen"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -54,16 +72,40 @@ public final class Media {
 		// constants and nested types only
 	}
 
-	/** The environment a query is evaluated against. */
-	public record Context(String os, String ws, String osVersion) {
+	/** Looks a bundle's version up by symbolic name. */
+	@FunctionalInterface
+	public interface BundleVersions {
+
+		/** The version of that bundle, or {@code null} when it is not installed. */
+		String versionOf(String symbolicName);
+	}
+
+	/**
+	 * The environment a query is evaluated against. The installed bundles can
+	 * change while the workbench runs, so a bundle query answers for the moment
+	 * the rules were indexed.
+	 */
+	public record Context(String os, String ws, String osVersion, BundleVersions bundles) {
+
+		private static final BundleVersions NONE_INSTALLED = symbolicName -> null;
 
 		public Context(String os, String ws) {
-			this(os, ws, null);
+			this(os, ws, null, NONE_INSTALLED);
+		}
+
+		public Context(String os, String ws, String osVersion) {
+			this(os, ws, osVersion, NONE_INSTALLED);
 		}
 
 		/** The platform this workbench runs on. */
 		public static Context current() {
-			return new Context(Platform.getOS(), Platform.getWS(), System.getProperty("os.version")); //$NON-NLS-1$
+			return new Context(Platform.getOS(), Platform.getWS(), System.getProperty("os.version"), //$NON-NLS-1$
+					Context::installedVersion);
+		}
+
+		private static String installedVersion(String symbolicName) {
+			Bundle bundle = Platform.getBundle(symbolicName);
+			return bundle == null ? null : bundle.getVersion().toString();
 		}
 	}
 
@@ -75,6 +117,9 @@ public final class Media {
 
 		boolean matches(Context context) {
 			String feature = name.toLowerCase();
+			if (BUNDLE_FEATURES.contains(feature)) {
+				return matchesBundle(feature, context);
+			}
 			String actual = switch (feature) {
 			case FEATURE_OS -> context.os();
 			case FEATURE_WS -> context.ws();
@@ -92,6 +137,33 @@ public final class Media {
 			case FEATURE_MIN_OS_VERSION -> compareVersions(actual, value) >= 0;
 			case FEATURE_MAX_OS_VERSION -> compareVersions(actual, value) <= 0;
 			default -> actual.equalsIgnoreCase(value);
+			};
+		}
+
+		/**
+		 * A bundle feature names its subject in its value, as
+		 * {@code "<symbolic name> <version>"}: features are evaluated one by one
+		 * and cannot refer to each other.
+		 */
+		private boolean matchesBundle(String feature, Context context) {
+			if (value == null) {
+				return false; // the boolean form names no bundle
+			}
+			String[] parts = WHITESPACE.split(value.trim(), 2);
+			String installed = context.bundles().versionOf(parts[0]);
+			if (installed == null) {
+				return false;
+			}
+			if (feature.equals(FEATURE_BUNDLE)) {
+				return true;
+			}
+			if (parts.length < 2) {
+				return false; // a bound needs a version to compare against
+			}
+			return switch (feature) {
+			case FEATURE_BUNDLE_VERSION -> compareVersions(installed, parts[1]) == 0;
+			case FEATURE_MIN_BUNDLE_VERSION -> compareVersions(installed, parts[1]) >= 0;
+			default -> compareVersions(installed, parts[1]) <= 0;
 			};
 		}
 
