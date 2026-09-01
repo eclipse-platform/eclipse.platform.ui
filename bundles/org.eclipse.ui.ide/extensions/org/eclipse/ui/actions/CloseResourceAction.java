@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,11 +12,14 @@
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 41431, 462760, 461786
  *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
+ *     Lars Vogel <Lars.Vogel@vogella.com> - ask before closing nested projects
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -31,14 +34,20 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -48,7 +57,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
@@ -70,6 +81,9 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	private final String pluralTooltip;
 
 	private String[] modelProviderIds;
+
+	/** Projects the last {@link #run()} decided to close, may be wider than the selection. */
+	private List<? extends IResource> projectsToClose;
 
 	/**
 	 * Creates a new action.
@@ -186,6 +200,13 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 			return;
 		}
 
+		projects = promptForProjectsToClose(projects);
+		if (projects == null) {
+			// the user cancelled the operation
+			return;
+		}
+		projectsToClose = projects;
+
 		final IResource[] projectArray = projects.toArray(new IResource[projects.size()]);
 
 		if (!IDE.saveAllEditors(projectArray, true)) {
@@ -217,6 +238,120 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	@Override
 	protected boolean shouldPerformResourcePruning() {
 		return false;
+	}
+
+	@Override
+	protected List<? extends IResource> getActionResources() {
+		if (projectsToClose != null) {
+			return projectsToClose;
+		}
+		return super.getActionResources();
+	}
+
+	/**
+	 * Offers to close open projects nested below the selected ones, unless the
+	 * preference already decides.
+	 *
+	 * @return the projects to close, or <code>null</code> if the user cancelled
+	 */
+	private List<? extends IResource> promptForProjectsToClose(List<? extends IResource> projects) {
+		if (!promptForRelatedProjects()) {
+			return projects;
+		}
+		List<IProject> nestedProjects = computeNestedOpenProjects(projects);
+		if (nestedProjects.isEmpty()) {
+			return projects;
+		}
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		String key = IDEInternalPreferences.CLOSE_NESTED_PROJECTS;
+		String value = store.getString(key);
+		if (IDEInternalPreferences.PSPM_NEVER.equals(value)) {
+			return projects;
+		}
+		if (!IDEInternalPreferences.PSPM_ALWAYS.equals(value)) {
+			// the map fixes the button ids, so the toggle stores ALWAYS or NEVER
+			LinkedHashMap<String, Integer> buttons = new LinkedHashMap<>();
+			buttons.put(IDEWorkbenchMessages.CloseResourceAction_closeSelectedOnly,
+					Integer.valueOf(IDialogConstants.NO_ID));
+			buttons.put(IDEWorkbenchMessages.CloseResourceAction_closeIncludingNested,
+					Integer.valueOf(IDialogConstants.YES_ID));
+			buttons.put(IDialogConstants.CANCEL_LABEL, Integer.valueOf(IDialogConstants.CANCEL_ID));
+			MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION,
+					getShell(), IDEWorkbenchMessages.CloseResourceAction_nestedTitle,
+					nestedMessage(projects, nestedProjects), null, false, store, key, SWT.SHEET, buttons);
+			switch (dialog.getReturnCode()) {
+			case IDialogConstants.YES_ID:
+				break;
+			case IDialogConstants.NO_ID:
+				return projects;
+			default:
+				return null;
+			}
+		}
+		List<IResource> allProjects = new ArrayList<>(projects);
+		allProjects.addAll(nestedProjects);
+		return allProjects;
+	}
+
+	/**
+	 * @return the question asked when the selection nests further open projects
+	 */
+	private static String nestedMessage(List<? extends IResource> projects, List<IProject> nestedProjects) {
+		boolean oneProject = projects.size() == 1;
+		if (nestedProjects.size() == 1) {
+			return oneProject
+					? NLS.bind(IDEWorkbenchMessages.CloseResourceAction_closeOneNestedBelowProject,
+							projects.get(0).getName())
+					: IDEWorkbenchMessages.CloseResourceAction_closeOneNestedBelowSelection;
+		}
+		Integer count = Integer.valueOf(nestedProjects.size());
+		return oneProject
+				? NLS.bind(IDEWorkbenchMessages.CloseResourceAction_closeNestedBelowProject, count,
+						projects.get(0).getName())
+				: NLS.bind(IDEWorkbenchMessages.CloseResourceAction_closeNestedBelowSelection, count);
+	}
+
+	/**
+	 * @return <code>true</code> to ask about projects implied by the selection but
+	 *         not part of it. Subclasses computing and confirming the projects to
+	 *         close themselves answer <code>false</code>.
+	 */
+	boolean promptForRelatedProjects() {
+		return true;
+	}
+
+	/**
+	 * @param projects the projects the user selected
+	 * @return the open projects located inside the given ones, but not among them
+	 */
+	private static List<IProject> computeNestedOpenProjects(List<? extends IResource> projects) {
+		List<IPath> locations = new ArrayList<>(projects.size());
+		for (IResource project : projects) {
+			IPath location = project.getLocation();
+			if (location != null) {
+				locations.add(location);
+			}
+		}
+		if (locations.isEmpty()) {
+			return Collections.emptyList();
+		}
+		List<IProject> nestedProjects = new ArrayList<>();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (!project.isOpen() || projects.contains(project)) {
+				continue;
+			}
+			IPath location = project.getLocation();
+			if (location == null) {
+				continue;
+			}
+			for (IPath selected : locations) {
+				if (!selected.equals(location) && selected.isPrefixOf(location)) {
+					nestedProjects.add(project);
+					break;
+				}
+			}
+		}
+		return nestedProjects;
 	}
 
 	/**

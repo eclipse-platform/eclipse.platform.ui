@@ -67,6 +67,7 @@ import org.junit.platform.suite.api.Suite;
 	SaveablesListTest.class,
 	Bug540297WorkbenchPageFindViewTest.class,
 	Bug549139Test.class,
+	CloseResourceActionTest.class,
 	LargeFileLimitsPreferenceHandlerTest.class,
 	WorkbookEditorsHandlerTest.class,
 	ScopeAreaTest.class,
