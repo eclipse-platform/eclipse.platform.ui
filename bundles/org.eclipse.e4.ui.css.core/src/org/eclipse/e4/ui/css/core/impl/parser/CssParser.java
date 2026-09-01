@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSMediaRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPropertyImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
@@ -32,6 +33,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
+import org.eclipse.e4.ui.css.core.impl.dom.Media;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Adjacent;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.And;
@@ -59,7 +61,8 @@ import org.w3c.dom.css.CSSValue;
  * {@link org.eclipse.e4.ui.css.core.impl.dom.CssValues} value records.
  *
  * <p>
- * {@code @media}, {@code @font-face} and {@code @page} are parsed and discarded;
+ * {@code @media} is kept as a media rule holding the style rules it guards;
+ * {@code @font-face} and {@code @page} are parsed and discarded;
  * {@code !important} is recorded on the declaration; {@code @import} is kept as
  * an import rule.
  * </p>
@@ -114,7 +117,7 @@ public final class CssParser {
 				if (peek().kind == Kind.AT_KEYWORD) {
 					atRule(rules);
 				} else {
-					styleRule(rules);
+					rules.add(styleRule());
 				}
 			} catch (CssParseException e) {
 				// CSS 2.1 section 4.2: a malformed rule is dropped and the rest
@@ -163,8 +166,10 @@ public final class CssParser {
 			if (href != null) {
 				rules.add(new CSSImportRuleImpl(href));
 			}
+		} else if (name.equals("media")) { //$NON-NLS-1$
+			rules.add(mediaRule());
 		} else {
-			// @media / @font-face / @page / unknown: parse and discard.
+			// @font-face / @page / unknown: parse and discard.
 			discardUntilStatementEnd();
 		}
 	}
@@ -194,7 +199,7 @@ public final class CssParser {
 		}
 	}
 
-	private void styleRule(List<CssRule> rules) {
+	private CSSStyleRuleImpl styleRule() {
 		Selectors.SelectorList selectors = selectorList();
 		expect(Kind.LBRACE);
 		CSSStyleRuleImpl rule = new CSSStyleRuleImpl(selectors);
@@ -204,7 +209,188 @@ public final class CssParser {
 		if (peek().kind == Kind.RBRACE) {
 			advance();
 		}
-		rules.add(rule);
+		return rule;
+	}
+
+	// ---------- media rules ----------
+
+	/**
+	 * Parse an {@code @media} block. The query list is kept unevaluated, so the
+	 * rule index decides which blocks contribute.
+	 */
+	private CssRule mediaRule() {
+		List<Media.Query> queries = mediaQueryList();
+		expect(Kind.LBRACE);
+		List<CSSStyleRuleImpl> nested = new ArrayList<>();
+		while (true) {
+			skipWhitespace();
+			Kind kind = peek().kind;
+			if (kind == Kind.EOF) {
+				break;
+			}
+			if (kind == Kind.RBRACE) {
+				advance();
+				break;
+			}
+			try {
+				if (kind == Kind.AT_KEYWORD) {
+					// No at-rule nests inside @media in this subset.
+					advance();
+					discardUntilStatementEnd();
+				} else {
+					nested.add(styleRule());
+				}
+			} catch (CssParseException e) {
+				problems.add(e);
+				skipMalformedNestedRule();
+			}
+		}
+		return new CSSMediaRuleImpl(queries, nested);
+	}
+
+	/**
+	 * Consume through the end of a rule nested in a block, stopping before the
+	 * brace that closes the block so the caller still sees it.
+	 */
+	private void skipMalformedNestedRule() {
+		int depth = 0;
+		while (true) {
+			Kind kind = peek().kind;
+			if (kind == Kind.EOF || (kind == Kind.RBRACE && depth == 0)) {
+				return;
+			}
+			advance();
+			if (kind == Kind.LBRACE) {
+				depth++;
+			} else if (kind == Kind.RBRACE && --depth <= 0) {
+				return;
+			} else if (kind == Kind.SEMICOLON && depth == 0) {
+				return;
+			}
+		}
+	}
+
+	private List<Media.Query> mediaQueryList() {
+		List<Media.Query> queries = new ArrayList<>();
+		skipWhitespace();
+		if (peek().kind == Kind.LBRACE) {
+			return queries; // '@media { ... }': an empty list matches everything
+		}
+		while (true) {
+			queries.add(mediaQuery());
+			skipWhitespace();
+			if (peek().kind != Kind.COMMA) {
+				return queries;
+			}
+			advance();
+		}
+	}
+
+	private Media.Query mediaQuery() {
+		int start = index;
+		try {
+			return mediaQueryBody();
+		} catch (CssParseException e) {
+			// Media Queries section 2.1: a malformed query becomes 'not all',
+			// which never matches, and the queries beside it still count.
+			problems.add(e);
+			index = start;
+			skipMediaQuery();
+			return Media.Query.NEVER;
+		}
+	}
+
+	private Media.Query mediaQueryBody() {
+		skipWhitespace();
+		boolean negated = false;
+		if (peekIdent("not")) { //$NON-NLS-1$
+			advance();
+			negated = true;
+			skipWhitespace();
+		} else if (peekIdent("only")) { //$NON-NLS-1$
+			advance(); // legacy hiding keyword, no effect on matching
+			skipWhitespace();
+		}
+
+		String type = "all"; //$NON-NLS-1$
+		if (peek().kind == Kind.IDENT) {
+			type = advance().text;
+			skipWhitespace();
+			if (peek().kind == Kind.LPAREN) {
+				throw error("Expected 'and' between media type and expression"); //$NON-NLS-1$
+			}
+		} else if (peek().kind != Kind.LPAREN) {
+			throw error("Expected a media type or expression, found " + peek()); //$NON-NLS-1$
+		}
+
+		List<Media.Feature> features = new ArrayList<>();
+		if (peek().kind == Kind.LPAREN) {
+			features.add(mediaFeature());
+			skipWhitespace();
+		}
+		while (peekIdent("and")) { //$NON-NLS-1$
+			advance();
+			skipWhitespace();
+			features.add(mediaFeature());
+			skipWhitespace();
+		}
+		return new Media.Query(negated, type, features);
+	}
+
+	private Media.Feature mediaFeature() {
+		expect(Kind.LPAREN);
+		skipWhitespace();
+		String name = expect(Kind.IDENT).text;
+		skipWhitespace();
+		String value = null;
+		if (peek().kind == Kind.COLON) {
+			advance();
+			skipWhitespace();
+			value = mediaFeatureValue();
+			skipWhitespace();
+		}
+		expect(Kind.RPAREN);
+		return new Media.Feature(name, value);
+	}
+
+	/**
+	 * The value of a media feature. A dimension is taken as written: an
+	 * expression this engine does not know is a false query, not a parse error.
+	 */
+	private String mediaFeatureValue() {
+		Token token = peek();
+		switch (token.kind) {
+		case IDENT, STRING:
+			advance();
+			return token.text;
+		case NUMBER, DIMENSION, PERCENTAGE:
+			advance();
+			return token.unit == null ? token.text : token.text + token.unit;
+		default:
+			throw error("Expected a media feature value, found " + token); //$NON-NLS-1$
+		}
+	}
+
+	/** Skip to the end of a malformed query, leaving the ',' or '{' in place. */
+	private void skipMediaQuery() {
+		int depth = 0;
+		while (true) {
+			Kind kind = peek().kind;
+			if (kind == Kind.EOF || kind == Kind.LBRACE || (kind == Kind.COMMA && depth == 0)) {
+				return;
+			}
+			if (kind == Kind.LPAREN) {
+				depth++;
+			} else if (kind == Kind.RPAREN) {
+				depth--;
+			}
+			advance();
+		}
+	}
+
+	private boolean peekIdent(String keyword) {
+		Token token = peek();
+		return token.kind == Kind.IDENT && token.text.equalsIgnoreCase(keyword);
 	}
 
 	/** Parse declarations up to a closing brace or end of input; the brace is left in place. */

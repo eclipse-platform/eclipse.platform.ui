@@ -28,7 +28,7 @@ final class CssTokenizer {
 
 	enum Kind {
 		IDENT, FUNCTION, AT_KEYWORD, HASH, STRING, BAD_STRING, NUMBER, PERCENTAGE, DIMENSION, URI,
-		COLON, SEMICOLON, COMMA, LBRACE, RBRACE, LBRACKET, RBRACKET, RPAREN,
+		COLON, SEMICOLON, COMMA, LBRACE, RBRACE, LBRACKET, RBRACKET, LPAREN, RPAREN,
 		DOT, STAR, GT, PLUS, TILDE, BAR, EQUALS, INCLUDE_MATCH, DASH_MATCH, BANG,
 		WS, EOF
 	}
@@ -102,6 +102,7 @@ final class CssTokenizer {
 		case '}': advance(); return new Token(Kind.RBRACE, "}", 0, false, null, startLine, startColumn); //$NON-NLS-1$
 		case '[': advance(); return new Token(Kind.LBRACKET, "[", 0, false, null, startLine, startColumn); //$NON-NLS-1$
 		case ']': advance(); return new Token(Kind.RBRACKET, "]", 0, false, null, startLine, startColumn); //$NON-NLS-1$
+		case '(': advance(); return new Token(Kind.LPAREN, "(", 0, false, null, startLine, startColumn); //$NON-NLS-1$
 		case ')': advance(); return new Token(Kind.RPAREN, ")", 0, false, null, startLine, startColumn); //$NON-NLS-1$
 		case ':': advance(); return new Token(Kind.COLON, ":", 0, false, null, startLine, startColumn); //$NON-NLS-1$
 		case ';': advance(); return new Token(Kind.SEMICOLON, ";", 0, false, null, startLine, startColumn); //$NON-NLS-1$

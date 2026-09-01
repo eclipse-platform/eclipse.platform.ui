@@ -16,6 +16,38 @@ The new **CSS** declarative styling support provides developers with the flexibi
 
 Note that while the support for SWT widgets is the primary focus of the current developers that are working on the CSS code, the core engine is **headless** and can be used to "style" other things such as for applying arbitrary properties to a model.
 
+Platform-specific rules
+-----------------------
+
+An `@media` rule restricts the rules it contains to one platform, so a theme can carve out an exception without shipping a second style sheet.
+Two vendor features name the platform, `-eclipse-os` and `-eclipse-ws`, whose values are the ones `Platform.getOS()` and `Platform.getWS()` report (`linux`, `win32`, `macosx` and `gtk`, `win32`, `cocoa`).
+
+```css
+CTabFolder { background-color: #fafafa; }
+
+@media (-eclipse-os: linux) {
+  CTabFolder { background-color: #2f2f2f; }
+}
+```
+
+Three more features cover the operating system version: `-eclipse-os-version`, `-eclipse-min-os-version` and `-eclipse-max-os-version`.
+Quote a version with more than one dot, since `10.15.7` is not a single CSS number.
+
+```css
+@media (-eclipse-os: macosx) and (-eclipse-min-os-version: "10.15") {
+  CTabFolder { background-color: #2f2f2f; }
+}
+```
+
+Comparison happens over the segments the value gives, so its own precision decides the granularity: `"10.15"` covers all of 10.15.x, and both bounds include the line they name.
+Anything that is not a digit separates segments, which drops a Linux `-33-generic` tail.
+
+The usual media query syntax applies: `and` requires every expression, a comma separated list matches when any query does, `not` inverts one query, and the media types `all` and `screen` match while `print` and the rest do not.
+A guarded rule takes part in the cascade at the position of its `@media` block.
+An unknown feature, value or media type simply does not match, so a query written for a browser contributes no rules instead of breaking the sheet.
+
+Rules can also be restricted per platform from the outside, with the `os` and `ws` attributes of the `org.eclipse.e4.ui.css.swt.theme` extension point, which pick a whole style sheet rather than single rules.
+
 Sample
 ------
 
