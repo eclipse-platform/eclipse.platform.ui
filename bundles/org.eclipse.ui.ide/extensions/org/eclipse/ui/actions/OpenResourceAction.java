@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -216,6 +217,14 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	}
 
 	/**
+	 * Logs a project that could not be opened, e.g. because its .project file is
+	 * missing, so that the remaining projects can still be opened.
+	 */
+	private static void logOpenFailure(IProject project, CoreException e) {
+		ILog.of(OpenResourceAction.class).warn("Failed to open project " + project.getName(), e); //$NON-NLS-1$
+	}
+
+	/**
 	 * Opens the selected projects, and all related projects, in the background.
 	 */
 	private void runOpenWithReferences() {
@@ -232,7 +241,12 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					return;
 				}
 				SubMonitor subMonitor = SubMonitor.convert(mon, openProjectReferences ? 2 : 1);
-				project.open(IResource.BACKGROUND_REFRESH, subMonitor.split(1));
+				try {
+					project.open(IResource.BACKGROUND_REFRESH, subMonitor.split(1));
+				} catch (CoreException e) {
+					logOpenFailure(project, e);
+					return;
+				}
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
@@ -266,7 +280,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			}
 
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, countClosedProjects());
 				// at most we can only open all projects currently closed
 				subMonitor.setTaskName(getOperationMessage());
@@ -278,7 +292,11 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					if (!project.exists() || project.isOpen()) {
 						continue;
 					}
-					doOpenWithReferences(project, subMonitor.split(1));
+					try {
+						doOpenWithReferences(project, subMonitor.split(1));
+					} catch (CoreException e) {
+						logOpenFailure(project, e);
+					}
 				}
 				return Status.OK_STATUS;
 			}
