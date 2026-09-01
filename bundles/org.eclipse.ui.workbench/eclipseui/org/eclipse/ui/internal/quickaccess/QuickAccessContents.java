@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,6 +110,12 @@ public abstract class QuickAccessContents {
 	private static final int FILTER_DEBOUNCE_MS = 100;
 
 	/**
+	 * Row-count difference a resize must exceed before it recomputes. A scroll bar
+	 * appearing and disappearing changes the count by one in each direction.
+	 */
+	private static final int ROW_COUNT_TOLERANCE = 1;
+
+	/**
 	 * Family of the background job that computes the matching entries. Lets tests
 	 * join on the streaming compute deterministically instead of polling the table.
 	 */
@@ -118,7 +125,7 @@ public abstract class QuickAccessContents {
 
 	private final QuickAccessProvider[] providers;
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
-	private final Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new HashMap<>();
+	private final Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new ConcurrentHashMap<>();
 
 	private Composite tableComposite;
 	protected Table table;
@@ -138,6 +145,15 @@ public abstract class QuickAccessContents {
 	private int lastComputedItemCount = -1;
 	private TriggerSequence keySequence;
 	private Job computeProposalsJob;
+
+	/** Id of the most recent proposal request. UI thread only. */
+	private int currentRequest;
+
+	/** Id of the request whose final results are in the table. UI thread only. */
+	private int lastRenderedRequest;
+
+	/** Whether a debounced resize recompute is still armed. UI thread only. */
+	private boolean resizeUpdatePending;
 
 	/**
 	 * Orders entries by descending relevance score, then match quality. Applied
@@ -194,6 +210,7 @@ public abstract class QuickAccessContents {
 			return;
 		}
 		final Display display = table.getDisplay();
+		final int request = ++currentRequest;
 
 		// perfect match, to be selected in the table if not null
 		QuickAccessElement perfectMatch = getPerfectMatch(filter);
@@ -207,17 +224,31 @@ public abstract class QuickAccessContents {
 		// flashes over content that has already streamed in.
 		boolean[] rendered = { false };
 		AtomicReference<UIJob> feedbackJobRef = new AtomicReference<>();
+		// Newest snapshot waiting to be drawn, plus whether a draw is already queued
+		// for it: together they conflate a burst of per-provider results into one rebuild.
+		AtomicReference<List<QuickAccessEntry>[]> pendingSnapshot = new AtomicReference<>();
+		AtomicBoolean renderQueued = new AtomicBoolean();
+		Object[] appliedSnapshot = new Object[1];
 		final Job currentComputeEntriesJob = new Job(computingMessage) {
 			@Override
 			protected IStatus run(IProgressMonitor theMonitor) {
-				// Query providers one at a time and re-render as each returns, so a slow
-				// provider neither holds the UI thread for the whole batch nor delays the
+				// Re-render as results arrive, so a slow provider does not delay the
 				// results that are already available.
-				computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor, entries -> {
+				computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor,
+						(entries, last) -> {
 					if (table.isDisposed()) {
 						return;
 					}
+					pendingSnapshot.set(entries);
+					// A queued draw picks up the newest snapshot by the time it runs, so
+					// only the final draw has to be queued unconditionally.
+					if (!last && !renderQueued.compareAndSet(false, true)) {
+						return;
+					}
 					display.asyncExec(() -> {
+						if (!last) {
+							renderQueued.set(false);
+						}
 						if (table.isDisposed() || filterText == null || filterText.isDisposed()) {
 							return;
 						}
@@ -227,15 +258,29 @@ public abstract class QuickAccessContents {
 								|| requestShowAllMatches != showAllMatches) {
 							return;
 						}
-						if (Policy.DEBUG_QUICK_ACCESS) {
-							trace("Setting quick access contents: " + toIds(entries)); //$NON-NLS-1$
+						List<QuickAccessEntry>[] snapshot = pendingSnapshot.get();
+						if (snapshot != appliedSnapshot[0]) {
+							appliedSnapshot[0] = snapshot;
+							if (Policy.DEBUG_QUICK_ACCESS) {
+								trace("Setting quick access contents: " + toIds(snapshot)); //$NON-NLS-1$
+							}
+							rendered[0] = true;
+							UIJob feedbackJob = feedbackJobRef.get();
+							if (feedbackJob != null) {
+								feedbackJob.cancel();
+							}
+							refreshTable(perfectMatch, snapshot, filter);
 						}
-						rendered[0] = true;
-						UIJob feedbackJob = feedbackJobRef.get();
-						if (feedbackJob != null) {
-							feedbackJob.cancel();
+						if (last) {
+							// Nothing else marks this edge: the job ends as soon as this
+							// draw is queued, not once it has run.
+							lastRenderedRequest = request;
+							// Resizes were ignored while this compute ran, and it was sized
+							// for the layout at request time.
+							if (needsResizeUpdate()) {
+								updateProposals(filter);
+							}
 						}
-						refreshTable(perfectMatch, entries, filter);
 					});
 				});
 				return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
@@ -273,6 +318,13 @@ public abstract class QuickAccessContents {
 							", last proposals Job: " + computeProposalsJob); //$NON-NLS-1$
 				}
 				computingFeedbackJob.cancel();
+				// A compute that died before its final render would otherwise leave
+				// the dialog permanently unsettled.
+				display.asyncExec(() -> {
+					if (request == currentRequest) {
+						lastRenderedRequest = request;
+					}
+				});
 			}
 		});
 		this.computeProposalsJob = currentComputeEntriesJob;
@@ -283,6 +335,26 @@ public abstract class QuickAccessContents {
 		// Keep the feedback delay relative to when the compute actually starts, so the
 		// debounce window never flashes the "computing" hint.
 		computingFeedbackJob.schedule(scheduleDelay + 200);
+	}
+
+	/**
+	 * Returns whether the table holds the final results of the most recent request
+	 * and no further recompute is armed. Must be called on the UI thread.
+	 */
+	public boolean isSettled() {
+		if (table == null || table.isDisposed()) {
+			return true;
+		}
+		return lastRenderedRequest == currentRequest && !resizeUpdatePending;
+	}
+
+	/**
+	 * Receives one table snapshot. {@code last} marks the snapshot that completes
+	 * the request, so the renderer can conflate the ones before it.
+	 */
+	@FunctionalInterface
+	private interface ResultRenderer {
+		void render(List<QuickAccessEntry>[] entries, boolean last);
 	}
 
 	/**
@@ -469,9 +541,10 @@ public abstract class QuickAccessContents {
 	/**
 	 * Queries each provider in turn and streams the matching entries to {@code render}
 	 * after every provider that contributes, so results appear as they are computed
-	 * rather than only once the slowest provider has finished. The number of entries
-	 * is affected by {@link #getShowAllMatches()} and the size of the table's
-	 * composite.
+	 * rather than only once the slowest provider has finished. The last snapshot is
+	 * always rendered with {@code last} set, even when nothing matched, so the table
+	 * reflects the final result rather than stale content. The number of entries is
+	 * affected by {@link #getShowAllMatches()} and the size of the table's composite.
 	 *
 	 * @param filter       the string text filter to apply, possibly empty
 	 * @param perfectMatch a quick access element that should be given priority or
@@ -479,7 +552,7 @@ public abstract class QuickAccessContents {
 	 * @param render       receives one snapshot (a list per provider) per re-render
 	 */
 	private void computeMatchingEntries(String filter, QuickAccessElement perfectMatch, int maxNumberOfItemsInTable,
-			IProgressMonitor aMonitor, Consumer<List<QuickAccessEntry>[]> render) {
+			IProgressMonitor aMonitor, ResultRenderer render) {
 		if (aMonitor == null) {
 			aMonitor = new NullProgressMonitor();
 		}
@@ -496,7 +569,6 @@ public abstract class QuickAccessContents {
 		// stream into the table.
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
 				providers.length);
-		boolean anyRendered = false;
 		for (QuickAccessProvider provider : providers) {
 			if (aMonitor.isCanceled()) {
 				return;
@@ -522,16 +594,17 @@ public abstract class QuickAccessContents {
 			if (sortedElements.isEmpty()) {
 				continue;
 			}
-			render.accept(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
-					aMonitor));
-			anyRendered = true;
+			render.render(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
+					aMonitor), false);
 		}
-		// Nothing matched (or only a perfect match exists): render once so the table
-		// reflects the final result rather than stale content.
-		if (!anyRendered && !aMonitor.isCanceled()) {
-			render.accept(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
-					aMonitor));
+		if (aMonitor.isCanceled()) {
+			return;
 		}
+		// Always close with a full render: it is what marks the request settled, and
+		// it also covers the case where nothing matched at all.
+		render.render(
+				assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable, aMonitor),
+				true);
 	}
 
 	/**
@@ -660,7 +733,19 @@ public abstract class QuickAccessContents {
 		return categoryPattern;
 	}
 
+	/**
+	 * Whether the layout now fits enough more or fewer rows than the table was last
+	 * computed for to be worth recomputing.
+	 */
+	private boolean needsResizeUpdate() {
+		if (showAllMatches || table == null || table.isDisposed() || filterText == null || filterText.isDisposed()) {
+			return false;
+		}
+		return Math.abs(computeNumberOfItems() - lastComputedItemCount) > ROW_COUNT_TOLERANCE;
+	}
+
 	private void doDispose() {
+		resizeUpdatePending = false;
 		// Stop any in-flight compute so a closed dialog neither keeps querying providers
 		// nor leaves a job lingering in COMPUTE_JOB_FAMILY.
 		if (computeProposalsJob != null) {
@@ -821,13 +906,8 @@ public abstract class QuickAccessContents {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		final Runnable resizeUpdate = () -> {
-			if (showAllMatches || table == null || table.isDisposed() || filterText == null
-					|| filterText.isDisposed()) {
-				return;
-			}
-			// Skip when the layout settled back to the row count we already computed for,
-			// so an oscillating burst does not cancel the in-flight compute job.
-			if (computeNumberOfItems() == lastComputedItemCount) {
+			resizeUpdatePending = false;
+			if (!needsResizeUpdate()) {
 				return;
 			}
 			if (Policy.DEBUG_QUICK_ACCESS) {
@@ -838,16 +918,12 @@ public abstract class QuickAccessContents {
 		table.getShell().addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				if (showAllMatches || table == null || table.isDisposed() || filterText == null
-						|| filterText.isDisposed()) {
+				// The final render of a compute in flight catches up with the layout.
+				if (!isSettled() || !needsResizeUpdate()) {
 					return;
 				}
-				// A resize only matters when the number of visible rows changes. Coalesce a
-				// burst of resizes (e.g. scrollbar oscillation during initial layout) into a
-				// single trailing update, and skip it when the row count is unchanged.
-				if (computeNumberOfItems() == lastComputedItemCount) {
-					return;
-				}
+				// Coalesce a burst of resizes into a single trailing update.
+				resizeUpdatePending = true;
 				e.display.timerExec(-1, resizeUpdate);
 				e.display.timerExec(RESIZE_DEBOUNCE_MS, resizeUpdate);
 			}
