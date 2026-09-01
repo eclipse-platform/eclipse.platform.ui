@@ -1561,7 +1561,7 @@
       <context
             id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay"
             name="%context.findReplaceOverlay.name"
-            parentId="org.eclipse.ui.textEditorScope">
+            parentId="org.eclipse.ui.contexts.window">
       </context>
       <context
             id="org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"
