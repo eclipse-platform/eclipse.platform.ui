@@ -116,6 +116,12 @@ public abstract class QuickAccessContents {
 	private static final int ROW_COUNT_TOLERANCE = 1;
 
 	/**
+	 * How long the batched query of UI-thread providers may hold the display thread
+	 * before the rest are queried in a further pass.
+	 */
+	private static final long UI_BATCH_BUDGET_MS = 20;
+
+	/**
 	 * Family of the background job that computes the matching entries. Lets tests
 	 * join on the streaming compute deterministically instead of polling the table.
 	 */
@@ -512,39 +518,60 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
-	 * Collects one provider's matching elements. Providers that require UI access are
-	 * queried on the display thread one at a time, so the UI thread is released
-	 * between providers instead of being held for the whole batch.
+	 * Queries one provider. Must not be called for providers that require UI access;
+	 * those are collected by {@link #collectUiProviderElements}.
 	 */
-	private List<QuickAccessElement> collectProviderElements(QuickAccessProvider provider, String filter,
+	private static List<QuickAccessElement> collectProviderElements(QuickAccessProvider provider, String filter,
 			IProgressMonitor monitor) {
-		if (!provider.requiresUiAccess()) {
-			return Arrays.asList(provider.getElementsSorted(filter, monitor));
-		}
-		if (monitor.isCanceled() || table == null || table.isDisposed()) {
+		try {
+			QuickAccessElement[] elements = provider.getElementsSorted(filter, monitor);
+			return elements == null ? Collections.emptyList() : Arrays.asList(elements);
+		} catch (RuntimeException e) {
+			WorkbenchPlugin.log(e);
 			return Collections.emptyList();
 		}
-		AtomicReference<List<QuickAccessElement>> result = new AtomicReference<>(Collections.emptyList());
-		table.getDisplay().syncExec(() -> {
-			if (monitor.isCanceled() || table.isDisposed()) {
-				return;
-			}
-			try {
-				result.set(Arrays.asList(provider.getElementsSorted(filter, monitor)));
-			} catch (RuntimeException e) {
-				WorkbenchPlugin.log(e);
-			}
-		});
-		return result.get();
 	}
 
 	/**
-	 * Queries each provider in turn and streams the matching entries to {@code render}
-	 * after every provider that contributes, so results appear as they are computed
-	 * rather than only once the slowest provider has finished. The last snapshot is
-	 * always rendered with {@code last} set, even when nothing matched, so the table
-	 * reflects the final result rather than stale content. The number of entries is
-	 * affected by {@link #getShowAllMatches()} and the size of the table's composite.
+	 * Queries providers that require UI access in a single trip to the display
+	 * thread, instead of one round trip each. The pass gives back the display thread
+	 * once it has held it for {@link #UI_BATCH_BUDGET_MS}, so a slow provider cannot
+	 * freeze the UI for the whole batch; remaining providers are picked up by the
+	 * next call.
+	 *
+	 * @param remaining providers still to query, consumed from the front
+	 * @param collected receives the elements of every provider queried in this pass
+	 */
+	private void collectUiProviderElements(List<QuickAccessProvider> remaining, String filter,
+			IProgressMonitor monitor, Map<QuickAccessProvider, List<QuickAccessElement>> collected) {
+		if (monitor.isCanceled() || table == null || table.isDisposed()) {
+			remaining.clear();
+			return;
+		}
+		table.getDisplay().syncExec(() -> {
+			if (monitor.isCanceled() || table.isDisposed()) {
+				// Consume the rest, otherwise the caller's loop never terminates
+				remaining.clear();
+				return;
+			}
+			long deadline = System.currentTimeMillis() + UI_BATCH_BUDGET_MS;
+			while (!remaining.isEmpty()) {
+				QuickAccessProvider provider = remaining.remove(0);
+				collected.put(provider, collectProviderElements(provider, filter, monitor));
+				if (monitor.isCanceled() || System.currentTimeMillis() >= deadline) {
+					return;
+				}
+			}
+		});
+	}
+
+	/**
+	 * Queries the providers and streams the matching entries to {@code render} as
+	 * results arrive, so they appear without waiting for the slowest provider. The
+	 * last snapshot is always rendered with {@code last} set, even when nothing
+	 * matched, so the table reflects the final result rather than stale content. The
+	 * number of entries is affected by {@link #getShowAllMatches()} and the size of
+	 * the table's composite.
 	 *
 	 * @param filter       the string text filter to apply, possibly empty
 	 * @param perfectMatch a quick access element that should be given priority or
@@ -556,6 +583,7 @@ public abstract class QuickAccessContents {
 		if (aMonitor == null) {
 			aMonitor = new NullProgressMonitor();
 		}
+		final IProgressMonitor monitor = aMonitor;
 		// check for a category filter, like "Views: "
 		Matcher categoryMatcher = getCategoryPattern().matcher(filter);
 		String category = null;
@@ -565,14 +593,13 @@ public abstract class QuickAccessContents {
 		}
 		final String finalFilter = filter;
 
-		// Collect elements provider by provider and re-render after each, so results
-		// stream into the table.
+		// Seed every applicable provider up front so the map keeps registration order
+		// no matter which provider reports first.
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
 				providers.length);
+		List<QuickAccessProvider> uiProviders = new ArrayList<>();
+		List<QuickAccessProvider> backgroundProviders = new ArrayList<>();
 		for (QuickAccessProvider provider : providers) {
-			if (aMonitor.isCanceled()) {
-				return;
-			}
 			boolean isPreviousPickProvider = provider instanceof PreviousPicksProvider;
 			// skip if filter contains a category, and current provider isn't this category
 			if (category != null && !category.equalsIgnoreCase(provider.getName()) && !isPreviousPickProvider) {
@@ -581,30 +608,64 @@ public abstract class QuickAccessContents {
 			if (finalFilter.isEmpty() && !isPreviousPickProvider && !showAllMatches) {
 				continue;
 			}
-			List<QuickAccessElement> sortedElements = collectProviderElements(provider, finalFilter, aMonitor);
-			if (sortedElements == null) {
-				sortedElements = Collections.emptyList();
+			elementsForProviders.put(provider, Collections.emptyList());
+			(provider.requiresUiAccess() ? uiProviders : backgroundProviders).add(provider);
+		}
+
+		Map<QuickAccessProvider, List<QuickAccessElement>> collected = new LinkedHashMap<>();
+		for (QuickAccessProvider provider : backgroundProviders) {
+			if (monitor.isCanceled()) {
+				return;
 			}
-			if (!isPreviousPickProvider) {
-				for (QuickAccessElement element : sortedElements) {
+			collected.put(provider, collectProviderElements(provider, finalFilter, monitor));
+			if (publish(collected, elementsForProviders)) {
+				render.render(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
+						monitor), false);
+			}
+		}
+		while (!uiProviders.isEmpty()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			collectUiProviderElements(uiProviders, finalFilter, monitor, collected);
+			if (publish(collected, elementsForProviders) && !uiProviders.isEmpty()) {
+				render.render(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
+						monitor), false);
+			}
+		}
+		if (monitor.isCanceled()) {
+			return;
+		}
+		publish(collected, elementsForProviders);
+		render.render(
+				assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable, monitor),
+				true);
+	}
+
+	/**
+	 * Moves freshly collected elements into the ordered result map and records which
+	 * provider each element came from.
+	 *
+	 * @return whether any of them matched
+	 */
+	private boolean publish(Map<QuickAccessProvider, List<QuickAccessElement>> collected,
+			Map<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders) {
+		boolean any = false;
+		for (Iterator<Entry<QuickAccessProvider, List<QuickAccessElement>>> it = collected.entrySet().iterator(); it
+				.hasNext();) {
+			Entry<QuickAccessProvider, List<QuickAccessElement>> entry = it.next();
+			QuickAccessProvider provider = entry.getKey();
+			List<QuickAccessElement> elements = entry.getValue();
+			it.remove();
+			if (!(provider instanceof PreviousPicksProvider)) {
+				for (QuickAccessElement element : elements) {
 					elementsToProviders.put(element, provider);
 				}
 			}
-			elementsForProviders.put(provider, new ArrayList<>(sortedElements));
-			if (sortedElements.isEmpty()) {
-				continue;
-			}
-			render.render(assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable,
-					aMonitor), false);
+			elementsForProviders.put(provider, new ArrayList<>(elements));
+			any |= !elements.isEmpty();
 		}
-		if (aMonitor.isCanceled()) {
-			return;
-		}
-		// Always close with a full render: it is what marks the request settled, and
-		// it also covers the case where nothing matched at all.
-		render.render(
-				assembleEntries(elementsForProviders, finalFilter, perfectMatch, maxNumberOfItemsInTable, aMonitor),
-				true);
+		return any;
 	}
 
 	/**
