@@ -42,6 +42,17 @@ Quote a version with more than one dot, since `10.15.7` is not a single CSS numb
 Comparison happens over the segments the value gives, so its own precision decides the granularity: `"10.15"` covers all of 10.15.x, and both bounds include the line they name.
 Anything that is not a digit separates segments, which drops a Linux `-33-generic` tail.
 
+A rule can also depend on an installed bundle, which is useful when an optional contribution has to be styled only where it exists.
+The bundle is named in the value, since media features are evaluated one by one and cannot refer to each other, and `-eclipse-bundle-version`, `-eclipse-min-bundle-version` and `-eclipse-max-bundle-version` take a symbolic name followed by a version.
+
+```css
+@media (-eclipse-bundle: "org.eclipse.ui") { ... }
+@media (-eclipse-min-bundle-version: "org.eclipse.ui 3.2") { ... }
+```
+
+Unlike the operating system, the installed bundles can change while the workbench runs.
+A bundle query answers for the moment the rules were indexed, which is when a theme is applied, so a bundle installed afterwards is picked up at the next theme switch.
+
 The usual media query syntax applies: `and` requires every expression, a comma separated list matches when any query does, `not` inverts one query, and the media types `all` and `screen` match while `print` and the rest do not.
 A guarded rule takes part in the cascade at the position of its `@media` block.
 An unknown feature, value or media type simply does not match, so a query written for a browser contributes no rules instead of breaking the sheet.
