@@ -194,6 +194,7 @@ public class SmartImportJob extends Job {
 				loopMonitor.worked(1);
 				// Create all projects in one workspace operation, so listeners see a single
 				// resource delta instead of one per project. No configurator runs here.
+				// AVOID_UPDATE would defer that delta to the workspace notification job.
 				workspace.run(creationMonitor -> {
 					for (final File directoryToImport : directories) {
 						final boolean alreadyAnEclipseProject = new File(directoryToImport,
@@ -214,7 +215,7 @@ public class SmartImportJob extends Job {
 							this.errors.put(path, ex);
 						}
 					}
-				}, this.workspaceRoot, IWorkspace.AVOID_UPDATE, null);
+				}, this.workspaceRoot, IResource.NONE, null);
 				if (configureProjects) {
 					JobGroup multiDirectoriesJobGroup = new JobGroup(
 							DataTransferMessages.SmartImportJob_configuringSelectedDirectories, 20, 1);
