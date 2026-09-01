@@ -10,51 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.expressions.IEvaluationContext;
 
-import org.eclipse.core.runtime.ILog;
-
-import org.eclipse.jface.action.IAction;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.part.MultiPageEditorSite;
-import org.eclipse.ui.swt.IFocusService;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
- * Owns the Find/Replace overlay's command infrastructure, including context
- * activation, handler activation, and key-binding hint updates.
+ * Owns the Find/Replace overlay's command infrastructure: handler activation and
+ * key-binding hint updates.
  * <p>
- * The overlay's own commands are activated as handlers once, scoped by
- * {@link #overlayFocusedExpression}, rather than imperatively
- * activated/deactivated on every focus change. That expression relies on
- * {@link IFocusService} tracking the search/replace bar controls so that
- * {@code ACTIVE_FOCUS_CONTROL} reflects them. Context activation (which
- * drives key binding resolution and has no expression-based equivalent)
- * remains imperative and is updated directly from the overlay's focus
- * listeners.
+ * The overlay's own commands are activated as handlers once, rather than
+ * imperatively activated and deactivated on every focus change. They are scoped
+ * by {@link FindReplaceOverlayContextSupport#overlayFocusedExpression()}, which
+ * both limits them to the time an input field has focus and tells them apart
+ * from the handlers of the overlays of other editors, since all of those are
+ * activated at the workbench for the same commands.
+ * <p>
+ * Everything context related, both the overlay's key binding scopes and keeping
+ * the editor's own commands from consuming keys meant for the input fields, is
+ * owned by {@link FindReplaceOverlayContextSupport}. This class only forwards
+ * the overlay's focus changes to it, because the shortcut hints have to be
+ * refreshed whenever the active scopes change.
  */
 class FindReplaceOverlayCommandSupport {
 
@@ -81,70 +62,20 @@ class FindReplaceOverlayCommandSupport {
 	static final String CMD_REPLACE_ALL =
 			"org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceAll"; //$NON-NLS-1$
 
-	private static final String OVERLAY_CONTEXT_ID =
-			"org.eclipse.ui.workbench.texteditor.findReplaceOverlay"; //$NON-NLS-1$
-	private static final String OVERLAY_SEARCH_CONTEXT_ID =
-			"org.eclipse.ui.workbench.texteditor.findReplaceOverlay.searchFocused"; //$NON-NLS-1$
-	private static final String OVERLAY_REPLACE_CONTEXT_ID =
-			"org.eclipse.ui.workbench.texteditor.findReplaceOverlay.replaceFocused"; //$NON-NLS-1$
-
-	private Composite containerControl;
-	private final IWorkbenchPart targetPart;
-	private DeactivateGlobalActionHandlers globalActionHandlerDeaction;
-
-	private final List<IContextActivation> contextActivations = new ArrayList<>();
 	private final Expression overlayFocusedExpression;
+	private final FindReplaceOverlayContextSupport contextSupport;
 
 	private final List<FindReplaceOverlayAction> registeredActions = new ArrayList<>();
 	private final List<IHandlerActivation> actionActivations = new ArrayList<>();
 
 	FindReplaceOverlayCommandSupport(IWorkbenchPart targetPart) {
-		this.targetPart = targetPart;
-		this.overlayFocusedExpression = createOverlayFocusedExpression();
+		this.contextSupport = new FindReplaceOverlayContextSupport(targetPart);
+		this.overlayFocusedExpression = contextSupport.overlayFocusedExpression();
 	}
 
-	private Expression createOverlayFocusedExpression() {
-		return new Expression() {
-			@Override
-			public EvaluationResult evaluate(IEvaluationContext context) {
-				Object focusControl = context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_NAME);
-				if (focusControl instanceof Control control) {
-					Control current = control;
-					while (current != null) {
-						if (current == containerControl) {
-							return EvaluationResult.TRUE;
-						}
-						current = current.getParent();
-					}
-				}
-				return EvaluationResult.FALSE;
-			}
-
-			@Override
-			public void collectExpressionInfo(ExpressionInfo info) {
-				info.addVariableNameAccess(ISources.ACTIVE_FOCUS_CONTROL_NAME);
-			}
-		};
-	}
-
-	void trackFocusControl(Text text) {
-		IFocusService focusService = PlatformUI.getWorkbench().getService(IFocusService.class);
-		if (focusService != null) {
-			focusService.addFocusTracker(text, "" + text.hashCode()); //$NON-NLS-1$
-		}
-	}
-
-	void setContainerControl(Composite containerControl) {
-		this.containerControl = containerControl;
-		containerControl.addDisposeListener(__ -> {
-			deregisterActionActivations();
-			// Safety net: normally already done by the focus-lost handling that runs
-			// while the overlay is closed via close(), but disposal is not guaranteed
-			// to be preceded by a focus-lost event, so repeat it here defensively. Both
-			// calls are idempotent if that cleanup already ran.
-			deactivateContexts();
-			setTextEditorActionsActivated(true);
-		});
+	void dispose() {
+		deregisterActionActivations();
+		contextSupport.dispose();
 	}
 
 	void registerAction(FindReplaceOverlayAction action) {
@@ -178,103 +109,23 @@ class FindReplaceOverlayCommandSupport {
 	}
 
 	void searchBarActivated() {
-		searchOrReplaceBarActivated(OVERLAY_SEARCH_CONTEXT_ID);
+		contextSupport.searchBarFocused();
+		refreshShortcutHints();
 	}
 
 	void replaceBarActivated() {
-		searchOrReplaceBarActivated(OVERLAY_REPLACE_CONTEXT_ID);
-	}
-
-	private void searchOrReplaceBarActivated(String barContextId) {
-		setTextEditorActionsActivated(false);
-		// Defensively clear any contexts still active from a previous activation,
-		// making this method idempotent instead of relying on a focus-lost event
-		// always having deactivated them first.
-		deactivateContexts();
-		activateContext(OVERLAY_CONTEXT_ID);
-		activateContext(barContextId);
+		contextSupport.replaceBarFocused();
 		refreshShortcutHints();
-	}
-
-	private void activateContext(String context) {
-		IContextService contextService = getWorkbenchContextService();
-		if (contextService != null) {
-			contextActivations.add(contextService.activateContext(context));
-		}
-	}
-
-	private static IContextService getWorkbenchContextService() {
-		return PlatformUI.getWorkbench().getService(IContextService.class);
 	}
 
 	void searchOrReplaceBarDeactivated() {
-		deactivateContexts();
-		setTextEditorActionsActivated(true);
+		contextSupport.fieldsLostFocus();
 		refreshShortcutHints();
-	}
-
-	private void deactivateContexts() {
-		IContextService contextService = getWorkbenchContextService();
-		if (contextService != null) {
-			for (IContextActivation activation : contextActivations.reversed()) {
-				contextService.deactivateContext(activation);
-			}
-		}
-		contextActivations.clear();
 	}
 
 	private void refreshShortcutHints() {
 		for (FindReplaceOverlayAction action : registeredActions) {
 			action.updateHint();
-		}
-	}
-
-	/*
-	 * Adapted from
-	 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(boolean)
-	 */
-	private void setTextEditorActionsActivated(boolean state) {
-		if (!(targetPart instanceof AbstractTextEditor) || targetPart.getSite().getWorkbenchWindow().isClosing()) {
-			return;
-		}
-		if (targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
-			if (!state && globalActionHandlerDeaction == null) {
-				globalActionHandlerDeaction = new DeactivateGlobalActionHandlers(multiEditorSite.getActionBars());
-			} else if (state && globalActionHandlerDeaction != null) {
-				globalActionHandlerDeaction.reactivate();
-				globalActionHandlerDeaction = null;
-			}
-		}
-		try {
-			Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
-			method.setAccessible(true);
-			method.invoke(targetPart, Boolean.valueOf(state));
-		} catch (IllegalArgumentException | ReflectiveOperationException ex) {
-			ILog.of(FindReplaceOverlayCommandSupport.class).error("cannot (de-)activate actions for text editor", ex); //$NON-NLS-1$
-		}
-	}
-
-	private static final class DeactivateGlobalActionHandlers {
-		private static final List<String> ACTIONS = List.of(ITextEditorActionConstants.CUT,
-				ITextEditorActionConstants.COPY, ITextEditorActionConstants.PASTE,
-				ITextEditorActionConstants.DELETE, ITextEditorActionConstants.SELECT_ALL,
-				ITextEditorActionConstants.FIND);
-
-		private final Map<String, IAction> deactivatedActions = new HashMap<>();
-		private final IActionBars actionBars;
-
-		DeactivateGlobalActionHandlers(IActionBars actionBars) {
-			this.actionBars = actionBars;
-			for (String actionID : ACTIONS) {
-				deactivatedActions.putIfAbsent(actionID, actionBars.getGlobalActionHandler(actionID));
-				actionBars.setGlobalActionHandler(actionID, null);
-			}
-		}
-
-		void reactivate() {
-			for (String actionID : deactivatedActions.keySet()) {
-				actionBars.setGlobalActionHandler(actionID, deactivatedActions.get(actionID));
-			}
 		}
 	}
 

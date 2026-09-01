@@ -207,7 +207,7 @@ public class FindReplaceOverlay {
 		targetControl = getTargetControl(parent, part);
 		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
-		commandSupport.setContainerControl(containerControl);
+		containerControl.addDisposeListener(__ -> commandSupport.dispose());
 		customFocusOrder.install();
 		updateReplaceVisibility(false);
 		containerControl.setVisible(false);
@@ -446,9 +446,7 @@ public class FindReplaceOverlay {
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(contentGroup);
 
 		createSearchContainer();
-		commandSupport.trackFocusControl(searchBar.getTextBar());
 		createReplaceContainer();
-		commandSupport.trackFocusControl(replaceBar.getTextBar());
 	}
 
 	private void createSearchTools() {
