@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSMediaRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
@@ -194,16 +195,18 @@ public class CssParserTest {
 	}
 
 	@Test
-	void testMediaAndFontFaceDiscardedFollowingRuleKept() {
+	void testFontFaceDiscardedMediaKeptFollowingRuleKept() {
 		CSSStyleSheetImpl sheet = CssParser.parseStyleSheet("""
 				@font-face { font-family: x; }
-				@media screen { Hidden { color: red; } }
+				@media screen { Guarded { color: red; } }
 				Label { color: blue; }
 				""");
-		// Both at-rules are discarded entirely; only the top-level Label remains.
+		// @font-face is discarded, @media keeps the rules it guards.
 		List<CssRule> rules = sheet.getRules();
-		assertEquals(1, rules.size());
-		CSSStyleRuleImpl label = (CSSStyleRuleImpl) rules.get(0);
+		assertEquals(2, rules.size());
+		CSSMediaRuleImpl media = (CSSMediaRuleImpl) rules.get(0);
+		assertEquals("Guarded", media.getRules().get(0).getSelectorText());
+		CSSStyleRuleImpl label = (CSSStyleRuleImpl) rules.get(1);
 		assertEquals("Label", label.getSelectorText());
 		assertEquals("blue", label.getStyle().getPropertyCSSValue("color").getCssText());
 	}

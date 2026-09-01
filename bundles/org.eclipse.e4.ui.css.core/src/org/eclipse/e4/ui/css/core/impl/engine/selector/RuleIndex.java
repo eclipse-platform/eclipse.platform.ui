@@ -21,9 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSMediaRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
+import org.eclipse.e4.ui.css.core.impl.dom.Media;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors.Selector;
 import org.w3c.dom.Element;
 
@@ -49,19 +51,34 @@ public final class RuleIndex {
 	private RuleIndex() {
 	}
 
-	/** Indexes every style rule of the given stylesheets in cascade order. */
+	/** Indexes every style rule in cascade order, for the running platform. */
 	public static RuleIndex of(List<CSSStyleSheetImpl> styleSheets) {
+		return of(styleSheets, Media.Context.current());
+	}
+
+	/**
+	 * Indexes every style rule in cascade order. A rule guarded by an
+	 * {@code @media} query is indexed at its block's position, and only when
+	 * the query matches.
+	 */
+	public static RuleIndex of(List<CSSStyleSheetImpl> styleSheets, Media.Context media) {
 		RuleIndex index = new RuleIndex();
 		for (CSSStyleSheetImpl styleSheet : styleSheets) {
 			for (CssRule rule : styleSheet.getRules()) {
 				if (rule instanceof CSSStyleRuleImpl styleRule) {
-					for (Selector alternative : styleRule.getSelectorList().alternatives()) {
-						index.add(new Candidate(alternative, styleRule, index.all.size()));
-					}
+					index.addRule(styleRule);
+				} else if (rule instanceof CSSMediaRuleImpl mediaRule && mediaRule.matches(media)) {
+					mediaRule.getRules().forEach(index::addRule);
 				}
 			}
 		}
 		return index;
+	}
+
+	private void addRule(CSSStyleRuleImpl styleRule) {
+		for (Selector alternative : styleRule.getSelectorList().alternatives()) {
+			add(new Candidate(alternative, styleRule, all.size()));
+		}
 	}
 
 	private void add(Candidate candidate) {

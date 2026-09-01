@@ -14,7 +14,8 @@
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 /**
- * A rule in a parsed stylesheet: either a style rule or an {@code @import}.
+ * A rule in a parsed stylesheet: a style rule, an {@code @import} or an
+ * {@code @media} block.
  */
-public sealed interface CssRule permits CSSStyleRuleImpl, CSSImportRuleImpl {
+public sealed interface CssRule permits CSSStyleRuleImpl, CSSImportRuleImpl, CSSMediaRuleImpl {
 }

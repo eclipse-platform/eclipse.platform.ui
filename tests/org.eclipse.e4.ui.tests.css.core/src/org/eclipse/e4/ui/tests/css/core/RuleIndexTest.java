@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.impl.dom.Media;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.RuleIndex;
 import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
@@ -139,6 +140,24 @@ public class RuleIndexTest {
 		boolean found = index.candidatesFor(plain).stream()
 				.anyMatch(candidate -> candidate.selector().text().equals(":not(.warning)"));
 		assertTrue(found, "a bare negation must be a candidate for every element");
+	}
+
+	@Test
+	void testMediaRulesAreIndexedOnlyWhenTheQueryMatches() throws Exception {
+		String sheet = """
+				Label { color: red; }
+				@media (-eclipse-os: linux) { Label { color: blue; } }
+				""";
+		TestElement label = new TestElement("Label", engine);
+
+		RuleIndex onLinux = RuleIndex.of(List.of(ParserTestUtil.parseCss(sheet)), new Media.Context("linux", "gtk"));
+		assertEquals(2, onLinux.candidatesFor(label).size());
+		// The guarded rule keeps the position of its block, so it still wins.
+		assertEquals(1, onLinux.candidatesFor(label).get(1).order());
+
+		RuleIndex onWindows = RuleIndex.of(List.of(ParserTestUtil.parseCss(sheet)),
+				new Media.Context("win32", "win32"));
+		assertEquals(1, onWindows.candidatesFor(label).size());
 	}
 
 	@Test
