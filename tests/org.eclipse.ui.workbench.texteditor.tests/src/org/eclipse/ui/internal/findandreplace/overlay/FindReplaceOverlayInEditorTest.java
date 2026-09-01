@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.notifyKeyDown;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.processPendingEvents;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,10 +25,11 @@ import java.util.ResourceBundle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.text.IDocument;
@@ -35,6 +39,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
 
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.StatusTextEditor;
@@ -72,21 +78,39 @@ public class FindReplaceOverlayInEditorTest {
 
 	private Text searchField;
 
+	private String testName;
+
 	@BeforeEach
-	void openEditorWithOverlay() throws PartInitException {
+	void openEditorWithOverlay(TestInfo testInfo) throws PartInitException {
+		testName = testInfo.getTestMethod().get().getName();
 		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
+		closeWelcomePage();
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		editor = (StatusTextEditor) page.openEditor(new TestTextEditorInput(CONTENT), TestTextEditor.ID);
-		processPendingEvents();
+		runEventQueue();
 
 		// Opening through the action rather than through its internals also asserts
 		// that an editor of this kind gets the overlay rather than the dialog.
 		new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), //$NON-NLS-1$
 				"Editor.FindReplace.", editor).run(); //$NON-NLS-1$
-		processPendingEvents();
+		runEventQueue();
 
-		searchField = focusedInputField("opening the overlay is expected to focus its search field", //$NON-NLS-1$
-				SEARCH_FIELD);
+		searchField = focusedInputField(SEARCH_FIELD);
+	}
+
+	/**
+	 * Where these tests run inside a full product rather than against the test
+	 * bundle's own dependencies, the workbench opens its Welcome page over the whole
+	 * window on a fresh workspace. It would cover the editor and keep the focus, so
+	 * that the overlay never receives it. Nothing to close where no such page exists.
+	 */
+	private static void closeWelcomePage() {
+		IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
+		IIntroPart welcomePage = introManager.getIntro();
+		if (welcomePage != null) {
+			introManager.closeIntro(welcomePage);
+			runEventQueue();
+		}
 	}
 
 	@AfterEach
@@ -211,7 +235,7 @@ public class FindReplaceOverlayInEditorTest {
 	public void testTheEditorActsOnKeysAgainOnceTheOverlayLostFocus() {
 		focusSearchField();
 		editor.setFocus();
-		processPendingEvents();
+		waitForFocus(editorWidget()::isFocusControl, testName);
 
 		type(editorWidget(), SWT.MOD1, 'a');
 
@@ -225,21 +249,29 @@ public class FindReplaceOverlayInEditorTest {
 		editor.setFocus();
 		processPendingEvents();
 		searchField.forceFocus();
-		processPendingEvents();
-		assertTrue(searchField.isFocusControl(), "the search field is expected to have focus"); //$NON-NLS-1$
+		waitForFocus(searchField::isFocusControl, testName);
 	}
 
 	/** Reveals the replace field through the overlay's own command, which focuses it. */
 	private Text showReplaceField() throws Exception {
 		executeCommand(FindReplaceOverlayCommandSupport.CMD_TOGGLE_REPLACE);
-		return focusedInputField("showing the replace field is expected to focus it", //$NON-NLS-1$
-				REPLACE_FIELD);
+		return focusedInputField(REPLACE_FIELD);
 	}
 
-	private static Text focusedInputField(String message, String expectedId) {
-		Text field = assertInstanceOf(Text.class, Display.getCurrent().getFocusControl(), message);
-		assertEquals(expectedId, field.getParent().getData(FindReplaceOverlay.ID_DATA_KEY), message);
-		return field;
+	/**
+	 * The overlay's input field of the given kind, once it has focus. Waiting rather
+	 * than asserting straight away is what makes this survive a workbench that hands
+	 * focus over more slowly, and yields a screenshot rather than a bare mismatch when
+	 * the focus ends up somewhere else entirely.
+	 */
+	private Text focusedInputField(String expectedId) {
+		waitForFocus(() -> isInputField(Display.getCurrent().getFocusControl(), expectedId), testName);
+		return (Text) Display.getCurrent().getFocusControl();
+	}
+
+	private static boolean isInputField(Control focused, String expectedId) {
+		return focused instanceof Text field
+				&& expectedId.equals(field.getParent().getData(FindReplaceOverlay.ID_DATA_KEY));
 	}
 
 	private static void executeCommand(String commandId) throws Exception {
@@ -248,25 +280,16 @@ public class FindReplaceOverlayInEditorTest {
 	}
 
 	/**
-	 * Delivers a key stroke the way the workbench sees it, through the display
-	 * filter the key binding dispatcher installs.
+	 * Types a key and lets what it triggered run, but without waiting on top: the
+	 * stroke itself is carried out while it is delivered, and waiting after every one
+	 * of them would dominate the runtime of this class.
 	 */
-	private static void type(org.eclipse.swt.widgets.Control target, int stateMask, int keyCode) {
-		Event keyEvent = new Event();
-		keyEvent.widget = target;
-		keyEvent.type = SWT.KeyDown;
-		keyEvent.stateMask = stateMask;
-		keyEvent.keyCode = keyCode;
-		// Control, and only Control, turns a letter into a control character. On macOS
-		// SWT.MOD1 is Command, which does not.
-		keyEvent.character = (char) ((stateMask & SWT.CTRL) != 0 && Character.isLetter(keyCode)
-				? Character.toUpperCase(keyCode) - 64
-				: keyCode);
-		target.notifyListeners(SWT.KeyDown, keyEvent);
+	private static void type(Control target, int stateMask, int keyCode) {
+		notifyKeyDown(target, stateMask, keyCode);
 		processPendingEvents();
 	}
 
-	private org.eclipse.swt.widgets.Control editorWidget() {
+	private Control editorWidget() {
 		return editor.getAdapter(org.eclipse.jface.text.ITextViewer.class).getTextWidget();
 	}
 
@@ -288,13 +311,6 @@ public class FindReplaceOverlayInEditorTest {
 
 	private int editorSelectionOffset() {
 		return editorSelection().getOffset();
-	}
-
-	private static void processPendingEvents() {
-		Display display = Display.getCurrent();
-		while (display != null && !display.isDisposed() && display.readAndDispatch()) {
-			// keep dispatching
-		}
 	}
 
 }
