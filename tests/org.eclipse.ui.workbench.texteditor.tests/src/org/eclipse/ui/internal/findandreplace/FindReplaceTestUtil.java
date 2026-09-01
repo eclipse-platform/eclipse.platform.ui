@@ -17,7 +17,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.function.Supplier;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.ui.PlatformUI;
 
@@ -26,6 +29,19 @@ import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 public final class FindReplaceTestUtil {
 
 	private FindReplaceTestUtil() {
+	}
+
+	/**
+	 * Carries out what is already pending and returns. Unlike {@link #runEventQueue()}
+	 * it does not wait, so it covers what the code under test has scheduled by now but
+	 * not what it schedules with a delay. Preferred where there is nothing to wait
+	 * for, since waiting costs half a second every time.
+	 */
+	public static void processPendingEvents() {
+		Display display= PlatformUI.getWorkbench().getDisplay();
+		while (!display.isDisposed() && display.readAndDispatch()) {
+			// do nothing
+		}
 	}
 
 	public static void runEventQueue() {
@@ -40,6 +56,47 @@ public final class FindReplaceTestUtil {
 				// do nothing
 			}
 		}
+	}
+
+	/**
+	 * Delivers a key stroke to the given control the way the workbench sees one,
+	 * through the display filters the key binding dispatcher installs. Notifying the
+	 * widget rather than posting a native event keeps this independent of the
+	 * operating system, so it also works headless, and it is synchronous: the stroke
+	 * has been carried out by the time this returns, and only what it triggers in turn
+	 * may still be pending.
+	 *
+	 * @param target the control to deliver the stroke to
+	 * @param stateMask the modifiers held down, {@link SWT#NONE} for none
+	 * @param keyCode the key, either a character or one of the {@link SWT} key codes
+	 */
+	public static void notifyKeyDown(Control target, int stateMask, int keyCode) {
+		Event keyEvent= new Event();
+		keyEvent.stateMask= stateMask;
+		keyEvent.keyCode= keyCode;
+		keyEvent.character= characterFor(stateMask, keyCode);
+		// The type and the widget are filled in by SWT while sending the event.
+		target.notifyListeners(SWT.KeyDown, keyEvent);
+	}
+
+	/**
+	 * The character a key stroke carries, which is not simply its key code. Keys that
+	 * stand for no character, such as the arrow keys, have their own code range and
+	 * carry none, whereas the Enter key of the keypad lives in that range and still
+	 * carries a carriage return. Control, and only Control, turns a letter into a
+	 * control character: on macOS {@link SWT#MOD1} is Command, which does not.
+	 */
+	private static char characterFor(int stateMask, int keyCode) {
+		if (keyCode == SWT.CR || keyCode == SWT.KEYPAD_CR) {
+			return '\r';
+		}
+		if ((keyCode & SWT.KEYCODE_BIT) != 0) {
+			return '\0';
+		}
+		if ((stateMask & SWT.CTRL) != 0 && Character.isLetter(keyCode)) {
+			return (char) (Character.toUpperCase(keyCode) - 64);
+		}
+		return (char) keyCode;
 	}
 
 	public static void waitForFocus(Supplier<Boolean> hasFocusValidator, String testName) {

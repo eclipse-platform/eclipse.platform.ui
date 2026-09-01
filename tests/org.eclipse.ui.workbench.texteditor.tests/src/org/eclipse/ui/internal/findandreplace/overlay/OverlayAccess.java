@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.notifyKeyDown;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -134,16 +134,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed) {
-		final Event event= new Event();
-		event.type= SWT.KeyDown;
-		if (shiftPressed) {
-			event.stateMask= SWT.SHIFT;
-		}
-		if (keyCode == SWT.CR | keyCode == SWT.KEYPAD_CR) {
-			event.character= '\r';
-		}
-		event.keyCode= keyCode;
-		find.getTextBar().notifyListeners(SWT.KeyDown, event);
+		notifyKeyDown(find.getTextBar(), shiftPressed ? SWT.SHIFT : SWT.NONE, keyCode);
 		runEventQueue();
 	}
 
