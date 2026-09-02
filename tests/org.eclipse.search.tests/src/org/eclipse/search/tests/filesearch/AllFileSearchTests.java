@@ -16,6 +16,7 @@ package org.eclipse.search.tests.filesearch;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
+import org.eclipse.search.tests.MatchFilterStateTest;
 import org.eclipse.search.tests.TextSearchResultTest;
 
 @Suite
@@ -23,6 +24,8 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		AnnotationManagerTest.class,
 		FileSearchTests.class,
 		LineAnnotationManagerTest.class,
+		MatchFilterStateTest.class,
+		NestedProjectFilterTest.class,
 		PositionTrackerTest.class,
 		ResultUpdaterTest.class,
 		SearchResultPageTest.class,
