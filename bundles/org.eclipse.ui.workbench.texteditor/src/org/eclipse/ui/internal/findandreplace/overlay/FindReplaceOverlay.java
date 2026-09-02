@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.SWT;
@@ -43,7 +41,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
@@ -394,40 +391,47 @@ public class FindReplaceOverlay {
 	}
 
 	/**
-	 * HACK: In order to not introduce a hard-coded color, we need to retrieve the
-	 * background color of text widgets and composite to color those widgets that
-	 * would otherwise inherit non-fitting custom colors from the containing
-	 * StyledText.
+	 * The overlay hard-codes no colors: its text fields blend into the part it is
+	 * placed on, and everything around them takes the color the theme gives to
+	 * widgets of the respective kind.
+	 * <p>
+	 * The theme applies its colors through the CSS engine, which offers nothing to
+	 * ask for the color a widget would be given, so they are read off throwaway
+	 * widgets created for that purpose. Those are put into a shell of their own,
+	 * which is never opened: it keeps them out of the shell the user is looking at,
+	 * and it keeps the colors independent of the kind of part the overlay is opened
+	 * in, which is what the CSS rules of the shipped themes key on.
 	 */
 	private void retrieveColors() {
-		if (targetPart instanceof StatusTextEditor textEditor) {
-			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
-			widgetBackgroundColor = targetWidget.getBackground();
-			normalTextForegroundColor = targetWidget.getForeground();
-		} else {
-			Text textBarForRetrievingTheRightColor = new Text(targetControl.getShell(), SWT.SINGLE | SWT.SEARCH);
-			targetControl.getShell().layout();
-			widgetBackgroundColor = textBarForRetrievingTheRightColor.getBackground();
-			normalTextForegroundColor = textBarForRetrievingTheRightColor.getForeground();
-			textBarForRetrievingTheRightColor.dispose();
+		Shell colorProbeShell = new Shell(targetControl.getShell(), SWT.NONE);
+		try {
+			Composite compositeColorProbe = new Composite(colorProbeShell, SWT.NONE);
+			Text textColorProbe = new Text(colorProbeShell, SWT.SINGLE | SWT.SEARCH);
+			applyPendingStyling(colorProbeShell);
+
+			overlayBackgroundColor = compositeColorProbe.getBackground();
+			Control textColorSource = targetPart instanceof StatusTextEditor textEditor
+					? textEditor.getAdapter(ITextViewer.class).getTextWidget()
+					: textColorProbe;
+			widgetBackgroundColor = textColorSource.getBackground();
+			normalTextForegroundColor = textColorSource.getForeground();
+		} finally {
+			colorProbeShell.dispose();
 		}
-		overlayBackgroundColor = retrieveDefaultCompositeBackground();
 		errorTextForegroundColor = JFaceColors.getErrorText(targetControl.getShell().getDisplay());
 	}
 
-	private Color retrieveDefaultCompositeBackground() {
-		AtomicReference<Color> colorReference = new AtomicReference<>();
-		Dialog dummyDialogForColorRetrieval = new Dialog(targetControl.getShell()) {
-			@Override
-			public void create() {
-				super.create();
-				colorReference.set(getContents().getBackground());
-			}
-
-		};
-		dummyDialogForColorRetrieval.create();
-		dummyDialogForColorRetrieval.close();
-		return colorReference.get();
+	/**
+	 * Has the CSS engine style the widgets created so far, so that their colors can
+	 * be read without returning to the event loop first.
+	 * <p>
+	 * The engine styles a widget in reaction to the {@link SWT#Skin} event SWT
+	 * queues when the widget is created. SWT delivers those events from its event
+	 * loop, but also whenever a composite computes its size, which is why computing
+	 * a size that is not needed for anything is what makes the colors readable here.
+	 */
+	private static void applyPendingStyling(Composite widgets) {
+		widgets.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
 	private static Composite createColoredComposite(Composite parent, Color backgroundColor) {
