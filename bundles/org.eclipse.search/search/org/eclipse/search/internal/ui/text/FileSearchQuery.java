@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.core.text.TextSearchEngine;
@@ -231,6 +230,10 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus run(final IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
+		// the filter states are remembered for all search results and are keyed by
+		// the file handles, they must not be reused by this new search: not every
+		// change of the workspace that invalidates them can be detected
+		OuterProjectFileFilter.clearRememberedStates();
 
 		Pattern searchPattern= getSearchPattern();
 
@@ -291,21 +294,6 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 		Object[] args= { fScope.getFilterDescription(), Integer.valueOf(nMatches), fScope.getDescription() };
 		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args);
-	}
-
-	/**
-	 * @param result all result are added to this search result
-	 * @param monitor the progress monitor to use
-	 * @param file the file to search in
-	 * @return returns the status of the operation
-	 */
-	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
-		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { file }, new String[] { "*" }, true); //$NON-NLS-1$
-
-		Pattern searchPattern= getSearchPattern();
-		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileNameSearch(), fSearchInBinaries);
-
-		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}
 
 	protected Pattern getSearchPattern() {
