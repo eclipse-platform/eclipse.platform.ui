@@ -24,8 +24,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  * "Help".
  */
 public class HelpSearchProvider extends QuickAccessProvider {
-	/** Minumum length to suggest the user to search typed text in the Help */
-	public static final int MIN_SEARCH_LENGTH = 3;
 
 	public HelpSearchProvider() {
 		super();

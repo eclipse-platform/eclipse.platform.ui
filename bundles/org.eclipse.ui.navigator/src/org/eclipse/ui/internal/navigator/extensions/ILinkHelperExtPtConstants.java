@@ -30,9 +30,6 @@ public interface ILinkHelperExtPtConstants {
 	String ATT_CLASS = "class"; //$NON-NLS-1$
 
 	/** */
-	String ATT_NAVIGATOR_CONTENT_EXTENSION_ID = "navigatorContentExtensionId"; //$NON-NLS-1$
-
-	/** */
 	String EDITOR_INPUT_ENABLEMENT = "editorInputEnablement"; //$NON-NLS-1$
 
 	/** */

@@ -38,9 +38,6 @@ public interface INavigatorContentExtPtConstants {
 	String TAG_POSSIBLE_CHILDREN = "possibleChildren"; //$NON-NLS-1$
 
 	/** */
-	String TAG_DUPLICATE_CONTENT_FILTER = "duplicateContentFilter"; //$NON-NLS-1$
-
-	/** */
 	String TAG_COMMON_FILTER = "commonFilter"; //$NON-NLS-1$
 
 	/** */
@@ -108,9 +105,6 @@ public interface INavigatorContentExtPtConstants {
 
 	/** */
 	String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
-
-	/** */
-	String ATT_VIEWER_FILTER = "viewerFilter"; //$NON-NLS-1$
 
 	/** */
 	String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
