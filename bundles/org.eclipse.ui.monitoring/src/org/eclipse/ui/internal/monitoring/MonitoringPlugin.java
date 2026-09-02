@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 
 /**
@@ -43,7 +43,7 @@ public class MonitoringPlugin {
 
 	public static IPreferenceStore getPreferenceStore() {
 		if (store == null) {
-			store = PlatformUI.createPreferenceStore(MonitoringPlugin.class);
+			store = ScopedPreferenceStore.getInstance(MonitoringPlugin.class);
 		}
 		return store;
 	}
