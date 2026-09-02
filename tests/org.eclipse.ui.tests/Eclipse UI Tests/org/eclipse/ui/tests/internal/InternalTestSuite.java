@@ -68,6 +68,7 @@ import org.junit.platform.suite.api.Suite;
 	Bug540297WorkbenchPageFindViewTest.class,
 	Bug549139Test.class,
 	CloseResourceActionTest.class,
+	OpenResourceActionTest.class,
 	LargeFileLimitsPreferenceHandlerTest.class,
 	WorkbookEditorsHandlerTest.class,
 	ScopeAreaTest.class,

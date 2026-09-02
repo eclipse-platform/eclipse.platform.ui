@@ -58,6 +58,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IDEInternalPreferences.OPEN_REQUIRED_PROJECTS,
 				IDEInternalPreferences.PSPM_PROMPT);
 		node.putBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, false);
+		node.put(IDEInternalPreferences.OPEN_NESTED_PROJECTS, IDEInternalPreferences.PSPM_PROMPT);
 		node.put(IDEInternalPreferences.CLOSE_NESTED_PROJECTS, IDEInternalPreferences.PSPM_PROMPT);
 
 		node.putBoolean(IDEInternalPreferences.WARN_ABOUT_WORKSPACE_INCOMPATIBILITY, true);

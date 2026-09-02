@@ -17,7 +17,6 @@
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -258,7 +256,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		if (!promptForRelatedProjects()) {
 			return projects;
 		}
-		List<IProject> nestedProjects = computeNestedOpenProjects(projects);
+		List<IProject> nestedProjects = NestedProjects.below(projects, true);
 		if (nestedProjects.isEmpty()) {
 			return projects;
 		}
@@ -318,40 +316,6 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 */
 	boolean promptForRelatedProjects() {
 		return true;
-	}
-
-	/**
-	 * @param projects the projects the user selected
-	 * @return the open projects located inside the given ones, but not among them
-	 */
-	private static List<IProject> computeNestedOpenProjects(List<? extends IResource> projects) {
-		List<IPath> locations = new ArrayList<>(projects.size());
-		for (IResource project : projects) {
-			IPath location = project.getLocation();
-			if (location != null) {
-				locations.add(location);
-			}
-		}
-		if (locations.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<IProject> nestedProjects = new ArrayList<>();
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			if (!project.isOpen() || projects.contains(project)) {
-				continue;
-			}
-			IPath location = project.getLocation();
-			if (location == null) {
-				continue;
-			}
-			for (IPath selected : locations) {
-				if (!selected.equals(location) && selected.isPrefixOf(location)) {
-					nestedProjects.add(project);
-					break;
-				}
-			}
-		}
-		return nestedProjects;
 	}
 
 	/**

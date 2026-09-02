@@ -323,6 +323,13 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenResourceAction_operationMessage;
 	public static String OpenResourceAction_operationMessage_plural;
 	public static String OpenResourceAction_openRequiredProjects;
+	public static String OpenResourceAction_nestedTitle;
+	public static String OpenResourceAction_openOneNestedBelowProject;
+	public static String OpenResourceAction_openNestedBelowProject;
+	public static String OpenResourceAction_openOneNestedBelowSelection;
+	public static String OpenResourceAction_openNestedBelowSelection;
+	public static String OpenResourceAction_openIncludingNested;
+	public static String OpenResourceAction_openSelectedOnly;
 
 	public static String CloseResourceAction_text;
 	public static String CloseResourceAction_text_plural;
@@ -569,6 +576,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_otherLineDelim;
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
+	public static String IDEWorkspacePreference_openNestedProjects;
 	public static String IDEWorkspacePreference_closeNestedProjects;
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
 	public static String IDEWorkspacePreference_windowTitleGroupText;

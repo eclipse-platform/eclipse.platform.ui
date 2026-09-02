@@ -56,6 +56,11 @@ public interface IDEInternalPreferences {
 	String CLOSE_UNRELATED_PROJECTS = "CLOSE_UNRELATED_PROJECTS"; //$NON-NLS-1$
 
 	/**
+	 * (String) Whether to open projects nested below a project that is opened.
+	 */
+	String OPEN_NESTED_PROJECTS = "OPEN_NESTED_PROJECTS"; //$NON-NLS-1$
+
+	/**
 	 * (String) Whether to close projects nested below a project that is closed.
 	 */
 	String CLOSE_NESTED_PROJECTS = "CLOSE_NESTED_PROJECTS"; //$NON-NLS-1$

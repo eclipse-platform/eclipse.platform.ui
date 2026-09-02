@@ -110,6 +110,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private ComboFieldEditor openReferencesEditor;
 
+	private ComboFieldEditor openNestedEditor;
+
 	private ComboFieldEditor closeNestedEditor;
 
 	private StringFieldEditor systemExplorer;
@@ -146,6 +148,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		Composite comboParent = new Composite(composite, SWT.NONE);
 		comboParent.setLayout(new GridLayout(2, false));
 		createOpenPrefControls(comboParent);
+		createOpenNestedPrefControls(comboParent);
 		createCloseNestedPrefControls(comboParent);
 		createMissingNaturePref(comboParent);
 		createMissingEncodingPref(comboParent);
@@ -237,6 +240,22 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		openReferencesEditor.setPreferenceStore(getIDEPreferenceStore());
 		openReferencesEditor.setPage(this);
 		openReferencesEditor.load();
+	}
+
+	/**
+	 * Creates controls for the preference to open nested projects.
+	 */
+	private void createOpenNestedPrefControls(Composite parent) {
+		String name = IDEInternalPreferences.OPEN_NESTED_PROJECTS;
+		String label = IDEWorkbenchMessages.IDEWorkspacePreference_openNestedProjects;
+		String[][] namesAndValues = {
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Always), IDEInternalPreferences.PSPM_ALWAYS },
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Never), IDEInternalPreferences.PSPM_NEVER },
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Prompt), IDEInternalPreferences.PSPM_PROMPT } };
+		openNestedEditor = new ComboFieldEditorInGrid(name, label, namesAndValues, parent);
+		openNestedEditor.setPreferenceStore(getIDEPreferenceStore());
+		openNestedEditor.setPage(this);
+		openNestedEditor.load();
 	}
 
 	/**
@@ -581,6 +600,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		encodingEditor.loadDefault();
 		lineSeparatorEditor.loadDefault();
 		openReferencesEditor.loadDefault();
+		openNestedEditor.loadDefault();
 		closeNestedEditor.loadDefault();
 		missingNatureSeverityCombo.loadDefault();
 		missingEncodingSeverityCombo.loadDefault();
@@ -648,6 +668,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		encodingEditor.store();
 		lineSeparatorEditor.store();
 		openReferencesEditor.store();
+		openNestedEditor.store();
 		closeNestedEditor.store();
 		missingNatureSeverityCombo.store();
 		missingEncodingSeverityCombo.store();

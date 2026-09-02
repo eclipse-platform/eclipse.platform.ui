@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,12 @@
  *     IBM Corporation - initial API and implementation
  *     Mohamed Tarief , IBM - Bug 139211
  *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
+ *     Lars Vogel <Lars.Vogel@vogella.com> - ask before opening nested projects
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -34,11 +36,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -134,19 +138,16 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	}
 
 	/**
-	 * Returns whether there are closed projects in the workspace that are
-	 * not part of the current selection.
+	 * Returns whether there are closed projects in the workspace that are not
+	 * among the given ones.
 	 */
-	private boolean hasOtherClosedProjects() {
-		//count the closed projects in the selection
+	private boolean hasOtherClosedProjects(List<? extends IResource> projects) {
 		int closedInSelection = 0;
-		for (IResource project : getSelectedResources()) {
+		for (IResource project : projects) {
 			if (!((IProject) project).isOpen()) {
 				closedInSelection++;
 			}
 		}
-		//there are other closed projects if the selection does
-		//not contain all closed projects in the workspace
 		return closedInSelection < countClosedProjects();
 	}
 
@@ -209,8 +210,13 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	@Override
 	public void run() {
+		List<? extends IResource> projects = promptForProjectsToOpen(getActionResources());
+		if (projects == null) {
+			// the user cancelled the operation
+			return;
+		}
 		try {
-			runOpenWithReferences();
+			runOpenWithReferences(projects);
 		} catch (OperationCanceledException e) {
 			//just return when canceled
 		}
@@ -225,10 +231,70 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	}
 
 	/**
-	 * Opens the selected projects, and all related projects, in the background.
+	 * Offers to open closed projects nested below the selected ones, unless the
+	 * preference already decides.
+	 *
+	 * @return the projects to open, or <code>null</code> if the user cancelled
 	 */
-	private void runOpenWithReferences() {
-		final List<IResource> resources = new ArrayList<>(getActionResources());
+	private List<? extends IResource> promptForProjectsToOpen(List<? extends IResource> projects) {
+		List<IProject> nestedProjects = NestedProjects.below(projects, false);
+		if (nestedProjects.isEmpty()) {
+			return projects;
+		}
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		String key = IDEInternalPreferences.OPEN_NESTED_PROJECTS;
+		String value = store.getString(key);
+		if (IDEInternalPreferences.PSPM_NEVER.equals(value)) {
+			return projects;
+		}
+		if (!IDEInternalPreferences.PSPM_ALWAYS.equals(value)) {
+			// the map fixes the button ids, so the toggle stores ALWAYS or NEVER
+			LinkedHashMap<String, Integer> buttons = new LinkedHashMap<>();
+			buttons.put(IDEWorkbenchMessages.OpenResourceAction_openSelectedOnly,
+					Integer.valueOf(IDialogConstants.NO_ID));
+			buttons.put(IDEWorkbenchMessages.OpenResourceAction_openIncludingNested,
+					Integer.valueOf(IDialogConstants.YES_ID));
+			buttons.put(IDialogConstants.CANCEL_LABEL, Integer.valueOf(IDialogConstants.CANCEL_ID));
+			MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION, getShell(),
+					IDEWorkbenchMessages.OpenResourceAction_nestedTitle, nestedMessage(projects, nestedProjects),
+					null, false, store, key, SWT.SHEET, buttons);
+			switch (dialog.getReturnCode()) {
+			case IDialogConstants.YES_ID:
+				break;
+			case IDialogConstants.NO_ID:
+				return projects;
+			default:
+				return null;
+			}
+		}
+		List<IResource> allProjects = new ArrayList<>(projects);
+		allProjects.addAll(nestedProjects);
+		return allProjects;
+	}
+
+	/**
+	 * @return the question asked when the selection nests further closed projects
+	 */
+	private static String nestedMessage(List<? extends IResource> projects, List<IProject> nestedProjects) {
+		boolean oneProject = projects.size() == 1;
+		if (nestedProjects.size() == 1) {
+			return oneProject
+					? NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openOneNestedBelowProject,
+							projects.get(0).getName())
+					: IDEWorkbenchMessages.OpenResourceAction_openOneNestedBelowSelection;
+		}
+		Integer count = Integer.valueOf(nestedProjects.size());
+		return oneProject
+				? NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openNestedBelowProject, count,
+						projects.get(0).getName())
+				: NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openNestedBelowSelection, count);
+	}
+
+	/**
+	 * Opens the given projects, and all related projects, in the background.
+	 */
+	private void runOpenWithReferences(List<? extends IResource> projects) {
+		final List<IResource> resources = new ArrayList<>(projects);
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
 			private boolean openProjectReferences = true;
 			private boolean hasPrompted = false;
@@ -256,7 +322,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 							break;
 						}
 					}
-					if (openProjectReferences && hasOtherClosedProjects()) {
+					if (openProjectReferences && hasOtherClosedProjects(resources)) {
 						Display.getDefault().syncExec(() -> {
 							try {
 							openProjectReferences = promptToOpenWithReferences();
