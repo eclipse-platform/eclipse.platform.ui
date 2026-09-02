@@ -209,6 +209,8 @@ public class SourceViewerDecorationSupport {
 	private MarginPainter fMarginPainter;
 	/** The editor's annotation painter */
 	private AnnotationPainter fAnnotationPainter;
+	/** Whether a repaint of the annotation painter is already scheduled. */
+	private boolean fAnnotationPainterRepaintPending;
 	/** The editor's peer character painter */
 	private MatchingCharacterPainter fMatchingCharacterPainter;
 	/** The character painter's pair matcher */
@@ -617,7 +619,7 @@ public class SourceViewerDecorationSupport {
 				Color color= getColor(info.getColorPreferenceKey());
 				if (fAnnotationPainter != null) {
 					fAnnotationPainter.setAnnotationTypeColor(info.getAnnotationType(), color);
-					fAnnotationPainter.paint(IPainter.CONFIGURATION);
+					repaintAnnotationPainterLater();
 				}
 				setAnnotationOverviewColor(info.getAnnotationType(), color);
 				return;
@@ -649,9 +651,30 @@ public class SourceViewerDecorationSupport {
 				Color color = registry.get(fInlineAnnotationColorKey);
 				fAnnotationPainter.setInlineAnnotationColor(color);
 				fAnnotationPainter.setAnnotationTypeColor(AbstractInlinedAnnotation.TYPE, color);
-				fAnnotationPainter.paint(IPainter.CONFIGURATION);
+				repaintAnnotationPainterLater();
 			}
 		}
+	}
+
+	/**
+	 * Repaints the annotation painter once per UI event loop turn, so a burst of
+	 * color changes costs one repaint instead of one per color.
+	 */
+	private void repaintAnnotationPainterLater() {
+		if (fAnnotationPainterRepaintPending) {
+			return;
+		}
+		StyledText widget= fSourceViewer.getTextWidget();
+		if (widget == null || widget.isDisposed()) {
+			return;
+		}
+		fAnnotationPainterRepaintPending= true;
+		widget.getDisplay().asyncExec(() -> {
+			fAnnotationPainterRepaintPending= false;
+			if (fAnnotationPainter != null && !widget.isDisposed()) {
+				fAnnotationPainter.paint(IPainter.CONFIGURATION);
+			}
+		});
 	}
 
 	/**

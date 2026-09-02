@@ -2543,6 +2543,8 @@ public abstract class AbstractTextEditor extends EditorPart
 	private SourceViewerConfiguration fConfiguration;
 	/** The editor's source viewer. */
 	private ISourceViewer fSourceViewer;
+	/** Whether a full re-style of the text presentation is already scheduled. */
+	private boolean fInvalidateTextPresentationPending;
 	/**
 	 * The editor's selection provider.
 	 *
@@ -4749,6 +4751,28 @@ public abstract class AbstractTextEditor extends EditorPart
 	}
 
 	/**
+	 * Re-styles the whole document once per UI event loop turn, so a burst of
+	 * preference changes costs one re-style instead of one per key.
+	 */
+	private void invalidateTextPresentationLater() {
+		if (fInvalidateTextPresentationPending) {
+			return;
+		}
+		StyledText widget= fSourceViewer.getTextWidget();
+		if (widget == null || widget.isDisposed()) {
+			return;
+		}
+		fInvalidateTextPresentationPending= true;
+		widget.getDisplay().asyncExec(() -> {
+			fInvalidateTextPresentationPending= false;
+			ISourceViewer viewer= fSourceViewer;
+			if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed()) {
+				viewer.invalidateTextPresentation();
+			}
+		});
+	}
+
+	/**
 	 * Determines whether the given preference change affects the editor's
 	 * presentation. This implementation always returns <code>false</code>. May be
 	 * reimplemented by subclasses.
@@ -4843,7 +4867,7 @@ public abstract class AbstractTextEditor extends EditorPart
 		}
 
 		if (affectsTextPresentation(event)) {
-			fSourceViewer.invalidateTextPresentation();
+			invalidateTextPresentationLater();
 		}
 
 		if (PREFERENCE_HYPERLINKS_ENABLED.equals(property)) {
