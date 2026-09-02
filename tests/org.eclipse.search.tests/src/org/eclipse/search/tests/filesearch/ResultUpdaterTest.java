@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.tests.ResourceHelper;
@@ -60,7 +61,7 @@ public class ResultUpdaterTest {
 		Object[] elements= result.getElements();
 		int fileCount= result.getMatchCount(elements[0]);
 		int totalCount= result.getMatchCount();
-		ResourceHelper.delete((IFile)elements[0]);
+		ResourceHelper.delete((IFile)elements[0], ResourcesPlugin.getWorkspace().getRoot());
 		assertEquals(totalCount-fileCount, result.getMatchCount());
 		assertEquals(0, result.getMatchCount(elements[0]));
 	}
