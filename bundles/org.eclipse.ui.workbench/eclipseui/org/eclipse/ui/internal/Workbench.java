@@ -327,8 +327,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	public static final String EARLY_STARTUP_FAMILY = "earlyStartup"; //$NON-NLS-1$
 
-	public static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
-
 	/**
 	 * Holds onto the only instance of Workbench.
 	 */

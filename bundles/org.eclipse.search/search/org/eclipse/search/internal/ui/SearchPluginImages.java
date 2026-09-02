@@ -56,15 +56,9 @@ public class SearchPluginImages {
 	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_FLAT_LAYOUT= NAME_PREFIX + "flatLayout.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT= NAME_PREFIX + "hierarchicalLayout.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_HORIZONTAL_ORIENTATION= NAME_PREFIX + "horizontalOrientation.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_VERTICAL_ORIENTATION= NAME_PREFIX + "verticalOrientation.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_AUTOMATIC_ORIENTATION= NAME_PREFIX + "automaticOrientation.svg"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_SINGLE_ORIENTATION= NAME_PREFIX + "singleOrientation.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_CANCEL= NAME_PREFIX + "stop.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_COLLAPSE_ALL= NAME_PREFIX + "collapseall.svg"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_EXPAND_ALL= NAME_PREFIX + "expandall.svg"; //$NON-NLS-1$
