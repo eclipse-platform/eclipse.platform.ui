@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
@@ -36,10 +35,6 @@ class AccessibleToolItem {
 
 	ToolItem getToolItem() {
 		return toolItem;
-	}
-
-	void setBackground(Color color) {
-		toolItem.getParent().setBackground(color);
 	}
 
 	void setImage(Image image) {

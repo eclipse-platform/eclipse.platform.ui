@@ -13,11 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -31,8 +27,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
  * into a Composite.
  */
 class AccessibleToolBar extends Composite {
-
-	private final List<AccessibleToolItem> accessibleToolItems = new ArrayList<>();
 
 	private final GridLayout layout;
 
@@ -50,21 +44,9 @@ class AccessibleToolBar extends Composite {
 	 */
 	public AccessibleToolItem createToolItem(int styleBits) {
 		AccessibleToolItem toolItem = new AccessibleToolItem(this, styleBits);
-		accessibleToolItems.add(toolItem);
 		layout.numColumns++;
 		return toolItem;
 	}
-
-	@Override
-	public void setBackground(Color color) {
-		super.setBackground(color);
-		// some ToolItems (like SWT.SEPARATOR) don't easily inherit the color from the
-		// parent control
-		for (AccessibleToolItem item : accessibleToolItems) {
-			item.setBackground(color);
-		}
-	}
-
 
 	Control getFirstControl() {
 		Control[] children = getChildren();
