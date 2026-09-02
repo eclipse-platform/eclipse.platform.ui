@@ -17,18 +17,13 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -251,22 +246,6 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		return !children.isEmpty();
 	}
 
-	static <T> Stream<T> toStream(Enumeration<T> e) {
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(e.asIterator(), Spliterator.ORDERED), false);
-	}
-
-	private boolean isUnfiltered(FileMatch m) {
-		MatchFilter[] filters = fResult.getActiveMatchFilters();
-		if (filters != null) {
-			for (MatchFilter filter : filters) {
-				if (filter.filters(m)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	/**
 	 *
 	 * Update the search contents. Screen out any results that are filtered via
@@ -281,25 +260,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		boolean singleElement = updatedElements.length == 1;
-		Set<LineElement> lineMatches = Collections.emptySet();
-		// if we have active match filters, we should only use non-filtered FileMatch
-		// objects to collect LineElements to update
-		if (hasActiveMatchFilters()) {
-			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
-				// only for distinct files:
-				.map(u -> ((LineElement) u).getParent()).distinct()
-				// query matches:
-				.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
-				.map(m -> ((FileMatch) m)).filter(this::isUnfiltered).map(m -> m.getLineElement())
-				.collect(Collectors.toSet());
-		} else {
-			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
-					// only for distinct files:
-					.map(u -> ((LineElement) u).getParent()).distinct()
-					// query matches:
-					.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
-					.map(m -> ((FileMatch) m).getLineElement()).collect(Collectors.toSet());
-		}
+		Set<LineElement> lineMatches = getUpdatedLinesWithMatches(updatedElements);
 		try {
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement lineElement)) {
@@ -335,6 +296,55 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private boolean hasActiveMatchFilters() {
 		MatchFilter[] activeMatchFilters = fResult.getActiveMatchFilters();
 		return activeMatchFilters != null && activeMatchFilters.length > 0;
+	}
+
+	/**
+	 * Collects the updated line elements that still have matches. The matches of a
+	 * file are enumerated only once, no matter how many lines of that file have been
+	 * updated, and only the given lines are remembered instead of all lines of the
+	 * touched files.
+	 *
+	 * @param updatedElements the updated elements, may contain elements that are no
+	 *                        line elements
+	 * @return the line elements of <code>updatedElements</code> that have at least
+	 *         one match that is not hidden by an active match filter
+	 */
+	private Set<LineElement> getUpdatedLinesWithMatches(Object[] updatedElements) {
+		// LineElement doesn't implement equals(..)/hashCode(), matches refer to the
+		// very same instance the update is reported for
+		Set<LineElement> updatedLines = Collections.newSetFromMap(new IdentityHashMap<>());
+		Set<IResource> files = new HashSet<>();
+		for (Object updatedElement : updatedElements) {
+			if (updatedElement instanceof LineElement lineElement) {
+				updatedLines.add(lineElement);
+				files.add(lineElement.getParent());
+			}
+		}
+		if (updatedLines.isEmpty()) {
+			return Collections.emptySet();
+		}
+		// if we have active match filters, we should only use non-filtered FileMatch
+		// objects to collect LineElements to update. The filter state is evaluated
+		// once per match by the search result (see AbstractTextSearchResult), it must
+		// not be computed again here: match filters can be expensive and this code
+		// runs in the UI thread for every batch of search results.
+		boolean useFilterState = hasActiveMatchFilters();
+		Set<LineElement> linesWithMatches = Collections.newSetFromMap(new IdentityHashMap<>());
+		for (IResource file : files) {
+			Enumeration<Match> matches = fResult.getMatchSet(file);
+			while (matches.hasMoreElements()) {
+				Match match = matches.nextElement();
+				if (useFilterState && match.isFiltered()) {
+					continue;
+				}
+				LineElement lineElement = ((FileMatch) match).getLineElement();
+				if (updatedLines.contains(lineElement) && linesWithMatches.add(lineElement)
+						&& linesWithMatches.size() == updatedLines.size()) {
+					return linesWithMatches; // all updated lines have matches
+				}
+			}
+		}
+		return linesWithMatches;
 	}
 
 	@Override
