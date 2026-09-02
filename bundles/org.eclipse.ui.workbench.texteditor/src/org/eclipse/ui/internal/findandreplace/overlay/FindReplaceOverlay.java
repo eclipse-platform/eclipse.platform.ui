@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -74,6 +75,8 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 public class FindReplaceOverlay {
 
 	public static final String ID_DATA_KEY = "org.eclipse.ui.internal.findreplace.overlay.FindReplaceOverlay.id"; //$NON-NLS-1$
+
+	private static final String DISABLE_CSS = "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
 
 	private static final String REPLACE_BAR_OPEN_DIALOG_SETTING = "replaceBarOpen"; //$NON-NLS-1$
 	private static final double WORST_CASE_RATIO_EDITOR_TO_OVERLAY = 0.95;
@@ -355,7 +358,39 @@ public class FindReplaceOverlay {
 		}
 		retrieveColors();
 		createMainContainer(parent);
+		disableCssStyling(containerControl);
 		containerControl.layout();
+	}
+
+	/**
+	 * Excludes the overlay from the styling performed by the Eclipse UI CSS engine.
+	 * <p>
+	 * The overlay derives its colors from the part it is placed on, so that it
+	 * blends into that part rather than into the surrounding workbench. The CSS
+	 * engine, however, styles widgets according to the kind of part they are
+	 * contained in: rules like {@code .View ToolBar} apply to everything inside a
+	 * view but to nothing inside an editor. Leaving the overlay to the CSS engine
+	 * would thus give it a different look depending on where it is opened, and would
+	 * overwrite the colors derived here.
+	 * <p>
+	 * The exclusion has to be marked on every single widget, because the engine
+	 * styles each newly created widget individually in reaction to its
+	 * {@link SWT#Skin} event, rather than only traversing the widget tree top-down.
+	 * It therefore only covers the widgets that exist by the time it is called, so
+	 * it has to be called once the overlay is fully built, and any widget added to
+	 * it afterwards has to be excluded as well.
+	 */
+	private static void disableCssStyling(Control control) {
+		control.setData(DISABLE_CSS, Boolean.TRUE);
+		if (control instanceof ToolBar toolBar) {
+			for (ToolItem toolItem : toolBar.getItems()) {
+				toolItem.setData(DISABLE_CSS, Boolean.TRUE);
+			}
+		} else if (control instanceof Composite composite) {
+			for (Control child : composite.getChildren()) {
+				disableCssStyling(child);
+			}
+		}
 	}
 
 	/**
@@ -395,26 +430,20 @@ public class FindReplaceOverlay {
 		return colorReference.get();
 	}
 
-	/**
-	 * A composite with a fixed background color, not adapting to theming.
-	 */
-	private class FixedColorComposite extends Composite {
-		private final Color fixColor;
-
-		public FixedColorComposite(Composite parent, int style, Color backgroundColor) {
-			super(parent, style);
-			this.fixColor = backgroundColor;
-			setBackground(backgroundColor);
-		}
-
-		@Override
-		public void setBackground(Color unusedColor) {
-			super.setBackground(fixColor);
-		}
+	private static Composite createColoredComposite(Composite parent, Color backgroundColor) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(backgroundColor);
+		return composite;
 	}
 
 	private void createMainContainer(final Composite parent) {
-		containerControl = new FixedColorComposite(parent, SWT.NONE, overlayBackgroundColor);
+		containerControl = createColoredComposite(parent, overlayBackgroundColor);
+		// Every widget of the overlay takes the background of the container it sits in,
+		// rather than whatever SWT would fall back to for a widget without one. That
+		// fallback is decided by the widget hierarchy the overlay is placed in, so
+		// without this the tool bars and input fields look different depending on the
+		// kind of editor or view the overlay was opened on.
+		containerControl.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(containerControl);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(2, 2).spacing(2, 0)
 				.applyTo(containerControl);
@@ -441,7 +470,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void createContentsContainer() {
-		contentGroup = new FixedColorComposite(containerControl, SWT.NONE, overlayBackgroundColor);
+		contentGroup = createColoredComposite(containerControl, overlayBackgroundColor);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).spacing(0, 2).applyTo(contentGroup);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(contentGroup);
 
@@ -666,7 +695,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void createSearchContainer() {
-		searchContainer = new FixedColorComposite(contentGroup, SWT.NONE, widgetBackgroundColor);
+		searchContainer = createColoredComposite(contentGroup, widgetBackgroundColor);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchContainer);
 		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(7, 4, 3, 5).equalWidth(false)
 				.applyTo(searchContainer);
@@ -677,7 +706,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void createReplaceContainer() {
-		replaceContainer = new FixedColorComposite(contentGroup, SWT.NONE, widgetBackgroundColor);
+		replaceContainer = createColoredComposite(contentGroup, widgetBackgroundColor);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(replaceContainer);
 		GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).extendedMargins(7, 4, 3, 5).equalWidth(false)
 				.applyTo(replaceContainer);
