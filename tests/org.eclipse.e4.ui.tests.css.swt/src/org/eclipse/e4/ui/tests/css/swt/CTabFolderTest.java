@@ -20,10 +20,17 @@ import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.GREEN;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -190,17 +197,6 @@ public class CTabFolderTest {
 		assertEquals(false, folderToTest.getBorderVisible());
 		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "border-visible", null));
 	}
-	@Test
-	void testSimple() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-simple: true}");
-		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
-		folderToTest.getShell().close();
-		folderToTest = createTestCTabFolder("CTabFolder { swt-simple: false}");
-		// Curved tabs are no longer supported, so getSimple() always returns true
-		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
-	}
 
 	@Test
 	void testMaximizeVisible() {
@@ -355,5 +351,229 @@ public class CTabFolderTest {
 		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
 		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+	}
+
+	@Test
+	void testPageSelectedProgrammaticallyAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		// the class selector keeps this engine's skin listener off other tests' widgets
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		// no selection yet, so the folder hides the page from the engine
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		int unwatched = page.getListeners(SWT.Show).length;
+		tab1.setControl(page);
+		spinEventLoop(display); // the skin pass skips the hidden page
+
+		folderToTest.setSelection(0); // programmatic, so no selection event
+
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+		assertEquals(unwatched, page.getListeners(SWT.Show).length);
+	}
+
+	@Test
+	void testPageAttachedToItsItemAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		// skinned before it is attached, as a Search dialog page is
+		spinEventLoop(display);
+
+		tab1.setControl(page); // already visible, so no show event either
+
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testHiddenPageIsWatchedOnceAcrossReskins() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		int unwatched = page.getListeners(SWT.Show).length;
+		tab1.setControl(page);
+		spinEventLoop(display);
+		int watching = page.getListeners(SWT.Show).length;
+		assertTrue(watching > unwatched);
+
+		page.reskin(SWT.NONE);
+		spinEventLoop(display);
+		page.reskin(SWT.NONE);
+		spinEventLoop(display);
+
+		assertEquals(watching, page.getListeners(SWT.Show).length);
+	}
+
+	@Test
+	void testPresizedPageAttachedToItsItemIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.open();
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		spinEventLoop(display);
+		page.setBounds(folderToTest.getClientArea());
+		drainPaints(display);
+
+		tab1.setControl(page); // same bounds and already visible, so neither a resize nor a show
+
+		spinEventLoop(display);
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testToolBarPageIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		ToolBar page = new ToolBar(folderToTest, SWT.FLAT);
+		WidgetElement.setCSSClass(page, "tabPage");
+		tab1.setControl(page);
+		spinEventLoop(display);
+
+		folderToTest.setSelection(0);
+
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testPendingPageMovedOutOfItsFolderIsReleased() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		CTabItem tab2 = new CTabItem(folderToTest, SWT.NONE);
+		tab2.setText("ANOTHER TAB ITEM");
+		folderToTest.setSelection(0);
+		Composite other = new Composite(shell, SWT.NONE);
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		int unwatched = page.getListeners(SWT.Show).length;
+		tab2.setControl(page);
+		spinEventLoop(display);
+		assumeTrue(page.setParent(other), "reparenting is not supported on this platform");
+
+		folderToTest.dispose();
+		page.setVisible(true); // must not query the disposed folder
+
+		assertEquals(unwatched, page.getListeners(SWT.Show).length);
+	}
+
+	@Test
+	void testTopRightIsNotWatched() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		Composite topRight = new Composite(folderToTest, SWT.NONE);
+		folderToTest.setTopRight(topRight);
+		int listeners = topRight.getListeners(SWT.Show).length;
+
+		spinEventLoop(display);
+		folderToTest.reskin(SWT.ALL);
+		spinEventLoop(display);
+
+		assertEquals(listeners, topRight.getListeners(SWT.Show).length);
+	}
+
+	@Test
+	void testPageOfUnselectedTabIsStyledOnlyWhenSelected() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		CTabItem tab2 = new CTabItem(folderToTest, SWT.NONE);
+		tab2.setText("ANOTHER TAB ITEM");
+		folderToTest.setSelection(0);
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		tab2.setControl(page);
+		spinEventLoop(display);
+		assertNotEquals(RED, page.getBackground().getRGB());
+
+		folderToTest.setSelection(1);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	/** Runs the event loop until the shell's pending paints are delivered. */
+	private static void drainPaints(Display display) {
+		long end = System.currentTimeMillis() + 500;
+		while (System.currentTimeMillis() < end) {
+			if (!display.readAndDispatch()) {
+				display.timerExec(20, () -> {
+				});
+				display.sleep();
+			}
+		}
+	}
+
+	private static void spinEventLoop(Display display) {
+		while (display.readAndDispatch()) {
+			// deliver pending skin and show events
+		}
 	}
 }
