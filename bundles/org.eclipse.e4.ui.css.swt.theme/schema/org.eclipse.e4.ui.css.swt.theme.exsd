@@ -134,6 +134,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isDarkTheme" type="boolean">
+            <annotation>
+               <documentation>
+                  whether this theme is a dark theme. Defaults to &lt;code&gt;false&lt;/code&gt;, unless the theme id contains &quot;dark&quot;, which is the legacy heuristic used before this attribute existed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

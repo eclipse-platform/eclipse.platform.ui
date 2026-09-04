@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -49,6 +50,11 @@ import org.osgi.service.event.EventHandler;
 public class ThemeTest {
 
 	private static final String THEMEID_KEY = "themeid";
+
+	private static final String PERSISTED_THEME_ID = "persisted.test";
+
+	// the appearance is recorded under a key carrying the theme id it belongs to
+	private static final String PERSISTED_THEME_DARK_KEY = "themeIsDark." + PERSISTED_THEME_ID;
 
 	@RegisterExtension
 	CssSwtEngine css = new CssSwtEngine();
@@ -131,6 +137,70 @@ public class ThemeTest {
 				}
 			}
 		}
+	}
+
+	@Test
+	void testDarkAttributeIsReadFromThemeExtension() {
+		List<ITheme> themes = getThemeEngine(Display.getDefault()).getThemes();
+
+		assertTrue(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.declaredDark").isDark());
+		assertFalse(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.declaredLight").isDark());
+		// themes contributed before the attribute existed are classified by their id
+		assertTrue(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.legacydark").isDark());
+	}
+
+	@Test
+	void testLegacyThemesKeepTheirIdBasedClassification() {
+		assertTrue(new Theme("com.example.theme.dark", "Legacy dark").isDark());
+		assertFalse(new Theme("com.example.theme.light", "Legacy light").isDark());
+		// implementations predating isDark() are classified by their id as well
+		ITheme legacy = new ITheme() {
+			@Override
+			public String getId() {
+				return "com.example.theme.dark";
+			}
+
+			@Override
+			public String getLabel() {
+				return "Legacy dark";
+			}
+		};
+		assertTrue(legacy.isDark());
+	}
+
+	@Test
+	void testDarkFlagIsPersistedWithTheThemeId() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID);
+		ITheme previousTheme = themer.getActiveTheme();
+		String previousId = node.get(THEMEID_KEY, null);
+		String previousDark = node.get(PERSISTED_THEME_DARK_KEY, null);
+
+		try {
+			themer.setTheme(new Theme(PERSISTED_THEME_ID, "Persisted", true), true);
+
+			assertEquals(PERSISTED_THEME_ID, node.get(THEMEID_KEY, null));
+			assertTrue(node.getBoolean(PERSISTED_THEME_DARK_KEY, false));
+		} finally {
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			putOrRemove(node, THEMEID_KEY, previousId);
+			putOrRemove(node, PERSISTED_THEME_DARK_KEY, previousDark);
+		}
+	}
+
+	private static void putOrRemove(IEclipsePreferences node, String key, String value) {
+		if (value != null) {
+			node.put(key, value);
+		} else {
+			node.remove(key);
+		}
+	}
+
+	private static ITheme findTheme(List<ITheme> themes, String id) {
+		return themes.stream().filter(t -> id.equals(t.getId())).findFirst()
+				.orElseThrow(() -> new AssertionError("Theme not registered: " + id));
 	}
 
 	private IThemeEngine getThemeEngine(Display display) {

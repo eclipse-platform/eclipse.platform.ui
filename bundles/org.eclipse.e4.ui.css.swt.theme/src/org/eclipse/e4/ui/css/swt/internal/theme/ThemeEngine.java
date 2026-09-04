@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -88,6 +89,13 @@ public class ThemeEngine implements IThemeEngine {
 	private final HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<>();
 
 	private static final String THEMEID_KEY = "themeid";
+
+	/**
+	 * Prefix of the key recording a theme's appearance. The theme id is part of the
+	 * key, so a record left behind by another installation sharing the preferences
+	 * cannot be mistaken for the appearance of the theme in {@link #THEMEID_KEY}.
+	 */
+	private static final String THEME_IS_DARK_KEY_PREFIX = "themeIsDark.";
 
 	public static final String THEME_PLUGIN_ID = "org.eclipse.e4.ui.css.swt.theme";
 
@@ -157,13 +165,14 @@ public class ThemeEngine implements IThemeEngine {
 						final String themeBaseId = id + version;
 						String themeId = themeBaseId;
 						String label = ce.getAttribute("label");
+						boolean dark = isDarkTheme(ce);
 						String originalCSSFile;
 						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
 						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
 							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
 									+ basestylesheeturi;
 						}
-						registerTheme(themeId, label, basestylesheeturi, version);
+						registerTheme(themeId, label, basestylesheeturi, version, dark);
 
 						//check for modified files
 						if (modifiedFiles != null) {
@@ -237,6 +246,20 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 
+	/**
+	 * Themes declare their appearance with the {@code isDarkTheme} attribute. Themes
+	 * contributed before that attribute existed are classified by their id, which is
+	 * the convention the platform relied on so far.
+	 */
+	private static boolean isDarkTheme(IConfigurationElement themeElement) {
+		String dark = themeElement.getAttribute("isDarkTheme");
+		if (dark != null) {
+			return Boolean.parseBoolean(dark);
+		}
+		String id = themeElement.getAttribute("id");
+		return id != null && id.contains("dark"); //$NON-NLS-1$
+	}
+
 	private boolean isOsVersionMatch(String osVersionList) {
 		boolean found = false;
 		String osVersion = System.getProperty("os.version");
@@ -264,13 +287,15 @@ public class ThemeEngine implements IThemeEngine {
 
 	public synchronized ITheme registerTheme(String id, String label,
 			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
-		for (Theme t : themes) {
-			if (t.getId().equals(id)) {
-				throw new IllegalArgumentException("A theme with the id '" + id
-						+ "' is already registered");
-			}
+		return registerTheme(id, label, basestylesheetURI, osVersion, id.contains("dark")); //$NON-NLS-1$
+	}
+
+	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI, String osVersion,
+			boolean dark) throws IllegalArgumentException {
+		if (themes.stream().anyMatch(t -> t.getId().equals(id))) {
+			throw new IllegalArgumentException("A theme with the id '" + id + "' is already registered");
 		}
-		Theme theme = new Theme(id, label);
+		Theme theme = new Theme(id, label, dark);
 		if (osVersion != "") {
 			theme.setOsVersion(osVersion);
 		}
@@ -512,6 +537,7 @@ public class ThemeEngine implements IThemeEngine {
 			EclipsePreferencesHelper.setCurrentThemeId(theme.getId());
 
 			pref.put(THEMEID_KEY, theme.getId());
+			pref.putBoolean(darkKey(theme.getId()), theme.isDark());
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
@@ -520,8 +546,7 @@ public class ThemeEngine implements IThemeEngine {
 		}
 		publishEffectiveThemeId();
 
-		boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
-		display.setDarkThemePreferred(isDark);
+		display.setDarkThemePreferred(theme.isDark());
 
 		sendThemeChangeEvent(restore);
 
@@ -599,7 +624,9 @@ public class ThemeEngine implements IThemeEngine {
 	 */
 	private void publishEffectiveThemeId() {
 		if (currentTheme != null) {
-			DefaultScope.INSTANCE.getNode(THEME_PLUGIN_ID).put(THEMEID_KEY, currentTheme.getId());
+			IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(THEME_PLUGIN_ID);
+			defaults.put(THEMEID_KEY, currentTheme.getId());
+			defaults.putBoolean(darkKey(currentTheme.getId()), currentTheme.isDark());
 			effectiveThemeIdPublished = true;
 		}
 	}
@@ -625,24 +652,23 @@ public class ThemeEngine implements IThemeEngine {
 
 		// use theme from preferences if it exists
 		if (prefThemeId != null) {
-			for (ITheme t : getThemes()) {
-				if (prefThemeId.equals(t.getId())) {
-					setTheme(t, false);
-					return;
-				}
+			Optional<ITheme> prefTheme = getThemes().stream().filter(t -> prefThemeId.equals(t.getId())).findFirst();
+			if (prefTheme.isPresent()) {
+				setTheme(prefTheme.get(), false);
+				return;
 			}
 		}
 
-		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
+		Optional<ITheme> darkTheme = findDarkTheme();
 		boolean overrideWithDarkTheme = false;
-		if (hasDarkTheme) {
+		if (darkTheme.isPresent()) {
 			if (prefThemeId != null) {
 				/*
 				 * The user had previously selected a theme which is not available anymore. In
 				 * this case want to fall back to respect whether that previous choice was dark
 				 * or not. https://github.com/eclipse-platform/eclipse.platform.ui/issues/2776
 				 */
-				overrideWithDarkTheme = prefThemeId.contains("dark");
+				overrideWithDarkTheme = isPreferenceThemeDark(prefThemeId);
 			} else {
 				/*
 				 * No previous theme selection in preferences. In this case check if the system
@@ -654,10 +680,41 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 
-		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+		String themeToRestore = overrideWithDarkTheme ? darkTheme.get().getId() : alternateTheme;
 		if (themeToRestore != null) {
 			setTheme(themeToRestore, false);
 		}
+	}
+
+	private static String darkKey(String themeId) {
+		return THEME_IS_DARK_KEY_PREFIX + themeId;
+	}
+
+	/**
+	 * Whether the theme recorded in the preferences is a dark one. Preferences
+	 * written before themes declared their appearance only carry the theme id, so
+	 * fall back to the id based classification.
+	 */
+	private boolean isPreferenceThemeDark(String prefThemeId) {
+		boolean darkById = prefThemeId.contains("dark"); //$NON-NLS-1$
+		IPreferencesService prefService = Platform.getPreferencesService();
+		if (!effectiveThemeIdPublished) {
+			return prefService.getBoolean(THEME_PLUGIN_ID, darkKey(prefThemeId), darkById, null);
+		}
+		String dark = prefService.get(darkKey(prefThemeId), null, new Preferences[] {
+				InstanceScope.INSTANCE.getNode(THEME_PLUGIN_ID), ConfigurationScope.INSTANCE.getNode(THEME_PLUGIN_ID),
+				UserScope.INSTANCE.getNode(THEME_PLUGIN_ID) });
+		return dark != null ? Boolean.parseBoolean(dark) : darkById;
+	}
+
+	/**
+	 * The dark theme to fall back to, preferring the one shipped with the platform
+	 * over a dark theme contributed by someone else.
+	 */
+	private Optional<ITheme> findDarkTheme() {
+		List<ITheme> darkThemes = getThemes().stream().filter(ITheme::isDark).toList();
+		return darkThemes.stream().filter(t -> E4_DARK_THEME_ID.equals(t.getId())).findFirst()
+				.or(() -> darkThemes.stream().findFirst());
 	}
 
 	@Override
