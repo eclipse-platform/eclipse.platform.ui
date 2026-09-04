@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -84,7 +85,6 @@ public class FindReplaceOverlayInEditorTest {
 	void openEditorWithOverlay(TestInfo testInfo) throws PartInitException {
 		testName = testInfo.getTestMethod().get().getName();
 		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
-		closeWelcomePage();
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		editor = (StatusTextEditor) page.openEditor(new TestTextEditorInput(CONTENT), TestTextEditor.ID);
 		runEventQueue();
@@ -103,11 +103,23 @@ public class FindReplaceOverlayInEditorTest {
 	 * bundle's own dependencies, the workbench opens its Welcome page over the whole
 	 * window on a fresh workspace. It would cover the editor and keep the focus, so
 	 * that the overlay never receives it. Nothing to close where no such page exists.
+	 * <p>
+	 * The page is put into standby before it is closed, because it is shown
+	 * maximized: closing it right away leaves the window maximized on a part that is
+	 * gone, and an editor opened afterwards is then never rendered into the window.
+	 * It remains in the rendering engine's limbo instead, where it is invisible, and
+	 * nothing inside an invisible widget tree can take the focus, so the overlay
+	 * would never receive it. Standby restores the window's regular layout.
+	 * <p>
+	 * Closing once for the whole class is enough, since the page does not come back.
 	 */
-	private static void closeWelcomePage() {
+	@BeforeAll
+	static void closeWelcomePage() {
 		IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
 		IIntroPart welcomePage = introManager.getIntro();
 		if (welcomePage != null) {
+			introManager.setIntroStandby(welcomePage, true);
+			runEventQueue();
 			introManager.closeIntro(welcomePage);
 			runEventQueue();
 		}
