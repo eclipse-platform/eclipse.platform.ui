@@ -159,6 +159,16 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	}
 
 	/**
+	 * Whether this annotation should be included in the "Collapse All" action of the editor.
+	 *
+	 * @return {@code true} if the annotation participates in "Collapse All" actions
+	 * @since 3.32
+	 */
+	protected boolean includeInCollapseAll() {
+		return true;
+	}
+
+	/**
 	 * Returns the state of this annotation.
 	 *
 	 * @return <code>true</code> if collapsed
