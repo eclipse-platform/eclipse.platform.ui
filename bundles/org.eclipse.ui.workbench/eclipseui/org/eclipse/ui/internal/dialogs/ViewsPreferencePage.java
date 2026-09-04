@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -89,6 +88,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.themes.DefaultThemePreference;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.IThemeManager;
@@ -356,10 +356,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private void openManageDefaultThemeDialog() {
 		String productOrAppId = getProductOrApplicationId();
-		IEclipsePreferences baseNode = UserScope.INSTANCE.getNode(E4_THEME_EXTENSION_POINT);
-		IEclipsePreferences scopedNode = productOrAppId != null ? (IEclipsePreferences) baseNode.node(productOrAppId)
-				: baseNode;
-		String currentDefaultId = scopedNode.get("themeid", null); //$NON-NLS-1$
+		String currentDefaultId = DefaultThemePreference.getThemeId();
 
 		String currentDefaultLabel = null;
 		if (currentDefaultId != null) {
@@ -408,21 +405,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		int result = dialog.open();
 		if (result == 0 && selectedTheme != null) {
-			// Set as default
-			scopedNode.put("themeid", selectedTheme.getId()); //$NON-NLS-1$
-			try {
-				scopedNode.flush();
-			} catch (BackingStoreException e) {
-				WorkbenchPlugin.log("Failed to set default theme in user scope", e); //$NON-NLS-1$
-			}
+			DefaultThemePreference.set(selectedTheme);
 		} else if (currentDefaultId != null && result == 1) {
-			// Remove default
-			scopedNode.remove("themeid"); //$NON-NLS-1$
-			try {
-				scopedNode.flush();
-			} catch (BackingStoreException e) {
-				WorkbenchPlugin.log("Failed to remove default theme from user scope", e); //$NON-NLS-1$
-			}
+			DefaultThemePreference.remove(currentDefaultId);
 		}
 	}
 
@@ -513,11 +498,16 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		boolean showRestartDialog = false;
 		String restartDialogTitle = null;
 		String restartDialogMessage = null;
-		boolean themeChanged = false;
+		ITheme changedTheme = null;
 
 		if (isThemingPossible()) {
 			ITheme theme = getSelectedTheme();
-			themeChanged = theme != null && !theme.equals(currentTheme);
+			boolean themeChanged = theme != null && !theme.equals(currentTheme);
+			changedTheme = themeChanged ? theme : null;
+			// Only a switch between a light and a dark theme leaves parts styled for the
+			// previous appearance behind, themes of the same appearance restyle in place.
+			boolean appearanceChanged = themeChanged
+					&& (currentTheme == null || theme.isDark() != currentTheme.isDark());
 			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
 					.equals(currentColorsAndFontsTheme.getId());
 
@@ -533,7 +523,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			themeComboDecorator.hide();
 			colorFontsDecorator.hide();
 
-			if (themeChanged || colorsAndFontsThemeChanged) {
+			if (appearanceChanged || colorsAndFontsThemeChanged) {
 				showRestartDialog = true;
 				restartDialogTitle = WorkbenchMessages.ThemeChangeWarningTitle;
 				restartDialogMessage = WorkbenchMessages.ThemeChangeWarningText;
@@ -551,26 +541,19 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		if (showRestartDialog) {
-			String themeId = null;
-			if (themeChanged) {
-				ITheme theme = getSelectedTheme();
-				if (theme != null) {
-					themeId = theme.getId();
-				}
-			}
-			showRestartDialog(restartDialogTitle, restartDialogMessage, themeId);
+			showRestartDialog(restartDialogTitle, restartDialogMessage, changedTheme);
 		}
 
 		return super.performOk();
 	}
 
-	private void showRestartDialog(String title, String warningText, String themeId) {
+	private void showRestartDialog(String title, String warningText, ITheme theme) {
 		boolean[] useAsDefault = { true };
 		MessageDialog dialog = new MessageDialog(null, title, null, warningText, MessageDialog.NONE, 2,
 				WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton) {
 			@Override
 			protected Control createCustomArea(Composite parent) {
-				if (themeId == null) {
+				if (theme == null) {
 					return null;
 				}
 				Button checkbox = new Button(parent, SWT.CHECK);
@@ -582,19 +565,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		};
 		int result = dialog.open();
 		if (result == 0 || result == 1) { // 0: Restart, 1: Don't Restart
-			if (themeId != null && useAsDefault[0]) {
-				IEclipsePreferences baseNode = UserScope.INSTANCE
-						.getNode(E4_THEME_EXTENSION_POINT);
-				String productOrAppId = getProductOrApplicationId();
-				IEclipsePreferences scopedNode = productOrAppId != null
-						? (IEclipsePreferences) baseNode.node(productOrAppId)
-						: baseNode;
-				scopedNode.put("themeid", themeId); //$NON-NLS-1$
-				try {
-					scopedNode.flush();
-				} catch (BackingStoreException e) {
-					WorkbenchPlugin.log("Failed to set default theme in user scope", e); //$NON-NLS-1$
-				}
+			if (theme != null && useAsDefault[0]) {
+				DefaultThemePreference.set(theme);
 			}
 		}
 		if (result == 0) {

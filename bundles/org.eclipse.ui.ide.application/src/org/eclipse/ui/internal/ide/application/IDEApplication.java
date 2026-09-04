@@ -916,13 +916,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	protected void initializeDefaultTheme(Display display) {
 		IEclipsePreferences themeNode = UserScope.INSTANCE.getNode("org.eclipse.e4.ui.css.swt.theme"); //$NON-NLS-1$
 		String productOrAppId = getProductOrApplicationId();
-		String defaultThemeId;
-		if (productOrAppId != null) {
-			defaultThemeId = themeNode.node(productOrAppId).get("themeid", null); //$NON-NLS-1$
-		} else {
-			defaultThemeId = themeNode.get("themeid", null); //$NON-NLS-1$
-		}
-		isDark = defaultThemeId != null && defaultThemeId.contains("dark"); //$NON-NLS-1$
+		IEclipsePreferences scopedNode = productOrAppId != null ? (IEclipsePreferences) themeNode.node(productOrAppId)
+				: themeNode;
+		String defaultThemeId = scopedNode.get("themeid", null); //$NON-NLS-1$
+		// preferences written before themes declared their appearance only carry the id
+		isDark = defaultThemeId != null
+				&& scopedNode.getBoolean("themeIsDark." + defaultThemeId, defaultThemeId.contains("dark")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isDark) {
 			display.setDarkThemePreferred(true);
 			darkThemeShowListener = event -> {

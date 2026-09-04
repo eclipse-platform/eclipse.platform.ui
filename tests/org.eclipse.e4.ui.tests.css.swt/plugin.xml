@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/testTheme.css"
+            isDarkTheme="true"
+            id="org.eclipse.e4.ui.tests.css.swt.theme.declaredDark"
+            label="Declared dark test theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/testTheme.css"
+            isDarkTheme="false"
+            id="org.eclipse.e4.ui.tests.css.swt.theme.declaredLight"
+            label="Declared light test theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/testTheme.css"
+            id="org.eclipse.e4.ui.tests.css.swt.theme.legacydark"
+            label="Undeclared dark test theme">
+      </theme>
+   </extension>
+
+</plugin>
