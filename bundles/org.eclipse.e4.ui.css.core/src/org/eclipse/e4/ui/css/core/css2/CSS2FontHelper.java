@@ -72,6 +72,11 @@ public class CSS2FontHelper {
 	 */
 	public static String getCSSFontPropertyName(CssPrimitive value) {
 		if (value instanceof CssText text && (text.kind() == CssText.Kind.STRING || text.kind() == CssText.Kind.IDENT)) {
+			// keywords are only keywords unquoted, a quoted value is always a family
+			if (text.kind() == CssText.Kind.IDENT
+					&& ("larger".equalsIgnoreCase(text.value()) || "smaller".equalsIgnoreCase(text.value()))) {
+				return "font-size";
+			}
 			switch (text.value()) {
 			case "italic":
 			case "oblique":
@@ -85,7 +90,8 @@ public class CSS2FontHelper {
 			}
 		}
 		if (value instanceof CssNumeric numeric
-				&& (numeric.unit() == CssUnit.PT || numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX)) {
+				&& (numeric.unit() == CssUnit.PT || numeric.unit() == CssUnit.NUMBER || numeric.unit() == CssUnit.PX
+						|| numeric.unit() == CssUnit.EM || numeric.unit() == CssUnit.PERCENT)) {
 			return "font-size";
 		}
 		return null;

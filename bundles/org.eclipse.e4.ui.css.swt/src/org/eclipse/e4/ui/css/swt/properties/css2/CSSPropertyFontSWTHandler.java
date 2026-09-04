@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.swt.dom.ItemElement;
@@ -69,6 +70,15 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Resolves a relative font size against the font the element had before it was
+	 * styled, so that reapplying a style does not scale an already scaled font.
+	 */
+	private static CSS2FontProperties resolveRelativeSize(CSS2FontProperties fontProperties,
+			CSSElementContext context) {
+		return CSSSWTFontHelper.resolveRelativeSize(fontProperties, CSSSWTFontHelper.getBaseFontData(context));
 	}
 
 	private static void updateChildrenFonts(CTabFolder folder, Font font) {
@@ -237,13 +247,12 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		if (widget == null || widget instanceof CTabItem) {
 			return;
 		}
-		CSS2FontProperties fontProperties = CSSSWTFontHelper
-				.getCSS2FontProperties(widget, engine
-						.getCSSElementContext(widget));
+		CSSElementContext context = engine.getCSSElementContext(widget);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper.getCSS2FontProperties(widget, context);
 		if (fontProperties == null) {
 			return;
 		}
-		Font font = (Font) engine.convert(fontProperties, Font.class, widget);
+		Font font = (Font) engine.convert(resolveRelativeSize(fontProperties, context), Font.class, widget);
 		setFont(widget, font);
 	}
 
@@ -332,7 +341,8 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 
 				try {
 					// set the font
-					Font font = (Font) engine.convert(fontProperties,
+					Font font = (Font) engine.convert(
+							resolveRelativeSize(fontProperties, engine.getCSSElementContext(item)),
 							Font.class, item);
 					setFont(item, font);
 				} catch (Exception e) {

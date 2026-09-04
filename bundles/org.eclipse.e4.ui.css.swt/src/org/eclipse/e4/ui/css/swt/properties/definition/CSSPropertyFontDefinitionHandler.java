@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.css.swt.properties.definition;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.definition.FontDefinitionElement;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
@@ -30,9 +31,10 @@ public class CSSPropertyFontDefinitionHandler extends AbstractCSSPropertyFontHan
 		if (element instanceof FontDefinitionElement) {
 			CSS2FontProperties properties = new CSS2FontPropertiesImpl();
 			IFontDefinitionOverridable definition = (IFontDefinitionOverridable) ((FontDefinitionElement) element).getNativeWidget();
+			FontData baseFontData = getBaseFontData(definition, engine.getCSSElementContext(element));
 
 			super.applyCSSProperty(properties, property, value, pseudo, engine);
-			setFontProperties(definition, properties);
+			setFontProperties(definition, CSSSWTFontHelper.resolveRelativeSize(properties, baseFontData));
 			return true;
 		}
 		return false;
@@ -45,8 +47,27 @@ public class CSSPropertyFontDefinitionHandler extends AbstractCSSPropertyFontHan
 	}
 
 	private void setFontProperties(IFontDefinitionOverridable definition, CSS2FontProperties properties) {
-		FontData fontData = definition.getValue() != null? definition.getValue()[0]: null;
-		definition.setValue(new FontData[]{CSSSWTFontHelper.getFontData(properties, fontData)});
+		definition.setValue(new FontData[] { CSSSWTFontHelper.getFontData(properties, getFontData(definition)) });
+	}
+
+	/**
+	 * The font the definition was registered with, so that a relative size scales
+	 * the registered font instead of the override applied by an earlier style.
+	 */
+	private static FontData getBaseFontData(IFontDefinitionOverridable definition, CSSElementContext context) {
+		FontData baseFontData = CSSSWTFontHelper.getBaseFontData(context);
+		// an overridden definition still carries the override of an earlier pass,
+		// unless it was reset to its registered value in between
+		if (baseFontData == null || !definition.isOverridden()) {
+			baseFontData = getFontData(definition);
+			CSSSWTFontHelper.setBaseFontData(context, baseFontData);
+		}
+		return baseFontData;
+	}
+
+	private static FontData getFontData(IFontDefinitionOverridable definition) {
+		FontData[] value = definition.getValue();
+		return value != null && value.length > 0 ? value[0] : null;
 	}
 
 	@Override

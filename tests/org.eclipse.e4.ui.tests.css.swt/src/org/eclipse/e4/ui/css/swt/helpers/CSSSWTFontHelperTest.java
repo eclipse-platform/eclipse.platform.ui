@@ -17,6 +17,12 @@ package org.eclipse.e4.ui.css.swt.helpers;
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.getFontData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
+import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssDimension;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.junit.jupiter.api.Test;
@@ -143,6 +149,130 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
+	void testGetFontDataWithSizeInEm() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(1.5, CssUnit.EM)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(15, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInEmIsRounded() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(1.2, CssUnit.EM)),
+				new FontData("Courier", 9, SWT.NORMAL));
+
+		assertEquals(11, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInPercent() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(120, CssUnit.PERCENT)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInPercentBelowHundred() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(50, CssUnit.PERCENT)),
+				new FontData("Courier", 11, SWT.NORMAL));
+
+		assertEquals(6, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithRelativeSizeNeverReachesZero() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(1, CssUnit.PERCENT)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(1, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeLarger() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("larger")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeSmaller() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("smaller")),
+				new FontData("Courier", 12, SWT.NORMAL));
+
+		assertEquals(10, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeKeywordIsCaseInsensitive() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("LARGER")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithRelativeSizeAndWithoutOldFont() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(1.5, CssUnit.EM)), null);
+
+		assertEquals(new FontData().getHeight(), result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithUnknownSizeKeyword() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("xx-large")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(10, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInPixels() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(16, CssUnit.PX)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInPixelsIsRounded() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(11, CssUnit.PX)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(8, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeInPoints() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(16, CssUnit.PT)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(16, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeWithoutUnitIsTakenAsPoints() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssDimension(16, CssUnit.NUMBER)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(16, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWhenFontFamilyFromDefinitionAndRelativeSize() {
+		registerFontProviderWith("org.eclipse.jface.bannerfont", "Arial", 15, SWT.NORMAL);
+
+		FontData result = getFontData(
+				fontPropertiesWithSize(addFontDefinitionMarker("org-eclipse-jface-bannerfont"),
+						new CssDimension(200, CssUnit.PERCENT)),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals("Arial", result.getName());
+		assertEquals(20, result.getHeight());
+	}
+
+	@Test
 	void testGetFontDataFromFontDefinition() {
 		registerFontProviderWith("org.eclipse.jface.bannerfont", "Arial", 15, SWT.ITALIC | SWT.BOLD);
 
@@ -153,5 +283,23 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 		assertEquals("Arial", result.getName());
 		assertEquals(15, result.getHeight());
 		assertEquals(SWT.ITALIC | SWT.BOLD, result.getStyle());
+	}
+
+	private static CssPrimitive keyword(String value) {
+		return new CssText(CssText.Kind.IDENT, value);
+	}
+
+	private static CSS2FontProperties fontPropertiesWithSize(CssPrimitive size) {
+		return fontPropertiesWithSize(null, size);
+	}
+
+	private static CSS2FontProperties fontPropertiesWithSize(String family, CssPrimitive size) {
+		CSS2FontProperties result = new CSS2FontPropertiesImpl();
+		if (family != null) {
+			result.setFamily(new CssText(CssText.Kind.IDENT, family));
+		}
+		result.setSize(size);
+		result.setSizeFromCSS(true);
+		return result;
 	}
 }

@@ -120,6 +120,23 @@ They also show pseudo selectors which can be used to choose styling based on wid
 
 
 
+#### font-size
+
+The SWT font height is a point size, so a `font-size` is resolved to points.
+
+| Value | Meaning | Example |
+| --- | --- | --- |
+| unitless | points | `Label { font-size: 12 }` |
+| `pt` | points | `Label { font-size: 12pt }` |
+| `px` | CSS pixels, converted with 1px = 0.75pt | `Label { font-size: 16px }` gives 12pt |
+| `em` | relative to the font the widget inherited | `Label { font-size: 1.5em }` |
+| `%` | relative to the font the widget inherited | `Label { font-size: 150% }` |
+| `larger` / `smaller` | one step (factor 1.2) up or down from the inherited font | `Label { font-size: larger }` |
+
+Relative values are resolved against the font the widget had before styling, which lets a theme say "a bit larger than the rest" without overriding the size the user configured.
+Point sizes stay resolution independent because the platform converts them using the system DPI and Eclipse scales on top of that.
+The shorthand accepts the same forms, for example `Label { font: Verdana larger }`.
+
 ### Widget: Button
 
 | SWT Method | CSS Property Name | CSS Example |

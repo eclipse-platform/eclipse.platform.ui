@@ -69,7 +69,7 @@ public class ShellTest {
 
 	@Test
 	void testFontRegular() {
-		Shell shellToTest = createTestShell("Shell { font: Verdana 16px }");
+		Shell shellToTest = createTestShell("Shell { font: Verdana 16pt }");
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
@@ -79,7 +79,7 @@ public class ShellTest {
 
 	@Test
 	void testFontBold() {
-		Shell shellToTest = createTestShell("Shell { font: Arial 12px; font-weight: bold }");
+		Shell shellToTest = createTestShell("Shell { font: Arial 12pt; font-weight: bold }");
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
