@@ -113,7 +113,13 @@ public final class FindReplaceTestUtil {
 		}
 		if (!hasFocusValidator.get()) {
 			String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, testName, System.out);
-			fail("The find/replace UI did not receive focus. Screenshot: " + screenshotPath);
+			Display display= PlatformUI.getWorkbench().getDisplay();
+			// Where the focus ended up instead tells apart the usual causes: no focus
+			// control at all means the window is not active, a control of the workbench
+			// means something took the focus away, and an invisible widget tree means the
+			// focus was never given away in the first place.
+			fail("The find/replace UI did not receive focus. Focused control: " + display.getFocusControl()
+					+ ", active shell: " + display.getActiveShell() + ". Screenshot: " + screenshotPath);
 		}
 	}
 
