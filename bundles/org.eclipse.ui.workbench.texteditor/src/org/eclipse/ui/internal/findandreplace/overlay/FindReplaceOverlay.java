@@ -434,6 +434,11 @@ public class FindReplaceOverlay {
 		widgets.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
+	/**
+	 * Creates a composite that introduces a background color. Only the composites
+	 * that start an area of a different color need one, since the overlay's
+	 * container passes its background on to everything inside it.
+	 */
 	private static Composite createColoredComposite(Composite parent, Color backgroundColor) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(backgroundColor);
@@ -474,7 +479,7 @@ public class FindReplaceOverlay {
 	}
 
 	private void createContentsContainer() {
-		contentGroup = createColoredComposite(containerControl, overlayBackgroundColor);
+		contentGroup = new Composite(containerControl, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).spacing(0, 2).applyTo(contentGroup);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(contentGroup);
 

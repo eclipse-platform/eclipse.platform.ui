@@ -175,20 +175,16 @@ public class HistoryTextWrapper extends Composite {
 		textBar.setText(str);
 	}
 
-	@Override
-	public void setBackground(Color color) {
-		super.setBackground(color);
-
-		textBar.setBackground(color);
-		tools.setBackground(color);
-	}
-
+	/**
+	 * Passes the foreground on to the text bar, the only widget in here that shows
+	 * text. There is no counterpart for the background: the container this wrapper
+	 * sits in passes its background on to everything inside it.
+	 */
 	@Override
 	public void setForeground(Color color) {
 		super.setForeground(color);
 
 		textBar.setForeground(color);
-		tools.setForeground(color);
 	}
 
 	@Override
