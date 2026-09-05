@@ -1794,6 +1794,19 @@
                   commandId="org.eclipse.ui.window.minimizePart"
                   style="push">
             </command>
+            <separator
+                  name="org.eclipse.ui.window.appearance.themesSeparator"
+                  visible="true">
+            </separator>
+            <menu
+                  id="org.eclipse.ui.appearance.themes"
+                  label="%menu.window.appearance.themes.label"
+                  mnemonic="%menu.window.appearance.themes.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.ExtensionFactory:themeContribution"
+                     id="org.eclipse.ui.menus.dynamicThemeMenu">
+               </dynamic>
+            </menu>
          </menu>
       </menuContribution>
 
