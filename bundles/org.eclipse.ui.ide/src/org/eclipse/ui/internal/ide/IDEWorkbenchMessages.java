@@ -1017,10 +1017,22 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_workspaceEntryLabel;
 	public static String ChooseWorkspaceDialog_browseLabel;
 	public static String ChooseWorkspaceDialog_browseTooltip;
+	public static String ChooseWorkspaceDialog_importLabel;
+	public static String ChooseWorkspaceDialog_importTooltip;
 	public static String ChooseWorkspaceDialog_launchLabel;
+	public static String ChooseWorkspaceDialog_importPreviousInstallationWindowTitle;
+	public static String ChooseWorkspaceDialog_importPreviousInstallationWindowMessage;
+	public static String ChooseWorkspaceDialog_noWorkspacesFoundTitle;
+	public static String ChooseWorkspaceDialog_noWorkspacesFoundMessage;
+	public static String ChooseWorkspaceDialog_noNewWorkspacesTitle;
+	public static String ChooseWorkspaceDialog_noNewWorkspacesMessage;
+	public static String ChooseWorkspaceDialog_nothingSelectedTitle;
+	public static String ChooseWorkspaceDialog_nothingSelectedMessage;
 	public static String ChooseWorkspaceDialog_directoryBrowserTitle;
 	public static String ChooseWorkspaceDialog_directoryBrowserMessage;
 	public static String ChooseWorkspaceDialog_removeWorkspaceSelection;
+	public static String ChooseWorkspaceDialog_noRecentWorkspaceFound;
+	public static String ChooseWorkspaceDialog_addMoreRecentWorkspaces;
 	public static String ChooseWorkspaceDialog_recentWorkspaces;
 
 	public static String ChooseWorkspaceDialog_ResolvedAbsolutePath;
@@ -1029,6 +1041,28 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_InvalidPathWarning;
 	public static String ChooseWorkspaceDialog_NotWriteablePathWarning;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
+	public static String ChooseWorkspaceDialog_importedWorkspacesTitle;
+	public static String ChooseWorkspaceDialog_importedWorkspacesMessage;
+	public static String ChooseWorkspaceDialog_showMoreLink;
+
+	public static String WorkspaceImportDialog_dialogName;
+	public static String WorkspaceImportDialog_dialogTitle;
+	public static String WorkspaceImportDialog_dialogMessage;
+	public static String WorkspaceImportDialog_installationPath;
+	public static String WorkspaceImportDialog_typeFilterText;
+	public static String WorkspaceImportDialog_browseLabel;
+	public static String WorkspaceImportDialog_browseTooltip;
+	public static String WorkspaceImportDialog_selectPreviousInstallationText;
+	public static String WorkspaceImportDialog_selectPreviousInstallationMessage;
+	public static String WorkspaceImportDialog_noWorkspaceFoundTitle;
+	public static String WorkspaceImportDialog_noWorkspaceFoundMessage;
+	public static String WorkspaceImportDialog_noNewWorkspacesTitle;
+	public static String WorkspaceImportDialog_noNewWorkspacesMessage;
+	public static String WorkspaceImportDialog_tableColumn1;
+	public static String WorkspaceImportDialog_tableColumn2;
+	public static String WorkspaceImportDialog_selectAllLabel;
+	public static String WorkspaceImportDialog_deselectAllLabel;
+
 
 	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;
 	public static String ChooseWorkspaceWithSettingsDialog_ProblemsTransferTitle;
