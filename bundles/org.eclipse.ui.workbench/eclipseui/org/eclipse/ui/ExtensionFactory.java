@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.dialogs.ViewsPreferencePage;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.keys.KeysPreferencePage;
 import org.eclipse.ui.internal.keys.NewKeysPreferencePage;
+import org.eclipse.ui.internal.menus.ThemeContributionItem;
 import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
@@ -120,6 +121,12 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 	 */
 	public static final String SHOW_IN_CONTRIBUTION = "showInContribution"; //$NON-NLS-1$
 
+	/**
+	 * Factory ID for the contribution listing the installed themes. Private on
+	 * purpose, a public constant here would be new API.
+	 */
+	private static final String THEME_CONTRIBUTION = "themeContribution"; //$NON-NLS-1$
+
 	private IConfigurationElement config;
 
 	private String id;
@@ -187,6 +194,9 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 		}
 		if (SHOW_IN_CONTRIBUTION.equals(id)) {
 			return new ShowInMenu();
+		}
+		if (THEME_CONTRIBUTION.equals(id)) {
+			return new ThemeContributionItem();
 		}
 
 		throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
