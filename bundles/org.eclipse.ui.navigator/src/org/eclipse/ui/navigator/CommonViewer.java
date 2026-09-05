@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.navigator.CommonNavigatorFrameSource;
 import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider;
 import org.eclipse.ui.internal.navigator.NavigatorDecoratingLabelProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
@@ -240,6 +242,25 @@ public class CommonViewer extends TreeViewer {
 					.getSource(), others.toArray());
 		}
 		super.handleLabelProviderChanged(event);
+	}
+
+	@Override
+	protected Object getParentElement(Object elementOrTreePath) {
+		if (!(elementOrTreePath instanceof TreePath)
+				&& getContentProvider() instanceof NavigatorContentServiceContentProvider provider) {
+			// getParents() compiles the whole ancestor chain although only the immediate parent is used
+			boolean oldBusy = isBusy();
+			setBusy(true);
+			try {
+				Object parent = provider.getParent(elementOrTreePath);
+				if (parent != null) {
+					return parent;
+				}
+			} finally {
+				setBusy(oldBusy);
+			}
+		}
+		return super.getParentElement(elementOrTreePath);
 	}
 
 	@Override

@@ -286,42 +286,14 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	}
 
 	@Override
-	public Object getParent(final Object anElement) {
-		final Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
-		final Object[] parent = new Object[1];
-
-		for (Iterator itr = extensions.iterator(); itr.hasNext();) {
-			final NavigatorContentExtension foundExtension = (NavigatorContentExtension) itr.next();
-
-			SafeRunner.run(new NavigatorSafeRunnable() {
-				NavigatorContentExtension[] overridingExtensions;
-
-				@Override
-				public void run() throws Exception {
-					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), extensions)) {
-						parent[0] = foundExtension.internalGetContentProvider()
-								.getParent(anElement);
-						overridingExtensions = foundExtension
-								.getOverridingExtensionsForPossibleChild(anElement);
-						if (overridingExtensions.length > 0) {
-							parent[0] = pipelineParent(anElement, overridingExtensions, parent);
-						}
-					}
-				}
-
-				@Override
-				public void handleException(Throwable e) {
-					NavigatorPlugin.logError(0, NLS.bind(
-							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
-									foundExtension.getDescriptor().getId(), anElement }), e);
-				}
-			});
-
-			if (parent[0] != null) {
-				return parent[0];
-			}
+	public Object getParent(Object anElement) {
+		Set parents = findParents(anElement);
+		if (parents.isEmpty()) {
+			return null;
 		}
-		return parent[0];
+		Object parent = parents.iterator().next();
+		// an element answering itself as parent is a cycle; getParents() logs it and answers the root
+		return parent.equals(anElement) ? null : parent;
 	}
 
 	@Override
@@ -336,43 +308,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return (TreePath[]) paths.toArray(new TreePath[paths.size()]);
 
 	}
-	/**
-	 * Query each of <code>theOverridingExtensions</code> for elements, and then
-	 * pipe them through the Pipeline content provider.
-	 *
-	 * @param anInputElement
-	 *            The input element in the tree
-	 * @param theOverridingExtensions
-	 *            The set of overriding extensions that should participate in
-	 *            the pipeline chain
-	 * @param theCurrentParent
-	 *            The current elements to return to the viewer (should be
-	 *            modifiable)
-	 * @return The set of elements to return to the viewer
-	 */
-	private Object pipelineParent(Object anInputElement, NavigatorContentExtension[] theOverridingExtensions,
-			Object theCurrentParent) {
-		IPipelinedTreeContentProvider pipelinedContentProvider;
-		NavigatorContentExtension[] overridingExtensions;
-		Object aSuggestedParent = null;
-		for (NavigatorContentExtension theOverridingExtension : theOverridingExtensions) {
-
-			if (theOverridingExtension.internalGetContentProvider().isPipelined()) {
-				pipelinedContentProvider = theOverridingExtension
-						.internalGetContentProvider();
-
-				aSuggestedParent = pipelinedContentProvider.getPipelinedParent(anInputElement, aSuggestedParent);
-
-				overridingExtensions = theOverridingExtension
-						.getOverridingExtensionsForTriggerPoint(anInputElement);
-				if (overridingExtensions.length > 0) {
-					aSuggestedParent = pipelineParent(anInputElement, overridingExtensions, aSuggestedParent);
-				}
-			}
-		}
-		return aSuggestedParent != null ? aSuggestedParent : theCurrentParent;
-	}
-
 	/**
 	 * Calculate hasChildren for both an element or a path.
 	 *
