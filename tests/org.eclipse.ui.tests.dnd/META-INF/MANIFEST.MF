@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dnd
+Bundle-SymbolicName: org.eclipse.ui.tests.dnd
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: junit-jupiter-api;bundle-version="5.13.4",
+ org.eclipse.jface;bundle-version="3.38.0",
+ org.eclipse.e4.ui.workbench.addons.swt;bundle-version="1.5.800"
+Automatic-Module-Name: org.eclipse.ui.tests.dnd
+Bundle-RequiredExecutionEnvironment: JavaSE-21
