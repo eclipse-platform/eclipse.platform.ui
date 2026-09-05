@@ -23,6 +23,7 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		AnnotationManagerTest.class,
 		FileSearchTests.class,
 		LineAnnotationManagerTest.class,
+		NestedProjectFilterTest.class,
 		PositionTrackerTest.class,
 		ResultUpdaterTest.class,
 		SearchResultPageTest.class,
