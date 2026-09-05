@@ -70,7 +70,11 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	private static final Object CACHED_NULL = new String("CACHED_NULL"); //$NON-NLS-1$
 	private MarkerCategory category;
 	private final Map<String, Object> cache = new ConcurrentHashMap<>();
+	// RuleBasedCollator.getCollationKey is synchronized, so one shared instance is safe.
+	private static final Collator COLLATOR = Collator.getInstance();
+	// Previous update's keys are kept for one round; only the update job touches these.
 	private static Map<String, CollationKey> collationCache = new ConcurrentHashMap<>();
+	private static Map<String, CollationKey> previousCollationCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Set the MarkerEntry to be stale, if discovered at any point of time
@@ -207,9 +211,10 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (attributeValue.isEmpty()) {
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		}
-		CollationKey key = collationCache.computeIfAbsent(attributeValue,
-				k -> Collator.getInstance().getCollationKey(attributeValue));
-		return key;
+		return collationCache.computeIfAbsent(attributeValue, k -> {
+			CollationKey previous = previousCollationCache.get(k);
+			return previous != null ? previous : COLLATOR.getCollationKey(k);
+		});
 	}
 
 	@Override
@@ -366,6 +371,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	}
 
 	static void clearCollationCache() {
+		previousCollationCache = collationCache;
 		collationCache = new ConcurrentHashMap<>();
 	}
 
