@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,6 +49,27 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 			return elementLimit;
 		}
 		return elementsCount;
+	}
+
+	@Override
+	public boolean isTruncated(Object parentElement) {
+		if (!(parentElement instanceof AbstractTextSearchResult searchResult)) {
+			return false;
+		}
+		int elementLimit = getElementLimit();
+		return elementLimit != -1 && searchResult.getElementsCount() > elementLimit;
+	}
+
+	@Override
+	public int getShownMatchCount(AbstractTextSearchResult result) {
+		if (result == null) {
+			return 0;
+		}
+		int count = 0;
+		for (Object element : getElements(result)) {
+			count += fPage.getDisplayedMatchCount(element);
+		}
+		return count;
 	}
 
 	@Override
