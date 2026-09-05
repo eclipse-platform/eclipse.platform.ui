@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
@@ -94,6 +95,7 @@ public class FindReplaceOverlay {
 
 	private Composite searchContainer;
 	private HistoryTextWrapper searchBar;
+	private Label countLabel;
 	private AccessibleToolBar searchTools;
 	private AccessibleToolBar closeTools;
 
@@ -676,6 +678,7 @@ public class FindReplaceOverlay {
 
 	private void updateIncrementalSearch() {
 		findReplaceLogic.setFindString(searchBar.getText());
+		updateCount();
 		evaluateStatusAfterFind();
 	}
 
@@ -701,12 +704,140 @@ public class FindReplaceOverlay {
 	private void createSearchContainer() {
 		searchContainer = createColoredComposite(contentGroup, widgetBackgroundColor);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchContainer);
-		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(7, 4, 3, 5).equalWidth(false)
+		GridLayoutFactory.fillDefaults().numColumns(4).extendedMargins(7, 4, 3, 5).equalWidth(false)
 				.applyTo(searchContainer);
 
 		createSearchBar();
+		createCountLabel();
 		createSearchTools();
 		createCloseTools();
+	}
+
+	private void createCountLabel() {
+		countLabel = new Label(searchContainer, SWT.NONE);
+		countLabel.setForeground(normalTextForegroundColor);
+		countLabel.setBackground(widgetBackgroundColor);
+		GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).exclude(true)
+				.applyTo(countLabel);
+		countLabel.setVisible(false);
+	}
+
+	private void updateCount() {
+		if (!okayToUse(countLabel)) {
+			return;
+		}
+		String inputString = searchBar.getText();
+		if (inputString.isEmpty()) {
+			hideCountLabel();
+			return;
+		}
+
+		try {
+			int totalCount = inputTextCount(inputString);
+			if (totalCount == 0) {
+				hideCountLabel();
+			} else {
+				int currentIndex = getCurrentIndex(inputString, totalCount);
+				countLabel.setText(currentIndex + " of " + totalCount); //$NON-NLS-1$
+				showCountLabel();
+			}
+		} catch (Exception e) {
+			hideCountLabel();
+		}
+	}
+
+	private void showCountLabel() {
+		if (!countLabel.isVisible()) {
+			countLabel.setVisible(true);
+			((GridData) countLabel.getLayoutData()).exclude = false;
+		}
+		countLabel.pack();
+		countLabel.getParent().layout();
+	}
+
+	private void hideCountLabel() {
+		if (countLabel.isVisible()) {
+			countLabel.setVisible(false);
+			((GridData) countLabel.getLayoutData()).exclude = true;
+			countLabel.getParent().layout();
+		}
+	}
+
+	private int inputTextCount(String inputString) {
+		if (inputString.isEmpty() || findReplaceLogic.getTarget() == null) {
+			return 0;
+		}
+		if (!(targetPart instanceof StatusTextEditor)) {
+			return 0;
+		}
+		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
+		ITextViewer viewer = textEditor.getAdapter(ITextViewer.class);
+		if (viewer == null || viewer.getDocument() == null) {
+			return 0;
+		}
+
+		FindReplaceDocumentAdapter docAdapter = new FindReplaceDocumentAdapter(viewer.getDocument());
+		return findMatches(docAdapter, inputString, -1);
+	}
+
+	private int getCurrentIndex(String inputString, int totalCount) {
+		if (totalCount == 0 || findReplaceLogic.getTarget() == null) {
+			return 0;
+		}
+
+		IFindReplaceTarget target = findReplaceLogic.getTarget();
+		Point selection = target.getSelection();
+		int currentOffset = selection.x;
+
+		if (!(targetPart instanceof StatusTextEditor)) {
+			return 0;
+		}
+
+		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
+		ITextViewer viewer = textEditor.getAdapter(ITextViewer.class);
+		if (viewer == null || viewer.getDocument() == null) {
+			return 0;
+		}
+
+		FindReplaceDocumentAdapter docAdapter = new FindReplaceDocumentAdapter(viewer.getDocument());
+		int index = findMatches(docAdapter, inputString, currentOffset);
+		return index > 0 ? index : 1;
+	}
+
+	/**
+	 * Iterates through all matches of the search string in the document.
+	 *
+	 * @param docAdapter   the document adapter to search in
+	 * @param searchString the string to search for
+	 * @param stopOffset   if stopOffset>= 0, stops and returns the index when a
+	 *                     match at or after this offset is found; if stopOffset< 0,
+	 *                     counts all matches
+	 * @return the count of all matches (if stopOffset < 0) or the index of the
+	 *         first match at or after stopOffset.
+	 */
+	private int findMatches(FindReplaceDocumentAdapter docAdapter, String searchString, int stopOffset) {
+		boolean isCaseSensitive = findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE);
+		boolean isWholeWord = findReplaceLogic.isActive(SearchOptions.WHOLE_WORD);
+		boolean isRegEx = findReplaceLogic.isActive(SearchOptions.REGEX);
+
+		int index = 0;
+		int startOffset = 0;
+		try {
+			while (true) {
+				org.eclipse.jface.text.IRegion match = docAdapter.find(startOffset, searchString, true,
+						isCaseSensitive, isWholeWord, isRegEx);
+				if (match == null) {
+					break;
+				}
+				index++;
+				if (stopOffset >= 0 && match.getOffset() >= stopOffset) {
+					return index;
+				}
+				startOffset = match.getOffset() + Math.max(1, match.getLength());
+			}
+		} catch (Exception e) {
+		}
+		return index;
 	}
 
 	private void createReplaceContainer() {
@@ -908,6 +1039,7 @@ public class FindReplaceOverlay {
 	private void performSingleReplace() {
 		if (findReplaceLogic.performSelectAndReplace()) {
 			findReplaceLogic.performSearch();
+			updateCount();
 			evaluateStatusAfterFind();
 		} else {
 			evaluateStatusAfterReplace();
@@ -922,6 +1054,7 @@ public class FindReplaceOverlay {
 		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
 		findReplaceLogic.performSearch();
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
+		updateCount();
 		evaluateStatusAfterFind();
 		searchBar.storeHistory();
 	}
