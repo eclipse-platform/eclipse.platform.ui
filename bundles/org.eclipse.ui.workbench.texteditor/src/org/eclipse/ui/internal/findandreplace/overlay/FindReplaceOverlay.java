@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
@@ -113,21 +114,68 @@ public class FindReplaceOverlay {
 
 	private final FindReplaceOverlayCommandSupport commandSupport;
 
-	private final FocusListener targetActionActivationHandling = new FocusListener() {
-		@Override
-		public void focusGained(FocusEvent e) {
-			if (e.widget == searchBar.getTextBar()) {
-				commandSupport.searchBarActivated();
-			} else if (e.widget == replaceBar.getTextBar()) {
-				commandSupport.replaceBarActivated();
+	private final FocusTracking focusTracking = new FocusTracking();
+
+	/**
+	 * Keeps the overlay's contexts in step with the focus on any of its controls,
+	 * so that the overlay's shortcuts also work from its tool bars.
+	 * <p>
+	 * Focus loss is evaluated asynchronously: SWT reports it before the new control
+	 * gains focus, and the active leaf must only be handed back once the focus has
+	 * really left the overlay.
+	 */
+	private class FocusTracking {
+		private final Listener listener = this::handleFocusEvent;
+
+		/**
+		 * Registers untyped listeners on the whole widget tree, because
+		 * {@link HistoryTextWrapper} redirects {@code addFocusListener} to its text bar,
+		 * which would skip its other children and register twice on the text bar.
+		 */
+		void install(Control control) {
+			control.addListener(SWT.FocusIn, listener);
+			control.addListener(SWT.FocusOut, listener);
+			if (control instanceof Composite composite) {
+				for (Control child : composite.getChildren()) {
+					install(child);
+				}
 			}
 		}
 
-		@Override
-		public void focusLost(FocusEvent e) {
-			commandSupport.searchOrReplaceBarDeactivated();
+		private void handleFocusEvent(Event event) {
+			if (event.type == SWT.FocusIn) {
+				if (event.widget == searchBar.getTextBar()) {
+					commandSupport.searchBarFocused();
+				} else if (event.widget == replaceBar.getTextBar()) {
+					commandSupport.replaceBarFocused();
+				} else {
+					commandSupport.otherOverlayControlFocused();
+				}
+			} else {
+				asyncExecIfOpen(() -> {
+					if (!isFocusInOverlay()) {
+						commandSupport.overlayLostFocus();
+					}
+				});
+			}
 		}
-	};
+
+		boolean isInputFieldFocused() {
+			Control focusControl = containerControl.getDisplay().getFocusControl();
+			return focusControl == searchBar.getTextBar() || focusControl == replaceBar.getTextBar();
+		}
+
+		private boolean isFocusInOverlay() {
+			Control focusControl = containerControl.getDisplay().getFocusControl();
+			while (focusControl != null) {
+				if (focusControl == containerControl) {
+					return true;
+				}
+				focusControl = focusControl.getParent();
+			}
+			return false;
+		}
+	}
 
 	private final CustomFocusOrder customFocusOrder = new CustomFocusOrder();
 
@@ -371,6 +419,7 @@ public class FindReplaceOverlay {
 		// on top of it without becoming part of the target's own content.
 		createMainContainer(targetControl.getParent());
 		disableCssStyling(containerControl);
+		focusTracking.install(containerControl);
 		containerControl.layout();
 	}
 
@@ -558,9 +607,10 @@ public class FindReplaceOverlay {
 		FindReplaceOverlayAction closeAction = new FindReplaceOverlayAction(this::close,
 				FindReplaceOverlayCommandSupport.CMD_CLOSE);
 		commandSupport.registerAction(closeAction);
-		// Also close on Ctrl+F: otherwise it would reopen (a duplicate of) this very overlay.
-		commandSupport.registerAction(
-				new FindReplaceOverlayAction(this::close, IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE));
+		// Adopt Ctrl+F, which would otherwise reopen (a duplicate of) this overlay. It
+		// closes the overlay from an input field and focuses the search field otherwise.
+		commandSupport.registerAction(new FindReplaceOverlayAction(this::closeOrFocusSearchBar,
+				IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE));
 		commandSupport.registerAction(new FindReplaceOverlayAction(this::triggerContentAssist,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS));
 
@@ -695,7 +745,6 @@ public class FindReplaceOverlay {
 				resetErrorColoring();
 			}
 		});
-		searchBar.addFocusListener(targetActionActivationHandling);
 		searchBar.setTabList(null);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
 	}
@@ -719,7 +768,6 @@ public class FindReplaceOverlay {
 			findReplaceLogic.setReplaceString(replaceBar.getText());
 			resetErrorColoring();
 		});
-		replaceBar.addFocusListener(targetActionActivationHandling);
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> resetErrorColoring()));
 		contentAssistReplaceField = createContentAssistField(replaceBar, false);
 	}
@@ -1015,6 +1063,15 @@ public class FindReplaceOverlay {
 
 	private void updateContentAssistAvailability() {
 		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
+	}
+
+	private void closeOrFocusSearchBar() {
+		if (focusTracking.isInputFieldFocused()) {
+			close();
+		} else {
+			searchBar.forceFocus();
+			searchBar.selectAll();
+		}
 	}
 
 	private void triggerContentAssist() {

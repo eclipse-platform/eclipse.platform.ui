@@ -1,11 +1,11 @@
 # 1. Find/Replace overlay: key event and editor command handling
 
-How the Find/Replace overlay makes sure that the right commands are in effect while one of its
-input fields has focus: its own, and those of the surrounding workbench, but not those of the
-editor it is drawn on, whose key bindings and handlers would otherwise carry out edits on the
-document rather than in the field the user is typing into. The overlay is not a workbench part,
-so the framework does not separate the two on its own. This decision covers how that separation
-is achieved, and how it is achieved without tying the overlay to a particular kind of editor.
+How the Find/Replace overlay makes sure that the right commands are in effect while it has focus:
+its own, and those of the surrounding workbench, but not those of the editor it is drawn on,
+whose key bindings and handlers would otherwise carry out edits on the document rather than in
+the field the user is typing into. The overlay is not a workbench part, so the framework does not
+separate the two on its own. This decision covers how that separation is achieved, and how it is
+achieved without tying the overlay to a particular kind of editor.
 
 ## Status
 
@@ -91,13 +91,13 @@ tidying towards goal 4.
 
 ## Decision
 
-While one of the overlay's input fields has focus, the overlay activates an `IEclipseContext` of
-its own below the window context and publishes its own id as the active part id. That takes the
-editor's key binding scopes and part-level handlers off the active context chain, and makes the
-expression guarding its retargetable actions evaluate to false, so no editor handler is left in
-the command resolution path and no individual command has to be suppressed. The overlay's own key
-binding scopes are activated in that same context, which also gives them their lifetime, and its
-shared scope is given a parent outside `org.eclipse.ui.textEditorScope`.
+While the overlay has focus, it activates an `IEclipseContext` of its own below the window context
+and publishes its own id as the active part id. That takes the editor's key binding scopes and
+part-level handlers off the active context chain, and makes the expression guarding its
+retargetable actions evaluate to false, so no editor handler is left in the command resolution path
+and no individual command has to be suppressed. The overlay's own key binding scopes are activated
+in that same context, which also gives them their lifetime, and its shared scope is given a parent
+outside `org.eclipse.ui.textEditorScope`.
 
 ### Alternatives
 
@@ -121,7 +121,7 @@ all react, and it needs a home in the application model that a floating overlay 
 naturally have.
 
 **Give the overlay a context of its own (adopted).** Create an `IEclipseContext` for the overlay
-and activate it while an input field has focus, without the overlay becoming a part as far as the
+and activate it while the overlay has focus, without the overlay becoming a part as far as the
 part service is concerned. This addresses both gates at once and needs no command set: the
 editor's part-level registrations become unreachable, and its window-level ones evaluate to
 false. The platform's own default handlers for cut, copy, paste and select all then act on the
@@ -174,12 +174,12 @@ appendix.
   tests do not exercise multi-page editors.
 - `org.eclipse.ui.workbench.texteditor` gains a dependency on the E4 context and model bundles.
 - Per-focus imperative state is limited to activating and deactivating that one context plus
-  switching which of the two per-field scopes is activated inside it. The overlay's shared scope
-  is activated once, because scopes activated in the overlay's context are active exactly while
-  that context is the active leaf.
-- Handing the active leaf back when an input field loses focus must happen only while the overlay
+  switching which of the two per-field scopes, if any, is activated inside it. The overlay's
+  shared scope is activated once, because scopes activated in the overlay's context are active
+  exactly while that context is the active leaf.
+- Handing the active leaf back when the overlay loses focus must happen only while the overlay
   still holds that leaf. A click activates the part under the mouse before the focus leaves the
-  field, so on that path the new part already owns the leaf and has to keep it. Handing it to the
+  overlay, so on that path the new part already owns the leaf and has to keep it. Handing it to the
   editor anyway raises the editor's key-binding scope beside the one the new part brings, and while
   both are up every stroke the two scopes share is an unresolvable binding conflict. Observed by
   clicking from the overlay into the console, which reports conflicting zoom bindings; it is
@@ -306,8 +306,8 @@ way to attach `WidgetMethodHandler`-based cut/copy/paste to a widget outside the
 and it is the source whose priority lets the suppression variants outrank the editor. It changes
 nothing on its own, and `FocusControlSourceProvider` clears the variables on focus lost of a
 tracked control, so anything keyed on them is inactive while an overlay toolbar button has focus.
-For the adopted alternative it is redundant, because `activePartId` already changes at exactly
-the same moments and additionally identifies *which* overlay is focused.
+For the adopted alternative it is not needed, because `activePartId` covers the whole overlay
+rather than only the tracked fields, and additionally identifies *which* overlay is focused.
 
 ## Related
 

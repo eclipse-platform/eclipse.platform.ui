@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.expressions.EvaluationResult;
@@ -31,11 +32,16 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Owns the Find/Replace overlay's contexts, of which there are two kinds: an
  * {@link IEclipseContext} that makes the overlay rather than its host editor the
- * active part while an input field has focus, and the overlay's key binding
- * scopes. The second kind lives inside the first, because scopes are collected
- * along the chain between the active leaf and the root: a scope activated here is
- * active exactly while this context is the active leaf, so the shared scope is
- * activated once and only the per-field scope is switched.
+ * active part while the focus is anywhere in the overlay, and the overlay's key
+ * binding scopes. The second kind lives inside the first, because scopes are
+ * collected along the chain between the active leaf and the root: a scope
+ * activated here is active exactly while this context is the active leaf, so the
+ * shared scope is activated once and only the per-field scope is switched.
+ * <p>
+ * The shared scope follows the focus on the whole overlay, so that its shortcuts
+ * also work from the tool bars. The per-field scopes bind Enter and its
+ * variations and thus follow the input fields only, since on a tool bar button
+ * Enter belongs to the button.
  * <p>
  * Two conditions decide whether one of the editor's handlers wins, and the
  * editor's commands are spread over both. Its key binding scopes and part-level
@@ -96,8 +102,10 @@ class FindReplaceOverlayContextSupport {
 	private final Expression overlayFocusedExpression = createOverlayFocusedExpression();
 
 	/**
-	 * The per-field scope currently activated in {@link #overlayContext}. Only ever
-	 * switched: while that context is off the active chain its scopes are inert.
+	 * The per-field scope currently activated in {@link #overlayContext}, or
+	 * {@code null} while the focus is on a control that is not an input field. Only
+	 * ever switched: while that context is off the active chain its scopes are
+	 * inert.
 	 */
 	private String activeFieldContextId;
 
@@ -127,7 +135,7 @@ class FindReplaceOverlayContextSupport {
 	}
 
 	/**
-	 * Holds exactly while one of this overlay's input fields has focus, for scoping
+	 * Holds exactly while the focus is somewhere in this overlay, for scoping
 	 * activations to this overlay alone. It tests the active part id this context
 	 * publishes, which is unique per overlay. Declaring that variable in
 	 * {@code collectExpressionInfo} is what gives such activations their source
@@ -153,23 +161,37 @@ class FindReplaceOverlayContextSupport {
 	}
 
 	void searchBarFocused() {
-		fieldFocused(OVERLAY_SEARCH_CONTEXT_ID);
+		overlayFocused(OVERLAY_SEARCH_CONTEXT_ID);
 	}
 
 	void replaceBarFocused() {
-		fieldFocused(OVERLAY_REPLACE_CONTEXT_ID);
+		overlayFocused(OVERLAY_REPLACE_CONTEXT_ID);
 	}
 
-	private void fieldFocused(String fieldContextId) {
+	/**
+	 * Any control other than the input fields, which gets the shared scope but no
+	 * per-field scope.
+	 */
+	void otherOverlayControlFocused() {
+		overlayFocused(null);
+	}
+
+	/**
+	 * @param fieldContextId the per-field scope to activate, or {@code null} for
+	 *                       none
+	 */
+	private void overlayFocused(String fieldContextId) {
 		if (overlayContext == null) {
 			return;
 		}
-		if (!fieldContextId.equals(activeFieldContextId)) {
+		if (!Objects.equals(fieldContextId, activeFieldContextId)) {
 			EContextService contextService = overlayContext.get(EContextService.class);
 			if (activeFieldContextId != null) {
 				contextService.deactivateContext(activeFieldContextId);
 			}
-			contextService.activateContext(fieldContextId);
+			if (fieldContextId != null) {
+				contextService.activateContext(fieldContextId);
+			}
 			activeFieldContextId = fieldContextId;
 		}
 		if (!overlayContextActive) {
@@ -179,7 +201,7 @@ class FindReplaceOverlayContextSupport {
 		overlayContext.activate();
 	}
 
-	void fieldsLostFocus() {
+	void overlayLostFocus() {
 		if (!overlayContextActive) {
 			return;
 		}
@@ -195,8 +217,8 @@ class FindReplaceOverlayContextSupport {
 	 * Gives the active leaf back to what held it before the overlay took over, but
 	 * only while the overlay still holds it. Losing the focus to another part does
 	 * not come through here as a hand-back: the workbench activates the part under
-	 * the mouse before the focus leaves the field, so that part already owns the leaf
-	 * by now and has to keep it.
+	 * the mouse before the focus leaves the overlay, so that part already owns the
+	 * leaf by now and has to keep it.
 	 * <p>
 	 * Handing it to the editor anyway would put the editor's key binding scope up
 	 * beside the one the part coming up brings, and while both are up every key the
@@ -219,7 +241,7 @@ class FindReplaceOverlayContextSupport {
 			// The context is about to go, and disposing it while it holds the active leaf
 			// would leave the window context itself as the leaf, with the editor's scopes
 			// on no chain at all.
-			fieldsLostFocus();
+			overlayLostFocus();
 			overlayContext.dispose();
 			overlayContext = null;
 		}
