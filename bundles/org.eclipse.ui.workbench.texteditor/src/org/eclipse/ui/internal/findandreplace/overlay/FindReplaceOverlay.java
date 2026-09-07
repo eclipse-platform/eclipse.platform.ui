@@ -67,6 +67,7 @@ import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 public class FindReplaceOverlay {
@@ -519,6 +520,14 @@ public class FindReplaceOverlay {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
 				.withAction(searchForwardAction).build();
 		searchForwardButton.setData(ID_DATA_KEY, "searchForward"); //$NON-NLS-1$
+
+		// Also search on the editor's find next/previous: their bindings stay reachable
+		// while the overlay has focus, but the editor's handlers for them do not, and
+		// searching for what is typed in the field is what the user expects there.
+		commandSupport.registerAction(new FindReplaceOverlayAction(() -> performSearch(true),
+				IWorkbenchActionDefinitionIds.FIND_NEXT));
+		commandSupport.registerAction(new FindReplaceOverlayAction(() -> performSearch(false),
+				IWorkbenchActionDefinitionIds.FIND_PREVIOUS));
 
 		FindReplaceOverlayAction selectAllAction = new FindReplaceOverlayAction(this::performSelectAll,
 				FindReplaceOverlayCommandSupport.CMD_SELECT_ALL);

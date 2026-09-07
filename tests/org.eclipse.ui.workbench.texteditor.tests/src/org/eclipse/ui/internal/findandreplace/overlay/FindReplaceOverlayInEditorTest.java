@@ -33,6 +33,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 
@@ -42,8 +46,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.keys.IBindingService;
 
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 /**
@@ -208,6 +214,67 @@ public class FindReplaceOverlayInEditorTest {
 	}
 
 	/**
+	 * The editor's Find Next and Find Previous stay meaningful while an input field
+	 * has focus, so they must search on for what is typed there, exactly as the
+	 * overlay's own search buttons do.
+	 */
+	@Test
+	public void testFindNextAndPreviousSearchForTheTypedTerm() {
+		focusSearchField();
+		searchField.setText("word"); //$NON-NLS-1$
+		processPendingEvents();
+		int firstMatch = editorSelectionOffset();
+
+		typeKeyBoundTo(IWorkbenchActionDefinitionIds.FIND_NEXT);
+
+		int secondMatch = editorSelectionOffset();
+		assertNotEquals(firstMatch, secondMatch, "Find Next must move on to the next match"); //$NON-NLS-1$
+
+		typeKeyBoundTo(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+
+		assertEquals(firstMatch, editorSelectionOffset(), "Find Previous must move back to the previous match"); //$NON-NLS-1$
+		assertEquals(CONTENT, documentText(), "finding must not change the document"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Find Next is bound in the window scope, so its key keeps resolving while the
+	 * overlay has focus. It must find a handler there, no matter which key the
+	 * command is bound to, which is what executing it by id asserts.
+	 */
+	@Test
+	public void testFindNextIsHandledByTheOverlayWhileItHasFocus() throws Exception {
+		focusSearchField();
+		searchField.setText("word"); //$NON-NLS-1$
+		processPendingEvents();
+		int firstMatch = editorSelectionOffset();
+
+		executeCommand(IWorkbenchActionDefinitionIds.FIND_NEXT);
+
+		assertNotEquals(firstMatch, editorSelectionOffset(),
+				"Find Next must be handled while the overlay has focus"); //$NON-NLS-1$
+	}
+
+	/**
+	 * An empty search field is a no-op for the overlay's search buttons, so it has to
+	 * be one for the adopted commands too, rather than falling back to the previously
+	 * searched term the editor's own Find Next would use.
+	 */
+	@Test
+	public void testFindNextDoesNothingWhileTheSearchFieldIsEmpty() {
+		focusSearchField();
+		searchField.setText("word"); //$NON-NLS-1$
+		processPendingEvents();
+		searchField.setText(""); //$NON-NLS-1$
+		processPendingEvents();
+		int selectionBefore = editorSelectionOffset();
+
+		typeKeyBoundTo(IWorkbenchActionDefinitionIds.FIND_NEXT);
+
+		assertEquals(selectionBefore, editorSelectionOffset(),
+				"Find Next must not search on an empty search field"); //$NON-NLS-1$
+	}
+
+	/**
 	 * Commands of the surrounding window, Save among them, must stay executable
 	 * while an input field has focus: only the editor's own are out of place there.
 	 */
@@ -289,6 +356,22 @@ public class FindReplaceOverlayInEditorTest {
 	private static void executeCommand(String commandId) throws Exception {
 		PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(commandId, null);
 		processPendingEvents();
+	}
+
+	/**
+	 * Types into the search field whatever key the given command is bound to, rather
+	 * than a sequence spelled out here: which key that is belongs to the key bindings
+	 * and may change there, whereas what this asserts is that the command reaches the
+	 * overlay at all.
+	 */
+	private void typeKeyBoundTo(String commandId) {
+		TriggerSequence binding = PlatformUI.getWorkbench().getService(IBindingService.class)
+				.getBestActiveBindingFor(commandId);
+		assertTrue(binding instanceof KeySequence, () -> commandId + " is expected to be bound to a key: " + binding); //$NON-NLS-1$
+		KeyStroke[] keyStrokes = ((KeySequence) binding).getKeyStrokes();
+		assertEquals(1, keyStrokes.length,
+				() -> commandId + " is expected to be bound to a single key stroke: " + binding); //$NON-NLS-1$
+		type(searchField, keyStrokes[0].getModifierKeys(), keyStrokes[0].getNaturalKey());
 	}
 
 	/**
