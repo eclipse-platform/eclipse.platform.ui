@@ -27,9 +27,9 @@ import org.eclipse.ui.handlers.IHandlerService;
  * The overlay's own commands are activated as handlers once, rather than
  * imperatively activated and deactivated on every focus change. They are scoped
  * by {@link FindReplaceOverlayContextSupport#overlayFocusedExpression()}, which
- * both limits them to the time an input field has focus and tells them apart
- * from the handlers of the overlays of other editors, since all of those are
- * activated at the workbench for the same commands.
+ * both limits them to the time the focus is somewhere in the overlay and tells
+ * them apart from the handlers of the overlays of other editors, since all of
+ * those are activated at the workbench for the same commands.
  * <p>
  * Everything context related, both the overlay's key binding scopes and keeping
  * the editor's own commands from consuming keys meant for the input fields, is
@@ -113,18 +113,23 @@ class FindReplaceOverlayCommandSupport {
 		return PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
 
-	void searchBarActivated() {
+	void searchBarFocused() {
 		contextSupport.searchBarFocused();
 		refreshShortcutHints();
 	}
 
-	void replaceBarActivated() {
+	void replaceBarFocused() {
 		contextSupport.replaceBarFocused();
 		refreshShortcutHints();
 	}
 
-	void searchOrReplaceBarDeactivated() {
-		contextSupport.fieldsLostFocus();
+	void otherOverlayControlFocused() {
+		contextSupport.otherOverlayControlFocused();
+		refreshShortcutHints();
+	}
+
+	void overlayLostFocus() {
+		contextSupport.overlayLostFocus();
 		refreshShortcutHints();
 	}
 
