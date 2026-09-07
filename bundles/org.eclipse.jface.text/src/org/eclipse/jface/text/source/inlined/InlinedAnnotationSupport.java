@@ -16,7 +16,6 @@ package org.eclipse.jface.text.source.inlined;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -524,8 +523,10 @@ public class InlinedAnnotationSupport {
 				: Collections.emptyList();
 		// Loop for annotations to update
 		for (AbstractInlinedAnnotation ann : annotations) {
-			if (!annotationsToRemove.remove(ann)) {
-				// The annotation was not created, add it
+			boolean known= annotationsToRemove.remove(ann);
+			// An annotation a client removed from the annotation model behind our back is
+			// still known here, but invisible, so add it again.
+			if (!known || annotationModel.getPosition(ann) == null) {
 				annotationsToAdd.put(ann, ann.getPosition());
 			}
 		}
@@ -547,10 +548,10 @@ public class InlinedAnnotationSupport {
 					((IAnnotationModelExtension) annotationModel).replaceAnnotations(
 							annotationsToRemove.toArray(new Annotation[annotationsToRemove.size()]), annotationsToAdd);
 				} else {
-					removeInlinedAnnotations();
-					Iterator<Entry<AbstractInlinedAnnotation, Position>> iter= annotationsToAdd.entrySet().iterator();
-					while (iter.hasNext()) {
-						Entry<AbstractInlinedAnnotation, Position> mapEntry= iter.next();
+					for (AbstractInlinedAnnotation ann : annotationsToRemove) {
+						annotationModel.removeAnnotation(ann);
+					}
+					for (Entry<AbstractInlinedAnnotation, Position> mapEntry : annotationsToAdd.entrySet()) {
 						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 					}
 				}
