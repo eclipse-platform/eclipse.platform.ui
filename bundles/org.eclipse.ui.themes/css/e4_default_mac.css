@@ -181,7 +181,6 @@ CTabFolder Canvas {
 	swt-selected-tab-highlight: #8a8a8a;
 	swt-selected-highlight-top: true;	
 	swt-tab-outline:#eaeaea; 
-	swt-tab-outer-keyline: #eaeaea;
 	swt-draw-custom-tab-content-background: true;
 	swt-unselected-hot-tab-color-background:#ffffff;
 }
