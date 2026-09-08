@@ -13,6 +13,7 @@
  */
 package org.eclipse.jface.text.tests.codemining;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -48,6 +50,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -80,6 +83,36 @@ public class CodeMiningProjectionViewerTest {
 				}
 			}
 			return CompletableFuture.completedFuture(codeMinings);
+		}
+
+		@Override
+		public void dispose() {
+		}
+	}
+
+	private static final class LineHeaderMiningProvider implements ICodeMiningProvider {
+		private final int[] fLines;
+
+		LineHeaderMiningProvider(int... lines) {
+			fLines= lines;
+		}
+
+		@Override
+		public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+			List<ICodeMining> minings= new ArrayList<>();
+			for (int line : fLines) {
+				try {
+					minings.add(new LineHeaderCodeMining(line, viewer.getDocument(), this) {
+						@Override
+						public String getLabel() {
+							return "header of line " + line; //$NON-NLS-1$
+						}
+					});
+				} catch (BadLocationException e) {
+					throw new AssertionError(e);
+				}
+			}
+			return CompletableFuture.completedFuture(minings);
 		}
 
 		@Override
@@ -221,4 +254,69 @@ public class CodeMiningProjectionViewerTest {
 		fViewer.getTextWidget().notifyListeners(SWT.KeyDown, e);
 		assertTrue(completionShell.isVisible());
 	}
+
+	@Test
+	public void testLineHeaderMiningsShowUpAfterCollapsing() throws Exception {
+		StyledText widget= collapsedViewerWithMiningsOn(0, 151, 155);
+
+		// collapsing brought the lines 151 and 155 into the view port
+		assertReservesSpace(widget, 151);
+		assertReservesSpace(widget, 155);
+	}
+
+	@Test
+	public void testLineHeaderMiningsShowUpAfterScrolling() throws Exception {
+		StyledText widget= collapsedViewerWithMiningsOn(0, 151, 199);
+		assertReservesSpace(widget, 151);
+		assertFalse(reservesSpace(widget, 199), "line 199 is not in the view port yet");
+
+		// a programmatic scroll notifies no view port listener
+		widget.setTopIndex(widget.getLineCount() - 1);
+
+		assertReservesSpace(widget, 199);
+	}
+
+	/**
+	 * Opens a viewer on 200 lines with a line header mining on each of the given lines and one
+	 * collapsed region over the lines 5 to 150, so that the lines behind it come into the view port
+	 * only once that region is folded away.
+	 *
+	 * @return the text widget of the viewer
+	 */
+	private StyledText collapsedViewerWithMiningsOn(int... lines) throws BadLocationException {
+		StringBuilder text= new StringBuilder();
+		for (int i= 0; i < 200; i++) {
+			text.append("line").append(i).append('\n');
+		}
+		fParent.setSize(500, 600);
+		fViewer.getDocument().set(text.toString());
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new LineHeaderMiningProvider(lines) });
+		IDocument doc= fViewer.getDocument();
+		fViewer.getProjectionAnnotationModel().addAnnotation(new ProjectionAnnotation(false),
+				new Position(doc.getLineOffset(5), doc.getLineOffset(150) - doc.getLineOffset(5)));
+		fParent.open();
+		StyledText widget= fViewer.getTextWidget();
+		fViewer.updateCodeMinings();
+		// only the mining of line 0 is in the view port while the document is expanded
+		assertReservesSpace(widget, 0);
+
+		fViewer.doOperation(ProjectionViewer.COLLAPSE_ALL);
+		fViewer.updateCodeMinings();
+		return widget;
+	}
+
+	private void assertReservesSpace(StyledText widget, int modelLine) {
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return reservesSpace(widget, modelLine);
+			}
+		}.waitForCondition(fParent.getDisplay(), 3000), "no code mining drawn on line " + modelLine);
+	}
+
+	private boolean reservesSpace(StyledText widget, int modelLine) {
+		int widgetLine= fViewer.modelLine2WidgetLine(modelLine);
+		return widgetLine >= 0 && widget.getLineVerticalIndent(widgetLine) > 0;
+	}
+
 }

@@ -771,7 +771,7 @@ public class CodeMiningTest {
 		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return widget.getLineVerticalIndent(151) > 0;
+				return reservesSpaceFrom(widget, 150);
 			}
 		}.waitForCondition(widget.getDisplay(), 3000), "no code mining below the view port");
 		widget.setTopIndex(0);
@@ -816,6 +816,19 @@ public class CodeMiningTest {
 			this.setLabel(label);
 		}
 
+	}
+
+	/**
+	 * Reserving the space of a code mining moves the view port by a line or two, so which line ends
+	 * up on top after a scroll is not fixed.
+	 */
+	private static boolean reservesSpaceFrom(StyledText widget, int firstLine) {
+		for (int line= firstLine; line < widget.getLineCount(); line++) {
+			if (widget.getLineVerticalIndent(line) > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static class ReferenceLineHeaderCodeMining extends LineHeaderCodeMining {

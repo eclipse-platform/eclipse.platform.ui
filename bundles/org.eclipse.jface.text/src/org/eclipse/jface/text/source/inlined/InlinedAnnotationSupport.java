@@ -51,6 +51,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -58,6 +59,7 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -138,11 +140,13 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Class to track start/end offset of visible lines.
 	 */
-	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener {
+	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener, ITextListener {
 
-		private int startOffset;
+		/** The document offsets of the first and the last visible line. */
+		private record Range(int start, int end) {}
 
-		private Integer endOffset;
+		/** Published as a whole, so that a reader never pairs a start with a foreign end. */
+		private volatile Range range;
 
 		public VisibleLines() {
 			install();
@@ -158,13 +162,20 @@ public class InlinedAnnotationSupport {
 
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			endOffset= null;
+			range= null;
+		}
+
+		@Override
+		public void textChanged(TextEvent event) {
+			// folding changes what is shown without a view port or document event
+			range= null;
 		}
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
-			if (endOffset != null && event != null && event.fDocument != null && event.fDocument.getLength() > endOffset) {
-				endOffset= null;
+			Range current= range;
+			if (current != null && event != null && event.fDocument != null && event.fDocument.getLength() > current.end()) {
+				range= null;
 			}
 		}
 
@@ -179,8 +190,7 @@ public class InlinedAnnotationSupport {
 		}
 
 		private void compute() {
-			startOffset= getInclusiveTopIndexStartOffset();
-			endOffset= getExclusiveBottomIndexEndOffset();
+			range= new Range(getInclusiveTopIndexStartOffset(), getExclusiveBottomIndexEndOffset());
 		}
 
 		/**
@@ -232,15 +242,17 @@ public class InlinedAnnotationSupport {
 		 *         otherwise.
 		 */
 		boolean isInVisibleLines(int documentOffset) {
-			if (endOffset == null) {
-				Display display= fViewer.getTextWidget().getDisplay();
-				if (display.getThread() == Thread.currentThread()) {
-					endOffset= getExclusiveBottomIndexEndOffset();
-				} else {
-					display.syncExec(() -> endOffset= getExclusiveBottomIndexEndOffset());
-				}
+			Display display= fViewer.getTextWidget().getDisplay();
+			if (display.getThread() == Thread.currentThread()) {
+				// a scroll that reports no view port event, such as a programmatic one,
+				// is only noticed by asking the widget again
+				compute();
+			} else if (range == null) {
+				display.syncExec(this::compute);
 			}
-			return documentOffset >= startOffset && documentOffset <= endOffset;
+			// another thread may have invalidated the range in between
+			Range current= range;
+			return current != null && documentOffset >= current.start() && documentOffset <= current.end();
 		}
 
 		/**
@@ -249,6 +261,7 @@ public class InlinedAnnotationSupport {
 		void uninstall() {
 			if (fViewer != null) {
 				fViewer.removeViewportListener(this);
+				fViewer.removeTextListener(this);
 				if (fViewer.getDocument() != null) {
 					fViewer.getDocument().removeDocumentListener(this);
 				}
@@ -260,6 +273,7 @@ public class InlinedAnnotationSupport {
 
 		void install() {
 			fViewer.addViewportListener(this);
+			fViewer.addTextListener(this);
 			fViewer.getDocument().addDocumentListener(this);
 			fViewer.getTextWidget().addControlListener(this);
 		}
