@@ -39,17 +39,8 @@ ICSSPropertyFontHandler {
 		case "font-size":
 			applyCSSPropertyFontSize(element, value, pseudo, engine);
 			break;
-		case "font-adjust":
-			applyCSSPropertyFontSizeAdjust(element, value, pseudo, engine);
-			break;
-		case "font-stretch":
-			applyCSSPropertyFontStretch(element, value, pseudo, engine);
-			break;
 		case "font-style":
 			applyCSSPropertyFontStyle(element, value, pseudo, engine);
-			break;
-		case "font-variant":
-			applyCSSPropertyFontVariant(element, value, pseudo, engine);
 			break;
 		case "font-weight":
 			applyCSSPropertyFontWeight(element, value, pseudo, engine);
@@ -72,14 +63,8 @@ ICSSPropertyFontHandler {
 			return retrieveCSSPropertyFontFamily(element, pseudo, engine);
 		case "font-size":
 			return retrieveCSSPropertyFontSize(element, pseudo, engine);
-		case "font-adjust":
-			return retrieveCSSPropertyFontAdjust(element, pseudo, engine);
-		case "font-stretch":
-			return retrieveCSSPropertyFontStretch(element, pseudo, engine);
 		case "font-style":
 			return retrieveCSSPropertyFontStyle(element, pseudo, engine);
-		case "font-variant":
-			return retrieveCSSPropertyFontVariant(element, pseudo, engine);
 		case "font-weight":
 			return retrieveCSSPropertyFontWeight(element, pseudo, engine);
 		}
@@ -130,18 +115,6 @@ ICSSPropertyFontHandler {
 	}
 
 	@Override
-	public void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
-		throw new UnsupportedPropertyException("font-adjust");
-	}
-
-	@Override
-	public void applyCSSPropertyFontStretch(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
-		throw new UnsupportedPropertyException("font-stretch");
-	}
-
-	@Override
 	public void applyCSSPropertyFontStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (element instanceof CSS2FontProperties) {
@@ -157,12 +130,6 @@ ICSSPropertyFontHandler {
 		if (value instanceof CssPrimitive primitive) {
 			font.setStyle(primitive);
 		}
-	}
-
-	@Override
-	public void applyCSSPropertyFontVariant(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
-		throw new UnsupportedPropertyException("font-variant");
 	}
 
 	@Override

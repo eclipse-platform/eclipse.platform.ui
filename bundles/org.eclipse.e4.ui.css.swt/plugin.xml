@@ -182,16 +182,7 @@
                name="font-size">
          </property-name>
          <property-name
-               name="font-adjust">
-         </property-name>
-         <property-name
-               name="font-stretch">
-         </property-name>
-         <property-name
                name="font-style">
-         </property-name>
-         <property-name
-               name="font-variant">
          </property-name>
          <property-name
                name="font-weight">
@@ -270,16 +261,7 @@
                name="font-size">
          </property-name>
          <property-name
-               name="font-adjust">
-         </property-name>
-         <property-name
-               name="font-stretch">
-         </property-name>
-         <property-name
                name="font-style">
-         </property-name>
-         <property-name
-               name="font-variant">
          </property-name>
          <property-name
                name="font-weight">

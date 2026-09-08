@@ -278,11 +278,8 @@ public class CSSSWTFontHelper {
 		resolved.setFamily(fontProperties.getFamily());
 		resolved.setSize(new CssDimension(height.getAsInt(), CssUnit.PT));
 		resolved.setSizeFromCSS(true);
-		resolved.setSizeAdjust(fontProperties.getSizeAdjust());
 		resolved.setWeight(fontProperties.getWeight());
 		resolved.setStyle(fontProperties.getStyle());
-		resolved.setVariant(fontProperties.getVariant());
-		resolved.setStretch(fontProperties.getStretch());
 		return resolved;
 	}
 

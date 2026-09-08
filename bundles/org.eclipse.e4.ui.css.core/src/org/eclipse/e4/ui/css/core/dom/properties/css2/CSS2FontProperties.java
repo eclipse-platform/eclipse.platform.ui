@@ -35,10 +35,6 @@ public interface CSS2FontProperties extends CSSValue {
 
 	void setSizeFromCSS(boolean sizeFromCSS);
 
-	CssPrimitive getSizeAdjust();
-
-	void setSizeAdjust(CssPrimitive sizeAdjust);
-
 	CssPrimitive getWeight();
 
 	void setWeight(CssPrimitive weight);
@@ -46,12 +42,4 @@ public interface CSS2FontProperties extends CSSValue {
 	CssPrimitive getStyle();
 
 	void setStyle(CssPrimitive style);
-
-	CssPrimitive getVariant();
-
-	void setVariant(CssPrimitive variant);
-
-	CssPrimitive getStretch();
-
-	void setStretch(CssPrimitive stretch);
 }
