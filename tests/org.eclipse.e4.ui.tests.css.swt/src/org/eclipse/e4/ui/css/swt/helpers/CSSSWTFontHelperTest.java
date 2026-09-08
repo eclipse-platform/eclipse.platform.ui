@@ -80,6 +80,34 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
+	void testGetFontDataWithNumericWeight() {
+		FontData bold = getFontData(fontProperties("Times", 11, null, 600), new FontData("Courier", 11, SWT.NORMAL));
+		assertEquals(SWT.BOLD, bold.getStyle());
+
+		FontData regular = getFontData(fontProperties("Times", 11, null, 500), new FontData("Courier", 11, SWT.BOLD));
+		assertEquals(SWT.NORMAL, regular.getStyle());
+	}
+
+	@Test
+	void testGetFontDataWithRelativeWeight() {
+		FontData bolder = getFontData(fontProperties("Times", 11, null, "bolder"),
+				new FontData("Courier", 11, SWT.NORMAL));
+		assertEquals(SWT.BOLD, bolder.getStyle());
+
+		FontData lighter = getFontData(fontProperties("Times", 11, null, "lighter"),
+				new FontData("Courier", 11, SWT.BOLD));
+		assertEquals(SWT.NORMAL, lighter.getStyle());
+	}
+
+	@Test
+	void testGetFontDataWithUnknownWeightKeepsTheOldWeight() {
+		FontData result = getFontData(fontProperties("Times", 11, null, "semibold"),
+				new FontData("Courier", 11, SWT.BOLD));
+
+		assertEquals(SWT.BOLD, result.getStyle());
+	}
+
+	@Test
 	void testGetFontDataWhenMissingStyleInCss() {
 		FontData result = getFontData(fontProperties("Times", 11, null, CSS_BOLD),
 				new FontData("Courier", 5, SWT.ITALIC));

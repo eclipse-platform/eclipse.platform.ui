@@ -99,7 +99,9 @@ public class CSS2FontPropertiesHelpers {
 			}
 		} else if (value instanceof CssPrimitive primitive) {
 			String property = CSS2FontHelper.getCSSFontPropertyName(primitive);
-			updateCSSPropertyFont(font, property, value);
+			if (property != null) {
+				updateCSSPropertyFont(font, property, value);
+			}
 		}
 	}
 

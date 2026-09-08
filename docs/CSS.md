@@ -102,6 +102,15 @@ These tables show the equivalent mapping from SWT method to CSS property.
 They also show pseudo selectors which can be used to choose styling based on widget state.
 
 
+### Font weight
+
+`font-weight` accepts `normal`, `bold`, `bolder`, `lighter` and the numbers
+`100` to `900`.
+SWT fonts have no weight axis, so a weight of `600` or more selects a bold face
+and anything below it a regular one.
+In the `font` shorthand a bare `100` to `900` is read as a weight, any other
+bare number as a size in points.
+
 ### Widget: Control
 
 | SWT Method | CSS Property Name | CSS Example |

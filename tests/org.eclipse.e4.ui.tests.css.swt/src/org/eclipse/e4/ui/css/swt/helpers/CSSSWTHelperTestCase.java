@@ -73,7 +73,9 @@ public abstract class CSSSWTHelperTestCase {
 		if (style != null) {
 			result.setStyle(new CssText(CssText.Kind.IDENT, style.toString()));
 		}
-		if (weight != null) {
+		if (weight instanceof Number number) {
+			result.setWeight(new CssNumber(number.doubleValue(), true));
+		} else if (weight != null) {
 			result.setWeight(new CssText(CssText.Kind.IDENT, weight.toString()));
 		}
 		return result;
