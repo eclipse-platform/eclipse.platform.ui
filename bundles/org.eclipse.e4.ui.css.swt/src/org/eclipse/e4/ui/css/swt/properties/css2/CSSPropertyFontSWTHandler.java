@@ -194,12 +194,6 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 	}
 
 	@Override
-	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
@@ -214,23 +208,11 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 	}
 
 	@Override
-	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
 		return CSSSWTFontHelper.getFontStyle(widget);
 
-	}
-
-	@Override
-	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
 	}
 
 	@Override
@@ -263,9 +245,8 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		 * retrieved from the style sheet. This list must be updated if
 		 * AbstractCSSPropertyFontHandler's listing changes.
 		 */
-		private final String[] fontAttributes = { "font", "font-family", "font-size",
-				"font-adjust", "font-stretch", "font-style", "font-variant",
-		"font-weight" };
+		private final String[] fontAttributes = { "font", "font-family", "font-size", "font-style",
+				"font-weight" };
 
 		private CSSEngine engine;
 
@@ -390,11 +371,8 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 			properties.setFamily(null);
 			properties.setSize(null);
 			properties.setSizeFromCSS(false);
-			properties.setSizeAdjust(null);
 			properties.setWeight(null);
 			properties.setStyle(null);
-			properties.setVariant(null);
-			properties.setStretch(null);
 		}
 
 		@Override

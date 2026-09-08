@@ -25,15 +25,9 @@ public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 
 	private boolean sizeFromCSS;
 
-	private CssPrimitive sizeAdjust;
-
 	private CssPrimitive weight;
 
 	private CssPrimitive style;
-
-	private CssPrimitive variant;
-
-	private CssPrimitive stretch;
 
 	@Override
 	public CssPrimitive getFamily() {
@@ -66,16 +60,6 @@ public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 	}
 
 	@Override
-	public CssPrimitive getSizeAdjust() {
-		return sizeAdjust;
-	}
-
-	@Override
-	public void setSizeAdjust(CssPrimitive sizeAdjust) {
-		this.sizeAdjust = sizeAdjust;
-	}
-
-	@Override
 	public CssPrimitive getWeight() {
 		return weight;
 	}
@@ -93,26 +77,6 @@ public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 	@Override
 	public void setStyle(CssPrimitive style) {
 		this.style = style;
-	}
-
-	@Override
-	public CssPrimitive getVariant() {
-		return variant;
-	}
-
-	@Override
-	public void setVariant(CssPrimitive variant) {
-		this.variant = variant;
-	}
-
-	@Override
-	public CssPrimitive getStretch() {
-		return stretch;
-	}
-
-	@Override
-	public void setStretch(CssPrimitive stretch) {
-		this.stretch = stretch;
 	}
 
 	@Override

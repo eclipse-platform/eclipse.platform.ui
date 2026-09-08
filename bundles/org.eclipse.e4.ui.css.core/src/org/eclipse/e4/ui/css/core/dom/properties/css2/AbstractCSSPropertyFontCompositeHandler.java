@@ -30,8 +30,8 @@ import org.w3c.dom.css.CSSValue;
 public abstract class AbstractCSSPropertyFontCompositeHandler extends
 		AbstractCSSPropertyCompositeHandler {
 
-	private static final String[] FONT_CSSPROPERTIES = { "font-style",
-			"font-variant", "font-weight", "font-size", "font-family" };
+	private static final String[] FONT_CSSPROPERTIES = { "font-style", "font-weight", "font-size",
+			"font-family" };
 
 	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,

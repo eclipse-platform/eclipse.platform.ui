@@ -83,25 +83,7 @@ public class CSSPropertyFontDefinitionHandler extends AbstractCSSPropertyFontHan
 	}
 
 	@Override
-	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
-	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
-	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
