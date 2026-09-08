@@ -56,6 +56,9 @@ public class CSSSWTFontHelper {
 	/** Lower bound so that a small factor cannot shrink a font away. */
 	private static final int MIN_FONT_HEIGHT = 1;
 
+	/** SWT has no weight axis, so from this weight up a face is bold. */
+	private static final int BOLD_WEIGHT_THRESHOLD = 600;
+
 	/** A CSS pixel is 1/96 inch, an SWT font height is 1/72 inch. */
 	private static final double PX_TO_PT = 72d / 96d;
 
@@ -330,13 +333,14 @@ public class CSSSWTFontHelper {
 			}
 		}
 		// CSS font-weight
-		CssPrimitive cssFontWeight = fontProperties.getWeight();
-		if (cssFontWeight instanceof CssText weightText) {
-			String weight = weightText.value();
-			if ("bold".equals(weight.toLowerCase())) {
+		int inheritedWeight = fontData != null && isBold(fontData) ? CSS2FontHelper.FONT_WEIGHT_BOLD
+				: CSS2FontHelper.FONT_WEIGHT_NORMAL;
+		OptionalInt cssFontWeight = CSS2FontHelper.getFontWeight(fontProperties.getWeight(), inheritedWeight);
+		if (cssFontWeight.isPresent()) {
+			if (cssFontWeight.getAsInt() >= BOLD_WEIGHT_THRESHOLD) {
 				fontStyle = fontStyle | SWT.BOLD;
-			} else if (fontStyle == (fontStyle | SWT.BOLD)) {
-				fontStyle = fontStyle ^ SWT.BOLD;
+			} else {
+				fontStyle = fontStyle & ~SWT.BOLD;
 			}
 		}
 		return fontStyle;

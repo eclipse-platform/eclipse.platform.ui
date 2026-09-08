@@ -61,6 +61,30 @@ public class LabelTest {
 	}
 
 	@Test
+	void testFontWeightNumeric() {
+		Label labelToTest = css.createTestLabel("Label { font-weight: 600 }");
+
+		assertEquals(SWT.BOLD, labelToTest.getFont().getFontData()[0].getStyle());
+	}
+
+	@Test
+	void testFontWeightBelowBoldStaysRegular() {
+		Label labelToTest = css.createTestLabel("Label { font-weight: 500 }");
+
+		assertEquals(SWT.NORMAL, labelToTest.getFont().getFontData()[0].getStyle());
+	}
+
+	@Test
+	void testFontWeightInShorthand() {
+		Label labelToTest = css.createTestLabel("Label { font: 700 12pt Arial }");
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+
+		assertEquals("Arial", fontData.getName());
+		assertEquals(12, fontData.getHeight());
+		assertEquals(SWT.BOLD, fontData.getStyle());
+	}
+
+	@Test
 	void testFontItalic() {
 		Label labelToTest = css.createTestLabel("Label { font-style: italic }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
