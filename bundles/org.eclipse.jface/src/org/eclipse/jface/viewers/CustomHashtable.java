@@ -15,9 +15,6 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
-
 /**
  * CustomHashtable associates keys with values. Keys and values cannot be null.
  * The size of the Hashtable is the number of key/value pairs it contains.
@@ -52,55 +49,6 @@ import java.util.NoSuchElementException;
 		}
 	}
 
-	private static final class EmptyEnumerator implements Enumeration {
-		@Override
-		public boolean hasMoreElements() {
-			return false;
-		}
-
-		@Override
-		public Object nextElement() {
-			throw new NoSuchElementException();
-		}
-	}
-
-	private class HashEnumerator implements Enumeration {
-		boolean key;
-
-		int start;
-
-		HashMapEntry entry;
-
-		HashEnumerator(boolean isKey) {
-			key = isKey;
-			start = firstSlot;
-		}
-
-		@Override
-		public boolean hasMoreElements() {
-			if (entry != null) {
-				return true;
-			}
-			while (start <= lastSlot) {
-				if (elementData[start++] != null) {
-					entry = elementData[start - 1];
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public Object nextElement() {
-			if (hasMoreElements()) {
-				Object result = key ? entry.key : entry.value;
-				entry = entry.next;
-				return result;
-			}
-			throw new NoSuchElementException();
-		}
-	}
-
 	transient int elementCount;
 
 	transient HashMapEntry[] elementData;
@@ -109,13 +57,7 @@ import java.util.NoSuchElementException;
 
 	private int threshold;
 
-	transient int firstSlot = 0;
-
-	transient int lastSlot = -1;
-
 	transient private IElementComparer comparer;
-
-	private static final EmptyEnumerator emptyEnumerator = new EmptyEnumerator();
 
 	/**
 	 * The default capacity used when not specified in the constructor.
@@ -166,7 +108,6 @@ import java.util.NoSuchElementException;
 		if (capacity >= 0) {
 			elementCount = 0;
 			elementData = new HashMapEntry[capacity == 0 ? 1 : capacity];
-			firstSlot = elementData.length;
 			loadFactor = 0.75f;
 			computeMaxSize();
 		} else {
@@ -225,20 +166,6 @@ import java.util.NoSuchElementException;
 	}
 
 	/**
-	 * Answers an Enumeration on the values of this Hashtable. The
-	 * results of the Enumeration may be affected if the contents
-	 * of this Hashtable are modified.
-	 *
-	 * @return		an Enumeration of the values of this Hashtable
-	 */
-	public Enumeration elements() {
-		if (elementCount == 0) {
-			return emptyEnumerator;
-		}
-		return new HashEnumerator(false);
-	}
-
-	/**
 	 * Answers the value associated with the specified key in
 	 * this Hashtable.
 	 *
@@ -291,20 +218,6 @@ import java.util.NoSuchElementException;
 	}
 
 	/**
-	 * Answers an Enumeration on the keys of this Hashtable. The
-	 * results of the Enumeration may be affected if the contents
-	 * of this Hashtable are modified.
-	 *
-	 * @return		an Enumeration of the keys of this Hashtable
-	 */
-	public Enumeration keys() {
-		if (elementCount == 0) {
-			return emptyEnumerator;
-		}
-		return new HashEnumerator(true);
-	}
-
-	/**
 	 * Associate the specified value with the specified key in this Hashtable.
 	 * If the key already exists, the old value is replaced. The key and value
 	 * cannot be null.
@@ -326,12 +239,6 @@ import java.util.NoSuchElementException;
 				if (++elementCount > threshold) {
 					rehash();
 					index = indexFor(hash);
-				}
-				if (index < firstSlot) {
-					firstSlot = index;
-				}
-				if (index > lastSlot) {
-					lastSlot = index;
 				}
 				entry = new HashMapEntry(key, value, hash);
 				entry.next = elementData[index];
@@ -355,19 +262,11 @@ import java.util.NoSuchElementException;
 		if (length == 0) {
 			length = 1;
 		}
-		firstSlot = length;
-		lastSlot = -1;
 		HashMapEntry[] newData = new HashMapEntry[length];
 		for (int i = elementData.length; --i >= 0;) {
 			HashMapEntry entry = elementData[i];
 			while (entry != null) {
 				int index = (entry.hash & 0x7FFFFFFF) % length;
-				if (index < firstSlot) {
-					firstSlot = index;
-				}
-				if (index > lastSlot) {
-					lastSlot = index;
-				}
 				HashMapEntry next = entry.next;
 				entry.next = newData[index];
 				newData[index] = entry;
