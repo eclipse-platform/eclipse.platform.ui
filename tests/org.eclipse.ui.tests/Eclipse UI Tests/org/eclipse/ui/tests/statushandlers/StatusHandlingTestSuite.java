@@ -29,6 +29,7 @@ import org.junit.platform.suite.api.Suite;
 	SupportTrayTest.class,
 	WorkbenchStatusDialogManagerImplTest.class,
 	WizardsStatusHandlingTestCase.class,
+	StatusManagerTest.class,
 })
 public class StatusHandlingTestSuite {
 	//
