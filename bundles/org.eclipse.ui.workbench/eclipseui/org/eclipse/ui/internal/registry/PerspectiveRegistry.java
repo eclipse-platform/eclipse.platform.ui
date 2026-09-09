@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -57,6 +58,9 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * Perspective registry.
  */
 public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChangeHandler {
+
+	private static final String PLATFORM_PLUGIN_PREFIX = "platform:/plugin/"; //$NON-NLS-1$
+	private static final String PLATFORM_FRAGMENT_PREFIX = "platform:/fragment/"; //$NON-NLS-1$
 
 	@Inject
 	private IExtensionRegistry extensionRegistry;
@@ -137,17 +141,47 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		String id = perspective.getElementId();
 		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label, originalDescriptor);
 
-		if (perspective.getIconURI() != null) {
+		String iconURI = perspective.getIconURI();
+		if (iconURI != null && isIconAvailable(iconURI)) {
 			try {
-				ImageDescriptor img = ImageDescriptor.createFromURL(new URI(perspective.getIconURI()).toURL());
+				ImageDescriptor img = ImageDescriptor.createFromURL(new URI(iconURI).toURL());
 				newDescriptor.setImageDescriptor(img);
 			} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
 				logger.warn(e, MessageFormat.format("Error on applying configured perspective icon: {0}", //$NON-NLS-1$
-						perspective.getIconURI()));
+						iconURI));
 			}
 		}
 
 		descriptors.put(id, newDescriptor);
+	}
+
+	/**
+	 * Tells whether the bundle a platform icon URI points to is installed. Loading
+	 * an icon of a missing bundle logs an error per attempt in the platform URL
+	 * layer.
+	 */
+	private boolean isIconAvailable(String iconURI) {
+		String reference = null;
+		for (String prefix : new String[] { PLATFORM_PLUGIN_PREFIX, PLATFORM_FRAGMENT_PREFIX }) {
+			if (iconURI.startsWith(prefix)) {
+				reference = iconURI.substring(prefix.length()).split("/", 2)[0]; //$NON-NLS-1$
+				break;
+			}
+		}
+		if (reference == null) {
+			return true;
+		}
+		if (Platform.getBundle(reference) != null) {
+			return true;
+		}
+		// the reference may carry a version, as in "com.example_1.0.0"
+		int underscore = reference.indexOf('_');
+		if (underscore > 0 && Platform.getBundle(reference.substring(0, underscore)) != null) {
+			return true;
+		}
+		logger.warn(MessageFormat.format("Skipping the perspective icon {0} of the not installed bundle {1}", //$NON-NLS-1$
+				iconURI, reference));
+		return false;
 	}
 
 	/**

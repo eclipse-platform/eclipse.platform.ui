@@ -27,8 +27,10 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.junit.Before;
@@ -130,6 +132,43 @@ public class IPerspectiveRegistryTest {
 			assertNotNull("model-contributed perspective must be resolvable by id", descriptor);
 			assertEquals(id, descriptor.getId());
 			assertEquals(label, descriptor.getLabel());
+		} finally {
+			stack.getChildren().remove(perspective);
+			IPerspectiveDescriptor descriptor = fReg.findPerspectiveWithId(id);
+			if (descriptor != null) {
+				fReg.deletePerspective(descriptor);
+			}
+		}
+	}
+
+	/**
+	 * A perspective whose contributing bundle is gone must fall back to the default
+	 * icon instead of loading the one its model element names.
+	 */
+	@Test
+	public void testModelPerspectiveWithUninstalledIconBundle() {
+		WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		EModelService modelService = window.getService(EModelService.class);
+
+		List<MPerspectiveStack> stacks = modelService.findElements(window.getModel(), null, MPerspectiveStack.class);
+		assertFalse("expected a perspective stack in the active window", stacks.isEmpty());
+		MPerspectiveStack stack = stacks.get(0);
+
+		String id = "org.eclipse.ui.tests.perspectiveWithUninstalledIconBundle";
+		MPerspective perspective = modelService.createModelElement(MPerspective.class);
+		perspective.setElementId(id);
+		perspective.setLabel("Perspective With Uninstalled Icon Bundle");
+		perspective.setIconURI("platform:/plugin/org.eclipse.ui.tests.uninstalled/icons/missing.svg");
+		perspective.setToBeRendered(false);
+		stack.getChildren().add(perspective);
+
+		try {
+			fReg.getPerspectives(); // registers perspectives added to the model
+			IPerspectiveDescriptor descriptor = fReg.findPerspectiveWithId(id);
+			assertNotNull("model-contributed perspective must be resolvable by id", descriptor);
+			assertEquals("the default perspective icon must be used for an uninstalled bundle",
+					WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE),
+					descriptor.getImageDescriptor());
 		} finally {
 			stack.getChildren().remove(perspective);
 			IPerspectiveDescriptor descriptor = fReg.findPerspectiveWithId(id);
