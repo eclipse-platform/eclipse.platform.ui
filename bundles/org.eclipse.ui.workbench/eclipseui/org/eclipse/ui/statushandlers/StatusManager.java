@@ -15,8 +15,9 @@
 
 package org.eclipse.ui.statushandlers;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -116,7 +117,9 @@ public class StatusManager {
 
 	private volatile AbstractStatusHandler statusHandler;
 
-	private final List<IStatus> loggedStatuses = new Vector<>();
+	// Weakly held so that a status which never reaches the log listener cannot accumulate.
+	private final Set<IStatus> loggedStatuses = Collections
+			.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<IStatus, Boolean>()));
 
 	private final ListenerList<INotificationListener> listeners = new ListenerList<>();
 
