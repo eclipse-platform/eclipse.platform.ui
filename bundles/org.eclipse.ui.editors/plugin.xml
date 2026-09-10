@@ -1126,6 +1126,49 @@
          </description>
       </colorDefinition>
 
+      <themeElementCategory
+            id="org.eclipse.editors.syntaxColors"
+            label="%SYNTAX_COLORS_CATEGORY">
+         <description>
+            %SYNTAX_COLORS_CATEGORY_DESCRIPTION
+         </description>
+      </themeElementCategory>
+      <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.editors.syntax.tagColor"
+            isEditable="true"
+            label="%SYNTAX_TAG_COLOR"
+            value="0,0,128">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.editors.syntax.attributeNameColor"
+            isEditable="true"
+            label="%SYNTAX_ATTRIBUTE_NAME_COLOR"
+            value="128,0,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.editors.syntax.stringColor"
+            isEditable="true"
+            label="%SYNTAX_STRING_COLOR"
+            value="0,128,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.editors.syntax.commentColor"
+            isEditable="true"
+            label="%SYNTAX_COMMENT_COLOR"
+            value="128,0,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.editors.syntax.directiveColor"
+            isEditable="true"
+            label="%SYNTAX_DIRECTIVE_COLOR"
+            value="128,128,128">
+      </colorDefinition>
+
       <theme
 		  id="org.eclipse.ui.ide.systemDefault">
          <colorOverride
