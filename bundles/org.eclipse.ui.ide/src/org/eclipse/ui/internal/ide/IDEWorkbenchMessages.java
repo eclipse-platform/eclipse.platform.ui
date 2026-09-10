@@ -322,7 +322,13 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenResourceAction_problemMessage;
 	public static String OpenResourceAction_operationMessage;
 	public static String OpenResourceAction_operationMessage_plural;
-	public static String OpenResourceAction_openRequiredProjects;
+	public static String OpenResourceAction_promptTitle;
+	public static String OpenResourceAction_referencedProjectsClosed;
+	public static String OpenResourceAction_openOneNestedBelowProject;
+	public static String OpenResourceAction_openNestedBelowProject;
+	public static String OpenResourceAction_openOneNestedBelowSelection;
+	public static String OpenResourceAction_openNestedBelowSelection;
+	public static String OpenResourceAction_open;
 
 	public static String CloseResourceAction_text;
 	public static String CloseResourceAction_text_plural;
@@ -335,6 +341,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CloseResourceAction_problemMessage;
 	public static String CloseResourceAction_operationMessage;
 	public static String CloseResourceAction_operationMessage_plural;
+	public static String CloseResourceAction_promptTitle;
+	public static String CloseResourceAction_closeOneNestedBelowProject;
+	public static String CloseResourceAction_closeNestedBelowProject;
+	public static String CloseResourceAction_closeOneNestedBelowSelection;
+	public static String CloseResourceAction_closeNestedBelowSelection;
+	public static String CloseResourceAction_close;
+	public static String RelatedProjectsDialog_includeNested;
+	public static String RelatedProjectsDialog_includeReferenced;
 
 	public static String CloseUnrelatedProjectsAction_text;
 	public static String CloseUnrelatedProjectsAction_text_plural;
@@ -562,6 +576,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_otherLineDelim;
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
+	public static String IDEWorkspacePreference_openNestedProjects;
+	public static String IDEWorkspacePreference_closeNestedProjects;
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
 	public static String IDEWorkspacePreference_windowTitleGroupText;
 	public static String IDEWorkspacePreference_showLocationInWindowTitle;
