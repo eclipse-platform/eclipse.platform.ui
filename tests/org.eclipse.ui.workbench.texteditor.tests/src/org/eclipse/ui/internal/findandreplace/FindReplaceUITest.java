@@ -17,8 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ResourceBundle;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,9 +62,10 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fTextViewer.setDocument(new Document(content));
 		fTextViewer.getControl().setFocus();
-		findReplaceAction= new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", fTextViewer.getControl().getShell(),
-				fTextViewer.getFindReplaceTarget());
+		findReplaceAction= initializeFindReplaceAction();
 	}
+
+	protected abstract FindReplaceAction initializeFindReplaceAction();
 
 	protected void initializeFindReplaceUIForTextViewer() {
 		dialog= openUIFromTextViewer(fTextViewer);
