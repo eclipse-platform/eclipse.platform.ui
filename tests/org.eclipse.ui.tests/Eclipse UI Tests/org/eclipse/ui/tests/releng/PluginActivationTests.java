@@ -47,7 +47,7 @@ public class PluginActivationTests {
 
 	private static List<String> NOT_ACTIVE_BUNDLES = List.of(
 			"org.apache.xerces",
-			"com.jcraft.jsch",
+			"com.github.mwiede.jsch",
 			"javax.servlet",
 			"javax.servlet.jsp-api",
 			"org.apache.ant",
