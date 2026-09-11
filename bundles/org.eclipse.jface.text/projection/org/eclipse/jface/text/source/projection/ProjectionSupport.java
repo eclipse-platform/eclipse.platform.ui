@@ -98,7 +98,9 @@ public class ProjectionSupport {
 						Point p= textWidget.getLocationAtOffset(lineEnd);
 
 						Color c= gc.getForeground();
+						Color bg= gc.getBackground();
 						gc.setForeground(color);
+						gc.setBackground(color);
 
 						FontMetrics metrics= gc.getFontMetrics();
 
@@ -117,10 +119,12 @@ public class ProjectionSupport {
 						gc.drawRectangle(p.x, p.y + leading, (int) width, height);
 						int third= (int) (width / 3);
 						int dotsVertical= p.y + baseline - 1;
-						gc.drawPoint(p.x + third, dotsVertical);
-						gc.drawPoint((int) (p.x + width - third), dotsVertical);
+						// drawPoint stays one device pixel on Windows
+						gc.fillRectangle(p.x + third, dotsVertical, 1, 1);
+						gc.fillRectangle((int) (p.x + width - third), dotsVertical, 1, 1);
 
 						gc.setForeground(c);
+						gc.setBackground(bg);
 
 					} else {
 						textWidget.redrawRange(offset, length, true);
