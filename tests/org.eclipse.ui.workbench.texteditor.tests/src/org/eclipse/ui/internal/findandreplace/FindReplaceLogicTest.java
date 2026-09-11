@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 Vector Informatik GmbH and others.
+ * Copyright (c) 2023, 2026 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
+ *     Edward Lo - test replaceAll line-start regex (issue 2820)
  *******************************************************************************/
 
 package org.eclipse.ui.internal.findandreplace;
@@ -190,6 +191,37 @@ public class FindReplaceLogicTest {
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
 				+ "[" + lineSeparator()
 				+ "^");
+	}
+
+	/**
+	 * Replace All with a line-start regex must not rematch the same line after an
+	 * empty replacement (see https://github.com/eclipse-platform/eclipse.platform.ui/issues/2820).
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartAnchor() {
+		TextViewer textViewer= setupTextViewer("  hello" + lineSeparator() + "  world" + lineSeparator() + "   three");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^ ", "");
+		findReplaceLogic.performReplaceAll();
+		// One leading space removed per line, not all leading spaces
+		assertThat(textViewer.getDocument().get(), equalTo(" hello" + lineSeparator() + " world" + lineSeparator() + "  three"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	@Test
+	public void testPerformReplaceAllRegExZeroLengthLineStart() {
+		TextViewer textViewer= setupTextViewer("a" + lineSeparator() + "b");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^", ">");
+		findReplaceLogic.performReplaceAll();
+		assertThat(textViewer.getDocument().get(), equalTo(">a" + lineSeparator() + ">b"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 	}
 
 	@Test
