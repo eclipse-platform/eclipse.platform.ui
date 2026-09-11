@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.util.ResourceBundle;
+
 import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
@@ -56,6 +58,13 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		DialogAccess uiAccess= new DialogAccess(getFindReplaceTarget(), dialog);
 		waitForFocus(uiAccess::hasFocus, testInfo.getTestMethod().get().getName());
 		return uiAccess;
+	}
+
+	@Override
+	protected FindReplaceAction initializeFindReplaceAction() {
+		return new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.",
+				getTextViewer().getControl().getShell(),
+				getTextViewer().getFindReplaceTarget());
 	}
 
 	@Test

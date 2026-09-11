@@ -20,11 +20,16 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -36,8 +41,12 @@ import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IMultiTextSelection;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
@@ -49,6 +58,8 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 
 	private static final String USE_FIND_REPLACE_OVERLAY= "useFindReplaceOverlay"; //$NON-NLS-1$
 
+	private static final Rectangle VIEWER_BOUNDS= new Rectangle(0, 0, 800, 400);
+
 	@Override
 	public OverlayAccess openUIFromTextViewer(TextViewer viewer) {
 		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
@@ -57,6 +68,27 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess uiAccess= new OverlayAccess(getFindReplaceTarget(), overlay);
 		waitForFocus(uiAccess::hasFocus, testInfo.getTestMethod().get().getName());
 		return uiAccess;
+	}
+
+	@Override
+	protected FindReplaceAction initializeFindReplaceAction() {
+		return new FindReplaceAction(
+				ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"),
+				"Editor.FindReplace.", createHostPart(getTextViewer()));
+	}
+
+	private static IWorkbenchPart createHostPart(TextViewer viewer) {
+		// Nothing lays the viewer out in the workbench window's shell, where the test
+		// creates it, whereas the overlay needs a host control of a reasonable size.
+		viewer.getTextWidget().setBounds(VIEWER_BOUNDS);
+
+		IWorkbenchPartSite site= Mockito.mock(IWorkbenchPartSite.class);
+		when(site.getWorkbenchWindow()).thenReturn(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		IWorkbenchPart part= Mockito.mock(IWorkbenchPart.class);
+		when(part.getSite()).thenReturn(site);
+		when(part.getAdapter(ITextViewer.class)).thenReturn(viewer);
+		when(part.getAdapter(IFindReplaceTarget.class)).thenReturn(viewer.getFindReplaceTarget());
+		return part;
 	}
 
 	@Test

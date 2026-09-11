@@ -202,10 +202,10 @@ public class FindReplaceOverlay {
 		}
 	}
 
-	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
+	public FindReplaceOverlay(IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
 		commandSupport = new FindReplaceOverlayCommandSupport(targetPart);
-		targetControl = getTargetControl(parent, part);
+		targetControl = getTargetControl(part);
 		findReplaceLogic = createFindReplaceLogic(target);
 		createContainerAndSearchControls(targetControl);
 		containerControl.addDisposeListener(__ -> commandSupport.dispose());
@@ -216,12 +216,15 @@ public class FindReplaceOverlay {
 				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
 	}
 
-	private static Composite getTargetControl(Shell targetShell, IWorkbenchPart targetPart) {
-		if (targetPart instanceof StatusTextEditor textEditor) {
-			return textEditor.getAdapter(ITextViewer.class).getTextWidget();
-		} else {
-			return targetShell;
+	private static Composite getTargetControl(IWorkbenchPart targetPart) {
+		if (targetPart == null) {
+			return null;
 		}
+		ITextViewer viewer = targetPart.getAdapter(ITextViewer.class);
+		if (viewer != null) {
+			return viewer.getTextWidget();
+		}
+		return null;
 	}
 
 	private boolean insertedInTargetParent() {
