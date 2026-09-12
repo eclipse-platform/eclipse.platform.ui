@@ -713,13 +713,7 @@ public abstract class WorkbenchAdvisor {
 		final Display display = PlatformUI.getWorkbench().getDisplay();
 		final boolean result[] = new boolean[1];
 
-		// spawn another init thread. For API compatibility We guarantee this method is
-		// called from
-		// the UI thread but it could take enough time to disrupt progress reporting.
-		// spawn a new thread to do the grunt work of this initialization and spin the
-		// event loop
-		// ourselves just like it's done in Workbench.
-
+		// Restore off the UI thread and spin the event loop here, it can take a while.
 		final Throwable[] error = new Throwable[1];
 		Thread initThread = new Thread() {
 			@Override
@@ -752,13 +746,14 @@ public abstract class WorkbenchAdvisor {
 					error[0] = e;
 				} finally {
 					initDone = true;
-					Thread.yield();
-					try {
-						Thread.sleep(5);
-					} catch (InterruptedException e) {
-						// this is a no-op in this case.
-					}
-					display.wake();
+					// A wake() before the UI thread reaches Display.sleep() is lost, queued
+					// work is not. Plain runnables would be deferred until the workbench is up.
+					display.asyncExec(new StartupRunnable() {
+						@Override
+						public void runWithException() {
+							// nothing to do
+						}
+					});
 				}
 			}
 		};
