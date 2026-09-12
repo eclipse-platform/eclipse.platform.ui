@@ -15,8 +15,6 @@ package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -156,7 +154,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		initializeFindReplaceUIForTextViewer();
 		DialogAccess dialog= getDialog();
 
-		assertThat(dialog.getFindText(), is("text"));
+		assertEquals("text", dialog.getFindText());
 
 		IFindReplaceTarget target= getFindReplaceTarget();
 		assertEquals(0, (target.getSelection()).x);
@@ -205,7 +203,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.assertSelected(SearchOptions.WHOLE_WORD);
 
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertThat(target.getSelectionText(), is(dialog.getFindText()));
+		assertEquals(dialog.getFindText(), target.getSelectionText());
 
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);

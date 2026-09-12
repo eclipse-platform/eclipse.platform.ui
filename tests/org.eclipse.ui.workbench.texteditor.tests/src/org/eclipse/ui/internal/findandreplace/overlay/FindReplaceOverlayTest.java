@@ -14,11 +14,9 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -154,11 +152,11 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 		IFindReplaceTarget target= getFindReplaceTarget();
 		dialog.setFindText("Line");
-		assertThat(target.getSelectionText(), is("line"));
+		assertEquals("line", target.getSelectionText());
 		assertEquals(new Point(1, 4), target.getSelection());
 
 		dialog.select(SearchOptions.CASE_SENSITIVE);
-		assertThat(target.getSelectionText(), is("Line"));
+		assertEquals("Line", target.getSelectionText());
 		assertEquals(new Point(8, 4), target.getSelection());
 
 		dialog.unselect(SearchOptions.CASE_SENSITIVE);
@@ -173,7 +171,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		dialog.unselect(SearchOptions.WHOLE_WORD);
 		assertEquals(1, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
-		assertThat(target.getSelectionText(), is("line"));
+		assertEquals("line", target.getSelectionText());
 	}
 
 	@Test
@@ -184,10 +182,10 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 
 		dialog.openReplaceDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(false));
+		assertFalse(dialog.isReplaceDialogOpen());
 		reopenFindReplaceUIForTextViewer();
 		dialog= getDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(false));
+		assertFalse(dialog.isReplaceDialogOpen());
 	}
 
 	@Test
@@ -196,21 +194,21 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 
 		dialog.openReplaceDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(true));
+		assertTrue(dialog.isReplaceDialogOpen());
 		reopenFindReplaceUIForTextViewer();
 		dialog= getDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(true));
+		assertTrue(dialog.isReplaceDialogOpen());
 
 		dialog.closeReplaceDialog();
 		reopenFindReplaceUIForTextViewer();
 		dialog= getDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(false));
+		assertFalse(dialog.isReplaceDialogOpen());
 
 		dialog.openReplaceDialog();
 		getTextViewer().setEditable(false);
 		reopenFindReplaceUIForTextViewer();
 		dialog= getDialog();
-		assertThat(dialog.isReplaceDialogOpen(), is(false));
+		assertFalse(dialog.isReplaceDialogOpen());
 	}
 
 	@Test
@@ -221,13 +219,13 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("text");
-		assertThat(target.getSelection().y, is(4));
+		assertEquals(4, target.getSelection().y);
 		dialog.pressSearch(true);
-		assertThat(target.getSelection().x, is("text ".length()));
+		assertEquals("text ".length(), target.getSelection().x);
 		dialog.pressSearch(true);
-		assertThat(target.getSelection().x, is("text text ".length()));
+		assertEquals("text text ".length(), target.getSelection().x);
 		dialog.pressSearch(false);
-		assertThat(target.getSelection().x, is("text ".length()));
+		assertEquals("text ".length(), target.getSelection().x);
 	}
 
 	@Test
@@ -295,10 +293,10 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		dialog.setReplaceText("replacement");
 
 		dialog.performReplace();
-		assertThat(getTextViewer().getDocument().get(), is("text text"));
+		assertEquals("text text", getTextViewer().getDocument().get());
 
 		dialog.performReplaceAll();
-		assertThat(getTextViewer().getDocument().get(), is("text text"));
+		assertEquals("text text", getTextViewer().getDocument().get());
 	}
 
 	@Test
@@ -310,7 +308,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		dialog.pressSelectAll();
 
 		ISelection selection= getTextViewer().getSelection();
-		assertThat(selection, is(instanceOf(IMultiTextSelection.class)));
+		assertInstanceOf(IMultiTextSelection.class, selection);
 		assertEquals(3, ((IMultiTextSelection) selection).getRegions().length);
 	}
 
