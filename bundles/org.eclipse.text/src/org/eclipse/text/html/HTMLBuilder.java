@@ -426,6 +426,76 @@ public class HTMLBuilder {
 	}
 
 	/**
+	 * Starts an HTML table element.
+	 *
+	 * @param buffer the output buffer
+	 * @since 3.22
+	 */
+	public void startTable(StringBuilder buffer) {
+		buffer.append("<table>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Ends an HTML table element.
+	 *
+	 * @param buffer the output buffer
+	 * @since 3.22
+	 */
+	public void endTable(StringBuilder buffer) {
+		buffer.append("</table>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Starts an HTML table row element.
+	 *
+	 * @param buffer the output buffer
+	 * @since 3.22
+	 */
+	public void startTableRow(StringBuilder buffer) {
+		buffer.append("<tr>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Ends an HTML table row element.
+	 *
+	 * @param buffer the output buffer
+	 * @since 3.22
+	 */
+	public void endTableRow(StringBuilder buffer) {
+		buffer.append("</tr>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Adds an HTML table header cell element with the given content.
+	 *
+	 * @param buffer the output buffer
+	 * @param content the content of the header cell, or <code>null</code> to add an empty cell
+	 * @since 3.22
+	 */
+	public void addTableHeaderCell(StringBuilder buffer, String content) {
+		buffer.append("<th>"); //$NON-NLS-1$
+		if (content != null) {
+			buffer.append(content);
+		}
+		buffer.append("</th>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Adds an HTML table data cell element with the given content.
+	 *
+	 * @param buffer the output buffer
+	 * @param content the content of the cell, or <code>null</code> to add an empty cell
+	 * @since 3.22
+	 */
+	public void addTableCell(StringBuilder buffer, String content) {
+		buffer.append("<td>"); //$NON-NLS-1$
+		if (content != null) {
+			buffer.append(content);
+		}
+		buffer.append("</td>"); //$NON-NLS-1$
+	}
+
+	/**
 	 *
 	 * @param buffer the output buffer
 	 * @param paragraphReader The content of the Read will be added to output buffer
