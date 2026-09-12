@@ -69,11 +69,6 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	}
 
 	@Override
-	public String getPartName() {
-		return descriptor == null ? "" : descriptor.getLabel(); //$NON-NLS-1$
-	}
-
-	@Override
 	public String getSecondaryId() {
 		MPart part = getModel();
 
