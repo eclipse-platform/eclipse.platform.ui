@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -68,7 +67,6 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
-import org.eclipse.ui.texteditor.StatusTextEditor;
 
 public class FindReplaceOverlay {
 
@@ -399,26 +397,26 @@ public class FindReplaceOverlay {
 	 * placed on, and everything around them takes the color the theme gives to
 	 * widgets of the respective kind.
 	 * <p>
-	 * The theme applies its colors through the CSS engine, which offers nothing to
-	 * ask for the color a widget would be given, so they are read off throwaway
-	 * widgets created for that purpose. Those are put into a shell of their own,
-	 * which is never opened: it keeps them out of the shell the user is looking at,
-	 * and it keeps the colors independent of the kind of part the overlay is opened
-	 * in, which is what the CSS rules of the shipped themes key on.
+	 * The text fields therefore take their colors from the control the overlay is
+	 * placed on.
+	 * <p>
+	 * The remaining colors come from the theme, which applies them through the CSS
+	 * engine. That engine offers nothing to ask for the color a widget would be
+	 * given, so they are read off a throwaway widget created for that purpose. It is
+	 * put into a shell of its own, which is never opened: it keeps the widget out of
+	 * the shell the user is looking at, and it keeps the color independent of the
+	 * kind of part the overlay is opened in, which is what the CSS rules of the
+	 * shipped themes key on.
 	 */
 	private void retrieveColors() {
 		Shell colorProbeShell = new Shell(targetControl.getShell(), SWT.NONE);
 		try {
 			Composite compositeColorProbe = new Composite(colorProbeShell, SWT.NONE);
-			Text textColorProbe = new Text(colorProbeShell, SWT.SINGLE | SWT.SEARCH);
 			applyPendingStyling(colorProbeShell);
 
 			overlayBackgroundColor = compositeColorProbe.getBackground();
-			Control textColorSource = targetPart instanceof StatusTextEditor textEditor
-					? textEditor.getAdapter(ITextViewer.class).getTextWidget()
-					: textColorProbe;
-			widgetBackgroundColor = textColorSource.getBackground();
-			normalTextForegroundColor = textColorSource.getForeground();
+			widgetBackgroundColor = targetControl.getBackground();
+			normalTextForegroundColor = targetControl.getForeground();
 		} finally {
 			colorProbeShell.dispose();
 		}
