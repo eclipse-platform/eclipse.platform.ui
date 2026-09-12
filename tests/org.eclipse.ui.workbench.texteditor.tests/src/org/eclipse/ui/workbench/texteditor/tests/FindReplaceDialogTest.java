@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.processPendingEvents;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -97,7 +97,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		initializeTextViewerWithFindReplaceUI("");
 		DialogAccess dialog= getDialog();
 		dialog.setFindText("line");
-		runEventQueue();
+		processPendingEvents();
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		wrapCheckBox.setFocus();

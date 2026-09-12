@@ -103,7 +103,7 @@ public final class FindReplaceTestUtil {
 		int focusAttempts= 0;
 		while (!hasFocusValidator.get() && focusAttempts < 10) {
 			focusAttempts++;
-			PlatformUI.getWorkbench().getDisplay().readAndDispatch();
+			processPendingEvents();
 			if (!hasFocusValidator.get()) {
 				try {
 					Thread.sleep(50);

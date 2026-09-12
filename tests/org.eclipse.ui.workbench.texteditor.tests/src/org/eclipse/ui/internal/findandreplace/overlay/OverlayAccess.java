@@ -14,7 +14,7 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.notifyKeyDown;
-import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.processPendingEvents;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -135,7 +135,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	@Override
 	public void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed) {
 		notifyKeyDown(find.getTextBar(), shiftPressed ? SWT.SHIFT : SWT.NONE, keyCode);
-		runEventQueue();
+		processPendingEvents();
 	}
 
 	@Override
