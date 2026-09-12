@@ -93,13 +93,12 @@ public class FindReplaceOverlayInEditorTest {
 		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		editor = (StatusTextEditor) page.openEditor(new TestTextEditorInput(CONTENT), TestTextEditor.ID);
-		runEventQueue();
+		processPendingEvents();
 
 		// Opening through the action rather than through its internals also asserts
 		// that an editor of this kind gets the overlay rather than the dialog.
 		new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), //$NON-NLS-1$
 				"Editor.FindReplace.", editor).run(); //$NON-NLS-1$
-		runEventQueue();
 
 		searchField = focusedInputField(SEARCH_FIELD);
 	}

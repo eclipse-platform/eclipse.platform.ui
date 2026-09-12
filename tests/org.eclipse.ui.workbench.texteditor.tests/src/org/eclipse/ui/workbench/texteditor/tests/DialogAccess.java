@@ -180,6 +180,8 @@ class DialogAccess implements IFindReplaceUIAccess {
 		}
 		event.keyCode= keyCode;
 		findCombo.traverse(SWT.TRAVERSE_RETURN, event);
+		// Waited for rather than just carried out, unlike elsewhere: traversing can end up
+		// activating the default button, which GTK delivers on a timer of its own.
 		runEventQueue();
 	}
 
