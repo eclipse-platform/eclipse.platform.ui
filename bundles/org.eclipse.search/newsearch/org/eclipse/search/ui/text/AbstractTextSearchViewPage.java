@@ -26,14 +26,24 @@ import java.util.concurrent.LinkedBlockingDeque;
 import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,6 +64,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -279,6 +290,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public static final int FLAG_LAYOUT_TREE = 2;
 	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
 
+	private Shell fHoverShell;
+	private TreeItem fHoveredItem;
 
 	/**
 	 * This constructor must be passed a combination of layout flags combined
@@ -709,6 +722,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void disposeViewer() {
+		disposeHoverShell();
+		fHoveredItem = null;
 		fViewer.removeSelectionChangedListener(fViewerAdapter);
 		fViewer.getControl().dispose();
 		fViewer = null;
@@ -746,6 +761,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			configureTreeViewer(viewer);
 			fCollapseAllAction.setViewer(viewer);
 			fExpandAllAction.setViewer(viewer);
+			installHoverExpandSupport(viewer);
 		}
 
 		fCopyToClipboardAction.setViewer(fViewer);
@@ -1559,5 +1575,141 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return fElementLimit;
 	}
 
+	private void installHoverExpandSupport(TreeViewer viewer) {
+		Tree tree = viewer.getTree();
+
+		tree.addMouseMoveListener(e -> {
+			TreeItem item = tree.getItem(new Point(e.x, e.y));
+
+			boolean overShell = fHoverShell != null && !fHoverShell.isDisposed()
+					&& fHoverShell.getBounds().contains(tree.toDisplay(e.x, e.y));
+			if (item == null || item.getParentItem() != null) {
+				if (!overShell) {
+					disposeHoverShell();
+					fHoveredItem = null;
+				}
+				return;
+			}
+			Rectangle rowBounds = item.getBounds();
+			Rectangle extRowBounds = new Rectangle(rowBounds.x, rowBounds.y,
+					rowBounds.width + 20, rowBounds.height);
+			boolean overRow = extRowBounds.contains(e.x, e.y);
+			if (!overRow) {
+				if (!overShell) {
+					disposeHoverShell();
+					fHoveredItem = null;
+				}
+				return;
+			}
+			if (item == fHoveredItem) {
+				return;
+			}
+			disposeHoverShell();
+			fHoveredItem = item;
+
+			Object element = item.getData();
+			if (element == null) {
+				return;
+			}
+			boolean expanded = viewer.getExpandedState(element);
+			showHoverShell(tree, item, element, viewer, expanded);
+		});
+
+		tree.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
+			public void mouseExit(org.eclipse.swt.events.MouseEvent e) {
+				if (fHoverShell == null || fHoverShell.isDisposed()) {
+					fHoveredItem = null;
+				}
+			}
+		});
+	}
+
+	/**
+	 * Creates and displays an option to expand or collapse any single item
+	 *
+	 * @param expanded
+	 *            whether the parent is currently expanded
+	 */
+	private void showHoverShell(Tree tree, TreeItem item, Object element, TreeViewer viewer, boolean expanded) {
+		org.eclipse.jface.resource.ImageDescriptor desc = expanded
+				? fCollapseAllAction.getImageDescriptor()
+				: fExpandAllAction.getImageDescriptor();
+		if (desc == null) {
+			return;
+		}
+		Image actionImage = desc.createImage(false);
+		if (actionImage == null) {
+			return;
+		}
+
+		Shell shell = new Shell(tree.getShell(), SWT.TOOL | SWT.ON_TOP | SWT.NO_FOCUS | SWT.NO_TRIM);
+		shell.setBackground(tree.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		ToolBar tb = new ToolBar(shell, SWT.FLAT);
+		ToolItem ti = new ToolItem(tb, SWT.PUSH);
+		ti.setImage(actionImage);
+		ti.setToolTipText(expanded ? SearchMessages.CollapseItemAction_tooltip : SearchMessages.ExpandItemAction_tooltip);
+
+		shell.addListener(SWT.Dispose, e -> actionImage.dispose());
+		shell.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
+			public void mouseExit(org.eclipse.swt.events.MouseEvent e) {
+				disposeHoverShell();
+				fHoveredItem = null;
+			}
+		});
+
+		ti.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				if (!viewer.getControl().isDisposed()) {
+					viewer.getControl().setRedraw(false);
+					try {
+						if (expanded) {
+							viewer.collapseToLevel(element, AbstractTreeViewer.ALL_LEVELS);
+						} else {
+							viewer.expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);
+						}
+					} finally {
+						viewer.getControl().setRedraw(true);
+					}
+				}
+				shell.dispose();
+				fHoverShell = null;
+				fHoveredItem = null;
+			}
+		});
+
+		tb.pack();
+		shell.pack();
+
+		Rectangle textBounds = item.getTextBounds(0);
+		int shellHeight = shell.getSize().y;
+		int shellWidth = shell.getSize().x;
+		int centredY = textBounds.y + (textBounds.height - shellHeight) / 2;
+		GC gc = new GC(tree);
+		int textWidth;
+		try {
+			textWidth = gc.textExtent(item.getText()).x;
+		} finally {
+			gc.dispose();
+		}
+		int desiredX = textBounds.x + textWidth + 2;
+		Rectangle treeDisplayBounds = tree.getDisplay().map(tree, null, tree.getClientArea());
+		int maxX = treeDisplayBounds.x + treeDisplayBounds.width - shellWidth - 2;
+		Point desiredDisplay = tree.toDisplay(desiredX, centredY);
+		int finalX = Math.min(desiredDisplay.x, maxX);
+		shell.setLocation(finalX, desiredDisplay.y);
+		shell.setVisible(true);
+
+		fHoverShell = shell;
+	}
+
+	private void disposeHoverShell() {
+		if (fHoverShell != null && !fHoverShell.isDisposed()) {
+			fHoverShell.dispose();
+		}
+		fHoverShell = null;
+	}
 
 }

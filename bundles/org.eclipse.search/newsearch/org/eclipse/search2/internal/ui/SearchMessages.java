@@ -84,6 +84,8 @@ public final class SearchMessages extends NLS {
 	public static String CollapseAllAction_1;
 	public static String ExpandAllAction_label;
 	public static String ExpandAllAction_tooltip;
+	public static String ExpandItemAction_tooltip;
+	public static String CollapseItemAction_tooltip;
 	public static String SearchView_error_noResultPage;
 	public static String InternalSearchUI_error_unexpected;
 	public static String NewSearchUI_error_title;
