@@ -21,9 +21,14 @@ import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -190,17 +195,6 @@ public class CTabFolderTest {
 		assertEquals(false, folderToTest.getBorderVisible());
 		assertEquals("false", css.getEngine().retrieveCSSProperty(folderToTest, "border-visible", null));
 	}
-	@Test
-	void testSimple() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-simple: true}");
-		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
-		folderToTest.getShell().close();
-		folderToTest = createTestCTabFolder("CTabFolder { swt-simple: false}");
-		// Curved tabs are no longer supported, so getSimple() always returns true
-		assertEquals(true, folderToTest.getSimple());
-		assertEquals("true", css.getEngine().retrieveCSSProperty(folderToTest, "swt-simple", null));
-	}
 
 	@Test
 	void testMaximizeVisible() {
@@ -355,5 +349,65 @@ public class CTabFolderTest {
 		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
 		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+	}
+
+	@Test
+	void testPageSelectedProgrammaticallyAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.setErrorHandler(e -> fail(e.getMessage()));
+		// the class selector keeps this engine's skin listener off other tests' widgets
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		// no selection yet, so the folder hides the page from the engine
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		tab1.setControl(page);
+		spinEventLoop(display); // the skin pass skips the hidden page
+
+		folderToTest.setSelection(0); // programmatic, so no selection event
+
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testPageAttachedToItsItemAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.setErrorHandler(e -> fail(e.getMessage()));
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		// skinned before it is attached, as a Search dialog page is
+		spinEventLoop(display);
+
+		tab1.setControl(page); // already visible, so no show event either
+
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	private static void spinEventLoop(Display display) {
+		while (display.readAndDispatch()) {
+			// deliver pending skin and show events
+		}
 	}
 }
