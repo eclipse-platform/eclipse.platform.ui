@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.internal.DPIUtil.ElementAtZoom;
 import org.eclipse.swt.internal.NativeImageLoader;
 import org.eclipse.swt.internal.image.FileFormat;
@@ -59,6 +61,11 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (tempURL != null) {
 				final boolean logIOException = zoom == 100;
 				if (zoom == 100) {
+					// Do not use file path if URL has query parameters (e.g., size hints)
+					// because getFilePath() strips the query and size hints would be lost
+					if (tempURL.getQuery() != null) {
+						return null;
+					}
 					// Do not take this path if the image file can be scaled up dynamically.
 					// The calling image will do that itself!
 					return getFilePath(tempURL, logIOException);
@@ -133,7 +140,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(URL url, int fileZoom, int targetZoom) {
 		try (InputStream in = getStream(url)) {
 			if (in != null) {
-				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom);
+				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom, new URLHintProvider(url));
 			}
 		} catch (SWTException e) {
 			if (e.code != SWT.ERROR_INVALID_IMAGE) {
@@ -147,7 +154,13 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	@SuppressWarnings("restriction")
-	private static ImageData loadImageFromStream(InputStream stream, int fileZoom, int targetZoom) {
+	private static ImageData loadImageFromStream(InputStream stream, int fileZoom, int targetZoom,
+			Supplier<Point> hintProvider) {
+		Point hintSize = hintProvider.get();
+		if (hintSize != null) {
+			return NativeImageLoader.load(stream, new ImageLoader(), hintSize.x * targetZoom / fileZoom,
+					hintSize.y * targetZoom / fileZoom);
+		}
 		return NativeImageLoader.load(new ElementAtZoom<>(stream, fileZoom), new ImageLoader(), targetZoom).get(0)
 				.element();
 	}
@@ -169,8 +182,14 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (InternalPolicy.OSGI_AVAILABLE) {
 				url = resolvePathVariables(url);
 			}
+			// For file: URLs, strip query parameters before opening the stream
+			// Query parameters are used for size hints but are not valid in file paths
+			if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()) && url.getQuery() != null) {
+				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath());
+			}
 			return url.openStream();
 		} catch (IOException e) {
+			e.printStackTrace();
 			if (InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x) {
 				String path = url.getPath();
 				if (path.endsWith("@2x.png") || path.endsWith("@1.5x.png")) { //$NON-NLS-1$ //$NON-NLS-2$
