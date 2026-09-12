@@ -20,12 +20,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddonUtil;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -59,12 +63,20 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		}
 
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
-		if (!(changedObj instanceof MPartStack)) {
+		if (!(changedObj instanceof MPartStack) && !(changedObj instanceof MPlaceholder)) {
 			return;
 		}
 
-		if (changedObj != getIntroStack()) {
-			return;
+		MPartStack introStack = getIntroStack();
+		if (changedObj != introStack) {
+			MArea parentArea = MinMaxAddonUtil.getAreaFor(introStack);
+			if (parentArea != null && !(parentArea.getWidget() instanceof CTabFolder)) {
+				if (parentArea.getCurSharedRef() != changedObj) {
+					return;
+				}
+			} else {
+				return;
+			}
 		}
 
 		if (UIEvents.isADD(event)

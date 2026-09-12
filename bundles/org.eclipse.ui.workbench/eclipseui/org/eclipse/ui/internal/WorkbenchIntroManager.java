@@ -21,10 +21,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddonUtil;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -191,7 +194,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return;
 		}
 
-		MPartStack introStack = getIntroStack(viewIntroAdapterPart);
+		MUIElement introStack = getIntroStack(viewIntroAdapterPart);
 		if (introStack == null) {
 			return;
 		}
@@ -204,14 +207,18 @@ public class WorkbenchIntroManager implements IIntroManager {
 		}
 	}
 
-	private MPartStack getIntroStack(ViewIntroAdapterPart introAdapter) {
+	private MUIElement getIntroStack(ViewIntroAdapterPart introAdapter) {
 		ViewSite site = (ViewSite) introAdapter.getViewSite();
 
 		MPart introModelPart = site.getModel();
 		if (introModelPart.getCurSharedRef() != null) {
 			MUIElement introPartParent = introModelPart.getCurSharedRef().getParent();
-			if (introPartParent instanceof MPartStack) {
-				return (MPartStack) introPartParent;
+			if (introPartParent instanceof MPartStack parentStack) {
+				MArea parentArea = MinMaxAddonUtil.getAreaFor(parentStack);
+				if (parentArea != null && !(parentArea.getWidget() instanceof CTabFolder)) {
+					return parentArea.getCurSharedRef();
+				}
+				return introPartParent;
 			}
 		}
 
@@ -219,7 +226,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 	}
 
 	private boolean isIntroMaximized(ViewIntroAdapterPart introAdapter) {
-		MPartStack introStack = getIntroStack(introAdapter);
+		MUIElement introStack = getIntroStack(introAdapter);
 		if (introStack == null) {
 			return false;
 		}
