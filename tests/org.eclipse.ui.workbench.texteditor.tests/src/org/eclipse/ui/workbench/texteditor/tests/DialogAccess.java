@@ -11,10 +11,8 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -287,26 +285,22 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void assertEnabled(SearchOptions option) {
-		Set<SearchOptions> enabled= getEnabledOptions();
-		assertThat(enabled, hasItems(option));
+		assertTrue(getEnabledOptions().contains(option));
 	}
 
 	@Override
 	public void assertDisabled(SearchOptions option) {
-		Set<SearchOptions> enabled= getEnabledOptions();
-		assertThat(enabled, not(hasItems(option)));
+		assertFalse(getEnabledOptions().contains(option));
 	}
 
 	@Override
 	public void assertSelected(SearchOptions option) {
-		Set<SearchOptions> enabled= getSelectedOptions();
-		assertThat(enabled, hasItems(option));
+		assertTrue(getSelectedOptions().contains(option));
 	}
 
 	@Override
 	public void assertUnselected(SearchOptions option) {
-		Set<SearchOptions> enabled= getSelectedOptions();
-		assertThat(enabled, not(hasItems(option)));
+		assertFalse(getSelectedOptions().contains(option));
 	}
 
 	private Set<SearchOptions> getEnabledOptions() {

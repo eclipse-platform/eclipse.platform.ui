@@ -15,13 +15,10 @@
 package org.eclipse.ui.internal.findandreplace;
 
 import static java.lang.System.lineSeparator;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -129,33 +126,33 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "a", "b");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("bbbb"));
+		assertEquals("bbbb", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
 
 		setFindAndReplaceString(findReplaceLogic, "b", "aa");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("aaaaaaaa"));
+		assertEquals("aaaaaaaa", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
 
 		setFindAndReplaceString(findReplaceLogic, "b", "c");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("aaaaaaaa"));
+		assertEquals("aaaaaaaa", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		setFindAndReplaceString(findReplaceLogic, "aaaaaaaa", "d");
 		findReplaceLogic.performReplaceAll(); // https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203
-		assertThat(textViewer.getDocument().get(), equalTo("d"));
+		assertEquals("d", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		setFindAndReplaceString(findReplaceLogic, "d", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo(""));
+		assertEquals("", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		textViewer.getDocument().set("f");
 		setFindAndReplaceString(findReplaceLogic, "f", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo(""));
+		assertEquals("", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		IFindReplaceTarget mockFindReplaceTarget= Mockito.mock(IFindReplaceTarget.class);
@@ -176,17 +173,17 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, ".+\\@.+\\.com", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo(" looks.almost@like_an_email"));
+		assertEquals(" looks.almost@like_an_email", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		setFindAndReplaceString(findReplaceLogic, "( looks.)|(like_)", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
+		assertEquals("almost@an_email", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
 		setFindAndReplaceString(findReplaceLogic, "[", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
+		assertEquals("almost@an_email", textViewer.getDocument().get());
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
 				+ "[" + lineSeparator()
 				+ "^");
@@ -201,17 +198,17 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, ".+\\@.+\\.com", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo(" looks.almost@like_an_email"));
+		assertEquals(" looks.almost@like_an_email", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		setFindAndReplaceString(findReplaceLogic, "( looks.)|(like_)", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
+		assertEquals("almost@an_email", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
 		setFindAndReplaceString(findReplaceLogic, "[", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
+		assertEquals("almost@an_email", textViewer.getDocument().get());
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
 				+ "[" + lineSeparator()
 				+ "^");
@@ -226,11 +223,11 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performSearch(); // select first, then replace. We don't need to perform a second search
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
+		assertEquals("Hello World<replace>!", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		findReplaceLogic.performSelectAndReplace(); // perform the search yourself and replace that automatically
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		assertEquals("Hello World !", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 	}
 
@@ -245,12 +242,12 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performSearch();
 		boolean status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
+		assertEquals("Hello World<replace>!", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		assertEquals("Hello World !", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performSelectAndReplace();
@@ -273,10 +270,10 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "o$", "o!");
 		boolean status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("""
+		assertEquals("""
 				Hello!
 				World
-				!"""));
+				!""", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, """
@@ -284,9 +281,9 @@ public class FindReplaceLogicTest {
 				!""", "d!");
 		status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("""
+		assertEquals("""
 				Hello!
-				World!"""));
+				World!""", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, """
@@ -308,21 +305,21 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "<(\\w*)>", " ");
 		boolean status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!<replace>!"));
+		assertEquals("Hello World<replace>!<replace>!", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		findReplaceLogic.deactivate(SearchOptions.REGEX);
 		status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !<replace>!"));
+		assertEquals("Hello World !<replace>!", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<(\\w*)>", " ");
 		findReplaceLogic.activate(SearchOptions.REGEX);
 		status= findReplaceLogic.performSelectAndReplace();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World ! !"));
+		assertEquals("Hello World ! !", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performSelectAndReplace();
@@ -342,10 +339,10 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performSearch(); // select first, then replace. We don't need to perform a second search
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.WRAPPED);
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getDocument().get(), equalTo("Hello<replace>World !"));
+		assertEquals("Hello<replace>World !", textViewer.getDocument().get());
 
 		findReplaceLogic.performSelectAndReplace(); // perform the search yourself and replace that automatically
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		assertEquals("Hello World !", textViewer.getDocument().get());
 		expectStatusEmpty(findReplaceLogic);
 	}
 
@@ -358,14 +355,14 @@ public class FindReplaceLogicTest {
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status, "replace should have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
+		assertEquals("Hello World<replace>!", textViewer.getDocument().get());
+		assertEquals("<replace>", findReplaceLogic.getTarget().getSelectionText());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status, "replace should have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		assertEquals("Hello World !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		status= findReplaceLogic.performReplaceAndFind();
@@ -384,13 +381,13 @@ public class FindReplaceLogicTest {
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status, "replace should have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
+		assertEquals("Hello<Replace>World !", textViewer.getDocument().get());
+		assertEquals(" ", findReplaceLogic.getTarget().getSelectionText());
 
 		status= findReplaceLogic.performReplaceAndFind();
 		assertFalse(status, "replace should not have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
+		assertEquals("Hello<Replace>World !", textViewer.getDocument().get());
+		assertEquals(" ", findReplaceLogic.getTarget().getSelectionText());
 	}
 
 	@Test
@@ -403,14 +400,14 @@ public class FindReplaceLogicTest {
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status, "replace should have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
+		assertEquals("Hello World<replace>!", textViewer.getDocument().get());
+		assertEquals("<replace>", findReplaceLogic.getTarget().getSelectionText());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status, "replace should have been performed");
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		assertEquals("Hello World !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		status= findReplaceLogic.performReplaceAndFind();
@@ -450,16 +447,16 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "Hello", "Hello\\");
 		boolean status= findReplaceLogic.performReplaceAndFind();
 		assertFalse(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("Hello"));
-		assertThat(findReplaceLogic.getStatus(), instanceOf(InvalidRegExStatus.class));
+		assertEquals("Hello", textViewer.getDocument().get());
+		assertEquals("Hello", findReplaceLogic.getTarget().getSelectionText());
+		assertInstanceOf(InvalidRegExStatus.class, findReplaceLogic.getStatus());
 
 		setFindAndReplaceString(findReplaceLogic, "Hello", "Hello" + System.lineSeparator());
 
 		status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello" + System.lineSeparator()));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("Hello" + System.lineSeparator()));
+		assertEquals("Hello" + System.lineSeparator(), textViewer.getDocument().get());
+		assertEquals("Hello" + System.lineSeparator(), findReplaceLogic.getTarget().getSelectionText());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -468,20 +465,20 @@ public class FindReplaceLogicTest {
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!<r>!"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
+		assertEquals("Hello World<replace>!<r>!", textViewer.getDocument().get());
+		assertEquals("<replace>", findReplaceLogic.getTarget().getSelectionText());
 		expectStatusEmpty(findReplaceLogic);
 
 		status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World !<r>!"));
-		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<r>"));
+		assertEquals("Hello World !<r>!", textViewer.getDocument().get());
+		assertEquals("<r>", findReplaceLogic.getTarget().getSelectionText());
 		expectStatusEmpty(findReplaceLogic);
 
 		setFindAndReplaceString(findReplaceLogic, "<(\\w)>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
 		assertTrue(status);
-		assertThat(textViewer.getDocument().get(), equalTo("Hello World ! !"));
+		assertEquals("Hello World ! !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		setFindAndReplaceString(findReplaceLogic, "<(\\w*)>", " ");
@@ -604,7 +601,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performReplaceAll();
 
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
-		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+		assertEquals("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -620,7 +617,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performReplaceAll();
 
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
-		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+		assertEquals("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -636,7 +633,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performReplaceAll();
 
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
-		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+		assertEquals("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -652,7 +649,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performReplaceAll();
 
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
-		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "ine3"));
+		assertEquals("line1" + lineSeparator() + "ine2" + lineSeparator() + "ine3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -670,7 +667,7 @@ public class FindReplaceLogicTest {
 
 		// Selection ending at beginning of new line should not include that line in search scope
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
-		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+		assertEquals("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -688,7 +685,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performReplaceAll();
 
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
-		assertThat(textViewer.getTextWidget().getText(), is("ine1" + lineSeparator() + "line2" + lineSeparator() + "line3"));
+		assertEquals("ine1" + lineSeparator() + "line2" + lineSeparator() + "line3", textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -743,15 +740,15 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.WRAP);
 		setFindAndReplaceString(findReplaceLogic, LINE_STRING, "");
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator() + LINE_STRING));
+		assertEquals(LINE_STRING + lineSeparator() + lineSeparator() + LINE_STRING, textViewer.getTextWidget().getText());
 		expectStatusEmpty(findReplaceLogic);
 
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator()));
+		assertEquals(LINE_STRING + lineSeparator() + lineSeparator(), textViewer.getTextWidget().getText());
 		expectStatusEmpty(findReplaceLogic);
 
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator()));
+		assertEquals(LINE_STRING + lineSeparator() + lineSeparator(), textViewer.getTextWidget().getText());
 		expectStatusIsCode(findReplaceLogic, StatusCode.NO_MATCH);
 	}
 
@@ -766,8 +763,8 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.setFindString(LINE_STRING);
 		findReplaceLogic.performSearch();
 		expectStatusEmpty(findReplaceLogic);
-		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(0)));
-		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(textViewer.getDocument().get().length() - LINE_STRING_LENGTH)));
+		assertNotEquals(0, findReplaceLogic.getTarget().getSelection().x);
+		assertNotEquals(textViewer.getDocument().get().length() - LINE_STRING_LENGTH, findReplaceLogic.getTarget().getSelection().x);
 	}
 
 	/**
@@ -810,9 +807,9 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, LINE_STRING, "");
 
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator()));
+		assertEquals(LINE_STRING + lineSeparator(), textViewer.getTextWidget().getText());
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getTextWidget().getText(), is(lineSeparator()));
+		assertEquals(lineSeparator(), textViewer.getTextWidget().getText());
 	}
 
 	@Test
@@ -826,10 +823,10 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "NOTFOUND", "");
 		findReplaceLogic.performSelectAndReplace();
 		// ensure nothing was replaced
-		assertThat(textViewer.getTextWidget().getText(), is(setupString));
+		assertEquals(setupString, textViewer.getTextWidget().getText());
 		// ensure the selection was not overridden
-		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
-		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+		assertEquals(0, findReplaceLogic.getTarget().getSelection().x);
+		assertEquals(4, findReplaceLogic.getTarget().getSelection().y);
 	}
 
 	@Test
@@ -843,23 +840,23 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 
 		findReplaceLogic.setFindString("test");
-		assertThat(textViewer.getSelectedRange(), is(new Point(0, 4)));
+		assertEquals(new Point(0, 4), textViewer.getSelectedRange());
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+		assertEquals(new Point(5, 4), textViewer.getSelectedRange());
 		textViewer.setSelectedRange(7, 0);
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		assertEquals(new Point(10, 4), textViewer.getSelectedRange());
 		textViewer.setSelectedRange(10, 0);
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		assertEquals(new Point(10, 4), textViewer.getSelectedRange());
 		// Verify that after clearing the search, caret goes back to last active location
 		findReplaceLogic.setFindString("");
 		findReplaceLogic.performSearch();
-		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		assertEquals(new Point(10, 4), textViewer.getSelectedRange());
 	}
 
 	@Test
@@ -874,9 +871,9 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.resetIncrementalBaseLocation(); // Set base location
 		findReplaceLogic.setFindString("test");
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+		assertEquals(new Point(5, 4), textViewer.getSelectedRange());
 		findReplaceLogic.setFindString(""); // Clear the find string
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Restored to base location
+		assertEquals(new Point(5, 0), textViewer.getSelectedRange()); // Restored to base location
 	}
 
 	@Test
@@ -891,10 +888,10 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.setFindString("test");
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0)));
+		assertEquals(new Point(5, 0), textViewer.getSelectedRange());
 		findReplaceLogic.setFindString(""); // Clear the find string
 		// Will not restore selection since incremental mode is not active
-		assertThat(textViewer.getSelectedRange(), is(new Point(5, 0))); // Remains unchanged
+		assertEquals(new Point(5, 0), textViewer.getSelectedRange()); // Remains unchanged
 	}
 
 	@Test
@@ -940,23 +937,23 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
 		findReplaceLogic.setFindString("Test");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 4)));
+		assertEquals(new Point(0, 4), findReplaceLogic.getTarget().getSelection());
 
 		findReplaceLogic.activate(SearchOptions.REGEX);
 		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.performSearch();
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 4)));
+		assertEquals(new Point(5, 4), findReplaceLogic.getTarget().getSelection());
 		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.performSearch();
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
+		assertEquals(new Point(10, 4), findReplaceLogic.getTarget().getSelection());
 		findReplaceLogic.deactivate(SearchOptions.REGEX);
 
 		findReplaceLogic.setFindString("Test");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
+		assertEquals(new Point(10, 4), findReplaceLogic.getTarget().getSelection());
 		findReplaceLogic.performSearch();
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
+		assertEquals(new Point(15, 4), findReplaceLogic.getTarget().getSelection());
 	}
 
 	@Test
@@ -968,7 +965,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		textViewer.setSelectedRange(0, 0);
 		findReplaceLogic.setFindString("hello");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 5)));
+		assertEquals(new Point(0, 5), findReplaceLogic.getTarget().getSelection());
 	}
 
 	@Test
@@ -980,7 +977,7 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.setFindString("hello");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 5)));
+		assertEquals(new Point(5, 5), findReplaceLogic.getTarget().getSelection());
 	}
 
 	@Test
@@ -991,7 +988,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 
-		assertThat(receivedValues, is(List.of(true)));
+		assertEquals(List.of(true), receivedValues);
 	}
 
 	@Test
@@ -1003,7 +1000,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.deactivate(SearchOptions.CASE_SENSITIVE);
 
-		assertThat(receivedValues, is(List.of(false)));
+		assertEquals(List.of(false), receivedValues);
 	}
 
 	@Test
@@ -1040,8 +1037,8 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
 
-		assertThat(received1, is(List.of(true)));
-		assertThat(received2, is(List.of(true)));
+		assertEquals(List.of(true), received1);
+		assertEquals(List.of(true), received2);
 	}
 
 	@Test
@@ -1054,7 +1051,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.activate(SearchOptions.REGEX);
 
-		assertThat(receivedValues, is(List.of(false)));
+		assertEquals(List.of(false), receivedValues);
 	}
 
 	@Test
@@ -1068,7 +1065,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.deactivate(SearchOptions.REGEX);
 
-		assertThat(receivedValues, is(List.of(true)));
+		assertEquals(List.of(true), receivedValues);
 	}
 
 	@Test
@@ -1080,7 +1077,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.setFindString("hello world");
 
-		assertThat(receivedValues, is(List.of(false)));
+		assertEquals(List.of(false), receivedValues);
 	}
 
 	@Test
@@ -1092,7 +1089,7 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.setFindString("word");
 
-		assertThat(receivedValues, is(List.of(true)));
+		assertEquals(List.of(true), receivedValues);
 	}
 
 	@Test
@@ -1111,27 +1108,27 @@ public class FindReplaceLogicTest {
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
-		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
+		assertInstanceOf(NoStatus.class, findReplaceLogic.getStatus());
 	}
 
 	private void expectStatusIsCode(IFindReplaceLogic findReplaceLogic, FindStatus.StatusCode code) {
-		assertThat(findReplaceLogic.getStatus(), instanceOf(FindStatus.class));
-		assertThat(((FindStatus) findReplaceLogic.getStatus()).getMessageCode(), equalTo(code));
+		assertInstanceOf(FindStatus.class, findReplaceLogic.getStatus());
+		assertEquals(code, ((FindStatus) findReplaceLogic.getStatus()).getMessageCode());
 	}
 
 	private void expectStatusIsReplaceAllWithCount(IFindReplaceLogic findReplaceLogic, int count) {
-		assertThat(findReplaceLogic.getStatus(), instanceOf(ReplaceAllStatus.class));
-		assertThat(((ReplaceAllStatus) findReplaceLogic.getStatus()).getReplaceCount(), equalTo(count));
+		assertInstanceOf(ReplaceAllStatus.class, findReplaceLogic.getStatus());
+		assertEquals(count, ((ReplaceAllStatus) findReplaceLogic.getStatus()).getReplaceCount());
 	}
 
 	private void expectStatusIsFindAllWithCount(IFindReplaceLogic findReplaceLogic, int count) {
-		assertThat(findReplaceLogic.getStatus(), instanceOf(FindAllStatus.class));
-		assertThat(((FindAllStatus) findReplaceLogic.getStatus()).getSelectCount(), equalTo(count));
+		assertInstanceOf(FindAllStatus.class, findReplaceLogic.getStatus());
+		assertEquals(count, ((FindAllStatus) findReplaceLogic.getStatus()).getSelectCount());
 	}
 
 	private void expectStatusIsMessageWithString(IFindReplaceLogic findReplaceLogic, String message) {
-		assertThat(findReplaceLogic.getStatus(), instanceOf(InvalidRegExStatus.class));
-		assertThat(((InvalidRegExStatus) findReplaceLogic.getStatus()).getMessage(), equalTo(message));
+		assertInstanceOf(InvalidRegExStatus.class, findReplaceLogic.getStatus());
+		assertEquals(message, ((InvalidRegExStatus) findReplaceLogic.getStatus()).getMessage());
 	}
 
 }

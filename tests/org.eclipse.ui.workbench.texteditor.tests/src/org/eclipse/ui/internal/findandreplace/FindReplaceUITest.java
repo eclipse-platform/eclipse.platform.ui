@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.AfterEach;
@@ -202,7 +200,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.assertSelected(SearchOptions.WHOLE_WORD);
 
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertThat(target.getSelectionText(), is(dialog.getFindText()));
+		assertEquals(dialog.getFindText(), target.getSelectionText());
 
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
@@ -240,16 +238,16 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setFindText("ABCD");
 		dialog.setReplaceText("abcd");
 		dialog.performReplace();
-		assertThat(fTextViewer.getDocument().get(), is("abcd ABCD ABCD"));
+		assertEquals("abcd ABCD ABCD", fTextViewer.getDocument().get());
 
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("abcd abcd abcd"));
+		assertEquals("abcd abcd abcd", fTextViewer.getDocument().get());
 
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("(ab|cd)");
 		dialog.setReplaceText("o");
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("oo oo oo"));
+		assertEquals("oo oo oo", fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -266,7 +264,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setReplaceText("");
 		dialog.performReplaceAll();
 
-		assertThat(fTextViewer.getDocument().get(), is("line" + System.lineSeparator() + System.lineSeparator()));
+		assertEquals("line" + System.lineSeparator() + System.lineSeparator(), fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -297,7 +295,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setFindText("text");
 		dialog.performReplaceAll();
 
-		assertThat(fTextViewer.getDocument().get(), is("text" + System.lineSeparator() + System.lineSeparator()));
+		assertEquals("text" + System.lineSeparator() + System.lineSeparator(), fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -360,7 +358,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertEquals("text\\.\\*", dialog.getFindText());
 
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("test ;"));
+		assertEquals("test ;", fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -372,7 +370,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setReplaceText("aa");
 		dialog.performReplace();
 
-		assertThat(fTextViewer.getDocument().get(), is("abaaefg"));
+		assertEquals("abaaefg", fTextViewer.getDocument().get());
 	}
 
 	@Test
