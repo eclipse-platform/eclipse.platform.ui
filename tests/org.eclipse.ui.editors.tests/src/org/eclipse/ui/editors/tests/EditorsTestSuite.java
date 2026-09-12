@@ -49,6 +49,8 @@ import org.eclipse.ui.texteditor.stickyscroll.StickyLineTest;
 		LargeFileTest.class, CaseActionTest.class,
 		TextMultiCaretNavigationTest.class,
 		TextMultiCaretSelectionCommandsTest.class,
+		TextEditorDefaultsPreferencePageTest.class,
+		BlockEndCodeMiningRenderingTest.class,
 
 		StickyScrollingControlTest.class,
 		StickyScrollingHandlerTest.class,

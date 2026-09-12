@@ -52,6 +52,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		FindReplaceOverlayInEditorTest.class,
 		FindReplaceDialogTest.class,
 		HistoryStoreTest.class,
+		BlockEndCodeMiningTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SelectClasses
