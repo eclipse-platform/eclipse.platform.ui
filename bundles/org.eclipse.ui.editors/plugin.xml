@@ -1152,14 +1152,14 @@
             id="org.eclipse.editors.syntax.stringColor"
             isEditable="true"
             label="%SYNTAX_STRING_COLOR"
-            value="0,128,0">
+            value="42,0,255">
       </colorDefinition>
       <colorDefinition
             categoryId="org.eclipse.editors.syntaxColors"
             id="org.eclipse.editors.syntax.commentColor"
             isEditable="true"
             label="%SYNTAX_COMMENT_COLOR"
-            value="128,0,0">
+            value="63,127,95">
       </colorDefinition>
       <colorDefinition
             categoryId="org.eclipse.editors.syntaxColors"
