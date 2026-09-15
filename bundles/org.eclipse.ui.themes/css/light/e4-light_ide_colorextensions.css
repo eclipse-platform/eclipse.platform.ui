@@ -90,30 +90,6 @@ ColorDefinition#org-eclipse-ui-workbench-SECONDARY_BACKGROUND {
 }
 
 /* Already existing ColorDefinitions overridden for the E4 default theme */
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
-	color: #dddfe5;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
-	color: #ffffff;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START{
-	color: #ffffff;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
-	color: #ffffff;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START {
-	color: #FFFFFF;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END {
-	color: #FFFFFF;
-}
-
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 	/* Never use black */
 	color: #101010;
