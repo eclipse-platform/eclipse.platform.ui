@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,25 +14,27 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public class OpenInNewWindowHandler extends AbstractHandler {
+import jakarta.inject.Named;
 
-	@Override
-	public Object execute(ExecutionEvent event) {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+public class OpenInNewWindowHandler {
+
+	@Execute
+	public void execute(
+			@Optional @Named(ISources.ACTIVE_WORKBENCH_WINDOW_NAME) IWorkbenchWindow activeWorkbenchWindow) {
 		if (activeWorkbenchWindow == null) {
-			return null;
+			return;
 		}
 		try {
 			String perspId = null;
@@ -52,8 +54,6 @@ public class OpenInNewWindowHandler extends AbstractHandler {
 					WorkbenchMessages.OpenInNewWindowAction_errorTitle + ": " + e.getMessage(), //$NON-NLS-1$
 					StatusManager.SHOW);
 		}
-		return null;
-
 	}
 
 }

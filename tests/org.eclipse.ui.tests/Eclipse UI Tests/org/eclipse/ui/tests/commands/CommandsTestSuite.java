@@ -40,7 +40,8 @@ import org.junit.platform.suite.api.Suite;
 	RadioStateTest.class,
 	WorkbenchStateTest.class,
 	E4CommandImageTest.class,
-	PojoHandlerTest.class
+	PojoHandlerTest.class,
+	PartHandlersTest.class
 })
 public final class CommandsTestSuite {
 }
