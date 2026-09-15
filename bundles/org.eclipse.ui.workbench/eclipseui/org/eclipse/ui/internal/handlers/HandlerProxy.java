@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.PlatformUI;
@@ -334,7 +336,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 			// Load the handler.
 			try {
 				if (configurationElement != null) {
-					handler = (IHandler) configurationElement.createExecutableExtension(handlerAttributeName);
+					handler = adapt(configurationElement.createExecutableExtension(handlerAttributeName));
 					handler.addHandlerListener(getHandlerListener());
 					if (handler instanceof IObjectWithState) {
 						for (String id : getStateIds()) {
@@ -346,8 +348,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 					return true;
 				}
 
-			} catch (final ClassCastException e) {
-				final String message = "The proxied handler was the wrong class"; //$NON-NLS-1$
+			} catch (final InjectionException e) {
+				final String message = "The proxied handler '" //$NON-NLS-1$
+						+ getConfigurationElementAttribute() + "' could not be injected"; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				configurationElement = null;
@@ -365,6 +368,18 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 		}
 
 		return true;
+	}
+
+	/**
+	 * Wraps handler contributions that do not implement {@link IHandler} so that
+	 * their {@code @Execute} and {@code @CanExecute} methods are dispatched through
+	 * dependency injection.
+	 */
+	private static IHandler adapt(Object contribution) {
+		if (contribution instanceof IHandler handler) {
+			return handler;
+		}
+		return new PojoHandlerAdapter(contribution, PlatformUI.getWorkbench().getService(IEclipseContext.class));
 	}
 
 	private IHandlerListener getHandlerListener() {
