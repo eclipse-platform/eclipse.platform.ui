@@ -39,7 +39,9 @@ import org.junit.platform.suite.api.Suite;
 	ToggleStateTest.class,
 	RadioStateTest.class,
 	WorkbenchStateTest.class,
-	E4CommandImageTest.class
+	E4CommandImageTest.class,
+	PojoHandlerTest.class,
+	PartHandlersTest.class
 })
 public final class CommandsTestSuite {
 }
