@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,7 +29,7 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 
 	private IWorkbenchWindow fWindow;
 	private String fPageId;
-
+	private static SearchDialog dialog;
 	public OpenSearchDialogAction() {
 		super(SearchMessages.OpenSearchDialogAction_label);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
@@ -56,7 +58,15 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 			SearchPlugin.beep();
 			return;
 		}
-		SearchDialog dialog= new SearchDialog(getWorkbenchWindow(), fPageId);
+		if (dialog != null) {
+			Shell shell = dialog.getShell();
+			if (shell != null) {
+				shell.setFocus();
+				shell.getDisplay().beep();
+				return;
+			}
+		}
+		dialog = new SearchDialog(getWorkbenchWindow(), fPageId);
 		dialog.open();
 	}
 
