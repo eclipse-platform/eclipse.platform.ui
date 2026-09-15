@@ -17,3 +17,5 @@ org.eclipse.jface.text/debug/AbstractInformationControlManager= false
 
 # Enables assertion check for valid offset and length when creating a TextSelection
 org.eclipse.jface.text/assert/TextSelection/validConstructorArguments= false
+
+org.eclipse.jface.text/debug/CodeMining/render= false
