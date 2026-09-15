@@ -1545,7 +1545,26 @@
       </actionSet>
    </extension>
    
-   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in. 
+   <!-- ModelPerspectiveActionSetTest. The action set is initially visible and is
+   contributed to the perspective as well, to verify that such a contribution is
+   taken over although the layout already seeded a tag for it. -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Initially Visible Action Set"
+            id="org.eclipse.ui.tests.api.initiallyVisibleActionSet"
+            visible="true" />
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.tests.api.modelPerspectiveActionSets">
+         <actionSet
+               id="org.eclipse.ui.tests.api.initiallyVisibleActionSet" />
+      </perspectiveExtension>
+   </extension>
+
+   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in.
    -->
    <extension
          point="org.eclipse.ui.actionSets">
