@@ -2838,6 +2838,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 				MPerspective temporary = modelService.createModelElement(MPerspective.class);
 				ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, temporary,
 						desc, this, true);
+				// creating the layout already tagged the scratch perspective with every
+				// initially visible action set, drop them so that only what the extension
+				// point contributes is left
+				temporary.getTags().removeIf(tag -> tag.startsWith(ModeledPageLayout.ACTION_SET_TAG));
 
 				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET,

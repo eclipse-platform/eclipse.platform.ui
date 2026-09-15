@@ -43,6 +43,7 @@ import org.junit.platform.suite.api.Suite;
 	 IAggregateWorkingSetTest.class,
 	 IPageServiceTest.class,
 	 IPerspectiveRegistryTest.class,
+	 ModelPerspectiveActionSetTest.class,
 	 IPerspectiveDescriptorTest.class,
 	 IFileEditorMappingTest.class,
 	 IEditorDescriptorTest.class,
