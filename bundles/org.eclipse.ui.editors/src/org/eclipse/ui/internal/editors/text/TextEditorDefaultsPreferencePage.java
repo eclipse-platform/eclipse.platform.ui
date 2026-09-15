@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -78,6 +79,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 import org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningPreferenceConstants;
+
+import org.eclipse.ui.internal.texteditor.BlockEndCodeMiningPreferenceConstants;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -808,6 +811,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX));
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, BlockEndCodeMiningPreferenceConstants.SHOW_BLOCK_END_CODE_MINING));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, BlockEndCodeMiningPreferenceConstants.BLOCK_END_CODE_MINING_MIN_LINES));
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT));
 
@@ -995,8 +1001,26 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference smartHomeEnd= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END, label, null);
 		addCheckBox(appearanceComposite, smartHomeEnd, new BooleanDomain(), 0);
 
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingEnabled;
+		Preference stickyScrollingEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED, label, null);
+		Button stickyScrollingEnabledButton= addCheckBox(appearanceComposite, stickyScrollingEnabled, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
+		String description= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
+		Preference stickyScrollingMaximumCount= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT, label, description);
+		final IntegerDomain stickyScrollingMaximumCountDomain= new IntegerDomain(1, 10);
+		final Control[] stickyScrollingMaximumCountControls= addTextField(appearanceComposite, stickyScrollingMaximumCount, stickyScrollingMaximumCountDomain, 15, 20);
+		createDependency(stickyScrollingEnabledButton, stickyScrollingEnabled, stickyScrollingMaximumCountControls);
+
+		Group codeMiningGroup= new Group(appearanceComposite, SWT.NONE);
+		codeMiningGroup.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_group);
+		codeMiningGroup.setLayout(new GridLayout(2, false));
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan= 2;
+		codeMiningGroup.setLayoutData(gd);
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_show;
-		String description= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_description;
+		description= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_description;
 		Preference showCodeMinings= new Preference(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL, label, description);
 		EnumeratedDomain codeMiningsDomain= new EnumeratedDomain();
 		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__NONE, TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_none));
@@ -1005,13 +1029,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrorWarnings));
 		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO,
 				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrorWarningsInfo));
-		final Control[] showCodeMiningsControls= addCombo(appearanceComposite, showCodeMinings, codeMiningsDomain, 0);
+		final Control[] showCodeMiningsControls= addCombo(codeMiningGroup, showCodeMinings, codeMiningsDomain, 0);
 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_max;
 		description= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_max_description;
 		Preference maxCodeMinings= new Preference(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX, label, description);
 		IntegerDomain maxCodeMiningsDomain= new IntegerDomain(0, 99999);
-		Control[] maxCodeMiningsControls= addTextField(appearanceComposite, maxCodeMinings, maxCodeMiningsDomain, 15, 20);
+		Control[] maxCodeMiningsControls= addTextField(codeMiningGroup, maxCodeMinings, maxCodeMiningsDomain, 15, 20);
 
 		final SelectionListener codeMiningsListener= new SelectionAdapter() {
 			@Override
@@ -1027,16 +1051,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		((Combo) showCodeMiningsControls[1]).addSelectionListener(codeMiningsListener);
 		fMasterSlaveListeners.add(codeMiningsListener);
 
-		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingEnabled;
-		Preference stickyScrollingEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED, label, null);
-		Button stickyScrollingEnabledButton= addCheckBox(appearanceComposite, stickyScrollingEnabled, new BooleanDomain(), 0);
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_blockEndCodeMining;
+		description= TextEditorMessages.TextEditorDefaultsPreferencePage_blockEndCodeMining_description;
+		Preference blockEndCodeMining= new Preference(BlockEndCodeMiningPreferenceConstants.SHOW_BLOCK_END_CODE_MINING, label, description);
+		Button blockEndCodeMiningButton= addCheckBox(codeMiningGroup, blockEndCodeMining, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
-		description= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
-		Preference stickyScrollingMaximumCount= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT, label, description);
-		final IntegerDomain stickyScrollingMaximumCountDomain= new IntegerDomain(1, 10);
-		final Control[] stickyScrollingMaximumCountControls= addTextField(appearanceComposite, stickyScrollingMaximumCount, stickyScrollingMaximumCountDomain, 15, 20);
-		createDependency(stickyScrollingEnabledButton, stickyScrollingEnabled, stickyScrollingMaximumCountControls);
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_blockEndCodeMining_minLines;
+		description= TextEditorMessages.TextEditorDefaultsPreferencePage_blockEndCodeMining_minLines_description;
+		Preference blockEndCodeMiningMinLines= new Preference(BlockEndCodeMiningPreferenceConstants.BLOCK_END_CODE_MINING_MIN_LINES, label, description);
+		IntegerDomain blockEndCodeMiningMinLinesDomain= new IntegerDomain(2, 99999);
+		Control[] blockEndCodeMiningMinLinesControls= addTextField(codeMiningGroup, blockEndCodeMiningMinLines, blockEndCodeMiningMinLinesDomain, 15, 20);
+		createDependency(blockEndCodeMiningButton, blockEndCodeMining, blockEndCodeMiningMinLinesControls);
 
 		addFiller(appearanceComposite, 2);
 
