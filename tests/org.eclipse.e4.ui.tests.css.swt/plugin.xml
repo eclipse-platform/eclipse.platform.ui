@@ -21,6 +21,17 @@
             id="org.eclipse.e4.ui.tests.css.swt.theme.legacydark"
             label="Undeclared dark test theme">
       </theme>
+      <theme
+            basestylesheeturi="css/testTheme.css"
+            id="org.eclipse.e4.ui.tests.css.swt.theme.missingStylesheet"
+            label="Test theme with a missing stylesheet">
+      </theme>
+      <stylesheet
+            uri="css/missing.css">
+         <themeid
+               refid="org.eclipse.e4.ui.tests.css.swt.theme.missingStylesheet">
+         </themeid>
+      </stylesheet>
    </extension>
 
 </plugin>
