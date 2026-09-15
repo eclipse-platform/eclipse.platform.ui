@@ -19,14 +19,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Table;
@@ -133,55 +133,43 @@ public class ColorCellEditor extends DialogCellEditor {
 	}
 
 	/**
-	 * Creates and returns the color image data for the given control
-	 * and RGB value. The image's size is either the control's item extent
-	 * or the cell editor's default extent, which is 16 pixels square.
-	 *
-	 * @param w the control
-	 * @param color the color
+	 * Creates the swatch image for the given color, sized to the item height of
+	 * the control.
 	 */
-	private ImageData createColorImage(Control w, RGB color) {
+	private Image createColorImage(Control w, RGB color) {
 
 		GC gc = new GC(w);
 		FontMetrics fm = gc.getFontMetrics();
-		int size = fm.getAscent();
+		int ascent = fm.getAscent();
 		gc.dispose();
 
 		int indent = 6;
 		int extent = DEFAULT_EXTENT;
-		if (w instanceof Table) {
-			extent = ((Table) w).getItemHeight() - 1;
-		} else if (w instanceof Tree) {
-			extent = ((Tree) w).getItemHeight() - 1;
+		if (w instanceof Table table) {
+			extent = table.getItemHeight() - 1;
+		} else if (w instanceof Tree tree) {
+			extent = tree.getItemHeight() - 1;
 		}
 
-		if (size > extent) {
-			size = extent;
-		}
+		int size = Math.min(ascent, extent);
+		int yoffset = (extent - size) / 2;
+		Display display = w.getDisplay();
 
-		int width = indent + size;
-		int height = extent;
-
-		int xoffset = indent;
-		int yoffset = (height - size) / 2;
-
-		RGB black = new RGB(0, 0, 0);
-		PaletteData dataPalette = new PaletteData(black, black, color);
-		ImageData data = new ImageData(width, height, 4, dataPalette);
-		data.transparentPixel = 0;
-
-		int end = size - 1;
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				if (x == 0 || y == 0 || x == end || y == end) {
-					data.setPixel(x + xoffset, y + yoffset, 1);
-				} else {
-					data.setPixel(x + xoffset, y + yoffset, 2);
-				}
+		ImageGcDrawer drawer = new ImageGcDrawer() {
+			@Override
+			public void drawOn(GC imageGc, int imageWidth, int imageHeight) {
+				imageGc.setBackground(new Color(display, color));
+				imageGc.fillRectangle(indent, yoffset, size, size);
+				imageGc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+				imageGc.drawRectangle(indent, yoffset, size - 1, size - 1);
 			}
-		}
 
-		return data;
+			@Override
+			public int getGcStyle() {
+				return SWT.TRANSPARENT;
+			}
+		};
+		return new Image(display, drawer, indent + size, extent);
 	}
 
 	@Override
@@ -230,9 +218,7 @@ public class ColorCellEditor extends DialogCellEditor {
 			image.dispose();
 		}
 
-		ImageData id = createColorImage(colorLabel.getParent().getParent(), rgb);
-		ImageData mask = id.getTransparencyMask();
-		image = new Image(colorLabel.getDisplay(), id, mask);
+		image = createColorImage(colorLabel.getParent().getParent(), rgb);
 		colorLabel.setImage(image);
 
 		rgbLabel
