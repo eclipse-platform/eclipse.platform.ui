@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -36,7 +37,9 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Adapts a handler contribution that does not implement
@@ -74,6 +77,7 @@ class PojoHandlerAdapter extends AbstractHandler {
 		}
 		IEclipseContext staticContext = EclipseContextFactory.create();
 		try {
+			addSnapshotVariables(event.getApplicationContext(), executionContext, staticContext);
 			staticContext.set(HandlerServiceImpl.PARM_MAP, event.getParameters());
 			addParameters(event, staticContext);
 			staticContext.set(ExecutionEvent.class, event);
@@ -105,6 +109,7 @@ class PojoHandlerAdapter extends AbstractHandler {
 		}
 		IEclipseContext staticContext = EclipseContextFactory.create();
 		try {
+			addSnapshotVariables(evaluationContext, executionContext, staticContext);
 			Object result = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext, staticContext,
 					Boolean.TRUE);
 			// a @CanExecute that does not return boolean leaves enablement untouched
@@ -116,6 +121,30 @@ class PojoHandlerAdapter extends AbstractHandler {
 			setBaseEnabled(false);
 		} finally {
 			staticContext.dispose();
+		}
+	}
+
+	/**
+	 * Makes the source variables of an evaluation context snapshot win over the
+	 * live context, so that a snapshot taken before the active part changed still
+	 * targets the part it was taken for.
+	 */
+	private static void addSnapshotVariables(Object evaluationObject, IEclipseContext executionContext,
+			IEclipseContext staticContext) {
+		// an ExpressionContext reads the live context, so there is nothing to override
+		if (!(evaluationObject instanceof IEvaluationContext snapshot) || snapshot instanceof ExpressionContext) {
+			return;
+		}
+		ISourceProviderService sourceProviderService = executionContext.get(ISourceProviderService.class);
+		if (sourceProviderService == null) {
+			return;
+		}
+		for (ISourceProvider provider : sourceProviderService.getSourceProviders()) {
+			for (String name : provider.getProvidedSourceNames()) {
+				Object value = snapshot.getVariable(name);
+				// a variable missing from the snapshot must not fall through to the live value
+				staticContext.set(name, value == IEvaluationContext.UNDEFINED_VARIABLE ? null : value);
+			}
 		}
 	}
 
