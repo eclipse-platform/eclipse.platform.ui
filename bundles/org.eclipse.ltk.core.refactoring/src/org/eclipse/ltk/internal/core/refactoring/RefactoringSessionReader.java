@@ -108,7 +108,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 */
 	private SAXParser createParser(final SAXParserFactory factory) throws ParserConfigurationException, SAXException {
 
-		final SAXParser parser= factory.newSAXParser();
+		final SAXParser parser= XmlProcessorFactoryLtk.withoutElementAttributeLimit(factory.newSAXParser());
 		final XMLReader reader= parser.getXMLReader();
 
 		try {
