@@ -48,7 +48,7 @@ Tree[swt-lines-visible=true] {
 	background-color: unset;
 }
 
-Button  {
+Button[style~='SWT.PUSH']  {
 	background-color: unset;
 	color: unset;
 }
