@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Mohamed Tarief , IBM - Bug 139211
  *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
+ *     Lars Vogel <Lars.Vogel@vogella.com> - ask before opening nested projects
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -19,28 +20,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -133,59 +132,11 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		return IDEWorkbenchMessages.OpenResourceAction_dialogTitle;
 	}
 
-	/**
-	 * Returns whether there are closed projects in the workspace that are
-	 * not part of the current selection.
-	 */
-	private boolean hasOtherClosedProjects() {
-		//count the closed projects in the selection
-		int closedInSelection = 0;
-		for (IResource project : getSelectedResources()) {
-			if (!((IProject) project).isOpen()) {
-				closedInSelection++;
-			}
-		}
-		//there are other closed projects if the selection does
-		//not contain all closed projects in the workspace
-		return closedInSelection < countClosedProjects();
-	}
-
 	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
 		((IProject) resource).open(IResource.BACKGROUND_REFRESH, monitor);
 	}
 
-	/**
-	 * Returns the preference for whether to open required projects when opening
-	 * a project. Consults the preference and prompts the user if necessary.
-	 *
-	 * @return <code>true</code> if referenced projects should be opened, and
-	 *         <code>false</code> otherwise.
-	 */
-	private boolean promptToOpenWithReferences() {
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		String key = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
-		String value = store.getString(key);
-		if (MessageDialogWithToggle.ALWAYS.equals(value)) {
-			return true;
-		}
-		if (MessageDialogWithToggle.NEVER.equals(value)) {
-			return false;
-		}
-		String message = IDEWorkbenchMessages.OpenResourceAction_openRequiredProjects;
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), IDEWorkbenchMessages.Question, message, null, false, store, key);
-		int result = dialog.getReturnCode();
-		// the result is equal to SWT.DEFAULT if the user uses the 'esc' key to close the dialog
-		if (result == Window.CANCEL || result == SWT.DEFAULT) {
-			throw new OperationCanceledException();
-		}
-		return dialog.getReturnCode() == IDialogConstants.YES_ID;
-	}
-
-	/**
-	 * Handles a resource changed event by updating the enablement if one of the
-	 * selected projects is opened or closed.
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		// Warning: code duplicated in CloseResourceAction
@@ -209,11 +160,68 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	@Override
 	public void run() {
-		try {
-			runOpenWithReferences();
-		} catch (OperationCanceledException e) {
-			//just return when canceled
+		List<? extends IResource> projects = getActionResources();
+		List<IProject> nestedProjects = NestedProjects.below(projects, false);
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		String nestedValue = store.getString(IDEInternalPreferences.OPEN_NESTED_PROJECTS);
+		String referencedValue = store.getString(IDEInternalPreferences.OPEN_REQUIRED_PROJECTS);
+		boolean includeNested = IDEInternalPreferences.PSPM_ALWAYS.equals(nestedValue);
+		boolean includeReferenced = IDEInternalPreferences.PSPM_ALWAYS.equals(referencedValue);
+		boolean askNested = !nestedProjects.isEmpty() && prompts(nestedValue);
+		boolean askReferenced = prompts(referencedValue) && hasClosedReferences(projects, nestedProjects);
+		if (askNested || askReferenced) {
+			RelatedProjectsDialog.Answer answer = RelatedProjectsDialog.open(getShell(),
+					IDEWorkbenchMessages.OpenResourceAction_promptTitle,
+					askNested ? nestedMessage(projects, nestedProjects)
+							: IDEWorkbenchMessages.OpenResourceAction_referencedProjectsClosed,
+					IDEWorkbenchMessages.OpenResourceAction_open, store,
+					askNested ? IDEInternalPreferences.OPEN_NESTED_PROJECTS : null,
+					askReferenced ? IDEInternalPreferences.OPEN_REQUIRED_PROJECTS : null);
+			if (answer == null) {
+				return;
+			}
+			includeNested = askNested ? answer.includeNested() : includeNested;
+			includeReferenced = askReferenced ? answer.includeReferenced() : includeReferenced;
 		}
+		List<IResource> allProjects = new ArrayList<>(projects);
+		if (includeNested) {
+			allProjects.addAll(nestedProjects);
+		}
+		runOpenWithReferences(allProjects, includeReferenced);
+	}
+
+	private static boolean prompts(String preferenceValue) {
+		return !IDEInternalPreferences.PSPM_ALWAYS.equals(preferenceValue)
+				&& !IDEInternalPreferences.PSPM_NEVER.equals(preferenceValue);
+	}
+
+	/**
+	 * Returns whether a project among the given ones references a closed
+	 * project outside them. Closed projects cannot be asked, so the references
+	 * come from their .project files.
+	 */
+	private static boolean hasClosedReferences(List<? extends IResource> projects, List<IProject> nestedProjects) {
+		List<IResource> candidates = new ArrayList<>(projects);
+		candidates.addAll(nestedProjects);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		for (IResource candidate : candidates) {
+			IPath location = candidate.getLocation();
+			if (!(candidate instanceof IProject project) || project.isOpen() || location == null) {
+				continue;
+			}
+			IProjectDescription description;
+			try {
+				description = workspace.loadProjectDescription(location.append(IProjectDescription.DESCRIPTION_FILE_NAME));
+			} catch (CoreException e) {
+				continue;
+			}
+			for (IProject reference : description.getReferencedProjects()) {
+				if (reference.exists() && !reference.isOpen() && !candidates.contains(reference)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -225,14 +233,30 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	}
 
 	/**
-	 * Opens the selected projects, and all related projects, in the background.
+	 * @return the statement shown when the selection nests further closed projects
 	 */
-	private void runOpenWithReferences() {
-		final List<IResource> resources = new ArrayList<>(getActionResources());
+	private static String nestedMessage(List<? extends IResource> projects, List<IProject> nestedProjects) {
+		boolean oneProject = projects.size() == 1;
+		if (nestedProjects.size() == 1) {
+			return oneProject
+					? NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openOneNestedBelowProject,
+							projects.get(0).getName())
+					: IDEWorkbenchMessages.OpenResourceAction_openOneNestedBelowSelection;
+		}
+		Integer count = Integer.valueOf(nestedProjects.size());
+		return oneProject
+				? NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openNestedBelowProject, count,
+						projects.get(0).getName())
+				: NLS.bind(IDEWorkbenchMessages.OpenResourceAction_openNestedBelowSelection, count);
+	}
+
+	/**
+	 * Opens the given projects in the background, with the projects they
+	 * reference if wanted.
+	 */
+	private void runOpenWithReferences(List<? extends IResource> projects, boolean openProjectReferences) {
+		final List<IResource> resources = new ArrayList<>(projects);
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
-			private boolean openProjectReferences = true;
-			private boolean hasPrompted = false;
-			private boolean canceled = false;
 			/**
 			 * Opens a project along with all projects it references
 			 */
@@ -247,31 +271,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					logOpenFailure(project, e);
 					return;
 				}
-				final IProject[] references = project.getReferencedProjects();
-				if (!hasPrompted) {
-					openProjectReferences = false;
-					for (IProject reference : references) {
-						if (reference.exists() && !reference.isOpen()) {
-							openProjectReferences = true;
-							break;
-						}
-					}
-					if (openProjectReferences && hasOtherClosedProjects()) {
-						Display.getDefault().syncExec(() -> {
-							try {
-							openProjectReferences = promptToOpenWithReferences();
-							} catch (OperationCanceledException e) {
-								canceled = true;
-							}
-							//remember that we have prompted to avoid repeating the analysis
-							hasPrompted = true;
-						});
-						if (canceled) {
-							throw new OperationCanceledException();
-						}
-					}
-				}
 				if (openProjectReferences) {
+					IProject[] references = project.getReferencedProjects();
 					SubMonitor loopMonitor = subMonitor.split(1).setWorkRemaining(references.length);
 					for (IProject reference : references) {
 						doOpenWithReferences(reference, loopMonitor.split(1));
