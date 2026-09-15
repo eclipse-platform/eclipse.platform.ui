@@ -526,7 +526,7 @@ public class ThemeEngine implements IThemeEngine {
 						}
 					}
 				} catch (IOException e) {
-					ThemeEngineManager.logError(e.getMessage(), e);
+					ThemeEngineManager.logError("Cannot load stylesheet '" + stylesheet + "' for theme '" + theme.getId() + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}

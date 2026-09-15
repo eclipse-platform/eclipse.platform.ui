@@ -20,10 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -188,6 +191,26 @@ public class ThemeTest {
 			putOrRemove(node, THEMEID_KEY, previousId);
 			putOrRemove(node, PERSISTED_THEME_DARK_KEY, previousDark);
 		}
+	}
+
+	@Test
+	void testMissingStylesheetIsReportedWithItsUri() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		String themeId = "org.eclipse.e4.ui.tests.css.swt.theme.missingStylesheet";
+		List<String> messages = new ArrayList<>();
+		ILogListener listener = (status, plugin) -> messages.add(status.getMessage());
+		ILog log = ILog.of(Platform.getBundle(ThemeEngine.THEME_PLUGIN_ID));
+		log.addLogListener(listener);
+		try {
+			themer.setTheme(findTheme(themer.getThemes(), themeId), false);
+		} finally {
+			log.removeLogListener(listener);
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+		}
+		assertTrue(messages.contains("Cannot load stylesheet 'platform:/plugin/org.eclipse.e4.ui.tests.css.swt/css/missing.css' for theme '" + themeId + "'"), messages.toString());
 	}
 
 	private static void putOrRemove(IEclipsePreferences node, String key, String value) {
