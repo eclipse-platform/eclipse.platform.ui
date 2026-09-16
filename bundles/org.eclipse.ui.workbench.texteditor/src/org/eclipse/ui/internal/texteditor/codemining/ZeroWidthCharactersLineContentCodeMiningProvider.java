@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 SAP S.E. and others.
+ * Copyright (c) 2025, 2026 SAP S.E. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
@@ -64,8 +65,13 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 			return CompletableFuture.completedFuture(Collections.emptyList());
 		}
 
+		IDocument document = viewer.getDocument();
+		if (document == null) {
+			return CompletableFuture.completedFuture(Collections.emptyList());
+		}
+
 		List<ICodeMining> list = new ArrayList<>();
-		String content = viewer.getDocument().get();
+		String content = document.get();
 		for (int i = 0; i < content.length(); i++) {
 			boolean isZwCharacter = ZW_CHARACTERS.contains(content.charAt(i));
 			if (isZwCharacter) {
@@ -102,8 +108,10 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 
 	private void loadStoreAndReadProperty() {
 		store = getAdapter(IPreferenceStore.class);
-		readShowZwspFromStore();
-		store.addPropertyChangeListener(this);
+		if (store != null) {
+			readShowZwspFromStore();
+			store.addPropertyChangeListener(this);
+		}
 	}
 
 	private ICodeMining createCodeMining(int offset) {
