@@ -445,6 +445,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 				// Replace from last to first so earlier match offsets stay valid
 				for (int i = matches.size() - 1; i >= 0; i--) {
 					Point match = matches.get(i);
+					// replaceSelection() reads the adapter's current match and expands $n from it,
+					// so the match has to be re-established before each replacement.
 					findAndSelect(match.x);
 					replacements.add(replaceSelection());
 				}
