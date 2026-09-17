@@ -445,10 +445,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 				// Replace from last to first so earlier match offsets stay valid
 				for (int i = matches.size() - 1; i >= 0; i--) {
 					Point match = matches.get(i);
-					// Re-select to restore find/replace state (including regex groups)
-					if (findAndSelect(match.x) != match.x) {
-						continue;
-					}
+					findAndSelect(match.x);
 					replacements.add(replaceSelection());
 				}
 			});
@@ -509,11 +506,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private int selectAll() {
 		List<Point> selections = new ArrayList<>();
 		executeInForwardMode(() -> {
-			Point currentSeletion = new Point(0, 0);
-			while (findAndSelect(currentSeletion.x + currentSeletion.y) != -1) {
-				currentSeletion = target.getSelection();
-				selections.add(currentSeletion);
-			}
+			selections.addAll(findAllMatches());
 			if (target instanceof IFindReplaceTargetExtension4 selectableTarget) {
 				IRegion[] selectedRegions = selections.stream().map(selection -> new Region(selection.x, selection.y))
 						.toArray(IRegion[]::new);
