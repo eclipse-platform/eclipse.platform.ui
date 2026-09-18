@@ -279,6 +279,18 @@ public class SourceViewerComputeStyleRangesTest {
 		assertTrue(styles.isEmpty(), "Expected empty style ranges for non-IDocumentExtension3 document");
 	}
 
+	@Test
+	public void testUnconfiguredViewerReturnsEmpty() throws Exception {
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		viewer.setDocument(new Document("original content"));
+
+		Document externalDoc= new Document("some 'highlighted' text");
+		List<StyleRange> styles= viewer.computeStyleRanges(externalDoc, new Region(0, externalDoc.getLength()));
+
+		assertNotNull(styles);
+		assertTrue(styles.isEmpty(), "Expected empty style ranges for a viewer without presentation reconciler");
+	}
+
 	private SourceViewer createConfiguredViewer() {
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
 		viewer.configure(new SourceViewerConfiguration() {

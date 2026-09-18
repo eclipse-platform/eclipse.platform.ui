@@ -1454,8 +1454,8 @@ public class SourceViewer extends TextViewer
 	 *            not be {@code null}
 	 * @return the list of {@link org.eclipse.swt.custom.StyleRange}s covering the given region, as
 	 *         produced by this viewer's presentation reconciler; never {@code null}, may be empty
-	 *         if no repairer is registered for the content type, or if either document does not
-	 *         implement {@code IDocumentExtension3}
+	 *         if this viewer has no presentation reconciler, if no repairer is registered for the
+	 *         content type, or if either document does not implement {@code IDocumentExtension3}
 	 * @throws BadLocationException if {@code region} is outside the bounds of {@code document}
 	 * @since 3.31
 	 */
@@ -1466,6 +1466,9 @@ public class SourceViewer extends TextViewer
 		List<StyleRange> result= new ArrayList<>();
 		String partitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 		IPresentationReconciler reconciler= fPresentationReconciler;
+		if (reconciler == null) {
+			return result;
+		}
 		if (reconciler instanceof IPresentationReconcilerExtension ext) {
 			String extPartitioning= ext.getDocumentPartitioning();
 			if (extPartitioning != null && !extPartitioning.isEmpty()) {
