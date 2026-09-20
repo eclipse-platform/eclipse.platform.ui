@@ -38,7 +38,7 @@ public class OpenIDELogFileAction extends Action {
 	public void run() {
 		IPath logPath = IPath.fromOSString(fView.getLogFile().getAbsolutePath());
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(logPath);
-		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+		if (!fileStore.isDirectory() && fileStore.exists()) {
 			IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage page = ww.getActivePage();
 			try {

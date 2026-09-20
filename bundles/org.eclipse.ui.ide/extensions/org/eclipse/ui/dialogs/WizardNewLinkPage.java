@@ -209,14 +209,14 @@ public class WizardNewLinkPage extends WizardPage {
 		IFileStore store = null;
 		if (linkTargetName.length() > 0) {
 			store = IDEResourceInfoUtils.getFileStore(linkTargetName);
-			if (store == null || !store.fetchInfo().exists()) {
+			if (store == null || !store.exists()) {
 				store = null;
 			}
 		}
 		if (type == IResource.FILE) {
 			FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
 			if (store != null) {
-				if (store.fetchInfo().isDirectory()) {
+				if (store.isDirectory()) {
 					dialog.setFilterPath(linkTargetName);
 				} else {
 					dialog.setFileName(linkTargetName);
@@ -226,7 +226,7 @@ public class WizardNewLinkPage extends WizardPage {
 		} else {
 			DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 			if (store != null) {
-				if (!store.fetchInfo().isDirectory()) {
+				if (!store.isDirectory()) {
 					linkTargetName = store.getParent().getName();
 				}
 				if (linkTargetName != null) {
@@ -294,10 +294,10 @@ public class WizardNewLinkPage extends WizardPage {
 	private boolean validateFileType(IFileStore linkTargetStore) {
 		boolean valid = true;
 
-		if (type == IResource.FILE && linkTargetStore.fetchInfo().isDirectory()) {
+		if (type == IResource.FILE && linkTargetStore.isDirectory()) {
 			setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFile);
 			valid = false;
-		} else if (type == IResource.FOLDER && !linkTargetStore.fetchInfo().isDirectory()) {
+		} else if (type == IResource.FOLDER && !linkTargetStore.isDirectory()) {
 			setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFolder);
 			valid = false;
 		}
@@ -343,7 +343,7 @@ public class WizardNewLinkPage extends WizardPage {
 			valid = validateLinkTargetName(linkTargetName);
 			if (valid) {
 				IFileStore linkTargetFile = IDEResourceInfoUtils.getFileStore(linkTargetName);
-				if (linkTargetFile == null || !linkTargetFile.fetchInfo().exists()) {
+				if (linkTargetFile == null || !linkTargetFile.exists()) {
 					setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNonExistent);
 					valid = false;
 				} else {

@@ -993,7 +993,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)  {
 			IFileStore fileStore= getFileStore(info);
-			return fileStore == null ? true : !fileStore.fetchInfo().exists();
+			return fileStore == null || !fileStore.exists();
 		}
 		return getParentProvider().isDeleted(element);
 	}

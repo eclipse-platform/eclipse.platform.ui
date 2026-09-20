@@ -52,7 +52,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IFileStore curr) {
-				if (curr.fetchInfo().isDirectory()) {
+				if (curr.isDirectory()) {
 					return IMG_FOLDER;
 				}
 				return IMG_FILE;
@@ -85,12 +85,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		 *            receiver. <code>false</code> only folders are returned.
 		 */
 		public FileContentProvider(final boolean showFiles) {
-			fileFilter = file -> {
-				if (!file.fetchInfo().isDirectory() && !showFiles) {
-					return false;
-				}
-				return true;
-			};
+			fileFilter = file -> showFiles || file.isDirectory();
 		}
 
 		@Override
@@ -139,8 +134,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	private static class FileViewerSorter extends ViewerComparator {
 		@Override
 		public int category(Object element) {
-			if (element instanceof IFileStore
-					&& !((IFileStore) element).fetchInfo().isDirectory()) {
+			if (element instanceof IFileStore fileStore && !fileStore.isDirectory()) {
 				return 1;
 			}
 			return 0;
@@ -182,7 +176,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 			}
 			for (Object currentSelection : selection) {
 				if (currentSelection instanceof IFileStore file) {
-					if (!acceptFolders && file.fetchInfo().isDirectory()) {
+					if (!acceptFolders && file.isDirectory()) {
 						return new Status(IStatus.ERROR, pluginId,
 								IStatus.ERROR,
 								IDEResourceInfoUtils.EMPTY_STRING, null);

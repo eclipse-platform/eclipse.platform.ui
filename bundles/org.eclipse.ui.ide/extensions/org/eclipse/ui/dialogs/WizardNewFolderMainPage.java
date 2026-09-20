@@ -413,7 +413,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			URI resolvedPath = newFolderHandle.getPathVariableManager().resolveURI(linkTargetPath);
 			try {
 				IFileStore store = EFS.getStore(resolvedPath);
-				if (!store.fetchInfo().exists()) {
+				if (!store.exists()) {
 					MessageDialog dlg = new MessageDialog(getContainer().getShell(),
 							IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationTitle, null,
 							NLS.bind(IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationQuestion,

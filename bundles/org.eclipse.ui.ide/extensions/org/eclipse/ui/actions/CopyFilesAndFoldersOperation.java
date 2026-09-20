@@ -225,7 +225,7 @@ public class CopyFilesAndFoldersOperation {
 				IStatus.OK, getProblemsMessage(), null);
 
 		for (IFileStore store : stores) {
-			if (!store.fetchInfo().exists()) {
+			if (!store.exists()) {
 				String message = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceDeleted,
 								store.getName());
 				IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, null);

@@ -79,7 +79,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	@Override
 	public boolean isFolder(Object element) {
-		return ((IFileStore) element).fetchInfo().isDirectory();
+		return ((IFileStore) element).isDirectory();
 	}
 
 }

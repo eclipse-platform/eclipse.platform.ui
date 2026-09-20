@@ -86,7 +86,7 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
-		assertTrue(fileStore.fetchInfo().exists());
+		assertTrue(fileStore.exists());
 		try (OutputStream out= fileStore.openOutputStream(EFS.NONE, null)) {
 			out.write("Changed content of workspace file".getBytes());
 			out.flush();
