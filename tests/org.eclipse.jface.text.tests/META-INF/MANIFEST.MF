@@ -23,7 +23,7 @@ Require-Bundle:
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.tests.harness,
  org.eclipse.test;bundle-version="3.6.200"
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jface.text.tests
 Import-Package: org.mockito,

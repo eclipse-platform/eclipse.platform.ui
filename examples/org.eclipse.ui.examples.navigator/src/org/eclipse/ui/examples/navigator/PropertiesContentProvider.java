@@ -165,7 +165,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 			final IFile file = (IFile) source;
 			if (PROPERTIES_EXT.equals(file.getFileExtension())) {
 				updateModel(file);
-				UIJob.create("Update Properties Model in CommonViewer", m -> { //$NON-NLS-1$
+				UIJob.create("Update Properties Model in CommonViewer", _ -> { //$NON-NLS-1$
 					if (viewer != null && !viewer.getControl().isDisposed()) {
 						viewer.refresh(file);
 					}

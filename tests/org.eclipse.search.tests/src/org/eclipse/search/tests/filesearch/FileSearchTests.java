@@ -598,7 +598,7 @@ public class FileSearchTests {
 					</extension>
 				</plugin>""".getBytes())) {
 			registry.addContribution(is, contributor, false, null, null, masterToken);
-			try (AutoCloseable c= () -> {
+			try (AutoCloseable _= () -> {
 				Arrays.stream(registry.getExtensions(contributor))
 						.forEach(extension -> registry.removeExtension(extension, masterToken));
 			}) {

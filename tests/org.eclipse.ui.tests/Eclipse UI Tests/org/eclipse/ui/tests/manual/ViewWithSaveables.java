@@ -151,7 +151,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			}
 		};
 		getSite().setSelectionProvider(viewer);
-		dirty.addValueChangeListener(event -> firePropertyChange(ISaveablePart.PROP_DIRTY));
+		dirty.addValueChangeListener(_ -> firePropertyChange(ISaveablePart.PROP_DIRTY));
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false)
 				.generateLayout(parent);
 	}

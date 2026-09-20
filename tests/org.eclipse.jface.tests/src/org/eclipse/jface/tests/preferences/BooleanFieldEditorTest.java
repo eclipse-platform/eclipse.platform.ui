@@ -80,7 +80,7 @@ public class BooleanFieldEditorTest {
 
 	@Test
 	public void testLoadDefault() {
-		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
+		bfEditorWithSameLabel.setPropertyChangeListener(_ -> otherThreadEventOccurred());
 
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
@@ -143,7 +143,7 @@ public class BooleanFieldEditorTest {
 
 	@Test
 	public void testValueChanged() {
-		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
+		bfEditorWithSameLabel.setPropertyChangeListener(_ -> otherThreadEventOccurred());
 
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");

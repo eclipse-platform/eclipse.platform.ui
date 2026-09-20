@@ -89,7 +89,7 @@ public class MarkerAnnotationOrderTest {
 		final ArrayList<IStatus> list= new ArrayList<>(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
 		ILog log= ILog.of(bundle);
-		log.addLogListener((status, plugin) -> list.add(status));
+		log.addLogListener((status, _) -> list.add(status));
 
 		TestMarkerAnnotationModel t1= new TestMarkerAnnotationModel();
 		Position position= new Position(0);

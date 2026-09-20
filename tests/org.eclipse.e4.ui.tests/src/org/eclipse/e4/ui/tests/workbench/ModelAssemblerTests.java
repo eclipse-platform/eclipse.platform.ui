@@ -126,7 +126,7 @@ public class ModelAssemblerTests {
 		logListener = new ModelAssemblerTestLogListener();
 
 		ExtendedLogReaderService log = appContext.get(ExtendedLogReaderService.class);
-		LogFilter logFilter = (bundle, loggerName, logLevel) -> {
+		LogFilter logFilter = (_, loggerName, _) -> {
 			return "org.eclipse.e4.ui.internal.workbench.ModelAssembler".equals(loggerName);
 		};
 

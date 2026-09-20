@@ -46,7 +46,7 @@ public class FailingParticipantTests {
 
 	@BeforeEach
 	public void setUp() {
-		fLogListener= (status, plugin) -> fLogEntries.add(status);
+		fLogListener= (status, _) -> fLogEntries.add(status);
 		Platform.addLogListener(fLogListener);
 	}
 

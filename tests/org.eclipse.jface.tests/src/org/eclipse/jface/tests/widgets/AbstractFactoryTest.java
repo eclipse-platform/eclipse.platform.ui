@@ -27,7 +27,7 @@ public class AbstractFactoryTest {
 
 	@BeforeAll
 	public static void classSetup() {
-		final ImageGcDrawer noOp = (gc, width, height) -> {};
+		final ImageGcDrawer noOp = (_, _, _) -> {};
 		image = new Image(null, noOp, 1, 1);
 	}
 

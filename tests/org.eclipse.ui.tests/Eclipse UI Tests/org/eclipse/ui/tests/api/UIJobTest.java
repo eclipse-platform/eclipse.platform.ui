@@ -70,7 +70,7 @@ public class UIJobTest {
 		backgroundThreadInterrupted = false;
 		uiJobFinishedBeforeBackgroundThread = false;
 
-		final UIJob testJob = UIJob.create("blah blah blah", m -> {
+		final UIJob testJob = UIJob.create("blah blah blah", _ -> {
 			backgroundThreadFinishedBeforeUIJob = backgroundThreadFinished;
 			uiJobFinished = true;
 		});

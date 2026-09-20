@@ -146,7 +146,7 @@ public class SmartImportTests {
 	}
 
 	private void proceedSmartImportWizard(SmartImportWizard wizard) throws InterruptedException {
-		Consumer<SmartImportRootWizardPage> doNothing = page -> {};
+		Consumer<SmartImportRootWizardPage> doNothing = _ -> {};
 		proceedSmartImportWizard(wizard, doNothing);
 	}
 
@@ -513,7 +513,7 @@ public class SmartImportTests {
 	@Test
 	public void testBug559600() throws Exception {
 		AtomicInteger errors = new AtomicInteger();
-		ILogListener errorListener = (status, plugin) -> {
+		ILogListener errorListener = (status, _) -> {
 			if (status.getSeverity() == IStatus.ERROR) {
 				errors.incrementAndGet();
 			}
@@ -657,7 +657,7 @@ public class SmartImportTests {
 		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
 		workingSetManager.addWorkingSet(workingSet);
 		AtomicInteger workingSetEvents = new AtomicInteger();
-		IPropertyChangeListener workingSetListener = event -> workingSetEvents.incrementAndGet();
+		IPropertyChangeListener workingSetListener = _ -> workingSetEvents.incrementAndGet();
 		workingSetManager.addPropertyChangeListener(workingSetListener);
 		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportNoWorkingSets");
 		try {

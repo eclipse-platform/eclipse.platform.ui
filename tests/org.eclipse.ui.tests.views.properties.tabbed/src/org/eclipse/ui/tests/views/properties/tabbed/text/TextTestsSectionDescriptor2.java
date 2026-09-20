@@ -36,7 +36,7 @@ public class TextTestsSectionDescriptor2 extends TextTestsSectionDescriptor {
 	 */
 	@Override
 	public IFilter getFilter() {
-		return toTest -> false;
+		return _ -> false;
 	}
 
 }

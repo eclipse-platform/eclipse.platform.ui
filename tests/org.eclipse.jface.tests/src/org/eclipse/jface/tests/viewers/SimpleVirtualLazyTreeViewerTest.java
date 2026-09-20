@@ -126,7 +126,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		Tree tree = new Tree(fShell, SWT.VIRTUAL | SWT.MULTI);
 		TreeViewer treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(new LazyTreeContentProvider());
-		tree.addListener(SWT.SetData, event -> setDataCalled = true);
+		tree.addListener(SWT.SetData, _ -> setDataCalled = true);
 		return treeViewer;
 	}
 

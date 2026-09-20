@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.ui.workbench;bundle-version="3.133.100"
 Automatic-Module-Name: org.eclipse.e4.ui.examples.dummyeditor
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Model-Fragment: fragment.e4xmi

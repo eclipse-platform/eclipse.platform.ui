@@ -16,8 +16,8 @@ public class LabelProviderTest {
 
 	private static final Car HORCH = new Car("Horch");
 
-	private static Image horchImage = new Image(Display.getDefault(), (gc, width, height) -> {}, 50, 10);
-	private static Image defaultImage = new Image(Display.getDefault(), (gc, width, height) -> {}, 1, 1);
+	private static Image horchImage = new Image(Display.getDefault(), (_, _, _) -> {}, 50, 10);
+	private static Image defaultImage = new Image(Display.getDefault(), (_, _, _) -> {}, 1, 1);
 
 	private final Function<Object, String> textFunction = o -> o instanceof Car ? ((Car) o).getMake() : "unknown";
 	private final Function<Object, Image> imageFunction = o -> o instanceof Car ? horchImage : defaultImage;

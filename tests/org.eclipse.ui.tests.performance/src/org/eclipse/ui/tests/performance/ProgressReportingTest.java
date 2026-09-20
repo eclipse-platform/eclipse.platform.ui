@@ -138,7 +138,7 @@ public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 		openTestWindow();
 		setRunInBackground(true);
 		runAsyncTest(() -> {
-			Job.create("Test Job", monitor -> {
+			Job.create("Test Job", _ -> {
 				int i = 0;
 				while (i < ITERATIONS) {
 					i++;
