@@ -76,7 +76,7 @@ public class FileStoreEditorInput implements IURIEditorInput, IPersistableElemen
 
 	@Override
 	public boolean exists() {
-		return fileStore.fetchInfo().exists();
+		return fileStore.exists();
 	}
 
 	@Override

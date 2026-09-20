@@ -67,7 +67,7 @@ public final class RefactoringPropertyPageTester extends PropertyTester {
 				if (resource instanceof final IProject project) {
 					final IFileStore store= getHistoryStore(project);
 					if (store != null) {
-						return store.fetchInfo().exists();
+						return store.exists();
 					}
 				}
 			}

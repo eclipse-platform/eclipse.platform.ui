@@ -493,7 +493,7 @@ public class LinkedResourceEditor {
 		URI uri = res.getLocationURI();
 		if (uri != null) {
 			IFileStore fileStore = EFS.getStore(uri);
-			return (fileStore != null) && fileStore.fetchInfo().exists();
+			return fileStore != null && fileStore.exists();
 		}
 		return false;
 	}

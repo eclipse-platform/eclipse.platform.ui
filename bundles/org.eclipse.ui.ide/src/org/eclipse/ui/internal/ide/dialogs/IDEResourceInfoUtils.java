@@ -256,7 +256,7 @@ public class IDEResourceInfoUtils {
 			if (store == null) {
 				return UNKNOWN_LABEL;
 			}
-			if (!store.fetchInfo().exists()) {
+			if (!store.exists()) {
 				return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 			}
 		}
@@ -300,7 +300,7 @@ public class IDEResourceInfoUtils {
 		}
 
 		// don't access the file system for closed projects (bug 151089)
-		if (isProjectAccessible(resource) && !store.fetchInfo().exists()) {
+		if (isProjectAccessible(resource) && !store.exists()) {
 			return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 		}
 

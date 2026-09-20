@@ -170,7 +170,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	}
 
 	private InputStream getFileContents(IFileStore fileStore) throws CoreException {
-		if (!fFileStore.fetchInfo().exists()) {
+		if (!fFileStore.exists()) {
 			return null;
 		}
 
@@ -418,8 +418,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			throw new CoreException(s);
 		}
 
-		IFileInfo fileInfo= fFileStore.fetchInfo();
-		if (fileInfo != null && fileInfo.exists()) {
+		if (fFileStore.exists()) {
 
 			if (!overwrite) {
 				checkSynchronizationState();

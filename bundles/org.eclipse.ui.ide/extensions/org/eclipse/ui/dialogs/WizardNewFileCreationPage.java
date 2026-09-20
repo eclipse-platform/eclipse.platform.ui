@@ -365,7 +365,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				try {
 					if (resolvedPath.getScheme() != null && resolvedPath.getSchemeSpecificPart() != null) {
 						IFileStore store = EFS.getStore(resolvedPath);
-						if (!store.fetchInfo().exists()) {
+						if (!store.exists()) {
 							MessageDialog dlg = new MessageDialog(getContainer().getShell(),
 									IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle, null,
 									NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion,
