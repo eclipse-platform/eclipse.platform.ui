@@ -153,7 +153,7 @@ public class ImportExistingProjectsWizardTest {
 	private void waitForRefresh() {
 		try {
 			getWorkbench().getProgressService().busyCursorWhile(
-					monitor -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
+					_ -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
 							new NullProgressMonitor()));
 		} catch (InvocationTargetException | InterruptedException e) {
 			fail(e.getLocalizedMessage());
@@ -1029,7 +1029,7 @@ public class ImportExistingProjectsWizardTest {
 		ImportTestUtils.deleteWorkspaceProjects();
 		WizardProjectsImportPage wpip = getNewWizard();
 
-		try (AutoCloseable restore = setPageSetting(wpip, "WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID", true)) {
+		try (AutoCloseable _ = setPageSetting(wpip, "WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID", true)) {
 			useDataLocationProject(wpip, "ImportExistingProjectsWizardTestRebuildProject");
 			assertTrue("Failed to import project", wpip.createProjects());
 
@@ -1072,7 +1072,7 @@ public class ImportExistingProjectsWizardTest {
 		ImportTestUtils.deleteWorkspaceProjects();
 		WizardProjectsImportPage wpip = getNewWizard();
 
-		try (AutoCloseable restore = setPageSetting(wpip, "WizardProjectsImportPage.STORE_COPY_PROJECT_ID", true)) {
+		try (AutoCloseable _ = setPageSetting(wpip, "WizardProjectsImportPage.STORE_COPY_PROJECT_ID", true)) {
 			useDataLocationProject(wpip, "ImportExistingProjectsWizardTestRebuildProject");
 
 			ImportTestUtils.TestBuilder.resetCallCount();

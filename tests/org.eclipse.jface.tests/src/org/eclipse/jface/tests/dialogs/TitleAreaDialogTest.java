@@ -45,7 +45,7 @@ public class TitleAreaDialogTest {
 		dialog.setTitleImage(image);
 		dialog.create();
 		Shell shell = dialog.getShell();
-		shell.addDisposeListener(e -> image.dispose());
+		shell.addDisposeListener(_ -> image.dispose());
 		dialog.open();
 	}
 

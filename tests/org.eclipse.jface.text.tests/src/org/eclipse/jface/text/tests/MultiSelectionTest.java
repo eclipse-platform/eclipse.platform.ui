@@ -122,7 +122,7 @@ public class MultiSelectionTest {
 		//
 		AtomicInteger idx= new AtomicInteger();
 		selectionProcessor.doReplace(selection,
-				Arrays.stream(selection.getRegions()).mapToInt(r -> idx.getAndIncrement()).mapToObj(Integer::toString).collect(Collectors.joining(System.lineSeparator())));
+				Arrays.stream(selection.getRegions()).mapToInt(_ -> idx.getAndIncrement()).mapToObj(Integer::toString).collect(Collectors.joining(System.lineSeparator())));
 		assertEquals("0ab1ab2a\nb3ab4a", document.get());
 		assertArrayEquals(new IRegion[] { new Region(1, 0), new Region(4, 0), new Region(7, 0), new Region(11, 0), new Region(14, 0) },
 				((IMultiTextSelection) textViewer.getSelectionProvider().getSelection()).getRegions());
@@ -185,7 +185,7 @@ public class MultiSelectionTest {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(shell);
 		shell.pack();
 		shell.setVisible(true);
-		b.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+		b.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> {
 			textViewer.setSelection(selection);
 			textViewer.getTextWidget().setFocus();
 		}));

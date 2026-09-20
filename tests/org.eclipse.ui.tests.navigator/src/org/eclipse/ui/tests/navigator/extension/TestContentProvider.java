@@ -177,7 +177,7 @@ public class TestContentProvider implements ITreeContentProvider,
 			final IFile file = (IFile) source;
 			if ("model.properties".equals(file.getName())) {
 				updateModel(file);
-				UIJob.create("Update Test Model in CommonViewer", m -> {
+				UIJob.create("Update Test Model in CommonViewer", _ -> {
 					if (viewer != null && !viewer.getControl().isDisposed()) {
 						viewer.refresh(file.getParent());
 					}

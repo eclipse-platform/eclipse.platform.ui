@@ -36,7 +36,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(parent, SWT.VIRTUAL);
-		tree.addListener(SWT.SetData, event -> setDataCalls++);
+		tree.addListener(SWT.SetData, _ -> setDataCalls++);
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new TestModelLazyTreeContentProvider((TreeViewer) fTreeViewer));
 		return fTreeViewer;

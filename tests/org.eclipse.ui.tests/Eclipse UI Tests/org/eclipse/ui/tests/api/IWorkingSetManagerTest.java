@@ -407,11 +407,11 @@ public class IWorkingSetManagerTest {
 	public void testListenerSafety() throws Throwable {
 		final boolean[] result = new boolean[1];
 		// add a bogus listener that dies unexpectedly
-		IPropertyChangeListener badListener = event -> {
+		IPropertyChangeListener badListener = _ -> {
 			throw new TestException();
 
 		};
-		IPropertyChangeListener goodListener = event -> result[0] = true;
+		IPropertyChangeListener goodListener = _ -> result[0] = true;
 		fWorkingSetManager.addPropertyChangeListener(badListener);
 		fWorkingSetManager.addPropertyChangeListener(goodListener);
 		try {

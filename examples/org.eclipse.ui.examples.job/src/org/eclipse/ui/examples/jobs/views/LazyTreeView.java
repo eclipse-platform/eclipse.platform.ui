@@ -56,14 +56,14 @@ public class LazyTreeView extends ViewPart {
 //		serializeButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isSerializeFetching());
 		serializeButton.addSelectionListener(SelectionListener
-				.widgetSelectedAdapter(e -> SlowElementAdapter.setSerializeFetching(serializeButton.getSelection())));
+				.widgetSelectedAdapter(_ -> SlowElementAdapter.setSerializeFetching(serializeButton.getSelection())));
 		serializeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		batchButton = new Button(parent, SWT.CHECK | SWT.FLAT);
 		batchButton.setText("Batch returned children"); //$NON-NLS-1$
 //		batchButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isBatchFetchedChildren());
 		batchButton.addSelectionListener(SelectionListener
-				.widgetSelectedAdapter(e -> SlowElementAdapter.setBatchFetchedChildren(batchButton.getSelection())));
+				.widgetSelectedAdapter(_ -> SlowElementAdapter.setBatchFetchedChildren(batchButton.getSelection())));
 		batchButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new DeferredContentProvider());

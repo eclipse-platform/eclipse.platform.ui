@@ -56,7 +56,7 @@ public class SampleView {
 			final IExtensionRegistry registry) {
 		context = outputContext;
 
-		parent.addDisposeListener(e -> {
+		parent.addDisposeListener(_ -> {
 			if (errorOnWidgetDisposal) {
 				throw new TestException();
 			}

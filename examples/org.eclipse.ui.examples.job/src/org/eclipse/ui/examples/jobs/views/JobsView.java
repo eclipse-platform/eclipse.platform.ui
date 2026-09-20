@@ -179,68 +179,68 @@ public class JobsView extends ViewPart {
 		create.setText("Create jobs"); //$NON-NLS-1$
 		create.setToolTipText("Creates and schedules jobs according to above parameters"); //$NON-NLS-1$
 		create.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		create.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> createJobs()));
+		create.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> createJobs()));
 
 		// touch workspace
 		Button touch = new Button(group, SWT.PUSH);
 		touch.setText("Touch workspace"); //$NON-NLS-1$
 		touch.setToolTipText("Modifies the workspace in the UI thread"); //$NON-NLS-1$
 		touch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		touch.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> touchWorkspace()));
+		touch.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> touchWorkspace()));
 		// busy cursor while
 		Button busyWhile = new Button(group, SWT.PUSH);
 		busyWhile.setText("busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setToolTipText("Uses IProgressService.busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		busyWhile.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> busyCursorWhile()));
+		busyWhile.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> busyCursorWhile()));
 		// progress monitor dialog with fork=false
 		Button noFork = new Button(group, SWT.PUSH);
 		noFork.setText("runInUI"); //$NON-NLS-1$
 		noFork.setToolTipText("Uses IProgressService.runInUI"); //$NON-NLS-1$
 		noFork.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		noFork.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> progressNoFork()));
+		noFork.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> progressNoFork()));
 
 		// progress monitor dialog with fork=false
 		Button exception = new Button(group, SWT.PUSH);
 		exception.setText("Runtime Exception"); //$NON-NLS-1$
 		exception.setToolTipText("NullPointerException when running"); //$NON-NLS-1$
 		exception.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		exception.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> jobWithRuntimeException()));
+		exception.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> jobWithRuntimeException()));
 
 		// join the running test jobs
 		Button join = new Button(group, SWT.PUSH);
 		join.setText("Join Test Jobs"); //$NON-NLS-1$
 		join.setToolTipText("IJobManager.join() on test jobs"); //$NON-NLS-1$
 		join.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		join.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> joinTestJobs()));
+		join.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> joinTestJobs()));
 
 		// Cancel the job family (all TestJobs have the same family)
 		Button cancelFamily = new Button(group, SWT.PUSH);
 		cancelFamily.setText("Cancel Job family"); //$NON-NLS-1$
 		cancelFamily.setToolTipText("IJobManager.cancel() on test jobs"); //$NON-NLS-1$
 		cancelFamily.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		cancelFamily.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> cancelTestJobs()));
+		cancelFamily.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> cancelTestJobs()));
 
 		// Use a runnable context
 		Button window = new Button(group, SWT.PUSH);
 		window.setText("Runnable in Window"); //$NON-NLS-1$
 		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
 		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		window.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> runnableInWindow()));
+		window.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> runnableInWindow()));
 
 		// Put all jobs to sleep
 		Button sleep = new Button(group, SWT.PUSH);
 		sleep.setText("Sleep"); //$NON-NLS-1$
 		sleep.setToolTipText("Calls sleep() on all TestJobs"); //$NON-NLS-1$
 		sleep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		sleep.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doSleep()));
+		sleep.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> doSleep()));
 
 		// Wake up all jobs
 		Button wake = new Button(group, SWT.PUSH);
 		wake.setText("WakeUp"); //$NON-NLS-1$
 		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
 		wake.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		wake.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doWakeUp()));
+		wake.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> doWakeUp()));
 
 		// show in dialog
 		Button showInDialog = new Button(group, SWT.PUSH);
@@ -248,7 +248,7 @@ public class JobsView extends ViewPart {
 		showInDialog.setToolTipText(
 				"Uses IProgressService.showInDialog. Does nothing if IPreferenceConstants.RUN_IN_BACKGROUND is enabled"); //$NON-NLS-1$
 		showInDialog.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		showInDialog.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> showInDialog()));
+		showInDialog.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> showInDialog()));
 
 	}
 
@@ -552,7 +552,7 @@ public class JobsView extends ViewPart {
 	private void cancelTestJobs() {
 		try {
 			PlatformUI.getWorkbench().getProgressService()
-					.busyCursorWhile(monitor -> Job.getJobManager().cancel(TestJob.FAMILY_TEST_JOB));
+					.busyCursorWhile(_ -> Job.getJobManager().cancel(TestJob.FAMILY_TEST_JOB));
 		} catch (InterruptedException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -592,7 +592,7 @@ public class JobsView extends ViewPart {
 		for (int i = 0; i < jobCount; i++) {
 			getSite().getShell().getDisplay().asyncExec(() -> {
 				try {
-					ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor -> {
+					ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) _ -> {
 						// no-op
 					}, null);
 				} catch (OperationCanceledException e1) {

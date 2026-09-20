@@ -58,7 +58,7 @@ public class AsyncContentAssistTest {
 	@BeforeEach
 	public void setUp() {
 		shell= new Shell();
-		listener= (status, plugin) -> {
+		listener= (status, _) -> {
 			if (status.getSeverity() == IStatus.ERROR && "org.eclipse.jface.text".equals(status.getPlugin())) {
 				errorStatus= status;
 			}

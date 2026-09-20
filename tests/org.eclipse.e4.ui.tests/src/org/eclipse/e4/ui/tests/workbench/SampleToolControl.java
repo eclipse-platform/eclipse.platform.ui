@@ -30,7 +30,7 @@ public class SampleToolControl {
 	@PostConstruct
 	void construct(MWindow window) {
 		Shell shell = (Shell) window.getWidget();
-		shell.addListener(SWT.Dispose, event -> shellDisposed = true);
+		shell.addListener(SWT.Dispose, _ -> shellDisposed = true);
 	}
 
 	@PreDestroy

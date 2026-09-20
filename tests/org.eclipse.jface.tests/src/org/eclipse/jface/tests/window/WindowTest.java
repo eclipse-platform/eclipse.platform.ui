@@ -26,7 +26,7 @@ public class WindowTest {
 		};
 		window.setBlockOnOpen(true);
 
-		Listener closeWindowListener = event -> window.close();
+		Listener closeWindowListener = _ -> window.close();
 		Display.getDefault().addFilter(SWT.Show, closeWindowListener);
 		try {
 			window.open();

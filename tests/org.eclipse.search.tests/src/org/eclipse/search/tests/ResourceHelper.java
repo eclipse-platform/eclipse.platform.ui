@@ -77,7 +77,7 @@ public class ResourceHelper {
 	}
 
 	public static void delete(final IResource resource, ISchedulingRule rule) throws CoreException {
-		IWorkspaceRunnable runnable= monitor -> {
+		IWorkspaceRunnable runnable= _ -> {
 			for (int i= 0; i < MAX_RETRY; i++) {
 				try {
 					resource.delete(true, null);

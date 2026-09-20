@@ -15,7 +15,7 @@ Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
  org.opentest4j
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Export-Package: org.eclipse.ui.tests.rcp,
  org.eclipse.ui.tests.rcp.performance,
  org.eclipse.ui.tests.rcp.util

@@ -81,7 +81,7 @@ public class LazyResourceManagerTest {
 		public AtomicReference<DeviceResourceDescriptor> create(DeviceResourceDescriptor descriptor) {
 			AtomicReference<DeviceResourceDescriptor> newInstance = new AtomicReference<>(descriptor);
 			AtomicReference<DeviceResourceDescriptor> previous = objects.putIfAbsent(descriptor, newInstance);
-			refCount.compute(descriptor, (k, refs) -> Integer.valueOf((refs == null ? 0 : refs.intValue()) + 1));
+			refCount.compute(descriptor, (_, refs) -> Integer.valueOf((refs == null ? 0 : refs.intValue()) + 1));
 			return previous == null ? newInstance : previous;
 		}
 

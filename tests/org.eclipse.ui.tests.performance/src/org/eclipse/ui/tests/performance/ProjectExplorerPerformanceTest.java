@@ -92,7 +92,7 @@ public class ProjectExplorerPerformanceTest {
 	@AfterEach
 	public void cleanUpWorkspace() throws CoreException {
 		hideProjectExplorer();
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 				project.delete(true, true, null);
 			}
@@ -140,7 +140,7 @@ public class ProjectExplorerPerformanceTest {
 
 	private IProject createProject(String name) throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			if (!project.exists()) {
 				project.create(null);
 			}
@@ -150,7 +150,7 @@ public class ProjectExplorerPerformanceTest {
 	}
 
 	private void createFiles(IContainer container, int fileCount) throws CoreException {
-		runInWorkspace(monitor -> addFiles(container, fileCount));
+		runInWorkspace(_ -> addFiles(container, fileCount));
 	}
 
 	private void addFiles(IContainer container, int fileCount) throws CoreException {
@@ -167,7 +167,7 @@ public class ProjectExplorerPerformanceTest {
 	 */
 	private IContainer createNestedFolders(IProject project, int depth) throws CoreException {
 		IContainer[] innermost = new IContainer[] { project };
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			IContainer container = project;
 			for (int i = 0; i < depth; i++) {
 				IFolder folder = container.getFolder(new Path("d" + NAME_FORMAT.format(i)));
@@ -182,7 +182,7 @@ public class ProjectExplorerPerformanceTest {
 	}
 
 	private void createProjects(int projectCount) throws CoreException {
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			for (int i = 0; i < projectCount; i++) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("p" + NAME_FORMAT.format(i));
 				project.create(null);
@@ -193,7 +193,7 @@ public class ProjectExplorerPerformanceTest {
 	}
 
 	private void deleteAllProjects() throws CoreException {
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 				project.delete(true, null);
 			}
@@ -201,7 +201,7 @@ public class ProjectExplorerPerformanceTest {
 	}
 
 	private void deleteAllFiles(IContainer container) throws CoreException {
-		runInWorkspace(monitor -> {
+		runInWorkspace(_ -> {
 			for (IResource member : container.members()) {
 				if (member instanceof IFile) {
 					member.delete(true, null);

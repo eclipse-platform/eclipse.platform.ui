@@ -419,7 +419,7 @@ public class FontRegistryTest {
 		Font originalFont = fontRegistry.get("myfont");
 
 		AtomicReference<Font> fontSeenByListener = new AtomicReference<>();
-		fontRegistry.addListener(event -> fontSeenByListener.set(fontRegistry.get("myfont")));
+		fontRegistry.addListener(_ -> fontSeenByListener.set(fontRegistry.get("myfont")));
 
 		fontRegistry.put("myfont", new FontData[] { new FontData("Arial", 18, SWT.NORMAL) });
 

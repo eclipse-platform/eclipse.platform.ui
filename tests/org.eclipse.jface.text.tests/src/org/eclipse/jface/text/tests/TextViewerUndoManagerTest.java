@@ -84,7 +84,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		Object newContext= new Object();
 		undoManager.connect(newContext);
 
-		undoManager.addDocumentUndoListener(event -> fail());
+		undoManager.addDocumentUndoListener(_ -> fail());
 
 		undoManager.transferUndoHistory(tempUndoManager);
 		tempUndoManager.disconnect(context);

@@ -140,7 +140,7 @@ public class CodeMiningProjectionViewerTest {
 		fViewer.setCodeMiningAnnotationPainter(painter);
 		// projection/folding
 		fViewer.setDocument(new Document(), new ProjectionAnnotationModel());
-		ProjectionSupport projectionSupport = new ProjectionSupport(fViewer, annotationAccess, rgb -> null);
+		ProjectionSupport projectionSupport = new ProjectionSupport(fViewer, annotationAccess, _ -> null);
 		projectionSupport.install();
 		fViewer.doOperation(ProjectionViewer.TOGGLE);
 	}
@@ -189,7 +189,7 @@ public class CodeMiningProjectionViewerTest {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.workbench");
 		ILog log = null;
 		AtomicReference<IStatus> logError = new AtomicReference<>();
-		ILogListener logListener= (status, plugin) -> {
+		ILogListener logListener= (status, _) -> {
 			logError.set(status);
 		};
 		if (bundle != null && bundle.getState() == Bundle.ACTIVE) {

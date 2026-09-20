@@ -141,7 +141,7 @@ public class ModeledPageLayoutTest {
 	}
 
 	private int getNumberOfOnboardingCommands(List<String> commands) {
-		return commands.stream().filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).mapToInt(i -> 1).sum();
+		return commands.stream().filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).mapToInt(_ -> 1).sum();
 	}
 
 	private MKeyBinding createBinding(String elementId, String name, String keys) {

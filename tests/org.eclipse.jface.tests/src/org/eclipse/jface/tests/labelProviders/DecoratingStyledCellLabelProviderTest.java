@@ -205,7 +205,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 	}
 
 	private ILabelProviderListener getListener() {
-		return event -> changeMe = "been changed";
+		return _ -> changeMe = "been changed";
 	}
 
 	/**

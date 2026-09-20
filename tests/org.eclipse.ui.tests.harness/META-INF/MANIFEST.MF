@@ -17,6 +17,6 @@ Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
  org.eclipse.ui.tests.internal.util;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Automatic-Module-Name: org.eclipse.ui.tests.harness
 Bundle-Vendor: Eclipse.org
