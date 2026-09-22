@@ -16,11 +16,11 @@ package org.eclipse.ui.internal.navigator.resources.nested;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -42,9 +42,9 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlug
  */
 public class NestedProjectsProblemsModel {
 
-	private boolean neverRan = true;
+	private volatile boolean neverRan = true;
 	private final Set<IResource> dirty = new LinkedHashSet<>();
-	private final Map<IResource, Integer> cache = new HashMap<>();
+	private final Map<IResource, Integer> cache = new ConcurrentHashMap<>();
 	private final Set<IResource> modifiedSeveritySinceLastRun = new LinkedHashSet<>();
 
 	public void refreshModel() {

@@ -14,9 +14,6 @@
 package org.eclipse.ui.internal.navigator.resources.nested;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.internal.resources.MarkerManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -44,14 +41,14 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 
 	private IResourceChangeListener refreshSeveritiesOnProblemMarkerChange;
 	private NestedProjectsProblemsModel model;
-	private CompletableFuture<NestedProjectsProblemsModel> refreshModelJob;
+	private CompletableFuture<Void> refreshModelJob = CompletableFuture.completedFuture(null);
 	private volatile boolean isDisposed;
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		super.init(aConfig);
 		model = new NestedProjectsProblemsModel();
-		refreshModelJob = refreshSeverities();
+		refreshSeverities();
 		refreshSeveritiesOnProblemMarkerChange = event -> {
 			if (event.getDelta() == null) {
 				return;
@@ -75,14 +72,7 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}
 			if (model.isDirty()) {
-				refreshModelJob = refreshSeverities();
-				refreshModelJob.thenAccept(model -> {
-					if (!isDisposed) {
-						Object[] toUpdate = model.getResourcesWithModifiedSeverity().toArray();
-						LabelProviderChangedEvent evt = new LabelProviderChangedEvent(this, toUpdate);
-						PlatformUI.getWorkbench().getDisplay().asyncExec(() -> fireLabelProviderChanged(evt));
-					}
-				});
+				refreshSeverities();
 			}
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
@@ -95,10 +85,23 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 		super.dispose();
 	}
 
-	private CompletableFuture<NestedProjectsProblemsModel> refreshSeverities() {
-		return CompletableFuture.supplyAsync(() -> {
-			model.refreshModel();
-			return model;
+	// chained so refreshes never mutate the model concurrently
+	private synchronized void refreshSeverities() {
+		refreshModelJob = refreshModelJob.thenRunAsync(() -> {
+			if (isDisposed || !model.isDirty()) {
+				return;
+			}
+			try {
+				model.refreshModel();
+			} catch (RuntimeException e) {
+				// already logged by the model
+				return;
+			}
+			Object[] toUpdate = model.getResourcesWithModifiedSeverity().toArray();
+			if (!isDisposed && toUpdate.length > 0) {
+				LabelProviderChangedEvent evt = new LabelProviderChangedEvent(this, toUpdate);
+				PlatformUI.getWorkbench().getDisplay().asyncExec(() -> fireLabelProviderChanged(evt));
+			}
 		});
 	}
 
@@ -127,22 +130,8 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 	protected int getHighestProblemSeverity(IResource resource) {
 		int problemSeverity = super.getHighestProblemSeverity(resource);
 		if (resource instanceof IContainer && problemSeverity < IMarker.SEVERITY_ERROR) {
-			// ask the Nested Projects Problem model about whether a child has more sever
-			// problem
-			try {
-				// keep a snapshot to avoid the value to suddenly turn null
-				final CompletableFuture<NestedProjectsProblemsModel> problemsModelSnapshot = refreshModelJob;
-				if (problemsModelSnapshot != null) {
-					problemSeverity = Math.max(problemSeverity,
-							problemsModelSnapshot.get(50, TimeUnit.MILLISECONDS)
-									.getMaxSeverityIncludingNestedProjects(resource));
-				}
-			} catch (TimeoutException e) {
-				// ignore
-			} catch (InterruptedException | ExecutionException | RuntimeException e) {
-				WorkbenchNavigatorPlugin.log(e.getMessage(),
-						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
-			}
+			// never wait for a running refresh, it updates the labels when done
+			problemSeverity = Math.max(problemSeverity, model.getMaxSeverityIncludingNestedProjects(resource));
 		}
 		return problemSeverity;
 	}
