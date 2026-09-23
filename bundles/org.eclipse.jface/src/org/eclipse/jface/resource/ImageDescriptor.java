@@ -82,6 +82,20 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 		super(shouldBeCached);
 	}
 
+	/** Written at startup, read on the UI thread. */
+	static volatile IImageURLModifier urlModifier;
+
+	/**
+	 * Installs the modifier consulted when an image is loaded from a URL. Images
+	 * created before are not reloaded.
+	 *
+	 * @param modifier the modifier, or <code>null</code> to remove it
+	 * @since 3.41
+	 */
+	public static void setURLModifier(IImageURLModifier modifier) {
+		urlModifier = modifier;
+	}
+
 	private static final ImageDescriptor NULL_IMAGE = createFromImageDataProvider(z -> null);
 
 	/**

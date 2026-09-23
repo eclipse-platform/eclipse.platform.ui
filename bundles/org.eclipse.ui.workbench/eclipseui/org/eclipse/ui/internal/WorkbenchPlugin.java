@@ -36,6 +36,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.help.EHelpService;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.IImageURLModifier;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.BidiUtils;
@@ -197,6 +198,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ServiceTracker debugTracker = null;
 
 	private ServiceTracker testableTracker = null;
+
+	private ServiceTracker<IImageURLModifier, IImageURLModifier> imageURLModifierTracker = null;
 
 	private EHelpService helpService;
 
@@ -759,6 +762,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		JFaceUtil.initializeJFace();
 
+		imageURLModifierTracker = new ImageURLModifierTracker(context);
+		imageURLModifierTracker.open();
+
 		parseBidiArguments();
 		Window.setDefaultOrientation(getDefaultOrientation());
 
@@ -1060,6 +1066,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (testableTracker != null) {
 			testableTracker.close();
 			testableTracker = null;
+		}
+		if (imageURLModifierTracker != null) {
+			imageURLModifierTracker.close();
+			imageURLModifierTracker = null;
 		}
 		super.stop(context);
 	}
