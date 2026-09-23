@@ -84,6 +84,9 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String workingSet_others;
 	public static String ShowInActionProvider_showInAction_label;
 
+	public static String ToggleBookmarkHandler_dialogTitle;
+	public static String ToggleBookmarkHandler_dialogMessage;
+
 
 
 	static {
