@@ -155,6 +155,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String PROBLEMS_GENERATOR = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
 
+	/**
+	 * The highlighted resources generator.
+	 */
+	public static final String HIGHLIGHTED_RESOURCES_GENERATOR = "org.eclipse.ui.ide.highlightedResourcesGenerator"; //$NON-NLS-1$
 
 	/**
 	 * The all markers generator.
