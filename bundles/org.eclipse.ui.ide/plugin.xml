@@ -1593,6 +1593,7 @@
             name="%Field.Description">
       </markerField>
       <markerContentGenerator
+            defaultMarkerGrouping="org.eclipse.ui.ide.type"
             id="org.eclipse.ui.ide.bookmarksGenerator"
             name="%ContentGenerator.Bookmarks">
          <markerFieldReference
@@ -1622,10 +1623,17 @@
          <markerTypeReference
                id="org.eclipse.core.resources.bookmark">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.ui.navigator.resources.highlightMarker">
+         </markerTypeReference>
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
-               visible="false">
+               visible="true">
          </markerFieldReference>
+         <markerGrouping
+               id="org.eclipse.ui.ide.type"
+               label="%markerGrouping.type">
+         </markerGrouping>
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerTypeField"
@@ -1757,6 +1765,16 @@
             id="org.eclipse.ui.ide.allSeverityField"
             name="%Field.Description">
       </markerField>
+
+       <markerTypeCategory
+             name="%markerTypeCategory.bookmark">
+          <markerTypeReference
+                id="org.eclipse.core.resources.bookmark">
+          </markerTypeReference>
+          <markerTypeReference
+                id="org.eclipse.ui.navigator.resources.highlightMarker">
+          </markerTypeReference>
+       </markerTypeCategory>
 
    </extension>
    <extension
