@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,12 +17,15 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -50,6 +53,12 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private final FileSearchPage fPage;
 	private final AbstractTreeViewer fTreeViewer;
 	private Map<Object, Set<Object>> fChildrenMap;
+	/**
+	 * Upper bound for the number of children of an element in
+	 * {@link #fChildrenMap}. Only updated while inserting, so it may be bigger than
+	 * the real maximum after elements have been removed.
+	 */
+	private int fMaxChildrenCount;
 
 	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
 		fPage= page;
@@ -81,7 +90,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private synchronized void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 		fChildrenMap= new HashMap<>();
-		boolean showLineMatches= !((FileSearchQuery) fResult.getQuery()).isFileNameSearch();
+		fMaxChildrenCount= 0;
+		// the result may be provided by a client that doesn't use a FileSearchQuery
+		boolean showLineMatches= fResult.getQuery() instanceof FileSearchQuery query && !query.isFileNameSearch();
 
 		if (result != null) {
 			Object[] elements= result.getElements();
@@ -137,7 +148,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 			children= new HashSet<>();
 			fChildrenMap.put(parent, children);
 		}
-		return children.add(child);
+		boolean added= children.add(child);
+		if (added && children.size() > fMaxChildrenCount) {
+			fMaxChildrenCount= children.size();
+		}
+		return added;
 	}
 
 	private boolean hasChild(Object parent, Object child) {
@@ -226,20 +241,125 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public int getLeafCount(Object parentElement) {
-		Object[] children = getChildren(parentElement);
-		if (children.length == 0) {
+		Set<Object> children = fChildrenMap.get(parentElement);
+		if (children == null || children.isEmpty()) {
 			return 0;
 		}
+		return countShownLeafs(parentElement, getElementLimit());
+	}
+
+	/**
+	 * Counts the leafs below the given element that are shown in the viewer. Like
+	 * {@link #getChildren(Object)} only the first <code>elementLimit</code> children
+	 * of an element are considered, subtrees hidden by the element limit are not
+	 * traversed.
+	 *
+	 * @param element      the element to count the shown leafs for
+	 * @param elementLimit the element limit, <code>-1</code> for no limit
+	 * @return number of leafs shown below the given element
+	 */
+	private int countShownLeafs(Object element, int elementLimit) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null || children.isEmpty()) {
+			return 1; // the element itself is a leaf
+		}
 		int count = 0;
-		for (Object object : children) {
-			boolean leaf = !hasChildren(object);
-			if (leaf) {
-				count++;
-			} else {
-				count += getLeafCount(object);
+		int index = 0;
+		for (Object child : children) {
+			if (elementLimit != -1 && index >= elementLimit) {
+				break; // the remaining children are hidden
 			}
+			count += countShownLeafs(child, elementLimit);
+			index++;
 		}
 		return count;
+	}
+
+	@Override
+	public boolean isTruncated(Object parentElement) {
+		int elementLimit = getElementLimit();
+		if (elementLimit == -1 || fMaxChildrenCount <= elementLimit) {
+			// no element can have more children than the element limit allows
+			return false;
+		}
+		return isTruncated(parentElement, elementLimit);
+	}
+
+	/**
+	 * Elements are hidden if and only if a shown element has more children than the
+	 * element limit allows, so only shown subtrees have to be traversed, and the
+	 * traversal can stop at the first truncated element.
+	 *
+	 * @param element      the element to check
+	 * @param elementLimit the element limit, never <code>-1</code>
+	 * @return <code>true</code> if elements below the given element are hidden
+	 */
+	private boolean isTruncated(Object element, int elementLimit) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null) {
+			return false;
+		}
+		if (children.size() > elementLimit) {
+			return true;
+		}
+		for (Object child : children) { // all children are shown
+			if (isTruncated(child, elementLimit)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int getShownMatchCount(AbstractTextSearchResult result) {
+		if (result == null || !fChildrenMap.containsKey(result)) {
+			return 0;
+		}
+		Map<Object, Set<LineElement>> shownLines = new HashMap<>();
+		List<Object> shownFiles = new ArrayList<>();
+		collectShownLeafs(result, getElementLimit(), shownLines, shownFiles);
+
+		int count = 0;
+		// count the matches of the shown lines with one pass over the matches of
+		// each file instead of scanning them once per line
+		for (Entry<Object, Set<LineElement>> entry : shownLines.entrySet()) {
+			for (Match match : result.getMatches(entry.getKey())) {
+				if (isShown(result, match) && entry.getValue().contains(((FileMatch) match).getLineElement())) {
+					count++;
+				}
+			}
+		}
+		for (Object file : shownFiles) {
+			count += fPage.getDisplayedMatchCount(file);
+		}
+		return count;
+	}
+
+	private static boolean isShown(AbstractTextSearchResult result, Match match) {
+		// see AbstractTextSearchViewPage#getDisplayedMatchCount(Object): if no filters
+		// are set at all the filter state of a match is ignored
+		return result.getActiveMatchFilters() == null || !match.isFiltered();
+	}
+
+	private void collectShownLeafs(Object element, int elementLimit, Map<Object, Set<LineElement>> shownLines,
+			List<Object> shownFiles) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null || children.isEmpty()) {
+			if (element instanceof LineElement line) {
+				shownLines.computeIfAbsent(line.getParent(), k -> new HashSet<>()).add(line);
+			} else {
+				shownFiles.add(element);
+			}
+			return;
+		}
+		int index = 0;
+		for (Object child : children) {
+			if (elementLimit != -1 && index >= elementLimit) {
+				break;
+			}
+			collectShownLeafs(child, elementLimit, shownLines, shownFiles);
+			index++;
+		}
 	}
 
 	@Override
