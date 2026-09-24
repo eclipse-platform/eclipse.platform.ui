@@ -17,4 +17,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ui/texteditor/stickyscroll/IStickyLine.java" type="org.eclipse.ui.texteditor.stickyscroll.IStickyLine">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.texteditor.stickyscroll.IStickyLine"/>
+                <message_argument value="getBackgroundColor()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
