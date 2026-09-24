@@ -268,13 +268,38 @@ public class MyHandler {
      ```
 
 4. **Convert enablement logic**:
-   - Replace `enabledWhen` expressions with `@CanExecute` method:
-     ```java
-     @CanExecute
-     public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) ISelection selection) {
-         return selection != null && !selection.isEmpty();
-     }
+   
+   **Option A: Use Core Expressions (Recommended for complex conditions)**
+   
+   If your E3 handler had an `<enabledWhen>` expression, you can migrate it to a core expression in the E4 model:
+   
+   - Define a core expression in plugin.xml (see [Command_Core_Expressions.md](Command_Core_Expressions.md#definitions)):
+     ```xml
+     <extension point="org.eclipse.core.expressions.definitions">
+        <definition id="com.example.handler.enabled">
+           <with variable="selection">
+              <count value="1"/>
+           </with>
+        </definition>
+     </extension>
      ```
+   
+   - In the E4 Model Editor, select your handler and add an "Enabled When" expression:
+     - In the handler details, click "Add" in the "Enabled When" section
+     - Select "Core Expression"
+     - Set Core Expression Id: `com.example.handler.enabled`
+   
+   When a core expression is defined, it takes precedence over `@CanExecute` annotations.
+   
+   **Option B: Use @CanExecute annotation (Recommended for simple conditions)**
+   
+   For simple enablement conditions, use `@CanExecute` method in your handler class:
+   ```java
+   @CanExecute
+   public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) ISelection selection) {
+       return selection != null && !selection.isEmpty();
+   }
+   ```
 
 5. **Handle active context** (replacement for `activeWhen`):
    - In E4, handlers are scoped to their containing model element
@@ -289,6 +314,17 @@ public class MyHandler {
    Import-Package: jakarta.inject;version="1.0.0",
     jakarta.annotation;version="1.1.0"
    ```
+
+### Handler Enablement Precedence
+
+When both an `enabledWhen` core expression and a `@CanExecute` annotation are present:
+1. The `enabledWhen` expression is evaluated first
+2. If the expression returns false, the handler is disabled (regardless of `@CanExecute`)
+3. If the expression returns true (or is not defined), the `@CanExecute` method is called
+
+This allows you to use core expressions for complex, declarative conditions while still having programmatic control through `@CanExecute` when needed.
+
+For more information on core expression syntax, see [Command_Core_Expressions.md](Command_Core_Expressions.md).
 
 ### Common Injection Patterns for Handlers
 
