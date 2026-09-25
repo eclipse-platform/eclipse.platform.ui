@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -46,6 +47,11 @@ public class ProgressReportingTest {
 	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	@RegisterExtension
+	@Order(1)
+	PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
+
+	@RegisterExtension
+	@Order(2)
 	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	/**
@@ -78,9 +84,6 @@ public class ProgressReportingTest {
 	 * results during profiling.
 	 */
 	public static final int MAX_ITERATIONS = 100;
-
-	@RegisterExtension
-	PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
 
 	private volatile boolean isDone;
 	private Display display;
