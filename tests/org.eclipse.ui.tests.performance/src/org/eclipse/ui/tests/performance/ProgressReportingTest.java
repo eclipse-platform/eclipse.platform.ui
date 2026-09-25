@@ -23,29 +23,36 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Verifies the performance of progress reporting APIs in various contexts which
  * offer progress monitoring.
  */
-public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
+public class ProgressReportingTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	@Order(1)
+	PreferenceMementoExtension preferenceMemento = new PreferenceMementoExtension();
+
+	@RegisterExtension
+	@Order(2)
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
 	/**
 	 * Number of iterations to run for the inner loop in these tests. This
@@ -78,15 +85,14 @@ public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 	 */
 	public static final int MAX_ITERATIONS = 100;
 
-	@Rule
-	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
-
 	private volatile boolean isDone;
 	private Display display;
+	private String scenarioId;
 
-	@Before
-	public final void storeDisplay() throws Exception {
+	@BeforeEach
+	void setUp(TestInfo testInfo) throws Exception {
 		this.display = Display.getCurrent();
+		this.scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
 	}
 
 	private void setRunInBackground(boolean newRunInBackgroundSetting) {
@@ -101,23 +107,31 @@ public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 	 */
 	public void runAsyncTest(Runnable testContent) throws Exception {
 		final Display display = Display.getCurrent();
-		exercise(() -> {
-			startMeasuring();
 
-			isDone = false;
-			testContent.run();
+		Performance perf = Performance.getDefault();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
 
-			for (; !isDone;) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
+		try {
+			exercise(() -> {
+				meter.start();
+
+				isDone = false;
+				testContent.run();
+
+				for (; !isDone;) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
 				}
-			}
 
-			stopMeasuring();
-		}, 1, MAX_ITERATIONS, MAX_RUNTIME);
+				meter.stop();
+			}, 1, MAX_ITERATIONS, MAX_RUNTIME);
 
-		commitMeasurements();
-		assertPerformance();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 	/**
