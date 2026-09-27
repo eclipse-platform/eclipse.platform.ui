@@ -14,12 +14,14 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -170,6 +172,114 @@ public class AsyncContentAssistTest {
 				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
 			}
 		}.waitForCondition(display, 4000), "Completion item not shown");
+	}
+
+	@Test
+	public void testAutoInsertSingleProposal() {
+		Document document= new Document("b");
+		ContentAssistant contentAssistant= createAutoInsertingContentAssistant(new BarContentAssistProcessor());
+		installAndOpen(contentAssistant, document);
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		contentAssistant.showPossibleCompletions();
+		assertInsertedWithoutPopup(document, beforeShells);
+	}
+
+	@Test
+	public void testAutoInsertSingleProposalWithPrefixCompletion() {
+		Document document= new Document("b");
+		ContentAssistant contentAssistant= createAutoInsertingContentAssistant(new BarContentAssistProcessor());
+		contentAssistant.enablePrefixCompletion(true);
+		installAndOpen(contentAssistant, document);
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		contentAssistant.showPossibleCompletions();
+		assertInsertedWithoutPopup(document, beforeShells);
+	}
+
+	@Test
+	public void testNoAutoInsertOfMultipleProposals() {
+		Document document= new Document("b");
+		ContentAssistant contentAssistant= createAutoInsertingContentAssistant(new BarContentAssistProcessor());
+		contentAssistant.addContentAssistProcessor(new BarContentAssistProcessor("bazaar"), IDocument.DEFAULT_CONTENT_TYPE);
+		installAndOpen(contentAssistant, document);
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		contentAssistant.showPossibleCompletions();
+		assertProposalShown(beforeShells, "azaar");
+		assertEquals("b", document.get());
+	}
+
+	@Test
+	public void testNoAutoInsertOnAutoActivation() {
+		BarContentAssistProcessor processor= new BarContentAssistProcessor();
+		processor.setCompletionProposalAutoActivationChar('b');
+		ContentAssistant contentAssistant= createAutoInsertingContentAssistant(processor);
+		contentAssistant.enableAutoActivation(true);
+		contentAssistant.setAutoActivationDelay(0);
+		typeAndAssertNotInserted(contentAssistant, 'b');
+	}
+
+	@Test
+	public void testNoAutoInsertOnCompletionOnType() {
+		ContentAssistant contentAssistant= createAutoInsertingContentAssistant(new BarContentAssistProcessor());
+		contentAssistant.enableAutoActivation(true);
+		contentAssistant.setAutoActivationDelay(0);
+		contentAssistant.enableAutoActivateCompletionOnType(true);
+		typeAndAssertNotInserted(contentAssistant, 'b');
+	}
+
+	private static ContentAssistant createAutoInsertingContentAssistant(BarContentAssistProcessor processor) {
+		ContentAssistant contentAssistant= new ContentAssistant(true);
+		contentAssistant.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		contentAssistant.enableAutoInsert(true);
+		return contentAssistant;
+	}
+
+	private SourceViewer installAndOpen(ContentAssistant contentAssistant, Document document) {
+		shell.setLayout(new FillLayout());
+		shell.setSize(500, 300);
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		viewer.setDocument(document);
+		viewer.setSelectedRange(document.getLength(), 0);
+		contentAssistant.install(viewer);
+		shell.open();
+		Display display= shell.getDisplay();
+		DisplayHelper.runEventLoop(display, 0);
+		viewer.getTextWidget().forceFocus();
+		DisplayHelper.runEventLoop(display, 0);
+		return viewer;
+	}
+
+	private void assertInsertedWithoutPopup(Document document, Collection<Shell> beforeShells) {
+		Display display= shell.getDisplay();
+		DisplayHelper.waitForCondition(display, 2000, () -> BarContentAssistProcessor.PROPOSAL.equals(document.get()));
+		DisplayHelper.runEventLoop(display, 100);
+		assertEquals(BarContentAssistProcessor.PROPOSAL, document.get(), "Single proposal not inserted");
+		assertEquals(List.of(), AbstractContentAssistTest.findNewShells(beforeShells), "Proposal popup shown");
+	}
+
+	private void typeAndAssertNotInserted(ContentAssistant contentAssistant, char c) {
+		Document document= new Document("");
+		Control control= installAndOpen(contentAssistant, document).getTextWidget();
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		Event keyEvent= new Event();
+		keyEvent.widget= control;
+		keyEvent.type= SWT.KeyDown;
+		keyEvent.character= c;
+		keyEvent.keyCode= c;
+		control.notifyListeners(SWT.KeyDown, keyEvent);
+		AbstractContentAssistTest.processEvents();
+		assertProposalShown(beforeShells, BarContentAssistProcessor.PROPOSAL.substring(1));
+		assertEquals(String.valueOf(c), document.get());
+	}
+
+	private void assertProposalShown(Collection<Shell> beforeShells, String proposal) {
+		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				Table completionTable= findCompletionSelectionControl(newShell);
+				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(proposal));
+			}
+		}.waitForCondition(shell.getDisplay(), 4000), "Completion item not shown");
 	}
 
 	private static Table findCompletionSelectionControl(Widget control) {
