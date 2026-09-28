@@ -1799,6 +1799,15 @@
           </parameter>
          </colorFactory>
       </colorDefinition>
+      <colorDefinition
+            label="%Color.activeEditorTabBG"
+            categoryId="org.eclipse.ui.presentation.default"
+            value="COLOR_LIST_BACKGROUND"
+            id="org.eclipse.ui.workbench.ACTIVE_EDITOR_TAB_BG">
+         <description>
+            %Color.activeEditorTabBGDesc
+         </description>
+      </colorDefinition>
 <!-- Active (Nofocus) Tab Colors -->
       <colorDefinition
             label="%Color.activeNofocusTabText"

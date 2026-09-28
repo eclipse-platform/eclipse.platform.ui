@@ -132,6 +132,10 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
     label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_TAB_BG_END');
 }
 
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_EDITOR_TAB_BG {
+    color: #1E1F22;
+}
+
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #646464;
 	category: '#org-eclipse-ui-presentation-default';
