@@ -108,6 +108,7 @@ ImageBasedFrame,
 }
 
 #org-eclipse-ui-editorss CTabFolder.active {
+    swt-selected-tab-fill: '#org-eclipse-ui-workbench-ACTIVE_EDITOR_TAB_BG';
     swt-selected-tab-highlight: '#2b79d7';
     swt-selected-highlight-top: true;
 }
