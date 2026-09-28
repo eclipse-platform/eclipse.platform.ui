@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 IBM Corporation and others.
+ * Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,17 +53,22 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 				return;
 			}
 
-			addCurrentEvent(topic, event);
-			requestor.resolveArguments(false);
-			removeCurrentEvent(topic);
-			if( uiSync == null ) {
+			UISynchronize synchronizer = uiSync;
+			if (synchronizer == null) {
 				if (logger != null) {
-					logger.log(Level.WARNING, "No realm found to process UI event " + event);
+					logger.log(Level.WARNING, "No realm found to process UI event " + event); //$NON-NLS-1$
 				}
 				return;
-			} else {
-				uiSync.syncExec(requestor::execute);
 			}
+
+			addCurrentEvent(topic, event);
+			try {
+				requestor.resolveArguments(false);
+			} finally {
+				removeCurrentEvent(topic);
+			}
+
+			synchronizer.syncExec(requestor::execute);
 		}
 	}
 
@@ -91,7 +96,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 			return null;
 		}
 		UIEventTopic qualifier = descriptor.getQualifier(UIEventTopic.class);
-		return qualifier.value();
+		return qualifier == null ? null : qualifier.value();
 	}
 
 }
