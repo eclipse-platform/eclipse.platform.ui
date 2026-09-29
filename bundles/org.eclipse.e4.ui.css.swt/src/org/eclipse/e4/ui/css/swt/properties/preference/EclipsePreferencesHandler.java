@@ -57,7 +57,7 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 
 	protected void overrideProperty(IEclipsePreferences preferences, String name, String value) {
 		if (preferences.get(name, null) == null || EclipsePreferencesHelper.isThemeChanged()) {
-			preferences.put(name, value);
+			EclipsePreferencesHelper.putOverriddenProperty(preferences, name, value);
 			EclipsePreferencesHelper.appendOverriddenPropertyName(preferences, name);
 		}
 		EclipsePreferencesHelper.overrideDefault(preferences, name, value);

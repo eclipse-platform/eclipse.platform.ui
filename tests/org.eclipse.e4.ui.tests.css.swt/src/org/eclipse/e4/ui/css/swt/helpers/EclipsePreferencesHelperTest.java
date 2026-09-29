@@ -20,6 +20,7 @@ import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.SEPARAT
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.appendOverriddenPropertyName;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.getOverriddenPropertyNames;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.getPreferenceChangeListener;
+import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.putOverriddenProperty;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.removeOverriddenByCssProperty;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.removeOverriddenPropertyNames;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,5 +110,41 @@ public class EclipsePreferencesHelperTest {
 		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop1" + SEPARATOR));
 		assertFalse(overriddenPreferences.contains(SEPARATOR + "prop2" + SEPARATOR));
 		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop3" + SEPARATOR));
+	}
+
+	@Test
+	void testUserEditRemovesOverriddenByCssProperty() {
+		IEclipsePreferences preferences = new EclipsePreferences();
+		putOverriddenProperty(preferences, "prop1", "false");
+		appendOverriddenPropertyName(preferences, "prop1");
+
+		preferences.put("prop1", "true");
+
+		assertFalse(getOverriddenPropertyNames(preferences).contains("prop1"));
+	}
+
+	@Test
+	void testUserEditAfterResetToDefaultRemovesOverriddenByCssProperty() {
+		IEclipsePreferences preferences = new EclipsePreferences();
+		putOverriddenProperty(preferences, "prop1", "false");
+		appendOverriddenPropertyName(preferences, "prop1");
+
+		preferences.remove("prop1");
+		assertTrue(getOverriddenPropertyNames(preferences).contains("prop1"));
+
+		preferences.put("prop1", "true");
+
+		assertFalse(getOverriddenPropertyNames(preferences).contains("prop1"));
+	}
+
+	@Test
+	void testCssValueKeepsOverriddenByCssProperty() {
+		IEclipsePreferences preferences = new EclipsePreferences();
+		putOverriddenProperty(preferences, "prop1", "false");
+		appendOverriddenPropertyName(preferences, "prop1");
+
+		putOverriddenProperty(preferences, "prop1", "true");
+
+		assertTrue(getOverriddenPropertyNames(preferences).contains("prop1"));
 	}
 }
