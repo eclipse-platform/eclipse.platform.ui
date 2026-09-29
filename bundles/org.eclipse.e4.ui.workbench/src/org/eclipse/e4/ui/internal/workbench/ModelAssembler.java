@@ -611,12 +611,63 @@ public class ModelAssembler {
 			}
 		}
 
-		// elements already in the application model must not replace the existing ones
-		elements.removeAll(existingElements);
-		if (elements.isEmpty()) {
-			return new ArrayList<>();
+		if (!existingElements.isEmpty()) {
+			// elements already in the application model must not replace the existing ones
+			Map<EObject, EObject> existingObjects = getExistingObjects(existingElements, applicationResource);
+			Resource fragmentResource = ((EObject) fragment).eResource();
+			elements.removeAll(existingElements);
+			redirectReferences(existingObjects, applicationResource, fragmentResource);
+			if (elements.isEmpty()) {
+				return new ArrayList<>();
+			}
 		}
 		return fragment.merge(application);
+	}
+
+	/**
+	 * Maps the given fragment elements and their contents to the elements with the
+	 * same id in the application model.
+	 */
+	private Map<EObject, EObject> getExistingObjects(List<MApplicationElement> fragmentElements,
+			E4XMIResource applicationResource) {
+		Map<EObject, EObject> existingObjects = new HashMap<>();
+		for (MApplicationElement el : fragmentElements) {
+			EObject o = (EObject) el;
+			E4XMIResource r = (E4XMIResource) o.eResource();
+			putExistingObject(existingObjects, o, r.getID(o), applicationResource);
+			Iterable<EObject> contents = () -> EcoreUtil.getAllContents(o, true);
+			for (EObject eObj : contents) {
+				putExistingObject(existingObjects, eObj, r.getInternalId(eObj), applicationResource);
+			}
+		}
+		return existingObjects;
+	}
+
+	/**
+	 * Points the references to the given fragment objects, which are not merged,
+	 * at the existing objects. These references can only be in the application
+	 * model or in the resource of the fragment, as fragments reference other
+	 * fragments through imports.
+	 */
+	private void redirectReferences(Map<EObject, EObject> existingObjects, Resource applicationResource,
+			Resource fragmentResource) {
+		Map<EObject, Collection<EStructuralFeature.Setting>> usages = EcoreUtil.UsageCrossReferencer
+				.findAll(existingObjects.keySet(), List.of(applicationResource, fragmentResource));
+		for (Map.Entry<EObject, Collection<EStructuralFeature.Setting>> usage : usages.entrySet()) {
+			for (EStructuralFeature.Setting setting : usage.getValue()) {
+				if (setting.getEStructuralFeature().isChangeable()) {
+					EcoreUtil.replace(setting, usage.getKey(), existingObjects.get(usage.getKey()));
+				}
+			}
+		}
+	}
+
+	private void putExistingObject(Map<EObject, EObject> existingObjects, EObject fragmentObject, String id,
+			E4XMIResource applicationResource) {
+		EObject existingObject = id == null ? null : applicationResource.getIDToEObjectMap().get(id);
+		if (existingObject != null && existingObject.eClass() == fragmentObject.eClass()) {
+			existingObjects.put(fragmentObject, existingObject);
+		}
 	}
 
 	/**
