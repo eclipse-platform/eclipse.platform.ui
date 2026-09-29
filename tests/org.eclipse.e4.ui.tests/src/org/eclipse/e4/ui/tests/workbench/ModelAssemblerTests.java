@@ -44,11 +44,14 @@ import org.eclipse.e4.ui.internal.workbench.ModelAssembler;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
@@ -329,6 +332,130 @@ public class ModelAssemblerTests {
 		assertEquals(missingWindow, modelService.find(missingElementId, application));
 		assertEquals(contributorURI, missingWindow.getContributorURI());
 		assertEquals(missingXmiId, appResource.getID((EObject) missingWindow));
+
+		assertEquals(0, logMessages.size());
+	}
+
+	/**
+	 * Tests that an element merged by a fragment references the existing element
+	 * of the model, if the element it references is contributed by another
+	 * fragment and is not merged because it already exists.
+	 */
+	@Test
+	public void testFragments_checkExists_referenceToExistingElement() throws Exception {
+		checkReferenceToExistingElement(false);
+	}
+
+	/**
+	 * Tests that an element merged by a fragment references the existing element
+	 * of the model, if the fragment contributing the referenced element is
+	 * processed afterwards and not merged because its element already exists.
+	 */
+	@Test
+	public void testFragments_checkExists_referenceToExistingElement_processedLater() throws Exception {
+		checkReferenceToExistingElement(true);
+	}
+
+	private void checkReferenceToExistingElement(boolean handlerFragmentFirst) {
+		// create the fragments contributing a command and a handler referencing it
+		MStringModelFragment commandFragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+		commandFragment.setFeaturename("commands");
+		commandFragment.setParentElementId(APPLICATION_ID);
+		MStringModelFragment handlerFragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+		handlerFragment.setFeaturename("handlers");
+		handlerFragment.setParentElementId(APPLICATION_ID);
+		MModelFragments fragments = MFragmentFactory.INSTANCE.createModelFragments();
+		fragments.getFragments().add(commandFragment);
+		fragments.getFragments().add(handlerFragment);
+		// create fragment resource
+		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
+		resourceSet.getResources().add(fragmentResource);
+		fragmentResource.getContents().add((EObject) fragments);
+
+		final String commandElementId = "testFragments_checkExists_referenceToExistingElement-command";
+		MCommand existingCommand = modelService.createModelElement(MCommand.class);
+		existingCommand.setElementId(commandElementId);
+		MCommand contributedCommand = modelService.createModelElement(MCommand.class);
+		contributedCommand.setElementId(commandElementId);
+		MHandler handler = modelService.createModelElement(MHandler.class);
+		handler.setElementId("testFragments_checkExists_referenceToExistingElement-handler");
+		handler.setCommand(contributedCommand);
+
+		// add the existing command to app, the contributed one and the handler to the fragments
+		application.getCommands().add(existingCommand);
+		commandFragment.getElements().add(contributedCommand);
+		handlerFragment.getElements().add(handler);
+
+		// set the same resource xmi id to both commands
+		final String commandXmiId = "testFragments_checkExists_referenceToExistingElement_commandXMIID";
+		appResource.setID((EObject) existingCommand, commandXmiId);
+		fragmentResource.setID((EObject) contributedCommand, commandXmiId);
+		fragmentResource.setID((EObject) handler, "testFragments_checkExists_referenceToExistingElement_handlerXMIID");
+
+		final String contributorURI = "testFragments_checkExists_referenceToExistingElement_contribURI";
+		if (handlerFragmentFirst) {
+			assertEquals(List.of(handler), assembler.processModelFragment(handlerFragment, contributorURI, true));
+			assertEquals(0, assembler.processModelFragment(commandFragment, contributorURI, true).size());
+		} else {
+			assertEquals(0, assembler.processModelFragment(commandFragment, contributorURI, true).size());
+			assertEquals(List.of(handler), assembler.processModelFragment(handlerFragment, contributorURI, true));
+		}
+
+		assertEquals(List.of(existingCommand), application.getCommands());
+		assertEquals(List.of(handler), application.getHandlers());
+		assertEquals(existingCommand, handler.getCommand());
+
+		assertEquals(0, logMessages.size());
+	}
+
+	/**
+	 * Tests that an element which exists in the model is not merged if its
+	 * contents reference each other, e.g. a container its selected element.
+	 */
+	@Test
+	public void testFragments_checkExists_referencesWithinExistingElement() throws Exception {
+		// create fragment
+		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+		fragment.setFeaturename("children");
+		fragment.setParentElementId(APPLICATION_ID);
+		// create fragment resource
+		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
+		resourceSet.getResources().add(fragmentResource);
+		fragmentResource.getContents().add((EObject) fragment);
+
+		final String windowElementId = "testFragments_checkExists_referencesWithinExistingElement-window";
+		final String stackElementId = "testFragments_checkExists_referencesWithinExistingElement-stack";
+		MWindow existingWindow = modelService.createModelElement(MWindow.class);
+		existingWindow.setElementId(windowElementId);
+		MPartStack existingStack = modelService.createModelElement(MPartStack.class);
+		existingStack.setElementId(stackElementId);
+		existingWindow.getChildren().add(existingStack);
+		existingWindow.setSelectedElement(existingStack);
+		MWindow contributedWindow = modelService.createModelElement(MWindow.class);
+		contributedWindow.setElementId(windowElementId);
+		MPartStack contributedStack = modelService.createModelElement(MPartStack.class);
+		contributedStack.setElementId(stackElementId);
+		contributedWindow.getChildren().add(contributedStack);
+		contributedWindow.setSelectedElement(contributedStack);
+
+		// add the existing window to app and the contributed one to the fragment
+		application.getChildren().add(existingWindow);
+		fragment.getElements().add(contributedWindow);
+
+		// set the same resource xmi ids to the windows and their stacks
+		final String windowXmiId = "testFragments_checkExists_referencesWithinExistingElement_windowXMIID";
+		final String stackXmiId = "testFragments_checkExists_referencesWithinExistingElement_stackXMIID";
+		appResource.setID((EObject) existingWindow, windowXmiId);
+		appResource.setID((EObject) existingStack, stackXmiId);
+		fragmentResource.setID((EObject) contributedWindow, windowXmiId);
+		fragmentResource.setID((EObject) contributedStack, stackXmiId);
+		List<MApplicationElement> elements = assembler.processModelFragment(fragment,
+				"testFragments_checkExists_referencesWithinExistingElement_contribURI", true);
+
+		assertEquals(0, elements.size());
+		assertEquals(List.of(existingWindow), application.getChildren());
+		assertEquals(List.of(existingStack), existingWindow.getChildren());
+		assertEquals(existingStack, existingWindow.getSelectedElement());
 
 		assertEquals(0, logMessages.size());
 	}
