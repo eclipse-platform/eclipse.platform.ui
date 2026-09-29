@@ -44,6 +44,7 @@ import org.junit.platform.suite.api.Suite;
 	 IPageServiceTest.class,
 	 IPerspectiveRegistryTest.class,
 	 ModelPerspectiveActionSetTest.class,
+	 WorkbenchWindowMainMenuTest.class,
 	 IPerspectiveDescriptorTest.class,
 	 IFileEditorMappingTest.class,
 	 IEditorDescriptorTest.class,
