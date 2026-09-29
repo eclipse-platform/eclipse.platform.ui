@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2021 EclipseSource Muenchen GmbH and others.
+ * Copyright (c) 2016, 2026 EclipseSource Muenchen GmbH and others.
  *
  *
  * This program and the accompanying materials
@@ -67,7 +67,6 @@ import org.eclipse.equinox.log.LogFilter;
 import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
@@ -197,8 +196,12 @@ public class ModelAssemblerTests {
 		assertEquals(0, logMessages.size());
 	}
 
+	/**
+	 * Tests that fragments configured to be merged only if their elements don't
+	 * exist yet are not merged if the model already contains the contributed
+	 * element.
+	 */
 	@Test
-	@Disabled // currently ignored due to bug 487748
 	public void testFragments_existingXMIID_checkExists() throws Exception {
 		// create fragment
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
@@ -235,6 +238,97 @@ public class ModelAssemblerTests {
 
 		MUIElement found = modelService.find(contributedElementId, application);
 		assertEquals(window1, found);
+
+		assertEquals(0, logMessages.size());
+	}
+
+	/**
+	 * Tests that an element which exists in the model but differs from the
+	 * contributed one, e.g. because it was changed at runtime and restored from
+	 * the persisted state, is not replaced by the contributed element.
+	 */
+	@Test
+	public void testFragments_existingXMIID_checkExists_modifiedElement() throws Exception {
+		// create fragment
+		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+		fragment.setFeaturename("children");
+		fragment.setParentElementId("org.eclipse.e4.ui.tests.modelassembler.app");
+		// create fragment resource
+		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
+		resourceSet.getResources().add(fragmentResource);
+		fragmentResource.getContents().add((EObject) fragment);
+
+		final String contributedElementId = "testFragments_existingXMIID_modifiedElement-contributedWindow";
+		MWindow window1 = modelService.createModelElement(MWindow.class);
+		window1.setElementId(contributedElementId);
+		window1.setLabel("persisted");
+		MWindow window2 = modelService.createModelElement(MWindow.class);
+		window2.setElementId(contributedElementId);
+		window2.setLabel("contributed");
+
+		// add window1 to app and window2 to fragment
+		application.getChildren().add(window1);
+		fragment.getElements().add(window2);
+
+		// set the same resource xmi id to window1 and window2
+		final String xmiId = "testFragments_existingXMIID_modifiedElement_XMIID";
+		appResource.setID((EObject) window1, xmiId);
+		fragmentResource.setID((EObject) window2, xmiId);
+		List<MApplicationElement> elements = assembler.processModelFragment(fragment,
+				"testFragments_existingXMIID_modifiedElement_contribURI", true);
+
+		assertEquals(0, elements.size());
+		assertEquals(1, application.getChildren().size());
+		MUIElement found = modelService.find(contributedElementId, application);
+		assertEquals(window1, found);
+		assertEquals("persisted", window1.getLabel());
+		assertEquals(xmiId, appResource.getID((EObject) window1));
+
+		assertEquals(0, logMessages.size());
+	}
+
+	/**
+	 * Tests that fragments configured to be merged only if their elements don't
+	 * exist yet still merge the elements which are missing in the model.
+	 */
+	@Test
+	public void testFragments_checkExists_mergesMissingElements() throws Exception {
+		// create fragment
+		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+		fragment.setFeaturename("children");
+		fragment.setParentElementId("org.eclipse.e4.ui.tests.modelassembler.app");
+		// create fragment resource
+		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
+		resourceSet.getResources().add(fragmentResource);
+		fragmentResource.getContents().add((EObject) fragment);
+
+		final String existingElementId = "testFragments_checkExists_mergesMissingElements-existingWindow";
+		MWindow existingWindow = modelService.createModelElement(MWindow.class);
+		existingWindow.setElementId(existingElementId);
+		MWindow contributedExistingWindow = modelService.createModelElement(MWindow.class);
+		contributedExistingWindow.setElementId(existingElementId);
+		final String missingElementId = "testFragments_checkExists_mergesMissingElements-missingWindow";
+		MWindow missingWindow = modelService.createModelElement(MWindow.class);
+		missingWindow.setElementId(missingElementId);
+
+		application.getChildren().add(existingWindow);
+		fragment.getElements().add(contributedExistingWindow);
+		fragment.getElements().add(missingWindow);
+
+		final String existingXmiId = "testFragments_checkExists_mergesMissingElements_existingXMIID";
+		appResource.setID((EObject) existingWindow, existingXmiId);
+		fragmentResource.setID((EObject) contributedExistingWindow, existingXmiId);
+		final String missingXmiId = "testFragments_checkExists_mergesMissingElements_missingXMIID";
+		fragmentResource.setID((EObject) missingWindow, missingXmiId);
+		final String contributorURI = "testFragments_checkExists_mergesMissingElements_contribURI";
+		List<MApplicationElement> elements = assembler.processModelFragment(fragment, contributorURI, true);
+
+		assertEquals(List.of(missingWindow), elements);
+		assertEquals(2, application.getChildren().size());
+		assertEquals(existingWindow, modelService.find(existingElementId, application));
+		assertEquals(missingWindow, modelService.find(missingElementId, application));
+		assertEquals(contributorURI, missingWindow.getContributorURI());
+		assertEquals(missingXmiId, appResource.getID((EObject) missingWindow));
 
 		assertEquals(0, logMessages.size());
 	}
