@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -328,7 +328,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			MMenu menu = model.getMainMenu();
 			if (menu != null) {
 				engine.removeGui(menu);
-				model.setMainMenu(null);
+				// keep a main menu defined by the application model, so that it is persisted
+				if (menu == mainMenu) {
+					model.setMainMenu(null);
+				}
 			}
 
 			eventBroker.unsubscribe(this.windowWidgetHandler);
