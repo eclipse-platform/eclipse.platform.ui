@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 BestSolution.at and others.
+ * Copyright (c) 2010, 2026 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -583,12 +583,14 @@ public class ModelAssembler {
 			return new ArrayList<>();
 		}
 
+		List<MApplicationElement> existingElements = new ArrayList<>();
 		for (MApplicationElement el : elements) {
 			EObject o = (EObject) el;
 
 			E4XMIResource r = (E4XMIResource) o.eResource();
 
 			if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
+				existingElements.add(el);
 				continue;
 			}
 
@@ -609,6 +611,11 @@ public class ModelAssembler {
 			}
 		}
 
+		// elements already in the application model must not replace the existing ones
+		elements.removeAll(existingElements);
+		if (elements.isEmpty()) {
+			return new ArrayList<>();
+		}
 		return fragment.merge(application);
 	}
 
