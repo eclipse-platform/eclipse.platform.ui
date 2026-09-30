@@ -114,6 +114,12 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public static final DETECTION_STRATEGY LONGEST_REGION_FIRST= new DETECTION_STRATEGY("first with longest region"); //$NON-NLS-1$
 
+	/**
+	 * Time in milliseconds the mouse must rest while the modifier is held before detection runs,
+	 * so that modifier+mouse gestures such as copy or drag do not trigger detectors.
+	 */
+	private static final int DETECTION_DELAY= 200;
+
 
 	/** The text viewer on which this hyperlink manager works. */
 	private ITextViewer fTextViewer;
@@ -134,6 +140,8 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private IHyperlinkPresenter fHyperlinkPresenter;
 	/** The detection strategy. */
 	private final DETECTION_STRATEGY fDetectionStrategy;
+	/** Runs the delayed detection scheduled by {@link #mouseMove(MouseEvent)}. */
+	private final Runnable fDelayedDetection= this::detectDelayed;
 
 
 	/**
@@ -245,7 +253,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * Deactivates the currently shown hyperlinks.
 	 */
 	protected void deactivate() {
+		cancelDelayedDetection();
 		fHyperlinkPresenter.hideHyperlinks();
+		fActiveHyperlinks= null;
 		fActive= false;
 	}
 
@@ -418,6 +428,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
+		cancelDelayedDetection();
 		fActiveHyperlinks= findHyperlinks();
 		showHyperlinks(false);
 	}
@@ -430,14 +441,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
-		if (e.button != 1) {
-			fActiveHyperlinks= null;
-		}
-
+		IHyperlink[] hyperlinks= e.button == 1 ? fActiveHyperlinks : null;
 		deactivate();
 
-		if (fActiveHyperlinks != null) {
-			fActiveHyperlinks[0].open();
+		if (hyperlinks != null) {
+			hyperlinks[0].open();
 		}
 	}
 
@@ -457,6 +465,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
+		boolean sameStateMask= fActiveHyperlinkStateMask == event.stateMask;
 		fActive= true;
 		fActiveHyperlinkStateMask= event.stateMask;
 
@@ -471,8 +480,52 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
+		int offset= getCurrentTextOffset();
+		if (sameStateMask && offset != -1 && isInActiveHyperlink(offset)) {
+			cancelDelayedDetection();
+			return;
+		}
+
+		if (fActiveHyperlinks != null) {
+			fActiveHyperlinks= null;
+			fHyperlinkPresenter.hideHyperlinks();
+		}
+		text.getDisplay().timerExec(DETECTION_DELAY, fDelayedDetection);
+	}
+
+	private boolean isInActiveHyperlink(int offset) {
+		if (fActiveHyperlinks == null) {
+			return false;
+		}
+		for (IHyperlink hyperlink : fActiveHyperlinks) {
+			IRegion region= hyperlink.getHyperlinkRegion();
+			if (region != null && offset >= region.getOffset() && offset < region.getOffset() + region.getLength()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void detectDelayed() {
+		if (!fActive || fTextViewer == null) {
+			return;
+		}
+		StyledText text= fTextViewer.getTextWidget();
+		if (text == null || text.isDisposed()) {
+			return;
+		}
+		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension extension && !extension.canHideHyperlinks()) {
+			return;
+		}
 		fActiveHyperlinks= findHyperlinks();
 		showHyperlinks(false);
+	}
+
+	private void cancelDelayedDetection() {
+		StyledText text= fTextViewer != null ? fTextViewer.getTextWidget() : null;
+		if (text != null && !text.isDisposed()) {
+			text.getDisplay().timerExec(-1, fDelayedDetection);
+		}
 	}
 
 	/**
@@ -607,6 +660,8 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 		IRegion region= new Region(offset, 0);
 		fActiveHyperlinks= findHyperlinks(region);
-		return showHyperlinks(true);
+		boolean found= showHyperlinks(true);
+		fActiveHyperlinks= null;
+		return found;
 	}
 }
