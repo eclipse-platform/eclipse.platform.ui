@@ -145,6 +145,26 @@ public class LabelTest {
 	}
 
 	@Test
+	void testFontSizeLarger() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font-size: larger }");
+
+		assertEquals(Math.round(inheritedHeight * 1.2), labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeSmallerInShorthand() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font: Verdana smaller }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Verdana", fontData.getName());
+		assertEquals(Math.round(inheritedHeight / 1.2), fontData.getHeight());
+	}
+
+	@Test
 	void testFontSizeInPixels() {
 		Label labelToTest = css.createTestLabel("Label { font-size: 16px }");
 

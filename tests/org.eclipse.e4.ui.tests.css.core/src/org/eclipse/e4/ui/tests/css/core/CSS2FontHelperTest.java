@@ -117,6 +117,17 @@ public class CSS2FontHelperTest {
 	}
 
 	@Test
+	void testShorthandRoutesSizeKeywordsToSize() {
+		assertEquals("font-size", getCSSFontPropertyName(keyword("larger")));
+		assertEquals("font-size", getCSSFontPropertyName(keyword("Smaller")));
+	}
+
+	@Test
+	void testShorthandRoutesQuotedSizeKeywordsToFamily() {
+		assertEquals("font-family", getCSSFontPropertyName(new CssText(CssText.Kind.STRING, "larger")));
+	}
+
+	@Test
 	void testShorthandRejectsValuesThatAreNoFontProperty() {
 		assertNull(getCSSFontPropertyName(new CssDimension(1, CssUnit.CM)));
 	}
