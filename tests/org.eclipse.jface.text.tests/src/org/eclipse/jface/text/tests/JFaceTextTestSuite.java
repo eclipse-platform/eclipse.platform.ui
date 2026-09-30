@@ -52,6 +52,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		SourceViewerBackgroundTest.class,
 		SourceViewerComputeStyleRangesTest.class,
 		HTML2TextReaderTest.class,
+		HyperlinkManagerTest.class,
 		TextHoverPopupTest.class,
 		TextPresentationTest.class,
 		DefaultUndoManagerTest.class,
