@@ -136,6 +136,10 @@ public class CSS2FontHelper {
 	 * belongs to none of them.
 	 */
 	public static String getCSSFontPropertyName(CssPrimitive value) {
+		if (value instanceof CssText text && text.kind() == CssText.Kind.IDENT
+				&& ("larger".equalsIgnoreCase(text.value()) || "smaller".equalsIgnoreCase(text.value()))) {
+			return "font-size";
+		}
 		if (value instanceof CssText text && (text.kind() == CssText.Kind.STRING || text.kind() == CssText.Kind.IDENT)) {
 			switch (text.value()) {
 			case "italic":

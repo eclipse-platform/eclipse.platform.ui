@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.getFontData;
+import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.resolveRelativeSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -253,8 +254,50 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	void testGetFontDataWithSizeKeywordKeepsTheOldSize() {
+	void testGetFontDataWithSizeLarger() {
 		FontData result = getFontData(fontPropertiesWithSize(keyword("larger")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeSmaller() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("smaller")),
+				new FontData("Courier", 12, SWT.NORMAL));
+
+		assertEquals(10, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeKeywordIsCaseInsensitive() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("LARGER")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testResolveRelativeSizeWithSizeKeyword() {
+		CSS2FontProperties larger = fontPropertiesWithSize(keyword("larger"));
+
+		assertEquals(new CssDimension(12, CssUnit.PT),
+				resolveRelativeSize(larger, new FontData("Courier", 10, SWT.NORMAL)).getSize());
+		assertEquals(new CssDimension(24, CssUnit.PT),
+				resolveRelativeSize(larger, new FontData("Courier", 20, SWT.NORMAL)).getSize());
+	}
+
+	@Test
+	void testGetFontDataWithQuotedSizeKeywordKeepsTheOldSize() {
+		FontData result = getFontData(fontPropertiesWithSize(new CssText(CssText.Kind.STRING, "larger")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(10, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithUnknownSizeKeywordKeepsTheOldSize() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("medium")),
 				new FontData("Courier", 10, SWT.NORMAL));
 
 		assertEquals(10, result.getHeight());
