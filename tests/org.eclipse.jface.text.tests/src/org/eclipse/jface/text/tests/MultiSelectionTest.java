@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -38,6 +39,9 @@ import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IMultiTextSelection;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.MultiTextSelection;
@@ -162,6 +166,45 @@ public class MultiSelectionTest {
 				new Region(4, 0),
 				new Region(5, 0)},
 			selection.getRegions());
+	}
+
+	@Test
+	public void testReplaceAllWithEmptyStringAfterMultiSelection() {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			String findString= "foo";
+			Document document= new Document("foo foo foo\nfoofoo");
+			textViewer.setDocument(document);
+			List<Region> regions= new ArrayList<>();
+			int index= 0;
+			while ((index= document.get().indexOf(findString, index)) >= 0) {
+				regions.add(new Region(index, findString.length()));
+				index+= findString.length();
+			}
+			textViewer.setSelection(new MultiTextSelection(document, regions.toArray(IRegion[]::new)));
+
+			IFindReplaceTarget target= textViewer.getFindReplaceTarget();
+			IFindReplaceTargetExtension3 regexTarget= (IFindReplaceTargetExtension3) target;
+			((IFindReplaceTargetExtension) target).setReplaceAllMode(true);
+			int replaceCount= 0;
+			try {
+				Point selection= new Point(0, 0);
+				while (regexTarget.findAndSelect(selection.x + selection.y, findString, true, false, false, false) != -1) {
+					regexTarget.replaceSelection("", false);
+					selection= target.getSelection();
+					assertEquals(0, selection.y, "selection must collapse after replacing with empty string");
+					replaceCount++;
+				}
+			} finally {
+				((IFindReplaceTargetExtension) target).setReplaceAllMode(false);
+			}
+
+			assertEquals(regions.size(), replaceCount);
+			assertEquals("  \n", document.get());
+		} finally {
+			shell.dispose();
+		}
 	}
 
 	@Test
