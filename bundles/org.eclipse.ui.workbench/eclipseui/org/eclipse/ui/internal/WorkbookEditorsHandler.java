@@ -50,12 +50,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.themes.ITheme;
 
 /**
  * Shows a list of open editor and parts in the current or last active workbook.
@@ -378,7 +376,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					} else {
 						String pattern = matcher.getPattern();
 						StyledStringHighlighter ssh = new StyledStringHighlighter();
-						StyledString ss = ssh.highlight(text, pattern, getBoldStylerProvider().getBoldStyler());
+						StyledString ss = ssh.highlight(text, pattern,
+								getBoldStylerProvider(cell.getControl().getFont()).getBoldStyler());
 						cell.setStyleRanges(ss.getStyleRanges());
 					}
 
@@ -394,9 +393,10 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				return super.getToolTipText(element);
 			}
 
-			private BoldStylerProvider getBoldStylerProvider() {
+			// Derive from the table font, a differently sized font breaks the row layout
+			private BoldStylerProvider getBoldStylerProvider(Font tableFont) {
 				if (boldStylerProvider == null) {
-					boldStylerProvider = new BoldStylerProvider(WorkbookEditorsHandler.this.getFont(false, true));
+					boldStylerProvider = new BoldStylerProvider(tableFont);
 				}
 				return boldStylerProvider;
 			}
@@ -433,17 +433,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		StackRenderer renderer = (StackRenderer) model.getParent().getRenderer();
 		CTabItem item = renderer.findItemForPart(model);
 		return (item != null && !item.isShowing());
-	}
-
-	private Font getFont(boolean hidden, boolean active) {
-		ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-		if (active) {
-			return theme.getFontRegistry().getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT);
-		}
-		if (hidden) {
-			return theme.getFontRegistry().getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT);
-		}
-		return theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
 	}
 
 	@Override
