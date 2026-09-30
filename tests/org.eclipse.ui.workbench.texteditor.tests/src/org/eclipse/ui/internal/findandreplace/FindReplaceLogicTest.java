@@ -1107,6 +1107,22 @@ public class FindReplaceLogicTest {
 		assertTrue(receivedValues.isEmpty());
 	}
 
+	@Test
+	public void testPerformReplaceAllWithEmptyStringAfterSelectAll() {
+		TextViewer textViewer= setupTextViewer("foo foo foo");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "foo", "");
+		findReplaceLogic.performSelectAll();
+		expectStatusIsFindAllWithCount(findReplaceLogic, 3);
+
+		findReplaceLogic.performReplaceAll();
+		assertEquals("  ", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+		assertEquals(0, textViewer.getSelectedRange().y);
+	}
+
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
 		assertInstanceOf(NoStatus.class, findReplaceLogic.getStatus());
 	}
