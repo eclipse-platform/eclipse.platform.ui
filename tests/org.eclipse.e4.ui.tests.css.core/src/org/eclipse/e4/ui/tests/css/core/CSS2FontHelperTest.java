@@ -56,6 +56,24 @@ public class CSS2FontHelperTest {
 	}
 
 	@Test
+	void testFaceNameWeights() {
+		assertEquals(OptionalInt.of(100), getFontWeight(keyword("hairline"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(200), getFontWeight(keyword("extra-light"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(300), getFontWeight(keyword("Light"), FONT_WEIGHT_BOLD));
+		assertEquals(OptionalInt.of(FONT_WEIGHT_NORMAL), getFontWeight(keyword("regular"), FONT_WEIGHT_BOLD));
+		assertEquals(OptionalInt.of(500), getFontWeight(keyword("medium"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(600), getFontWeight(keyword("semi-bold"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(600), getFontWeight(keyword("DemiBold"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(800), getFontWeight(keyword("ultrabold"), FONT_WEIGHT_NORMAL));
+		assertEquals(OptionalInt.of(900), getFontWeight(keyword("black"), FONT_WEIGHT_NORMAL));
+	}
+
+	@Test
+	void testShorthandRoutesFaceNamesToFamily() {
+		assertEquals("font-family", getCSSFontPropertyName(keyword("Black")));
+	}
+
+	@Test
 	void testWeightsOutsideTheAllowedRange() {
 		assertFalse(getFontWeight(number(0), FONT_WEIGHT_NORMAL).isPresent());
 		assertFalse(getFontWeight(number(1001), FONT_WEIGHT_NORMAL).isPresent());
@@ -63,7 +81,7 @@ public class CSS2FontHelperTest {
 
 	@Test
 	void testUnknownWeightIsNotAWeight() {
-		assertFalse(getFontWeight(keyword("semibold"), FONT_WEIGHT_NORMAL).isPresent());
+		assertFalse(getFontWeight(keyword("chunky"), FONT_WEIGHT_NORMAL).isPresent());
 		assertFalse(getFontWeight(new CssDimension(600, CssUnit.PT), FONT_WEIGHT_NORMAL).isPresent());
 	}
 

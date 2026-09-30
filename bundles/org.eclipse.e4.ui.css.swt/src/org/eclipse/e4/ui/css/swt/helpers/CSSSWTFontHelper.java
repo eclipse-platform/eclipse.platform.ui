@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.internal.css.swt.ColorAndFontUtil;
+import org.eclipse.e4.ui.internal.css.swt.FontWeights;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
@@ -212,6 +213,9 @@ public class CSSSWTFontHelper {
 			newFontData.setHeight(oldFontData.getHeight());
 		}
 
+		// Weight last, as setName and setStyle reset it
+		getCSSFontWeight(fontProperties, oldFontData).ifPresent(weight -> FontWeights.apply(newFontData, weight));
+
 		return newFontData;
 	}
 
@@ -333,9 +337,7 @@ public class CSSSWTFontHelper {
 			}
 		}
 		// CSS font-weight
-		int inheritedWeight = fontData != null && isBold(fontData) ? CSS2FontHelper.FONT_WEIGHT_BOLD
-				: CSS2FontHelper.FONT_WEIGHT_NORMAL;
-		OptionalInt cssFontWeight = CSS2FontHelper.getFontWeight(fontProperties.getWeight(), inheritedWeight);
+		OptionalInt cssFontWeight = getCSSFontWeight(fontProperties, fontData);
 		if (cssFontWeight.isPresent()) {
 			if (cssFontWeight.getAsInt() >= BOLD_WEIGHT_THRESHOLD) {
 				fontStyle = fontStyle | SWT.BOLD;
@@ -344,6 +346,12 @@ public class CSSSWTFontHelper {
 			}
 		}
 		return fontStyle;
+	}
+
+	private static OptionalInt getCSSFontWeight(CSS2FontProperties fontProperties, FontData fontData) {
+		int inheritedWeight = fontData != null && isBold(fontData) ? CSS2FontHelper.FONT_WEIGHT_BOLD
+				: CSS2FontHelper.FONT_WEIGHT_NORMAL;
+		return CSS2FontHelper.getFontWeight(fontProperties.getWeight(), inheritedWeight);
 	}
 
 	/**
@@ -588,7 +596,7 @@ public class CSSSWTFontHelper {
 			return false;
 		}
 		for (int i = 0; i < fd1.length; i++) {
-			if (!fd1[i].equals(fd2[i])) {
+			if (!fd1[i].equals(fd2[i]) || !FontWeights.isSameFace(fd1[i], fd2[i])) {
 				return false;
 			}
 		}

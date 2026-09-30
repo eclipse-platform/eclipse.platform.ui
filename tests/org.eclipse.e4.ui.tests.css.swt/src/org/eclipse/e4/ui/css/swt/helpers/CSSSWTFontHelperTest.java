@@ -16,6 +16,10 @@ package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.getFontData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
@@ -81,11 +85,36 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 
 	@Test
 	void testGetFontDataWithNumericWeight() {
-		FontData bold = getFontData(fontProperties("Times", 11, null, 600), new FontData("Courier", 11, SWT.NORMAL));
+		FontData bold = getFontData(fontProperties("Times", 11, null, 700), new FontData("Courier", 11, SWT.NORMAL));
 		assertEquals(SWT.BOLD, bold.getStyle());
 
-		FontData regular = getFontData(fontProperties("Times", 11, null, 500), new FontData("Courier", 11, SWT.BOLD));
+		FontData regular = getFontData(fontProperties("Times", 11, null, 400), new FontData("Courier", 11, SWT.BOLD));
 		assertEquals(SWT.NORMAL, regular.getStyle());
+	}
+
+	@Test
+	void testGetFontDataWithIntermediateWeightDescribesThePangoWeight() throws ReflectiveOperationException {
+		assumeTrue("gtk".equals(SWT.getPlatform()));
+
+		FontData semiBold = getFontData(fontProperties("Ubuntu Sans", 11, null, 600), null);
+		assertEquals("Ubuntu Sans, Semi-Bold 11", pangoDescription(semiBold));
+
+		FontData lightItalic = getFontData(fontProperties("Ubuntu Sans", 11, CSS_ITALIC, 300), null);
+		assertEquals("Ubuntu Sans, Italic Light 11", pangoDescription(lightItalic));
+	}
+
+	@Test
+	void testGetFontDataWithRegularOrBoldWeightKeepsThePortableFont() throws ReflectiveOperationException {
+		assumeTrue("gtk".equals(SWT.getPlatform()));
+
+		assertNull(pangoDescription(getFontData(fontProperties("Ubuntu Sans", 11, null, 400), null)));
+		assertNull(pangoDescription(getFontData(fontProperties("Ubuntu Sans", 11, null, 700), null)));
+	}
+
+	private static String pangoDescription(FontData fontData) throws ReflectiveOperationException {
+		byte[] description = (byte[]) FontData.class.getField("string").get(fontData);
+		return description == null ? null
+				: new String(description, 0, description.length - 1, StandardCharsets.UTF_8);
 	}
 
 	@Test
@@ -101,7 +130,7 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 
 	@Test
 	void testGetFontDataWithUnknownWeightKeepsTheOldWeight() {
-		FontData result = getFontData(fontProperties("Times", 11, null, "semibold"),
+		FontData result = getFontData(fontProperties("Times", 11, null, "chunky"),
 				new FontData("Courier", 11, SWT.BOLD));
 
 		assertEquals(SWT.BOLD, result.getStyle());

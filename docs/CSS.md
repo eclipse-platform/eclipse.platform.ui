@@ -106,8 +106,24 @@ They also show pseudo selectors which can be used to choose styling based on wid
 
 `font-weight` accepts `normal`, `bold`, `bolder`, `lighter` and the numbers
 `100` to `900`.
-SWT fonts have no weight axis, so a weight of `600` or more selects a bold face
-and anything below it a regular one.
+It also accepts the face names designers use, which are not standard CSS:
+
+| Name | Weight |
+| --- | --- |
+| `thin`, `hairline` | 100 |
+| `extra-light`, `ultra-light` | 200 |
+| `light` | 300 |
+| `regular` | 400 |
+| `medium` | 500 |
+| `semi-bold`, `demi-bold` | 600 |
+| `extra-bold`, `ultra-bold` | 800 |
+| `black`, `heavy` | 900 |
+
+The names are case-insensitive and may be written without the hyphen, as in `semibold`.
+They are only understood by `font-weight`, not in the `font` shorthand, where they could be part of a family name.
+A weight between regular and bold, such as `500` or `600`, selects the installed face of that weight, for example Semibold.
+On GTK Pango picks the closest face of the family, on Windows a family such as "Segoe UI Semibold" is used when it is installed, and on macOS a face of the family with a matching name such as `HelveticaNeue-Medium`.
+Where no such face is found, a weight of `600` or more selects the bold face and anything below it the regular one.
 In the `font` shorthand a bare `100` to `900` is read as a weight, any other
 bare number as a size in points.
 
