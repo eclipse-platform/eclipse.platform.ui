@@ -91,8 +91,16 @@ public class CSS2FontHelper {
 		}
 		if (value instanceof CssText text) {
 			return switch (text.value().toLowerCase(Locale.ENGLISH)) {
-			case "normal" -> OptionalInt.of(FONT_WEIGHT_NORMAL);
+			case "normal", "regular" -> OptionalInt.of(FONT_WEIGHT_NORMAL);
 			case "bold" -> OptionalInt.of(FONT_WEIGHT_BOLD);
+			// face names designers use, not standard CSS
+			case "thin", "hairline" -> OptionalInt.of(100);
+			case "extra-light", "extralight", "ultra-light", "ultralight" -> OptionalInt.of(200);
+			case "light" -> OptionalInt.of(300);
+			case "medium" -> OptionalInt.of(500);
+			case "semi-bold", "semibold", "demi-bold", "demibold" -> OptionalInt.of(600);
+			case "extra-bold", "extrabold", "ultra-bold", "ultrabold" -> OptionalInt.of(800);
+			case "black", "heavy" -> OptionalInt.of(900);
 			case "bolder" -> OptionalInt.of(bolder(inheritedWeight));
 			case "lighter" -> OptionalInt.of(lighter(inheritedWeight));
 			default -> OptionalInt.empty();

@@ -18,6 +18,10 @@ package org.eclipse.e4.ui.tests.css.swt;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
@@ -62,7 +66,7 @@ public class LabelTest {
 
 	@Test
 	void testFontWeightNumeric() {
-		Label labelToTest = css.createTestLabel("Label { font-weight: 600 }");
+		Label labelToTest = css.createTestLabel("Label { font-weight: 700 }");
 
 		assertEquals(SWT.BOLD, labelToTest.getFont().getFontData()[0].getStyle());
 	}
@@ -72,6 +76,36 @@ public class LabelTest {
 		Label labelToTest = css.createTestLabel("Label { font-weight: 500 }");
 
 		assertEquals(SWT.NORMAL, labelToTest.getFont().getFontData()[0].getStyle());
+	}
+
+	@Test
+	void testFontWeightSelectsThePangoWeightOnGtk() throws ReflectiveOperationException {
+		assumeTrue("gtk".equals(SWT.getPlatform()));
+
+		Label labelToTest = css.createTestLabel("Label { font-weight: semi-bold }");
+
+		byte[] description = (byte[]) FontData.class.getField("string").get(labelToTest.getFont().getFontData()[0]);
+		assertTrue(new String(description, StandardCharsets.UTF_8).contains("Semi-Bold"));
+	}
+
+	@Test
+	void testFontWeightSelectsTheSemiBoldFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Semibold", true).length > 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 600 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Semibold", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightSelectsTheMediumFaceOnMac() throws ReflectiveOperationException {
+		assumeTrue("cocoa".equals(SWT.getPlatform()));
+
+		Label labelToTest = css.createTestLabel("Label { font: 500 12pt \"Helvetica Neue\" }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("HelveticaNeue-Medium", FontData.class.getField("nsName").get(fontData));
 	}
 
 	@Test
