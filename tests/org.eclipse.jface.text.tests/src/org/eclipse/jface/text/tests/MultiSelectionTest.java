@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -162,6 +163,29 @@ public class MultiSelectionTest {
 				new Region(4, 0),
 				new Region(5, 0)},
 			selection.getRegions());
+	}
+
+	@Test
+	public void testSelectionTrackedAfterSelectionCountChangeWhileRedrawDisabled() throws BadLocationException {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			Document document= new Document("foo foo");
+			textViewer.setDocument(document);
+			textViewer.setSelection(new MultiTextSelection(document, new IRegion[] { new Region(0, 3), new Region(4, 3) }));
+
+			textViewer.setRedraw(false); // switch to usage of ViewerState
+			try {
+				textViewer.setSelectedRange(4, 3); // selection count changes from 2 to 1
+				document.replace(0, 4, "");
+				assertEquals(new Point(0, 3), textViewer.getSelectedRange());
+			} finally {
+				textViewer.setRedraw(true);
+			}
+			assertEquals(new Point(0, 3), textViewer.getSelectedRange());
+		} finally {
+			shell.dispose();
+		}
 	}
 
 	@Test
