@@ -229,44 +229,52 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	}
 
 	/**
-	 * If the offset lies on an ASCII identifier character ({@code [A-Za-z0-9_]}), or
-	 * just after one, returns the maximal contiguous identifier run. Otherwise
-	 * returns {@code null} so the caller falls back to the locale-aware
-	 * {@link BreakIterator}. This handles identifier-style words containing runs
-	 * of {@code '_'} (e.g. {@code foo__bar}, {@code __aaaa}) consistently across
-	 * JDK versions, since {@link BreakIterator#getWordInstance()} places word
-	 * boundaries between consecutive underscores while users expect such tokens
-	 * to be selected as a single word.
+	 * Returns the identifier run containing an underscore at or just before the offset, or
+	 * {@code null}. Needed because {@link BreakIterator} splits runs of underscores.
 	 */
 	private static IRegion findIdentifierAt(IDocument document, int offset) {
 		try {
 			IRegion line= document.getLineInformationOfOffset(offset);
 			int lineStart= line.getOffset();
-			int lineEnd= lineStart + line.getLength();
-			int probe;
-			if (offset < lineEnd && isIdentifierPart(document.getChar(offset))) {
-				probe= offset;
-			} else if (offset > lineStart && isIdentifierPart(document.getChar(offset - 1))) {
-				probe= offset - 1;
-			} else {
+			String text= document.get(lineStart, line.getLength());
+			int probe= offset - lineStart;
+			if (probe > text.length()) {
 				return null;
 			}
+			if (probe > 0 && probe < text.length() && Character.isLowSurrogate(text.charAt(probe))
+					&& Character.isHighSurrogate(text.charAt(probe - 1))) {
+				probe--;
+			}
+			if (probe == text.length() || !isIdentifierPart(text.codePointAt(probe))) {
+				if (probe == 0 || !isIdentifierPart(text.codePointBefore(probe))) {
+					return null;
+				}
+				probe-= Character.charCount(text.codePointBefore(probe));
+			}
 			int start= probe;
-			while (start > lineStart && isIdentifierPart(document.getChar(start - 1))) {
-				start--;
+			while (start > 0 && isIdentifierPart(text.codePointBefore(start))) {
+				start-= Character.charCount(text.codePointBefore(start));
 			}
-			int end= probe + 1;
-			while (end < lineEnd && isIdentifierPart(document.getChar(end))) {
-				end++;
+			int end= probe;
+			while (end < text.length() && isIdentifierPart(text.codePointAt(end))) {
+				end+= Character.charCount(text.codePointAt(end));
 			}
-			return new Region(start, end - start);
+			if (text.substring(start, end).indexOf('_') == -1) {
+				return null;
+			}
+			return new Region(lineStart + start, end - start);
 		} catch (BadLocationException e) {
 			return null;
 		}
 	}
 
-	private static boolean isIdentifierPart(char c) {
-		return c == '_' || (c < 128 && (c >= '0' && c <= '9' || c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z'));
+	private static boolean isIdentifierPart(int codePoint) {
+		if (codePoint == '_' || Character.isLetterOrDigit(codePoint)) {
+			return true;
+		}
+		int type= Character.getType(codePoint);
+		return type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK
+				|| type == Character.ENCLOSING_MARK;
 	}
 
 	/**
