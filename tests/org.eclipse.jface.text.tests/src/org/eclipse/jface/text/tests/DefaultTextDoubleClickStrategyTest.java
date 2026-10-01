@@ -15,6 +15,7 @@ package org.eclipse.jface.text.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -160,6 +161,63 @@ public class DefaultTextDoubleClickStrategyTest {
 		IRegion selection= strategy.findWord(document, 5);
 		assertNotNull(selection);
 		assertEquals("ไทย", document.get(selection.getOffset(), selection.getLength()));
+	}
+
+	@Test
+	public void testWordWithUmlauts() throws Exception {
+		String content= "foo Gr\u00f6\u00dfenwahnsinn Verschiebek\u00e4rtchen";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy strategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		for (int offset= 4; offset <= 18; offset++) {
+			IRegion selection= strategy.findWord(document, offset);
+			assertNotNull(selection, "no selection at offset " + offset);
+			assertEquals("Gr\u00f6\u00dfenwahnsinn", document.get(selection.getOffset(), selection.getLength()),
+					"unexpected selection at offset " + offset);
+		}
+		IRegion selection= strategy.findWord(document, 22);
+		assertNotNull(selection);
+		assertEquals("Verschiebek\u00e4rtchen", document.get(selection.getOffset(), selection.getLength()));
+	}
+
+	@Test
+	public void testWordWithDecomposedUmlaut() throws Exception {
+		String content= "Gru\u0308\u00dfen";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy strategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		IRegion selection= strategy.findWord(document, 1);
+		assertNotNull(selection);
+		assertEquals(content, document.get(selection.getOffset(), selection.getLength()));
+	}
+
+	@Test
+	public void testIdentifierWithUmlautsAndUnderscores() throws Exception {
+		String content= "x = gr\u00f6\u00dfe__f\u00fcr_alle;";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy strategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		IRegion selection= strategy.findWord(document, 5);
+		assertNotNull(selection);
+		assertEquals("gr\u00f6\u00dfe__f\u00fcr_alle", document.get(selection.getOffset(), selection.getLength()));
+	}
+
+	@Test
+	public void testIdentifierWithSupplementaryLetter() throws Exception {
+		String content= "x__\uD835\uDC9C__y";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy strategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		for (int offset= 3; offset <= 4; offset++) {
+			IRegion selection= strategy.findWord(document, offset);
+			assertNotNull(selection, "no selection at offset " + offset);
+			assertEquals(content, document.get(selection.getOffset(), selection.getLength()),
+					"unexpected selection at offset " + offset);
+		}
+	}
+
+	@Test
+	public void testClickOnSecondCharOfCrLfDelimiter() throws Exception {
+		String content= "foo_bar\r\nbaz";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy strategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		assertNull(strategy.findWord(document, 8));
 	}
 
 	private static final class TestSpecificDefaultTextDoubleClickStrategy extends DefaultTextDoubleClickStrategy {
