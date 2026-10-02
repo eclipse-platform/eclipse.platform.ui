@@ -50,9 +50,13 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 public class MarkerInformationControl extends AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2 {
 
 	private final LinkedHashMap<IMarker, Composite> composites = new LinkedHashMap<>();
+    private Composite parent;
+    private Composite statusComposite;
+    private final boolean showAffordanceString;
 
 	public MarkerInformationControl(Shell parentShell, boolean showAffordanceString) {
 		super(parentShell, showAffordanceString ? EditorsUI.getTooltipAffordanceString() : null);
+		this.showAffordanceString = showAffordanceString;
 		create();
 	}
 
@@ -69,7 +73,10 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 		parentComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		parentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		parentComposite.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		this.parent = parentComposite;
+	    this.parent = parentComposite;
+		// AbstractInformationControl will always contain 2 composite, first is the content and second is the status
+        // the fShell at this point will always be the right one (not replaced)
+        this.statusComposite = (Composite) getShell().getChildren()[1];
 	}
 
 	private static Image getImage(IMarker marker) {
@@ -146,7 +153,8 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 						resolutionJob.setSystem(true);
 						resolutionJob.setPriority(Job.INTERACTIVE);
 						resolutionJob.schedule();
-						getShell().dispose();
+						// fix popup not getting disposed after applying a quickfix
+                        getParentShell().dispose();
 					}
 				});
 			}
@@ -159,13 +167,48 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 		return new MarkerHoverControlCreator(false);
 	}
 
-	@Override
-	public Point computeSizeHint() {
-		if (getShell().getChildren().length > 0) {
-			// Do not pack the shell/control if it has no children, as it will size to 2,2
-			getShell().pack();
-		}
-		return getShell().getSize();
-	}
+  @Override
+  public Point computeSizeHint() {
+    // getShell().pack();
+    // return getShell().getSize();
+
+    // Do not rely on getShell() as this may already been changed
+    // the size will always be the size of the parent composite + the size of the status composite (if visible)
+    // + size of the shell border (which is a constant value of 2px)
+
+    getParentShell().pack();
+
+    int contentHeight = parent.getSize().y + statusComposite.getSize().y;
+    int contentWidth = Math.max(parent.getSize().x, statusComposite.getSize().x);
+    // Shells have hidden borders, since we are not computing the size hint based from the shell
+    // the contents might not fit if the shell is resized outside, or might trigger text wrapping
+    int borderWidth = getParentShell().getSize().x - contentWidth;
+
+    Point constraints = getSizeConstraints();
+    if (constraints != null && parent.getSize().x > constraints.x) {
+      parent.setSize(constraints);
+      statusComposite.setSize(constraints);
+      contentWidth = constraints.x;
+      // this will wrap the text, but also sets the vertical height of the whole container
+      // recalculate height base from the children
+      contentHeight = 0;
+      for (Control c : com.google.common.collect.Iterables.concat(Arrays.asList(parent.getChildren()), showAffordanceString
+          ? Arrays.asList(statusComposite.getChildren())
+          : Collections.emptyList())) {
+        contentHeight += c.getSize().y;
+      }
+    }
+    return new Point(contentWidth + borderWidth, contentHeight + borderWidth);
+  }
+	
+  // if the control is created in CompositeInformation control it will have a different parent,
+  // and its chached shell (fShell) will be useless
+  private Shell getParentShell() {
+    if (!parent.getShell().equals(getShell())) {
+      return parent.getShell();
+    } else {
+      return getShell();
+    }
+  }
 
 }
