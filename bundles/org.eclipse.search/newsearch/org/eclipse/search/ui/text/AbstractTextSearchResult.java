@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.StampedLock;
 
 import org.eclipse.jface.text.Position;
 
@@ -57,7 +58,34 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private final ConcurrentHashMap<Match, Long> collisionOrder;
 	private final AtomicLong collisionCounter;
 
-	private MatchFilter[] fMatchFilters;
+	private volatile MatchFilter[] fMatchFilters;
+
+	/**
+	 * Makes the change of the active match filters and the publication of a match
+	 * mutually exclusive. The filter state of a match is evaluated before the
+	 * match is added, without holding any lock because filters can be expensive,
+	 * while {@link #setActiveMatchFilters(MatchFilter[])} updates only the matches
+	 * that are already added. Without this lock a match that is evaluated with the
+	 * previous filters but added after the filters have been changed would keep an
+	 * outdated filter state.
+	 * <p>
+	 * Matches are added while the read lock is held (there are usually many search
+	 * threads adding matches concurrently), the filters are changed while the
+	 * write lock is held. Neither the filters nor any other overridable method are
+	 * called while the lock is held.
+	 * </p>
+	 *
+	 * @see #fFilterGeneration
+	 */
+	private final StampedLock fFilterLock;
+
+	/**
+	 * Incremented whenever the active match filters are changed, written only while
+	 * the write lock of {@link #fFilterLock} is held. A match is only added if the
+	 * generation hasn't changed since its filter state has been evaluated,
+	 * otherwise it is evaluated again with the new filters.
+	 */
+	private volatile int fFilterGeneration;
 
 	/**
 	 * Constructs a new <code>AbstractTextSearchResult</code>
@@ -67,6 +95,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fListeners = new CopyOnWriteArrayList<>();
 		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
+		fFilterLock= new StampedLock();
 		collisionOrder = new ConcurrentHashMap<>();
 		collisionCounter = new AtomicLong(0);
 	}
@@ -198,6 +227,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * {@link ConcurrentSkipListSet} per element so that matches are always kept
 	 * in sorted order (by offset and length), avoiding the need to sort results
 	 * on demand each time {@link #getMatches(Object)} is called.
+	 * <p>
+	 * The filter state of the match is evaluated with the active match filters
+	 * before the match is added. If the filters are changed meanwhile, the match
+	 * is evaluated again: {@link #setActiveMatchFilters(MatchFilter[])} updates
+	 * only the matches that are already added, so the filter state of every added
+	 * match is always the one of the current filters.
+	 * </p>
 	 *
 	 * @param match
 	 *            the match to add
@@ -206,9 +242,31 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	private boolean didAddMatch(Match match) {
 		matchCount.set(0);
-		updateFilterState(match);
-		return fElementsToMatches.computeIfAbsent(match.getElement(),
-				k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
+		while (true) {
+			// the generation is read before the filters: if they are changed after
+			// this point, the generation check below fails
+			int generation= fFilterGeneration;
+			// evaluated without holding the lock, filters can be expensive
+			MatchFilter[] matchFilters= getActiveMatchFilters();
+			boolean isFiltered= matchFilters != null && isFilteredBy(match, matchFilters);
+			long stamp= fFilterLock.readLock();
+			try {
+				if (generation == fFilterGeneration) {
+					// the filters can't change until the match is added: either it
+					// is added before the filters are changed and is then updated
+					// by setActiveMatchFilters(..), or the filters are changed
+					// before and the evaluation above has used the new ones
+					if (matchFilters != null) {
+						match.setFiltered(isFiltered);
+					}
+					return fElementsToMatches.computeIfAbsent(match.getElement(),
+							k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
+				}
+			} finally {
+				fFilterLock.unlockRead(stamp);
+			}
+			// the filters were changed during the evaluation, evaluate again
+		}
 	}
 
 	/**
@@ -348,39 +406,39 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 
 	private void updateFilterStateForAllMatches() {
-		boolean disableFiltering= getActiveMatchFilters() == null;
+		MatchFilter[] matchFilters= getActiveMatchFilters();
+		boolean disableFiltering= matchFilters == null;
 		ArrayList<Match> changed= new ArrayList<>();
 		Object[] elements= getElements();
 		for (Object element : elements) {
 			Match[] matches= getMatches(element);
 			for (Match match : matches) {
-				if (disableFiltering || updateFilterState(match)) {
+				if (disableFiltering || updateFilterState(match, matchFilters)) {
 					changed.add(match);
 				}
 			}
 		}
 		Match[] allChanges = changed.toArray(Match[]::new);
-		fireChange(new FilterUpdateEvent(this, allChanges, getActiveMatchFilters()));
+		fireChange(new FilterUpdateEvent(this, allChanges, matchFilters));
 	}
 
 	/*
-	 * Evaluates the filter for the match and updates it. Return true if the filter changed.
+	 * Evaluates the filters for the match and updates it. Return true if the filter state changed.
 	 */
-	private boolean updateFilterState(Match match) {
-		MatchFilter[] matchFilters= getActiveMatchFilters();
-		if (matchFilters == null) {
-			return false; // do nothing, no change
-		}
-
+	private static boolean updateFilterState(Match match, MatchFilter[] matchFilters) {
 		boolean oldState= match.isFiltered();
+		boolean newState= isFilteredBy(match, matchFilters);
+		match.setFiltered(newState);
+		return oldState != newState;
+	}
+
+	private static boolean isFilteredBy(Match match, MatchFilter[] matchFilters) {
 		for (MatchFilter matchFilter : matchFilters) {
 			if (matchFilter.filters(match)) {
-				match.setFiltered(true);
-				return !oldState;
+				return true;
 			}
 		}
-		match.setFiltered(false);
-		return oldState;
+		return false;
 	}
 
 	/**
@@ -495,7 +553,16 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @since 3.3
 	 */
 	public void setActiveMatchFilters(MatchFilter[] filters) {
-		fMatchFilters= filters;
+		// a match that is evaluated concurrently with the previous filters is either
+		// already added now (and is updated below), or it is evaluated again with
+		// the new filters before it is added, see didAddMatch(..)
+		long stamp= fFilterLock.writeLock();
+		try {
+			fMatchFilters= filters;
+			fFilterGeneration++;
+		} finally {
+			fFilterLock.unlockWrite(stamp);
+		}
 		updateFilterStateForAllMatches();
 	}
 
