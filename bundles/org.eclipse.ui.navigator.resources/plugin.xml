@@ -567,6 +567,84 @@
       </command>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.navigator.resources.toggleHighlight"
+            name="%command.toggleHighlight.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.navigator.resources.actions.ToggleHighlightHandler"
+            commandId="org.eclipse.ui.navigator.resources.toggleHighlight">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.eclipse.ui.navigator.resources.toggleHighlight"
+               label="%command.toggleHighlight.label"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <iterate
+                        ifEmpty="false">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="org.eclipse.ui.internal.navigator.resources.ResourceHighlightDecorator"
+            id="org.eclipse.ui.navigator.resources.highlightDecorator"
+            label="%decorator.highlight.name"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+         <description>
+            %decorator.highlight.description
+         </description>
+      </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.navigator.resources.highlightColor"
+            isEditable="true"
+            label="%colorDefinition.highlightColor.label"
+            value="COLOR_LIST_FOREGROUND">
+         <description>
+            %colorDefinition.highlightColor.description
+         </description>
+      </colorDefinition>
+   </extension>
+   <extension
+         id="highlightMarker"
+         name="%marker.highlight.name"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.marker"/>
+      <persistent value="true"/>
+      <attribute name="description"/>
+   </extension>
+   <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             class="org.eclipse.ui.internal.navigator.resources.NavigatorResourcesPreferenceTester"

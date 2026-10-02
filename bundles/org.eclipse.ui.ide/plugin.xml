@@ -748,6 +748,14 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.views.markers.HighlightedResourcesView"
+            icon="$nl$/icons/full/eview16/bkmrk_nav.svg"
+            id="org.eclipse.ui.views.HighlightedResourcesView"
+            name="%Views.HighlightedResources">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.TasksView"
             icon="$nl$/icons/full/eview16/tasks_tsk.svg"
             id="org.eclipse.ui.views.TaskList"
@@ -1626,6 +1634,34 @@
                id="org.eclipse.ui.ide.markerType"
                visible="false">
          </markerFieldReference>
+      </markerContentGenerator>
+      <markerField
+            class="org.eclipse.ui.internal.views.markers.HighlightResourceTypeField"
+            id="org.eclipse.ui.ide.highlightResourceTypeField"
+            name="%Field.HighlightResourceType">
+      </markerField>
+      <markerContentGenerator
+            id="org.eclipse.ui.ide.highlightedResourcesGenerator"
+            name="%ContentGenerator.HighlightedResources">
+         <markerFieldReference
+               id="org.eclipse.ui.ide.resourceField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.pathField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.highlightResourceTypeField"
+               visible="true">
+         </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.ui.navigator.resources.highlightMarker">
+         </markerTypeReference>
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerTypeField"
