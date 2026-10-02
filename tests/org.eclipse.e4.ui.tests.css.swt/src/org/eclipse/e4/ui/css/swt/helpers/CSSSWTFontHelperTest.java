@@ -253,8 +253,32 @@ public class CSSSWTFontHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	void testGetFontDataWithSizeKeywordKeepsTheOldSize() {
+	void testGetFontDataWithSizeLarger() {
 		FontData result = getFontData(fontPropertiesWithSize(keyword("larger")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeSmaller() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("smaller")),
+				new FontData("Courier", 12, SWT.NORMAL));
+
+		assertEquals(10, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithSizeKeywordIsCaseInsensitive() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("LARGER")),
+				new FontData("Courier", 10, SWT.NORMAL));
+
+		assertEquals(12, result.getHeight());
+	}
+
+	@Test
+	void testGetFontDataWithUnknownSizeKeywordKeepsTheOldSize() {
+		FontData result = getFontData(fontPropertiesWithSize(keyword("medium")),
 				new FontData("Courier", 10, SWT.NORMAL));
 
 		assertEquals(10, result.getHeight());

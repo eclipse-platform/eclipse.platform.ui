@@ -54,6 +54,9 @@ public class CSSSWTFontHelper {
 
 	private static final String DEFAULT_FONT = "defaultFont";
 
+	/** Step between two sizes for the 'larger' and 'smaller' keywords. */
+	private static final double RELATIVE_FONT_SIZE_STEP = 1.2;
+
 	/** Lower bound so that a small factor cannot shrink a font away. */
 	private static final int MIN_FONT_HEIGHT = 1;
 
@@ -221,8 +224,8 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Resolves a CSS font-size to an SWT font height in points, empty if the value
-	 * cannot be resolved. Relative sizes (em, %) scale the font the widget had
-	 * before styling.
+	 * cannot be resolved. Relative sizes (em, %, larger, smaller) scale the font
+	 * the widget had before styling.
 	 */
 	private static OptionalInt getFontHeight(CssPrimitive cssFontSize, FontData oldFontData) {
 		if (cssFontSize instanceof CssNumeric numeric) {
@@ -233,6 +236,14 @@ public class CSSSWTFontHelper {
 			// SWT font heights are points, so any other unit is taken as-is
 			default -> OptionalInt.of(toFontHeight(numeric.value()));
 			};
+		}
+		if (cssFontSize instanceof CssText text) {
+			if ("larger".equalsIgnoreCase(text.value())) {
+				return scaleFontHeight(RELATIVE_FONT_SIZE_STEP, oldFontData);
+			}
+			if ("smaller".equalsIgnoreCase(text.value())) {
+				return scaleFontHeight(1 / RELATIVE_FONT_SIZE_STEP, oldFontData);
+			}
 		}
 		return OptionalInt.empty();
 	}
@@ -291,6 +302,9 @@ public class CSSSWTFontHelper {
 	}
 
 	private static boolean isRelativeSize(CssPrimitive size) {
+		if (size instanceof CssText text) {
+			return "larger".equalsIgnoreCase(text.value()) || "smaller".equalsIgnoreCase(text.value());
+		}
 		return size instanceof CssNumeric numeric
 				&& (numeric.unit() == CssUnit.EM || numeric.unit() == CssUnit.PERCENT);
 	}
