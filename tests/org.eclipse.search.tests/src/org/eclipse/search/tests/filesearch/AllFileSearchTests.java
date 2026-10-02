@@ -26,6 +26,7 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		PositionTrackerTest.class,
 		ResultUpdaterTest.class,
 		SearchResultPageTest.class,
+		SearchResultPageLabelTest.class,
 		SortingTest.class,
 		TextSearchResultTest.class,
 		RestrictedFilesSearchTest.class,
