@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 Vector Informatik GmbH and others.
+ * Copyright (c) 2023, 2026 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
+ *     Edward Lo - test replaceAll line-start regex (issue 2820)
  *******************************************************************************/
 
 package org.eclipse.ui.internal.findandreplace;
@@ -187,6 +188,152 @@ public class FindReplaceLogicTest {
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
 				+ "[" + lineSeparator()
 				+ "^");
+	}
+
+	/**
+	 * Replace All with a line-start regex must not rematch the same line after an
+	 * empty replacement (see https://github.com/eclipse-platform/eclipse.platform.ui/issues/2820).
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartAnchor() {
+		TextViewer textViewer= setupTextViewer("  hello" + lineSeparator() + "  world" + lineSeparator() + "   three");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^ ", "");
+		findReplaceLogic.performReplaceAll();
+		// One leading space removed per line, not all leading spaces
+		assertThat(textViewer.getDocument().get(), equalTo(" hello" + lineSeparator() + " world" + lineSeparator() + "  three"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	// Note: bare "^" (zero-length) is not exercised here — FindReplaceDocumentAdapter
+	// deliberately ignores empty regex matches (group().isEmpty()), so such a find never hits.
+	/**
+	 * A single-character line-start pattern must not be rematched at the same line start
+	 * after the replacement removed the character it matched. This is the shapes of
+	 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/2820 where every
+	 * character on a line matches at the line start.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExWordBoundaryAnchorIsNotRematched() {
+		TextViewer textViewer= setupTextViewer("aa");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "\\ba", "");
+		findReplaceLogic.performReplaceAll();
+		// "aa" has a word boundary before the first "a" only, so one match, not two
+		assertThat(textViewer.getDocument().get(), equalTo("a"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+	}
+
+	/**
+	 * A line-start anchor on a line other than the first must also be matched exactly once,
+	 * i.e. the search must not restart at the offset it already processed.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartAnchorOnLaterLineIsNotRematched() {
+		TextViewer textViewer= setupTextViewer(lineSeparator() + "aa");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^a", "");
+		findReplaceLogic.performReplaceAll();
+		// only the "a" starting the second line is at a line start
+		assertThat(textViewer.getDocument().get(), equalTo(lineSeparator() + "a"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+	}
+
+	/**
+	 * A line consisting only of whitespace must not be emptied completely: the pattern matches
+	 * once per line, so exactly one match is consumed per line.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartAnchorOnWhitespaceOnlyLine() {
+		TextViewer textViewer= setupTextViewer("   ");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^ ", "");
+		findReplaceLogic.performReplaceAll();
+		// one leading space removed, not all three
+		assertThat(textViewer.getDocument().get(), equalTo("  "));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+	}
+
+	/**
+	 * A non-greedy line-start pattern matches at most once per line, even when the line keeps
+	 * matching after the replacement.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartWhitespaceIsReplacedOncePerLine() {
+		TextViewer textViewer= setupTextViewer(" a" + lineSeparator() + "  b" + lineSeparator() + "c");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^\\s*", "");
+		findReplaceLogic.performReplaceAll();
+		// the two indented lines are stripped once each; the third line has no leading whitespace
+		assertThat(textViewer.getDocument().get(), equalTo("a" + lineSeparator() + "b" + lineSeparator() + "c"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
+	}
+
+	/**
+	 * Replacing a line-start pattern with a non-empty string must still produce one replacement
+	 * per line and no extra ones.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExLineStartAnchorWithReplacement() {
+		TextViewer textViewer= setupTextViewer("  a" + lineSeparator() + "  b");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "^ ", ">");
+		findReplaceLogic.performReplaceAll();
+		assertThat(textViewer.getDocument().get(), equalTo("> a" + lineSeparator() + "> b"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
+	}
+
+	/**
+	 * Group references in the replacement must be expanded for every match. Collecting all
+	 * matches before replacing leaves the find/replace matcher exhausted, so each match has to
+	 * be re-established before it is replaced - without that, replacement fails entirely.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExGroupsAreExpandedForEachMatch() {
+		TextViewer textViewer= setupTextViewer("hello@eclipse.com");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "(\\w+)@(\\w+)", "$2@$1");
+		findReplaceLogic.performReplaceAll();
+		assertThat(textViewer.getDocument().get(), equalTo("eclipse@hello.com"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+	}
+
+	/**
+	 * Trailing whitespace is a regression guard rather than a fix: a greedy pattern matches a
+	 * whole whitespace run at once, so this already behaved this way before the change.
+	 */
+	@Test
+	public void testPerformReplaceAllRegExTrailingWhitespaceIsRemovedOncePerLine() {
+		TextViewer textViewer= setupTextViewer("a  " + lineSeparator() + "b   ");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, " +$", "");
+		findReplaceLogic.performReplaceAll();
+		assertThat(textViewer.getDocument().get(), equalTo("a" + lineSeparator() + "b"));
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 	}
 
 	@Test
