@@ -70,7 +70,7 @@ public class TableOwnerDrawSupport implements Listener {
 		return (StyleRange[])item.getData(STYLED_RANGES_KEY + column);
 	}
 
-	private TableOwnerDrawSupport(Table table) {
+	public TableOwnerDrawSupport(Table table) {
 		int orientation= table.getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 		fSharedLayout= new TextLayout(table.getDisplay());
 		fSharedLayout.setOrientation(orientation);
