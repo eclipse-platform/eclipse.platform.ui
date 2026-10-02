@@ -62,6 +62,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 
 	private BundleContext context;
 	private ServiceTracker<?, Location> locationTracker;
+	private ImageURLModifierTracker imageURLModifierTracker;
 	private static WorkbenchSWTActivator activator;
 	private DebugTrace trace;
 
@@ -89,10 +90,13 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RENDERERS);
 		context.registerService(DebugOptionsListener.class, this, props);
+		imageURLModifierTracker = new ImageURLModifierTracker(context);
+		imageURLModifierTracker.open();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		imageURLModifierTracker.close();
 		saveDialogSettings();
 	}
 
