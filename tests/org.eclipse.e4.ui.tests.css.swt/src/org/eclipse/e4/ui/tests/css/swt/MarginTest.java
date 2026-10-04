@@ -177,6 +177,15 @@ public class MarginTest {
 	}
 
 	@Test
+	void testMargin3Values() {
+		Control control = createTestControl("Button { margin: 10 15 20}");
+		assertEquals(10, getMargin(control, TOP));
+		assertEquals(15, getMargin(control, RIGHT));
+		assertEquals(20, getMargin(control, BOTTOM));
+		assertEquals(15, getMargin(control, LEFT));
+	}
+
+	@Test
 	void testMargin4Values() {
 		Control control = createTestControl("Button { margin: 10 15 20 40}");
 		assertEquals(10, getMargin(control, TOP));
