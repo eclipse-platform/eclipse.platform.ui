@@ -14,12 +14,18 @@
 package org.eclipse.e4.ui.css.core.impl.engine;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Objects;
 
+import org.eclipse.e4.ui.css.core.dom.properties.converters.AbstractCSSValueConverter;
+import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
+import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.css.CSSValue;
 
 public class CSSEngineImplTest {
 
@@ -53,6 +59,43 @@ public class CSSEngineImplTest {
 	void testGetElement_null() {
 		Element result = objectUnderTest.getElement(null);
 		assertNull(result);
+	}
+
+	@Test
+	void testUnregisterCSSValueConverter() {
+		ICSSValueConverter converter = new TestConverter();
+		objectUnderTest.registerCSSValueConverter(converter);
+		assertSame(converter, objectUnderTest.getCSSValueConverter(TestConverter.class));
+
+		objectUnderTest.unregisterCSSValueConverter(converter);
+		assertNull(objectUnderTest.getCSSValueConverter(TestConverter.class));
+	}
+
+	@Test
+	void testUnregisterReplacedConverterKeepsCurrentOne() {
+		ICSSValueConverter replaced = new TestConverter();
+		ICSSValueConverter current = new TestConverter();
+		objectUnderTest.registerCSSValueConverter(replaced);
+		objectUnderTest.registerCSSValueConverter(current);
+
+		objectUnderTest.unregisterCSSValueConverter(replaced);
+		assertSame(current, objectUnderTest.getCSSValueConverter(TestConverter.class));
+	}
+
+	private static class TestConverter extends AbstractCSSValueConverter {
+		TestConverter() {
+			super(TestConverter.class);
+		}
+
+		@Override
+		public Object convert(CSSValue value, CSSEngine engine, Object context) {
+			return null;
+		}
+
+		@Override
+		public String convert(Object value, CSSEngine engine, Object context, ICSSValueConverterConfig config) {
+			return null;
+		}
 	}
 
 }
