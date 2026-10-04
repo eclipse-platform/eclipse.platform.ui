@@ -150,7 +150,7 @@ public class CSS2ColorHelper {
 	}
 
 	static {
-		colorNamesMap.put("aliceBlue", "#F0F8FF");
+		colorNamesMap.put("aliceblue", "#F0F8FF");
 		colorNamesMap.put("aqua", "#00FFFF");
 		colorNamesMap.put("aquamarine", "#7FFFD4");
 		colorNamesMap.put("azure", "#F0FFFF");
