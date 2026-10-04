@@ -42,6 +42,7 @@ import org.junit.platform.suite.api.Suite;
 	SelectorTest.class,
 	CSSEngineTest.class,
 	CSS2FontHelperTest.class,
+	CSS2ColorHelperTest.class,
 	ImportTest.class,
 	InheritTest.class,
 	CSSEngineImplTest.class
