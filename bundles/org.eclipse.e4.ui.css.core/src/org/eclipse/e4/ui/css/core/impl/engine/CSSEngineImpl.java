@@ -1051,7 +1051,7 @@ public abstract class CSSEngineImpl implements CSSEngine {
 		if (valueConverters == null) {
 			return;
 		}
-		valueConverters.remove(converter);
+		valueConverters.remove(converter.getToType(), converter);
 	}
 
 	@Override
