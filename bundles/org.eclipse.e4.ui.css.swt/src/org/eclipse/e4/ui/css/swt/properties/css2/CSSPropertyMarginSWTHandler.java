@@ -79,6 +79,7 @@ AbstractCSSPropertyMarginHandler {
 				setMargin(element, RIGHT, valueList.item(1));
 				setMargin(element, BOTTOM, valueList.item(2));
 				setMargin(element, LEFT, valueList.item(1));
+				break;
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
 				setMargin(element, TOP, valueList.item(0));
