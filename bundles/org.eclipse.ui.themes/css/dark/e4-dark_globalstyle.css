@@ -225,6 +225,17 @@ Section {
 	tb-toggle-color: #F4F7F7;
 }
 
+/* Forms outside a part (popups, dialogs) take the Form background, as the .MPart rules do */
+Form Section,
+Form Composite,
+Form Label,
+Form FormText,
+Form ScrolledPageBook,
+Form Button[style~='SWT.CHECK'],
+Form Button[style~='SWT.RADIO'] {
+    background-color: inherit;
+}
+
 Table,
 Tree {
 	swt-header-color: #CCC;
