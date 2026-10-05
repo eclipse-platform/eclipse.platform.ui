@@ -56,4 +56,16 @@ public class ColumnLabelProviderLambdaTest {
 		assertEquals(fgImage, provider.getImage(model[0]), "same image");
 	}
 
+	@Test
+	public void testCreateTypedTextProvider() {
+		Shell shell = LabelProviderLambdaTest.initializeShell();
+		TableViewer viewer = (TableViewer) LabelProviderLambdaTest.initializeViewer(shell);
+		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
+		columnViewer.setLabelProvider(ColumnLabelProvider.createTextProvider((Integer i) -> "#" + i));
+		shell.open();
+		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
+		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
+		assertEquals("#0", provider.getText(model[0]), "same label text");
+	}
+
 }
