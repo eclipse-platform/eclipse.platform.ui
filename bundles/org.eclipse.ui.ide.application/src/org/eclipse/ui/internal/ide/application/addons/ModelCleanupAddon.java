@@ -118,6 +118,7 @@ public class ModelCleanupAddon {
 
 		CompletableFuture.supplyAsync(() -> getObsoletePartDescriptors(descriptors), executor)
 				.thenAccept(d -> uiSync.asyncExec(() -> iteratorRemove(app.getDescriptors(), d)));
+		executor.shutdown();
 	}
 
 	private void cleanUnavailableHandlers(MApplication app, UISynchronize uiSync) {
@@ -128,6 +129,7 @@ public class ModelCleanupAddon {
 
 		CompletableFuture.supplyAsync(() -> getObsoleteHandlers(handlers), executor)
 				.thenAccept(d -> uiSync.asyncExec(() -> iteratorRemove(app.getHandlers(), d)));
+		executor.shutdown();
 	}
 
 	private List<MPartDescriptor> getObsoletePartDescriptors(List<MPartDescriptor> partDescriptors) {
