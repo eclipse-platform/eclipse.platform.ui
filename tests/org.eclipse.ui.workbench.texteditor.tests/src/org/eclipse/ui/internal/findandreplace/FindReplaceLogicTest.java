@@ -204,7 +204,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "^ ", "");
 		findReplaceLogic.performReplaceAll();
 		// One leading space removed per line, not all leading spaces
-		assertThat(textViewer.getDocument().get(), equalTo(" hello" + lineSeparator() + " world" + lineSeparator() + "  three"));
+		assertEquals(" hello" + lineSeparator() + " world" + lineSeparator() + "  three", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
 	}
 
@@ -226,7 +226,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "\\ba", "");
 		findReplaceLogic.performReplaceAll();
 		// "aa" has a word boundary before the first "a" only, so one match, not two
-		assertThat(textViewer.getDocument().get(), equalTo("a"));
+		assertEquals("a", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -244,7 +244,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "^a", "");
 		findReplaceLogic.performReplaceAll();
 		// only the "a" starting the second line is at a line start
-		assertThat(textViewer.getDocument().get(), equalTo(lineSeparator() + "a"));
+		assertEquals(lineSeparator() + "a", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -262,7 +262,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "^ ", "");
 		findReplaceLogic.performReplaceAll();
 		// one leading space removed, not all three
-		assertThat(textViewer.getDocument().get(), equalTo("  "));
+		assertEquals("  ", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -280,7 +280,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "^\\s*", "");
 		findReplaceLogic.performReplaceAll();
 		// the two indented lines are stripped once each; the third line has no leading whitespace
-		assertThat(textViewer.getDocument().get(), equalTo("a" + lineSeparator() + "b" + lineSeparator() + "c"));
+		assertEquals("a" + lineSeparator() + "b" + lineSeparator() + "c", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 	}
 
@@ -297,7 +297,7 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "^ ", ">");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("> a" + lineSeparator() + "> b"));
+		assertEquals("> a" + lineSeparator() + "> b", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 	}
 
@@ -315,7 +315,7 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "(\\w+)@(\\w+)", "$2@$1");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("eclipse@hello.com"));
+		assertEquals("eclipse@hello.com", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -332,7 +332,7 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, " +$", "");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("a" + lineSeparator() + "b"));
+		assertEquals("a" + lineSeparator() + "b", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 	}
 
