@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -68,12 +68,13 @@ public class LabelProvider extends BaseLabelProvider implements ILabelProvider {
 	 * @return The new LabelProvider
 	 * @since 3.19
 	 */
-	public static LabelProvider createTextProvider(Function<Object, String> textFunction) {
+	public static <E> LabelProvider createTextProvider(Function<? super E, String> textFunction) {
 		Objects.requireNonNull(textFunction);
 		return new LabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public String getText(Object e) {
-				return textFunction.apply(e);
+				return textFunction.apply((E) e);
 			}
 		};
 	}
@@ -86,12 +87,13 @@ public class LabelProvider extends BaseLabelProvider implements ILabelProvider {
 	 * @return The new LabelProvider
 	 * @since 3.19
 	 */
-	public static LabelProvider createImageProvider(Function<Object, Image> imageFunction) {
+	public static <E> LabelProvider createImageProvider(Function<? super E, Image> imageFunction) {
 		Objects.requireNonNull(imageFunction);
 		return new LabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public Image getImage(Object e) {
-				return imageFunction.apply(e);
+				return imageFunction.apply((E) e);
 			}
 		};
 	}
@@ -105,18 +107,20 @@ public class LabelProvider extends BaseLabelProvider implements ILabelProvider {
 	 * @return The new LabelProvider
 	 * @since 3.19
 	 */
-	public static LabelProvider createTextImageProvider(Function<Object, String> textFunction,
-			Function<Object, Image> imageFunction) {
+	public static <E> LabelProvider createTextImageProvider(Function<? super E, String> textFunction,
+			Function<? super E, Image> imageFunction) {
 		Objects.requireNonNull(textFunction);
 		Objects.requireNonNull(imageFunction);
 		return new LabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public String getText(Object e) {
-				return textFunction.apply(e);
+				return textFunction.apply((E) e);
 			}
 			@Override
+			@SuppressWarnings("unchecked")
 			public Image getImage(Object e) {
-				return imageFunction.apply(e);
+				return imageFunction.apply((E) e);
 			}
 		};
 	}
