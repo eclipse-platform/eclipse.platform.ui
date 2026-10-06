@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.text.Position;
 
@@ -53,7 +53,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	private final ConcurrentMap<Object, ConcurrentSkipListSet<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
-	private final AtomicInteger matchCount;
+	private final AtomicLong modCount= new AtomicLong();
+	private final AtomicReference<CountedMatches> cachedMatchCount= new AtomicReference<>();
+
 	private final ConcurrentHashMap<Match, Long> collisionOrder;
 	private final AtomicLong collisionCounter;
 
@@ -65,7 +67,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	protected AbstractTextSearchResult() {
 		fElementsToMatches= new ConcurrentHashMap<>();
 		fListeners = new CopyOnWriteArrayList<>();
-		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
 		collisionOrder = new ConcurrentHashMap<>();
 		collisionCounter = new AtomicLong(0);
@@ -205,10 +206,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 *         already present
 	 */
 	private boolean didAddMatch(Match match) {
-		matchCount.set(0);
 		updateFilterState(match);
-		return fElementsToMatches.computeIfAbsent(match.getElement(),
-				k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
+		try {
+			return fElementsToMatches.computeIfAbsent(match.getElement(),
+					k -> new ConcurrentSkipListSet<>(this::compare)).add(match);
+		} finally {
+			modCount.incrementAndGet();
+		}
 	}
 
 	/**
@@ -266,9 +270,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fireChange(new RemoveAllEvent(this));
 	}
 	private void doRemoveAll() {
-		matchCount.set(0);
 		fElementsToMatches.clear();
 		collisionOrder.clear();
+		modCount.incrementAndGet();
 	}
 
 	/**
@@ -308,7 +312,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 
 	private boolean didRemoveMatch(Match match) {
-		matchCount.set(0);
 		boolean[] existed = new boolean[1];
 		fElementsToMatches.computeIfPresent(match.getElement(), (f, matches) -> {
 			existed[0] = matches.remove(match);
@@ -320,6 +323,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (existed[0]) {
 			collisionOrder.remove(match);
 		}
+		modCount.incrementAndGet();
 		return existed[0];
 	}
 
@@ -390,21 +394,18 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return total number of matches
 	 */
 	public int getMatchCount() {
-		final int oldCount = matchCount.get();
-		if (oldCount != 0) {
-			return oldCount;
+		// Read the stamp before summing so a concurrent modification invalidates the value computed below
+		long stamp = modCount.get();
+		CountedMatches cached = cachedMatchCount.get();
+		if (cached != null && cached.stamp() == stamp) {
+			return cached.count();
 		}
-		// The oldCount is zero here => we have to calculate again
 		int newCount = 0;
 		for (Set<Match> element : fElementsToMatches.values()) {
 			newCount += element.size();
 		}
-		if (matchCount.compareAndSet(0, newCount)) {
-			// Only return if not changed meanwhile
-			return newCount;
-		}
-		// Changed once again, fetch again latest value
-		return getMatchCount();
+		cachedMatchCount.set(new CountedMatches(stamp, newCount));
+		return newCount;
 	}
 
 	/**
@@ -557,13 +558,16 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @since 3.19
 	 */
 	public void removeElements(Collection<?> elements) {
-		matchCount.set(0);
 		List<Match> removedMatches = new ArrayList<>();
-		for (Object object : elements) {
-			Set<Match> matches = fElementsToMatches.remove(object);
-			if (matches != null) {
-				removedMatches.addAll(matches);
+		try {
+			for (Object object : elements) {
+				Set<Match> matches = fElementsToMatches.remove(object);
+				if (matches != null) {
+					removedMatches.addAll(matches);
+				}
 			}
+		} finally {
+			modCount.incrementAndGet();
 		}
 		if (!removedMatches.isEmpty()) {
 			if (!collisionOrder.isEmpty()) {
@@ -571,5 +575,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			}
 			fireChange(getSearchResultEvent(removedMatches, MatchEvent.REMOVED));
 		}
+	}
+
+	/** Match count tagged with the modification stamp it was computed under. */
+	private record CountedMatches(long stamp, int count) {
 	}
 }
