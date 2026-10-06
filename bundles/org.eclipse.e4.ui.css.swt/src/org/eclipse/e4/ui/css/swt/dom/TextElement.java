@@ -34,7 +34,7 @@ public class TextElement extends ControlElement {
 	public void initialize() {
 		super.initialize();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
@@ -46,7 +46,7 @@ public class TextElement extends ControlElement {
 	public void dispose() {
 		super.dispose();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 

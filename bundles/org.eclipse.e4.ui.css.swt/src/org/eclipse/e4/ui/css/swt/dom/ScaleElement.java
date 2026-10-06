@@ -40,7 +40,7 @@ public class ScaleElement extends ControlElement {
 	public void initialize() {
 		super.initialize();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
@@ -52,7 +52,7 @@ public class ScaleElement extends ControlElement {
 	public void dispose() {
 		super.dispose();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
