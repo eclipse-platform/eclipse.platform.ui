@@ -52,6 +52,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 
 		node.putBoolean(IPreferenceConstants.RUN_IN_BACKGROUND, true);
 		node.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
+		node.putBoolean(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE, true);
 
 		node.putBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);

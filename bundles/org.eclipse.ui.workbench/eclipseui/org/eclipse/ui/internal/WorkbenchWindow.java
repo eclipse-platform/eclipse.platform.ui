@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,7 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
@@ -945,12 +947,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (getShell().getDisplay().isRescalingAtRuntime()) {
 				return;
 			}
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			if (!store.getBoolean(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE)) {
+				return;
+			}
 			if (getShell().getDisplay().getPrimaryMonitor().equals(getShell().getMonitor())) {
-				int dialogResponse = MessageDialog.open(MessageDialog.QUESTION, getShell(),
-						WorkbenchMessages.Workbench_zoomChangedTitle, WorkbenchMessages.Workbench_zoomChangedMessage,
-						SWT.NONE, WorkbenchMessages.Workbench_RestartButton,
-						WorkbenchMessages.Workbench_DontRestartButton);
-				if (event.doit && dialogResponse == 0) {
+				LinkedHashMap<String, Integer> buttons = new LinkedHashMap<>();
+				buttons.put(WorkbenchMessages.Workbench_RestartButton, IDialogConstants.OK_ID);
+				buttons.put(WorkbenchMessages.Workbench_DontRestartButton, IDialogConstants.CANCEL_ID);
+				MessageDialogWithToggle dialog = new MessageDialogWithToggle(getShell(),
+						WorkbenchMessages.Workbench_zoomChangedTitle, null,
+						WorkbenchMessages.Workbench_zoomChangedMessage, MessageDialog.QUESTION, buttons, 0,
+						WorkbenchMessages.Workbench_zoomChangedDoNotShowAgain, false);
+				int dialogResponse = dialog.open();
+				if (dialog.getToggleState()) {
+					store.setValue(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE, false);
+				}
+				if (event.doit && dialogResponse == IDialogConstants.OK_ID) {
 					getWorkbenchImpl().restart(true);
 				}
 			}
