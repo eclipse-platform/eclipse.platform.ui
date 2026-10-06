@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -96,12 +96,13 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 	private ITheme currentTheme;
 
 	private final IPropertyChangeListener currentThemeListener = event -> {
-		firePropertyChange(event);
+		// JFace first, as the CSS engine resolves definitions from the JFace registries
 		if (event.getSource() instanceof FontRegistry) {
 			JFaceResources.getFontRegistry().put(event.getProperty(), (FontData[]) event.getNewValue());
 		} else if (event.getSource() instanceof ColorRegistry) {
 			JFaceResources.getColorRegistry().put(event.getProperty(), (RGB) event.getNewValue());
 		}
+		firePropertyChange(event);
 	};
 
 	private ColorRegistry defaultThemeColorRegistry;
@@ -337,7 +338,6 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 		init();
 		ITheme oldTheme = currentTheme;
 		if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
-			firePropertyChange(CHANGE_CURRENT_THEME, oldTheme, getCurrentTheme());
 			if (oldTheme != null) {
 				oldTheme.removePropertyChangeListener(currentThemeListener);
 			}
@@ -361,6 +361,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 			for (String key : themeFonts.getKeySet()) {
 				jfaceFonts.put(key, themeFonts.getFontData(key));
 			}
+			firePropertyChange(CHANGE_CURRENT_THEME, oldTheme, getCurrentTheme());
 			if (oldTheme != null && eventBroker != null) {
 				eventBroker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
 				eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED, context.get(MApplication.class));

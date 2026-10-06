@@ -139,5 +139,4 @@ Automatic-Module-Name: org.eclipse.ui.workbench
 Service-Component: OSGI-INF/org.eclipse.ui.internal.BindingToModelProcessor.xml,
  OSGI-INF/org.eclipse.ui.internal.CommandToModelProcessor.xml,
  OSGI-INF/org.eclipse.ui.internal.ContextToModelProcessor.xml,
- OSGI-INF/org.eclipse.ui.internal.WindowsDefenderConfigurator.xml,
- OSGI-INF/org.eclipse.ui.internal.themes.ColorAndFontProviderImpl.xml
+ OSGI-INF/org.eclipse.ui.internal.WindowsDefenderConfigurator.xml

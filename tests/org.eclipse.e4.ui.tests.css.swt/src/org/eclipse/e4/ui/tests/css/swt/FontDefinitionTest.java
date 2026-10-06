@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import java.util.Hashtable;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -33,14 +33,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.FontDefinition;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 
 public class FontDefinitionTest {
 
 	@RegisterExtension
 	CssSwtEngine css = new CssSwtEngine();
+
+	private ServiceRegistration<IColorAndFontProvider> registration;
+
+	@AfterEach
+	void unregisterProvider() {
+		if (registration != null) {
+			registration.unregister();
+		}
+	}
 
 	@Test
 	void testFontDefinition() {
@@ -154,6 +165,85 @@ public class FontDefinitionTest {
 		font.dispose();
 	}
 
+	@Test
+	void testFontDefinitionFromJFaceRegistryWithoutProvider() {
+		JFaceResources.getFontRegistry().put("CSS_TEST_JFACE_FONT",
+				new FontData[] { new FontData("Times", 13, SWT.NORMAL) });
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {font-family: '#CSS_TEST_JFACE_FONT'}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label label = new Label(shell, SWT.NONE);
+
+		engine.applyStyles(label, true);
+
+		assertEquals("Times", label.getFont().getFontData()[0].getName());
+		assertEquals(13, label.getFont().getFontData()[0].getHeight());
+		shell.dispose();
+	}
+
+	@Test
+	void testUnresolvedFontDefinitionKeepsWidgetFont() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {font-family: '#UNKNOWN-FONT-DEFINITION'}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label label = new Label(shell, SWT.NONE);
+		Font font = new Font(display, "DejaVu Sans", 9, SWT.BOLD);
+		label.setFont(font);
+		String fontName = font.getFontData()[0].getName();
+
+		engine.applyStyles(label, true);
+
+		assertEquals(fontName, label.getFont().getFontData()[0].getName());
+		assertEquals(9, label.getFont().getFontData()[0].getHeight());
+		assertEquals(SWT.BOLD, label.getFont().getFontData()[0].getStyle());
+		shell.dispose();
+		font.dispose();
+	}
+
+	@Test
+	void testUnresolvedFontDefinitionAppliesOtherFontAttributes() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(
+				"Label {font-family: '#UNKNOWN-FONT-DEFINITION'; font-size: 14pt; font-style: italic}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label label = new Label(shell, SWT.NONE);
+		Font font = new Font(display, "Arial", 9, SWT.BOLD);
+		label.setFont(font);
+
+		engine.applyStyles(label, true);
+
+		assertEquals("Arial", label.getFont().getFontData()[0].getName());
+		assertEquals(14, label.getFont().getFontData()[0].getHeight());
+		assertEquals(SWT.BOLD | SWT.ITALIC, label.getFont().getFontData()[0].getStyle());
+		shell.dispose();
+		font.dispose();
+	}
+
+	@Test
+	void testUnresolvedFontDefinitionKeepsFamilyOfEachWidget() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {font-family: '#UNKNOWN-FONT-DEFINITION'}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label arialLabel = new Label(shell, SWT.NONE);
+		Font arial = new Font(display, "Arial", 9, SWT.BOLD);
+		arialLabel.setFont(arial);
+		Label timesLabel = new Label(shell, SWT.NONE);
+		Font times = new Font(display, "Times", 9, SWT.BOLD);
+		timesLabel.setFont(times);
+		String arialName = arialLabel.getFont().getFontData()[0].getName();
+		String timesName = timesLabel.getFont().getFontData()[0].getName();
+		assumeFalse(arialName.equals(timesName));
+
+		engine.applyStyles(arialLabel, true);
+		engine.applyStyles(timesLabel, true);
+
+		assertEquals(arialName, arialLabel.getFont().getFontData()[0].getName());
+		assertEquals(timesName, timesLabel.getFont().getFontData()[0].getName());
+		shell.dispose();
+		arial.dispose();
+		times.dispose();
+	}
+
 	private FontDefinition fontDefinition(String uniqueId, String name,
 			String categoryId, String description) {
 		return new FontDefinition(new FontDefinition(name, uniqueId,
@@ -164,11 +254,7 @@ public class FontDefinitionTest {
 	private void registerFontProviderWith(final String symbolicName, final FontData fontData) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(new FontData[] { fontData }).when(provider).getFont(symbolicName);
-
-		Hashtable<String, Object> properties = new Hashtable<>();
-		properties.put("service.ranking", "1000");
-
-		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
-				null);
+		registration = FrameworkUtil.getBundle(getClass()).getBundleContext()
+				.registerService(IColorAndFontProvider.class, provider, null);
 	}
 }

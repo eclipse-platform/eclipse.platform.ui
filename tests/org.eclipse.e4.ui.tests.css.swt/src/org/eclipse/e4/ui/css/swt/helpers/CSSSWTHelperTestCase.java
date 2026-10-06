@@ -19,6 +19,7 @@ import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.FONT_DEFINITION
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
@@ -32,12 +33,21 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.junit.jupiter.api.AfterEach;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 
 public abstract class CSSSWTHelperTestCase {
 
 	protected static final String CSS_ITALIC = CSS2FontHelper.getFontStyle(true);
 	protected static final String CSS_BOLD = CSS2FontHelper.getFontWeight(true);
+
+	private final List<ServiceRegistration<IColorAndFontProvider>> registrations = new ArrayList<>();
+
+	@AfterEach
+	void unregisterProviders() {
+		registrations.forEach(ServiceRegistration::unregister);
+	}
 
 	protected void registerFontProviderWith(String expectedSymbolicName, String family, int size, int style) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
@@ -49,12 +59,11 @@ public abstract class CSSSWTHelperTestCase {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(rgb).when(provider).getColor(expectedSymbolicName);
 		registerProvider(provider);
-
 	}
 
 	private void registerProvider(final IColorAndFontProvider provider) {
-		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
-				null);
+		registrations.add(FrameworkUtil.getBundle(getClass()).getBundleContext()
+				.registerService(IColorAndFontProvider.class, provider, null));
 	}
 
 	protected CSS2FontProperties fontProperties(String family) {
