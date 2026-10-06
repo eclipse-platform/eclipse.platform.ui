@@ -17,9 +17,9 @@ import static org.eclipse.e4.ui.css.swt.helpers.ThemeElementDefinitionHelper.nor
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.WeakHashMap;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -43,7 +43,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 
 	private static final String EDITABLE_PROP = "editable";
 
-	private final Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<>();
+	private final Map<Long, ResourceBundle> bundleToResourceBundles = new HashMap<>();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
