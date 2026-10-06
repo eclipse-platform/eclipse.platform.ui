@@ -311,4 +311,13 @@ public interface IPreferenceConstants {
 	 */
 	String SHOW_KEYS_TIME_TO_CLOSE = "showCommandKeys_timeToClose"; //$NON-NLS-1$
 
+	/**
+	 * Workbench preference id for whether to prompt for a restart when the zoom of
+	 * the primary monitor changes.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (prompt)
+	 * </p>
+	 */
+	String PROMPT_RESTART_ON_ZOOM_CHANGE = "promptRestartOnZoomChange"; //$NON-NLS-1$
+
 }
