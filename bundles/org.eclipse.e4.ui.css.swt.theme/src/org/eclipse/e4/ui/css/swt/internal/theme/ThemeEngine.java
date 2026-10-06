@@ -182,7 +182,6 @@ public class ThemeEngine implements IThemeEngine {
 								for (File modifiedFile : modifiedFiles) {
 									String modifiedFileName = modifiedFile.getName();
 									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
-										//								modifiedStylesheets
 										ArrayList<String> styleSheets = new ArrayList<>();
 										styleSheets.add(modifiedFile.toURI().toString());
 										modifiedStylesheets.put(themeId, styleSheets);
@@ -241,8 +240,6 @@ public class ThemeEngine implements IThemeEngine {
 				"platform:/plugin/org.eclipse.ui.themes/css/"));
 		// register a default resolver for file uri's
 		registerResourceLocator(new FileResourcesLocatorImpl());
-		// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
-		// registerResourceLocator(new HttpResourcesLocatorImpl());
 	}
 
 

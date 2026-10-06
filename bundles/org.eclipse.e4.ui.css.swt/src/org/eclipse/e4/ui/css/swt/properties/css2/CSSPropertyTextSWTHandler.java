@@ -131,10 +131,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 			String pseudo, CSSEngine engine) throws Exception {
 		String text = null;
 		Widget widget = (Widget) element;
-		// if (control instanceof Text) {
-		// final Text controlText = ((Text) element);
-		// text = controlText.getText();
-		// } else {
 		if (widget instanceof Label) {
 			text = ((Label) element).getText();
 			if (text != null) {
@@ -146,7 +142,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 				widget.setData(CSSSWTConstants.TEXT_KEY, text);
 			}
 		}
-		// }
 		return "none";
 	}
 

@@ -89,10 +89,6 @@ AbstractCSSPropertyClassificationHandler {
 		try {
 			cursor = control.getCursor();
 		} catch (Throwable e) {
-			//TODO replace with eclipse logging
-			//			if (logger.isWarnEnabled())
-			//				logger
-			//						.warn("Impossible to manage cursor, This SWT version doesn't support control.getCursor() Method");
 		}
 		return engine.convert(cursor, Cursor.class, null);
 	}
@@ -100,9 +96,6 @@ AbstractCSSPropertyClassificationHandler {
 	@Override
 	public String retrieveCSSPropertyVisibility(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// Control control = (Control) element;
-		// if (control.isVisible())
 		return "visible";
-		// return "hidden";
 	}
 }
