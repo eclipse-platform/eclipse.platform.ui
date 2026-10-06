@@ -198,6 +198,24 @@ public class LabelTest {
 	}
 
 	@Test
+	void testFontWeightKeepsAnInheritedFamilyWithSpacesUnquoted() {
+		Font font = new Font(css.getDisplay(), "Times New Roman", 10, SWT.NORMAL);
+		// macOS reports the font it fell back to when the family is not installed
+		String family = font.getFontData()[0].getName();
+		assumeTrue(family.contains(" "));
+		CSSEngine engine = css.createEngine("Label { font-weight: bold }");
+		Shell shell = new Shell(css.getDisplay());
+		Label label = new Label(shell, SWT.NONE);
+		label.setFont(font);
+
+		engine.applyStyles(label, true);
+
+		assertEquals(family, label.getFont().getFontData()[0].getName());
+		shell.dispose();
+		font.dispose();
+	}
+
+	@Test
 	void testAlignment() {
 		Label labelToTest = css.createTestLabel("Label { swt-alignment: right }");
 		assertEquals(SWT.RIGHT, labelToTest.getAlignment());

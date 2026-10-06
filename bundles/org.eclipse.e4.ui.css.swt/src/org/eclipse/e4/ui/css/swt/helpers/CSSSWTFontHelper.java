@@ -126,9 +126,8 @@ public class CSSSWTFontHelper {
 		CSS2FontProperties fontProperties = new CSS2FontPropertiesImpl();
 		if (font != null) {
 			FontData fontData = getFirstFontData(font);
-			// Update font-family
-			String fontFamily = getFontFamily(font);
-			fontProperties.setFamily(new CssText(CssText.Kind.IDENT, fontFamily));
+			// The plain name, CSS quoting would end up in the FontData name
+			fontProperties.setFamily(new CssText(CssText.Kind.STRING, fontData.getName()));
 			// Update font-size; mirrors the widget font, not a CSS declaration
 			int fontSize = fontData.getHeight();
 			fontProperties.setSize(new CssNumber(fontSize, true));
