@@ -15,22 +15,76 @@ package org.eclipse.e4.ui.css.swt.engine;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 
 /**
- * Add SWT filter to the {@link Display} to apply styles when SWT widget is
- * resized or showed.
+ * Applies styles to the widgets of a {@link Display} when they are skinned, and
+ * to the page of an unselected {@link CTabFolder} tab once it is shown.
  */
 public class CSSSWTApplyStylesListener {
+	// marks a control this listener already watches, since every re-skin repeats the skin event
+	private final String pendingPageKey = getClass().getName() + '@' + Integer.toHexString(hashCode());
+
 	CSSEngine engine;
 	public CSSSWTApplyStylesListener(Display display, final CSSEngine engine) {
 		this.engine = engine;
 		display.addListener(SWT.Skin, event -> {
-			if (engine != null) {
-				engine.applyStyles(event.widget, false);
+			if (engine == null) {
+				return;
+			}
+			engine.applyStyles(event.widget, false);
+			if (event.widget instanceof Control control && isHiddenPage(control)) {
+				// the folder hides this page from the engine, so it was skipped
+				styleWhenItBecomesThePage(control);
 			}
 		});
+	}
+
+	/**
+	 * Styles the control once it is shown, which selecting its tab does.
+	 */
+	private void styleWhenItBecomesThePage(Control control) {
+		if (control.getData(pendingPageKey) != null) {
+			return;
+		}
+		Listener listener = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				// read the parent each time, since setParent may have moved the control to another folder
+				if (isHiddenPage(control)) {
+					return;
+				}
+				control.removeListener(SWT.Show, this);
+				control.setData(pendingPageKey, null);
+				if (control.getParent() instanceof CTabFolder) {
+					engine.applyStyles(control, true);
+				}
+			}
+		};
+		control.setData(pendingPageKey, listener);
+		control.addListener(SWT.Show, listener);
+	}
+
+	private static boolean isHiddenPage(Control control) {
+		if (!(control.getParent() instanceof CTabFolder folder)) {
+			return false;
+		}
+		int selected = folder.getSelectionIndex();
+		if (selected >= 0 && folder.getItem(selected).getControl() == control) {
+			return false;
+		}
+		for (CTabItem item : folder.getItems()) {
+			if (item.getControl() == control) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

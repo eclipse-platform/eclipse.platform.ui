@@ -16,6 +16,8 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.e4.ui.css.core.dom.ArrayNodeList;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
@@ -31,6 +33,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -137,28 +140,28 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 
 	@Override
 	public NodeList getVisibleChildNodes() {
-		// CTabFolder#getChildren() exposes the "tab controls" (the toolbars and
-		// the top-right area), as well as the composites used to host the
-		// CTabItem contents. We need to expose both the CTabItems but
-		// just the composite of the active CTabItem
+		// Only the pages of unselected tabs are hidden. A child no tab holds yet stays
+		// visible, since attaching it to the selected tab may send no event, except
+		// for the folder's own chevron and minimize/maximize toolbars.
 		CTabFolder folder = (CTabFolder) getWidget();
-		ArrayList<Widget> visible = new ArrayList<>();
-
-		if (folder.getTopRight() != null) {
-			visible.add(folder.getTopRight());
-		}
-		Collections.addAll(visible, folder.getItems());
-		int selected = folder.getSelectionIndex();
-		// if (selected < 0 && folder.getItemCount() > 0) {
-		// selected = 0;
-		// }
-		if (selected >= 0) {
-			CTabItem item = folder.getItem(selected);
-			// If item.getControl() is not yet set, we pretend it doesn't exist
-			if (!item.isDisposed() && item.getControl() != null) {
-				visible.add(item.getControl());
+		CTabItem[] items = folder.getItems();
+		Set<Control> pages = new HashSet<>();
+		for (CTabItem item : items) {
+			if (item.getControl() != null) {
+				pages.add(item.getControl());
 			}
 		}
+		int selected = folder.getSelectionIndex();
+		Control selectedPage = selected >= 0 ? items[selected].getControl() : null;
+		ArrayList<Widget> visible = new ArrayList<>();
+		for (Control child : folder.getChildren()) {
+			boolean visibleChild = pages.contains(child) ? child == selectedPage
+					: child == folder.getTopRight() || !(child instanceof ToolBar);
+			if (visibleChild) {
+				visible.add(child);
+			}
+		}
+		Collections.addAll(visible, items);
 		return new ArrayNodeList(visible, engine);
 	}
 
