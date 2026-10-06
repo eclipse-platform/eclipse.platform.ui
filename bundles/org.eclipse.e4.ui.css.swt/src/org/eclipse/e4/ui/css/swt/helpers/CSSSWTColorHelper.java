@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -94,6 +94,15 @@ public class CSSSWTColorHelper {
 			return hasColorDefinitionAsValue(text.value());
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether the value looks like a color definition reference but
+	 * resolves neither to a color, such as an SWT system color, nor to a definition.
+	 */
+	public static boolean isUnresolvedColorDefinition(CSSValue value) {
+		return hasColorDefinitionAsValue(value) && getRGBA(value) == null
+				&& findColorByDefinition(((CssText) value).value()) == null;
 	}
 
 	public static boolean hasColorDefinitionAsValue(String name) {

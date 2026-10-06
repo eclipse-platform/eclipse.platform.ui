@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -111,6 +112,38 @@ public class CTabItemTest {
 		engine.applyStyles(folder.getShell(), true);
 
 		return folder;
+	}
+
+	@Test
+	void testUnresolvedFontDefinitionKeepsHeightOfEachItem() {
+		CTabFolder folder = createTestTabFolder(false);
+		CTabItem small = folder.getItem(0);
+		CTabItem large = folder.getItem(1);
+		Font smallFont = new Font(css.getDisplay(), "Arial", 9, SWT.NORMAL);
+		Font largeFont = new Font(css.getDisplay(), "Arial", 14, SWT.NORMAL);
+		small.setFont(smallFont);
+		large.setFont(largeFont);
+		CSSEngine engine = css.createEngine("CTabItem { font-family: '#UNKNOWN-FONT-DEFINITION'; }");
+
+		engine.applyStyles(folder.getShell(), true);
+		shell.open();
+		spinEventLoop();
+
+		assertEquals(9, small.getFont().getFontData()[0].getHeight());
+		assertEquals(14, large.getFont().getFontData()[0].getHeight());
+		shell.dispose();
+		smallFont.dispose();
+		largeFont.dispose();
+	}
+
+	@Test
+	void testUnresolvedFontDefinitionDropsSelectedStyleOnDeselect() {
+		CTabFolder folder = createTestTabFolder("CTabItem { font-family: '#UNKNOWN-FONT-DEFINITION'; }\n"
+				+ "CTabItem:selected { font-weight: bold; }");
+		spinEventLoop();
+		for (int i = 0; i < folder.getItemCount(); i++) {
+			testSelectedFontBold(folder, i);
+		}
 	}
 
 	@Test

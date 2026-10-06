@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,6 +44,10 @@ public class CSSValueSWTColorConverterImpl extends AbstractCSSValueConverter {
 	@Override
 	public Color convert(CSSValue value, CSSEngine engine, Object context)
 			throws DOMException {
+		if (CSSSWTColorHelper.isUnresolvedColorDefinition(value)) {
+			// treated like unset, so the widget keeps its default color instead of black
+			return null;
+		}
 		Display display = (Display) context;
 		Color color = CSSSWTColorHelper.getSWTColor(value, display);
 		if (color == null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2019 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,14 +17,15 @@ package org.eclipse.e4.ui.tests.css.swt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import java.util.Hashtable;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.internal.css.swt.ColorAndFontUtil;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -33,14 +34,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 
 public class ColorDefinitionTest {
 
 	@RegisterExtension
 	CssSwtEngine css = new CssSwtEngine();
+
+	private ServiceRegistration<IColorAndFontProvider> registration;
+
+	@AfterEach
+	void unregisterProvider() {
+		if (registration != null) {
+			registration.unregister();
+		}
+	}
 
 	@Test
 	void testColorDefinition() {
@@ -151,6 +163,61 @@ public class ColorDefinitionTest {
 	}
 
 	@Test
+	void testUnresolvedColorDefinitionKeepsDefaultColor() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Button {background-color: '#UNKNOWN-COLOR-DEFINITION';}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Button button = new Button(shell, SWT.NONE);
+		RGB defaultBackground = button.getBackground().getRGB();
+
+		engine.applyStyles(button, true);
+
+		assertEquals(defaultBackground, button.getBackground().getRGB());
+		engine.dispose();
+		shell.dispose();
+	}
+
+	@Test
+	void testColorDefinitionFromJFaceRegistryWithoutProvider() {
+		JFaceResources.getColorRegistry().put("CSS_TEST_JFACE_COLOR", new RGB(1, 2, 3));
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {background-color: '#CSS_TEST_JFACE_COLOR'}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label label = new Label(shell, SWT.NONE);
+
+		engine.applyStyles(label, true);
+
+		assertEquals(new RGB(1, 2, 3), label.getBackground().getRGB());
+		engine.dispose();
+		shell.dispose();
+	}
+
+	@Test
+	void testQuotedSystemColorIsNotTreatedAsUnresolvedDefinition() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("Label {background-color: '#COLOR-LIST-SELECTION'}");
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Label label = new Label(shell, SWT.NONE);
+
+		engine.applyStyles(label, true);
+
+		assertEquals(display.getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB(), label.getBackground().getRGB());
+		engine.dispose();
+		shell.dispose();
+	}
+
+	@Test
+	void testUnregisteredColorProviderIsNoLongerUsed() {
+		registerColorProviderWith("ACTIVE_HYPERLINK_COLOR", new RGB(255, 0, 0));
+		IColorAndFontProvider provider = ColorAndFontUtil.getColorAndFontProvider();
+
+		registration.unregister();
+		registration = null;
+
+		assertNotSame(provider, ColorAndFontUtil.getColorAndFontProvider());
+	}
+
+	@Test
 	void testSetColorDefinitionWithSystemColor() {
 		// given
 		Display display = css.getDisplay();
@@ -178,10 +245,7 @@ public class ColorDefinitionTest {
 	private void registerColorProviderWith(final String symbolicName, final RGB rgb) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(rgb).when(provider).getColor(symbolicName);
-		Hashtable<String, Object> properties = new Hashtable<>();
-		properties.put("service.ranking", "1000");
-
-		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
-				properties);
+		registration = FrameworkUtil.getBundle(getClass()).getBundleContext()
+				.registerService(IColorAndFontProvider.class, provider, null);
 	}
 }

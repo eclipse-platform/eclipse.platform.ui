@@ -74,11 +74,13 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 
 	/**
 	 * Resolves a relative font size against the font the element had before it was
-	 * styled, so that reapplying a style does not scale an already scaled font.
+	 * styled, and an unresolved font definition against the widget's own font.
 	 */
-	private static CSS2FontProperties resolveRelativeSize(CSS2FontProperties fontProperties,
-			CSSElementContext context) {
-		return CSSSWTFontHelper.resolveRelativeSize(fontProperties, CSSSWTFontHelper.getBaseFontData(context));
+	private static CSS2FontProperties resolve(CSS2FontProperties fontProperties, CSSElementContext context,
+			Widget widget) {
+		CSS2FontProperties resolved = CSSSWTFontHelper.resolveRelativeSize(fontProperties,
+				CSSSWTFontHelper.getBaseFontData(context));
+		return CSSSWTFontHelper.resolveUnresolvedFontDefinition(resolved, context, widget);
 	}
 
 	private static void updateChildrenFonts(CTabFolder folder, Font font) {
@@ -234,7 +236,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 		if (fontProperties == null) {
 			return;
 		}
-		Font font = (Font) engine.convert(resolveRelativeSize(fontProperties, context), Font.class, widget);
+		Font font = (Font) engine.convert(resolve(fontProperties, context, widget), Font.class, widget);
 		setFont(widget, font);
 	}
 
@@ -323,7 +325,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 				try {
 					// set the font
 					Font font = (Font) engine.convert(
-							resolveRelativeSize(fontProperties, engine.getCSSElementContext(item)),
+							resolve(fontProperties, engine.getCSSElementContext(item), item),
 							Font.class, item);
 					setFont(item, font);
 				} catch (Exception e) {

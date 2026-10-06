@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,6 +86,11 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 			if (grad == null) {
 				return; // warn?
 			}
+			if (grad.getRGBs().isEmpty()) {
+				// no stop resolved, treated like unset
+				resetGradient(widget, pseudo);
+				return;
+			}
 			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
 				Color[] colors = CSSSWTColorHelper.getSWTColors(grad,
@@ -102,6 +107,20 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				GradientBackgroundListener.handle((Control) widget, grad);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
+		}
+	}
+
+	private static void resetGradient(Widget widget, String pseudo) {
+		if (widget instanceof CTabItem item) {
+			if ("selected".equals(pseudo)) {
+				item.getParent().setSelectionBackground(null, null, true);
+			} else {
+				item.getParent().setBackground(null, null, true);
+			}
+		} else if (widget instanceof Control control) {
+			GradientBackgroundListener.remove(control);
+			CSSSWTColorHelper.setBackground(control, null);
+			CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 		}
 	}
 

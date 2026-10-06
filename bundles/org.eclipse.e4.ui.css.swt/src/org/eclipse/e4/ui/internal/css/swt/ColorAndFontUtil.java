@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2019 IBM Corporation and others.
+ *  Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,38 +14,34 @@
 package org.eclipse.e4.ui.internal.css.swt;
 
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class ColorAndFontUtil {
 
-	static IColorAndFontProvider colorAndFontProvider = null;
+	private static final IColorAndFontProvider DEFAULT_PROVIDER = new JFaceColorAndFontProvider();
 
-	static {
-		if (FrameworkUtil.getBundle(ColorAndFontUtil.class).getBundleContext() != null) {
-			ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> colorAndFontProviderTracker = new ServiceTracker<>(
-					FrameworkUtil.getBundle(ColorAndFontUtil.class).getBundleContext(),
-					IColorAndFontProvider.class.getName(), null) {
-				@Override
-				public IColorAndFontProvider addingService(ServiceReference<IColorAndFontProvider> reference) {
-					// this is needed so that the unit test can exchange the color and font provider
-					// with a mocked version
-					colorAndFontProvider = super.addingService(reference);
-					return colorAndFontProvider;
-				}
-			};
-			colorAndFontProviderTracker.open();
+	private static final ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> TRACKER = openTracker();
+
+	private static ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> openTracker() {
+		BundleContext context = FrameworkUtil.getBundle(ColorAndFontUtil.class).getBundleContext();
+		if (context == null) {
+			return null;
 		}
+		ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> tracker = new ServiceTracker<>(context,
+				IColorAndFontProvider.class, null);
+		tracker.open();
+		return tracker;
 	}
 
 	/**
-	 * Util method to access the OSGI immediate component IColorAndFontProvider
-	 * defined in the same bundle as we do life in the same bundle we do not track
-	 * its life-cycle (as it is the same as our life-cycle)
+	 * Returns the registered {@link IColorAndFontProvider} service, or a provider
+	 * backed by the JFace registries if none is registered.
 	 */
 	public static IColorAndFontProvider getColorAndFontProvider() {
-		return colorAndFontProvider;
+		IColorAndFontProvider provider = TRACKER != null ? TRACKER.getService() : null;
+		return provider != null ? provider : DEFAULT_PROVIDER;
 	}
 
 }
