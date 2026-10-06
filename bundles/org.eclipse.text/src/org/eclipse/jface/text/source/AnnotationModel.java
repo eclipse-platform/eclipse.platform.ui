@@ -727,9 +727,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		List<Iterator<Annotation>> iterators= new ArrayList<>(fAttachments.size() + 1);
 		iterators.add(regionIterator);
-		Iterator<Object> it= fAttachments.keySet().iterator();
+		Iterator<IAnnotationModel> it= fAttachments.values().iterator();
 		while (it.hasNext()) {
-			IAnnotationModel attachment= fAttachments.get(it.next());
+			IAnnotationModel attachment= it.next();
 			if (attachment instanceof IAnnotationModelExtension2) {
 				iterators.add(((IAnnotationModelExtension2) attachment).getAnnotationIterator(offset, length, canStartBefore, canEndAfter));
 			} else {
@@ -786,9 +786,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		List<Iterator<Annotation>> iterators= new ArrayList<>(fAttachments.size() + 1);
 		iterators.add(iter);
-		Iterator<Object> it= fAttachments.keySet().iterator();
+		Iterator<IAnnotationModel> it= fAttachments.values().iterator();
 		while (it.hasNext()) {
-			iterators.add(fAttachments.get(it.next()).getAnnotationIterator());
+			iterators.add(it.next().getAnnotationIterator());
 		}
 
 		return new MetaIterator<>(iterators.iterator());
