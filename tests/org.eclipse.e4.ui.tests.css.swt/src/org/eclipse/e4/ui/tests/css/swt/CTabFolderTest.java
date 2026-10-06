@@ -20,10 +20,17 @@ import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.GREEN;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Arrays;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -41,6 +48,9 @@ public class CTabFolderTest {
 
 	@RegisterExtension
 	CssSwtEngine css = new CssSwtEngine();
+
+	// stays attached to the shared display as a skin listener, so the tests share one
+	private static CSSEngine lazyEngine;
 
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
 		Display display = css.getDisplay();
@@ -355,5 +365,162 @@ public class CTabFolderTest {
 		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
 		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+	}
+
+	@Test
+	void testPageSelectedProgrammaticallyAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		ensureLazyEngine(display);
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		// nothing is selected yet, so the page is hidden and the CTabFolder does
+		// not expose it to the engine
+		Composite page = newPage(folderToTest);
+		tab1.setControl(page);
+		spinEventLoop(display);
+		assertNotEquals(RED, page.getBackground().getRGB());
+
+		// a programmatic selection sends no selection event, so only the page
+		// becoming visible can trigger its styling
+		folderToTest.setSelection(0);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testPresizedPageAttachedToSelectedTabIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		ensureLazyEngine(display);
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+
+		// sized like the Search dialog's folder layout sizes every child, and
+		// skinned before its tab holds it
+		Composite page = newPage(folderToTest);
+		page.setBounds(folderToTest.getClientArea());
+		spinEventLoop(display);
+
+		// neither the bounds nor the visibility change, so attaching sends no event
+		tab1.setControl(page);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testPageMovedToAnotherFolderIsStyledWhenItsTabIsSelected() throws IOException {
+		Display display = css.getDisplay();
+		ensureLazyEngine(display);
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder first = new CTabFolder(shell, SWT.NONE);
+		new CTabItem(first, SWT.NONE).setControl(newPage(first));
+		CTabItem firstTab2 = new CTabItem(first, SWT.NONE);
+		first.setSelection(0);
+		CTabFolder second = new CTabFolder(shell, SWT.NONE);
+		new CTabItem(second, SWT.NONE).setControl(newPage(second));
+		CTabItem secondTab2 = new CTabItem(second, SWT.NONE);
+		second.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+
+		Composite page = newPage(first);
+		firstTab2.setControl(page);
+		spinEventLoop(display); // skipped and watched in the first folder
+
+		boolean moved = page.setParent(second);
+		assumeTrue(moved, "reparenting is not supported");
+		firstTab2.setControl(null);
+		secondTab2.setControl(page);
+		spinEventLoop(display); // skipped again, as the page of an unselected tab
+		assertNotEquals(RED, page.getBackground().getRGB());
+
+		second.setSelection(1);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testTabToolBarsOfTheFolderAreNotStyled() {
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine("CTabFolder > ToolBar { background-color: #FF0000 }");
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		new CTabItem(folderToTest, SWT.NONE).setText("A TAB ITEM");
+		folderToTest.setMinimizeVisible(true);
+		folderToTest.setMaximizeVisible(true);
+		spinEventLoop(display); // the folder creates its toolbars in a deferred update
+		ToolBar[] tabToolBars = Arrays.stream(folderToTest.getChildren()).filter(ToolBar.class::isInstance)
+				.toArray(ToolBar[]::new);
+		assumeTrue(tabToolBars.length > 0, "the folder creates no tab toolbars");
+
+		engine.applyStyles(shell, true);
+
+		for (ToolBar toolBar : tabToolBars) {
+			assertNotEquals(RED, toolBar.getBackground().getRGB());
+		}
+	}
+
+	@Test
+	void testPageOfUnselectedTabIsStyledOnlyWhenSelected() throws IOException {
+		Display display = css.getDisplay();
+		ensureLazyEngine(display);
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setControl(newPage(folderToTest));
+		CTabItem tab2 = new CTabItem(folderToTest, SWT.NONE);
+		Composite page = newPage(folderToTest);
+		tab2.setControl(page);
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+		spinEventLoop(display);
+		page.reskin(SWT.ALL); // a theme switch re-skins the page while its tab is still unselected
+		spinEventLoop(display);
+		assertNotEquals(RED, page.getBackground().getRGB());
+
+		folderToTest.setSelection(1);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	private static void ensureLazyEngine(Display display) throws IOException {
+		if (lazyEngine == null) {
+			lazyEngine = new CSSSWTEngineImpl(display, true);
+			// a class selector keeps this engine from styling the widgets of other tests
+			lazyEngine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+		}
+	}
+
+	private static Composite newPage(CTabFolder folder) {
+		Composite page = new Composite(folder, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		return page;
+	}
+
+	private static void spinEventLoop(Display display) {
+		while (display.readAndDispatch()) {
+			// deliver the pending skin and show events
+		}
 	}
 }
