@@ -220,6 +220,8 @@ public class SmartImportTests {
 			job.setDirectoriesToImport(directories);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 			IStatus status = job.run(new NullProgressMonitor());
+			// a delta the workspace deferred to its notification job must arrive before counting
+			ResourcesPlugin.getWorkspace().checkpoint(false);
 
 			assertTrue("Import failed: " + status, status.isOK());
 			assertEquals(directories.size(), ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
