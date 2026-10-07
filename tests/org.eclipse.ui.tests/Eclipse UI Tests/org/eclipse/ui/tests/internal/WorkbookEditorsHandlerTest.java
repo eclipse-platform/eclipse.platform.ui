@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 vogella GmbH.
+ * Copyright (c) 2022, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,8 @@
  *
  * Contributors:
  *     Fabian Pfaff (vogella GmbH) - initial API and implementation
+ *     IBM Corporation - Move pinned editors to left in editor space, top in 
+ *     chevron list
  ******************************************************************************/
 
 package org.eclipse.ui.tests.internal;
@@ -26,16 +28,23 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
+import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbookEditorsHandler;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
@@ -68,15 +77,25 @@ public class WorkbookEditorsHandlerTest {
 
 	@After
 	public final void tearDown() throws Exception {
-		if (project1 != null) {
-			project1.delete(true, true, null);
-			project1 = null;
+		try {
+			if (project1 != null) {
+				project1.delete(true, true, null);
+				project1 = null;
+			}
+			if (project2 != null) {
+				project2.delete(true, true, null);
+				project2 = null;
+			}
+			if (activePage != null) {
+				activePage.closeAllEditors(false);
+			}
+		} finally {
+			IEclipsePreferences renderersPrefs = InstanceScope.INSTANCE
+					.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+			renderersPrefs.remove(CTabRendering.SHOW_PINNED_EDITORS_FIRST);
+			renderersPrefs.remove(StackRenderer.MRU_KEY);
+			renderersPrefs.flush();
 		}
-		if (project2 != null) {
-			project2.delete(true, true, null);
-			project2 = null;
-		}
-		activePage.closeAllEditors(false);
 	}
 
 	@Test
@@ -370,6 +389,65 @@ public class WorkbookEditorsHandlerTest {
 
 		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(0));
 		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(1));
+	}
+
+	@Test
+	public void testShowPinnedEditorsFirstPreference() throws Exception {
+		String file1Name = "file1.txt";
+		String file2Name = "file2.txt";
+		String file3Name = "file3.txt";
+		String file4Name = "file4.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(file1Name, project1), true);
+		IEditorPart editor2 = IDE.openEditor(activePage, FileUtil.createFile(file2Name, project1), true);
+		IDE.openEditor(activePage, FileUtil.createFile(file3Name, project1), true);
+		IEditorPart editor4 = IDE.openEditor(activePage, FileUtil.createFile(file4Name, project1), true);
+
+		// Pin editors 2 and 4
+		WorkbenchPartReference ref2 = (WorkbenchPartReference) ((WorkbenchPage) activePage).getReference(editor2);
+		ref2.setPinned(true);
+		WorkbenchPartReference ref4 = (WorkbenchPartReference) ((WorkbenchPage) activePage).getReference(editor4);
+		ref4.setPinned(true);
+
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+
+		IEclipsePreferences renderersPrefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+
+		// 1. In default MRU mode when preference is disabled (false):
+		// Expects standard MRU activation history order: [file4.txt, file3.txt, file2.txt, file1.txt]
+		renderersPrefs.putBoolean(StackRenderer.MRU_KEY, true);
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, false);
+		WorkbookEditorsHandlerTestable handlerMruDisabled = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handlerMruDisabled);
+		handlerMruDisabled.execute(handlerService.createExecutionEvent(cmd, null));
+		assertEquals(List.of(file4Name, file3Name, file2Name, file1Name), handlerMruDisabled.tableItemTexts);
+
+		// When preference is enabled (true) in MRU mode:
+		// Pinned editors first in MRU order (file4, file2), followed by unpinned in MRU order (file3, file1)
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, true);
+		WorkbookEditorsHandlerTestable handlerMruEnabled = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handlerMruEnabled);
+		handlerMruEnabled.execute(handlerService.createExecutionEvent(cmd, null));
+		assertEquals(List.of(file4Name, file2Name, file3Name, file1Name), handlerMruEnabled.tableItemTexts);
+
+		// 2. In non-MRU (tab index) mode when preference is disabled (false):
+		// Expects standard tab index order: [file1.txt, file2.txt, file3.txt, file4.txt]
+		renderersPrefs.putBoolean(StackRenderer.MRU_KEY, false);
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, false);
+		WorkbookEditorsHandlerTestable handlerNonMruDisabled = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handlerNonMruDisabled);
+		handlerNonMruDisabled.execute(handlerService.createExecutionEvent(cmd, null));
+		assertEquals(List.of(file1Name, file2Name, file3Name, file4Name), handlerNonMruDisabled.tableItemTexts);
+
+		// When preference is enabled (true) in non-MRU mode:
+		// Pinned editors first in screen tab order (file2, file4), followed by unpinned in screen tab order (file1, file3)
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, true);
+		WorkbookEditorsHandlerTestable handlerNonMruEnabled = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handlerNonMruEnabled);
+		handlerNonMruEnabled.execute(handlerService.createExecutionEvent(cmd, null));
+		assertEquals(List.of(file2Name, file4Name, file1Name, file3Name), handlerNonMruEnabled.tableItemTexts);
 	}
 
 	class WorkbookEditorsHandlerTestable extends WorkbookEditorsHandler {

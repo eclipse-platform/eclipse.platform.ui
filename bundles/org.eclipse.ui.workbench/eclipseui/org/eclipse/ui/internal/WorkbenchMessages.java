@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -472,6 +472,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_allowInplaceEditingButton;
 	public static String WorkbenchPreference_useIPersistableEditorButton;
 	public static String WorkbenchPreference_promptWhenStillOpenButton;
+	public static String WorkbenchPreference_showPinnedEditorsFirstButton;
 	public static String WorkbenchPreference_stickyCycleButton;
 	public static String WorkbenchPreference_RunInBackgroundButton;
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
