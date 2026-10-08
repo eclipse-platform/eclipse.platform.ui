@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.tests.css.swt.ColorDefinitionTest;
 import org.eclipse.e4.ui.tests.css.swt.CompositeTest;
 import org.eclipse.e4.ui.tests.css.swt.DescendentTest;
 import org.eclipse.e4.ui.tests.css.swt.FontDefinitionTest;
+import org.eclipse.e4.ui.tests.css.swt.FontWeightsTest;
 import org.eclipse.e4.ui.tests.css.swt.GradientTest;
 import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesPseudoKeyTest;
 import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesTest;
@@ -68,6 +69,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, SWTStyleHelpersTest.class,
 		CSSResourcesHelpersTest.class,
 		SWTResourceRegistryKeyFactoryTest.class, SWTResourcesRegistryTest.class, FontDefinitionTest.class,
+		FontWeightsTest.class,
 		ColorDefinitionTest.class, ThemesExtensionTest.class, IEclipsePreferencesTest.class,
 		EclipsePreferencesHelperTest.class, CSSSWTWidgetTest.class, LabelTest.class, LinkTest.class,
 		CTabFolderTest.class, CTabFolderActiveClassTest.class, CTabItemTest.class, CTabItemSelectionTest.class,

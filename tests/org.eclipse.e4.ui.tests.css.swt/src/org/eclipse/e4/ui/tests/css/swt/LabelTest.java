@@ -99,6 +99,42 @@ public class LabelTest {
 	}
 
 	@Test
+	void testFontWeightFallsBackToTheNearestLighterFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Light", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Segoe UI ExtraLight", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 200 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Light", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightFallsBackToTheNearestHeavierFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Black", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Segoe UI ExtraBold", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 800 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Black", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightWithoutSemiBoldFaceIsBoldOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Calibri", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Calibri Semibold", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 600 12pt Calibri }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Calibri", fontData.getName());
+		// GDI reports bold only for a weight of exactly 700
+		assertEquals(SWT.BOLD, fontData.getStyle());
+	}
+
+	@Test
 	void testFontWeightSelectsTheMediumFaceOnMac() throws ReflectiveOperationException {
 		assumeTrue("cocoa".equals(SWT.getPlatform()));
 
