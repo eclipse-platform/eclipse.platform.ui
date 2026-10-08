@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   viewBox="0 0 16 16"
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="arrow-bg">
+      <stop
+         id="arrow-bg-stop0"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="arrow-bg-stop1"
+         offset="1"
+         style="stop-color:#ffd25d;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="arrow-stroke-6-7">
+      <stop
+         style="stop-color:#ad7212;stop-opacity:1;"
+         offset="0"
+         id="arrow-stroke-stop0-3" />
+      <stop
+         style="stop-color:#996c22;stop-opacity:1"
+         offset="1"
+         id="arrow-stroke-stop1-5" />
+    </linearGradient>
+    <radialGradient
+       r="4.6733794"
+       fy="1043.6658"
+       fx="23.61665"
+       cy="1043.6658"
+       cx="23.61665"
+       gradientTransform="matrix(2.3370403,0,0,0.99262129,-32.199663,6.908994)"
+       gradientUnits="userSpaceOnUse"
+       id="arrow-bg-3"
+       xlink:href="#arrow-bg" />
+    <linearGradient
+       y2="1039.2389"
+       x2="22.668835"
+       y1="1043.5796"
+       x1="22.668835"
+       gradientTransform="matrix(0.99482282,0,0,1.0280754,-0.79185985,-30.004701)"
+       gradientUnits="userSpaceOnUse"
+       id="arrow-stroke-5"
+       xlink:href="#arrow-stroke-6-7" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <g
+       transform="matrix(-1.6126329,0,0,-1.6126329,45.067873,2723.8623)"
+       id="g7604-8"
+       style="display:inline">
+      <path
+         style="display:inline;fill:url(#arrow-bg-3);fill-opacity:1;stroke:url(#arrow-stroke-5);stroke-width:0.620104;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 18.335135,1040.5602 4.357039,3.9515 c 0,0 -0.021,-1.3944 -0.021,-2.2463 1.441121,-0.092 1.860491,-0.049 2.56576,0.6514 0.887176,0.8812 0.753766,2.4466 1.157913,2.5751 0.404148,0.1285 0.621765,-2.2489 0.621765,-2.6987 0,-0.4498 -0.173888,-1.955 -0.715029,-2.7001 -0.292025,-0.4021 -1.00136,-0.9824 -1.523322,-1.1307 -0.521964,-0.1485 -2.107087,-0.4407 -2.107087,-0.4407 l 0.01271,-1.7079 c -0.784087,0.6848 -4.34875,3.7464 -4.34875,3.7464 z"
+         id="redo-arrow">
+        <title
+           id="title3225">redo-arrow</title>
+      </path>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            name="org.eclipse.ui.examples.urlmodifier">
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.ui.examples.urlmodifier/css/default.css">
+         </property>
+         <property
+               name="appName"
+               value="org.eclipse.ui.examples.urlmodifier">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

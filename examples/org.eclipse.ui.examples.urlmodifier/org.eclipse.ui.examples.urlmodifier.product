@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="org.eclipse.ui.examples.urlmodifier" id="org.eclipse.ui.examples.urlmodifier.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" type="mixed" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-clearPersistedState
+      </programArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <plugins>
+      <plugin id="org.eclipse.ui.examples.urlmodifier"/>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.e4.rcp"/>
+   </features>
+
+</product>
