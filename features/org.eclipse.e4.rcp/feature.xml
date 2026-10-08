@@ -186,6 +186,10 @@
          version="0.0.0"/>
 
    <plugin
+         id="org.eclipse.equinox.spi"
+         version="0.0.0"/>
+
+   <plugin
          id="org.eclipse.osgi.util"
          version="0.0.0"/>
 
