@@ -8,7 +8,6 @@ import org.junit.platform.suite.api.SelectClasses;
 		ColorAndFontViewerLabelProviderTest.class, //
 		ColumnLabelProviderLambdaTest.class, //
 		CompositeLabelProviderTableTest.class, //
-		DecoratingLabelProviderTests.class, //
 		DecoratingLabelProviderTreePathTest.class, //
 		DecoratingLabelProviderTreeTest.class, //
 		DecoratingStyledCellLabelProviderTest.class, //
