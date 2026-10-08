@@ -231,6 +231,10 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus run(final IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
+		// the filter states are remembered for all search results and are keyed by
+		// the file handles, they must not be reused by this new search: not every
+		// change of the workspace that invalidates them can be detected
+		OuterProjectFileFilter.clearRememberedStates();
 
 		Pattern searchPattern= getSearchPattern();
 
