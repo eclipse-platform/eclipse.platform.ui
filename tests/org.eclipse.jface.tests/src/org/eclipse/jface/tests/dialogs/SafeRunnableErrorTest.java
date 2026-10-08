@@ -13,7 +13,12 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.util.SafeRunnable;
@@ -56,9 +61,16 @@ public class SafeRunnableErrorTest {
 
 	@Test
 	public void testSafeRunnableHandlerOtherThread() throws Exception {
+		AtomicReference<Throwable> uncaught = new AtomicReference<>();
 		Thread t = runner();
-		t.run();
-		t.join();
+		t.setUncaughtExceptionHandler((thread, e) -> uncaught.set(e));
+		t.start();
+		t.join(10_000);
+		assertFalse(t.isAlive());
+		assertNull(uncaught.get());
+		assertEquals(1, count);
+		// the error dialog is posted with asyncExec from the other thread
+		processEvents();
 	}
 
 	@Test
