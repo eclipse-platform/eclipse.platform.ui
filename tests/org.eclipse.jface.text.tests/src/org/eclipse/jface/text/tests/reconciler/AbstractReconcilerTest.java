@@ -482,9 +482,9 @@ public class AbstractReconcilerTest {
 	}
 
 	void pollUntilClean() throws InterruptedException {
-		// wait for reconciler to become clean
+		// the worker clears the dirty flag before the active flag, so wait for both
 		long start= System.currentTimeMillis();
-		while (isDirty()) {
+		while (isDirty() || isActive()) {
 			long current= System.currentTimeMillis();
 			if (current > start + 5000)
 				fail("waited > 5s for reconciler to complete");
