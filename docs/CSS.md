@@ -137,9 +137,10 @@ It also accepts the face names designers use, which are not standard CSS:
 
 The names are case-insensitive and may be written without the hyphen, as in `semibold`.
 They are only understood by `font-weight`, not in the `font` shorthand, where they could be part of a family name.
-A weight between regular and bold, such as `500` or `600`, selects the installed face of that weight, for example Semibold.
+A weight other than `400` or `700` selects the installed face of that weight, for example Semibold for `600`.
 On GTK Pango picks the closest face of the family, on Windows a family such as "Segoe UI Semibold" is used when it is installed, and on macOS a face of the family with a matching name such as `HelveticaNeue-Medium`.
-Where no such face is found, a weight of `600` or more selects the bold face and anything below it the regular one.
+Where the family has no face of that weight, the nearest one is taken in the order of CSS font matching: below `400` lighter faces first, above `500` heavier ones first, so `200` can select Light and `800` Black.
+If no face is found before regular or bold, a weight of `600` or more selects the bold face and anything below it the regular one.
 In the `font` shorthand a bare `100` to `900` is read as a weight, any other
 bare number as a size in points.
 
