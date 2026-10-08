@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -122,6 +123,35 @@ class NotificationPopupTest {
 		List<Control> controls = getNotificationPopupControls(notication);
 		notication.close();
 		assertThat(controls, hasItem(is(text[0])));
+	}
+
+	@Test
+	void createsWithTitleImageAndDefaultTitle() {
+		Image image = display.getSystemImage(SWT.ICON_INFORMATION);
+		NotificationPopup notication = this.builder.text("This is a test").titleImage(image).delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+
+		assertThat(controls, hasItem(aLabelWith(image)));
+		notication.close();
+	}
+
+	@Test
+	void createsWithTitleImageAndCustomTitle() {
+		Image image = display.getSystemImage(SWT.ICON_INFORMATION);
+		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).titleImage(image)
+				.delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+		assertThat(controls, hasItem(aLabelWith(image)));
+		Label imageLabel = (Label) controls.stream().filter(c -> c instanceof Label l && l.getImage() == image)
+				.findFirst().get();
+		Composite titleArea = imageLabel.getParent();
+		int columns = ((GridLayout) titleArea.getLayout()).numColumns;
+		int children = titleArea.getChildren().length;
+		notication.close();
+
+		assertEquals(children, columns, "title area must lay out all its children in one row");
 	}
 
 	@Test
