@@ -67,6 +67,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.20.0,4.0.0)";resol
 Import-Package: jakarta.annotation;version="[2.0.0,4.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
  org.osgi.service.event;version="[1.4.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Automatic-Module-Name: org.eclipse.ui.ide
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"
