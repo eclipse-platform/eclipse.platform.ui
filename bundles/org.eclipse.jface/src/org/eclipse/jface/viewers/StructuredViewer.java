@@ -677,7 +677,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected Object[] filter(Object[] elements) {
 		if (filters != null) {
-			List<Object> filtered = new ArrayList<>(elements.length);
+			Object[] filtered = new Object[elements.length];
+			int count = 0;
 			Object root = getRoot();
 			for (Object element : elements) {
 				boolean add = true;
@@ -688,12 +689,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 					}
 				}
 				if (add) {
-					filtered.add(element);
+					filtered[count++] = element;
 				} else if (associateListener != null) {
 					associateListener.filteredOut(element);
 				}
 			}
-			return filtered.toArray();
+			return count == filtered.length ? filtered : Arrays.copyOf(filtered, count);
 		}
 		return elements;
 	}

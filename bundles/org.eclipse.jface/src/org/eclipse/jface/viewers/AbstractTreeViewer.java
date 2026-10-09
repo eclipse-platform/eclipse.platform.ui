@@ -352,7 +352,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	private Object[] filter(Object parentElementOrTreePath, Object[] elements) {
 		ViewerFilter[] filters = getFilters();
 		if (filters != null) {
-			List<Object> filtered = new ArrayList<>(elements.length);
+			Object[] filtered = new Object[elements.length];
+			int count = 0;
 			for (Object element : elements) {
 				boolean add = true;
 				for (ViewerFilter filter : filters) {
@@ -363,10 +364,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					}
 				}
 				if (add) {
-					filtered.add(element);
+					filtered[count++] = element;
 				}
 			}
-			return filtered.toArray();
+			return count == filtered.length ? filtered : Arrays.copyOf(filtered, count);
 		}
 		return elements;
 	}
@@ -2950,15 +2951,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		Item[] items = getChildren(widget);
 
 		// save the expanded elements
-		CustomHashtable expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY); // assume
-																					// num
-																					// expanded
-																					// is
-																					// small
+		CustomHashtable expanded = null;
 		for (Item item : items) {
 			if (getExpanded(item)) {
 				Object element = item.getData();
 				if (element != null) {
+					if (expanded == null) {
+						expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY);
+					}
 					expanded.put(element, element);
 				}
 			}
@@ -3062,7 +3062,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (int i = 0; i < min; ++i) {
 			Item item = items[i];
 			Object newElement = elementChildren[i];
-			setExpanded(item, expanded.containsKey(newElement));
+			setExpanded(item, expanded != null && expanded.containsKey(newElement));
 		}
 
 		// add any remaining elements
@@ -3074,7 +3074,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			// Need to restore expanded state in a separate pass
 			// because createTreeItem does not return the new item.
 			// Avoid doing this unless needed.
-			if (expanded.size() > 0) {
+			if (expanded != null && expanded.size() > 0) {
 				// get the items again, to include the new items
 				items = getChildren(widget);
 				for (int i = min; i < elementChildren.length; ++i) {
@@ -3225,14 +3225,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.2
 	 */
 	protected TreePath getTreePathFromItem(Item item) {
-		LinkedList<Object> segments = new LinkedList<>();
-		while (item != null) {
+		int depth = 0;
+		for (Item i = item; i != null; i = getParentItem(i)) {
+			depth++;
+		}
+		Object[] segments = new Object[depth];
+		for (int i = depth - 1; i >= 0; i--) {
 			Object segment = item.getData();
 			Assert.isNotNull(segment);
-			segments.addFirst(segment);
+			segments[i] = segment;
 			item = getParentItem(item);
 		}
-		return new TreePath(segments.toArray());
+		return new TreePath(segments);
 	}
 
 	/**
