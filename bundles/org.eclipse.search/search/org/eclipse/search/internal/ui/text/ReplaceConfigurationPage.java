@@ -105,7 +105,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
-		fTextField.addModifyListener(e -> updateOKStatus());
+		fTextField.addModifyListener(_ -> updateOKStatus());
 
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(ReplaceConfigurationPage.class)).getDialogSettings()

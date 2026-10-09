@@ -356,7 +356,7 @@ public class TextSearchVisitor {
 					String key = path == null ? file.getLocationURI().toString() : path.toString();
 					Map<String, List<IFile>> filesByLocation = (path != null) ? localFilesByLocation
 							: remoteFilesByLocation;
-					filesByLocation.computeIfAbsent(key, k -> new ArrayList<>()).add(file);
+					filesByLocation.computeIfAbsent(key, _ -> new ArrayList<>()).add(file);
 
 				}
 				localFilesByLocation.values().forEach(fileBatches::offer);

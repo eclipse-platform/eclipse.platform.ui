@@ -347,7 +347,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		panelData.exclude = !expanded;
 		toggle.setText(expanded ? "\u25BE" : "\u25B8"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Listener toggleListener = e -> {
+		Listener toggleListener = _ -> {
 			boolean newState = !panel.getVisible();
 			panel.setVisible(newState);
 			((GridData) panel.getLayoutData()).exclude = !newState;
@@ -467,7 +467,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		label.setLayoutData(gd);
-		pathCombo.addModifyListener(e -> {
+		pathCombo.addModifyListener(_ -> {
 			String hint = getUnexpectedPathHint();
 			label.setText(hint);
 			boolean empty = hint.isEmpty();
@@ -552,7 +552,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		combo.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
 		combo.setFocus();
 		combo.setLayoutData(new BorderData(SWT.CENTER));
-		combo.addModifyListener(e -> {
+		combo.addModifyListener(_ -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
 				boolean nonWhitespaceFound = false;

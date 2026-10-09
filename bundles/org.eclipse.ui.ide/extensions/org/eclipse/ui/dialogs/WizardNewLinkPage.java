@@ -150,7 +150,7 @@ public class WizardNewLinkPage extends WizardPage {
 		linkTargetField.setLayoutData(data);
 		linkTargetField.setFont(font);
 		linkTargetField.setEnabled(enabled);
-		linkTargetField.addModifyListener(e -> setPageComplete(validatePage()));
+		linkTargetField.addModifyListener(_ -> setPageComplete(validatePage()));
 		if (initialLinkTarget != null) {
 			linkTargetField.setText(initialLinkTarget);
 		}

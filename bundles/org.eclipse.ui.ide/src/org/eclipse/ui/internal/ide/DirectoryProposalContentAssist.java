@@ -217,7 +217,7 @@ public class DirectoryProposalContentAssist {
 		directoryCombo = combo;
 		autoCompleteField = new DirectoryProposalAutoCompleteField(directoryCombo, new ComboContentAdapter());
 
-		getContentProposalAdapter().addContentProposalListener(e -> {
+		getContentProposalAdapter().addContentProposalListener(_ -> {
 			popupActivated = false;
 			updateProposals(directoryCombo.getText(), popupActivated);
 		});
@@ -234,7 +234,7 @@ public class DirectoryProposalContentAssist {
 			}
 		});
 
-		directoryCombo.addModifyListener(e -> {
+		directoryCombo.addModifyListener(_ -> {
 			updateProposals(directoryCombo.getText().substring(0, directoryCombo.getCaretPosition()), false);
 		});
 

@@ -121,7 +121,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 		listViewer.addSelectionChangedListener(event -> getOkButton().setEnabled(!event.getSelection().isEmpty()));
 
 		// Add double-click listener
-		listViewer.addDoubleClickListener(event -> okPressed());
+		listViewer.addDoubleClickListener(_ -> okPressed());
 		return composite;
 	}
 

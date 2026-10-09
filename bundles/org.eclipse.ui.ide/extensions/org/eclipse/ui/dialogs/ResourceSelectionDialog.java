@@ -207,7 +207,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 	 */
 	private void initializeDialog() {
 		selectionGroup
-				.addCheckStateListener(event -> getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0));
+				.addCheckStateListener(_ -> getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0));
 
 		if (getInitialElementSelections().isEmpty()) {
 			getOkButton().setEnabled(false);

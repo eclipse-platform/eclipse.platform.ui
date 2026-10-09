@@ -117,7 +117,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			fHistorySizeTextField= new Text(ancestor, SWT.BORDER | SWT.RIGHT);
 			fHistorySizeTextField.setTextLimit(2);
 			fHistorySizeTextField.setText(String.valueOf(fHistorySize));
-			fHistorySizeTextField.addModifyListener(e -> validateDialogState());
+			fHistorySizeTextField.addModifyListener(_ -> validateDialogState());
 
 			GridData gridData= new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 			gridData.widthHint= convertWidthInCharsToPixels(6);
@@ -325,7 +325,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		fRemoveButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 
-		fViewer.addSelectionChangedListener(event -> validateDialogState());
+		fViewer.addSelectionChangedListener(_ -> validateDialogState());
 
 		fLink= new Link(parent, SWT.NONE);
 		configureHistoryLink();

@@ -194,7 +194,7 @@ public class ProjectReferenceGraph {
 		for (IProject project : projects) {
 			IProject representative = set.findSet(project);
 			if (representative != null) {
-				componentsByRepresentative.computeIfAbsent(representative, key -> new ArrayList<>()).add(project);
+				componentsByRepresentative.computeIfAbsent(representative, _ -> new ArrayList<>()).add(project);
 			}
 		}
 		List<List<IProject>> result = new ArrayList<>(componentsByRepresentative.size());

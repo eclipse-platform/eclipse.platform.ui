@@ -371,7 +371,7 @@ public class DialogMarkerProperties extends TrayDialog {
 		gridData.widthHint = convertHorizontalDLUsToPixels(400);
 		descriptionText.setLayoutData(gridData);
 
-		descriptionText.addModifyListener(e -> markDirty());
+		descriptionText.addModifyListener(_ -> markDirty());
 	}
 
 	/**

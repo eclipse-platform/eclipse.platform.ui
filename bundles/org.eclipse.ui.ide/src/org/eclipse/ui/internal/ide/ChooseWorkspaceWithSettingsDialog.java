@@ -158,7 +158,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		// once the widget is realized. Re-apply colors to the check buttons when
 		// the section first becomes visible.
 		if (Util.isMac()) {
-			sectionClient.addListener(SWT.Show, e -> {
+			sectionClient.addListener(SWT.Show, _ -> {
 				for (Control child : sectionClient.getChildren()) {
 					if (child instanceof Button button && (button.getStyle() & SWT.CHECK) != 0) {
 						button.setBackground(workArea.getBackground());
@@ -168,7 +168,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			});
 		}
 
-		Listener toggleListener = e -> {
+		Listener toggleListener = _ -> {
 			boolean newState = !sectionClient.getVisible();
 			sectionClient.setVisible(newState);
 			((GridData) sectionClient.getLayoutData()).exclude = !newState;
@@ -218,7 +218,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			deco.setImage(image);
 
 			toggleDecoForSettingsImportButtons(button, deco);
-			getCombo().addModifyListener(e -> toggleDecoForSettingsImportButtons(button, deco));
+			getCombo().addModifyListener(_ -> toggleDecoForSettingsImportButtons(button, deco));
 
 			String helpId = settingsTransfer.getAttribute(ATT_HELP_CONTEXT);
 

@@ -496,14 +496,14 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		closeProjectsCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
 		closeProjectsCheckbox.addSelectionListener(
-				SelectionListener.widgetSelectedAdapter(e -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
+				SelectionListener.widgetSelectedAdapter(_ -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
 
 		hideConflictingProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
 		hideConflictingProjectsCheckbox
 				.setText(DataTransferMessages.WizardProjectsImportPage_hideExistingProjects);
 		hideConflictingProjectsCheckbox.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		hideConflictingProjectsCheckbox.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+		hideConflictingProjectsCheckbox.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> {
 			hideConflictingProjects = hideConflictingProjectsCheckbox.getSelection();
 			projectsList.removeFilter(conflictingProjectsFilter);
 			if (hideConflictingProjectsCheckbox.getSelection()) {

@@ -67,7 +67,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	// widgets
 	Text projectNameField;
 
-	private final Listener nameModifyListener = e -> {
+	private final Listener nameModifyListener = _ -> {
 		setLocationForSelection();
 		boolean valid = validatePage();
 		setPageComplete(valid);

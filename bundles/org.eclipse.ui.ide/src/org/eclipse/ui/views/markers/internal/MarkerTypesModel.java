@@ -60,7 +60,7 @@ public class MarkerTypesModel {
 		types = readTypes();
 		for (MarkerType type : types.values()) {
 			for (String supertypeId : type.getSupertypeIds()) {
-				subtypes.computeIfAbsent(supertypeId, id -> new ArrayList<>()).add(type);
+				subtypes.computeIfAbsent(supertypeId, _ -> new ArrayList<>()).add(type);
 			}
 		}
 	}

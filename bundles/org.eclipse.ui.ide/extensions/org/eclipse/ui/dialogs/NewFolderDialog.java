@@ -166,7 +166,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 				}
 			});
 		}
-		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER, e -> {
+		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER, _ -> {
 			validateLinkedResource();
 			firstLinkCheck = false;
 		}, new CreateLinkedResourceGroup.IStringValue() {
@@ -223,7 +223,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		folderNameField.setLayoutData(data);
 		folderNameField.setFont(font);
-		folderNameField.addListener(SWT.Modify, event -> validateLinkedResource());
+		folderNameField.addListener(SWT.Modify, _ -> validateLinkedResource());
 	}
 
 	/**

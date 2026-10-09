@@ -285,7 +285,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 			}
 		});
 
-		limitText.addModifyListener(e -> {
+		limitText.addModifyListener(_ -> {
 			boolean isInvalid = false;
 			try {
 				int value = Integer.parseInt(limitText.getText());
@@ -333,7 +333,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 			updateRadioButtonsFromTable();
 		});
 
-		configsTable.addSelectionChangedListener(event -> {
+		configsTable.addSelectionChangedListener(_ -> {
 			storeConfiguration();
 			MarkerFieldFilterGroup group = getSelectionFromTable();
 			if (group == null) {
@@ -394,7 +394,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		descComposite.setBackground(parent.getBackground());
 
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		parent.addDisposeListener(e -> toolkit.dispose());
+		parent.addDisposeListener(_ -> toolkit.dispose());
 
 		form = toolkit.createScrolledForm(descComposite);
 		form.setBackground(parent.getBackground());

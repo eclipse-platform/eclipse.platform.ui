@@ -107,7 +107,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 		// if fatal error occurs, we will ask to close the workbench
 		if (isFatal(statusAdapter)) {
-			UIJob handlingExceptionJob = UIJob.create("IDE Exception Handler", m -> { //$NON-NLS-1$
+			UIJob handlingExceptionJob = UIJob.create("IDE Exception Handler", _ -> { //$NON-NLS-1$
 				handleException(statusAdapter.getStatus().getException());
 				return new Status(IStatus.OK, IDEWorkbenchPlugin.IDE_WORKBENCH,
 						IDEWorkbenchMessages.IDEExceptionHandler_ExceptionHandledMessage);

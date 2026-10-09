@@ -521,7 +521,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		// add some listeners for regex syntax checking
-		fPattern.addModifyListener(e -> updateOKStatus());
+		fPattern.addModifyListener(_ -> updateOKStatus());
 		fPattern.setFont(group.getFont());
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 2);
 		data.widthHint= convertWidthInCharsToPixels(50);
@@ -693,7 +693,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		label.setFont(group.getFont());
 
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fExtensions.addModifyListener(e -> updateOKStatus());
+		fExtensions.addModifyListener(_ -> updateOKStatus());
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fExtensions.setLayoutData(data);

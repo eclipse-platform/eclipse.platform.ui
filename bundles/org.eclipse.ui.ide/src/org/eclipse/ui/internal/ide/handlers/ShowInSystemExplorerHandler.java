@@ -73,7 +73,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		final StatusReporter statusReporter = HandlerUtil.getActiveWorkbenchWindow(event).getService(
 				StatusReporter.class);
 
-		Job job = Job.create(IDEWorkbenchMessages.ShowInSystemExplorerHandler_jobTitle, monitor -> {
+		Job job = Job.create(IDEWorkbenchMessages.ShowInSystemExplorerHandler_jobTitle, _ -> {
 			String logMsgPrefix;
 			try {
 				logMsgPrefix = event.getCommand().getName() + ": "; //$NON-NLS-1$

@@ -661,7 +661,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			textControl.setToolTipText(preference.getDescription());
 
 			if (domain != null) {
-				textControl.addModifyListener(e -> {
+				textControl.addModifyListener(_ -> {
 					String value= textControl.getText();
 					IStatus status= domain.validate(value);
 					if (!status.matches(IStatus.ERROR)) {
@@ -1136,7 +1136,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initializeAppearColorTable(Composite tableComposite) {
-		fAppearanceColorTableViewer.addSelectionChangedListener((SelectionChangedEvent event) -> handleAppearanceColorListSelection());
+		fAppearanceColorTableViewer
+				.addSelectionChangedListener((SelectionChangedEvent _) -> handleAppearanceColorListSelection());
 		colorPreviewImages= new ArrayList<>();
 
 		fAppearanceColorTableViewer.setLabelProvider(new LabelProvider() {
@@ -1477,7 +1478,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		textControl.setToolTipText(preference.getDescription());
 
 		if (domain != null) {
-			textControl.addModifyListener(e -> {
+			textControl.addModifyListener(_ -> {
 				String value= textControl.getText();
 				IStatus status= domain.validate(value);
 				if (!status.matches(IStatus.ERROR)) {

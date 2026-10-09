@@ -58,10 +58,10 @@ public class ReconcilerRegistry {
 	 * Creates the registry and binds it to the extension point.
 	 */
 	public ReconcilerRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> highlightOutOfSync = true,
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> outOfSync = true, EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> highlightOutOfSync = true,
 				HIGHLIGHT_EXTENSION_POINT_ID);
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> foldingOutOfSync = true,
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> foldingOutOfSync = true,
 				FOLDING_EXTENSION_POINT_ID);
 	}
 
