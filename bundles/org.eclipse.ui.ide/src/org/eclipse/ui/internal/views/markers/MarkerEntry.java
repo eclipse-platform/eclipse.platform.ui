@@ -21,7 +21,7 @@ import java.text.Collator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -156,20 +156,19 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @return Object or <code>null</code>
 	 */
 	Object getAttributeValue(String attribute) {
-		Object value = getCachedValueOrCompute(attribute, () -> {
-			if(stale){
-				return null;
-			}
-			Object v;
-			try {
-				v = marker.getAttribute(attribute);
-			} catch (CoreException e) {
-				checkIfMarkerStale();
-				v = null;
-			}
-			return v;
-		});
-		return value;
+		return getCachedValueOrCompute(attribute, MarkerEntry::computeAttributeValue);
+	}
+
+	private Object computeAttributeValue(String attribute) {
+		if (stale) {
+			return null;
+		}
+		try {
+			return marker.getAttribute(attribute);
+		} catch (CoreException e) {
+			checkIfMarkerStale();
+			return null;
+		}
 	}
 
 	@Override
@@ -211,6 +210,10 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (attributeValue.isEmpty()) {
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		}
+		CollationKey key = collationCache.get(attributeValue);
+		if (key != null) {
+			return key;
+		}
 		return collationCache.computeIfAbsent(attributeValue, k -> {
 			CollationKey previous = previousCollationCache.get(k);
 			return previous != null ? previous : COLLATOR.getCollationKey(k);
@@ -249,23 +252,21 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	@Override
 	public String getLocation() {
-		Object value = getCachedValueOrCompute(LOCATION_STRING, () -> {
-			String locationString = getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
-			if (locationString.length() > 0) {
-				return locationString;
-			}
+		return (String) getCachedValueOrCompute(LOCATION_STRING, (entry, key) -> entry.computeLocation());
+	}
 
-			// No override so use line number
-			int lineNumber = getAttributeValue(IMarker.LINE_NUMBER, -1);
-			String lineNumberString;
-			if (lineNumber < 0) {
-				lineNumberString = MarkerMessages.Unknown;
-			} else {
-				lineNumberString = NLS.bind(MarkerMessages.label_lineNumber, Integer.toString(lineNumber));
-			}
-			return lineNumberString;
-		});
-		return (String) value;
+	private String computeLocation() {
+		String locationString = getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
+		if (locationString.length() > 0) {
+			return locationString;
+		}
+
+		// No override so use line number
+		int lineNumber = getAttributeValue(IMarker.LINE_NUMBER, -1);
+		if (lineNumber < 0) {
+			return MarkerMessages.Unknown;
+		}
+		return NLS.bind(MarkerMessages.label_lineNumber, Integer.toString(lineNumber));
 	}
 
 	@Override
@@ -319,13 +320,14 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	@Override
 	public String getPath() {
-		Object value = getCachedValueOrCompute(MarkerViewUtil.PATH_ATTRIBUTE, () -> {
-			if (stale || checkIfMarkerStale()) {
-				return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
-			}
-			return getPath(marker.getResource());
-		});
-		return (String) value;
+		return (String) getCachedValueOrCompute(MarkerViewUtil.PATH_ATTRIBUTE, (entry, key) -> entry.computePath());
+	}
+
+	private String computePath() {
+		if (stale || checkIfMarkerStale()) {
+			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
+		}
+		return getPath(marker.getResource());
 	}
 
 	protected String getPath(IResource resource) {
@@ -351,15 +353,20 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		category = markerCategory;
 	}
 
-	protected Object getCachedValueOrCompute(String key, Supplier<Object> supplier) {
-		Object cached = cache.computeIfAbsent(key, k -> {
-			Object value = supplier.get();
-			// also remember null values:
-			Object toCache = (value != null) ? value : CACHED_NULL;
-			return toCache;
-		});
-		Object value = (cached == CACHED_NULL) ? null : cached;
-		return value;
+	/**
+	 * Returns the cached value for key, computing it on a miss. The compute
+	 * functions must not capture state, so a cache hit allocates nothing.
+	 */
+	private Object getCachedValueOrCompute(String key, BiFunction<MarkerEntry, String, Object> compute) {
+		Object cached = cache.get(key);
+		if (cached == null) {
+			cached = cache.computeIfAbsent(key, k -> {
+				Object value = compute.apply(this, k);
+				// also remember null values:
+				return value != null ? value : CACHED_NULL;
+			});
+		}
+		return cached == CACHED_NULL ? null : cached;
 	}
 
 	/**
