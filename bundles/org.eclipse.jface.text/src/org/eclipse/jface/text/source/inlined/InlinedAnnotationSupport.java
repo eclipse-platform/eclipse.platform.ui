@@ -347,9 +347,14 @@ public class InlinedAnnotationSupport {
 	private AnnotationPainter fPainter;
 
 	/**
-	 * Holds the current inlined annotations.
+	 * Holds the current inlined annotations; replaced from the code mining thread, so read it once.
 	 */
-	private Set<AbstractInlinedAnnotation> fInlinedAnnotations;
+	private volatile Set<AbstractInlinedAnnotation> fInlinedAnnotations;
+
+	/**
+	 * Keeps an update that is still running from adding annotations after uninstall.
+	 */
+	private volatile boolean fUninstalled;
 
 	/**
 	 * The mouse tracker used to support hover, click on inlined annotation.
@@ -382,6 +387,7 @@ public class InlinedAnnotationSupport {
 		Assert.isNotNull(painter);
 		fViewer= viewer;
 		fPainter= painter;
+		fUninstalled= false;
 		initPainter();
 		StyledText text= fViewer.getTextWidget();
 		if (text == null || text.isDisposed()) {
@@ -510,6 +516,7 @@ public class InlinedAnnotationSupport {
 			visibleLines.uninstall();
 			visibleLines= null;
 		}
+		fUninstalled= true;
 		removeInlinedAnnotations();
 		disposeFont();
 		fViewer= null;
@@ -522,18 +529,20 @@ public class InlinedAnnotationSupport {
 	 * @param annotations the inlined annotation.
 	 */
 	public void updateAnnotations(Set<AbstractInlinedAnnotation> annotations) {
-		IDocument document= fViewer != null ? fViewer.getDocument() : null;
-		if (document == null) {
+		ISourceViewer viewer= fViewer;
+		IDocument document= viewer != null ? viewer.getDocument() : null;
+		if (viewer == null || document == null) {
 			// this case comes from when editor is closed before rendered is done.
 			return;
 		}
-		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
+		IAnnotationModel annotationModel= viewer.getAnnotationModel();
 		if (annotationModel == null) {
 			return;
 		}
 		Map<AbstractInlinedAnnotation, Position> annotationsToAdd= new HashMap<>();
-		List<AbstractInlinedAnnotation> annotationsToRemove= fInlinedAnnotations != null
-				? new ArrayList<>(fInlinedAnnotations)
+		Set<AbstractInlinedAnnotation> previousAnnotations= fInlinedAnnotations;
+		List<AbstractInlinedAnnotation> annotationsToRemove= previousAnnotations != null
+				? new ArrayList<>(previousAnnotations)
 				: Collections.emptyList();
 		// Loop for annotations to update
 		for (AbstractInlinedAnnotation ann : annotations) {
@@ -551,6 +560,9 @@ public class InlinedAnnotationSupport {
 		}
 		// Update annotation model
 		synchronized (getLockObject(annotationModel)) {
+			if (fUninstalled) {
+				return;
+			}
 			if (annotationsToAdd.isEmpty() && annotationsToRemove.isEmpty()) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
@@ -584,10 +596,11 @@ public class InlinedAnnotationSupport {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractInlinedAnnotation> T findExistingAnnotation(Position pos) {
-		if (fInlinedAnnotations == null) {
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations == null) {
 			return null;
 		}
-		for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+		for (AbstractInlinedAnnotation ann : annotations) {
 			if (pos.equals(ann.getPosition()) && !ann.getPosition().isDeleted()) {
 				try {
 					return (T) ann;
@@ -621,16 +634,20 @@ public class InlinedAnnotationSupport {
 	private void removeInlinedAnnotations() {
 
 		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
-		if (annotationModel == null || fInlinedAnnotations == null) {
+		if (annotationModel == null) {
 			return;
 		}
 
 		synchronized (getLockObject(annotationModel)) {
+			Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+			if (annotations == null) {
+				return;
+			}
 			if (annotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension) annotationModel).replaceAnnotations(
-						fInlinedAnnotations.toArray(new Annotation[fInlinedAnnotations.size()]), null);
+						annotations.toArray(new Annotation[annotations.size()]), null);
 			} else {
-				for (AbstractInlinedAnnotation annotation : fInlinedAnnotations) {
+				for (AbstractInlinedAnnotation annotation : annotations) {
 					annotationModel.removeAnnotation(annotation);
 				}
 			}
@@ -646,8 +663,9 @@ public class InlinedAnnotationSupport {
 	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 */
 	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(int x, int y) {
-		if (fInlinedAnnotations != null) {
-			for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations != null) {
+			for (AbstractInlinedAnnotation ann : annotations) {
 				ann.setSupport(this);
 				if (ann.contains(x, y) && isInVisibleLines(ann.getPosition().getOffset())) {
 					return ann;
