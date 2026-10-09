@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Patrik Suzzi and others.
+ * Copyright (c) 2017, 2026 Patrik Suzzi and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089, 504090, 504091, 509232, 506019
+ *     IBM Corporation - Add clear button to CTRL+E shortcut to clear filter text.
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -169,9 +170,14 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		composite.setLayout(gl_composite);
 
 		if (isFiltered()) {
-			text = new Text(composite, SWT.NONE);
+			text = new Text(composite, SWT.SEARCH | SWT.ICON_CANCEL);
 			text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 			text.setBackground(getBackground());
+			text.addListener(SWT.DefaultSelection, event -> {
+				if (event.detail == SWT.ICON_CANCEL) {
+					text.setText(EMPTY_STRING);
+				}
+			});
 		} else {
 			/*
 			 * For issues with dark theme, don't use table.setHeaderVisible(true); and
