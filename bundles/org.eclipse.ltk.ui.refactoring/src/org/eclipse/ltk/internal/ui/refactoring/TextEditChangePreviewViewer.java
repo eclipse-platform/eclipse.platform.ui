@@ -80,7 +80,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_original_source);
 			fCompareConfiguration.setLeftEditable(false);
 			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
-			addDisposeListener(e -> {
+			addDisposeListener(_ -> {
 				if (fImage != null && !fImage.isDisposed()) {
 					fImage.dispose();
 				}

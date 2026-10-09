@@ -398,7 +398,7 @@ public class StickyScrollingControl {
 		StyledText textWidget= sourceViewer.getTextWidget();
 
 		if (sourceViewer instanceof ITextViewerExtension4 extension) {
-			textPresentationListener = e -> {
+			textPresentationListener = _ -> {
 				textWidget.getDisplay().asyncExec(() -> {
 					if (textWidget.isDisposed() || areStickyLinesOutDated(textWidget)) {
 						return;

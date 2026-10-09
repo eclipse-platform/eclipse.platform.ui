@@ -114,7 +114,7 @@ class SelectResourcesDialog extends Dialog {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fResourceGroup= new SelectResourcesBlock(composite, ResourcesPlugin.getWorkspace().getRoot(), getResourceProvider(IResource.FOLDER | IResource.PROJECT), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), getResourceProvider(IResource.FILE), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE, useHeightHint(parent));
-		fResourceGroup.addCheckStateListener(event -> updateSelectionCount());
+		fResourceGroup.addCheckStateListener(_ -> updateSelectionCount());
 
 		fCountIndication= new Label(composite, SWT.LEFT);
 		fCountIndication.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

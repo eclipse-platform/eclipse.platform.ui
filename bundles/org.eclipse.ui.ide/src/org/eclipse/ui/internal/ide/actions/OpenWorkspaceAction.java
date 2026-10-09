@@ -150,7 +150,7 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 		public Menu getMenu(Menu parent) {
 			createDropDownMenuMgr();
 			final Menu menu = new Menu(parent);
-			menu.addListener(SWT.Show, event -> {
+			menu.addListener(SWT.Show, _ -> {
 				if (menu.isDisposed()) {
 					return;
 				}

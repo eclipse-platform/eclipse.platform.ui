@@ -214,7 +214,7 @@ public class LinkedResourceEditor {
 
 		fTree = new TreeViewer(treeComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
-		fTree.addSelectionChangedListener(event -> updateSelection());
+		fTree.addSelectionChangedListener(_ -> updateSelection());
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = fTree.getTree().getItemHeight() * 10;

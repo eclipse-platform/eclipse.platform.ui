@@ -172,7 +172,7 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 		textControl.setTextLimit(textLimit);
 		textControl.setToolTipText(meta.description());
 
-		textControl.addModifyListener(e -> {
+		textControl.addModifyListener(_ -> {
 			updateStatus(validateDelay(textControl.getText()));
 		});
 		textFields.put(meta, textControl);

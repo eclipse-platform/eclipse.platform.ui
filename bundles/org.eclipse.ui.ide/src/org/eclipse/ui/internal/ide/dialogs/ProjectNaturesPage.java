@@ -194,7 +194,7 @@ public class ProjectNaturesPage extends PropertyPage {
 			}
 		});
 		this.activeNaturesList.addSelectionChangedListener(
-				event -> removeButton.setEnabled(!ProjectNaturesPage.this.activeNaturesList.getSelection().isEmpty()));
+				_ -> removeButton.setEnabled(!ProjectNaturesPage.this.activeNaturesList.getSelection().isEmpty()));
 		this.activeNaturesList.setSelection(new StructuredSelection()); // Empty selection
 
 		return composite;

@@ -352,7 +352,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	}
 
 	protected Object getCachedValueOrCompute(String key, Supplier<Object> supplier) {
-		Object cached = cache.computeIfAbsent(key, k -> {
+		Object cached = cache.computeIfAbsent(key, _ -> {
 			Object value = supplier.get();
 			// also remember null values:
 			Object toCache = (value != null) ? value : CACHED_NULL;

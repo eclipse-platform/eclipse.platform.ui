@@ -45,7 +45,7 @@ public class PresentationReconcilerRegistry {
 	 * Creates the registry and binds it to the extension point.
 	 */
 	public PresentationReconcilerRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> outOfSync = true, EXTENSION_POINT_ID);
 	}
 
 	/**

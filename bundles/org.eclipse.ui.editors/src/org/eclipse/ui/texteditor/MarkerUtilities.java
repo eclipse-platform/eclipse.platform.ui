@@ -393,7 +393,7 @@ public final class MarkerUtilities {
 	 */
 	public static void createMarker(final IResource resource, final Map<String, Object> attributes, final String markerType) throws CoreException {
 
-		IWorkspaceRunnable r= monitor -> {
+		IWorkspaceRunnable r= _ -> {
 			IMarker marker= resource.createMarker(markerType);
 			marker.setAttributes(attributes);
 		};

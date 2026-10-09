@@ -639,7 +639,7 @@ public class ResourceFilterGroup {
 		filterView.setInput(filters);
 		filterView.getTree().setFont(parent.getFont());
 
-		filterView.addSelectionChangedListener(event -> refreshEnablement());
+		filterView.addSelectionChangedListener(_ -> refreshEnablement());
 
 		TreeColumn modeColumn = new TreeColumn(filterView.getTree(), 0);
 		modeColumn.setText(IDEWorkbenchMessages.ResourceFilterPage_columnFilterDescription);
@@ -696,7 +696,7 @@ public class ResourceFilterGroup {
 		filterView.addDropSupport(ops, transfers,
 				new FilterCopyDrop(filterView));
 
-		filterView.getTree().addMenuDetectListener(e -> {
+		filterView.getTree().addMenuDetectListener(_ -> {
 			MenuManager mgr = new MenuManager();
 			mgr.add(addSubFilterAction);
 			mgr.add(addSubGroupFilterAction);
@@ -2642,7 +2642,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
-			arguments.addModifyListener(e -> validateInputText());
+			arguments.addModifyListener(_ -> validateInputText());
 
 			dummyLabel1 = new Label(multiArgumentComposite, SWT.NONE);
 			data = new GridData(SWT.LEFT, SWT.CENTER, false, true);
@@ -2691,7 +2691,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				argumentsRegularExpresion.setSelection(argument.regularExpression);
 			}
 
-			arguments.addModifyListener(e -> storeMultiSelection());
+			arguments.addModifyListener(_ -> storeMultiSelection());
 			argumentsRegularExpresion.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -2726,7 +2726,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
-			arguments.addModifyListener(e -> validateInputText());
+			arguments.addModifyListener(_ -> validateInputText());
 
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
@@ -2737,7 +2737,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				}
 			}
 
-			arguments.addModifyListener(e -> storeMultiSelection());
+			arguments.addModifyListener(_ -> storeMultiSelection());
 		}
 		if (selectedKeyOperatorType.equals(Date.class)) {
 			GridData data;
@@ -3158,7 +3158,7 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		arguments.setLayoutData(data);
 		arguments.setFont(font);
-		arguments.addModifyListener(e -> FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS,
+		arguments.addModifyListener(_ -> FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS,
 				arguments.getText()));
 		if (filter.hasStringArguments()) {
 			arguments.setText((String) FilterTypeUtil.getValue(filter,

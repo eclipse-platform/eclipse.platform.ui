@@ -81,7 +81,7 @@ public class SortFieldContribution extends MarkersContribution {
 				MenuItem item = new MenuItem(menu, SWT.CHECK);
 				item.setText(MarkerMessages.sortDirectionAscending_text);
 				final ExtendedMarkersView view = getView();
-				item.addListener(SWT.Selection, event -> {
+				item.addListener(SWT.Selection, _ -> {
 
 					if (view != null) {
 						view.toggleSortDirection();
