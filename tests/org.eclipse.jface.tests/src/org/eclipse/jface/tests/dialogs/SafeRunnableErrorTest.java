@@ -13,7 +13,6 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -70,7 +70,10 @@ public class SafeRunnableErrorTest {
 		assertNull(uncaught.get());
 		assertEquals(1, count);
 		// the error dialog is posted with asyncExec from the other thread
-		processEvents();
+		Display display = Display.getDefault();
+		while (display.readAndDispatch()) {
+			// process the posted dialog
+		}
 	}
 
 	@Test
