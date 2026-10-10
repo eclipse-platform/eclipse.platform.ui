@@ -246,7 +246,7 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
 
 		if (titleImage != null) {
-			WidgetFactory.label(SWT.NONE).image(titleImage);
+			WidgetFactory.label(SWT.NONE).image(titleImage).create(parent);
 		}
 
 		Control control = this.titleCreator.apply(parent);
@@ -261,6 +261,11 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		if (hasCloseButton) {
 			super.createCloseButton(parent);
 		}
+	}
+
+	@Override
+	protected Image getPopupShellImage(int maximumHeight) {
+		return titleImage;
 	}
 
 	@Override
