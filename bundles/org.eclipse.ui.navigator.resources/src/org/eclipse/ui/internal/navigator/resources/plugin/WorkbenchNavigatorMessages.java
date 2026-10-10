@@ -85,6 +85,10 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String ShowInActionProvider_showInAction_label;
 
 
+	public static String ToggleHighlightHandler_dialogTitle;
+	public static String ToggleHighlightHandler_dialogMessage;
+
+
 
 	static {
 		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
