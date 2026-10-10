@@ -46,12 +46,9 @@ AbstractCSSPropertySWTHandler {
 		if (value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class,
 					control.getDisplay());
-			if (newColor == null) {
-				return;
-			}
-
 			if (SWT_SELECTED_TAB_HIGHLIGHT.equals(property)) {
-				if ("none".equalsIgnoreCase(value.getCssText()) || "transparent".equalsIgnoreCase(value.getCssText())) {
+				if (newColor == null || "none".equalsIgnoreCase(value.getCssText())
+						|| "transparent".equalsIgnoreCase(value.getCssText())) {
 					((ICTabRendering) renderer).setSelectedTabHighlight(null);
 				} else {
 					((ICTabRendering) renderer).setSelectedTabHighlight(newColor);
@@ -59,13 +56,20 @@ AbstractCSSPropertySWTHandler {
 			} else if (SWT_SELECTED_HIGHLIGHT_TOP.equals(property)) {
 				Boolean drawHiglightOnTop = (Boolean) engine.convert(value, Boolean.class, control.getDisplay());
 				((ICTabRendering) renderer).setSelectedTabHighlightTop(drawHiglightOnTop);
+			} else if (newColor == null) {
+				// unresolved definition, treated like unset
+				((ICTabRendering) renderer).setSelectedTabFill(null, null);
 			} else {
 				((ICTabRendering) renderer).setSelectedTabFill(newColor);
 			}
 		} else if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					control.getDisplay());
-			if (grad == null || grad.getRGBs().isEmpty()) {
+			if (grad == null) {
+				return;
+			}
+			if (grad.getRGBs().isEmpty()) {
+				((ICTabRendering) renderer).setSelectedTabFill(null, null);
 				return;
 			}
 			Color[] colors = CSSSWTColorHelper.getSWTColors(grad,

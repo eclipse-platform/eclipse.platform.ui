@@ -16,12 +16,21 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.withSettings;
 
 import java.lang.reflect.Field;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4SelectedTabFillHandler;
+import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -123,6 +132,59 @@ public class GradientTest {
 				"CTabItem:selected { background-color: red green blue yellow 10%}");
 		assertArrayEquals(new int[] { 33, 67, 100 }, getSelectionGradientPercents(folderToTest)); // default
 		// percent
+	}
+
+	@Test
+	void testBackgroundGradientWithOnlyUnresolvedDefinitionsIsUnset() throws Exception {
+		CSSEngine engine = css.createEngine("");
+		Shell shell = new Shell(css.getDisplay(), SWT.SHELL_TRIM);
+		Composite composite = new Composite(shell, SWT.NONE);
+		composite.setSize(100, 100);
+		CSSPropertyBackgroundSWTHandler handler = new CSSPropertyBackgroundSWTHandler();
+		handler.applyCSSPropertyBackgroundColor(engine.getElement(composite),
+				engine.parsePropertyValue("#FF0000 #0000FF 100%"), null, engine);
+		assertNotNull(composite.getBackgroundImage());
+
+		handler.applyCSSPropertyBackgroundColor(engine.getElement(composite),
+				engine.parsePropertyValue("'#MISSING-A' '#MISSING-B' 100%"), null, engine);
+
+		assertNull(composite.getBackgroundImage());
+		shell.dispose();
+	}
+
+	@Test
+	void testTabGradientWithOnlyUnresolvedDefinitionsIsUnset() throws Exception {
+		CTabFolder folderToTest = createTestCTabFolder("CTabItem:selected { background-color: #FF0000 #0000FF}");
+		CSSEngine engine = css.createEngine("");
+
+		new CSSPropertyBackgroundSWTHandler().applyCSSPropertyBackgroundColor(
+				engine.getElement(folderToTest.getItem(0)),
+				engine.parsePropertyValue("'#MISSING-A' '#MISSING-B' 100%"), "selected", engine);
+
+		assertNull(getSelectionGradientPercents(folderToTest));
+	}
+
+	@Test
+	void testSelectedTabFillWithUnresolvedDefinitionResetsFill() throws Exception {
+		CTabFolder folder = createTestCTabFolder("");
+		CSSEngine engine = css.createEngine("");
+		Class<?> renderingType = Class.forName("org.eclipse.e4.ui.internal.css.swt.ICTabRendering");
+		CTabFolderRenderer renderer = mock(CTabFolderRenderer.class, withSettings().extraInterfaces(renderingType));
+		folder.setRenderer(renderer);
+		CSSPropertye4SelectedTabFillHandler handler = new CSSPropertye4SelectedTabFillHandler();
+
+		for (String value : new String[] { "'#MISSING-A'", "'#MISSING-A' '#MISSING-B' 100%" }) {
+			handler.applyCSSProperty(engine.getElement(folder), "swt-selected-tab-fill", engine.parsePropertyValue(value),
+					null, engine);
+		}
+
+		long resets = mockingDetails(renderer).getInvocations().stream()
+				.filter(i -> i.getMethod().getName().equals("setSelectedTabFill")
+						&& i.getArguments().length == 2 && i.getArguments()[0] == null && i.getArguments()[1] == null)
+				.count();
+		assertEquals(2, resets);
+		assertTrue(mockingDetails(renderer).getInvocations().stream()
+				.noneMatch(i -> i.getMethod().getName().equals("setSelectedTabFill") && i.getArguments().length == 1));
 	}
 
 	/*

@@ -304,6 +304,44 @@ public class CSSSWTFontHelper {
 		return resolved;
 	}
 
+	/**
+	 * Returns the properties unchanged unless the family references an unresolved
+	 * font definition; then returns the font the element had before it was styled,
+	 * with the size, weight and style set in CSS applied on top.
+	 */
+	public static CSS2FontProperties resolveUnresolvedFontDefinition(CSS2FontProperties fontProperties,
+			CSSElementContext context, Widget widget) {
+		if (!hasFontDefinitionAsFamily(fontProperties)
+				|| findFontDataByDefinition((CssText) fontProperties.getFamily()).length > 0) {
+			return fontProperties;
+		}
+		// not the current font, which may carry styling of another state such as :selected
+		FontData baseFontData = getBaseFontData(context);
+		if (baseFontData == null) {
+			baseFontData = getFirstFontData(getFont(widget));
+		}
+		if (baseFontData == null) {
+			return fontProperties;
+		}
+		int baseStyle = baseFontData.getStyle();
+		CSS2FontProperties resolved = new CSS2FontPropertiesImpl();
+		resolved.setFamily(new CssText(CssText.Kind.STRING, baseFontData.getName()));
+		resolved.setSize(new CssDimension(baseFontData.getHeight(), CssUnit.PT));
+		resolved.setSizeFromCSS(true);
+		resolved.setWeight(new CssText(CssText.Kind.IDENT, (baseStyle & SWT.BOLD) != 0 ? "bold" : "normal"));
+		resolved.setStyle(new CssText(CssText.Kind.IDENT, (baseStyle & SWT.ITALIC) != 0 ? "italic" : "normal"));
+		if (fontProperties.isSizeFromCSS()) {
+			resolved.setSize(fontProperties.getSize());
+		}
+		if (fontProperties.getWeight() != null) {
+			resolved.setWeight(fontProperties.getWeight());
+		}
+		if (fontProperties.getStyle() != null) {
+			resolved.setStyle(fontProperties.getStyle());
+		}
+		return resolved;
+	}
+
 	private static boolean isRelativeSize(CssPrimitive size) {
 		if (isKeyword(size, "larger") || isKeyword(size, "smaller")) {
 			return true;
