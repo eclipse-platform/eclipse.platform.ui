@@ -21,6 +21,7 @@ import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -243,7 +244,11 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		if (titleImage != null) {
 			numColums++;
 		}
-		GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
+		if (parent.getLayout() instanceof GridLayout layout) {
+			layout.numColumns = numColums;
+		} else {
+			GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
+		}
 
 		if (titleImage != null) {
 			WidgetFactory.label(SWT.NONE).image(titleImage);
@@ -269,7 +274,9 @@ public class NotificationPopup extends AbstractNotificationPopup {
 			super.createContentArea(parent);
 			return;
 		}
-		GridLayoutFactory.fillDefaults().applyTo(parent);
+		if (!(parent.getLayout() instanceof GridLayout)) {
+			GridLayoutFactory.fillDefaults().applyTo(parent);
+		}
 		Control control = this.contentCreator.apply(parent);
 		if (control.getLayoutData() == null) {
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
