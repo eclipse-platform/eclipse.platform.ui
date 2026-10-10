@@ -22,6 +22,13 @@
             class="org.eclipse.ui.examples.jobs.views.JobsView"
             id="org.eclipse.ui.examples.jobs.views.JobsView">
       </view>
+      <view
+            name="Progress Service"
+            icon="icons/job_view.gif"
+            category="ProgressExamples"
+            class="org.eclipse.ui.examples.jobs.views.ProgressServiceView"
+            id="org.eclipse.ui.examples.jobs.views.ProgressServiceView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
