@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -100,13 +100,15 @@ public abstract class IconAndMessageDialog extends Dialog {
 		if (message != null) {
 			messageLabel = new Label(composite, getMessageLabelStyle());
 			messageLabel.setText(message);
+			int xHint = message.length() > 40
+					? convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH)
+					: convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH - 50);
 			GridDataFactory
 					.fillDefaults()
 					.align(SWT.FILL, SWT.BEGINNING)
 					.grab(true, false)
-					.hint(
-							convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH),
-							SWT.DEFAULT).applyTo(messageLabel);
+					.hint(xHint, SWT.DEFAULT)
+					.applyTo(messageLabel);
 		}
 		return composite;
 	}
