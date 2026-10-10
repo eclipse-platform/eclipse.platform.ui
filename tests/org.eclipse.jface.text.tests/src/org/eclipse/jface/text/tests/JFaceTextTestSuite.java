@@ -30,6 +30,7 @@ import org.eclipse.jface.text.tests.reconciler.FastAbstractReconcilerTest;
 import org.eclipse.jface.text.tests.reconciler.ReconcilerResetOrderingTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerZeroLengthTest;
+import org.eclipse.jface.text.tests.rules.RuleBasedScannerDelimitersTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
 import org.eclipse.jface.text.tests.source.AnnotationRulerColumnTest;
@@ -73,6 +74,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		FastPartitionerZeroLengthTest.class,
 		FastPartitionerTest.class,
 		ScannerColumnTest.class,
+		RuleBasedScannerDelimitersTest.class,
 		WordRuleTest.class,
 
 		TemplatePersistenceDataTest.class,
