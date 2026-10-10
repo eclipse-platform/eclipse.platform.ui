@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -210,6 +211,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public static final String PERSPECTIVE_SPACER_ID = "PerspectiveSpacer"; //$NON-NLS-1$
 
+	/**
+	 * The 'elementId' of the perspective switcher in the trim
+	 */
+	public static final String PERSPECTIVE_SWITCHER_ID = "PerspectiveSwitcher"; //$NON-NLS-1$
+
 	public static final String STATUS_LINE_ID = "org.eclipse.ui.StatusLine"; //$NON-NLS-1$
 
 	public static final String TRIM_CONTRIBUTION_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"; //$NON-NLS-1$
@@ -309,6 +315,16 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.3
 	 */
 	private final ListenerList<IPropertyChangeListener> genericPropertyListeners = new ListenerList<>();
+
+	private final IPropertyChangeListener switcherSideListener = event -> {
+		if (IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE.equals(event.getProperty())) {
+			workbench.getDisplay().asyncExec(() -> {
+				if (!workbench.isClosing() && getShell() != null && !getShell().isDisposed()) {
+					placePerspectiveSwitcher();
+				}
+			});
+		}
+	};
 
 	private final IAdaptable input;
 
@@ -917,6 +933,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			getShell().setData(this);
 			trackShellActivation();
 			addZoomChangeListenerToPromptForRestart();
+			WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(switcherSideListener);
 		} finally {
 			HandlerServiceImpl.pop();
 		}
@@ -940,6 +957,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@PreDestroy
 	void preDestroy() {
+		WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(switcherSideListener);
 		if (mainMenu != null) {
 			renderer.clearModelToManager(mainMenu, menuManager);
 			mainMenu = null;
@@ -1026,11 +1044,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			trimBar.getChildren().add(spacerControl);
 		}
 
-		MToolControl switcherControl = (MToolControl) modelService.find("PerspectiveSwitcher", model); //$NON-NLS-1$
+		MToolControl switcherControl = (MToolControl) modelService.find(PERSPECTIVE_SWITCHER_ID, model);
 		if (switcherControl == null && getWindowConfigurer().getShowPerspectiveBar()) {
 			switcherControl = modelService.createModelElement(MToolControl.class);
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
-			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+			switcherControl.setElementId(PERSPECTIVE_SWITCHER_ID);
 			switcherControl.getTags().add(IPresentationEngine.DRAGGABLE);
 			switcherControl.getTags().add("HIDEABLE"); //$NON-NLS-1$
 			switcherControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
@@ -1040,10 +1058,56 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		} else if (switcherControl != null && !getWindowConfigurer().getShowPerspectiveBar()) {
 			trimBar.getChildren().remove(switcherControl);
 		}
+		placePerspectiveSwitcher();
 
 		// render now after everything has been added so contributions can be
 		// inserted in the right place
 		updateLayoutDataForContents();
+	}
+
+	/**
+	 * Moves the perspective switcher to the trim side given by
+	 * {@link IPreferenceConstants#PERSPECTIVE_SWITCHER_SIDE} if that value differs
+	 * from the one last applied, so that a placement by the user survives restarts.
+	 */
+	private void placePerspectiveSwitcher() {
+		MToolControl switcherControl = (MToolControl) modelService.find(PERSPECTIVE_SWITCHER_ID, model);
+		if (switcherControl == null) {
+			return;
+		}
+		String side = WorkbenchPlugin.getDefault().getPreferenceStore()
+				.getString(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE).toLowerCase(Locale.ROOT);
+		Map<String, String> state = switcherControl.getPersistedState();
+		// not the preference default, which a theme's preferences rule overrides too
+		if (side.equals(state.getOrDefault(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "top"))) { //$NON-NLS-1$
+			return;
+		}
+		SideValue sideValue = switch (side) {
+		case "top" -> SideValue.TOP; //$NON-NLS-1$
+		case "bottom" -> SideValue.BOTTOM; //$NON-NLS-1$
+		case "left" -> SideValue.LEFT; //$NON-NLS-1$
+		case "right" -> SideValue.RIGHT; //$NON-NLS-1$
+		default -> null;
+		};
+		if (sideValue == null) {
+			return;
+		}
+		state.put(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, side);
+		MTrimBar trimBar = modelService.getTrim(model, sideValue);
+		if (trimBar.getChildren().contains(switcherControl)) {
+			return;
+		}
+		// re-render so that the switcher picks the orientation of its new trim bar
+		boolean toBeRendered = switcherControl.isToBeRendered();
+		switcherControl.setToBeRendered(false);
+		// vertical bars start with the switcher, horizontal ones end with it
+		if (sideValue == SideValue.LEFT || sideValue == SideValue.RIGHT) {
+			trimBar.getChildren().add(0, switcherControl);
+		} else {
+			trimBar.getChildren().add(switcherControl);
+		}
+		trimBar.setToBeRendered(true);
+		switcherControl.setToBeRendered(toBeRendered);
 	}
 
 	/**
