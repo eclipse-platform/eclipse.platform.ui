@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -170,6 +171,27 @@ class NotificationPopupTest {
 				"notification bottom edge must align with parent client area bottom edge");
 
 		notification.close();
+	}
+
+	@Test
+	void keepsMarginsOfTitleAndContentArea() {
+		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+
+		GridLayout titleLayout = (GridLayout) findLabel(controls, "Hello World").getParent().getLayout();
+		assertEquals(3, titleLayout.marginWidth);
+		assertEquals(2, titleLayout.numColumns);
+
+		GridLayout contentLayout = (GridLayout) findLabel(controls, "This is a test").getParent().getLayout();
+		assertEquals(5, contentLayout.marginHeight);
+		assertEquals(5, contentLayout.marginLeft);
+		assertEquals(5, contentLayout.marginRight);
+	}
+
+	private Label findLabel(List<Control> controls, String text) {
+		return controls.stream().filter(Label.class::isInstance).map(Label.class::cast)
+				.filter(l -> text.equals(l.getText())).findFirst().orElseThrow();
 	}
 
 	private List<Control> getNotificationPopupControls(NotificationPopup notication) {
