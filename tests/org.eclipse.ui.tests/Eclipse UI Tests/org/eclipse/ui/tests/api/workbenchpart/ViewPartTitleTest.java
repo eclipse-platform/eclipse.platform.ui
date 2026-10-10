@@ -25,7 +25,6 @@ import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -152,8 +151,7 @@ public class ViewPartTitleTest {
 	}
 
 	@Test
-	@Ignore
-	public void XXXtestCustomName() throws Throwable {
+	public void testCustomName() throws Throwable {
 		view.setPartName("CustomPartName");
 		verifySettings("CustomPartName", "CustomPartName", "");
 		verifyEvents(true, true, false);
@@ -175,8 +173,7 @@ public class ViewPartTitleTest {
 	}
 
 	@Test
-	@Ignore
-	public void XXXtestCustomNameAndContentDescription() throws Throwable {
+	public void testCustomNameAndContentDescription() throws Throwable {
 		view.setPartName("CustomName");
 		view.setContentDescription("CustomContentDescription");
 		verifySettings("CustomName (CustomContentDescription)", "CustomName",
