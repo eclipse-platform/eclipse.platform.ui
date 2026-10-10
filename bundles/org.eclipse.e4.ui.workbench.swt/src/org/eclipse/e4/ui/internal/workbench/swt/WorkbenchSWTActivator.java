@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.IImageURLModifier;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -62,6 +63,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 
 	private BundleContext context;
 	private ServiceTracker<?, Location> locationTracker;
+	private ServiceTracker<IImageURLModifier, IImageURLModifier> imageURLModifierTracker;
 	private static WorkbenchSWTActivator activator;
 	private DebugTrace trace;
 
@@ -89,11 +91,17 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RENDERERS);
 		context.registerService(DebugOptionsListener.class, this, props);
+		imageURLModifierTracker = new ImageURLModifierTracker(context);
+		imageURLModifierTracker.open();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		saveDialogSettings();
+		if (imageURLModifierTracker != null) {
+			imageURLModifierTracker.close();
+			imageURLModifierTracker = null;
+		}
 	}
 
 	public Bundle getBundle() {

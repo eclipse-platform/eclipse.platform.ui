@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6wlLcMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.application" bindingContexts="_6wlLecgZEeSyMNYR5xypkQ">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.window.main" label="Icon Pack Demo" width="500" height="400">
+    <children xsi:type="basic:PartSashContainer" xmi:id="_6wlLksgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.partsashcontainer.sample">
+      <children xsi:type="basic:PartStack" xmi:id="_6wlLk8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.partstack.sample">
+        <children xsi:type="basic:Part" xmi:id="_6wlLlMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.part.sample" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.parts.SamplePart" label="Sample Part" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/home.svg"/>
+      </children>
+    </children>
+    <mainMenu xmi:id="_6wlLicgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_6wlLisgZEeSyMNYR5xypkQ" elementId="file" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.handleditem.save" label="Save" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/save_edit.svg" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.handleditem.quit" label="Quit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
+      </children>
+    </mainMenu>
+    <trimBars xmi:id="_6wlLlcgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.trimbar.top">
+      <children xsi:type="menu:ToolBar" xmi:id="_6wlLlsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLmMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.handleditem.trimbar.top.save" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/save_edit.svg" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_copy" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.copy" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/copy_edit.svg" tooltip="Copy" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_paste" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.paste" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/paste_edit.svg" tooltip="Paste" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_delete" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.delete" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/delete.svg" tooltip="Delete" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_undo" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.undo" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/undo_edit.svg" tooltip="Undo" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_redo" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.redo" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/redo_edit.svg" tooltip="Redo" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_iconPackDemo_refresh" elementId="org.eclipse.ui.examples.urlmodifier.directtoolitem.refresh" iconURI="platform:/plugin/org.eclipse.ui.examples.urlmodifier/icons/refresh_nav.svg" tooltip="Refresh" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.FakeHandler"/>
+      </children>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_6wlLfcgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.handler.quitCommand" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.QuitHandler" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
+  <handlers xmi:id="_6wlLhMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.handler.saveCommand" contributionURI="bundleclass://org.eclipse.ui.examples.urlmodifier/org.eclipse.ui.examples.urlmodifier.handlers.SaveHandler" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+  <bindingTables xmi:id="_6wlLfsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.bindingtable" bindingContext="_6wlLecgZEeSyMNYR5xypkQ">
+    <bindings xmi:id="_6wlLf8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.keybinding.m1q" keySequence="M1+Q" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
+    <bindings xmi:id="_6wlLhcgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.examples.urlmodifier.keybinding.m1s" keySequence="M1+S" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+  </bindingTables>
+  <rootContext xmi:id="_6wlLecgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_6wlLesgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_6wlLe8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <commands xmi:id="_6wlLfMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
+  <commands xmi:id="_6wlLg8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
+  <addons xmi:id="_6wlLcsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_6wlLc8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_6wlLdMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_6wlLdcgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_6wlLdsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_6wlLd8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_6wlLeMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>
