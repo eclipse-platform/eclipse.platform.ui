@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +114,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
@@ -938,34 +935,18 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
+	private static final int ZOOM_RESTART_PROMPT_DELAY_MS = 1000;
+
 	private void addZoomChangeListenerToPromptForRestart() {
-		getShell().addListener(SWT.ZoomChanged, event -> {
-			/**
-			 * Prompt for restart when an SWT zoom change for the primary monitor occurs,
-			 * only when rescaling at runtime is not activated.
-			 */
-			if (getShell().getDisplay().isRescalingAtRuntime()) {
-				return;
-			}
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-			if (!store.getBoolean(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE)) {
-				return;
-			}
-			if (getShell().getDisplay().getPrimaryMonitor().equals(getShell().getMonitor())) {
-				LinkedHashMap<String, Integer> buttons = new LinkedHashMap<>();
-				buttons.put(WorkbenchMessages.Workbench_RestartButton, IDialogConstants.OK_ID);
-				buttons.put(WorkbenchMessages.Workbench_DontRestartButton, IDialogConstants.CANCEL_ID);
-				MessageDialogWithToggle dialog = new MessageDialogWithToggle(getShell(),
-						WorkbenchMessages.Workbench_zoomChangedTitle, null,
-						WorkbenchMessages.Workbench_zoomChangedMessage, MessageDialog.QUESTION, buttons, 0,
-						WorkbenchMessages.Workbench_zoomChangedDoNotShowAgain, false);
-				int dialogResponse = dialog.open();
-				if (dialog.getToggleState()) {
-					store.setValue(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE, false);
-				}
-				if (event.doit && dialogResponse == IDialogConstants.OK_ID) {
-					getWorkbenchImpl().restart(true);
-				}
+		Shell shell = getShell();
+		Display display = shell.getDisplay();
+		Runnable promptForRestart = () -> getWorkbenchImpl().promptForRestartIfZoomChanged(shell);
+		shell.addListener(SWT.ZoomChanged, event -> {
+			// Only needed when SWT cannot rescale at runtime
+			if (!display.isRescalingAtRuntime() && display.getPrimaryMonitor().equals(shell.getMonitor())) {
+				// Delay so that a transient zoom change, e.g. on monitor reconnect, does not prompt;
+				// rescheduling the same runnable restarts the timer, which coalesces bursts
+				display.timerExec(ZOOM_RESTART_PROMPT_DELAY_MS, promptForRestart);
 			}
 		});
 	}

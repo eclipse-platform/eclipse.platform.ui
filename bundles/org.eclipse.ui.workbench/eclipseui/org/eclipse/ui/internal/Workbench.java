@@ -44,6 +44,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.Category;
@@ -128,7 +129,9 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -364,6 +367,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	private final Display display;
 
+	private final int startupZoom;
+
+	// Workbench-wide so that several windows do not stack restart prompts
+	private boolean zoomRestartPromptOpen;
+
 	private boolean workbenchAutoSave = true;
 
 	private EditorHistory editorHistory;
@@ -466,6 +474,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		this.advisor = Objects.requireNonNull(advisor);
 		this.display = Objects.requireNonNull(display);
+		this.startupZoom = display.getPrimaryMonitor().getZoom();
 		if (OS.isWindows()) {
 			setEdgeDataDirectory(this.display);
 		}
@@ -2032,6 +2041,38 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		Window.setDefaultImage(null);
 		for (Image image : images) {
 			image.dispose();
+		}
+	}
+
+	/**
+	 * Asks the user to restart if the primary monitor zoom differs from the zoom
+	 * at workbench startup.
+	 */
+	void promptForRestartIfZoomChanged(Shell parent) {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (isClosing || parent.isDisposed() || zoomRestartPromptOpen
+				|| !store.getBoolean(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE)
+				|| display.getPrimaryMonitor().getZoom() == startupZoom) {
+			return;
+		}
+		LinkedHashMap<String, Integer> buttons = new LinkedHashMap<>();
+		buttons.put(WorkbenchMessages.Workbench_RestartButton, IDialogConstants.OK_ID);
+		buttons.put(WorkbenchMessages.Workbench_DontRestartButton, IDialogConstants.CANCEL_ID);
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
+				WorkbenchMessages.Workbench_zoomChangedTitle, null, WorkbenchMessages.Workbench_zoomChangedMessage,
+				MessageDialog.QUESTION, buttons, 0, WorkbenchMessages.Workbench_zoomChangedDoNotShowAgain, false);
+		int dialogResponse;
+		zoomRestartPromptOpen = true;
+		try {
+			dialogResponse = dialog.open();
+		} finally {
+			zoomRestartPromptOpen = false;
+		}
+		if (dialog.getToggleState()) {
+			store.setValue(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE, false);
+		}
+		if (dialogResponse == IDialogConstants.OK_ID) {
+			restart(true);
 		}
 	}
 
