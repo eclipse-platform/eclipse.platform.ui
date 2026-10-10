@@ -22,8 +22,12 @@ import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+import java.io.IOException;
+import java.io.StringReader;
+
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -355,5 +359,69 @@ public class CTabFolderTest {
 		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
 		assertEquals(1, folderToTest.getMinimumCharacters());
 		assertEquals("1", css.getEngine().retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+	}
+
+	@Test
+	void testPageSelectedProgrammaticallyAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		// a class selector keeps this engine, which stays attached to the shared
+		// display as a skin listener, from styling the widgets of other tests
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		// nothing is selected yet, so the page is hidden and the CTabFolder does
+		// not expose it to the engine
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		tab1.setControl(page);
+		spinEventLoop(display); // the skin pass skips the hidden page
+
+		// a programmatic selection sends no selection event, so only the page
+		// becoming visible can trigger its styling
+		folderToTest.setSelection(0);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	@Test
+	void testPageAttachedToItsItemAfterSkinningIsStyled() throws IOException {
+		Display display = css.getDisplay();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		engine.parseStyleSheet(new StringReader(".tabPage { background-color: #FF0000 }"));
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		shell.setLayout(new FillLayout());
+		CTabFolder folderToTest = new CTabFolder(shell, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		folderToTest.setSelection(0);
+		shell.setSize(400, 300);
+		shell.layout(true, true);
+
+		Composite page = new Composite(folderToTest, SWT.NONE);
+		WidgetElement.setCSSClass(page, "tabPage");
+		// building the page runs the event loop, as loading a search page does in
+		// the Search dialog, so the page is skinned while its item has no control
+		// yet and the CTabFolder does not expose it
+		spinEventLoop(display);
+
+		// the tab is already selected and the page has been visible since it was
+		// created, so attaching it sends no show event either
+		tab1.setControl(page);
+		spinEventLoop(display);
+
+		assertEquals(RED, page.getBackground().getRGB());
+	}
+
+	private static void spinEventLoop(Display display) {
+		while (display.readAndDispatch()) {
+			// deliver the pending skin and show events
+		}
 	}
 }
