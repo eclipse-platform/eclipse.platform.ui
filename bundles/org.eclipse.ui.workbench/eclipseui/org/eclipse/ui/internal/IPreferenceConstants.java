@@ -320,4 +320,15 @@ public interface IPreferenceConstants {
 	 */
 	String PROMPT_RESTART_ON_ZOOM_CHANGE = "promptRestartOnZoomChange"; //$NON-NLS-1$
 
+	/**
+	 * Workbench preference id for the trim side of the perspective switcher, one of
+	 * <code>top</code>, <code>bottom</code>, <code>left</code> or <code>right</code>,
+	 * typically set by a theme. A user's own placement is kept until the value
+	 * changes.
+	 * <p>
+	 * The default value for this preference is: <code>top</code>
+	 * </p>
+	 */
+	String PERSPECTIVE_SWITCHER_SIDE = "perspectiveSwitcherSide"; //$NON-NLS-1$
+
 }
