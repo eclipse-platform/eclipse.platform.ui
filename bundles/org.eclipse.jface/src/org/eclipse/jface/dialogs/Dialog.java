@@ -16,6 +16,7 @@ package org.eclipse.jface.dialogs;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -1109,13 +1110,24 @@ public abstract class Dialog extends Window {
 		}
 
 		AtomicReference<Listener> customResizeListener = new AtomicReference<>();
+		// setSize() sends the next SWT.Resize, which calls this listener again. Without the
+		// re-entrancy guard the listener recurses until the stack is exhausted whenever the
+		// computed size is not a fixed point, e.g. because a scrollbar appears and disappears
+		// with it.
+		AtomicBoolean adaptingDefaultSize = new AtomicBoolean();
 		Listener adaptDefaultSizeListener = event -> {
 			Shell shell = getShell();
-			if (shell == null || shell.isDisposed()) {
+			if (shell == null || shell.isDisposed() || !adaptingDefaultSize.compareAndSet(false, true)) {
 				return;
 			}
-			Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			shell.setSize(size);
+			try {
+				Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				if (!size.equals(shell.getSize())) {
+					shell.setSize(size);
+				}
+			} finally {
+				adaptingDefaultSize.set(false);
+			}
 		};
 		AtomicReference<Listener> zoomChangeListener = new AtomicReference<>();
 		zoomChangeListener.set(event -> {
