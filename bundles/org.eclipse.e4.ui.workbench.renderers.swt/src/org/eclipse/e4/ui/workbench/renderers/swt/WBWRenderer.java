@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -48,6 +49,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -97,6 +99,40 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private static String ShellMinimizedTag = "shellMinimized"; //$NON-NLS-1$
 	private static String ShellMaximizedTag = "shellMaximized"; //$NON-NLS-1$
+
+	/**
+	 * A named preference of the
+	 * {@link CTabRendering#PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT}
+	 * node: when <code>true</code>, the detached windows are rendered as top level
+	 * shells instead of children of the shell of their window, as if they had the
+	 * {@link IPresentationEngine#WINDOW_TOP_LEVEL} tag.
+	 * <p>
+	 * The window manager keeps a child shell with its parent: activating a
+	 * detached window brings the workbench window to the front too, over the
+	 * other applications. A top level detached window is activated alone.
+	 * </p>
+	 * <p>
+	 * Such a shell has its own task bar entry: it can be minimized and, when the
+	 * window has no label, its title is the label of the part it shows.
+	 * </p>
+	 * <p>
+	 * The preference is read when the shell of a detached window is created.
+	 * </p>
+	 */
+	public static final String DETACHED_WINDOWS_TOP_LEVEL = "DETACHED_WINDOWS_TOP_LEVEL"; //$NON-NLS-1$
+
+	/**
+	 * Default value of the {@link #DETACHED_WINDOWS_TOP_LEVEL} preference: the
+	 * detached windows are children of the shell of their window.
+	 */
+	public static final boolean DETACHED_WINDOWS_TOP_LEVEL_DEFAULT = false;
+
+	/**
+	 * Marks the shell of a detached window made top level by the
+	 * {@link #DETACHED_WINDOWS_TOP_LEVEL} preference: its title follows the part
+	 * it shows.
+	 */
+	private static final String DETACHED_TOP_LEVEL_SHELL = "detachedTopLevelShell"; //$NON-NLS-1$
 
 	private class WindowSizeUpdateJob implements Runnable {
 		public List<MWindow> windowsToUpdate = new ArrayList<>();
@@ -199,6 +235,32 @@ public class WBWRenderer extends SWTPartRenderer {
 		} else if (UIEvents.UILabel.TOOLTIP.equals(attName) || UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
 			String newTTip = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			theShell.setToolTipText(newTTip);
+		}
+	}
+
+	/**
+	 * A top level detached window has its own task bar entry: when it has no
+	 * label, its title follows the label of the part it shows.
+	 */
+	@Inject
+	@Optional
+	private void subscribeTopicPartLabelChanged(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
+		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MPart part)) {
+			return;
+		}
+		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
+		if (UIEvents.UILabel.LABEL.equals(attName) || UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
+			updateDetachedWindowTitle(getWindowOf(part.getCurSharedRef() != null ? part.getCurSharedRef() : part));
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicDetachedWindowSelectionChanged(
+			@UIEventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
+		if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MElementContainer<?> container
+				&& !(container instanceof MApplication)) {
+			updateDetachedWindowTitle(getWindowOf(container));
 		}
 	}
 
@@ -376,10 +438,16 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwModel.getTags().add("topLevel"); //$NON-NLS-1$
 		} else {
 			int style = SWT.TITLE | SWT.RESIZE | SWT.MAX | SWT.CLOSE | rtlStyle;
-			style = styleOverride == -1 ? style : styleOverride;
 			if (wbwModel.getTags().contains(IPresentationEngine.WINDOW_TOP_LEVEL)) {
+				style = styleOverride == -1 ? style : styleOverride;
 				wbwShell = new Shell(display, style);
+			} else if (isDetachedWindowTopLevel()) {
+				// A top level window has its own task bar entry: it can be minimized
+				style = styleOverride == -1 ? style | SWT.MIN : styleOverride;
+				wbwShell = new Shell(display, style);
+				wbwShell.setData(DETACHED_TOP_LEVEL_SHELL, Boolean.TRUE);
 			} else {
+				style = styleOverride == -1 ? style : styleOverride;
 				wbwShell = new Shell(parentShell, style);
 			}
 
@@ -472,6 +540,8 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		if (wbwModel.getLabel() != null) {
 			wbwShell.setText(wbwModel.getLocalizedLabel());
+		} else {
+			updateDetachedWindowTitle(wbwModel, wbwShell);
 		}
 
 		Image windowImage = getImage(wbwModel);
@@ -485,6 +555,71 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		return newWidget;
+	}
+
+	private static boolean isDetachedWindowTopLevel() {
+		// Use the preferences service so product customization (default scope) is honored
+		return Platform.getPreferencesService().getBoolean(
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT, DETACHED_WINDOWS_TOP_LEVEL,
+				DETACHED_WINDOWS_TOP_LEVEL_DEFAULT, null);
+	}
+
+	private static MWindow getWindowOf(MUIElement element) {
+		MUIElement current = element;
+		while (current != null && !(current instanceof MWindow)) {
+			current = current.getParent();
+		}
+		return (MWindow) current;
+	}
+
+	private void updateDetachedWindowTitle(MWindow window) {
+		if (window != null && window.getRenderer() == this && window.getLabel() == null
+				&& window.getWidget() instanceof Shell shell) {
+			updateDetachedWindowTitle(window, shell);
+		}
+	}
+
+	/**
+	 * Sets the title of a detached window made top level by the
+	 * {@link #DETACHED_WINDOWS_TOP_LEVEL} preference, when it has no label, to the
+	 * label of the part it shows. The detached windows usually have no label: a
+	 * child shell has no task bar entry, but a top level shell has one.
+	 */
+	private static void updateDetachedWindowTitle(MWindow window, Shell shell) {
+		if (shell.isDisposed() || shell.getData(DETACHED_TOP_LEVEL_SHELL) == null) {
+			return;
+		}
+		MPart part = getShownPart(window);
+		String title = part == null || part.getLocalizedLabel() == null ? "" : part.getLocalizedLabel(); //$NON-NLS-1$
+		if (!title.equals(shell.getText())) {
+			shell.setText(title);
+		}
+	}
+
+	/**
+	 * @return the part shown by the container: its selected element or, if none,
+	 *         its first visible child
+	 */
+	private static MPart getShownPart(MElementContainer<?> container) {
+		MUIElement shown = container.getSelectedElement();
+		if (shown == null) {
+			for (MUIElement child : container.getChildren()) {
+				if (child.isToBeRendered() && child.isVisible()) {
+					shown = child;
+					break;
+				}
+			}
+		}
+		if (shown instanceof MPlaceholder placeholder) {
+			shown = placeholder.getRef();
+		}
+		if (shown instanceof MPart part) {
+			return part;
+		}
+		if (shown instanceof MElementContainer<?> childContainer) {
+			return getShownPart(childContainer);
+		}
+		return null;
 	}
 
 	private void setCloseHandler(MWindow window) {
