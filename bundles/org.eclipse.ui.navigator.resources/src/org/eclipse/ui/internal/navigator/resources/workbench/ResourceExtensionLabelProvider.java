@@ -84,19 +84,13 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 
 
 	protected int getHighestProblemSeverity(IResource resource) {
-		int problemSeverity = -1;
 		try {
-			for (IMarker marker : resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
-				problemSeverity = Math.max(problemSeverity, marker.getAttribute(IMarker.SEVERITY, -1));
-				if (problemSeverity >= IMarker.SEVERITY_ERROR) {
-					return problemSeverity;
-				}
-			}
+			return resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			// Mute error to prevent pop-up in case of concurrent modification
 			// of markers.
+			return -1;
 		}
-		return problemSeverity;
 	}
 
 
