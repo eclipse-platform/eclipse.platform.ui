@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2025 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -72,6 +73,8 @@ import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
@@ -182,6 +185,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 * tabs using the keyboard.
 	 */
 	private static final String INHIBIT_FOCUS = "InhibitFocus"; //$NON-NLS-1$
+	private static final String PART_OPEN_INDEX = "part_open_index"; //$NON-NLS-1$
+	private static final java.util.concurrent.atomic.AtomicLong PART_SEQUENCE_GEN = new java.util.concurrent.atomic.AtomicLong();
 
 	// Minimum characters in for stacks outside the shared area
 	private static int MIN_VIEW_CHARS = 1;
@@ -385,12 +390,113 @@ public class StackRenderer extends LazyStackRenderer {
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, IPresentationEngine.ADORNMENT_PIN)) {
 				item.setImage(getImage(part));
+				handlePartPinStateChanged(part, true);
 			}
 		} else if (UIEvents.isREMOVE(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, IPresentationEngine.ADORNMENT_PIN)) {
 				item.setImage(getImage(part));
+				handlePartPinStateChanged(part, false);
 			}
 		}
+	}
+
+	private static long getPartOpenSequence(MStackElement element) {
+		MPart part = element instanceof MPart p ? p : (MPart) ((MPlaceholder) element).getRef();
+		if (part != null) {
+			Object seq = part.getTransientData().get(PART_OPEN_INDEX);
+			if (seq instanceof Long l) {
+				return l;
+			}
+		}
+		return 0L;
+	}
+
+	private static void ensurePartOpenSequence(MStackElement element) {
+		MPart part = element instanceof MPart p ? p : (MPart) ((MPlaceholder) element).getRef();
+		if (part != null && !part.getTransientData().containsKey(PART_OPEN_INDEX)) {
+			part.getTransientData().put(PART_OPEN_INDEX, PART_SEQUENCE_GEN.incrementAndGet());
+		}
+	}
+
+	private void handlePartPinStateChanged(MPart part, boolean pinned) {
+		if (!shouldShowPinnedEditorsFirst()) {
+			return;
+		}
+		MUIElement parent = part.getParent();
+		if (parent == null && part.getCurSharedRef() != null) {
+			parent = part.getCurSharedRef().getParent();
+		}
+		if (!(parent instanceof MPartStack stack) || !PartStackUtil.isEditorStack(stack)) {
+			return;
+		}
+		MUIElement elementToMove = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
+		List<MStackElement> children = stack.getChildren();
+		int currentIndex = children.indexOf(elementToMove);
+		if (currentIndex < 0) {
+			return;
+		}
+		for (MStackElement child : children) {
+			ensurePartOpenSequence(child);
+		}
+		long elementSeq = getPartOpenSequence((MStackElement) elementToMove);
+		int targetIndex;
+		if (pinned) {
+			// Find position among pinned items sorted by open order
+			int insertIndex = 0;
+			for (int i = 0; i < children.size(); i++) {
+				MStackElement child = children.get(i);
+				if (child == elementToMove) {
+					continue;
+				}
+				MPart childPart = child instanceof MPart p ? p : (MPart) ((MPlaceholder) child).getRef();
+				if (childPart != null && isPinned(childPart)) {
+					if (getPartOpenSequence(child) < elementSeq) {
+						insertIndex++;
+					}
+				}
+			}
+			targetIndex = insertIndex;
+		} else {
+			// Find position among unpinned items (after all pinned items) sorted by open order
+			int pinnedCount = 0;
+			int unpinnedBeforeCount = 0;
+			for (MStackElement child : children) {
+				if (child == elementToMove) {
+					continue;
+				}
+				MPart childPart = child instanceof MPart p ? p : (MPart) ((MPlaceholder) child).getRef();
+				if (childPart != null && isPinned(childPart)) {
+					pinnedCount++;
+				} else if (getPartOpenSequence(child) < elementSeq) {
+					unpinnedBeforeCount++;
+				}
+			}
+			targetIndex = pinnedCount + unpinnedBeforeCount;
+		}
+		if (currentIndex != targetIndex) {
+			if (children instanceof EList<MStackElement> eList) {
+				ECollections.move(eList, targetIndex, currentIndex);
+			} else {
+				children.remove(currentIndex);
+				if (targetIndex >= children.size()) {
+					children.add((MStackElement) elementToMove);
+				} else {
+					children.add(targetIndex, (MStackElement) elementToMove);
+				}
+			}
+		}
+	}
+
+	private boolean isPinned(MPart part) {
+		return part.getTags().contains(IPresentationEngine.ADORNMENT_PIN);
+	}
+
+	private boolean shouldShowPinnedEditorsFirst() {
+		return Platform.getPreferencesService().getBoolean(
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST_DEFAULT,
+				null);
 	}
 
 	@Inject
@@ -716,6 +822,8 @@ public class StackRenderer extends LazyStackRenderer {
 		dirtyIndicatorListener = e -> {
 			if (CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS.equals(e.getKey())) {
 				synchronize.asyncExec(this::updateDirtyIndicatorStyle);
+			} else if (CTabRendering.SHOW_PINNED_EDITORS_FIRST.equals(e.getKey())) {
+				synchronize.asyncExec(this::reorderStacksForPinnedEditors);
 			}
 		};
 		preferences.addPreferenceChangeListener(dirtyIndicatorListener);
@@ -743,6 +851,57 @@ public class StackRenderer extends LazyStackRenderer {
 					}
 					item.setShowDirty(part.isDirty() && showDirtyIndicator);
 					item.setText(getLabel(part, part.getLocalizedLabel()));
+				}
+			}
+		}
+	}
+
+	private void reorderStacksForPinnedEditors() {
+		MApplication app = context.get(MApplication.class);
+		if (app == null) {
+			return;
+		}
+		boolean showPinnedFirst = shouldShowPinnedEditorsFirst();
+		List<MPartStack> stacks = modelService.findElements(app, null, MPartStack.class, null);
+		for (MPartStack stack : stacks) {
+			if (!PartStackUtil.isEditorStack(stack)) {
+				continue;
+			}
+			List<MStackElement> children = stack.getChildren();
+			for (MStackElement child : children) {
+				ensurePartOpenSequence(child);
+			}
+			List<MStackElement> desiredOrder = new ArrayList<>(children);
+			if (showPinnedFirst) {
+				List<MStackElement> pinned = new ArrayList<>();
+				List<MStackElement> unpinned = new ArrayList<>();
+				for (MStackElement child : children) {
+					MPart part = child instanceof MPart p ? p : (MPart) ((MPlaceholder) child).getRef();
+					if (part != null && isPinned(part)) {
+						pinned.add(child);
+					} else {
+						unpinned.add(child);
+					}
+				}
+				pinned.sort(Comparator.comparingLong(StackRenderer::getPartOpenSequence));
+				unpinned.sort(Comparator.comparingLong(StackRenderer::getPartOpenSequence));
+				desiredOrder.clear();
+				desiredOrder.addAll(pinned);
+				desiredOrder.addAll(unpinned);
+			} else {
+				desiredOrder.sort(Comparator.comparingLong(StackRenderer::getPartOpenSequence));
+			}
+
+			for (int i = 0; i < desiredOrder.size(); i++) {
+				MStackElement elem = desiredOrder.get(i);
+				int cur = children.indexOf(elem);
+				if (cur != i) {
+					if (children instanceof EList<MStackElement> eList) {
+						ECollections.move(eList, i, cur);
+					} else {
+						children.remove(cur);
+						children.add(i, elem);
+					}
 				}
 			}
 		}
@@ -1150,8 +1309,12 @@ public class StackRenderer extends LazyStackRenderer {
 	public void childRendered(final MElementContainer<MUIElement> parentElement, MUIElement element) {
 		super.childRendered(parentElement, element);
 
-		if (!(((MUIElement) parentElement) instanceof MPartStack) || !(element instanceof MStackElement)) {
+		if (!(((MUIElement) parentElement) instanceof MPartStack stack) || !(element instanceof MStackElement stackElement)) {
 			return;
+		}
+
+		if (PartStackUtil.isEditorStack(stack)) {
+			ensurePartOpenSequence(stackElement);
 		}
 
 		createTab(parentElement, element);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 IBM Corporation and others.
+ * Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,6 +90,16 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 * Default value for "dirty indicator" preference for tabs
 	 */
 	public static final boolean SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT = true;
+
+	/**
+	 * A named preference for whether to show pinned editors first in the drop-down list
+	 */
+	public static final String SHOW_PINNED_EDITORS_FIRST = "SHOW_PINNED_EDITORS_FIRST"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "show pinned editors first" preference
+	 */
+	public static final boolean SHOW_PINNED_EDITORS_FIRST_DEFAULT = false;
 
 	private static int MIN_VIEW_CHARS = 1;
 	private static int MAX_VIEW_CHARS = Integer.MAX_VALUE;

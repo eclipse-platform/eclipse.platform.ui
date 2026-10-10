@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -98,6 +98,13 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		return preferences.getBoolean(StackRenderer.MRU_KEY, initialMRUValue);
 	}
 
+	private static boolean isShowPinnedEditorsFirstEnabled() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		return preferences.getBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST_DEFAULT);
+	}
+
 	@Override
 	protected Object getInput(WorkbenchPage page) {
 		List<EditorReference> editorReferences = getParts(page);
@@ -116,6 +123,19 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			for (IEditorReference ier : page.getEditorReferences()) {
 				refs.add((EditorReference) ier);
 			}
+		}
+		if (isShowPinnedEditorsFirstEnabled()) {
+			List<EditorReference> pinned = new ArrayList<>();
+			List<EditorReference> unpinned = new ArrayList<>();
+			for (EditorReference ref : refs) {
+				if (ref.isPinned()) {
+					pinned.add(ref);
+				} else {
+					unpinned.add(ref);
+				}
+			}
+			pinned.addAll(unpinned);
+			return pinned;
 		}
 		return refs;
 	}

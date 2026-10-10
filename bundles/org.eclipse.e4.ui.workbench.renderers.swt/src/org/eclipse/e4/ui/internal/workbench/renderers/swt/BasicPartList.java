@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
@@ -126,8 +127,16 @@ public class BasicPartList extends AbstractTableInformationControl {
 				@Override
 				public int category(Object element) {
 					if (element instanceof MPart part) {
+						boolean pinned = isPinned(part);
 						CTabItem item = BasicPartList.this.renderer.findItemForPart(part);
-						if (item != null && !item.isShowing()) {
+						boolean notShowing = item != null && !item.isShowing();
+						if (shouldShowPinnedEditorsFirst()) {
+							if (pinned) {
+								return notShowing ? -3 : -2;
+							}
+							return notShowing ? -1 : 0;
+						}
+						if (notShowing) {
 							return -1;
 						}
 					}
@@ -170,7 +179,35 @@ public class BasicPartList extends AbstractTableInformationControl {
 				list.add(element);
 			}
 		}
+		if (shouldShowPinnedEditorsFirst()) {
+			List<Object> pinned = new ArrayList<>();
+			List<Object> unpinned = new ArrayList<>();
+			for (Object element : list) {
+				if (element instanceof MPart part && isPinned(part)) {
+					pinned.add(part);
+				} else {
+					unpinned.add(element);
+				}
+			}
+			pinned.addAll(unpinned);
+			return pinned;
+		}
 		return list;
+	}
+
+	private boolean isPinned(MPart part) {
+		return part.getTags().contains(IPresentationEngine.ADORNMENT_PIN);
+	}
+
+	private boolean shouldShowPinnedEditorsFirst() {
+		if (!PartStackUtil.isEditorStack(input)) {
+			return false;
+		}
+		return Platform.getPreferencesService().getBoolean(
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST_DEFAULT,
+				null);
 	}
 
 	public void setInput() {

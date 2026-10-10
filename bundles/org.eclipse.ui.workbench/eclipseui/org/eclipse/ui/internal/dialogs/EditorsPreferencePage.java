@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -74,6 +78,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Button promptWhenStillOpenEditor;
 
+	private Button showPinnedEditorsFirst;
+
 	private Button allowInplaceEditor;
 
 	private ComboFieldEditor multiPageEditorTabPositionComboField;
@@ -88,6 +94,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createAllowInplaceEditorPref(composite);
 		createUseIPersistablePref(composite);
 		createPromptWhenStillOpenPref(composite);
+		createShowPinnedEditorsFirstPref(composite);
 		createEditorReuseGroup(composite);
 		// ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup,
 		// showMultipleEditorTabs);
@@ -136,6 +143,15 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		setButtonLayoutData(promptWhenStillOpenEditor);
 	}
 
+	protected void createShowPinnedEditorsFirstPref(Composite composite) {
+		showPinnedEditorsFirst = new Button(composite, SWT.CHECK);
+		showPinnedEditorsFirst.setText(WorkbenchMessages.WorkbenchPreference_showPinnedEditorsFirstButton);
+		showPinnedEditorsFirst.setSelection(Platform.getPreferencesService().getBoolean(
+				CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+				CTabRendering.SHOW_PINNED_EDITORS_FIRST, CTabRendering.SHOW_PINNED_EDITORS_FIRST_DEFAULT, null));
+		setButtonLayoutData(showPinnedEditorsFirst);
+	}
+
 	protected void createAlignMultiPageEditorTabs(Composite parent) {
 		Composite comboComposite = new Composite(parent, SWT.NONE);
 		comboComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
@@ -176,6 +192,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		useIPersistableEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
 		promptWhenStillOpenEditor.setSelection(getAPIPreferenceStore()
 				.getDefaultBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN));
+		showPinnedEditorsFirst.setSelection(CTabRendering.SHOW_PINNED_EDITORS_FIRST_DEFAULT);
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
 		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
@@ -193,6 +210,15 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, useIPersistableEditor.getSelection());
 		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
 				promptWhenStillOpenEditor.getSelection());
+
+		IEclipsePreferences renderersPrefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, showPinnedEditorsFirst.getSelection());
+		try {
+			renderersPrefs.flush();
+		} catch (Exception e) {
+			// ignore
+		}
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, reuseEditors.getSelection());

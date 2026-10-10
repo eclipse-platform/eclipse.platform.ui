@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2023 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
@@ -43,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
@@ -597,6 +600,86 @@ public class StackRendererTest {
 		// Verify order in Widget
 		assertEquals("Part 2", tabFolder.getItem(0).getText());
 		assertEquals("Part 1", tabFolder.getItem(1).getText());
+	}
+
+	@Test
+	public void testPinnedTabReorderedToLeftWhenPreferenceEnabled() {
+		PartStackUtil.makeEditorStack(partStack);
+
+		MPart part1 = ems.createModelElement(MPart.class);
+		part1.setLabel("Part 1");
+
+		MPart part2 = ems.createModelElement(MPart.class);
+		part2.setLabel("Part 2");
+
+		MPart part3 = ems.createModelElement(MPart.class);
+		part3.setLabel("Part 3");
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+		partStack.getChildren().add(part3);
+
+		IEclipsePreferences renderersPrefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, true);
+
+		try {
+			contextRule.createAndRunWorkbench(window);
+
+			CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+			assertEquals(3, tabFolder.getItemCount());
+
+			// Activate part 3 so it is the selected element
+			partStack.setSelectedElement(part3);
+			assertEquals(part3, partStack.getSelectedElement());
+
+			// Pin part 3 (should move to front without stealing focus/selection)
+			part3.getTags().add(IPresentationEngine.ADORNMENT_PIN);
+
+			// Verify part 3 was moved to index 0 both in model and in CTabFolder widget
+			assertEquals(part3, partStack.getChildren().get(0));
+			assertEquals(part1, partStack.getChildren().get(1));
+			assertEquals(part2, partStack.getChildren().get(2));
+
+			assertEquals("Part 3", tabFolder.getItem(0).getText());
+			assertEquals("Part 1", tabFolder.getItem(1).getText());
+			assertEquals("Part 2", tabFolder.getItem(2).getText());
+
+			// Verify part 3 remains the selected element
+			assertEquals(part3, partStack.getSelectedElement());
+			assertEquals("Part 3", tabFolder.getSelection().getText());
+
+			// Unpin part 3 (should restore back to original position index 2)
+			part3.getTags().remove(IPresentationEngine.ADORNMENT_PIN);
+			assertEquals(part1, partStack.getChildren().get(0));
+			assertEquals(part2, partStack.getChildren().get(1));
+			assertEquals(part3, partStack.getChildren().get(2));
+
+			assertEquals("Part 1", tabFolder.getItem(0).getText());
+			assertEquals("Part 2", tabFolder.getItem(1).getText());
+			assertEquals("Part 3", tabFolder.getItem(2).getText());
+
+			// Pin part 3 again
+			part3.getTags().add(IPresentationEngine.ADORNMENT_PIN);
+			assertEquals(part3, partStack.getChildren().get(0));
+			assertEquals(part1, partStack.getChildren().get(1));
+			assertEquals(part2, partStack.getChildren().get(2));
+
+			// Disable preference -> should restore original order
+			renderersPrefs.putBoolean(CTabRendering.SHOW_PINNED_EDITORS_FIRST, false);
+			// Process pending async UI events
+			while (tabFolder.getDisplay().readAndDispatch()) {
+			}
+			assertEquals(part1, partStack.getChildren().get(0));
+			assertEquals(part2, partStack.getChildren().get(1));
+			assertEquals(part3, partStack.getChildren().get(2));
+
+			assertEquals("Part 1", tabFolder.getItem(0).getText());
+			assertEquals("Part 2", tabFolder.getItem(1).getText());
+			assertEquals("Part 3", tabFolder.getItem(2).getText());
+		} finally {
+			renderersPrefs.remove(CTabRendering.SHOW_PINNED_EDITORS_FIRST);
+		}
 	}
 
 	// helper functions
