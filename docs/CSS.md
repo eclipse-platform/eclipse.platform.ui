@@ -59,6 +59,21 @@ An unknown feature, value or media type simply does not match, so a query writte
 
 Rules can also be restricted per platform from the outside, with the `os` and `ws` attributes of the `org.eclipse.e4.ui.css.swt.theme` extension point, which pick a whole style sheet rather than single rules.
 
+Preferences
+-----------
+
+A theme can also set preferences, through an `IEclipsePreferences` element whose id is the preference node with dots replaced by dashes.
+The values a theme sets are removed again when another theme is applied.
+
+```css
+IEclipsePreferences#org-eclipse-ui-workbench {
+	preferences: 'perspectiveSwitcherSide=left';
+}
+```
+
+`perspectiveSwitcherSide` places the perspective switcher in the `top` (default), `bottom`, `left` or `right` trim, and on the left or right it is laid out vertically.
+A position the user drags the switcher to is kept until the value changes again.
+
 Sample
 ------
 
