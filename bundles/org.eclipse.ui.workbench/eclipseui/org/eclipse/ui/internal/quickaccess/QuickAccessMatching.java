@@ -34,6 +34,8 @@ public final class QuickAccessMatching {
 	private static final String PAR_START = "\\("; //$NON-NLS-1$
 	private static final String PAR_END = "\\)"; //$NON-NLS-1$
 	private static final String ONE_CHAR = ".?"; //$NON-NLS-1$
+	private static final Pattern STAR_RUN = Pattern.compile("\\*+"); //$NON-NLS-1$
+	private static final Pattern IGNORED_IN_NEEDLE = Pattern.compile("[\\s*?]"); //$NON-NLS-1$
 
 	private QuickAccessMatching() {
 	}
@@ -55,7 +57,7 @@ public final class QuickAccessMatching {
 	 * bounded length match.
 	 */
 	public static Pattern wildcardsPattern(String filter) {
-		filter = filter.replaceAll("\\*+", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+		filter = STAR_RUN.matcher(filter).replaceAll("*"); //$NON-NLS-1$
 		String sFilter = filter.replaceFirst(WS_WILD_START, EMPTY_STR).replaceFirst(WS_WILD_END, EMPTY_STR)
 				.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
 		StringBuilder sb = new StringBuilder();
@@ -105,11 +107,15 @@ public final class QuickAccessMatching {
 	 *         is not a substring of {@code matchLabel}.
 	 */
 	public static int substringMatchQuality(String matchLabel, String label, String filter) {
-		String lowerMatch = matchLabel.toLowerCase();
+		return substringMatchQualityLowered(matchLabel.toLowerCase(), label.toLowerCase(), filter);
+	}
+
+	/** Same as {@link #substringMatchQuality} for labels that are already lower-cased. */
+	static int substringMatchQualityLowered(String lowerMatch, String lowerLabel, String filter) {
 		if (lowerMatch.indexOf(filter) == -1) {
 			return -1;
 		}
-		if (label.toLowerCase().indexOf(filter) == -1) {
+		if (lowerLabel.indexOf(filter) == -1) {
 			return QuickAccessEntry.MATCH_PARTIAL;
 		}
 		if (lowerMatch.equals(filter)) {
@@ -147,7 +153,16 @@ public final class QuickAccessMatching {
 	 *         of the text
 	 */
 	public static int score(String text, String filter) {
-		String needle = filter.toLowerCase().replaceAll("[\\s*?]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return scoreNeedle(text, needle(filter));
+	}
+
+	/** The lower-cased filter without whitespace and wildcards, as {@link #scoreNeedle} expects. */
+	static String needle(String filter) {
+		return IGNORED_IN_NEEDLE.matcher(filter.toLowerCase()).replaceAll(EMPTY_STR);
+	}
+
+	/** Same as {@link #score} for a needle computed once by {@link #needle}. */
+	static int scoreNeedle(String text, String needle) {
 		if (needle.isEmpty()) {
 			return 0;
 		}
