@@ -39,7 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -684,8 +683,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			return;
 		}
 		synchronized (pendingUpdatesMutex) {
-			Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
-			rememberListenersForJob(info, pendingJobUpdates, predicate);
+			rememberListenersForJob(info, pendingJobUpdates, false);
 		}
 		uiRefreshThrottler.throttledExec();
 	}
@@ -717,8 +715,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			cancelPendingAdd(job);
 			managedJobs.remove(job);
 			synchronized (pendingUpdatesMutex) {
-				Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
-				rememberListenersForJob(info, pendingJobRemoval, predicate);
+				rememberListenersForJob(info, pendingJobRemoval, false);
 			}
 			runnableMonitors.remove(job);
 		}
@@ -779,8 +776,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private void rememberJobAddition(JobInfo info) {
 		synchronized (pendingUpdatesMutex) {
-			Predicate<IJobProgressManagerListener> predicate = listener -> !isCurrentDisplaying(info.getJob(), listener.showsDebug());
-			rememberListenersForJob(info, pendingJobAddition, predicate);
+			rememberListenersForJob(info, pendingJobAddition, true);
 		}
 	}
 
@@ -810,10 +806,19 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		return Math.max(MINIMUM_GRACE_PERIOD, getLongOperationTime() / 2);
 	}
 
-	private void rememberListenersForJob(JobInfo info, Map<JobInfo, Set<IJobProgressManagerListener>> listenersMap, Predicate<IJobProgressManagerListener> predicate) {
+	private void rememberListenersForJob(JobInfo info, Map<JobInfo, Set<IJobProgressManagerListener>> listenersMap,
+			boolean hideSleeping) {
 		Set<IJobProgressManagerListener> localListeners = listenersMap.computeIfAbsent(info,
 				k -> new LinkedHashSet<>());
-		listeners.stream().filter(predicate).forEach(localListeners::add);
+		Job job = info.getJob();
+		if (hideSleeping && isSleeping(job)) {
+			return;
+		}
+		for (IJobProgressManagerListener listener : listeners) {
+			if (!isNeverDisplaying(job, listener.showsDebug())) {
+				localListeners.add(listener);
+			}
+		}
 	}
 
 	/**
@@ -823,7 +828,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @return boolean <code>true</code> if the job is not displayed
 	 */
 	boolean isCurrentDisplaying(Job job, boolean debug) {
-		return isNeverDisplaying(job, debug) || job.getState() == Job.SLEEPING;
+		return isNeverDisplaying(job, debug) || isSleeping(job);
+	}
+
+	private static boolean isSleeping(Job job) {
+		return job.getState() == Job.SLEEPING;
 	}
 
 	/**
