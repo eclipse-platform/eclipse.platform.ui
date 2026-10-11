@@ -45,12 +45,23 @@ public final class QuickAccessMatcher {
 	private Pattern wcPattern;
 
 	private Pattern getWildcardsPattern(String filter) {
-		String squashed = filter.replaceAll("\\*+", "*"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (wcPattern == null || !squashed.equals(wcFilter)) {
-			wcFilter = squashed;
-			wcPattern = QuickAccessMatching.wildcardsPattern(squashed);
+		if (wcPattern == null || !filter.equals(wcFilter)) {
+			wcFilter = filter;
+			wcPattern = QuickAccessMatching.wildcardsPattern(filter);
 		}
 		return wcPattern;
+	}
+
+	// needle for scoring, derived from the filter
+	private String needleFilter;
+	private String needle;
+
+	private String getNeedle(String filter) {
+		if (needle == null || !filter.equals(needleFilter)) {
+			needleFilter = filter;
+			needle = QuickAccessMatching.needle(filter);
+		}
+		return needle;
 	}
 
 	/**
@@ -62,15 +73,15 @@ public final class QuickAccessMatcher {
 	public QuickAccessEntry match(QuickAccessElement element, String filter, QuickAccessProvider providerForMatching) {
 		QuickAccessEntry entry = doMatch(element, filter, providerForMatching);
 		if (entry != null) {
-			entry.matchScore = computeScore(element, filter, providerForMatching);
+			entry.matchScore = computeScore(element, getNeedle(filter), providerForMatching);
 		}
 		return entry;
 	}
 
-	private static int computeScore(QuickAccessElement element, String filter, QuickAccessProvider provider) {
-		int score = QuickAccessMatching.score(element.getMatchLabel(), filter);
+	private static int computeScore(QuickAccessElement element, String needle, QuickAccessProvider provider) {
+		int score = QuickAccessMatching.scoreNeedle(element.getMatchLabel(), needle);
 		if (score == QuickAccessMatching.SCORE_NONE) {
-			score = QuickAccessMatching.score(provider.getName() + ' ' + element.getMatchLabel(), filter);
+			score = QuickAccessMatching.scoreNeedle(provider.getName() + ' ' + element.getMatchLabel(), needle);
 		}
 		return score == QuickAccessMatching.SCORE_NONE ? 0 : score;
 	}
@@ -78,12 +89,15 @@ public final class QuickAccessMatcher {
 	private QuickAccessEntry doMatch(QuickAccessElement element, String filter, QuickAccessProvider providerForMatching) {
 		String matchLabel = element.getMatchLabel();
 		String label = element.getLabel();
-		int quality = QuickAccessMatching.substringMatchQuality(matchLabel, label, filter);
+		boolean sameLabel = label.equals(matchLabel);
+		String lowerMatchLabel = matchLabel.toLowerCase();
+		String lowerLabel = sameLabel ? lowerMatchLabel : label.toLowerCase();
+		int quality = QuickAccessMatching.substringMatchQualityLowered(lowerMatchLabel, lowerLabel, filter);
 		if (quality != -1) {
 			if (quality == QuickAccessEntry.MATCH_PARTIAL) {
 				return new QuickAccessEntry(element, providerForMatching, EMPTY_INDICES, EMPTY_INDICES, quality);
 			}
-			int index = label.toLowerCase().indexOf(filter);
+			int index = lowerLabel.indexOf(filter);
 			return new QuickAccessEntry(element, providerForMatching,
 					new int[][] { { index, index + filter.length() - 1 } }, EMPTY_INDICES, quality);
 		}
@@ -119,10 +133,11 @@ public final class QuickAccessMatcher {
 		}
 		//
 		String combinedMatchLabel = providerForMatching.getName() + " " + matchLabel; //$NON-NLS-1$
-		String combinedLabel = providerForMatching.getName() + " " + label; //$NON-NLS-1$
-		int index = combinedMatchLabel.toLowerCase().indexOf(filter);
+		String combinedLabel = sameLabel ? combinedMatchLabel : providerForMatching.getName() + " " + label; //$NON-NLS-1$
+		String lowerCombinedMatchLabel = combinedMatchLabel.toLowerCase();
+		int index = lowerCombinedMatchLabel.indexOf(filter);
 		if (index != -1) { // match
-			index = combinedLabel.toLowerCase().indexOf(filter);
+			index = (sameLabel ? lowerCombinedMatchLabel : combinedLabel.toLowerCase()).indexOf(filter);
 			if (index != -1) { // compute highlight on label
 				int lengthOfElementMatch = index + filter.length() - providerForMatching.getName().length() - 1;
 				if (lengthOfElementMatch > 0) {
