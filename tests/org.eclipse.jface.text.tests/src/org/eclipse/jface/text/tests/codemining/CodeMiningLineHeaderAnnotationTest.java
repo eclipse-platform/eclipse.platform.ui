@@ -230,6 +230,34 @@ public class CodeMiningLineHeaderAnnotationTest {
 		assertEquals(1, annotation.getMinings().size());
 	}
 
+	/** The height computation handles labels made only of line breaks and labels with \r\n or \r line ends. */
+	@Test
+	public void testMultilineHeightWithLineBreaksInLabels() throws Exception {
+		var getMultilineHeight= CodeMiningLineHeaderAnnotation.class.getDeclaredMethod("getMultilineHeight", GC.class, List.class, StyledText.class, int.class);
+		getMultilineHeight.setAccessible(true);
+		List<ICodeMining> minings= List.of(codeMining("mining"), codeMining("\n"));
+		var textWidget= fViewer.getTextWidget();
+
+		int heightFromLineCount= (int) getMultilineHeight.invoke(null, null, minings, textWidget, -1);
+		assertEquals(textWidget.getLineHeight() + textWidget.getLineSpacing(), heightFromLineCount);
+
+		var gc= new GC(textWidget);
+		try {
+			int heightFromExtent= (int) getMultilineHeight.invoke(null, gc, minings, null, -1);
+			assertEquals(gc.textExtent("mining").y, heightFromExtent);
+
+			List<ICodeMining> crlfMinings= List.of(codeMining("mining"), codeMining("next\r\nmore"));
+			int heightWithNextFirstLine= (int) getMultilineHeight.invoke(null, gc, crlfMinings, null, -1);
+			assertEquals(gc.textExtent("miningnext").y + gc.textExtent("more").y, heightWithNextFirstLine);
+
+			List<ICodeMining> crMinings= List.of(codeMining("mining"), codeMining("next\rmore"));
+			int heightWithCrSeparator= (int) getMultilineHeight.invoke(null, gc, crMinings, null, -1);
+			assertEquals(gc.textExtent("miningnext").y + gc.textExtent("more").y, heightWithCrSeparator);
+		} finally {
+			gc.dispose();
+		}
+	}
+
 	private LineHeaderCodeMining codeMining(String label) throws BadLocationException {
 		return new LineHeaderCodeMining(0, document, null) {
 			@Override

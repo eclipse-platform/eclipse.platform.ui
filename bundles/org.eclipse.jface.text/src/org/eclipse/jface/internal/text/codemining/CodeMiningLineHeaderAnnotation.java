@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -40,6 +40,7 @@ import org.eclipse.jface.text.source.inlined.LineHeaderAnnotation;
  */
 public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation implements ICodeMiningAnnotation {
 	private static final String SEPARATOR= " | "; //$NON-NLS-1$
+	private static final Pattern LINE_BREAK= Pattern.compile("\\r?\\n|\\r"); //$NON-NLS-1$
 
 	/**
 	 * List of resolved minings which contains current resolved minings and last resolved minings
@@ -98,6 +99,16 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		return hasAtLeastOneResolvedMiningNotEmpty(minings, fResolvedMinings) ? getMultilineHeight(gc, minings, super.getTextWidget(), super.getHeight()) : 0;
 	}
 
+	private static String firstLine(String label) {
+		for (int i= 0; i < label.length(); i++) {
+			char c= label.charAt(i);
+			if (c == '\r' || c == '\n') {
+				return label.substring(0, i);
+			}
+		}
+		return label;
+	}
+
 	static int getMultilineHeight(GC gc, List<ICodeMining> minings, StyledText styledText, int superHeight) {
 		int numLinesOfAllMinings= 0;
 		boolean ignoreFirstLine= false;
@@ -108,9 +119,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 			if (label == null) {
 				continue;
 			}
-			String[] splitted= label.split("\\r?\\n|\\r"); //$NON-NLS-1$
+			String[] splitted= LINE_BREAK.split(label);
 			int numLines= splitted.length;
-			if (ignoreFirstLine) {
+			if (ignoreFirstLine && numLines > 0) {
 				numLines--;
 			}
 			numLinesOfAllMinings+= numLines;
@@ -147,7 +158,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				if (j == splitted.length - 1 && miningIndex + 1 < minings.size()) { // last line, take first line from next mining
 					String nextLabel= minings.get(miningIndex + 1).getLabel();
 					if (nextLabel != null) {
-						String firstFromNext= nextLabel.split("\\r?\\n|\\r")[0]; //$NON-NLS-1$
+						String firstFromNext= firstLine(nextLabel);
 						line+= firstFromNext;
 					}
 				}
@@ -166,14 +177,22 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 *         label and <code>false</code> otherwise.
 	 */
 	static boolean hasAtLeastOneResolvedMiningNotEmpty(List<ICodeMining> minings, ICodeMining[] resolvedMinings) {
-		if (minings.stream().anyMatch(m -> m.getLabel() != null && !m.getLabel().isEmpty())) {
-			return true; // will have a resolved mining.
+		for (ICodeMining mining : minings) {
+			String label= mining.getLabel();
+			if (label != null && !label.isEmpty()) {
+				return true; // will have a resolved mining.
+			}
 		}
 
 		if (resolvedMinings == null || resolvedMinings.length == 0) {
 			return false;
 		}
-		return Stream.of(resolvedMinings).anyMatch(CodeMiningManager::isValidMining);
+		for (ICodeMining resolved : resolvedMinings) {
+			if (CodeMiningManager.isValidMining(resolved)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
