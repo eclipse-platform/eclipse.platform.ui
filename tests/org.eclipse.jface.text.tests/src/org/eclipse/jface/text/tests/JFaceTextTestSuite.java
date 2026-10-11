@@ -38,6 +38,7 @@ import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
 import org.eclipse.jface.text.tests.source.SourceViewerBackgroundTest;
 import org.eclipse.jface.text.tests.source.SourceViewerComputeStyleRangesTest;
 import org.eclipse.jface.text.tests.source.inlined.AnnotationOnTabTest;
+import org.eclipse.jface.text.tests.source.inlined.InlinedAnnotationFontTest;
 import org.eclipse.jface.text.tests.source.inlined.InlinedAnnotationSupportTest;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest;
 import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDataTest;
@@ -82,6 +83,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		LineContentBoundsDrawingTest.class,
 		AnnotationOnTabTest.class,
 		InlinedAnnotationSupportTest.class,
+		InlinedAnnotationFontTest.class,
 		CodeMiningTest.class,
 		CodeMiningLineHeaderAnnotationTest.class,
 		CodeMiningProjectionViewerTest.class,

@@ -104,38 +104,41 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
-	private Font getAnnotationFont(StyledText textWidget) {
-		Font annotationFont = (Font)textWidget.getData(INLINE_ANNOTATION_FONT);
-		if (!match(annotationFont, textWidget)) {
-			if (annotationFont != null) {
-				annotationFont.dispose();
-			}
-			annotationFont = null;
-		}
-		if (annotationFont == null) {
-			annotationFont = createInlineAnnotationFont(textWidget);
-			textWidget.setData(INLINE_ANNOTATION_FONT, annotationFont);
-			textWidget.addDisposeListener(e -> ((Font) textWidget.getData(INLINE_ANNOTATION_FONT)).dispose());
-		}
-		return annotationFont;
+	/** The annotation font of a widget and the widget font it was derived from. */
+	private static final class AnnotationFont {
+		Font font;
+		Font widgetFont;
 	}
 
-	private Font createInlineAnnotationFont(StyledText widget) {
-		Font initialFont = widget.getFont();
+	private Font getAnnotationFont(StyledText textWidget) {
+		AnnotationFont cached= (AnnotationFont) textWidget.getData(INLINE_ANNOTATION_FONT);
+		if (cached == null) {
+			AnnotationFont created= new AnnotationFont();
+			cached= created;
+			textWidget.setData(INLINE_ANNOTATION_FONT, created);
+			textWidget.addDisposeListener(e -> {
+				if (created.font != null) {
+					created.font.dispose();
+				}
+			});
+		}
+		Font widgetFont= textWidget.getFont();
+		if (cached.font == null || !widgetFont.equals(cached.widgetFont)) {
+			if (cached.font != null) {
+				cached.font.dispose();
+			}
+			cached.font= createInlineAnnotationFont(widgetFont);
+			cached.widgetFont= widgetFont;
+		}
+		return cached.font;
+	}
+
+	private Font createInlineAnnotationFont(Font initialFont) {
 		FontData[] fontData = initialFont.getFontData();
 		for (FontData data : fontData) {
 			data.setStyle(data.getStyle() | SWT.ITALIC);
 		}
 		return new Font(initialFont.getDevice(), fontData);
-	}
-
-	private boolean match(Font annotationFont, StyledText widget) {
-		if (annotationFont == null) {
-			return false;
-		}
-		int widgetFontHeight = widget.getFont().getFontData()[0].getHeight();
-		int annotationFontHeight = annotationFont.getFontData()[0].getHeight();
-		return annotationFontHeight == widgetFontHeight;
 	}
 
 	/**
