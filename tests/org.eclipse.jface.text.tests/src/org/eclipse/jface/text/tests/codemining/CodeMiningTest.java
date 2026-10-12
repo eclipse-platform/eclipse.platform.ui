@@ -77,6 +77,9 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class CodeMiningTest {
 
+	/** Right-edge pixels to skip: GTK paints a frame shadow there without a window manager (Xvfb). */
+	private static final int FRAME_INSET= 4;
+
 	private SourceViewer fViewer;
 	private Shell fShell;
 	private MonoReconciler fReconciler;
@@ -638,7 +641,7 @@ public class CodeMiningTest {
 			int zoom= DPIUtil.getDeviceZoom();
 			ImageData imageData= image.getImageData(zoom);
 			double zoomFactor= zoom / 100.0;
-			for (int x= (int) (zoomFactor * startx + 1); x < image.getBounds().width && x < imageData.width; x++) {
+			for (int x= (int) (zoomFactor * startx + 1); x < imageData.width - FRAME_INSET; x++) {
 				for (int y= (int) (zoomFactor * starty); y < imageData.height - 10 /*do not include the border*/; y++) {
 					if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 						// code mining printed
@@ -684,7 +687,7 @@ public class CodeMiningTest {
 		secondLineBounds.x += secondLineBounds.width; // look only area after text
 
 		double zoomFactor= zoom / 100.0;
-		for (int x= (int) (zoomFactor * (secondLineBounds.x + 1)); x < image.getBounds().width && x < imageData.width; x++) {
+		for (int x= (int) (zoomFactor * (secondLineBounds.x + 1)); x < imageData.width - FRAME_INSET; x++) {
 			for (int y= (int) (zoomFactor * (secondLineBounds.y)); y < zoomFactor * (secondLineBounds.y + secondLineBounds.height) && y < imageData.height; y++) {
 				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 					// code mining printed
