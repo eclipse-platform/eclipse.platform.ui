@@ -82,6 +82,24 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 		super(shouldBeCached);
 	}
 
+	/** Set from OSGi service events, read from any thread. */
+	static volatile IImageURLModifier urlModifier;
+
+	/**
+	 * Installs the modifier consulted when an image is loaded from a URL. Images
+	 * created before are not reloaded.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as part of a work
+	 * in progress. There is no guarantee that this API will remain the same.
+	 * </p>
+	 *
+	 * @param modifier the modifier, or <code>null</code> to remove it
+	 * @since 3.41
+	 */
+	public static void setURLModifier(IImageURLModifier modifier) {
+		urlModifier = modifier;
+	}
+
 	private static final ImageDescriptor NULL_IMAGE = createFromImageDataProvider(z -> null);
 
 	/**

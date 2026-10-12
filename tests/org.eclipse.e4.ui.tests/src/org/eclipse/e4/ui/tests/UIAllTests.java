@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.tests.workbench.ContributionsAnalyzerTest;
 import org.eclipse.e4.ui.tests.workbench.ExtensionsSortTests;
 import org.eclipse.e4.ui.tests.workbench.HandlerActivationTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
+import org.eclipse.e4.ui.tests.workbench.ImageURLModifierTrackerTest;
 import org.eclipse.e4.ui.tests.workbench.InjectionEventTest;
 import org.eclipse.e4.ui.tests.workbench.MApplicationCommandAccessTest;
 import org.eclipse.e4.ui.tests.workbench.MMenuItemTest;
@@ -101,6 +102,7 @@ import org.junit.platform.suite.api.Suite;
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
 		ModelAssemblerTests.class,
+		ImageURLModifierTrackerTest.class,
 		ModelAssemblerFragmentOrderingTests.class,
 		E4ResourceTest.class,
 		AreaRendererTest.class,

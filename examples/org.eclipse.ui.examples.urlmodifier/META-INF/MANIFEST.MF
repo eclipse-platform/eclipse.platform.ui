@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Image URL Modifier Example
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.ui.examples.urlmodifier;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.jface,
+ org.eclipse.e4.ui.services,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.eclipse.ui.examples.urlmodifier
+Bundle-ActivationPolicy: lazy
+Import-Package: jakarta.annotation;version="[2.1.0,4.0.0)",
+ jakarta.inject;version="[2.0.0,3.0.0)",
+ org.osgi.service.component.annotations;version="[1.3.0,2.0.0)";resolution:=optional
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
+Service-Component: OSGI-INF/org.eclipse.ui.examples.urlmodifier.IconPackModifier.xml
