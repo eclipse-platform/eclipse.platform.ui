@@ -428,6 +428,24 @@ public class ThemeEngine implements IThemeEngine {
 
 	@Override
 	public void setTheme(String themeId, boolean restore) {
+		if (applyTheme(themeId, restore)) {
+			return;
+		}
+		// In OS high-contrast mode keep the native OS colors instead of forcing a theme
+		if (display != null && display.getHighContrast()) {
+			ILog.of(ThemeEngine.class)
+					.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (!E4_DEFAULT_THEME_ID.equals(themeId) && applyTheme(E4_DEFAULT_THEME_ID, restore)) {
+			ILog.of(ThemeEngine.class)
+					.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		ILog.of(ThemeEngine.class).warn("Theme '" + themeId + "' not found."); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private boolean applyTheme(String themeId, boolean restore) {
 		String osVersion = System.getProperty("os.version");
 		if (osVersion != null) {
 			boolean found = false;
@@ -448,27 +466,17 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 			if (found) {
-				return;
+				return true;
 			}
 		}
 		//try generic
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
 				setTheme(t, restore);
-				return;
+				return true;
 			}
 		}
-		// In OS high-contrast mode keep the native OS colors instead of forcing a theme
-		if (display != null && display.getHighContrast()) {
-			ILog.of(ThemeEngine.class)
-					.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		ILog.of(ThemeEngine.class)
-				.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!E4_DEFAULT_THEME_ID.equals(themeId)) {
-			setTheme(E4_DEFAULT_THEME_ID, restore);
-		}
+		return false;
 	}
 
 	@Override
