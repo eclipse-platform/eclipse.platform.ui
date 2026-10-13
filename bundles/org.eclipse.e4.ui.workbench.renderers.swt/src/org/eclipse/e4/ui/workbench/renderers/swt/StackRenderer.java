@@ -862,9 +862,11 @@ public class StackRenderer extends LazyStackRenderer {
 		Composite onBoardingContainer = WidgetFactory.composite(SWT.NONE).data(ID, ONBOARDING_CONTAINER)
 				.layout(GridLayoutFactory.swtDefaults().create()).background(tabFolder.getBackground())
 				.create(tabFolder);
+		// CSS matches only the container, so its children must inherit its background
+		onBoardingContainer.setBackgroundMode(SWT.INHERIT_FORCE);
 
-		Composite onboardingComposite = WidgetFactory.composite(SWT.NONE).background(tabFolder.getBackground())
-				.data(ID, ONBOARDING_COMPOSITE).create(onBoardingContainer);
+		Composite onboardingComposite = WidgetFactory.composite(SWT.NONE).data(ID, ONBOARDING_COMPOSITE)
+				.create(onBoardingContainer);
 		GridDataFactory.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true)
 				.applyTo(onboardingComposite);
 
