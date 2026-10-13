@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -331,7 +332,7 @@ public final class DiffPainter {
 			background= new RGB(0, 0, 0);
 		}
 
-		return fSharedColors.getColor(interpolate(baseRGB, background, 0.6));
+		return fSharedColors.getColor(JFaceColors.blend(background, baseRGB, 0.6));
 	}
 
 	/**
@@ -488,19 +489,6 @@ public final class DiffPainter {
 				return "+"; //$NON-NLS-1$
 		}
 		return " "; //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns a specification of a color that lies between the given foreground and background
-	 * color using the given scale factor.
-	 *
-	 * @param fg the foreground color
-	 * @param bg the background color
-	 * @param scale the scale factor
-	 * @return the interpolated color
-	 */
-	private static RGB interpolate(RGB fg, RGB bg, double scale) {
-		return new RGB((int) ((1.0 - scale) * fg.red + scale * bg.red), (int) ((1.0 - scale) * fg.green + scale * bg.green), (int) ((1.0 - scale) * fg.blue + scale * bg.blue));
 	}
 
 	/**

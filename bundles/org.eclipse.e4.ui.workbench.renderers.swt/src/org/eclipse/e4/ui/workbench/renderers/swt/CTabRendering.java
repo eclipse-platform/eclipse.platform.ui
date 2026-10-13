@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -425,7 +426,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		Pattern foregroundPattern = null;
 		if (!active && !onBottom) {
 			RGB blendColor = gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB();
-			RGB topGradient = blend(blendColor, tabOutlineColor.getRGB(), 40);
+			RGB topGradient = JFaceColors.blend(blendColor, tabOutlineColor.getRGB(), 0.4);
 			gradientLineTop = new Color(topGradient);
 			foregroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, gradientLineTop,
 					gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
@@ -497,18 +498,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			gc.setBackground(color);
 			gc.fillRectangle(new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height));
 		}
-	}
-
-	static RGB blend(RGB c1, RGB c2, int ratio) {
-		int r = blend(c1.red, c2.red, ratio);
-		int g = blend(c1.green, c2.green, ratio);
-		int b = blend(c1.blue, c2.blue, ratio);
-		return new RGB(r, g, b);
-	}
-
-	static int blend(int v1, int v2, int ratio) {
-		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
-		return Math.min(255, b);
 	}
 
 

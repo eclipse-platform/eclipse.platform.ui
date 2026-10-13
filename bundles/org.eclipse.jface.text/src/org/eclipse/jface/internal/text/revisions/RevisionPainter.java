@@ -48,6 +48,7 @@ import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
@@ -254,7 +255,7 @@ public final class RevisionPainter {
 				}
 			}
 
-			return Colors.blend(background, color, scale);
+			return JFaceColors.blend(color, background, scale);
 		}
 
 		private long computeAge(Revision revision) {

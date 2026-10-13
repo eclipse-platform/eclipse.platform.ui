@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.internal.text.revisions.Colors;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
@@ -655,7 +654,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (foreground == null || background == null) {
 			return;
 		}
-		Color statusLabelForeground= new Color(Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+		Color statusLabelForeground= new Color(JFaceColors.blend(foreground.getRGB(), background.getRGB(), 0.56));
 		fStatusLabel.setForeground(statusLabelForeground);
 		fStatusLabel.setBackground(background);
 	}

@@ -37,7 +37,7 @@ Require-Bundle:
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.8.0,4.0.0)";visibility:=reexport,
  org.eclipse.swt;bundle-version="[3.133.0,4.0.0)",
- org.eclipse.jface;bundle-version="[3.39.0,4.0.0)"
+ org.eclipse.jface;bundle-version="[3.41.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.jface.text
 Bundle-Activator: org.eclipse.jface.text.Activator

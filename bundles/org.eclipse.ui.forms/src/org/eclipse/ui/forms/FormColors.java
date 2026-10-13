@@ -16,6 +16,7 @@ package org.eclipse.ui.forms;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
@@ -421,10 +422,7 @@ public class FormColors {
 	 * @since 3.1
 	 */
 	public static RGB blend(RGB c1, RGB c2, int ratio) {
-		int r = blend(c1.red, c2.red, ratio);
-		int g = blend(c1.green, c2.green, ratio);
-		int b = blend(c1.blue, c2.blue, ratio);
-		return new RGB(r, g, b);
+		return JFaceColors.blend(c1, c2, ratio / 100.0);
 	}
 
 	/**
@@ -480,22 +478,6 @@ public class FormColors {
 			total++;
 		}
 		return total >= 2;
-	}
-
-	/**
-	 * Blends two primary color components based on the provided ratio.
-	 *
-	 * @param v1
-	 *            first component
-	 * @param v2
-	 *            second component
-	 * @param ratio
-	 *            percentage of the first component in the blend
-	 * @return the blended color component
-	 */
-	private static int blend(int v1, int v2, int ratio) {
-		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
-		return Math.min(255, b);
 	}
 
 	private Color getImpliedBackground() {

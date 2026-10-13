@@ -19,7 +19,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -29,6 +28,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
@@ -39,7 +39,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -884,38 +883,11 @@ public class PopupDialog extends Window {
 		if (foregroundColor == null) {
 			foregroundColor = getDefaultForeground();
 		}
-		Color infoColor = new Color(blend(
-				backgroundColor.getRGB(), foregroundColor.getRGB(),
-				0.56f));
+		Color infoColor = new Color(JFaceColors.blend(
+				foregroundColor.getRGB(), backgroundColor.getRGB(), 0.56));
 
 		infoLabel.setForeground(infoColor);
 		return infoLabel;
-	}
-
-	/**
-	 * Returns an RGB that lies between the given foreground and background
-	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
-	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
-	 * equal to <code>bg</code>.
-	 * @param bg the background color
-	 * @param fg the foreground color
-	 * @param factor the mixing factor, must be in [0,&nbsp;1]
-	 *
-	 * @return the interpolated color
-	 * @since 3.6
-	 */
-	private static RGB blend(RGB bg, RGB fg, float factor) {
-		// copy of org.eclipse.jface.internal.text.revisions.Colors#blend(..)
-		Assert.isLegal(bg != null);
-		Assert.isLegal(fg != null);
-		Assert.isLegal(factor >= 0f && factor <= 1f);
-
-		float complement = 1f - factor;
-		return new RGB(
-				(int) (complement * bg.red + factor * fg.red),
-				(int) (complement * bg.green + factor * fg.green),
-				(int) (complement * bg.blue + factor * fg.blue)
-		);
 	}
 
 	/**

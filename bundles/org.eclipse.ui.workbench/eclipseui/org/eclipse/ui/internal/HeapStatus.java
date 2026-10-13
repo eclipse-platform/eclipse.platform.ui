@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.osgi.util.NLS;
@@ -333,12 +334,7 @@ public class HeapStatus extends Composite {
 
 	/** 40% foreground keeps the used-memory bar a light gray on light themes. */
 	private static Color blend(Color fg, Color bg) {
-		return new Color(mix(fg.getRed(), bg.getRed()), mix(fg.getGreen(), bg.getGreen()),
-				mix(fg.getBlue(), bg.getBlue()));
-	}
-
-	private static int mix(int fg, int bg) {
-		return Math.round(bg + (fg - bg) * 0.4f);
+		return new Color(JFaceColors.blend(fg.getRGB(), bg.getRGB(), 0.4));
 	}
 
 	/** A one pixel separator; drawLine would leave half-covered end pixels. */

@@ -18,7 +18,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ FontRegistryTest.class, JFaceResourcesTest.class })
+@SelectClasses({ FontRegistryTest.class, JFaceColorsTest.class, JFaceResourcesTest.class })
 public class AllResourcesTests {
 
 }

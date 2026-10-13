@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceColors;
 
 /**
  * Utility for color operations.
@@ -149,30 +150,6 @@ public final class Colors {
 	}
 
 	/**
-	 * Returns an RGB that lies between the given foreground and background
-	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
-	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
-	 * equal to <code>bg</code>.
-	 * @param bg the background color
-	 * @param fg the foreground color
-	 * @param factor the mixing factor, must be in [0,&nbsp;1]
-	 *
-	 * @return the interpolated color
-	 */
-	public static RGB blend(RGB bg, RGB fg, float factor) {
-		Assert.isLegal(bg != null);
-		Assert.isLegal(fg != null);
-		Assert.isLegal(factor >= 0f && factor <= 1f);
-
-		float complement= 1f - factor;
-		return new RGB(
-				(int) (complement * bg.red + factor * fg.red),
-				(int) (complement * bg.green + factor * fg.green),
-				(int) (complement * bg.blue + factor * fg.blue)
-		);
-	}
-
-	/**
 	 * Returns an array of colors in a smooth palette from <code>start</code> to <code>end</code>.
 	 * <p>
 	 * The returned array has size <code>steps</code>, and the color at index 0 is <code>start</code>, the color
@@ -195,7 +172,7 @@ public final class Colors {
 		float step= 1.0f / (steps - 1);
 		RGB[] gradient= new RGB[steps];
 		for (int i= 0; i < steps; i++) {
-			gradient[i]= blend(start, end, step * i);
+			gradient[i]= JFaceColors.blend(end, start, step * i);
 		}
 
 		return gradient;

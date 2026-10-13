@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -210,6 +211,25 @@ public class JFaceColors {
 		if (background != null) {
 			control.setBackground(background);
 		}
+	}
+
+	/**
+	 * Blends two colors: a <code>ratio</code> of 1 returns <code>c1</code>, a
+	 * <code>ratio</code> of 0 returns <code>c2</code>. Channel values are
+	 * truncated and clamped to the valid range.
+	 *
+	 * @param ratio the share of <code>c1</code>, normally in [0,&nbsp;1]
+	 * @since 3.41
+	 */
+	public static RGB blend(RGB c1, RGB c2, double ratio) {
+		return new RGB(blend(c1.red, c2.red, ratio), blend(c1.green, c2.green, ratio),
+				blend(c1.blue, c2.blue, ratio));
+	}
+
+	private static int blend(int v1, int v2, double ratio) {
+		// the epsilon keeps ratios like 0.3 from truncating exact results one step down
+		int v = (int) (ratio * v1 + (1 - ratio) * v2 + 1e-9);
+		return Math.clamp(v, 0, 255);
 	}
 
 }

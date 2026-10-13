@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogLabelKeys;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -173,28 +174,6 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	}
 
 	/**
-	 * Blends c1 and c2 based in the provided ratio.
-	 *
-	 * @param c1    first color
-	 * @param c2    second color
-	 * @param ratio percentage of the first color in the blend (0-100)
-	 * @return the RGB value of the blended color
-	 *
-	 *         copied from FormColors.java
-	 */
-	private static RGB blend(RGB c1, RGB c2, int ratio) {
-		int r = blend(c1.red, c2.red, ratio);
-		int g = blend(c1.green, c2.green, ratio);
-		int b = blend(c1.blue, c2.blue, ratio);
-		return new RGB(r, g, b);
-	}
-
-	private static int blend(int v1, int v2, int ratio) {
-		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
-		return Math.min(255, b);
-	}
-
-	/**
 	 * Create a new filtered tree viewer in the parent.
 	 *
 	 * @param parent the parent <code>Composite</code>.
@@ -208,7 +187,8 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 
 		TreeViewer treeViewer = filteredTree.getViewer();
 		Control treeControl = treeViewer.getControl();
-		RGB dimmedRGB = blend(treeControl.getForeground().getRGB(), treeControl.getBackground().getRGB(), 60);
+		RGB dimmedRGB = JFaceColors.blend(treeControl.getForeground().getRGB(), treeControl.getBackground().getRGB(),
+				0.6);
 		dimmedForeground = new Color(dimmedRGB);
 
 		treeViewer

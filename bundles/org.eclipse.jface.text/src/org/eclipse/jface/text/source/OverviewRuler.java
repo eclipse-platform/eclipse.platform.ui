@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -1333,23 +1334,6 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	}
 
 	/**
-	 * Returns a specification of a color that lies between the given
-	 * foreground and background color using the given scale factor.
-	 *
-	 * @param fg the foreground color
-	 * @param bg the background color
-	 * @param scale the scale factor
-	 * @return the interpolated color
-	 */
-	private static RGB interpolate(RGB fg, RGB bg, double scale) {
-		return new RGB(
-			(int) ((1.0-scale) * fg.red + scale * bg.red),
-			(int) ((1.0-scale) * fg.green + scale * bg.green),
-			(int) ((1.0-scale) * fg.blue + scale * bg.blue)
-		);
-	}
-
-	/**
 	 * Returns the grey value in which the given color would be drawn in grey-scale.
 	 *
 	 * @param rgb the color
@@ -1396,7 +1380,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			background= new RGB(0, 0, 0);
 		}
 
-		return fSharedTextColors.getColor(interpolate(baseRGB, background, scale));
+		return fSharedTextColors.getColor(JFaceColors.blend(background, baseRGB, scale));
 	}
 
 	/**
