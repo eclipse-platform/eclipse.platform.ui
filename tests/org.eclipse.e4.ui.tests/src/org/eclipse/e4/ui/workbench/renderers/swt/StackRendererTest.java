@@ -49,8 +49,10 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -428,6 +430,26 @@ public class StackRendererTest {
 		assertEquals(2, innerOnboardingComposite.getChildren().length);
 		assertNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
 		assertEquals("", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
+	}
+
+	@Test
+	public void testOnboardingContentFollowsContainerBackground() {
+		PartStackUtil.makeEditorStack(partStack);
+
+		contextRule.createAndRunWorkbench(window);
+
+		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
+		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
+		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
+		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
+		// a theme styles only the outer composite
+		Color color = tabFolder.getDisplay().getSystemColor(SWT.COLOR_RED);
+		outerOnboardingComposite.setBackground(color);
+
+		assertEquals(color, innerOnboardingComposite.getBackground());
+		for (Control child : innerOnboardingComposite.getChildren()) {
+			assertEquals(color, child.getBackground());
+		}
 	}
 
 	@Test
