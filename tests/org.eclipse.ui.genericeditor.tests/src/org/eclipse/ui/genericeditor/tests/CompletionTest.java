@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2025 Red Hat Inc. and others
+ * Copyright (c) 2016, 2026 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -237,12 +237,21 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	public static Shell findNewShell(Set<Shell> beforeShells, Display display) {
-		List<Shell> afterShells = Arrays.stream(display.getShells())
+		List<Shell> newShells = Arrays.stream(display.getShells())
 				.filter(Shell::isVisible)
 				.filter(shell -> !beforeShells.contains(shell))
 				.toList();
-		assertTrue(afterShells.size() <= 1, "More than one new shell was found");
-		return afterShells.isEmpty() ? null : afterShells.get(0);
+		// Ignore child popups of new shells, e.g. the additional proposal info popup
+		// (AdditionalInfoController) shown next to the selected completion proposal
+		List<Shell> topLevelNewShells = newShells.stream()
+				.filter(shell -> !newShells.contains(shell.getParent()))
+				.toList();
+		assertTrue(topLevelNewShells.size() <= 1,
+				() -> "More than one new top-level shell was found: " + topLevelNewShells.stream()
+						.map(s -> "'" + s.getText() + "' "
+								+ Arrays.stream(s.getChildren()).map(c -> c.getClass().getSimpleName()).toList())
+						.toList());
+		return topLevelNewShells.isEmpty() ? null : topLevelNewShells.get(0);
 	}
 
 	@Test
@@ -264,7 +273,6 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
-	@DisabledOnOs(value = OS.MAC, disabledReason = "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906")
 	public void testMoveCaretBackUsesAllProcessors_bug522255() throws Exception {
 		editor.selectAndReveal(3, 0);
 		Shell shell = openContentAssistWithLongRunningProposalComputation();
