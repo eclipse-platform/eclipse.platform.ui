@@ -16,6 +16,10 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -24,7 +28,11 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractFilteredViewerComposite;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -399,6 +407,7 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 				}
 
 				Control redrawFalseControl = treeComposite != null ? treeComposite : treeViewer.getControl();
+				ITreeSelection selection = treeViewer.getStructuredSelection();
 				try {
 					// don't want the user to see updates that will be made to
 					// the tree
@@ -406,13 +415,8 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 					// dancing scrollbar
 					redrawFalseControl.setRedraw(false);
 					if (!narrowingDown) {
-						// collapse all
-						TreeItem[] is = treeViewer.getTree().getItems();
-						for (TreeItem item : is) {
-							if (item.getExpanded()) {
-								treeViewer.setExpandedState(item.getData(), false);
-							}
-						}
+						// collapsing an ancestor of the selection would move the selection
+						treeViewer.setExpandedTreePaths(ancestorPaths(selection));
 					}
 					treeViewer.refresh(true);
 
@@ -437,6 +441,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 						updateToolbar(false);
 					}
 				} finally {
+					if (!narrowingDown) {
+						revealSelection(selection);
+					}
 					// done updating the tree - set redraw back to true
 					TreeItem[] items = getViewer().getTree().getItems();
 					if (items.length > 0 && getViewer().getTree().getSelectionCount() == 0) {
@@ -483,6 +490,56 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 			}
 
 		};
+	}
+
+	private static TreePath[] ancestorPaths(ITreeSelection selection) {
+		Set<TreePath> ancestors = new HashSet<>();
+		for (TreePath path : selection.getPaths()) {
+			TreePath parent = path.getParentPath();
+			while (parent != null && parent.getSegmentCount() > 0 && ancestors.add(parent)) {
+				parent = parent.getParentPath();
+			}
+		}
+		return ancestors.toArray(TreePath[]::new);
+	}
+
+	/**
+	 * Keeps the selection visible after a wider filter collapsed the tree.
+	 */
+	private void revealSelection(ITreeSelection selection) {
+		TreePath[] shown = selection.getPaths();
+		ITreeSelection current = treeViewer.getStructuredSelection();
+		if (!selection.equals(current)) {
+			shown = Arrays.stream(shown).filter(this::isShown).toArray(TreePath[]::new);
+			TreeSelection remaining = new TreeSelection(shown, treeViewer.getComparer());
+			// the refresh replaces a removed path with another occurrence of its element
+			if (!remaining.equals(current)) {
+				treeViewer.setSelection(remaining);
+			}
+		}
+		if (shown.length > 0) {
+			treeViewer.reveal(shown[0]);
+		}
+	}
+
+	/**
+	 * Returns whether every segment of the path has an item, so a repeated element
+	 * under another parent does not count.
+	 */
+	private boolean isShown(TreePath path) {
+		IElementComparer comparer = treeViewer.getComparer();
+		TreeItem[] items = treeViewer.getTree().getItems();
+		for (int i = 0; i < path.getSegmentCount(); i++) {
+			Object segment = path.getSegment(i);
+			TreeItem match = Arrays.stream(items).filter(item -> item.getData() != null
+					&& (comparer == null ? segment.equals(item.getData()) : comparer.equals(segment, item.getData())))
+					.findFirst().orElse(null);
+			if (match == null) {
+				return false;
+			}
+			items = match.getItems();
+		}
+		return true;
 	}
 
 	/**
