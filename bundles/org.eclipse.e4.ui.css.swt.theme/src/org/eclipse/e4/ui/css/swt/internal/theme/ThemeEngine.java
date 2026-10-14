@@ -54,6 +54,7 @@ import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySVGCurrentColorHandler;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -498,6 +499,10 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 
+			if (currentTheme != null && !currentTheme.getId().equals(theme.getId())) {
+				// icons already rasterized keep their color, so only a restart may change it
+				CSSPropertySVGCurrentColorHandler.freeze();
+			}
 			this.currentTheme = theme;
 			for (CSSEngine engine : cssEngines) {
 				engine.reset();
