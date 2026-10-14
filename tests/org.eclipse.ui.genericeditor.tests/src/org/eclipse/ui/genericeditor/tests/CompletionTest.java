@@ -246,7 +246,11 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		List<Shell> topLevelNewShells = newShells.stream()
 				.filter(shell -> !newShells.contains(shell.getParent()))
 				.toList();
-		assertTrue(topLevelNewShells.size() <= 1, "More than one new top-level shell was found");
+		assertTrue(topLevelNewShells.size() <= 1,
+				() -> "More than one new top-level shell was found: " + topLevelNewShells.stream()
+						.map(s -> "'" + s.getText() + "' "
+								+ Arrays.stream(s.getChildren()).map(c -> c.getClass().getSimpleName()).toList())
+						.toList());
 		return topLevelNewShells.isEmpty() ? null : topLevelNewShells.get(0);
 	}
 
