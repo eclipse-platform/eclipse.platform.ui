@@ -60,6 +60,8 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 	private Composite treeComposite;
 
+	private boolean quickSelectionMode = false;
+
 	/**
 	 * Maximum time spent expanding the tree after the filter text has been
 	 * updated (this is only used if we were able to at least expand the visible
@@ -274,6 +276,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 					if (items.length > 0 && getViewer().getTree().getSelectionCount() == 0) {
 						treeViewer.getTree().setTopItem(items[0]);
 					}
+					if (quickSelectionMode) {
+						updateTreeSelection(false);
+					}
 					redrawFalseControl.setRedraw(true);
 				}
 				return Status.OK_STATUS;
@@ -387,31 +392,54 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 		// enter key set focus to tree
 		filterText.addTraverseListener(e -> {
+			if (quickSelectionMode) {
+				return;
+			}
 			if (e.detail == SWT.TRAVERSE_RETURN) {
 				e.doit = false;
-				if (getViewer().getTree().getItemCount() == 0) {
-					return;
-				}
-				// if the initial filter text hasn't changed, do not try
-				// to match
-				boolean hasFocus = getViewer().getTree().setFocus();
-				boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-				if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
-					Tree tree = getViewer().getTree();
-					TreeItem item;
-					if (tree.getSelectionCount() > 0) {
-						item = getFirstMatchingItem(tree.getSelection());
-					} else {
-						item = getFirstMatchingItem(tree.getItems());
-					}
-					if (item != null) {
-						tree.setSelection(new TreeItem[] { item });
-						ISelection sel = getViewer().getSelection();
-						getViewer().setSelection(sel, true);
-					}
-				}
+				updateTreeSelection(true);
 			}
 		});
+	}
+
+	private void updateTreeSelection(boolean setFocus) {
+		Tree tree = getViewer().getTree();
+		if (tree.getItemCount() == 0) {
+			return;
+		}
+		// if the initial filter text hasn't changed, do not try
+		// to match
+		boolean hasFocus = setFocus ? tree.setFocus() : true;
+		boolean textChanged = !getInitialText().equals(filterText.getText().trim());
+		if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
+			TreeItem item;
+			if (tree.getSelectionCount() > 0) {
+				item = getFirstMatchingItem(tree.getSelection());
+			} else {
+				item = getFirstMatchingItem(tree.getItems());
+			}
+			if (item != null) {
+				tree.setSelection(new TreeItem[] { item });
+				ISelection sel = getViewer().getSelection();
+				getViewer().setSelection(sel, true);
+			}
+		}
+	}
+
+	/**
+	 * Sets whether this filtered tree is used to make quick selections. In this
+	 * mode the first match in the tree is automatically selected while filtering
+	 * and the 'Enter' key is not used to move the focus to the tree.
+	 * <p>
+	 * By default, this is set to <code>false</code>.
+	 * </p>
+	 *
+	 * @param enabled <code>true</code> if this filtered tree is used to make quick
+	 *                selections, <code>false</code> otherwise
+	 * @since 1.8
+	 */
+	public void setQuickSelectionMode(boolean enabled) {
+		this.quickSelectionMode = enabled;
 	}
 
 	@Override
