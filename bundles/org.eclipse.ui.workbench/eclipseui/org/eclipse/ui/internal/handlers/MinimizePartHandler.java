@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,18 +15,20 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
 
-public class MinimizePartHandler extends AbstractHandler {
+import jakarta.inject.Named;
 
-	@Override
-	public Object execute(ExecutionEvent event) {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+public class MinimizePartHandler {
+
+	@Execute
+	public void execute(
+			@Optional @Named(ISources.ACTIVE_WORKBENCH_WINDOW_NAME) IWorkbenchWindow activeWorkbenchWindow) {
 		if (activeWorkbenchWindow != null) {
 			IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
 			if (page != null) {
@@ -36,7 +38,6 @@ public class MinimizePartHandler extends AbstractHandler {
 				}
 			}
 		}
-		return null;
 	}
 
 }
