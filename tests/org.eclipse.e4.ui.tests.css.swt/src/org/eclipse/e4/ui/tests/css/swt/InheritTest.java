@@ -15,10 +15,15 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -95,6 +100,55 @@ public class InheritTest {
 	}
 
 	/**
+	 * A reset widget that had its own color gets it back even when it equals the
+	 * parent's, otherwise it shows the parent's background image.
+	 */
+	@Test
+	void testBackgroundReappliedAfterResetWhenEqualToParent() throws IOException {
+		Shell shell = new Shell(css.getDisplay(), SWT.SHELL_TRIM);
+		Composite composite = new Composite(shell, SWT.NONE);
+		composite.setBackgroundMode(SWT.INHERIT_FORCE);
+		Label label = new Label(composite, SWT.NONE);
+		CSSEngine engine = css.createEngine("Composite { background-color: #FF0000; } Label { background-color: #0000FF; }");
+		engine.applyStyles(shell, true);
+
+		// several resets, so the record survives more than one
+		restyle(engine, shell, "Composite, Label { background-color: #FF0000; }");
+		restyle(engine, shell, "Composite { background-color: #FF0000; } Label { background-color: #0000FF; }");
+		restyle(engine, shell, "Composite, Label { background-color: #FF0000; }");
+
+		Image image = new Image(css.getDisplay(), 4, 4);
+		try {
+			composite.setBackgroundImage(image);
+			assertNull(label.getBackgroundImage());
+		} finally {
+			image.dispose();
+		}
+	}
+
+	/**
+	 * A widget that never owned a color keeps inheriting the parent's, so it still
+	 * shows the parent's background image.
+	 */
+	@Test
+	void testBackgroundEqualToParentIsInherited() {
+		Shell shell = new Shell(css.getDisplay(), SWT.SHELL_TRIM);
+		Composite composite = new Composite(shell, SWT.NONE);
+		composite.setBackgroundMode(SWT.INHERIT_FORCE);
+		Label label = new Label(composite, SWT.NONE);
+		CSSEngine engine = css.createEngine("Composite, Label { background-color: #FF0000; }");
+		engine.applyStyles(shell, true);
+
+		Image image = new Image(css.getDisplay(), 4, 4);
+		try {
+			composite.setBackgroundImage(image);
+			assertEquals(image, label.getBackgroundImage());
+		} finally {
+			image.dispose();
+		}
+	}
+
+	/**
 	 * Create a test label on a red canvas. Then apply given styles.
 	 *
 	 * @param styleSheet
@@ -124,5 +178,11 @@ public class InheritTest {
 		// Apply styles
 		engine.applyStyles(shell, true);
 		return labelToTest;
+	}
+
+	private static void restyle(CSSEngine engine, Shell shell, String styleSheet) throws IOException {
+		engine.reset();
+		engine.parseStyleSheet(new StringReader(styleSheet));
+		engine.applyStyles(shell, true);
 	}
 }

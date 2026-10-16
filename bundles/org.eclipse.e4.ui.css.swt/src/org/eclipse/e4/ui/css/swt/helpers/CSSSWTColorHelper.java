@@ -47,6 +47,14 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTColorHelper {
+
+	private static final String APPLIED_BACKGROUND = "org.eclipse.e4.ui.css.swt.appliedBackground"; //$NON-NLS-1$
+
+	private static final String APPLIED_FOREGROUND = "org.eclipse.e4.ui.css.swt.appliedForeground"; //$NON-NLS-1$
+
+	/** Recorded when a control that had a CSS color is reset. */
+	private static final Object NOT_OWNED = new Object();
+
 	public static final String COLOR_DEFINITION_MARKER = "#";
 
 	private static final Pattern HEX_COLOR_VALUE_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
@@ -337,18 +345,45 @@ public class CSSSWTColorHelper {
 		return null;
 	}
 
-	/** Helper function to avoid setting colors unnecessarily */
+	/**
+	 * Sets the color unless the control already has it. A control reset after
+	 * having a CSS color gets it even when it equals the inherited one.
+	 */
 	public static void setForeground(Control control, Color newColor) {
-		if (!Objects.equals(control.getForeground(), newColor)) {
+		if (needsColor(control.getData(APPLIED_FOREGROUND), control.getForeground(), newColor)) {
 			control.setForeground(newColor);
+			control.setData(APPLIED_FOREGROUND, appliedMarker(control.getData(APPLIED_FOREGROUND), newColor));
 		}
 	}
 
-	/** Helper function to avoid setting colors unnecessarily */
+	/**
+	 * Sets the color unless the control already has it. A control reset after
+	 * having a CSS color gets it even when it equals the inherited one.
+	 */
 	public static void setBackground(Control control, Color newColor) {
-		if (!Objects.equals(control.getBackground(), newColor)) {
+		if (needsColor(control.getData(APPLIED_BACKGROUND), control.getBackground(), newColor)) {
 			control.setBackground(newColor);
+			control.setData(APPLIED_BACKGROUND, appliedMarker(control.getData(APPLIED_BACKGROUND), newColor));
 		}
+	}
+
+	/**
+	 * The current color may be inherited. A control that never had a CSS color
+	 * keeps inheriting it, since its parent may paint an image behind it.
+	 */
+	private static boolean needsColor(Object applied, Color current, Color newColor) {
+		if (newColor == null) {
+			return true;
+		}
+		return (applied != null && !applied.equals(newColor)) || !newColor.equals(current);
+	}
+
+	/** Returns the applied color, or NOT_OWNED when a styled control is reset. */
+	private static Object appliedMarker(Object previous, Color newColor) {
+		if (newColor != null) {
+			return newColor;
+		}
+		return previous != null ? NOT_OWNED : null;
 	}
 
 
