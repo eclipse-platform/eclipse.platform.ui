@@ -30,7 +30,10 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.lsp4e.operations.hover.FocusableBrowserInformationControl;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -105,9 +108,21 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 				if (children.isEmpty()) {
 					continue;
 				}
-				for (Control control : children) {
-					control.setParent(parent);
-				}
+				if (abstractInformationControl instanceof FocusableBrowserInformationControl browserControl) {
+		          for (Control control : ((Composite) browserControl.getShell().getChildren()[0]).getChildren()) {
+		            if (control instanceof Browser browser) {
+		              browser.addProgressListener(ProgressListener.completedAdapter(p -> {
+		                if (!isHtmlEmpty(browser.getText())) {
+		                  reassignParent(parent, children);
+		                  getShell().layout(true, true);
+		                  getShell().setSize(computeSizeHint());
+		                }
+		              }));
+		            }
+		          }
+				} else {
+	          		reassignParent(parent, children);
+	        	}
 				controls.put(hoverControlCreator.getKey(), abstractInformationControl);
 			} else {
 				ILog.of(CompositeInformationControl.class).warn(
@@ -115,6 +130,35 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 								+ informationControl.getClass().getSimpleName());
 				informationControl.dispose();
 			}
+		}
+	}
+
+	/**
+	* if the html is empty.
+	*
+	* @param html
+	*          the html
+	* @return {@code true} if the html is empty, {@code false} otherwise
+	*/
+	@SuppressWarnings("nls")
+	public boolean isHtmlEmpty(final String html) {
+		if (html == null || html.isEmpty()) {
+		  return true;
+		}
+		
+		// Remove all HTML tags
+		String plainText = html.replaceAll("<[^>]*>", "").trim();
+		
+		// Check if what's left is actually content
+		// We also decode common entities like &nbsp; which can trick empty checks
+		plainText = plainText.replace("&nbsp;", " ").trim();
+		
+		return plainText.isEmpty();
+	}
+	
+	private void reassignParent(final Composite parent, final List<Control> children) {
+		for (Control control : children) {
+		  control.setParent(parent);
 		}
 	}
 
