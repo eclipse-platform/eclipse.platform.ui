@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.swt.widgets.Table;
@@ -58,8 +59,8 @@ public class TableItemElement extends ItemElement {
 		Table parent = tableItem.getParent();
 
 		if (!parent.isDisposed()) {
-			parent.setForeground(null);
-			parent.setBackground(null);
+			CSSSWTColorHelper.setForeground(parent, null);
+			CSSSWTColorHelper.setBackground(parent, null);
 			CSSSWTFontHelper.restoreDefaultFont(parent);
 		}
 
