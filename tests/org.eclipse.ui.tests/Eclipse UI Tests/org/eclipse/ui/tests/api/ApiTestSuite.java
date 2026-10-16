@@ -63,6 +63,7 @@ import org.junit.platform.suite.api.Suite;
 	 SelectionListenerFactoryTest.class,
 	 IWorkingSetTest.class,
 	 IWorkingSetManagerTest.class,
+	 WorkingSetFilterActionGroupTest.class,
 	 IWorkingSetElementAdapterTests.class,
 	 MockWorkingSetTest.class,
 	 Bug42616Test.class,
