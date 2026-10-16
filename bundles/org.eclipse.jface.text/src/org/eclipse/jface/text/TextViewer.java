@@ -1177,9 +1177,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void updateSelection(Position[] selections) {
 			fSelectionSet= true;
-			if (selections == null) {
-				fSelections = new Position[0];
-			} else if (fSelections != null && fSelections.length == selections.length) {
+			if (fSelections != null && fSelections.length == selections.length) {
 				for (int i = 0; i < fSelections.length; i++) {
 					updatePosition(fSelections[i], selections[i].getOffset(), selections[i].getLength());
 				}
