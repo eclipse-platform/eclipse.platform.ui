@@ -84,7 +84,7 @@ public class FindReplaceOverlay {
 	private final IFindReplaceLogic findReplaceLogic;
 	private final IWorkbenchPart targetPart;
 
-	private final Composite targetControl;
+	private final StyledText targetControl;
 	private Composite containerControl;
 	private AccessibleToolBar replaceToggleTools;
 	private ToolItem replaceToggle;
@@ -205,7 +205,7 @@ public class FindReplaceOverlay {
 		commandSupport = new FindReplaceOverlayCommandSupport(targetPart);
 		targetControl = getTargetControl(part);
 		findReplaceLogic = createFindReplaceLogic(target);
-		createContainerAndSearchControls(targetControl);
+		createContainerAndSearchControls();
 		containerControl.addDisposeListener(__ -> commandSupport.dispose());
 		customFocusOrder.install();
 		updateReplaceVisibility(false);
@@ -214,19 +214,12 @@ public class FindReplaceOverlay {
 				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
 	}
 
-	private static Composite getTargetControl(IWorkbenchPart targetPart) {
+	private static StyledText getTargetControl(IWorkbenchPart targetPart) {
 		if (targetPart == null) {
 			return null;
 		}
 		ITextViewer viewer = targetPart.getAdapter(ITextViewer.class);
-		if (viewer != null) {
-			return viewer.getTextWidget();
-		}
-		return null;
-	}
-
-	private boolean insertedInTargetParent() {
-		return targetControl instanceof StyledText;
+		return viewer != null ? viewer.getTextWidget() : null;
 	}
 
 	private IFindReplaceLogic createFindReplaceLogic(IFindReplaceTarget target) {
@@ -351,12 +344,11 @@ public class FindReplaceOverlay {
 		targetControl.addKeyListener(closeOnTargetEscapeListener);
 	}
 
-	private void createContainerAndSearchControls(Composite parent) {
-		if (insertedInTargetParent()) {
-			parent = parent.getParent();
-		}
+	private void createContainerAndSearchControls() {
 		retrieveColors();
-		createMainContainer(parent);
+		// The overlay is a sibling of the target control, so that it can be positioned
+		// on top of it without becoming part of the target's own content.
+		createMainContainer(targetControl.getParent());
 		disableCssStyling(containerControl);
 		containerControl.layout();
 	}
@@ -860,12 +852,8 @@ public class FindReplaceOverlay {
 		Rectangle controlBounds = control.getBounds();
 		int width = controlBounds.width;
 		int height = controlBounds.height;
-		int x = 0;
-		int y = 0;
-		if (insertedInTargetParent()) {
-			x = controlBounds.x;
-			y = controlBounds.y;
-		}
+		int x = controlBounds.x;
+		int y = controlBounds.y;
 		if (control instanceof Scrollable scrollable) {
 			ScrollBar verticalBar = scrollable.getVerticalBar();
 			ScrollBar horizontalBar = scrollable.getHorizontalBar();
