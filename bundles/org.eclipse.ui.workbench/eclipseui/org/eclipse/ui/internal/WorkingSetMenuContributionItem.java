@@ -18,7 +18,11 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
@@ -34,7 +38,7 @@ import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
  * @since 2.1
  */
 public class WorkingSetMenuContributionItem extends ContributionItem {
-	private Image image;
+	private static final String RESOURCE_MANAGER_KEY = WorkingSetMenuContributionItem.class.getName();
 
 	private final int id;
 
@@ -82,18 +86,33 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 			actionGroup.setWorkingSet(workingSet);
 			manager.addRecentWorkingSet(workingSet);
 		}));
+		ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
+		if (imageDescriptor != null) {
+			mi.setImage(getImage(menu, imageDescriptor));
+		}
+	}
+
+	/**
+	 * Returns the image for the descriptor, cached for the lifetime of the menu
+	 * because dynamic items are recreated on every menu update.
+	 */
+	private static Image getImage(Menu menu, ImageDescriptor descriptor) {
+		ResourceManager resourceManager = (ResourceManager) menu.getData(RESOURCE_MANAGER_KEY);
+		if (resourceManager == null) {
+			LocalResourceManager localManager = new LocalResourceManager(JFaceResources.getResources());
+			menu.addDisposeListener(e -> localManager.dispose());
+			menu.setData(RESOURCE_MANAGER_KEY, localManager);
+			resourceManager = localManager;
+		}
+		Image image = resourceManager.find(descriptor);
 		if (image == null) {
-			ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
-			if (imageDescriptor != null) {
-				image = imageDescriptor.createImage();
-				mi.addDisposeListener(e -> {
-					if (image != null && !image.isDisposed()) {
-						image.dispose();
-					}
-				});
+			try {
+				image = resourceManager.create(descriptor);
+			} catch (DeviceResourceException e) {
+				image = resourceManager.create(ImageDescriptor.getMissingImageDescriptor());
 			}
 		}
-		mi.setImage(image);
+		return image;
 	}
 
 	/**
@@ -102,20 +121,5 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isDynamic() {
 		return true;
-	}
-
-	/*
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 *
-	 * @since 3.3
-	 */
-	@Override
-	public void dispose() {
-		if (image != null && !image.isDisposed()) {
-			image.dispose();
-		}
-		image = null;
-
-		super.dispose();
 	}
 }
