@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 Vector Informatik GmbH and others.
+ * Copyright (c) 2024, 2026 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.workbench.addons.dndaddon.StackDropAgentTest;
 import org.eclipse.e4.ui.workbench.addons.minmax.MaximizableChildrenTagTest;
 import org.eclipse.e4.ui.workbench.addons.minmax.MaximizeBugTest;
 import org.eclipse.e4.ui.workbench.addons.minmax.MaximizePartSashContainerPlaceholderTest;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStackTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -27,6 +28,7 @@ import org.junit.platform.suite.api.Suite;
 		MaximizeBugTest.class, //
 		MaximizePartSashContainerPlaceholderTest.class, //
 		MaximizableChildrenTagTest.class, //
+		TrimStackTest.class, //
 		CleanupAddonTest.class, //
 })
 public class AllTests {
