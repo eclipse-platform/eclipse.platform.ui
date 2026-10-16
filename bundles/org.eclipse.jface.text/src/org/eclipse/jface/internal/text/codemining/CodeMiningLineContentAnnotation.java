@@ -14,7 +14,6 @@
 package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
+import org.eclipse.jface.text.codemining.IPlaceholderCodeMining;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
 
@@ -51,9 +51,9 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	private volatile List<ICodeMining> fMinings;
 
 	/**
-	 * List of bounds minings
+	 * List of drawn minings
 	 */
-	private final List<Rectangle> fBounds;
+	private final List<DrawnMining> fDrawnMinings;
 
 	/**
 	 * The current progress monitor
@@ -98,7 +98,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		fResolvedMinings= null;
 		fMinings= List.of();
-		fBounds= new ArrayList<>();
+		fDrawnMinings= new ArrayList<>();
 		this.afterPosition= afterPosition;
 	}
 
@@ -121,7 +121,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		}
 		fResolvedMinings= resolvedMinings;
 		fMonitor= monitor;
-		fMinings= Collections.unmodifiableList(new ArrayList<>(minings));
+		fMinings= List.copyOf(minings);
 		CodeMiningLineHeaderAnnotation.disposeMinings(oldMinings);
 	}
 
@@ -143,34 +143,13 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		int nbDraw= 0;
 		int originalX= x;
 		int separatorWidth= -1;
-		boolean redrawn= false;
-		fBounds.clear();
+		Runnable redrawRunnable= CodeMiningDrawHelper.once(this::redraw);
+		fDrawnMinings.clear();
 		for (int i= 0; i < minings.size(); i++) {
-			ICodeMining mining= minings.get(i);
-			// try to get the last resolved mining.
-			ICodeMining lastResolvedMining= (resolvedMinings != null && resolvedMinings.length > i) ? resolvedMinings[i] : null;
-			if (mining.getLabel() != null) {
-				// mining is resolved without error, update the resolved mining list
-				if (resolvedMinings != null && resolvedMinings.length > i) {
-					resolvedMinings[i]= mining;
-				}
-			} else if (!mining.isResolved()) {
-				// the mining is not resolved, draw the last resolved mining
-				mining= lastResolvedMining;
-				if (!redrawn) {
-					// redraw the annotation when mining is resolved.
-					redraw();
-					redrawn= true;
-				}
-			} else {
-				// the mining is resolved with error, draw the last resolved mining
-				mining= lastResolvedMining;
-			}
-			if (!CodeMiningManager.isValidMining(mining)) {
-				// ignore the draw of mining
+			ICodeMining mining= CodeMiningDrawHelper.chooseMiningToDraw(minings.get(i), i, resolvedMinings, redrawRunnable);
+			if (mining == null) {
 				continue;
 			}
-			// draw the mining
 			if (nbDraw > 0) {
 				gc.drawText(SEPARATOR, x, y);
 				if (separatorWidth == -1) {
@@ -178,9 +157,8 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 				}
 				x+= separatorWidth;
 			}
-			@SuppressWarnings("null")
 			Point loc= mining.draw(gc, textWidget, color, x, y);
-			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
+			fDrawnMinings.add(new DrawnMining(new Rectangle(x, y, loc.x, loc.y), mining));
 			x+= loc.x;
 			nbDraw++;
 		}
@@ -193,8 +171,10 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		for (ICodeMining mining : fMinings) {
 			if (!mining.isResolved()) {
 				// one of mining is not resolved, resolve it and then redraw the annotation.
-				mining.resolve(getViewer(), fMonitor).thenRunAsync(() -> {
-					this.redraw();
+				mining.resolve(getViewer(), fMonitor).whenCompleteAsync((result, error) -> {
+					if (error == null || mining instanceof IPlaceholderCodeMining) {
+						this.redraw();
+					}
 				});
 				return;
 			}
@@ -205,7 +185,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
-		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fResolvedMinings, fBounds, e.x, e.y);
+		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fDrawnMinings, e.x, e.y);
 		return mining != null ? mining.getAction() : null;
 	}
 
