@@ -253,6 +253,18 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM= "findReplaceOverlayAtBottom"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the find/replace overlay is restricted to text
+	 * editors, instead of being used in every part that can host it.
+	 *
+	 * <p>
+	 * The preference value is of type <code>Boolean</code>
+	 * </p>
+	 *
+	 * @since 3.23
+	 */
+	public final static String EDITOR_RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS= "restrictFindReplaceOverlayToTextEditors"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls if the caret offset is shown in the status line.
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
@@ -784,6 +796,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM, false);
+		store.setDefault(
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS,
+				false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);
 

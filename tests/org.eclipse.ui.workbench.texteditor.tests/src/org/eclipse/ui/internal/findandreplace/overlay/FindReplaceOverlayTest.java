@@ -14,13 +14,17 @@
 package org.eclipse.ui.internal.findandreplace.overlay;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
+import static org.eclipse.ui.internal.findandreplace.overlay.OverlayAccess.RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -28,6 +32,8 @@ import org.mockito.Mockito;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -87,6 +93,22 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		when(part.getAdapter(ITextViewer.class)).thenReturn(viewer);
 		when(part.getAdapter(IFindReplaceTarget.class)).thenReturn(viewer.getFindReplaceTarget());
 		return part;
+	}
+
+	@Test
+	public void testOverlayCanOnlyBeOpenedInPartExposingTextViewerWidget() {
+		openTextViewer("line");
+
+		assertTrue(FindReplaceOverlay.canOpenInPart(createHostPart(getTextViewer())));
+		assertFalse(FindReplaceOverlay.canOpenInPart(Mockito.mock(IWorkbenchPart.class)));
+		assertFalse(FindReplaceOverlay.canOpenInPart(null));
+	}
+
+	@Test
+	public void testOverlayRejectsPartItCannotBeOpenedIn() {
+		IWorkbenchPart partWithoutTextViewer= Mockito.mock(IWorkbenchPart.class);
+
+		assertThrows(IllegalArgumentException.class, () -> new FindReplaceOverlay(partWithoutTextViewer, null));
 	}
 
 	@Test
@@ -239,6 +261,52 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		} finally {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
 			reopenFindReplaceUIForTextViewer();
+		}
+	}
+
+	@Test
+	public void testOverlayIsOpenedByActionForPartExposingTextViewer() {
+		// The part hosting the viewer is no text editor, so this also covers that the
+		// action goes by what the part exposes rather than by its type.
+		initializeTextViewerWithFindReplaceUI("");
+		getDialog().close();
+		assertFalse(getDialog().isShown());
+
+		getFindReplaceAction().run();
+
+		assertTrue(getDialog().isShown(), "the action should have opened the overlay");
+	}
+
+	/**
+	 * User can restrict the overlay to text editors in case they have trouble with it elsewhere, so
+	 * we need to ensure that for an editor that is not a StatusTextEditor, the dialog is opened.
+	 * <p>
+	 * The preference is meant as a temporary fallback for the overlay's generalization to parts
+	 * other than text editors. Remove this test together with it.
+	 */
+	@Test
+	public void testOverlayIsNotOpenedForNonTextEditorWhenRestrictedToTextEditors() {
+		IEclipsePreferences preferences= InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean wasRestricted= preferences.getBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, false);
+		Display display= Display.getCurrent();
+		Set<Shell> shellsBeforeAction= Set.of(display.getShells());
+		try {
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, true);
+			initializeTextViewerWithFindReplaceUI("");
+			getDialog().close();
+			assertFalse(getDialog().isShown());
+			getFindReplaceAction().run();
+			assertFalse(getDialog().isShown(), "the action should have opened the dialog (so no overlay should be shown)");
+			assertTrue(Arrays.stream(display.getShells()).anyMatch(shell -> !shellsBeforeAction.contains(shell) && shell.isVisible()),
+					"the action should have opened the dialog");
+		} finally {
+			// The dialog is unknown to the overlay test infrastructure, so close every shell the action opened
+			for (Shell shell : display.getShells()) {
+				if (!shellsBeforeAction.contains(shell)) {
+					shell.close();
+				}
+			}
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, wasRestricted);
 		}
 	}
 

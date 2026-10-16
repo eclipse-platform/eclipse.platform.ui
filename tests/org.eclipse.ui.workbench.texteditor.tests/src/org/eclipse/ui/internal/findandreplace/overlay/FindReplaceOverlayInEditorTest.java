@@ -14,6 +14,7 @@ import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.notifyK
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.processPendingEvents;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
+import static org.eclipse.ui.internal.findandreplace.overlay.OverlayAccess.RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -32,6 +33,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -81,7 +85,11 @@ public class FindReplaceOverlayInEditorTest {
 
 	private static final String REPLACE_FIELD = "replaceInput"; //$NON-NLS-1$
 
+	private static final String INSTANCE_SCOPE_NODE_NAME = "org.eclipse.ui.editors"; //$NON-NLS-1$
+
 	private StatusTextEditor editor;
+
+	private FindReplaceAction findReplaceAction;
 
 	private Text searchField;
 
@@ -97,8 +105,10 @@ public class FindReplaceOverlayInEditorTest {
 
 		// Opening through the action rather than through its internals also asserts
 		// that an editor of this kind gets the overlay rather than the dialog.
-		new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), //$NON-NLS-1$
-				"Editor.FindReplace.", editor).run(); //$NON-NLS-1$
+		findReplaceAction = new FindReplaceAction(
+				ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), //$NON-NLS-1$
+				"Editor.FindReplace.", editor); //$NON-NLS-1$
+		findReplaceAction.run();
 
 		searchField = focusedInputField(SEARCH_FIELD);
 	}
@@ -132,10 +142,32 @@ public class FindReplaceOverlayInEditorTest {
 
 	@AfterEach
 	void closeEditor() {
+		findReplaceAction = null;
 		searchField = null;
 		if (editor != null) {
 			editor.getSite().getPage().closeEditor(editor, false);
 			editor = null;
+		}
+	}
+
+	/**
+	 * User can restrict the overlay to text editors in case they have trouble with it elsewhere, so
+	 * an editor must keep getting the overlay rather than the dialog once they do.
+	 * <p>
+	 * The preference is meant as a temporary fallback for the overlay's generalization to parts
+	 * other than text editors. Remove this test together with it.
+	 */
+	@Test
+	public void testTextEditorKeepsOverlayWhenItIsRestrictedToTextEditors() {
+		IEclipsePreferences preferences= InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean wasRestricted= preferences.getBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, false);
+		try {
+			// Restricting it closes the overlay that is open, so the action decides anew.
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, true);
+			processPendingEvents();
+			assertTrue(searchField.isVisible(), "the overlay should stay open"); //$NON-NLS-1$
+		} finally {
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE, wasRestricted);
 		}
 	}
 
