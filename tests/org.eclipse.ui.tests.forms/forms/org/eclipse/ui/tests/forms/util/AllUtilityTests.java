@@ -27,6 +27,7 @@ import org.junit.platform.suite.api.Suite;
 	FormFontsTest.class,
 	FormImagesTest.class,
 	FormToolkitTest.class,
+	HyperlinkSettingsTest.class,
 	ImageHyperlinkTest.class
 })
 public class AllUtilityTests {
