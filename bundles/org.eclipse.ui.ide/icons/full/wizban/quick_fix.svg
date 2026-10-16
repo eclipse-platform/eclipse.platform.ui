@@ -150,17 +150,6 @@
          stdDeviation="1.95" />
     </filter>
     <filter
-       height="1.0821382"
-       y="-0.0410691"
-       width="1.1154902"
-       x="-0.057745107"
-       id="filter4828"
-       style="color-interpolation-filters:sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur4830"
-         stdDeviation="0.52586854" />
-    </filter>
-    <filter
        height="1.1359754"
        y="-0.067987697"
        width="1.1967134"
@@ -170,17 +159,6 @@
       <feGaussianBlur
          id="feGaussianBlur4315"
          stdDeviation="0.87922822" />
-    </filter>
-    <filter
-       height="1.1809883"
-       y="-0.090494169"
-       width="1.1835327"
-       x="-0.091766329"
-       id="filter4352"
-       style="color-interpolation-filters:sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur4354"
-         stdDeviation="0.18961321" />
     </filter>
     <filter
        height="1.7124275"
@@ -351,7 +329,7 @@
        transform="matrix(0.95107795,0,0,0.95254068,-20.267144,46.875775)"
        id="rect4044-7"
        d="m 82.848694,1030.3498 -12.201865,0 c 2.090347,-7.8138 -4.312604,-12.7973 -4.42084,-14.5531 l -0.436542,-7.0818 c -0.25042,-4.0623 4.501094,-9.23413 8.640747,-9.09303 l 4.271349,0.1455 c 2.683955,0.091 8.499747,3.50783 8.640748,6.69213 l 0.291028,6.5724 c 0.138348,3.1244 -4.964148,11.4485 -4.784625,17.3179 z"
-       style="display:inline;fill:url(#radialGradient4091);fill-opacity:1;stroke:none;filter:url(#filter4828);opacity:0.796" />
+       style="display:inline;fill:url(#radialGradient4091);fill-opacity:1;stroke:none;opacity:0.796" />
     <g
        style="stroke:#deb11d;stroke-width:1.02050185;stroke-opacity:1"
        transform="matrix(0.96022379,0,0,1,-39.713627,-1.9899224)"
@@ -373,7 +351,7 @@
        transform="matrix(0.50876944,-0.94449981,0.87230274,0.64263556,-863.63422,370.22679)"
        d="m 2.2999628,1043.3702 1.5316474,-2.1298 -1.2226632,-2.5168 2.1614513,1.6204 2.4885914,-1.2422 -1.5876228,2.0707 1.2912291,2.5798 -2.1658229,-1.6297 z"
        id="path4252-6-0-8"
-       style="display:inline;opacity:0.96300001;fill:#fff9bf;fill-opacity:0.84194527;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4352)" />
+       style="display:inline;opacity:0.96300001;fill:#fff9bf;fill-opacity:0.84194527;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
     <circle
        transform="matrix(0.21538462,0,0,0.07356586,31.922657,960.7678)"
        r="19.5"

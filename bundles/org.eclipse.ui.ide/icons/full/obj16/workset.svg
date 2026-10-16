@@ -254,16 +254,6 @@
          d="m -14.533968,1037.893 5.040919,0 2.995766,3.0066 0,7.9546 -8.036685,0 z"
          style="fill:#ffffff;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" />
     </mask>
-    <filter
-       id="filter4173"
-       x="-0.26411515"
-       width="1.5282303"
-       y="-0.29280384"
-       height="1.5856077">
-      <feGaussianBlur
-         stdDeviation="0.47552453"
-         id="feGaussianBlur4175" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -330,7 +320,7 @@
          mask="url(#mask4165)">
         <g
            id="layer1-9-1"
-           style="opacity:0.8;fill:#ffffff;stroke:#ffffff;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;display:inline;filter:url(#filter4173)"
+           style="opacity:0.8;fill:#ffffff;stroke:#ffffff;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
            transform="translate(-12.027511,2.9108908)">
           <g
              transform="matrix(0.27903303,0,0,0.27903303,-129.51159,939.94639)"

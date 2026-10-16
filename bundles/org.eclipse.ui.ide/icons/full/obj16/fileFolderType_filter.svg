@@ -326,17 +326,6 @@
            id="path3996" />
       </g>
     </mask>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter4002"
-       x="-0.24400508"
-       width="1.4408904"
-       y="-0.15409549"
-       height="1.3582005">
-      <feGaussianBlur
-         stdDeviation="0.55030309"
-         id="feGaussianBlur4004" />
-    </filter>
     <linearGradient
        gradientTransform="translate(-1.977903,-1.044194)"
        xlink:href="#linearGradient4994-6-5"
@@ -533,7 +522,7 @@
                  mask="url(#mask3988)">
                 <g
                    id="layer1-95-0"
-                   style="stroke-width:2.31082559;stroke-miterlimit:4;stroke-dasharray:none;display:inline;filter:url(#filter4002)"
+                   style="stroke-width:2.31082559;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
                    transform="matrix(0.67727662,0,-0.01986378,0.67727662,-261.07385,807.71453)">
                   <path
                      style="fill:url(#linearGradient4101-2);fill-opacity:1;stroke:none;display:inline"

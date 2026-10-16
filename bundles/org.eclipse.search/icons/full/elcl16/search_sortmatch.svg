@@ -82,16 +82,6 @@
          d="m 8.5,1037.7997 0,3 -4.78125,0 c -0.667867,0 -1.21875,0.5509 -1.21875,1.2188 l 0,2.5625 c 0,0.6678 0.550883,1.2187 1.21875,1.2187 l 4.78125,0 0,3 1,0 5.5,-5.5 -5.5,-5.5 z"
          id="path6317" />
     </mask>
-    <filter
-       id="filter7091"
-       x="-1.1317049"
-       width="2.8850323"
-       y="-0.2511147"
-       height="1.6854706">
-      <feGaussianBlur
-         stdDeviation="0.5249925"
-         id="feGaussianBlur7093" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -120,7 +110,7 @@
       <path
          id="path4108-4"
          d="m 4.999947,1042.362 -1,0 0,6 -2,0 2.5,2.9998 0.0625,-1.7498 0.4375,-1.25 z"
-         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;display:inline;filter:url(#filter7091)" />
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
     </g>
     <path
        style="fill:url(#linearGradient6220);fill-opacity:1;stroke:none"

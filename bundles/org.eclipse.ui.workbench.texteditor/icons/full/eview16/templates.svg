@@ -155,16 +155,6 @@
          x="22"
          y="1037.3622" />
     </mask>
-    <filter
-       id="filter4980"
-       x="-0.24181837"
-       width="1.4836367"
-       y="-0.37999937"
-       height="1.7599987">
-      <feGaussianBlur
-         stdDeviation="0.90000086"
-         id="feGaussianBlur4982" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -206,7 +196,7 @@
          height="7.0000172"
          width="11"
          id="rect3933-6-8"
-         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;display:inline;filter:url(#filter4980)" />
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;display:inline" />
     </g>
     <rect
        style="fill:url(#linearGradient4027);fill-opacity:1;stroke:none;display:inline"

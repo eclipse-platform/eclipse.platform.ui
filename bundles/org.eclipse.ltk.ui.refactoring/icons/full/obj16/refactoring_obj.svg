@@ -183,17 +183,6 @@
        gradientUnits="userSpaceOnUse"
        id="linearGradient3384"
        xlink:href="#linearGradient4188-4-3-9-6" />
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter4339-71"
-       x="-0.26403521"
-       width="1.6335939"
-       y="-0.90046308"
-       height="2.8120486">
-      <feGaussianBlur
-         stdDeviation="0.27970009"
-         id="feGaussianBlur4341-7" />
-    </filter>
     <mask
        maskUnits="userSpaceOnUse"
        id="mask4289">
@@ -202,16 +191,6 @@
          d="m 7.5107388,1039.8693 7.9833382,0 0,10.0177 -7.9833382,0 z"
          style="fill:#ffffff;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" />
     </mask>
-    <filter
-       id="filter4297"
-       x="-0.28563547"
-       width="1.6445245"
-       y="-0.48752752"
-       height="2.0546512">
-      <feGaussianBlur
-         stdDeviation="0.751532"
-         id="feGaussianBlur4299" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -274,7 +253,7 @@
        mask="url(#mask4289)"
        style="opacity:0.65">
       <g
-         style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:2.58440071000000016;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4297)"
+         style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:2.58440071000000016;stroke-miterlimit:4;stroke-dasharray:none"
          id="layer1-7-5"
          transform="matrix(0.7738738,0,0,0.7738738,-1.7598376,235.78238)">
         <path
@@ -306,7 +285,7 @@
         <path
            id="path4108-1-3-4-6-9"
            d="m 11.90625,1043.0312 2.28125,1.8438 -2.28125,1.7812 0,-1.0937 -1.21875,-0.062 c 0,0 -1.1298804,-0.1 -2.375,0.3125 -0.4970996,0.1646 -1.0141192,0.5483 -1.5,0.9687 -9.736e-4,-0.029 -0.06306,-0.097 -0.0625,-0.125 0.00915,-0.4526 0.1773911,-0.7816 0.5625,-1.1562 0.7702178,-0.7493 2.483426,-1.2754 3.3125,-1.2812 l 1.28125,0 0,-1.1876 z"
-           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:2.58440071000000016;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter4339-71);enable-background:accumulate;font-family:Sans;stroke-miterlimit:4;stroke-dasharray:none" />
+           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:2.58440071000000016;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;stroke-miterlimit:4;stroke-dasharray:none" />
       </g>
     </g>
     <g
