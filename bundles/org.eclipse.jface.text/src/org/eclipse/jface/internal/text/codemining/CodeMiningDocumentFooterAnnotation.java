@@ -12,7 +12,7 @@ package org.eclipse.jface.internal.text.codemining;
 
 import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.disposeMinings;
 import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.getMultilineHeight;
-import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.hasAtLeastOneResolvedMiningNotEmpty;
+import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.hasAtLeastOneDrawableMining;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -49,9 +48,9 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	private volatile List<ICodeMining> fMinings;
 
 	/**
-	 * List of bounds minings
+	 * List of drawn minings
 	 */
-	private final List<Rectangle> fBounds;
+	private final List<DrawnMining> fDrawnMinings;
 
 	/**
 	 * The current progress monitor
@@ -82,13 +81,13 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		fResolvedMinings= null;
 		fMinings= List.of();
-		fBounds= new ArrayList<>();
+		fDrawnMinings= new ArrayList<>();
 	}
 
 	@Override
 	public int getHeight() {
 		List<ICodeMining> minings= fMinings;
-		return hasAtLeastOneResolvedMiningNotEmpty(minings, fResolvedMinings)
+		return hasAtLeastOneDrawableMining(minings, fResolvedMinings)
 				? getMultilineHeight(null, minings, super.getTextWidget(), super.getHeight())
 				: 0;
 	}
@@ -181,7 +180,7 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	@Override
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		int singleLineHeight= super.getHeight();
-		CodeMiningLineHeaderAnnotation.draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
+		CodeMiningLineHeaderAnnotation.draw(fMinings, fDrawnMinings, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
 	}
 
 	@Override
@@ -202,7 +201,7 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
-		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fResolvedMinings, fBounds, e.x, e.y);
+		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fDrawnMinings, e.x, e.y);
 		return mining != null ? mining.getAction() : null;
 	}
 

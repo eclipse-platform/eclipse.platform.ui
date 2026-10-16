@@ -14,7 +14,6 @@
 package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -52,9 +51,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	private volatile List<ICodeMining> fMinings;
 
 	/**
-	 * List of bounds minings
+	 * List of drawn minings
 	 */
-	private final List<Rectangle> fBounds;
+	private final List<DrawnMining> fDrawnMinings;
 
 	/**
 	 * The current progress monitor
@@ -86,7 +85,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		fResolvedMinings= null;
 		fMinings= List.of();
-		fBounds= new ArrayList<>();
+		fDrawnMinings= new ArrayList<>();
 	}
 
 	@Override
@@ -96,7 +95,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	public int getHeight(GC gc) {
 		List<ICodeMining> minings= fMinings;
-		return hasAtLeastOneResolvedMiningNotEmpty(minings, fResolvedMinings) ? getMultilineHeight(gc, minings, super.getTextWidget(), super.getHeight()) : 0;
+		return hasAtLeastOneDrawableMining(minings, fResolvedMinings) ? getMultilineHeight(gc, minings, super.getTextWidget(), super.getHeight()) : 0;
 	}
 
 	private static String firstLine(String label) {
@@ -115,7 +114,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		int sumLineHeight= 0;
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
-			String label= mining.getLabel();
+			String label= CodeMiningManager.getLabelOrPlaceholder(mining);
 			if (label == null) {
 				continue;
 			}
@@ -156,7 +155,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				sumLineHeight+= styledTextLineHeight + styledText.getLineSpacing();
 			} else {
 				if (j == splitted.length - 1 && miningIndex + 1 < minings.size()) { // last line, take first line from next mining
-					String nextLabel= minings.get(miningIndex + 1).getLabel();
+					String nextLabel= CodeMiningManager.getLabelOrPlaceholder(minings.get(miningIndex + 1));
 					if (nextLabel != null) {
 						String firstFromNext= firstLine(nextLabel);
 						line+= firstFromNext;
@@ -170,17 +169,16 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	}
 
 	/**
-	 * Returns <code>true</code> if the annotation has at least one resolved mining which have a
-	 * label and <code>false</code> otherwise.
+	 * Returns <code>true</code> if the annotation has at least one mining which has a non-empty
+	 * label (or placeholder label) and <code>false</code> otherwise.
 	 *
-	 * @return <code>true</code> if the annotation has at least one resolved mining which have a
-	 *         label and <code>false</code> otherwise.
+	 * @return <code>true</code> if the annotation has at least one mining which has a non-empty
+	 *         label (or placeholder label) and <code>false</code> otherwise.
 	 */
-	static boolean hasAtLeastOneResolvedMiningNotEmpty(List<ICodeMining> minings, ICodeMining[] resolvedMinings) {
+	static boolean hasAtLeastOneDrawableMining(List<ICodeMining> minings, ICodeMining[] resolvedMinings) {
 		for (ICodeMining mining : minings) {
-			String label= mining.getLabel();
-			if (label != null && !label.isEmpty()) {
-				return true; // will have a resolved mining.
+			if (CodeMiningDrawHelper.isDrawableMining(mining)) {
+				return true;
 			}
 		}
 
@@ -188,7 +186,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 			return false;
 		}
 		for (ICodeMining resolved : resolvedMinings) {
-			if (CodeMiningManager.isValidMining(resolved)) {
+			if (CodeMiningDrawHelper.isDrawableMining(resolved)) {
 				return true;
 			}
 		}
@@ -213,7 +211,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		}
 		fResolvedMinings= resolvedMinings;
 		fMonitor= monitor;
-		fMinings= Collections.unmodifiableList(new ArrayList<>(minings));
+		fMinings= List.copyOf(minings);
 		disposeMinings(oldMinings);
 	}
 
@@ -235,42 +233,21 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	@Override
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		int singleLineHeight= super.getHeight();
-		draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
+		draw(fMinings, fDrawnMinings, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
 	}
 
-	static void draw(List<ICodeMining> minings, List<Rectangle> fBounds, int singleLineHeight, ICodeMining[] fResolvedMinings, GC gc, StyledText textWidget, Color color,
+	static void draw(List<ICodeMining> minings, List<DrawnMining> fDrawnMinings, int singleLineHeight, ICodeMining[] fResolvedMinings, GC gc, StyledText textWidget, Color color,
 			int x, int y, Runnable redrawRunnable) {
 		int nbDraw= 0;
 		int separatorWidth= -1;
-		boolean redrawn= false;
-		fBounds.clear();
+		fDrawnMinings.clear();
 		int lineSpacing= textWidget.getLineSpacing();
+		Runnable redrawOnce= CodeMiningDrawHelper.once(redrawRunnable);
 		for (int i= 0; i < minings.size(); i++) {
-			ICodeMining mining= minings.get(i);
-			// try to get the last resolved mining.
-			ICodeMining lastResolvedMining= (fResolvedMinings != null && fResolvedMinings.length > i) ? fResolvedMinings[i] : null;
-			if (mining.getLabel() != null) {
-				// mining is resolved without error, update the resolved mining list
-				if (fResolvedMinings != null && fResolvedMinings.length > i) {
-					fResolvedMinings[i]= mining;
-				}
-			} else if (!mining.isResolved()) {
-				// the mining is not resolved, draw the last resolved mining
-				mining= lastResolvedMining;
-				if (!redrawn) {
-					// redraw the annotation when mining is resolved.
-					redrawRunnable.run();
-					redrawn= true;
-				}
-			} else {
-				// the mining is resolved with error, draw the last resolved mining
-				mining= lastResolvedMining;
-			}
-			if (!CodeMiningManager.isValidMining(mining)) {
-				// ignore the draw of mining
+			ICodeMining mining= CodeMiningDrawHelper.chooseMiningToDraw(minings.get(i), i, fResolvedMinings, redrawOnce);
+			if (mining == null) {
 				continue;
 			}
-			// draw the mining
 			if (nbDraw > 0) {
 				gc.drawText(SEPARATOR, x, y);
 				if (separatorWidth == -1) {
@@ -278,12 +255,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				}
 				x+= separatorWidth;
 			}
-			Point loc= null;
-			if (mining != null) {
-				loc= mining.draw(gc, textWidget, color, x, y);
-			}
+			Point loc= mining.draw(gc, textWidget, color, x, y);
 			if (loc != null) {
-				fBounds.add(new Rectangle(x, y, loc.x, loc.y));
+				fDrawnMinings.add(new DrawnMining(new Rectangle(x, y, loc.x, loc.y), mining));
 				x+= loc.x;
 				if (loc.y > singleLineHeight) {
 					y+= loc.y + lineSpacing - singleLineHeight;
@@ -311,7 +285,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
-		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fResolvedMinings, fBounds, e.x, e.y);
+		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fDrawnMinings, e.x, e.y);
 		return mining != null ? mining.getAction() : null;
 	}
 

@@ -34,6 +34,6 @@ public class DocumentFooterCodeMining extends AbstractCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		return LineHeaderCodeMining.draw(getLabel(), gc, textWidget, x, y, () -> DocumentFooterCodeMining.super.draw(gc, textWidget, color, x, y));
+		return LineHeaderCodeMining.draw(getLabelOrPlaceholder(), gc, textWidget, x, y, () -> DocumentFooterCodeMining.super.draw(gc, textWidget, color, x, y));
 	}
 }
