@@ -11,20 +11,33 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.EndOfLineRule;
@@ -71,7 +84,7 @@ public class BlockEndCodeMiningTest {
 		RuleBasedPartitionScanner scanner= new RuleBasedPartitionScanner();
 		scanner.setPredicateRules(new IPredicateRule[] {
 				new EndOfLineRule("//", comment), //$NON-NLS-1$
-				new MultiLineRule("/*", "*/", comment), //$NON-NLS-1$ //$NON-NLS-2$
+				new MultiLineRule("/*", "*/", comment, (char) 0, true), //$NON-NLS-1$ //$NON-NLS-2$
 				new SingleLineRule("\"", "\"", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		IDocumentPartitioner partitioner= new FastPartitioner(scanner, new String[] { COMMENT, STRING });
@@ -162,6 +175,92 @@ public class BlockEndCodeMiningTest {
 			builder.append("\tstatement").append(i).append("();").append(delimiter); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return builder.toString();
+	}
+
+	private static BlockEndCodeMiningProvider provider(ITextViewer viewer) {
+		IPreferenceStore store= new PreferenceStore();
+		store.setValue("showBlockEndCodeMining", true); //$NON-NLS-1$
+		store.setValue("blockEndCodeMiningMinLines", MIN_LINES); //$NON-NLS-1$
+		IAdaptable context= mock(IAdaptable.class);
+		when(context.getAdapter(IPreferenceStore.class)).thenReturn(store);
+		when(context.getAdapter(ITextViewer.class)).thenReturn(viewer);
+		BlockEndCodeMiningProvider provider= new BlockEndCodeMiningProvider();
+		provider.setContext(context);
+		return provider;
+	}
+
+	@Test
+	public void documentChangeCancelsAnInFlightScan() throws Exception {
+		IDocument document= document("void method() {\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		ITextViewer viewer= mock(ITextViewer.class);
+		when(viewer.getDocument()).thenReturn(document);
+		BlockEndCodeMiningProvider provider= provider(viewer);
+		CountDownLatch scanning= new CountDownLatch(1);
+		CountDownLatch resume= new CountDownLatch(1);
+		IProgressMonitor monitor= new NullProgressMonitor() {
+			@Override
+			public boolean isCanceled() {
+				scanning.countDown();
+				try {
+					assertTrue(resume.await(10, TimeUnit.SECONDS), "scan was not released"); //$NON-NLS-1$
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					throw new AssertionError(e);
+				}
+				return super.isCanceled();
+			}
+		};
+		try {
+			var pending= provider.provideCodeMinings(viewer, monitor);
+			assertTrue(scanning.await(10, TimeUnit.SECONDS), "scan did not start"); //$NON-NLS-1$
+
+			document.replace(0, 0, "// inserted while scanning\n"); //$NON-NLS-1$
+			resume.countDown();
+
+			assertTrue(monitor.isCanceled());
+			ExecutionException exception= assertThrows(ExecutionException.class, () -> pending.get(10, TimeUnit.SECONDS));
+			assertInstanceOf(CancellationException.class, exception.getCause());
+
+			var refreshed= provider.provideCodeMinings(viewer, null).get(10, TimeUnit.SECONDS);
+			assertEquals(1, refreshed.size());
+			assertEquals(document.getLineOffset(27) + 1, refreshed.get(0).getPosition().getOffset());
+		} finally {
+			resume.countDown();
+			provider.dispose();
+		}
+	}
+
+	@Test
+	public void documentChangeInvalidatesACompletedScanAwaitingOtherProviders() throws Exception {
+		IDocument document= document("void method() {\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		ITextViewer viewer= mock(ITextViewer.class);
+		when(viewer.getDocument()).thenReturn(document);
+		BlockEndCodeMiningProvider provider= provider(viewer);
+		IProgressMonitor monitor= new NullProgressMonitor();
+		try {
+			assertEquals(1, provider.provideCodeMinings(viewer, monitor).get(10, TimeUnit.SECONDS).size());
+
+			document.replace(0, 0, "// inserted before rendering\n"); //$NON-NLS-1$
+
+			assertTrue(monitor.isCanceled(), "the combined render must not use the old positions"); //$NON-NLS-1$
+		} finally {
+			provider.dispose();
+		}
+	}
+
+	@Test
+	public void disposingTheProviderCancelsItsRequest() throws Exception {
+		IDocument document= document("void method() {\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		ITextViewer viewer= mock(ITextViewer.class);
+		when(viewer.getDocument()).thenReturn(document);
+		BlockEndCodeMiningProvider provider= provider(viewer);
+		IProgressMonitor monitor= new NullProgressMonitor();
+		try {
+			provider.provideCodeMinings(viewer, monitor).get(10, TimeUnit.SECONDS);
+		} finally {
+			provider.dispose();
+		}
+		assertTrue(monitor.isCanceled());
 	}
 
 	@Test
@@ -307,6 +406,46 @@ public class BlockEndCodeMiningTest {
 
 		assertEquals(1, ends.size());
 		assertEquals(" // void method()", ends.get(0).label()); //$NON-NLS-1$
+	}
+
+	@Test
+	public void bareBlockAfterAStatementWithATrailingCommentIsNotAnnotated() {
+		IDocument document= partitionedDocument("void method() {\n\twork(); // explanation\n\t{\n" + body(25) + "\t}\n}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List<BlockEnd> ends= blockEnds(document);
+
+		assertEquals(1, ends.size());
+		assertEquals(" // void method()", ends.get(0).label()); //$NON-NLS-1$
+	}
+
+	@Test
+	public void bareBlockAfterAStatementWithATrailingCommentIsNotAnnotatedWithoutPartitioning() {
+		IDocument document= document("void method() {\n\twork(); /* explanation */\n\t{\n" + body(25) + "\t}\n}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List<BlockEnd> ends= blockEnds(document);
+
+		assertEquals(1, ends.size());
+		assertEquals(" // void method()", ends.get(0).label()); //$NON-NLS-1$
+	}
+
+	@Test
+	public void allmanLabelOmitsATrailingComment() {
+		IDocument document= partitionedDocument("void method() // entry point\n{\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List<BlockEnd> ends= blockEnds(document);
+
+		assertEquals(1, ends.size());
+		assertEquals(" // void method()", ends.get(0).label()); //$NON-NLS-1$
+	}
+
+	@Test
+	public void wrappedSignatureStopsAtAStatementWithATrailingComment() {
+		IDocument document= document("foo(); // done\n\t\tb) {\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List<BlockEnd> ends= blockEnds(document);
+
+		assertEquals(1, ends.size());
+		assertEquals(" // b)", ends.get(0).label()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -515,6 +654,28 @@ public class BlockEndCodeMiningTest {
 		assertEquals(1, ends.size());
 		assertEquals(" // void method()", ends.get(0).label()); //$NON-NLS-1$
 		assertEquals(28, ends.get(0).endLine());
+	}
+
+	@Test
+	public void documentContainingOnlyABlockCommentIsNotAnnotated() {
+		IDocument document= partitionedDocument("/*\nvoid method() {\n" + body(25) + "}\n*/"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		assertTrue(blockEnds(document).isEmpty());
+	}
+
+	@Test
+	public void commentOnlyNamedPartitioningIsRespected() {
+		IDocument document= partitionedDocument("/*\nvoid method() {\n" + body(25) + "}\n*/", //$NON-NLS-1$ //$NON-NLS-2$
+				"__java_like_partitioning"); //$NON-NLS-1$
+
+		assertTrue(blockEnds(document).isEmpty());
+	}
+
+	@Test
+	public void documentContainingOnlyAnUnterminatedCommentIsNotAnnotated() {
+		IDocument document= partitionedDocument("/*\nvoid method() {\n" + body(25) + "}\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		assertTrue(blockEnds(document).isEmpty());
 	}
 
 	@Test

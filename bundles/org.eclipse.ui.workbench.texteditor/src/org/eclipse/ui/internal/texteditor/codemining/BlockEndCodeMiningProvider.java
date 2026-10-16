@@ -16,10 +16,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -52,6 +54,10 @@ import org.eclipse.ui.internal.texteditor.BlockEndCodeMiningPreferenceConstants;
  * skipped where a partitioning marks code as the default content type, and any other document is
  * treated as code in full, so a brace in a character literal can pair up wrongly there. A closing
  * brace already followed by a comment is left alone.
+ * </p>
+ * <p>
+ * Scans use a document snapshot and are canceled immediately on edits; replacement scans are
+ * deferred until typing pauses.
  * </p>
  */
 public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider implements IPropertyChangeListener {
@@ -92,7 +98,7 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 	private final IDocumentListener documentListener= new IDocumentListener() {
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			// Nothing to do.
+			cancelRequest();
 		}
 
 		@Override
@@ -103,10 +109,13 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 
 	private IDocument trackedDocument;
 
+	private IProgressMonitor currentMonitor;
+
 	private volatile boolean disposed;
 
 	@Override
-	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+	public synchronized CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+		cancelRequest();
 		loadStore();
 		IDocument document= viewer.getDocument();
 		// Nothing in the platform recomputes minings on a document change, JDT brings its own
@@ -115,6 +124,8 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 		if (!enabled || document == null) {
 			return CompletableFuture.completedFuture(Collections.emptyList());
 		}
+		IProgressMonitor requestMonitor= monitor != null ? monitor : new NullProgressMonitor();
+		currentMonitor= requestMonitor;
 		int blockSize= minLines;
 		ITypedRegion[] codeRegions;
 		try {
@@ -125,7 +136,13 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 		// The scan is slow enough on large documents to be felt on the UI thread, and the live
 		// document and its partitioner are not thread safe, so scan a copy in the background.
 		String text= document.get();
-		return CompletableFuture.supplyAsync(() -> collectMinings(new Document(text), codeRegions, blockSize, monitor));
+		return CompletableFuture.supplyAsync(() -> {
+			List<ICodeMining> minings= collectMinings(new Document(text), codeRegions, blockSize, requestMonitor);
+			if (requestMonitor.isCanceled()) {
+				throw new CancellationException();
+			}
+			return minings;
+		});
 	}
 
 	private List<ICodeMining> collectMinings(IDocument document, ITypedRegion[] codeRegions, int blockSize,
@@ -229,7 +246,7 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 
 	/**
 	 * Returns the partitioning of the document, or <code>null</code> when the given partitioning
-	 * has no partitioner or does not mark any region as code.
+	 * has no partitioner or does not mark any region, including empty boundary regions, as code.
 	 */
 	private static ITypedRegion[] computePartitioning(IDocumentExtension3 extension, IDocument document,
 			String partitioning) throws BadLocationException {
@@ -238,7 +255,8 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 		}
 		ITypedRegion[] partitions;
 		try {
-			partitions= extension.computePartitioning(partitioning, 0, document.getLength(), false);
+			// A comment-only document still has empty default partitions at its boundaries.
+			partitions= extension.computePartitioning(partitioning, 0, document.getLength(), true);
 		} catch (BadPartitioningException e) {
 			return null;
 		}
@@ -290,11 +308,12 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 					|| !isCode(codeRegions, region.getOffset() + raw.indexOf(text.charAt(0)))) {
 				continue;
 			}
+			String code= codeText(document, codeRegions, line);
 			// A statement or another block ends there, so the brace opens a bare block.
-			if (endsStatementOrBlock(text)) {
+			if (code.isEmpty() || endsStatementOrBlock(code.trim())) {
 				return ""; //$NON-NLS-1$
 			}
-			return wrappedLabel(document, codeRegions, line, region.getOffset() + region.getLength());
+			return wrappedLabel(document, codeRegions, line, region.getOffset() + code.length());
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -310,13 +329,39 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 		for (int first= line - 1; first >= 0 && line - first <= MAX_WRAPPED_LINES
 				&& parenthesisDepth(codeRegions, text, start) < 0; first--) {
 			// A line ending a statement or block is not part of a wrapped signature, as in "})).then(() -> {".
-			if (endsStatementOrBlock(document.get(document.getLineOffset(first), document.getLineLength(first)).trim())) {
+			if (endsStatementOrBlock(codeText(document, codeRegions, first).trim())) {
 				break;
 			}
 			start= document.getLineOffset(first);
 			text= document.get(start, endOffset - start);
 		}
 		return normalize(text);
+	}
+
+	/** Returns the line up to its last code character, so a trailing comment does not hide how it ends. */
+	private static String codeText(IDocument document, ITypedRegion[] codeRegions, int line) throws BadLocationException {
+		IRegion region= document.getLineInformation(line);
+		int offset= region.getOffset();
+		String text= document.get(offset, region.getLength());
+		int end= 0;
+		for (int i= 0; i < text.length(); i++) {
+			ITypedRegion partition= regionAt(codeRegions, offset + i);
+			boolean commentStart= partition == null || IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())
+					|| partition.getOffset() == offset + i;
+			if (commentStart && text.startsWith("//", i)) { //$NON-NLS-1$
+				break;
+			}
+			if (commentStart && text.startsWith("/*", i)) { //$NON-NLS-1$
+				int close= text.indexOf("*/", i + 2); //$NON-NLS-1$
+				if (close < 0) {
+					break;
+				}
+				i= close + 1;
+			} else if (!Character.isWhitespace(text.charAt(i))) {
+				end= i + 1;
+			}
+		}
+		return text.substring(0, end);
 	}
 
 	private static boolean endsStatementOrBlock(String text) {
@@ -403,8 +448,17 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 		String property= event.getProperty();
 		if (BlockEndCodeMiningPreferenceConstants.SHOW_BLOCK_END_CODE_MINING.equals(property)
 				|| BlockEndCodeMiningPreferenceConstants.BLOCK_END_CODE_MINING_MIN_LINES.equals(property)) {
+			cancelRequest();
 			readPreferences(store);
 			updateCodeMinings();
+		}
+	}
+
+	private synchronized void cancelRequest() {
+		if (currentMonitor != null) {
+			// Also cancel the combined render if this provider finished before another provider.
+			currentMonitor.setCanceled(true);
+			currentMonitor= null;
 		}
 	}
 
@@ -449,6 +503,7 @@ public class BlockEndCodeMiningProvider extends AbstractCodeMiningProvider imple
 	@Override
 	public synchronized void dispose() {
 		disposed= true;
+		cancelRequest();
 		Display display= displayOfViewer();
 		if (display != null) {
 			display.timerExec(-1, updater);
