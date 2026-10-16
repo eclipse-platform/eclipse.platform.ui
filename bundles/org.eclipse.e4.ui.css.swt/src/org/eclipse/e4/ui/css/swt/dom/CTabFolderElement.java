@@ -179,7 +179,7 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 				.getData(BACKGROUND_SET_BY_TAB_RENDERER);
 		if (backgroundSetByRenderer != null) {
 			if (control.getBackground() == backgroundSetByRenderer) {
-				control.setBackground(null);
+				CSSSWTColorHelper.setBackground(control, null);
 			}
 			control.setData(BACKGROUND_SET_BY_TAB_RENDERER, null);
 		}
