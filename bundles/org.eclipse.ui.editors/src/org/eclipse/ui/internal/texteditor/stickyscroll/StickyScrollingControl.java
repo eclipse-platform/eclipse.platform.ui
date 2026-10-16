@@ -21,6 +21,7 @@ import java.util.StringJoiner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
 import org.eclipse.swt.custom.CaretListener;
+import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -185,6 +186,7 @@ public class StickyScrollingControl {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(stickyLineText);
 		stickyLineText.setEnabled(false);
 		stickyLineText.setBackground(settings.stickyLineBackgroundColor());
+		stickyLineText.addLineBackgroundListener(this::styleStickyLineBackground);
 
 		bottomSeparator= new Composite(stickyLinesCanvas, SWT.NONE);
 		GridDataFactory.fillDefaults().hint(0, 3).grab(true, false).span(2, 1).applyTo(bottomSeparator);
@@ -258,6 +260,12 @@ public class StickyScrollingControl {
 		stickyLineText.setForeground(textWidget.getForeground());
 		stickyLineText.setLineSpacing(textWidget.getLineSpacing());
 		stickyLineText.setLeftMargin(textWidget.getLeftMargin());
+	}
+
+	private void styleStickyLineBackground(LineBackgroundEvent event) {
+		int lineIndex = stickyLineText.getLineAtOffset(event.lineOffset);
+		IStickyLine line = stickyLines.get(lineIndex);
+		event.lineBackground = line.getBackgroundColor();
 	}
 
 	private void layoutStickyLines() {
