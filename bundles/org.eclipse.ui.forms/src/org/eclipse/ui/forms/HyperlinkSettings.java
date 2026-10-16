@@ -48,6 +48,10 @@ public class HyperlinkSettings {
 	private Color foreground;
 	private Color activeBackground;
 	private Color activeForeground;
+	// Defaults follow the JFace color registry so that theme switches reach existing links.
+	private Display display;
+	private boolean defaultForeground;
+	private boolean defaultActiveForeground;
 	private Cursor busyCursor;
 	private Cursor textCursor;
 	private Cursor hyperlinkCursor;
@@ -79,6 +83,9 @@ public class HyperlinkSettings {
 		}
 		setForeground(fg);
 		setActiveForeground(afg);
+		this.display = display;
+		defaultForeground = true;
+		defaultActiveForeground = true;
 	}
 
 	/**
@@ -103,11 +110,15 @@ public class HyperlinkSettings {
 	}
 
 	/**
-	 * Returns the foreground to use for the active hyperlink.
+	 * Returns the foreground to use for the active hyperlink. Unless set
+	 * explicitly, it follows the current JFace active hyperlink color.
 	 *
 	 * @return active hyperlink foreground
 	 */
 	public Color getActiveForeground() {
+		if (defaultActiveForeground) {
+			return JFaceColors.getActiveHyperlinkText(display);
+		}
 		return activeForeground;
 	}
 
@@ -141,11 +152,16 @@ public class HyperlinkSettings {
 	}
 
 	/**
-	 * Returns the foreground to use for the normal hyperlink.
+	 * Returns the foreground to use for the normal hyperlink. Unless set
+	 * explicitly, it follows the current JFace hyperlink color.
 	 *
 	 * @return the normal hyperlink foreground
 	 */
 	public Color getForeground() {
+		if (defaultForeground) {
+			Color fg = JFaceColors.getHyperlinkText(display);
+			return fg != null ? fg : display.getSystemColor(SWT.COLOR_LINK_FOREGROUND);
+		}
 		return foreground;
 	}
 
@@ -186,6 +202,7 @@ public class HyperlinkSettings {
 	 */
 	public void setActiveForeground(Color newActiveForeground) {
 		activeForeground = newActiveForeground;
+		defaultActiveForeground = false;
 	}
 
 	/**
@@ -206,6 +223,7 @@ public class HyperlinkSettings {
 	 */
 	public void setForeground(Color newForeground) {
 		foreground = newForeground;
+		defaultForeground = false;
 	}
 
 	/**
