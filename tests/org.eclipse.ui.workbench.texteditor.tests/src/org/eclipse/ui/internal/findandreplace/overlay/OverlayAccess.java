@@ -36,6 +36,9 @@ import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.WidgetExtractor;
 
 class OverlayAccess implements IFindReplaceUIAccess {
+
+	static final String RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS_PREFERENCE= "restrictFindReplaceOverlayToTextEditors"; //$NON-NLS-1$
+
 	private final IFindReplaceTarget findReplaceTarget;
 
 	private final HistoryTextWrapper find;

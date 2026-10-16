@@ -36,6 +36,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_displayedTabWidth;
 	public static String TextEditorPreferencePage_lineSpacing;
 	public static String TextEditorPreferencePage_useFindReplaceOverlay;
+	public static String TextEditorPreferencePage_restrictFindReplaceOverlayToTextEditors;
 	public static String TextEditorPreferencePage_showFindReplaceOverlayAtBottom;
 	public static String TextEditorPreferencePage_enableWordWrap;
 	public static String TextEditorPreferencePage_convertTabsToSpaces;

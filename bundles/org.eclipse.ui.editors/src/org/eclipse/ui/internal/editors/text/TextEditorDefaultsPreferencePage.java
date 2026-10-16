@@ -94,6 +94,9 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  */
 public class TextEditorDefaultsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	/** Horizontal indentation of a control that depends on the one above it. */
+	private static final int INDENTATION= 20;
+
 	private static abstract class Initializer {
 
 		protected final Preference fPreference;
@@ -759,6 +762,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
@@ -901,7 +905,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorPreferencePage_showFindReplaceOverlayAtBottom;
 		Preference findReplaceOverlayAtBottom= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM, label, null);
 		final Button overlayAtBottom= addCheckBox(appearanceComposite, findReplaceOverlayAtBottom, new BooleanDomain(), 0);
-		createDependency(useOverlay, useFindReplaceOverlay, new Control[] { overlayAtBottom });
+
+		label= TextEditorMessages.TextEditorPreferencePage_restrictFindReplaceOverlayToTextEditors;
+		Preference restrictOverlayToTextEditors= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS, label, null);
+		// Indented here rather than by the dependency below, which indents its first
+		// control only and would place this one next to that one instead of beneath it.
+		final Button overlayInTextEditorsOnly= addCheckBox(appearanceComposite, restrictOverlayToTextEditors, new BooleanDomain(), INDENTATION);
+
+		createDependency(useOverlay, useFindReplaceOverlay, new Control[] { overlayAtBottom, overlayInTextEditorsOnly });
 
 		label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
 		Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);
@@ -1531,7 +1542,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
+		gridData.horizontalIndent= INDENTATION;
 		control.setLayoutData(gridData);
 	}
 
