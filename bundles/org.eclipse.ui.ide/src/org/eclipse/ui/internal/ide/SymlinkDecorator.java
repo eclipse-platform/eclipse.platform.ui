@@ -14,8 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.net.URI;
 import java.util.Optional;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -25,6 +28,7 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * Decorate symbolic links
@@ -33,12 +37,15 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 public class SymlinkDecorator implements ILightweightLabelDecorator {
 
 	private static Optional<ImageDescriptor> SYMLINK;
+	private static final Optional<ImageDescriptor> LINK_WARNING;
 
 	static {
 		SYMLINK = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/ovr16/symlink_ovr.svg"); //$NON-NLS-1$
 
+		LINK_WARNING = ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/ovr16/linkwarn_ovr.svg"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -68,8 +75,18 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 		IResource resource = Adapters.adapt(element, IResource.class);
 		if (resource != null) {
 			ResourceAttributes resourceAttributes = resource.getResourceAttributes();
-			if (resourceAttributes != null && resourceAttributes.isSymbolicLink()) {
-				SYMLINK.ifPresent(decoration::addOverlay);
+			if (resourceAttributes != null) {
+				if (resourceAttributes.isSymbolicLink()) {
+					SYMLINK.ifPresent(decoration::addOverlay);
+					URI location = resource.getLocationURI();
+					if (location != null) {
+						IFileInfo fileInfo = IDEResourceInfoUtils.getFileInfo(location);
+						String linkTarget = fileInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET);
+						if (linkTarget != null && !fileInfo.exists()) {
+							LINK_WARNING.ifPresent(t -> decoration.addOverlay(t, IDecoration.TOP_LEFT));
+						}
+					}
+				}
 			}
 		}
 	}
