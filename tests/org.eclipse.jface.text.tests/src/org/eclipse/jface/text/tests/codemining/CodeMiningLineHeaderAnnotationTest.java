@@ -10,20 +10,27 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -32,12 +39,19 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.IPlaceholderCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -112,20 +126,25 @@ public class CodeMiningLineHeaderAnnotationTest {
 		}
 	}
 
-	@Test
-	public void testGetHeightDoesNotReturnZero() throws Exception {
+	@ValueSource(booleans= { false, true })
+	@ParameterizedTest(name= "[{index}] placeHolder: {0}")
+	public void testGetHeightDoesNotReturnZero(boolean placeholder) throws Exception {
 		var cut= new CodeMiningLineHeaderAnnotation(new Position(0, 0), fViewer);
 		var s= new InlinedAnnotationSupport();
 		s.install(fViewer, new AnnotationPainter(fViewer, null));
 		var m= AbstractInlinedAnnotation.class.getDeclaredMethod("setSupport", InlinedAnnotationSupport.class);
 		m.setAccessible(true);
 		m.invoke(cut, s);
-		cut.update(Arrays.asList(new LineHeaderCodeMining(0, document, null) {
-			@Override
-			public String getLabel() {
-				return "mining";
-			}
-		}), null);
+
+		ICodeMining mining;
+
+		if (placeholder) {
+			mining= unresolvedPlaceholder("Placeholder");
+		} else {
+			mining= codeMining("mining");
+		}
+
+		cut.update(List.of(mining), null);
 		// https: //github.com/eclipse-platform/eclipse.platform.ui/issues/2786
 		assertNotEquals(0, cut.getHeight()); // getHeight should not return 0, otherwise editor content starts jumping around
 	}
@@ -139,10 +158,10 @@ public class CodeMiningLineHeaderAnnotationTest {
 	 * {@link StyledText#getLineHeight()}, so the lines below a multiline code mining were shifted
 	 * by a few pixels relative to the regular grid.
 	 */
-	@Test
-	public void testTwoLineCodeMiningHeightMatchesTextWidgetLineHeight() throws Exception {
-		var doc= fViewer.getDocument();
-		doc.set("line0\nline1\nline2");
+	@ValueSource(booleans= { false, true })
+	@ParameterizedTest(name= "[{index}] placeHolder: {0}")
+	public void testTwoLineCodeMiningHeightMatchesTextWidgetLineHeight(boolean placeholder) throws Exception {
+		document.set("line0\nline1\nline2");
 		var textWidget= fViewer.getTextWidget();
 		// A line spacing != 0 makes a regression in either factor immediately visible.
 		textWidget.setLineSpacing(3);
@@ -155,12 +174,14 @@ public class CodeMiningLineHeaderAnnotationTest {
 				textWidget.setFont(consolasFont);
 			}
 			String codeMiningLabel= "code mining line1\ncode mining line2";
-			var mining= new LineHeaderCodeMining(0, doc, null, null) {
-				@Override
-				public String getLabel() {
-					return codeMiningLabel;
-				}
-			};
+			ICodeMining mining;
+
+			if (placeholder) {
+				mining= unresolvedPlaceholder(codeMiningLabel);
+			} else {
+				mining= codeMining(codeMiningLabel);
+			}
+
 			int normalLineHeight= textWidget.getLineHeight();
 			int lineSpacing= textWidget.getLineSpacing();
 			int numMiningLines= codeMiningLabel.split("\n").length;
@@ -258,6 +279,102 @@ public class CodeMiningLineHeaderAnnotationTest {
 		}
 	}
 
+	@Test
+	public void testUnresolvedPlaceholderRequestsRedraw() throws Exception {
+		AtomicBoolean redrawRequested= new AtomicBoolean(false);
+		AtomicBoolean resolveRequested= new AtomicBoolean(false);
+
+		CodeMiningLineHeaderAnnotation annotation= new CodeMiningLineHeaderAnnotation(new Position(0, 0), fViewer) {
+			@Override
+			public void redraw() {
+				redrawRequested.set(true);
+				super.redraw();
+			}
+		};
+		StyledText widget= fViewer.getTextWidget();
+
+		CompletableFuture<String> labelDrawn= new CompletableFuture<>();
+		String placeholder= "Placeholder";
+
+		ICodeMining mining= new ResolvablePlaceholderMining(0, document, null, placeholder) {
+
+			@Override
+			public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
+				labelDrawn.complete(getLabel());
+				return super.draw(gc, textWidget, color, x, y);
+			}
+
+			@Override
+			protected CompletableFuture<Void> doResolve(ITextViewer viewer, IProgressMonitor monitor) {
+				resolveRequested.set(true);
+				return CompletableFuture.runAsync(() -> {
+					setLabel("Resolved");
+				});
+			}
+		};
+
+		annotation.update(List.of(mining), new NullProgressMonitor());
+
+		GC gc= new GC(widget);
+
+		try {
+			annotation.draw(gc, widget, 0, 0, null, 0, 0);
+		} finally {
+			gc.dispose();
+		}
+
+		assertTrue(resolveRequested.get());
+		assertTrue(redrawRequested.get());
+		assertEquals(placeholder, labelDrawn.resultNow());
+	}
+
+	@Test
+	void testResolvedPlaceholderDoesNotRequestRedraw() throws Exception {
+		AtomicBoolean redrawRequested= new AtomicBoolean(false);
+		AtomicBoolean resolveRequested= new AtomicBoolean(false);
+
+		CodeMiningLineHeaderAnnotation annotation= new CodeMiningLineHeaderAnnotation(new Position(0, 0), fViewer) {
+			@Override
+			public void redraw() {
+				redrawRequested.set(true);
+				super.redraw();
+			}
+		};
+		StyledText widget= fViewer.getTextWidget();
+
+		String placeholder= "Placeholder";
+
+		ICodeMining mining= new ResolvablePlaceholderMining(0, document, null, placeholder) {
+			@Override
+			protected CompletableFuture<Void> doResolve(ITextViewer viewer, IProgressMonitor monitor) {
+				resolveRequested.set(true);
+				return CompletableFuture.runAsync(() -> {
+					setLabel("Resolved");
+				});
+			}
+		};
+
+		mining.resolve(fViewer, new NullProgressMonitor()).get(2, TimeUnit.SECONDS);
+		resolveRequested.set(false); // Reset after intentional resolve
+
+		annotation.update(List.of(mining), new NullProgressMonitor());
+
+		GC gc= new GC(widget);
+
+		try {
+			annotation.draw(gc, widget, 0, 0, null, 0, 0);
+
+			assertFalse(resolveRequested.get());
+			assertFalse(redrawRequested.get());
+		} finally {
+			gc.dispose();
+		}
+	}
+
+	private LineHeaderCodeMining unresolvedPlaceholder(String label) throws BadLocationException {
+		return new UnresolvedPlaceholderMining(0, document, null, label);
+	}
+
 	private LineHeaderCodeMining codeMining(String label) throws BadLocationException {
 		return new LineHeaderCodeMining(0, document, null) {
 			@Override
@@ -274,4 +391,28 @@ public class CodeMiningLineHeaderAnnotationTest {
 		}
 		return new Font(textWidget.getDisplay(), "Consolas", height, SWT.NORMAL); //$NON-NLS-1$
 	}
+
+	private static class UnresolvedPlaceholderMining extends LineHeaderCodeMining implements IPlaceholderCodeMining {
+
+		public UnresolvedPlaceholderMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider, String label) throws BadLocationException {
+			super(beforeLineNumber, document, provider);
+			setLabel(label);
+		}
+
+		@Override
+		public boolean isResolved() {
+			return false;
+		}
+
+	}
+
+	private static class ResolvablePlaceholderMining extends LineHeaderCodeMining implements IPlaceholderCodeMining {
+
+		public ResolvablePlaceholderMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider, String placeholder) throws BadLocationException {
+			super(beforeLineNumber, document, provider);
+			setLabel(placeholder);
+		}
+
+	}
+
 }

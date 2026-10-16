@@ -114,7 +114,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		int length= Math.min(oldMinings.size(), minings.size());
 		for (int i= 0; i < length; i++) {
 			ICodeMining mining= oldMinings.get(i);
-			if (mining.getLabel() != null) {
+			if (mining.getLabel() != null && CodeMiningManager.isNotUnresolvedPlaceholder(mining)) {
 				// mining was resolved without an error.
 				resolvedMinings[i]= mining;
 			}
@@ -149,10 +149,24 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 			ICodeMining mining= minings.get(i);
 			// try to get the last resolved mining.
 			ICodeMining lastResolvedMining= (resolvedMinings != null && resolvedMinings.length > i) ? resolvedMinings[i] : null;
-			if (mining.getLabel() != null) {
-				// mining is resolved without error, update the resolved mining list
-				if (resolvedMinings != null && resolvedMinings.length > i) {
-					resolvedMinings[i]= mining;
+			String label= mining.getLabel();
+
+			if (label != null) {
+				if (CodeMiningManager.isNotUnresolvedPlaceholder(mining)) {
+					// mining is resolved without error, update the resolved mining list
+					if (resolvedMinings != null && resolvedMinings.length > i) {
+						resolvedMinings[i]= mining;
+					}
+				} else {
+					if (label.isEmpty()) {
+						mining= lastResolvedMining;
+					}
+
+					if (!redrawn) {
+						// redraw the annotation when mining is resolved.
+						redraw();
+						redrawn= true;
+					}
 				}
 			} else if (!mining.isResolved()) {
 				// the mining is not resolved, draw the last resolved mining
