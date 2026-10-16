@@ -186,16 +186,6 @@
            style="fill:#ffffff;stroke:#ffffff;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;display:inline" />
       </g>
     </mask>
-    <filter
-       id="filter9575"
-       x="-0.34857144"
-       width="1.6971429"
-       y="-0.27111112"
-       height="1.5422222">
-      <feGaussianBlur
-         stdDeviation="0.6"
-         id="feGaussianBlur9577" />
-    </filter>
     <linearGradient
        id="linearGradient4878-7">
       <stop
@@ -216,16 +206,6 @@
        gradientUnits="userSpaceOnUse"
        id="linearGradient3024"
        xlink:href="#linearGradient4878-7" />
-    <filter
-       id="filter3903"
-       x="-0.39351087"
-       width="1.7870217"
-       y="-0.1400016"
-       height="1.3081032">
-      <feGaussianBlur
-         stdDeviation="0.374995"
-         id="feGaussianBlur3905" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -270,9 +250,9 @@
         <path
            id="rect3997-9-1"
            d="m 9.720116,1054.7669 0,2.0313 7,0 0,-2.0313 -7,0 z m 0,2.0625 0,6.9375 7,0 0,-6.9375 -7,0 z"
-           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline;filter:url(#filter9575);stroke-dasharray:none" />
+           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline;stroke-dasharray:none" />
         <path
-           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;display:inline;filter:url(#filter3903)"
+           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;display:inline"
            d="m 21.222068,1055.2753 1,0 0,7 2,0 -2.5,2.9998 -2.5,-2.9998 2,0 z"
            id="path4108-9-6" />
       </g>

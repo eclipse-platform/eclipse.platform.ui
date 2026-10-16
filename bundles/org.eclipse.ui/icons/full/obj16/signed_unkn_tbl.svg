@@ -126,16 +126,6 @@
        id="linearGradient9407"
        xlink:href="#linearGradient9368-7"
        gradientTransform="matrix(0.99059914,0,0,1.2070442,13.790307,1039.7636)" />
-    <filter
-       id="filter6204"
-       x="-0.082807001"
-       y="-0.060528029"
-       width="1.165614"
-       height="1.1210561">
-      <feGaussianBlur
-         stdDeviation="0.24680834"
-         id="feGaussianBlur6206" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient6208"
        id="linearGradient6214"
@@ -270,7 +260,7 @@
            id="text4892">
           <g
              id="g6172"
-             style="fill:#ffffff;fill-opacity:1;filter:url(#filter6204)"
+             style="fill:#ffffff;fill-opacity:1"
              transform="matrix(1.0899808,0,0,1.0899808,-3.0796315,-89.217585)">
             <path
                id="path4897-4"

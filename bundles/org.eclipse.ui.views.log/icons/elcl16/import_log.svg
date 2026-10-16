@@ -67,16 +67,6 @@
          d="m -16.593048,1040.862 9.990206,0 0,10.0018 -2.983353,3.0385 -5.966213,0 c -0.53033,-0.022 -1.04064,-0.5519 -1.04064,-1.0385 z"
          style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" />
     </mask>
-    <filter
-       id="filter7378"
-       x="-0.23764625"
-       width="1.4752925"
-       y="-0.94444611"
-       height="2.8888922">
-      <feGaussianBlur
-         stdDeviation="0.3754875"
-         id="feGaussianBlur7380" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient7087"
        id="linearGradient7541"
@@ -326,7 +316,7 @@
        transform="matrix(0,-1,1,0,-1037.7801,1032.6792)">
       <g
          id="g7205-6"
-         style="display:inline;opacity:0.75;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter7378)">
+         style="display:inline;opacity:0.75;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
         <path
            style="fill:none;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="m -15.584151,1041.8789 0,-2.013"

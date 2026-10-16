@@ -164,17 +164,6 @@
          offset="1"
          id="stop8307-5" />
     </linearGradient>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter8319-5"
-       x="-0.36955386"
-       width="1.7391077"
-       y="-0.11362706"
-       height="1.2272541">
-      <feGaussianBlur
-         stdDeviation="0.32163811"
-         id="feGaussianBlur8321-1" />
-    </filter>
     <linearGradient
        id="linearGradient8198-1">
       <stop
@@ -260,7 +249,7 @@
              height="10.910031"
              width="3.3545172"
              id="rect8188-7-4-3"
-             style="display:inline;fill:none;stroke:url(#linearGradient8309-4);stroke-width:0.93548667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter8319-5)" />
+             style="display:inline;fill:none;stroke:url(#linearGradient8309-4);stroke-width:0.93548667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
           <rect
              y="1054.7385"
              x="21.514849"
