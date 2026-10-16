@@ -22,6 +22,9 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
@@ -86,6 +89,24 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		}
 	};
 
+	private final IResourceChangeListener resourceChangeListener = event -> {
+		IResourceDelta delta = event.getDelta();
+		if (delta == null || !hasProjectChanges(delta)) {
+			return;
+		}
+
+		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+			if (helper != null && viewer != null && !viewer.getControl().isDisposed()) {
+				helper.refreshWorkingSetTreeState();
+				viewer.refresh();
+			}
+		});
+	};
+
+	private boolean hasProjectChanges(IResourceDelta delta) {
+		return delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED, IResource.PROJECT).length > 0;
+	}
+
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		NavigatorContentService cs = (NavigatorContentService) aConfig.getService();
@@ -99,6 +120,8 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		workingSetManager.addPropertyChangeListener(workingSetManagerListener);
 
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
+				IResourceChangeEvent.POST_CHANGE);
 	}
 
 	@Override
@@ -175,6 +198,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		helper = null;
 		extensionStateModel.removePropertyChangeListener(rootModeListener);
 		workingSetManager.removePropertyChangeListener(workingSetManagerListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
 	}
 
 	@Override
