@@ -60,6 +60,15 @@
 }
 
 
+/* Ties '.MPart Composite > * > *' above on specificity, so it has to sit after
+ * it. Keep in step with the ProgressBar rule in e4-dark_globalstyle.css. */
+.MPart ProgressIndicator,
+.MPart ProgressIndicator > *,
+.MPart ProgressBar {
+    background-color: #5A5F62;
+    color: '#org-eclipse-ui-workbench-LINK_COLOR';
+}
+
 .MPart Section > Label {
     background-color: #2F2F2F;
     color: #ABCEDA;
