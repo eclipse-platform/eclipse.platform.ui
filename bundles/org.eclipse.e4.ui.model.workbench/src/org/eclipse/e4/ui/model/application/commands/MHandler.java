@@ -14,6 +14,7 @@
 package org.eclipse.e4.ui.model.application.commands;
 
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,6 +35,7 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MHandler#getCommand <em>Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.MHandler#getEnabledWhen <em>Enabled When</em>}</li>
  * </ul>
  *
  * @model
@@ -65,5 +67,33 @@ public interface MHandler extends MContribution {
 	 * @generated
 	 */
 	void setCommand(MCommand value);
+
+	/**
+	 * Returns the value of the '<em><b>Enabled When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * An optional core expression to control handler enablement. When specified, this takes precedence over the @CanExecute annotation.
+	 * </p>
+	 * @since 1.4
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Enabled When</em>' containment reference.
+	 * @see #setEnabledWhen(MExpression)
+	 * @model containment="true"
+	 * @generated
+	 */
+	MExpression getEnabledWhen();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.commands.MHandler#getEnabledWhen <em>Enabled When</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Enabled When</em>' containment reference.
+	 * @see #getEnabledWhen()
+	 * @since 1.4
+	 * @generated
+	 */
+	void setEnabledWhen(MExpression value);
 
 } // MHandler
