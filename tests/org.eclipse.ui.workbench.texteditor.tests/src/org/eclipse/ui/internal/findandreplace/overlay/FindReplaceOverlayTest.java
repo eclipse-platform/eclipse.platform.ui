@@ -17,6 +17,7 @@ import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitFor
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -56,6 +57,8 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 
 	private static final String USE_FIND_REPLACE_OVERLAY= "useFindReplaceOverlay"; //$NON-NLS-1$
 
+	private static final String RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS= "restrictFindReplaceOverlayToTextEditors"; //$NON-NLS-1$
+
 	private static final Rectangle VIEWER_BOUNDS= new Rectangle(0, 0, 800, 400);
 
 	@Override
@@ -87,6 +90,22 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		when(part.getAdapter(ITextViewer.class)).thenReturn(viewer);
 		when(part.getAdapter(IFindReplaceTarget.class)).thenReturn(viewer.getFindReplaceTarget());
 		return part;
+	}
+
+	@Test
+	public void testOverlayCanOnlyBeOpenedInPartExposingTextViewerWidget() {
+		openTextViewer("line");
+
+		assertTrue(FindReplaceOverlay.canOpenInPart(createHostPart(getTextViewer())));
+		assertFalse(FindReplaceOverlay.canOpenInPart(Mockito.mock(IWorkbenchPart.class)));
+		assertFalse(FindReplaceOverlay.canOpenInPart(null));
+	}
+
+	@Test
+	public void testOverlayRejectsPartItCannotBeOpenedIn() {
+		IWorkbenchPart partWithoutTextViewer= Mockito.mock(IWorkbenchPart.class);
+
+		assertThrows(IllegalArgumentException.class, () -> new FindReplaceOverlay(partWithoutTextViewer, null));
 	}
 
 	@Test
@@ -238,6 +257,24 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 			assertFalse(getDialog().isShown(), "dialog should be closed after changing preference");
 		} finally {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
+			reopenFindReplaceUIForTextViewer();
+		}
+	}
+
+	@Test
+	public void testRestrictOverlayToTextEditorsViaPreference() {
+		initializeTextViewerWithFindReplaceUI("");
+		IEclipsePreferences preferences= InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean restrictToTextEditorsPreference= preferences.getBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS,
+				false);
+		try {
+			// The part hosting the viewer is no text editor, so restricting the overlay to
+			// text editors takes it away from that part.
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS, true);
+
+			assertFalse(getDialog().isShown(), "overlay should be closed after changing preference");
+		} finally {
+			preferences.putBoolean(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS, restrictToTextEditorsPreference);
 			reopenFindReplaceUIForTextViewer();
 		}
 	}

@@ -66,10 +66,22 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 	private static final String FIND_REPLACE_OVERLAY_AT_BOTTOM = "findReplaceOverlayAtBottom"; //$NON-NLS-1$
 
+	private static final String RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS = "restrictFindReplaceOverlayToTextEditors"; //$NON-NLS-1$
+
+	// Whether the overlay can be opened in the part is only known to the overlay
+	// itself, whether it shall be is a matter of configuration.
 	private boolean shouldUseOverlay() {
+		if (!FindReplaceOverlay.canOpenInPart(fWorkbenchPart)) {
+			return false;
+		}
 		IPreferencesService preferences = Platform.getPreferencesService();
-		boolean overlayPreference = preferences.getBoolean(INSTANCE_SCOPE_NODE_NAME, USE_FIND_REPLACE_OVERLAY, true, null);
-		return overlayPreference && fWorkbenchPart instanceof StatusTextEditor;
+		if (!preferences.getBoolean(INSTANCE_SCOPE_NODE_NAME, USE_FIND_REPLACE_OVERLAY, true, null)) {
+			return false;
+		}
+		// Restores the former behavior of offering the overlay for text editors only.
+		boolean restrictedToTextEditors = preferences.getBoolean(INSTANCE_SCOPE_NODE_NAME,
+				RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS, false, null);
+		return !restrictedToTextEditors || fWorkbenchPart instanceof StatusTextEditor;
 	}
 
 	private static boolean shouldPositionOverlayOnTop() {
@@ -82,7 +94,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		if (this.overlay == null) {
 			return;
 		}
-		if (event.getKey().equals(USE_FIND_REPLACE_OVERLAY)) {
+		if (event.getKey().equals(USE_FIND_REPLACE_OVERLAY)
+				|| event.getKey().equals(RESTRICT_FIND_REPLACE_OVERLAY_TO_TEXT_EDITORS)) {
+			// The next invocation decides anew, so the open overlay must not outlive the change.
 			this.overlay.close();
 		} else if (event.getKey().equals(FIND_REPLACE_OVERLAY_AT_BOTTOM)) {
 			this.overlay.setPositionToTop(shouldPositionOverlayOnTop());
