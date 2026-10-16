@@ -121,15 +121,7 @@
          style="stop-color:#eec290;stop-opacity:1" /><stop
          style="stop-color:#c7700e;stop-opacity:1"
          offset="1"
-         id="stop4262" /></linearGradient><filter
-       height="1.0954513"
-       y="-0.047725668"
-       width="1.0967932"
-       x="-0.048396592"
-       id="filter4285-9"
-       style="color-interpolation-filters:sRGB"><feGaussianBlur
-         id="feGaussianBlur4287-9"
-         stdDeviation="0.10000000000000001" /></filter><linearGradient
+         id="stop4262" /></linearGradient><linearGradient
        xlink:href="#linearGradient4527"
        id="linearGradient4533"
        x1="29.521629"
@@ -234,7 +226,7 @@
          transform="matrix(0,0.69810267,-0.69299598,0,783.20728,1008.8838)"
          d="m 2.2999628,1043.3702 1.9823895,-2.1047 -1.6734053,-2.5419 2.1987064,2.0209 2.4513363,-1.6427 -2.0383649,2.1623 1.7419712,2.4882 -2.2030799,-2.0431 z"
          id="path4252-6"
-         style="display:inline;opacity:0.9;fill:#ffffff;fill-opacity:0.815842;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4285-9)" /><path
+         style="display:inline;opacity:0.9;fill:#ffffff;fill-opacity:0.815842;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" /><path
          id="path4696"
          d="m 44.753401,1036.7376 h 7.552567"
          style="fill:none;fill-rule:evenodd;stroke:#bbc5d8;stroke-width:1.67656;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /><path

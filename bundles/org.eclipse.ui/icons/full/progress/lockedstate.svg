@@ -133,16 +133,6 @@
        gradientUnits="userSpaceOnUse"
        id="linearGradient5103"
        xlink:href="#linearGradient4878" />
-    <filter
-       id="filter5152"
-       x="-0.11338032"
-       y="-0.15654873"
-       width="1.2267606"
-       height="1.3130975">
-      <feGaussianBlur
-         stdDeviation="0.32374297"
-         id="feGaussianBlur5154" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient5156"
        id="linearGradient5162"
@@ -187,7 +177,7 @@
        rx="1.1048543"
        ry="1.1048543" />
     <rect
-       style="fill:none;stroke:url(#linearGradient5162);stroke-width:0.87896538;stroke-opacity:1;display:inline;filter:url(#filter5152)"
+       style="fill:none;stroke:url(#linearGradient5162);stroke-width:0.87896538;stroke-opacity:1;display:inline"
        id="rect4838-4"
        width="10.729074"
        height="7.770525"

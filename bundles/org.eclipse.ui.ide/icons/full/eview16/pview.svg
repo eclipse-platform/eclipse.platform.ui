@@ -139,16 +139,6 @@
        y1="1054.6906"
        x2="15.633883"
        y2="1056.2894" />
-    <filter
-       id="filter3817"
-       x="-0.068235832"
-       y="-0.068235832"
-       width="1.1364717"
-       height="1.1364717">
-      <feGaussianBlur
-         stdDeviation="0.15706387"
-         id="feGaussianBlur3819" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -204,7 +194,7 @@
            transform="matrix(1.1386602,0,0,1.1034706,-2.2282159,1033.4277)"
            d="m 14.931318,12.480249 a 2.762136,2.762136 0 1 1 -5.5242722,0 2.762136,2.762136 0 1 1 5.5242722,0 z"
            id="path14185"
-           style="fill:url(#linearGradient14981);fill-opacity:1;stroke:none;filter:url(#filter3817)" />
+           style="fill:url(#linearGradient14981);fill-opacity:1;stroke:none" />
         <path
            style="fill:url(#linearGradient14983);fill-opacity:1;stroke:none;display:inline"
            id="path10796-2-6-0"

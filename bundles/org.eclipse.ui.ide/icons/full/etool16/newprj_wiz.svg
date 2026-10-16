@@ -106,16 +106,6 @@
        y1="398.98798"
        x2="548.45923"
        y2="373.77069" />
-    <filter
-       id="filter4929-7"
-       x="-0.31518737"
-       width="1.6303747"
-       y="-0.42999801"
-       height="1.859996">
-      <feGaussianBlur
-         stdDeviation="3.5620748"
-         id="feGaussianBlur4931-6" />
-    </filter>
     <mask
        maskUnits="userSpaceOnUse"
        id="mask4917-4">
@@ -309,7 +299,7 @@
                          mask="url(#mask4917-4)"
                          id="g4914-6">
                         <rect
-                           style="display:inline;opacity:0.5;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.38039374;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4929-7)"
+                           style="display:inline;opacity:0.5;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.38039374;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
                            id="rect13693-2-2-9"
                            width="30.899641"
                            height="22.649353"

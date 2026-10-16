@@ -85,16 +85,6 @@
          offset="1"
          style="stop-color:#989891;stop-opacity:1" />
     </linearGradient>
-    <filter
-       id="filter7367"
-       x="-0.38776938"
-       width="1.7755388"
-       y="-0.22923523"
-       height="1.4584703">
-      <feGaussianBlur
-         stdDeviation="0.68314364"
-         id="feGaussianBlur7369" />
-    </filter>
     <mask
        maskUnits="userSpaceOnUse"
        id="mask7379">
@@ -166,7 +156,7 @@
       <g
          transform="translate(-20,-1.2913233e-7)"
          id="g7056-7"
-         style="display:inline;fill:#ffffff;stroke:#ffffff;filter:url(#filter7367);stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
+         style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
         <path
            transform="translate(-12.551145,0)"
            id="path7582-8"

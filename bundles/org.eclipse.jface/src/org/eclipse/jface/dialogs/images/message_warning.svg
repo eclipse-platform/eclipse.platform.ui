@@ -103,16 +103,6 @@
        r="3.7734281"
        gradientTransform="matrix(2.8249601,0,0,1.7930635,-46.347422,-833.43041)"
        gradientUnits="userSpaceOnUse" />
-    <filter
-       id="filter3805"
-       x="-0.39630983"
-       width="1.7926197"
-       y="-0.091701626"
-       height="1.1834033">
-      <feGaussianBlur
-         stdDeviation="0.077130848"
-         id="feGaussianBlur3807" />
-    </filter>
     <linearGradient
        y2="0.39338252"
        x2="6.3885393"
@@ -176,7 +166,7 @@
            style="fill:url(#radialGradient4963);fill-opacity:1;stroke:url(#linearGradient4200);stroke-width:0.5488025;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
         <g
            id="g3797"
-           style="opacity:0.5;stroke:#fff5da;stroke-width:0.5488025;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter3805)">
+           style="opacity:0.5;stroke:#fff5da;stroke-width:0.5488025;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">
           <path
              style="fill:#ffdb9f;fill-opacity:1;stroke:#fff5da;stroke-width:0.5916447;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
              id="path4253-1"

@@ -257,17 +257,6 @@
        id="linearGradient3208"
        xlink:href="#linearGradient5300-6" />
     <filter
-       color-interpolation-filters="sRGB"
-       id="filter5428-9-1"
-       x="-0.20818877"
-       y="-0.21422231"
-       width="1.4163775"
-       height="1.4284446">
-      <feGaussianBlur
-         stdDeviation="0.22207033"
-         id="feGaussianBlur5430-2-9" />
-    </filter>
-    <filter
        id="filter4177"
        x="-0.23618249"
        width="1.5518694"
@@ -376,7 +365,7 @@
         <path
            id="path5426-2"
            d="m 4.984376,1047.2528 6.118276,-6.0089"
-           style="opacity:0.50000000000000000;fill:#ffffff;stroke:#ffffff;stroke-width:2.11441896;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter5428-9-1)" />
+           style="opacity:0.50000000000000000;fill:#ffffff;stroke:#ffffff;stroke-width:2.11441896;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
         <path
            transform="translate(0,1036.3622)"
            id="path5006-9"

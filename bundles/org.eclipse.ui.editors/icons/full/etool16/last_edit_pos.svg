@@ -54,17 +54,6 @@
        y2="1046.4902"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(-1,0,0,1,17,0)" />
-    <filter
-       style="color-interpolation-filters:sRGB"
-       id="filter4499"
-       x="-0.07215115"
-       width="1.1443023"
-       y="-0.071849168"
-       height="1.1436983">
-      <feGaussianBlur
-         stdDeviation="0.21929058"
-         id="feGaussianBlur4501" />
-    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -96,7 +85,7 @@
        height="16"
        width="16" />
     <ellipse
-       style="display:inline;opacity:0.90399996;fill:#e9deb7;fill-opacity:1;stroke:none;stroke-width:1.37168431;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4499)"
+       style="display:inline;opacity:0.90399996;fill:#e9deb7;fill-opacity:1;stroke:none;stroke-width:1.37168431;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4469"
        cx="13.727267"
        cy="1039.1163"

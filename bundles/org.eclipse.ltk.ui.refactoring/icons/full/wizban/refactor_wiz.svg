@@ -288,17 +288,6 @@
          offset="1"
          id="stop4582" />
     </linearGradient>
-    <filter
-       height="1.0954513"
-       y="-0.047725668"
-       width="1.0967932"
-       x="-0.048396592"
-       id="filter4285-9-8-1"
-       style="color-interpolation-filters:sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur4287-9-4-2"
-         stdDeviation="0.10000000000000001" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient4258"
        id="linearGradient4341-5"
@@ -407,17 +396,6 @@
        y1="1041.0833"
        x2="75.020309"
        y2="1023.2908" />
-    <filter
-       style="color-interpolation-filters:sRGB"
-       id="filter4344-8-9"
-       x="-0.027383926"
-       width="1.0547679"
-       y="-0.085576576"
-       height="1.1711532">
-      <feGaussianBlur
-         stdDeviation="0.57051052"
-         id="feGaussianBlur4346-1-7" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient4308"
        id="linearGradient5809"
@@ -470,7 +448,7 @@
     <path
        id="rect4001-3-4-5-8-3"
        d="m 61.725004,1022.8099 21.27431,-0.1009 1.654984,3.7793 -20.678174,12.1198 -29.322882,0.1009 z"
-       style="display:inline;opacity:0.32900002;fill:url(#linearGradient5809);fill-opacity:1;stroke:none;filter:url(#filter4344-8-9)"
+       style="display:inline;opacity:0.32900002;fill:url(#linearGradient5809);fill-opacity:1;stroke:none"
        transform="matrix(0.58090292,0,0,0.41711614,-19.334783,593.3449)" />
     <path
        id="rect4001-3-4-5"
@@ -591,7 +569,7 @@
          id="path5675-4-4-9" />
     </g>
     <path
-       style="display:inline;opacity:0.9;fill:#ffffff;fill-opacity:0.81584156;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4285-9-8-1)"
+       style="display:inline;opacity:0.9;fill:#ffffff;fill-opacity:0.81584156;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
        id="path4252-6-3-4"
        d="m 2.2999628,1043.3702 1.9823895,-2.1047 -1.6734053,-2.5419 2.1987064,2.0209 2.4513363,-1.6427 -2.0383649,2.1623 1.7419712,2.4882 -2.2030799,-2.0431 z"
        transform="matrix(0,0.56760589,-0.57097849,0,614.79974,1008.3382)" />
