@@ -47,6 +47,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.DocumentFooterCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.IPlaceholderCodeMining;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.Annotation;
@@ -350,6 +351,19 @@ public class CodeMiningManager implements Runnable {
 	 */
 	static boolean isValidMining(ICodeMining mining) {
 		return mining != null && mining.getLabel() != null && !mining.getLabel().isEmpty();
+	}
+
+
+	/**
+	 * Returns {@code true} if the given mining has a non-null label and is not a un-resolved
+	 * {@linkplain IPlaceholderCodeMining}
+	 *
+	 * @param mining the mining to check
+	 * @return {@code true}, if the mining is not a {@linkplain IPlaceholderCodeMining} or is
+	 *         resolved.
+	 */
+	static boolean isNotUnresolvedPlaceholder(ICodeMining mining) {
+		return !(mining instanceof IPlaceholderCodeMining) || mining.isResolved();
 	}
 
 	/**
