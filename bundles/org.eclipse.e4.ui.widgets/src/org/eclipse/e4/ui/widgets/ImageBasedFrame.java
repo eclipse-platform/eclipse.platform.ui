@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2018 IBM Corporation and others.
+ * Copyright (c) 2012, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -120,7 +121,7 @@ public class ImageBasedFrame extends Canvas {
 
 	public Rectangle getHandleRect() {
 		Rectangle handleRect = new Rectangle(0, 0, 0, 0);
-		if (!draggable || handle.isDisposed()) {
+		if (!draggable || handle == null || handle.isDisposed()) {
 			return handleRect;
 		}
 
@@ -156,7 +157,7 @@ public class ImageBasedFrame extends Canvas {
 	}
 
 	protected void drawFrame(PaintEvent e) {
-		if (handle.isDisposed() || (imageCache != null && imageCache.isDisposed())) {
+		if ((handle != null && handle.isDisposed()) || (imageCache != null && imageCache.isDisposed())) {
 			reskin(SWT.NONE);
 			return;
 		}
@@ -183,9 +184,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = 0;
 		dstRect.width = w1;
 		dstRect.height = h1;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Top Rail
 		srcRect.x = w1;
@@ -196,9 +195,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = 0;
 		dstRect.width = inner.x + handleWidth;
 		dstRect.height = h1;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// handle (if vertical)
 		if (handleHeight > 0) {
@@ -231,9 +228,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = 0;
 		dstRect.width = w3;
 		dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Left Rail
 		srcRect.x = 0;
@@ -244,9 +239,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1;
 		dstRect.width = w1;
 		dstRect.height = inner.y + handleHeight;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Handle (if horizontal)
 		if (handleWidth > 0) {
@@ -278,9 +271,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1;
 		dstRect.width = w3;
 		dstRect.height = inner.y + handleHeight;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Bottom Left
 		srcRect.x = 0;
@@ -291,9 +282,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1 + handleHeight + inner.y;
 		dstRect.width = w1;
 		dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Bottom Rail
 		srcRect.x = w1;
@@ -304,9 +293,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1 + handleHeight + inner.y;
 		dstRect.width = handleWidth + inner.x;
 		dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Bottom right
 		srcRect.x = w1 + w2;
@@ -317,9 +304,7 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1 + handleHeight + inner.y;
 		dstRect.width = w3;
 		dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
+		drawFramePart(e.gc, srcRect, dstRect);
 
 		// Imterior
 		srcRect.x = w1;
@@ -330,7 +315,15 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.y = h1 + handleHeight;
 		dstRect.width = inner.x;
 		dstRect.height = inner.y;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+		drawFramePart(e.gc, srcRect, dstRect);
+	}
+
+	private void drawFramePart(GC gc, Rectangle srcRect, Rectangle dstRect) {
+		// A frame without a frame image only paints its handle
+		if (imageCache == null) {
+			return;
+		}
+		gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
 				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
 				dstRect.height);
 	}
