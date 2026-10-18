@@ -27,4 +27,10 @@ public class LinkElement extends ControlElement {
 		return (Link) getControl();
 	}
 
+	@Override
+	public void reset() {
+		getLink().setLinkForeground(null);
+		super.reset();
+	}
+
 }
