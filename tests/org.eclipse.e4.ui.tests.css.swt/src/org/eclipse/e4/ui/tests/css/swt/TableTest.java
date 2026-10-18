@@ -14,6 +14,10 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
@@ -70,6 +74,29 @@ public class TableTest {
 				"Table { swt-header-background-color: #FF0000; swt-header-color: #0000FF }");
 		assertEquals(RED, tableToTest.getHeaderBackground().getRGB());
 		assertEquals(BLUE, tableToTest.getHeaderForeground().getRGB());
+	}
+
+	@Test
+	void testTableLinesVisibleReset() {
+		Table widgetToTest = createTestTable("Table { swt-lines-visible: true; }");
+		assertTrue(widgetToTest.getLinesVisible());
+
+		css.getEngine().reset();
+
+		assertFalse(widgetToTest.getLinesVisible());
+	}
+
+	@Test
+	void testTableLinesVisibleResetKeepsProgrammaticValue() throws Exception {
+		Table widgetToTest = createTestTable("");
+		widgetToTest.setLinesVisible(true);
+		css.getEngine().parseStyleSheet(new StringReader("Table { swt-lines-visible: false; }"));
+		css.getEngine().applyStyles(widgetToTest, false);
+		assertFalse(widgetToTest.getLinesVisible());
+
+		css.getEngine().reset();
+
+		assertTrue(widgetToTest.getLinesVisible());
 	}
 
 }

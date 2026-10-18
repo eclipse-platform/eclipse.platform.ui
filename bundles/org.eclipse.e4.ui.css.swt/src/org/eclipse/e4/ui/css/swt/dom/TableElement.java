@@ -15,6 +15,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import java.util.function.Supplier;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyLinesVisibleSWTHandler;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
@@ -30,6 +31,7 @@ public class TableElement extends ControlElement implements IHeaderCustomization
 	public void reset() {
 		setHeaderColor(null);
 		setHeaderBackgroundColor(null);
+		CSSPropertyLinesVisibleSWTHandler.restoreDefaultLinesVisible(getControl());
 		super.reset();
 	}
 
