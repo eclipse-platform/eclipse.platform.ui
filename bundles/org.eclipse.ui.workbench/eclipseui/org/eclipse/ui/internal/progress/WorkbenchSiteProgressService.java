@@ -155,6 +155,12 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	}
 
 	@Override
+	public void busyCursorWhile(IRunnableWithProgress runnable, boolean cancelable)
+			throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().busyCursorWhile(runnable, cancelable);
+	}
+
+	@Override
 	public void schedule(Job job, long delay, boolean useHalfBusyCursor) {
 		job.addJobChangeListener(getJobChangeListener(useHalfBusyCursor));
 		job.schedule(delay);
