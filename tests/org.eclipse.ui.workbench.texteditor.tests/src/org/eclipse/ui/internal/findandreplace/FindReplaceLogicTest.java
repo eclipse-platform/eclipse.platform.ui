@@ -1160,7 +1160,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,3}");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("001 002 003"));
+		assertEquals("001 002 003", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
 	}
 
@@ -1173,7 +1173,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "x", "#{10,10,0}");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("10 20 30"));
+		assertEquals("10 20 30", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
 	}
 
@@ -1185,13 +1185,13 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2"));
+		assertEquals("1 2", textViewer.getDocument().get());
 
 		// Reset document and perform again with the same replace string set anew
 		textViewer.setDocument(new Document("a a"));
 		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2"));
+		assertEquals("1 2", textViewer.getDocument().get());
 	}
 
 	@Test
@@ -1202,12 +1202,12 @@ public class FindReplaceLogicTest {
 
 		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2"));
+		assertEquals("1 2", textViewer.getDocument().get());
 
 		// Second Replace All on new content must restart from 1, not continue from 3
 		textViewer.setDocument(new Document("a a"));
 		findReplaceLogic.performReplaceAll();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2"));
+		assertEquals("1 2", textViewer.getDocument().get());
 	}
 
 	@Test
@@ -1219,7 +1219,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "z", "#{10,-2,0}");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("10 8 6 4"));
+		assertEquals("10 8 6 4", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
 	}
 
@@ -1232,7 +1232,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "x", "item_#{1,1,2}");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("item_01 item_02"));
+		assertEquals("item_01 item_02", textViewer.getDocument().get());
 	}
 
 	@Test
@@ -1244,7 +1244,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "a", "b");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("b b b"));
+		assertEquals("b b b", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
 	}
 
@@ -1258,7 +1258,7 @@ public class FindReplaceLogicTest {
 		setFindAndReplaceString(findReplaceLogic, "(\\w+)", "$1_#{1,1,2}");
 		findReplaceLogic.performReplaceAll();
 
-		assertThat(textViewer.getDocument().get(), equalTo("aa_01 bb_02 cc_03"));
+		assertEquals("aa_01 bb_02 cc_03", textViewer.getDocument().get());
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
 	}
 
@@ -1272,13 +1272,13 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performSearch();
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getDocument().get(), equalTo("1 a a"));
+		assertEquals("1 a a", textViewer.getDocument().get());
 
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2 a"));
+		assertEquals("1 2 a", textViewer.getDocument().get());
 
 		findReplaceLogic.performSelectAndReplace();
-		assertThat(textViewer.getDocument().get(), equalTo("1 2 3"));
+		assertEquals("1 2 3", textViewer.getDocument().get());
 	}
 
 }
