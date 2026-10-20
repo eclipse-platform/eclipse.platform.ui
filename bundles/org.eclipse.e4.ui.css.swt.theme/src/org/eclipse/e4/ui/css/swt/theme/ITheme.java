@@ -26,4 +26,15 @@ public interface ITheme {
 	 * @return the label
 	 */
 	String getLabel();
+
+	/**
+	 * Whether this theme is meant to be used with a dark appearance, as declared by
+	 * the <code>isDarkTheme</code> attribute of the theme extension. Implementations
+	 * that do not override this keep the id based classification the platform used
+	 * before the attribute existed.
+	 */
+	default boolean isDark() {
+		String id = getId();
+		return id != null && id.contains("dark"); //$NON-NLS-1$
+	}
 }

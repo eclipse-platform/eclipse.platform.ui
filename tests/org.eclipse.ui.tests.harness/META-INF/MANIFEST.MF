@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Harness Plug-in
 Bundle-SymbolicName: org.eclipse.ui.tests.harness;singleton:=true
-Bundle-Version: 1.11.100.qualifier
+Bundle-Version: 1.11.300.qualifier
 Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.runtime,
@@ -10,11 +10,13 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Import-Package: org.junit.jupiter.api;version="[5.0.0,6.0.0)",
- org.junit.jupiter.api.extension;version="[5.0.0,6.0.0)"
+ org.junit.jupiter.api.extension;version="[5.0.0,6.0.0)",
+ org.junit.platform.engine;version="[1.14.0,2.0.0)",
+ org.junit.platform.launcher;version="[1.14.0,2.0.0)"
 Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
  org.eclipse.ui.tests.internal.util;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Automatic-Module-Name: org.eclipse.ui.tests.harness
 Bundle-Vendor: Eclipse.org

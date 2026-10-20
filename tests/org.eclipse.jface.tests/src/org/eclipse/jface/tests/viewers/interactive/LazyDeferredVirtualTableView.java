@@ -41,7 +41,7 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 
 			int rangeEnd = -1;
 
-			UIJob updateJob = UIJob.create("Update", (ICoreRunnable) m -> {
+			UIJob updateJob = UIJob.create("Update", (ICoreRunnable) _ -> {
 				if (viewer.getControl().isDisposed()) {
 					throw new OperationCanceledException();
 				}

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -33,9 +34,9 @@ import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.JobTreeElement;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.TaskInfo;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.tests.TestPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -168,8 +169,8 @@ public class ProgressViewTests extends ProgressTestCase {
 				job.schedule();
 				scheduleOrder.append(job.getName()).append(", ");
 			}
-			TestPlugin.getDefault().getLog()
-					.log(new Status(IStatus.OK, TestPlugin.PLUGIN_ID, scheduleOrder.toString()));
+			ILog.of(ProgressViewTests.class)
+					.log(new Status(IStatus.OK, ProgressViewTests.class, scheduleOrder.toString()));
 
 			// Wait for all jobs to be running
 			for (DummyJob job : allJobs) {
@@ -203,6 +204,53 @@ public class ProgressViewTests extends ProgressTestCase {
 			for (DummyJob job : jobsToSchedule) {
 				job.shouldFinish = true;
 			}
+		}
+	}
+
+	@Test
+	public void testShortJobIsSuppressedFromView() throws Exception {
+		// A grace period far longer than the job's lifetime: the job must never
+		// be shown as running and therefore never flickers in the view.
+		System.setProperty(ProgressManager.GRACE_PERIOD_PROPERTY, Long.toString(TimeUnit.MINUTES.toMillis(1)));
+		DummyJob job = new DummyJob("Short job", Status.OK_STATUS);
+		try {
+			openProgressView();
+			job.schedule();
+			job.join();
+			// Flush any pending throttled updates.
+			processEventsUntil(() -> false, 500);
+			assertEquals("Short job should not appear in the progress view", 0, countJobs(job));
+		} finally {
+			System.clearProperty(ProgressManager.GRACE_PERIOD_PROPERTY);
+			processEvents();
+		}
+	}
+
+	@Test
+	public void testLongRunningJobAppearsAfterGracePeriod() throws Exception {
+		long grace = TimeUnit.SECONDS.toMillis(2);
+		System.setProperty(ProgressManager.GRACE_PERIOD_PROPERTY, Long.toString(grace));
+		DummyJob job = new DummyJob("Grace period job", Status.OK_STATUS);
+		job.shouldFinish = false;
+		try {
+			openProgressView();
+			long start = System.currentTimeMillis();
+			job.schedule();
+			// Wait until the job is actually running.
+			processEventsUntil(() -> job.inProgress, TimeUnit.SECONDS.toMillis(3));
+			// Within the grace period the job must not be shown yet.
+			if (System.currentTimeMillis() - start < grace) {
+				assertEquals("Job appeared before its grace period elapsed", 0, countJobs(job));
+			}
+			// Once the grace period elapses, the job appears.
+			processEventsUntil(() -> countJobs(job) == 1, grace + TimeUnit.SECONDS.toMillis(5));
+			assertEquals("Job did not appear after its grace period", 1, countJobs(job));
+		} finally {
+			job.shouldFinish = true;
+			job.cancel();
+			job.join();
+			processEvents();
+			System.clearProperty(ProgressManager.GRACE_PERIOD_PROPERTY);
 		}
 	}
 

@@ -16,6 +16,7 @@ package org.eclipse.jface.text.codemining;
 
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -34,6 +35,8 @@ import org.eclipse.jface.text.source.inlined.Positions;
  * @since 3.13
  */
 public abstract class LineHeaderCodeMining extends AbstractCodeMining {
+
+	private static final Pattern LINE_BREAK= Pattern.compile("\\r?\\n|\\r"); //$NON-NLS-1$
 
 	/**
 	 * CodeMining constructor to locate the code mining before the given line number.
@@ -84,16 +87,18 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 	}
 
 	static Point draw(String label, GC gc, StyledText textWidget, int x, int y, Callable<Point> superDrawCallable) {
+		int lineHeight= textWidget.getLineHeight();
+		int lineSpacing= textWidget.getLineSpacing();
 		String title= label != null ? label : "no command"; //$NON-NLS-1$
-		String[] lines= title.split("\\r?\\n|\\r"); //$NON-NLS-1$
+		String[] lines= LINE_BREAK.split(title);
 		if (lines.length > 1) {
 			Point result= new Point(0, 0);
 			for (String line : lines) {
 				gc.drawString(line, x, y, true);
 				Point ext= gc.stringExtent(line);
 				result.x= Math.max(result.x, ext.x);
-				result.y+= ext.y + textWidget.getLineSpacing();
-				y+= ext.y + textWidget.getLineSpacing();
+				result.y+= lineHeight + lineSpacing;
+				y+= lineHeight + lineSpacing;
 			}
 			return result;
 		} else {

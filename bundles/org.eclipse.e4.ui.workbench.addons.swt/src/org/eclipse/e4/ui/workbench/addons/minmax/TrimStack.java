@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -943,14 +943,6 @@ public class TrimStack {
 				originalParent = ctrl.getParent();
 				ctrl.setParent(hostPane);
 
-				// Hack ! Force a resize of the CTF to make sure the hosted
-				// view is the correct size...see bug 434062 for details
-				if (ctf != null) {
-					Rectangle bb = ctf.getBounds();
-					bb.width--;
-					ctf.setBounds(bb);
-				}
-
 				clientAreaComposite.addControlListener(caResizeListener);
 
 				// Set the initial location
@@ -959,6 +951,11 @@ public class TrimStack {
 				hostPane.addListener(SWT.Traverse, escapeListener);
 
 				hostPane.layout(true);
+				// Lay out the hosted view at its final size, also when the CTF keeps
+				// its bounds and so gets no resize (see bug 434062)
+				if (ctf != null) {
+					ctf.layout(false, true);
+				}
 				hostPane.moveAbove(null);
 				hostPane.setVisible(true);
 

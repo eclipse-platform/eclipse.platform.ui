@@ -14,8 +14,8 @@
 package org.eclipse.text.templates;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jface.text.templates.TemplateContextType;
 
@@ -32,7 +32,7 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 public class ContextTypeRegistry {
 
 	/** all known context types */
-	private final Map<String, TemplateContextType> fContextTypes= new LinkedHashMap<>();
+	private final Map<String, TemplateContextType> fContextTypes= new ConcurrentHashMap<>();
 
 	/**
 	 * Adds a context type to the registry. If there already is a context type

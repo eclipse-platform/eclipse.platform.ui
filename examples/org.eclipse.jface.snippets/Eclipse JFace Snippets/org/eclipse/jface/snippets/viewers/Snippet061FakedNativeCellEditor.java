@@ -144,7 +144,7 @@ public class Snippet061FakedNativeCellEditor {
 		private Image makeShot(Control control, boolean type) {
 			// Hopefully no platform uses exactly this color because we'll make
 			// it transparent in the image.
-			Color greenScreen = new Color(control.getDisplay(), 222, 223, 224);
+			Color greenScreen = new Color(222, 223, 224);
 
 			Shell shell = new Shell(control.getShell(), SWT.NO_TRIM);
 

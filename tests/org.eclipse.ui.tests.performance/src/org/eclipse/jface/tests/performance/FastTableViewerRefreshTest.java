@@ -17,7 +17,7 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import org.eclipse.swt.widgets.TableItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FastTableViewerRefreshTest extends TableViewerRefreshTest {
 
@@ -39,8 +39,7 @@ public class FastTableViewerRefreshTest extends TableViewerRefreshTest {
 		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -68,8 +67,7 @@ public class FastTableViewerRefreshTest extends TableViewerRefreshTest {
 				}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 }

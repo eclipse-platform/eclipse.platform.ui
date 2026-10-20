@@ -55,89 +55,28 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 
 	@Override
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
-		if (uiElement instanceof MArea) {
-			if (areaRenderer == null) {
-				areaRenderer = new AreaRenderer();
-				initRenderer(areaRenderer);
-			}
-			return areaRenderer;
-		} else if (uiElement instanceof MPart) {
-			if (contributedPartRenderer == null) {
-				contributedPartRenderer = new ContributedPartRenderer();
-				initRenderer(contributedPartRenderer);
-			}
-			return contributedPartRenderer;
-		} else if (uiElement instanceof MMenu) {
-			if (menuRenderer == null) {
-				menuRenderer = new MenuManagerRenderer();
-				initRenderer(menuRenderer);
-			}
-			return menuRenderer;
-		} else if (uiElement instanceof MToolBar) {
-			if (toolbarRenderer == null) {
-				toolbarRenderer = new ToolBarManagerRenderer();
-				initRenderer(toolbarRenderer);
-			}
-			return toolbarRenderer;
-		} else if (uiElement instanceof MMenuSeparator
-				|| uiElement instanceof MToolBarSeparator) {
-			if (separatorRenderer == null) {
-				separatorRenderer = new SeparatorRenderer();
-				initRenderer(separatorRenderer);
-			}
-			return separatorRenderer;
-		} else if (uiElement instanceof MPlaceholder) {
-			if (elementRefRenderer == null) {
-				elementRefRenderer = new ElementReferenceRenderer();
-				initRenderer(elementRefRenderer);
-			}
-			return elementRefRenderer;
-		} else if (uiElement instanceof MPerspective) {
-			if (perspRenderer == null) {
-				perspRenderer = new PerspectiveRenderer();
-				initRenderer(perspRenderer);
-			}
-			return perspRenderer;
-		} else if (uiElement instanceof MPerspectiveStack) {
-			if (perspStackRenderer == null) {
-				perspStackRenderer = new PerspectiveStackRenderer();
-				initRenderer(perspStackRenderer);
-			}
-			return perspStackRenderer;
-		} else if (uiElement instanceof MPartSashContainer) {
-			if (partSashRenderer == null) {
-				partSashRenderer = new SashRenderer();
-				initRenderer(partSashRenderer);
-			}
-			return partSashRenderer;
-		} else if (uiElement instanceof MPartStack) {
-			if (stackRenderer == null) {
-				stackRenderer = new StackRenderer();
-				initRenderer(stackRenderer);
-			}
-			return stackRenderer;
-		} else if (uiElement instanceof MTrimBar) {
-			if (trimBarRenderer == null) {
-				trimBarRenderer = new TrimBarRenderer();
-				initRenderer(trimBarRenderer);
-			}
-			return trimBarRenderer;
-		} else if (uiElement instanceof MToolControl) {
-			if (toolControlRenderer == null) {
-				toolControlRenderer = new ToolControlRenderer();
-				initRenderer(toolControlRenderer);
-			}
-			return toolControlRenderer;
-		} else if (uiElement instanceof MWindow) {
-			if (wbwRenderer == null) {
-				wbwRenderer = new WBWRenderer();
-				initRenderer(wbwRenderer);
-			}
-			return wbwRenderer;
-		}
+		return switch (uiElement) {
+		case MArea a -> areaRenderer != null ? areaRenderer : initialized(areaRenderer = new AreaRenderer());
+		case MPart p -> contributedPartRenderer != null ? contributedPartRenderer : initialized(contributedPartRenderer = new ContributedPartRenderer());
+		case MMenu m -> menuRenderer != null ? menuRenderer : initialized(menuRenderer = new MenuManagerRenderer());
+		case MToolBar t -> toolbarRenderer != null ? toolbarRenderer : initialized(toolbarRenderer = new ToolBarManagerRenderer());
+		case MMenuSeparator s -> separatorRenderer != null ? separatorRenderer : initialized(separatorRenderer = new SeparatorRenderer());
+		case MToolBarSeparator s -> separatorRenderer != null ? separatorRenderer : initialized(separatorRenderer = new SeparatorRenderer());
+		case MPlaceholder p -> elementRefRenderer != null ? elementRefRenderer : initialized(elementRefRenderer = new ElementReferenceRenderer());
+		case MPerspective p -> perspRenderer != null ? perspRenderer : initialized(perspRenderer = new PerspectiveRenderer());
+		case MPerspectiveStack s -> perspStackRenderer != null ? perspStackRenderer : initialized(perspStackRenderer = new PerspectiveStackRenderer());
+		case MPartSashContainer s -> partSashRenderer != null ? partSashRenderer : initialized(partSashRenderer = new SashRenderer());
+		case MPartStack s -> stackRenderer != null ? stackRenderer : initialized(stackRenderer = new StackRenderer());
+		case MTrimBar t -> trimBarRenderer != null ? trimBarRenderer : initialized(trimBarRenderer = new TrimBarRenderer());
+		case MToolControl t -> toolControlRenderer != null ? toolControlRenderer : initialized(toolControlRenderer = new ToolControlRenderer());
+		case MWindow w -> wbwRenderer != null ? wbwRenderer : initialized(wbwRenderer = new WBWRenderer());
+		case null, default -> null;
+		};
+	}
 
-		// We could return an 'no renderer' renderer here ??
-		return null;
+	private <R extends AbstractPartRenderer> R initialized(R renderer) {
+		initRenderer(renderer);
+		return renderer;
 	}
 
 	protected void initRenderer(AbstractPartRenderer renderer) {

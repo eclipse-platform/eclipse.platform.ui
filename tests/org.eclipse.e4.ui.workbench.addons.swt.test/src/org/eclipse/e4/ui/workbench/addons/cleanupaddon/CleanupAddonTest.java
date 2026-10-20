@@ -164,7 +164,11 @@ public class CleanupAddonTest {
 		appContext.set(MAddon.class, cleanupAddon);
 
 		ContextInjectionFactory.setDefault(appContext);
-		ContextInjectionFactory.make(CleanupAddon.class, appContext);
+		// Store the addon in the context so it isn't garbage collected before
+		// its event handlers fire. The DI framework holds injected objects
+		// only via WeakReference, so an addon discarded here can be collected
+		// before its asyncExec runs, silently invalidating the requestor.
+		appContext.set(CleanupAddon.class, ContextInjectionFactory.make(CleanupAddon.class, appContext));
 
 		appContext.set(IResourceUtilities.class, new ISWTResourceUtilities() {
 

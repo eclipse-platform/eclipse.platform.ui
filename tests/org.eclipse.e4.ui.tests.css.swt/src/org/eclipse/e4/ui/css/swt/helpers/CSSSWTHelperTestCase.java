@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,21 +19,35 @@ import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.FONT_DEFINITION
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
+import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumber;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.junit.jupiter.api.AfterEach;
 import org.osgi.framework.FrameworkUtil;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.css.CSSPrimitiveValue;
-import org.w3c.dom.css.CSSValue;
+import org.osgi.framework.ServiceRegistration;
 
 public abstract class CSSSWTHelperTestCase {
 
 	protected static final String CSS_ITALIC = CSS2FontHelper.getFontStyle(true);
 	protected static final String CSS_BOLD = CSS2FontHelper.getFontWeight(true);
+
+	private final List<ServiceRegistration<IColorAndFontProvider>> registrations = new ArrayList<>();
+
+	@AfterEach
+	void unregisterProviders() {
+		registrations.forEach(ServiceRegistration::unregister);
+	}
 
 	protected void registerFontProviderWith(String expectedSymbolicName, String family, int size, int style) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
@@ -45,12 +59,11 @@ public abstract class CSSSWTHelperTestCase {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(rgb).when(provider).getColor(expectedSymbolicName);
 		registerProvider(provider);
-
 	}
 
 	private void registerProvider(final IColorAndFontProvider provider) {
-		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
-				null);
+		registrations.add(FrameworkUtil.getBundle(getClass()).getBundleContext()
+				.registerService(IColorAndFontProvider.class, provider, null));
 	}
 
 	protected CSS2FontProperties fontProperties(String family) {
@@ -58,53 +71,33 @@ public abstract class CSSSWTHelperTestCase {
 	}
 
 	protected CSS2FontProperties fontProperties(String family, Object size, Object style, Object weight) {
-		CSS2FontProperties result = mock(CSS2FontProperties.class);
-		doReturn(valueImpl(family)).when(result).getFamily();
+		CSS2FontProperties result = new CSS2FontPropertiesImpl();
+		if (family != null) {
+			result.setFamily(new CssText(CssText.Kind.IDENT, family));
+		}
 		if (size != null) {
-			doReturn(valueImpl(size)).when(result).getSize();
+			result.setSize(new CssNumber(((Number) size).doubleValue(), true));
+			result.setSizeFromCSS(true);
 		}
 		if (style != null) {
-			doReturn(valueImpl(style)).when(result).getStyle();
+			result.setStyle(new CssText(CssText.Kind.IDENT, style.toString()));
 		}
-		if (weight != null) {
-			doReturn(valueImpl(weight)).when(result).getWeight();
+		if (weight instanceof Number number) {
+			result.setWeight(new CssNumber(number.doubleValue(), true));
+		} else if (weight != null) {
+			result.setWeight(new CssText(CssText.Kind.IDENT, weight.toString()));
 		}
 		return result;
 	}
 
-	private CSSValueImpl valueImpl(final Object value) {
-		if (value != null) {
-			return new CSSValueImpl() {
-				@Override
-				public String getCssText() {
-					return value.toString();
-				}
-
-				@Override
-				public String getStringValue() {
-					return getCssText();
-				}
-
-				@Override
-				public float getFloatValue(short valueType) throws DOMException {
-					return Float.parseFloat(getCssText());
-				}
-			};
-		}
-		return null;
+	/** A string-typed primitive value, the form the engine sees for quoted CSS strings. */
+	protected CssPrimitive colorValue(String value) {
+		return new CssText(CssText.Kind.STRING, value);
 	}
 
-	protected CSSValueImpl colorValue(String value) {
-		return colorValue(value, CSSValue.CSS_PRIMITIVE_VALUE);
-	}
-
-	protected CSSValueImpl colorValue(String value, short type) {
-		CSSValueImpl result = mock(CSSValueImpl.class);
-		doReturn(CSSPrimitiveValue.CSS_STRING).when(result).getPrimitiveType();
-		doReturn(type).when(result).getCssValueType();
-		doReturn(value).when(result).getStringValue();
-		doReturn(value).when(result).getCssText();
-		return result;
+	/** A value that is deliberately not a primitive, for the rejection paths. */
+	protected CssValue nonPrimitiveValue(String value) {
+		return new CssList(List.of(new CssText(CssText.Kind.STRING, value)));
 	}
 
 	protected String addFontDefinitionMarker(String fontDefinitionId) {

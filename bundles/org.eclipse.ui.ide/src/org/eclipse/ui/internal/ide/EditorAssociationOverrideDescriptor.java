@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -160,7 +161,7 @@ public final class EditorAssociationOverrideDescriptor {
 			} else {
 				String message= MessageFormat.format(IDEWorkbenchMessages.editorAssociationOverride_error_invalidElementName_message,
 						configElement.getContributor().getName(), configElement.getName());
-				IDEWorkbenchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.OK, message, null));
+				ILog.of(EditorAssociationOverrideDescriptor.class).error(message);
 			}
 		}
 		return result.toArray(new EditorAssociationOverrideDescriptor[result.size()]);

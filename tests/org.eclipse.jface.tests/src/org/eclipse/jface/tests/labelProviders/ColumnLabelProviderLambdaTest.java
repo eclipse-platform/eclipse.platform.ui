@@ -33,7 +33,7 @@ public class ColumnLabelProviderLambdaTest {
 		TableViewer viewer = (TableViewer) LabelProviderLambdaTest.initializeViewer(shell);
 		Image fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
 		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
-		columnViewer.setLabelProvider(ColumnLabelProvider.createImageProvider(inputElement -> fgImage));
+		columnViewer.setLabelProvider(ColumnLabelProvider.createImageProvider(_ -> fgImage));
 		shell.open();
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
@@ -47,13 +47,25 @@ public class ColumnLabelProviderLambdaTest {
 		Image fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
 		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
 		columnViewer.setLabelProvider(
-				ColumnLabelProvider.createTextImageProvider(Object::toString, inputElement -> fgImage));
+				ColumnLabelProvider.createTextImageProvider(Object::toString, _ -> fgImage));
 		shell.open();
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
 		String firstElementText = provider.getText(model[0]);
 		assertEquals(Integer.valueOf(0).toString(), firstElementText, "same label text");
 		assertEquals(fgImage, provider.getImage(model[0]), "same image");
+	}
+
+	@Test
+	public void testCreateTypedTextProvider() {
+		Shell shell = LabelProviderLambdaTest.initializeShell();
+		TableViewer viewer = (TableViewer) LabelProviderLambdaTest.initializeViewer(shell);
+		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
+		columnViewer.setLabelProvider(ColumnLabelProvider.createTextProvider((Integer i) -> "#" + i));
+		shell.open();
+		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
+		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
+		assertEquals("#0", provider.getText(model[0]), "same label text");
 	}
 
 }

@@ -93,7 +93,7 @@ public class ProjectReferencePage extends PropertyPage {
 		}
 
 		//check for initial modification to avoid work if no changes are made
-		listViewer.addCheckStateListener(event -> modified = true);
+		listViewer.addCheckStateListener(_ -> modified = true);
 
 		applyDialogFont(composite);
 

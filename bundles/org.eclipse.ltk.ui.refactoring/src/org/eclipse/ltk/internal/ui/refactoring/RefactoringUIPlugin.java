@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.osgi.framework.BundleContext;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -65,7 +66,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	public static void log(Throwable t) {

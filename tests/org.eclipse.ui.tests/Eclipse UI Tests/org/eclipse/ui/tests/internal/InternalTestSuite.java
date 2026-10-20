@@ -28,9 +28,9 @@ import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerTypeTests;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
+import org.eclipse.ui.tests.markers.MarkersFilteredTreeTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 import org.eclipse.ui.tests.markers.ScopeAreaTest;
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -55,6 +55,7 @@ import org.junit.platform.suite.api.Suite;
 	MarkerQueryTest.class,
 	Bug99858Test.class,
 	WorkbenchWindowSubordinateSourcesTests.class,
+	TrimVisibilityPreferenceTest.class,
 	ReopenMenuTest.class,
 	UtilTest.class,
 	MarkerTesterTest.class,
@@ -70,6 +71,7 @@ import org.junit.platform.suite.api.Suite;
 	LargeFileLimitsPreferenceHandlerTest.class,
 	WorkbookEditorsHandlerTest.class,
 	ScopeAreaTest.class,
-		MarkerTypeTests.class
+	MarkerTypeTests.class,
+	MarkersFilteredTreeTest.class,
 })
 public class InternalTestSuite {}

@@ -113,7 +113,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	public SortableRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
 
-		addDisposeListener(event -> {
+		addDisposeListener(_ -> {
 			if (fToolBarManager != null) {
 				fToolBarManager.removeAll();
 				fToolBarManager.dispose();

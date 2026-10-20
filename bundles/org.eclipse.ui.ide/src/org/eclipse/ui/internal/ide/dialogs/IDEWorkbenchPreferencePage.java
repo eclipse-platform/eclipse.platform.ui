@@ -42,6 +42,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 
 		createSettings(composite);
 		createInlineRenamePref(composite);
+		createShowFilterTextInMarkerViewsPref(composite);
 		createSaveIntervalGroup(composite);
 		createOpenModeGroup(composite);
 

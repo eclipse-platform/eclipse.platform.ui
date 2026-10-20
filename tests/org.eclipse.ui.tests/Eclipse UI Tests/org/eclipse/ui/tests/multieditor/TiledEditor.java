@@ -56,7 +56,7 @@ public class TiledEditor extends MultiEditor {
 	public void createPartControl(Composite parent) {
 		callHistory.add("createPartControl");
 
-		parent.addDisposeListener(e -> widgetsDisposed());
+		parent.addDisposeListener(_ -> widgetsDisposed());
 
 		parent = new Composite(parent, SWT.BORDER);
 

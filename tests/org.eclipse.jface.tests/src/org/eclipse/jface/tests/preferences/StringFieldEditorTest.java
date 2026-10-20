@@ -123,7 +123,7 @@ public class StringFieldEditorTest {
 		store.setToDefault("foo");
 		store.removePropertyChangeListener(listener);
 		assertEquals("bar", store.getString("foo"));
-		IPropertyChangeListener failingListener = event -> fail("1.0");
+		IPropertyChangeListener failingListener = _ -> fail("1.0");
 		store.addPropertyChangeListener(failingListener);
 		// We already called setToDefault, nothing should happen this time
 		store.setToDefault("foo");

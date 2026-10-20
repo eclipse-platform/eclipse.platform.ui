@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -50,6 +51,8 @@ public class LTKLauncher {
 	private static final String LTK_COPY_PROJECT_ID = "org.eclipse.ltk.ui.refactoring.commands.copyProject"; //$NON-NLS-1$
 	private static final String LTK_COPY_PROJECT_COMMAND_NEWNAME_KEY = "org.eclipse.ltk.ui.refactoring.commands.copyProject.newName.parameter.key"; //$NON-NLS-1$
 	private static final String LTK_COPY_PROJECT_COMMAND_NEWLOCATION_KEY = "org.eclipse.ltk.ui.refactoring.commands.copyProject.newLocation.parameter.key"; //$NON-NLS-1$
+	private static final String LTK_COPY_RESOURCES_ID = "org.eclipse.ltk.ui.refactoring.commands.copyResources"; //$NON-NLS-1$
+	private static final String LTK_COPY_RESOURCES_COMMAND_DESTINATION_KEY = "org.eclipse.ltk.ui.refactoring.commands.copyResources.destinationPaths.parameter.key"; //$NON-NLS-1$
 
 	/**
 	 * Open the LTK delete resources wizard if available.
@@ -125,6 +128,12 @@ public class LTKLauncher {
 		commandParameters.put(LTK_COPY_PROJECT_COMMAND_NEWNAME_KEY, newName);
 		commandParameters.put(LTK_COPY_PROJECT_COMMAND_NEWLOCATION_KEY, newLocation);
 		return runCommand(LTK_COPY_PROJECT_ID, new StructuredSelection(project), commandParameters);
+	}
+
+	public static boolean copyResources(IResource[] resources, IPath[] destinationPaths) {
+		Map<String, Object> commandParameters = new HashMap<>();
+		commandParameters.put(LTK_COPY_RESOURCES_COMMAND_DESTINATION_KEY, destinationPaths);
+		return runCommand(LTK_COPY_RESOURCES_ID, new StructuredSelection(resources), commandParameters);
 	}
 
 	private static boolean runCommand(String commandId, IStructuredSelection selection,

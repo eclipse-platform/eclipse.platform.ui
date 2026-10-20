@@ -594,14 +594,18 @@ public class ContentProposalAdapter {
 
 		@Override
 		protected Color getForeground() {
-			return JFaceResources.getColorRegistry().get(
+			Color foreground = JFaceResources.getColorRegistry().get(
 					JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
+			// Fall back to the host control's color so the popup matches its
+			// surroundings when no content assist color is configured.
+			return foreground != null ? foreground : control.getForeground();
 		}
 
 		@Override
 		protected Color getBackground() {
-			return JFaceResources.getColorRegistry().get(
+			Color background = JFaceResources.getColorRegistry().get(
 					JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
+			return background != null ? background : control.getBackground();
 		}
 
 		/*

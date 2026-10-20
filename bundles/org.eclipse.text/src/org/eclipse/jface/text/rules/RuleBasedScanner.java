@@ -15,6 +15,8 @@
 package org.eclipse.jface.text.rules;
 
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -46,6 +48,10 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	protected IDocument fDocument;
 	/** The cached legal line delimiters of the document */
 	protected char[][] fDelimiters;
+	/** The delimiter array last built by this class, to detect replacement by subclasses */
+	private char[][] fBuiltDelimiters;
+	/** The document delimiters {@link #fBuiltDelimiters} was built from */
+	private String[] fSourceDelimiters;
 	/** The offset of the next character to be read */
 	protected int fOffset;
 	/** The end offset of the range to be scanned */
@@ -102,9 +108,13 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		fRangeEnd= offset + length;
 
 		String[] delimiters= fDocument.getLegalLineDelimiters();
-		fDelimiters= new char[delimiters.length][];
-		for (int i= 0; i < delimiters.length; i++) {
-			fDelimiters[i]= delimiters[i].toCharArray();
+		if (fDelimiters == null || fDelimiters != fBuiltDelimiters || !Arrays.equals(delimiters, fSourceDelimiters)) {
+			fDelimiters= new char[delimiters.length][];
+			for (int i= 0; i < delimiters.length; i++) {
+				fDelimiters[i]= delimiters[i].toCharArray();
+			}
+			fBuiltDelimiters= fDelimiters;
+			fSourceDelimiters= delimiters.clone();
 		}
 
 		if (fDefaultReturnToken == null) {

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -72,7 +73,11 @@ public class ResourceHelper {
 	}
 
 	public static void delete(final IResource resource) throws CoreException {
-		IWorkspaceRunnable runnable= monitor -> {
+		delete(resource, null);
+	}
+
+	public static void delete(final IResource resource, ISchedulingRule rule) throws CoreException {
+		IWorkspaceRunnable runnable= _ -> {
 			for (int i= 0; i < MAX_RETRY; i++) {
 				try {
 					resource.delete(true, null);
@@ -90,7 +95,7 @@ public class ResourceHelper {
 				}
 			}
 		};
-		ResourcesPlugin.getWorkspace().run(runnable, null);
+		ResourcesPlugin.getWorkspace().run(runnable, rule, 0, null);
 
 	}
 

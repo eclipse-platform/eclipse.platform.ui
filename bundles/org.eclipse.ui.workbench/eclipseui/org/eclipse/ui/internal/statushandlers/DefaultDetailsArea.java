@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -187,18 +189,32 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	}
 
 	private void setStatusAdapter(StatusAdapter adapter) {
-		populateList(text, adapter.getStatus(), 0, new int[] { 0 });
+		StringBuilder content = new StringBuilder();
+		TreeMap<Integer, int[]> indents = new TreeMap<>();
+		populateList(content, indents, adapter.getStatus(), 0);
 		if (!isMulti()) {
 			Long timestamp = (Long) adapter.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
 
 			if (timestamp != null) {
 				String date = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
-				text.append(NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] { "", date }))); //$NON-NLS-1$
+				indents.put(content.length(), new int[] { 0, 0 });
+				content.append(NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] { "", date }))); //$NON-NLS-1$
 			}
 		}
-		int delimiterLength = getLineSeparator().length();
-		text.replaceTextRange(text.getText().length() - delimiterLength, delimiterLength, ""); //$NON-NLS-1$
+		String separator = getLineSeparator();
+		if (content.toString().endsWith(separator)) {
+			content.setLength(content.length() - separator.length());
+		}
+		// setLineIndent lays out all preceding lines, a listener only lays out visible ones
+		text.addLineStyleListener(event -> {
+			Entry<Integer, int[]> entry = indents.floorEntry(event.lineOffset);
+			if (entry != null) {
+				event.indent = entry.getValue()[0];
+				event.wrapIndent = entry.getValue()[1];
+			}
+		});
+		text.setText(content.toString());
 		adjustHeight(text);
 	}
 
@@ -270,27 +286,27 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		}
 	}
 
-	private void populateList(StyledText text, IStatus status, int nesting, int[] lineNumber) {
+	private void populateList(StringBuilder content, TreeMap<Integer, int[]> indents, IStatus status, int nesting) {
 		if (!status.matches(mask) && !(handleOkStatuses && status.isOK())) {
 			return;
 		}
-		appendNewLine(text, status.getMessage(), nesting, lineNumber[0]++);
+		appendNewLine(content, indents, status.getMessage(), nesting);
 
 		// Look for a nested core exception
 		Throwable t = status.getException();
 		if (t instanceof CoreException ce) {
-			populateList(text, ce.getStatus(), nesting + 1, lineNumber);
+			populateList(content, indents, ce.getStatus(), nesting + 1);
 		} else if (t != null) {
 			// Include low-level exception message
 			String message = t.getLocalizedMessage();
 			if (message == null) {
 				message = t.toString();
 			}
-			appendNewLine(text, message, nesting, lineNumber[0]++);
+			appendNewLine(content, indents, message, nesting);
 		}
 
 		for (IStatus child : status.getChildren()) {
-			populateList(text, child, nesting + 1, lineNumber);
+			populateList(content, indents, child, nesting + 1);
 		}
 	}
 
@@ -298,14 +314,14 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return System.lineSeparator();
 	}
 
-	private void appendNewLine(StyledText text, String line, int indentLevel, int lineNumber) {
-		text.append(line + getLineSeparator());
+	private void appendNewLine(StringBuilder content, TreeMap<Integer, int[]> indents, String line,
+			int indentLevel) {
 		int pixelIndent = indentLevel * NESTING_INDENT;
-		if (lineNumber != 0) {
+		if (!content.isEmpty()) {
 			pixelIndent += NESTING_INDENT / 2;
 		}
-		text.setLineIndent(lineNumber, 1, pixelIndent);
-		text.setLineWrapIndent(lineNumber, 1, indentLevel * NESTING_INDENT);
+		indents.put(content.length(), new int[] { pixelIndent, indentLevel * NESTING_INDENT });
+		content.append(line).append(getLineSeparator());
 	}
 
 	private void copyToClipboard() {

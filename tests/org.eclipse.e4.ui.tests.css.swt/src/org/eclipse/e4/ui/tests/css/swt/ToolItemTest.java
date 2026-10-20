@@ -13,22 +13,31 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ToolItemTest extends CSSSWTTestCase {
+public class ToolItemTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	protected ToolItem createTestToolItem(String styleSheet, int styleBit) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		var shell = new Shell(display, SWT.SHELL_TRIM);
@@ -70,7 +79,7 @@ public class ToolItemTest extends CSSSWTTestCase {
 				"ToolItem { color: #FF0000; }\n" + "ToolItem:checked { color: #0000FF; }", SWT.PUSH);
 		assertEquals(RED, toolItemToTest.getForeground().getRGB());
 		toolItemToTest.setSelection(true);
-		engine.applyStyles(toolItemToTest, false);
+		css.getEngine().applyStyles(toolItemToTest, false);
 		assertEquals(BLUE, toolItemToTest.getForeground().getRGB());
 	}
 

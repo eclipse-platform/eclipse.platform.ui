@@ -47,6 +47,24 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String CopyProjectProcessor_name;
 
+	public static String CopyResourceChange_name;
+
+	public static String CopyResourceChange_undo_composite_name;
+
+	public static String CopyResourcesDescriptor_error_resource_not_exists;
+
+	public static String CopyResourcesProcessor_create_task;
+
+	public static String CopyResourcesProcessor_description_multiple;
+
+	public static String CopyResourcesProcessor_description_single;
+
+	public static String CopyResourcesProcessor_destination_inside_moved;
+
+	public static String CopyResourcesProcessor_error_multiple_destinatinos;
+
+	public static String CopyResourcesProcessor_name;
+
 	public static String CreateChangeOperation_unknown_Refactoring;
 
 	public static String DefaultRefactoringDescriptor_cannot_create_refactoring;

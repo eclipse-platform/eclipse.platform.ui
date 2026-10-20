@@ -144,7 +144,7 @@ public class ImageHyperlinkTest {
 	}
 
 	private Image createGradient() {
-		return FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 1, 1,
+		return FormImages.getInstance().getGradient(new Color(0, 0, 0), new Color(100, 100, 100), 1, 1,
 				1, display);
 	}
 

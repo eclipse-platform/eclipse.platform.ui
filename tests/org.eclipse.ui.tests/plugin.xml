@@ -16,12 +16,6 @@
          point="org.eclipse.ui.perspectives">
  
       <perspective
-            name="UI Test Drag Test Perspective"
-            icon="icons/anything.gif"
-            class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
-            id="org.eclipse.ui.tests.dnd.dragdrop">
-      </perspective>
-      <perspective
             name="UI Test Zoom Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.zoom.ZoomPerspectiveFactory"
@@ -65,10 +59,6 @@
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             name="UI Test Perspective for presentation NPE"/> 
-      <perspective
-            class="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
-            id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
-            name="Standalone View DnD Perspective"/>         
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
@@ -462,11 +452,6 @@
             category="org.eclipse.ui.tests.decoratorCategory"
             name="Table View Test"
             id="org.eclipse.ui.tests.decorator.TableViewTest"/>
-      <view
-            class="org.eclipse.ui.tests.decorators.DecoratorTableTreeView"
-            category="org.eclipse.ui.tests.decoratorCategory"
-            name="Table Tree Test"
-            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>
       <view
             class="org.eclipse.jface.tests.viewers.interactive.VirtualTableView"
             category="org.eclipse.ui.tests.tableViewerViews"
@@ -1211,7 +1196,7 @@
    </extension>
    
    <extension
-   		point="org.eclipse.core.runtime.contentTypes">
+   		point="org.eclipse.core.contenttype.contentTypes">
    		
       	<!-- ObjectContributionTest: This is the content-type-based object contribution -->
 		<content-type 
@@ -1560,7 +1545,26 @@
       </actionSet>
    </extension>
    
-   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in. 
+   <!-- ModelPerspectiveActionSetTest. The action set is initially visible and is
+   contributed to the perspective as well, to verify that such a contribution is
+   taken over although the layout already seeded a tag for it. -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Initially Visible Action Set"
+            id="org.eclipse.ui.tests.api.initiallyVisibleActionSet"
+            visible="true" />
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.tests.api.modelPerspectiveActionSets">
+         <actionSet
+               id="org.eclipse.ui.tests.api.initiallyVisibleActionSet" />
+      </perspectiveExtension>
+   </extension>
+
+   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in.
    -->
    <extension
          point="org.eclipse.ui.actionSets">
@@ -3911,6 +3915,24 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.menus.showInMenu">
+         <command
+               commandId="org.eclipse.ui.tests.menus.showInMenuTestItem"
+               label="Show In Menu Test Item"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -4721,7 +4743,7 @@
    </extension>
    
    <extension point="org.eclipse.e4.ui.css.swt.theme">
-   		<theme basestylesheeturi="css/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
+   		<theme basestylesheeturi="CSS/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.editorAssociationOverride">
@@ -4957,6 +4979,26 @@
        id="markers.artificial.problem"
        name="Artificial Test Problem"
        point="org.eclipse.core.resources.markers">
+ </extension>
+
+ <!-- Handler contribution that does not implement IHandler -->
+ <extension
+       point="org.eclipse.ui.commands">
+   <command
+        id="org.eclipse.ui.tests.commands.pojoHandler"
+        name="POJO Handler Test">
+     <commandParameter
+          id="org.eclipse.ui.tests.commands.pojoHandler.value"
+          name="Value"
+          optional="true" />
+   </command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+   <handler
+        commandId="org.eclipse.ui.tests.commands.pojoHandler"
+        class="org.eclipse.ui.tests.commands.PojoHandler">
+   </handler>
  </extension>
 
 </plugin>

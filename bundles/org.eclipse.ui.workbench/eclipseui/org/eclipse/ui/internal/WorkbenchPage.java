@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -1061,12 +1062,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private List<EditorReference> getOrderedEditorReferences() {
 
 		List<EditorReference> editorRefs = new ArrayList<>();
+		Set<EditorReference> seen = new HashSet<>();
+		Map<MPart, EditorReference> referencesByModel = getEditorReferencesByModel();
 		List<MPart> visibleEditors = modelService.findElements(window, CompatibilityEditor.MODEL_ELEMENT_ID,
 				MPart.class);
 		for (MPart editor : visibleEditors) {
 			if (editor.isToBeRendered()) {
-				EditorReference ref = getEditorReference(editor);
-				if (ref != null && !editorRefs.contains(ref)) {
+				EditorReference ref = referencesByModel.get(editor);
+				if (ref != null && seen.add(ref)) {
 					editorRefs.add(ref);
 				}
 			}
@@ -1075,23 +1078,36 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return editorRefs;
 	}
 
+	/**
+	 * Maps the model element of every editor reference of this page to its
+	 * reference, so that callers can resolve many parts without rescanning the
+	 * reference list for each one.
+	 */
+	private Map<MPart, EditorReference> getEditorReferencesByModel() {
+		Map<MPart, EditorReference> referencesByModel = new IdentityHashMap<>(editorReferences.size());
+		for (EditorReference ref : editorReferences) {
+			referencesByModel.putIfAbsent(ref.getModel(), ref);
+		}
+		return referencesByModel;
+	}
+
 	List<EditorReference> getSortedEditorReferences() {
 		return getSortedEditorReferences(false);
 	}
 
 	private List<EditorReference> getSortedEditorReferences(boolean allPerspectives) {
+		Map<MPart, EditorReference> referencesByModel = getEditorReferencesByModel();
 		List<EditorReference> sortedReferences = new ArrayList<>();
+		Set<EditorReference> seen = new HashSet<>();
 		for (MPart part : activationList) {
-			for (EditorReference ref : editorReferences) {
-				if (ref.getModel() == part) {
-					sortedReferences.add(ref);
-					break;
-				}
+			EditorReference ref = referencesByModel.get(part);
+			if (ref != null && seen.add(ref)) {
+				sortedReferences.add(ref);
 			}
 		}
 
 		for (EditorReference ref : editorReferences) {
-			if (!sortedReferences.contains(ref)) {
+			if (seen.add(ref)) {
 				sortedReferences.add(ref);
 			}
 		}
@@ -1101,13 +1117,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 			int scope = allPerspectives ? WINDOW_SCOPE : EModelService.PRESENTATION;
 			List<MPart> placeholders = modelService.findElements(window, CompatibilityEditor.MODEL_ELEMENT_ID,
 					MPart.class, null, scope);
+			// only rendered placeholders are valid references
+			Set<MPart> rendered = Collections.newSetFromMap(new IdentityHashMap<>(placeholders.size()));
+			for (MPart placeholder : placeholders) {
+				if (placeholder.isToBeRendered()) {
+					rendered.add(placeholder);
+				}
+			}
 			List<EditorReference> visibleReferences = new ArrayList<>();
 			for (EditorReference reference : sortedReferences) {
-				for (MPart placeholder : placeholders) {
-					if (reference.getModel() == placeholder && placeholder.isToBeRendered()) {
-						// only rendered placeholders are valid references
-						visibleReferences.add(reference);
-					}
+				if (rendered.contains(reference.getModel())) {
+					visibleReferences.add(reference);
 				}
 			}
 
@@ -2318,32 +2338,36 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<>();
+		Set<IWorkbenchPartReference> seen = new HashSet<>();
 		IViewReference[] viewReferences = getViewReferences(allPerspectives);
 		List<EditorReference> editorReferences = getSortedEditorReferences(allPerspectives);
 
-		activationLoop: for (MPart part : activationList) {
-			if (views) {
-				for (IViewReference ref : viewReferences) {
-					if (((ViewReference) ref).getModel() == part) {
-						sortedReferences.add(ref);
-						continue activationLoop;
-					}
-				}
+		Map<MPart, IWorkbenchPartReference> viewsByModel = new IdentityHashMap<>(viewReferences.length);
+		if (views) {
+			for (IViewReference ref : viewReferences) {
+				viewsByModel.putIfAbsent(((ViewReference) ref).getModel(), ref);
 			}
+		}
+		Map<MPart, IWorkbenchPartReference> editorsByModel = new IdentityHashMap<>(editorReferences.size());
+		if (editors) {
+			for (EditorReference ref : editorReferences) {
+				editorsByModel.putIfAbsent(ref.getModel(), ref);
+			}
+		}
 
-			if (editors) {
-				for (EditorReference ref : editorReferences) {
-					if (ref.getModel() == part) {
-						sortedReferences.add(ref);
-						break;
-					}
-				}
+		for (MPart part : activationList) {
+			IWorkbenchPartReference ref = viewsByModel.get(part);
+			if (ref == null) {
+				ref = editorsByModel.get(part);
+			}
+			if (ref != null && seen.add(ref)) {
+				sortedReferences.add(ref);
 			}
 		}
 
 		if (views) {
 			for (IViewReference ref : viewReferences) {
-				if (!sortedReferences.contains(ref)) {
+				if (seen.add(ref)) {
 					sortedReferences.add(ref);
 				}
 			}
@@ -2351,7 +2375,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		if (editors) {
 			for (EditorReference ref : editorReferences) {
-				if (!sortedReferences.contains(ref)) {
+				if (seen.add(ref)) {
 					sortedReferences.add(ref);
 				}
 			}
@@ -2814,6 +2838,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 				MPerspective temporary = modelService.createModelElement(MPerspective.class);
 				ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, temporary,
 						desc, this, true);
+				// creating the layout already tagged the scratch perspective with every
+				// initially visible action set, drop them so that only what the extension
+				// point contributes is left
+				temporary.getTags().removeIf(tag -> tag.startsWith(ModeledPageLayout.ACTION_SET_TAG));
 
 				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET,
@@ -3908,8 +3936,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 			PerspectiveDescriptor perspectiveDesc = (PerspectiveDescriptor) getPerspectiveDesc(
 					mperspective.getElementId());
 			if (perspectiveDesc == null) {
-				fixedPerspective = true;
-				perspectiveDesc = fixOrphanPerspective(mperspective);
+				if (mperspective.getContributorURI() != null) {
+					PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
+					// Registers an E4 perspective that is contributed directly via the application
+					// model (e.g. via a model fragment), without renaming it or marking it as a
+					// local copy. Unlike PerspectiveRegistry#addPerspective(MPerspective),
+					// this method does not add the perspective to the application snippets.
+					reg.createDescriptor(mperspective);
+					perspectiveDesc = (PerspectiveDescriptor) getPerspectiveDesc(mperspective.getElementId());
+					sortedPerspectives.add(perspectiveDesc);
+				} else {
+					fixedPerspective = true;
+					perspectiveDesc = fixOrphanPerspective(mperspective);
+				}
 			}
 			Perspective p = new Perspective(perspectiveDesc, mperspective, this);
 			modelToPerspectiveMapping.put(mperspective, p);

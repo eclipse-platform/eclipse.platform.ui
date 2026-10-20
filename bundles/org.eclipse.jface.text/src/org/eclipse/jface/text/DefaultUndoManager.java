@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -894,7 +894,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 *
 	 * @param undoLevel the length of this manager's history
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true)
 	public DefaultUndoManager(int undoLevel) {
 		fHistory= OperationHistoryFactory.getOperationHistory();
 		setMaximalUndoLevel(undoLevel);
@@ -910,9 +910,6 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		return fTextViewer != null;
 	}
 
-	/*
-	 * @see IUndoManager#beginCompoundChange
-	 */
 	@Deprecated
 	@Override
 	public void beginCompoundChange() {
@@ -922,10 +919,6 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-
-	/*
-	 * @see IUndoManager#endCompoundChange
-	 */
 	@Deprecated
 	@Override
 	public void endCompoundChange() {

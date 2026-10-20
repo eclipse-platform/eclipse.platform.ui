@@ -282,15 +282,10 @@ public class MarkerSupportViewTest {
 				getFilters.setAccessible(true);
 				Object filtersGot = getFilters.invoke(this);
 
-				Method andFilters = FiltersConfigurationDialog.class.getDeclaredMethod("andFilters");
-				andFilters.setAccessible(true);
-				Object filtersAnd = andFilters.invoke(this);
-
-				Method updateFilters = MarkerContentGenerator.class.getDeclaredMethod("updateFilters", Collection.class,
-						boolean.class);
+				Method updateFilters = MarkerContentGenerator.class.getDeclaredMethod("updateFilters", Collection.class);
 				updateFilters.setAccessible(true);
 
-				updateFilters.invoke(_generator, filtersGot, filtersAnd);
+				updateFilters.invoke(_generator, filtersGot);
 
 			} catch (Exception e) {
 				e.printStackTrace();

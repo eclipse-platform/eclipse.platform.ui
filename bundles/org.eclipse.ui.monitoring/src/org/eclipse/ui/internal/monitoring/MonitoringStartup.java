@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.monitoring.preferences.MonitoringPreferenceListener;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.osgi.service.component.annotations.Component;
@@ -65,7 +64,7 @@ public class MonitoringStartup implements EventHandler {
 		}
 
 		final EventLoopMonitorThread thread = temporaryThread;
-		final Display display = PlatformUI.getWorkbench().getDisplay();
+		final Display display = Display.getDefault();
 		// Final setup and start asynchronously on the display thread.
 		display.asyncExec(() -> {
 			// If we're still running when display gets disposed, shutdown the thread.

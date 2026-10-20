@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTImageHelper {
@@ -38,14 +38,8 @@ public class CSSSWTImageHelper {
 
 	public static Image getImage(CSSValue value,
 			IResourcesLocatorManager manager, Display display) throws Exception {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
-			return null;
-		}
-		CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-		switch (primitiveValue.getPrimitiveType()) {
-		case CSSPrimitiveValue.CSS_URI:
-			String path = primitiveValue.getStringValue();
-			return loadImageFromURL(path, manager);
+		if (value instanceof CssText text && text.kind() == CssText.Kind.URI) {
+			return loadImageFromURL(text.value(), manager);
 		}
 		return null;
 	}

@@ -22,9 +22,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -53,6 +52,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 
 		node.putBoolean(IPreferenceConstants.RUN_IN_BACKGROUND, true);
 		node.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
+		node.putBoolean(IPreferenceConstants.PROMPT_RESTART_ON_ZOOM_CHANGE, true);
+		node.put(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "top"); //$NON-NLS-1$
 
 		node.putBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
@@ -130,6 +131,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		// Don't show more than 1000 child elements per parent by default
 		node.putInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, 1000);
 
+		node.putBoolean(IWorkbenchPreferenceConstants.INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS, true);
+
 		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,
 				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE);
 
@@ -143,9 +146,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 						.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 			}
 		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
-					IStatus.ERROR, e.getLocalizedMessage(), e);
-			WorkbenchPlugin.getDefault().getLog().log(status);
+			ILog.of(WorkbenchPreferenceInitializer.class).error(e.getLocalizedMessage(), e);
 		}
 
 		LargeFileLimitsPreferenceHandler.setDefaults();

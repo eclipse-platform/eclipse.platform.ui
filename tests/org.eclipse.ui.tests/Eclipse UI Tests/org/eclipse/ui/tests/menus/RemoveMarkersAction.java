@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
@@ -25,7 +26,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.tests.TestPlugin;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -77,7 +77,7 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
 
 		IStatus status = new Status(IStatus.ERROR, bundleId, 0, msg, e);
 
-		TestPlugin.getDefault().getLog().log(status);
+		ILog.of(RemoveMarkersAction.class).log(status);
 
 		ErrorDialog.openError(window.getShell(), "Error", msg, status);
 	}

@@ -72,11 +72,12 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof MDirtyable
-					&& ((MDirtyable) element).isDirty()) {
-				return "*" + ((MUILabel) element).getLocalizedLabel(); //$NON-NLS-1$
+			String label = ((MUILabel) element).getLocalizedLabel();
+			if (element instanceof MDirtyable && ((MDirtyable) element).isDirty()
+					&& !DirtyIndicatorPainter.isEnabled()) {
+				return "*" + label; //$NON-NLS-1$
 			}
-			return ((MUILabel) element).getLocalizedLabel();
+			return label;
 		}
 
 		@Override
@@ -145,6 +146,9 @@ public class BasicPartList extends AbstractTableInformationControl {
 		tableViewer.addFilter(new NamePatternFilter());
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BasicStackListLabelProvider());
+
+		DirtyIndicatorPainter.install(table,
+				data -> data instanceof MDirtyable d && d.isDirty());
 
 		ColumnViewerToolTipSupport.enableFor(tableViewer);
 		return tableViewer;

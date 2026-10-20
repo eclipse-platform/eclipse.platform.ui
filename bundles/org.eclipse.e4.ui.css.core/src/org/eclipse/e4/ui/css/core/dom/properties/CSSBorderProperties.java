@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties;
 
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 
 /**
  * CSS Border properties interface.
@@ -26,12 +26,12 @@ public interface CSSBorderProperties {
 	/**
 	 * Return border-color value.
 	 */
-	public CSSPrimitiveValue getColor();
+	public CssPrimitive getColor();
 
 	/**
 	 * Set  border-color value.
 	 */
-	public void setColor(CSSPrimitiveValue color);
+	public void setColor(CssPrimitive color);
 
 	/**
 	 * Return border-width value.

@@ -14,7 +14,7 @@
 package org.eclipse.e4.ui.css.core.impl.dom.properties;
 
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 
 /**
  * {@link CSSBorderProperties} implementation.
@@ -24,19 +24,19 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  */
 public class CSSBorderPropertiesImpl implements CSSBorderProperties {
 
-	private CSSPrimitiveValue color;
+	private CssPrimitive color;
 
 	private int width = 0;
 
 	private String style;
 
 	@Override
-	public CSSPrimitiveValue getColor() {
+	public CssPrimitive getColor() {
 		return color;
 	}
 
 	@Override
-	public void setColor(CSSPrimitiveValue color) {
+	public void setColor(CssPrimitive color) {
 		this.color = color;
 	}
 

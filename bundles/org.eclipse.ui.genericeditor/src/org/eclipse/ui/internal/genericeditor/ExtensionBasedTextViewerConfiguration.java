@@ -41,10 +41,9 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
@@ -127,8 +126,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 					this.resolvedContentTypes.add(contentType);
 				}
 			} catch (CoreException ex) {
-				GenericEditorPlugin.getDefault().getLog()
-						.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+				ILog.of(ExtensionBasedTextViewerConfiguration.class).error(ex.getMessage(), ex);
 			}
 		}
 		String fileName = getCurrentFileName(documentParam);

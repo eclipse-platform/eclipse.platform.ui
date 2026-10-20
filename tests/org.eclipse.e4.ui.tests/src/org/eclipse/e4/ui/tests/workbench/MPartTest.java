@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import jakarta.inject.Inject;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -30,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.junit.jupiter.api.Test;
@@ -191,34 +194,45 @@ public class MPartTest {
 
 	@Test
 	public void testMPartBug369866() {
-		final MWindow window = createWindowWithOneView("Part");
+		// This test verifies the textual '*' dirty prefix, which is only used
+		// when the graphical dirty indicator is disabled.
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		boolean previous = prefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
+		prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, false);
+		try {
+			final MWindow window = createWindowWithOneView("Part");
 
-		application.getChildren().add(window);
-		contextRule.createAndRunWorkbench(window);
+			application.getChildren().add(window);
+			contextRule.createAndRunWorkbench(window);
 
-		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
-		MPartStack stack = (MPartStack) container.getChildren().get(0);
-		MPart part = (MPart) stack.getChildren().get(0);
+			MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
+			MPartStack stack = (MPartStack) container.getChildren().get(0);
+			MPart part = (MPart) stack.getChildren().get(0);
 
-		CTabFolder folder = (CTabFolder) stack.getWidget();
-		CTabItem item = folder.getItem(0);
+			CTabFolder folder = (CTabFolder) stack.getWidget();
+			CTabItem item = folder.getItem(0);
 
-		// bug 369866 has a StringIOOBE from toggling the dirty flag with an
-		// empty part name
-		assertFalse(part.isDirty());
-		assertEquals("Part", item.getText());
+			// bug 369866 has a StringIOOBE from toggling the dirty flag with an
+			// empty part name
+			assertFalse(part.isDirty());
+			assertEquals("Part", item.getText());
 
-		part.setDirty(true);
-		assertEquals("*Part", item.getText());
+			part.setDirty(true);
+			assertEquals("*Part", item.getText());
 
-		part.setLabel("");
-		assertEquals("*", item.getText());
+			part.setLabel("");
+			assertEquals("*", item.getText());
 
-		part.setDirty(false);
-		assertEquals("", item.getText());
+			part.setDirty(false);
+			assertEquals("", item.getText());
 
-		part.setDirty(true);
-		assertEquals("*", item.getText());
+			part.setDirty(true);
+			assertEquals("*", item.getText());
+		} finally {
+			prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, previous);
+		}
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

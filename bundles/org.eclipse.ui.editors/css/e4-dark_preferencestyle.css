@@ -1,5 +1,9 @@
-
 IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-editors { 
 	preferences:
 		'org.eclipse.ui.editors.inlineAnnotationColor=155,155,155'
+		'org.eclipse.editors.syntax.tagColor=86,156,214'
+		'org.eclipse.editors.syntax.attributeNameColor=196,138,114'
+		'org.eclipse.editors.syntax.stringColor=118,200,244'
+		'org.eclipse.editors.syntax.commentColor=96,139,78'
+		'org.eclipse.editors.syntax.directiveColor=128,128,128'
 }

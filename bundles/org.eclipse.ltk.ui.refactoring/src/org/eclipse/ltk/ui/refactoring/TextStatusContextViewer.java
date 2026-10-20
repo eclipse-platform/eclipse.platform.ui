@@ -149,7 +149,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fForm.marginHeight= 0;
 		fLabel= new CLabel(fForm, SWT.NONE);
 		fForm.setTopLeft(fLabel);
-		fForm.addDisposeListener(e -> {
+		fForm.addDisposeListener(_ -> {
 			if (fPaneImage != null) {
 				fPaneImage.dispose();
 			}

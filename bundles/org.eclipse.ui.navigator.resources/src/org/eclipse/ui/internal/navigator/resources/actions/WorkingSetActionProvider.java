@@ -222,7 +222,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		workingSetActionGroup = new WorkingSetFilterActionGroup(aSite.getViewSite().getShell(), filterChangeListener);
 		workingSetRootModeActionGroup = new WorkingSetRootModeActionGroup(viewer, extensionStateModel);
 
-		topLevelModeListener = event -> {
+		topLevelModeListener = _ -> {
 			setWorkingSet(workingSet);
 			viewer.getFrameList().reset();
 		};

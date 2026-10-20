@@ -172,7 +172,7 @@ public class Snippet007ColorLabelProvider {
 		ColorLabelProvider(IObservableMap<?, ?>[] attributes, Display display, List<Person> persons) {
 			super(attributes);
 			this.persons = persons;
-			this.maleColor = new Color(display, 255, 192, 203);
+			this.maleColor = new Color(255, 192, 203);
 			this.femaleColor = display.getSystemColor(SWT.COLOR_BLUE);
 		}
 

@@ -76,6 +76,21 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 */
 	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
+	/**
+	 * A named preference for setting CTabFolder's to be rendered with dirty
+	 * indicator overlay on close button
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show dirty
+	 * indicator)
+	 * </p>
+	 */
+	public static final String SHOW_DIRTY_INDICATOR_ON_TABS = "SHOW_DIRTY_INDICATOR_ON_TABS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "dirty indicator" preference for tabs
+	 */
+	public static final boolean SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT = true;
+
 	private static int MIN_VIEW_CHARS = 1;
 	private static int MAX_VIEW_CHARS = Integer.MAX_VALUE;
 
@@ -411,7 +426,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		if (!active && !onBottom) {
 			RGB blendColor = gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB();
 			RGB topGradient = blend(blendColor, tabOutlineColor.getRGB(), 40);
-			gradientLineTop = new Color(gc.getDevice(), topGradient);
+			gradientLineTop = new Color(topGradient);
 			foregroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, gradientLineTop,
 					gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
 			gc.setForegroundPattern(foregroundPattern);
@@ -706,12 +721,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
 			Color defaultBackground) {
-		if (unselectedTabsColors == null) {
-			boolean selected = (state & SWT.SELECTED) != 0;
-			unselectedTabsColors = selected ? parentWrapper.getSelectionGradientColors()
-					: parentWrapper.getGradientColors();
-			unselectedTabsPercents = selected ? parentWrapper.getSelectionGradientPercents()
-					: parentWrapper.getGradientPercents();
+		if (unselectedTabsColors == null && (state & SWT.SELECTED) == 0) {
+			unselectedTabsColors = parentWrapper.getGradientColors();
+			unselectedTabsPercents = parentWrapper.getGradientPercents();
 		}
 		if (unselectedTabsColors == null) {
 			unselectedTabsColors = new Color[] { gc.getDevice().getSystemColor(SWT.COLOR_WHITE) };
@@ -730,10 +742,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		if (colors != null && colors.length == 2) {
 			colors = new Color[] { colors[1], colors[1] };
 		}
-		if (colors == null) {
-			boolean selected = (state & SWT.SELECTED) != 0;
-			colors = selected ? parentWrapper.getSelectionGradientColors() : parentWrapper.getGradientColors();
-			percents = selected ? parentWrapper.getSelectionGradientPercents() : parentWrapper.getGradientPercents();
+		if (colors == null && (state & SWT.SELECTED) == 0) {
+			colors = parentWrapper.getGradientColors();
+			percents = parentWrapper.getGradientPercents();
 		}
 		if (colors == null) {
 			colors = new Color[] { gc.getDevice().getSystemColor(SWT.COLOR_WHITE) };
@@ -849,10 +860,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 		private Field gradientVerticalField;
 
-		private Field selectionGradientColorsField;
-
-		private Field selectionGradientPercentsField;
-
 		private Field gradientColorsField;
 
 		private Field gradientPercentsField;
@@ -875,20 +882,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			}
 			Boolean result = (Boolean) getFieldValue(gradientVerticalField);
 			return result != null ? result : true;
-		}
-
-		public Color[] getSelectionGradientColors() {
-			if (selectionGradientColorsField == null) {
-				selectionGradientColorsField = getField("selectionGradientColorsField"); //$NON-NLS-1$
-			}
-			return (Color[]) getFieldValue(selectionGradientColorsField);
-		}
-
-		public int[] getSelectionGradientPercents() {
-			if (selectionGradientPercentsField == null) {
-				selectionGradientPercentsField = getField("selectionGradientPercents"); //$NON-NLS-1$
-			}
-			return (int[]) getFieldValue(selectionGradientPercentsField);
 		}
 
 		public Color[] getGradientColors() {

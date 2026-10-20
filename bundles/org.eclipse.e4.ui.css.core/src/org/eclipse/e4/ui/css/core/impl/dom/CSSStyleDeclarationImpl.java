@@ -20,20 +20,24 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
-import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyleDeclaration {
+/**
+ * W3C {@link CSSStyleDeclaration} view over the internal property list; part of
+ * the permanent compatibility facade returned by {@code IStylingEngine.getStyle}
+ * and {@code IThemeEngine.getStyle}.
+ */
+public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
 
 	private boolean readOnly;
-	private final CSSRule parentRule;
+	private final CSSStyleRuleImpl parentRule;
 	private final List<CSSProperty> properties = new ArrayList<>();
 	private CSSPropertyList cssPropertyListView;
 
-	public CSSStyleDeclarationImpl(CSSRule parentRule) {
+	public CSSStyleDeclarationImpl(CSSStyleRuleImpl parentRule) {
 		this.parentRule = parentRule;
 	}
 
@@ -61,6 +65,13 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 
 	@Override
 	public CSSRule getParentRule() {
+		// The internal rule model no longer implements the W3C CSSRule type;
+		// use getParentStyleRule() instead.
+		return null;
+	}
+
+	/** The style rule this declaration belongs to, or null for computed styles. */
+	public CSSStyleRuleImpl getParentStyleRule() {
 		return parentRule;
 	}
 
@@ -90,8 +101,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	@Override
 	public String removeProperty(String propertyName) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		for (int i = 0; i < properties.size(); i++) {
 			CSSProperty property = properties.get(i);
@@ -106,8 +117,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	@Override
 	public void setCssText(String cssText) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		// TODO Auto-generated method stub
 		// TODO throws SYNTAX_ERR if cssText is unparsable
@@ -117,8 +128,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	@Override
 	public void setProperty(String propertyName, String value, String priority) throws DOMException {
 		if (readOnly) {
-			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+					"Attempt to change a readonly object"); //$NON-NLS-1$
 		}
 		// TODO Auto-generated method stub
 		// TODO throws SYNTAX_ERR if value is unparsable

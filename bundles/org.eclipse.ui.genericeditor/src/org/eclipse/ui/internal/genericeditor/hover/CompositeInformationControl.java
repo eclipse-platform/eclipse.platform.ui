@@ -23,8 +23,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
 
 public class CompositeInformationControl extends AbstractInformationControl implements IInformationControlExtension2 {
 
@@ -112,10 +110,9 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 				}
 				controls.put(hoverControlCreator.getKey(), abstractInformationControl);
 			} else {
-				GenericEditorPlugin.getDefault().getLog()
-						.log(new Status(IStatus.WARNING, GenericEditorPlugin.BUNDLE_ID,
-								"Only text hovers producing an AbstractInformationControl can be aggregated; got a " //$NON-NLS-1$
-										+ informationControl.getClass().getSimpleName()));
+				ILog.of(CompositeInformationControl.class).warn(
+						"Only text hovers producing an AbstractInformationControl can be aggregated; got a " //$NON-NLS-1$
+								+ informationControl.getClass().getSimpleName());
 				informationControl.dispose();
 			}
 		}

@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -125,6 +126,35 @@ class NotificationPopupTest {
 	}
 
 	@Test
+	void createsWithTitleImageAndDefaultTitle() {
+		Image image = display.getSystemImage(SWT.ICON_INFORMATION);
+		NotificationPopup notication = this.builder.text("This is a test").titleImage(image).delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+
+		assertThat(controls, hasItem(aLabelWith(image)));
+		notication.close();
+	}
+
+	@Test
+	void createsWithTitleImageAndCustomTitle() {
+		Image image = display.getSystemImage(SWT.ICON_INFORMATION);
+		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).titleImage(image)
+				.delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+		assertThat(controls, hasItem(aLabelWith(image)));
+		Label imageLabel = (Label) controls.stream().filter(c -> c instanceof Label l && l.getImage() == image)
+				.findFirst().get();
+		Composite titleArea = imageLabel.getParent();
+		int columns = ((GridLayout) titleArea.getLayout()).numColumns;
+		int children = titleArea.getChildren().length;
+		notication.close();
+
+		assertEquals(children, columns, "title area must lay out all its children in one row");
+	}
+
+	@Test
 	void createsForShell() {
 		shell = WidgetFactory.shell(SWT.NONE).create(display);
 		this.builder = NotificationPopup.forShell(shell);
@@ -170,6 +200,27 @@ class NotificationPopupTest {
 				"notification bottom edge must align with parent client area bottom edge");
 
 		notification.close();
+	}
+
+	@Test
+	void keepsMarginsOfTitleAndContentArea() {
+		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+
+		GridLayout titleLayout = (GridLayout) findLabel(controls, "Hello World").getParent().getLayout();
+		assertEquals(3, titleLayout.marginWidth);
+		assertEquals(2, titleLayout.numColumns);
+
+		GridLayout contentLayout = (GridLayout) findLabel(controls, "This is a test").getParent().getLayout();
+		assertEquals(5, contentLayout.marginHeight);
+		assertEquals(5, contentLayout.marginLeft);
+		assertEquals(5, contentLayout.marginRight);
+	}
+
+	private Label findLabel(List<Control> controls, String text) {
+		return controls.stream().filter(Label.class::isInstance).map(Label.class::cast)
+				.filter(l -> text.equals(l.getText())).findFirst().orElseThrow();
 	}
 
 	private List<Control> getNotificationPopupControls(NotificationPopup notication) {

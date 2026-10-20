@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
@@ -291,6 +292,6 @@ public final class RulerColumnRegistry {
 	}
 
 	private void warnUser(IStatus status) {
-		TextEditorPlugin.getDefault().getLog().log(status);
+		ILog.of(RulerColumnRegistry.class).log(status);
 	}
 }

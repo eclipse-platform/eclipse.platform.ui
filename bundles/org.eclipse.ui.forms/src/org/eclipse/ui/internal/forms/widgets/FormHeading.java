@@ -795,7 +795,17 @@ public class FormHeading extends Canvas {
 
 	public void setTextBackground(Color[] gradientColors, int[] percents,
 			boolean vertical) {
-		if (gradientColors != null) {
+		if (gradientColors != null && allColorsIdentical(gradientColors)) {
+			// Flat look: all gradient colors are the same, so use a solid
+			// background instead of generating a gradient image
+			gradientInfo = null;
+			if (gradientImage != null) {
+				FormImages.getInstance().markFinished(gradientImage, getDisplay());
+				gradientImage = null;
+				setBackgroundImage(null);
+			}
+			setBackground(gradientColors[0]);
+		} else if (gradientColors != null) {
 			gradientInfo = new GradientInfo();
 			gradientInfo.gradientColors = gradientColors;
 			gradientInfo.percents = percents;
@@ -811,6 +821,19 @@ public class FormHeading extends Canvas {
 				setBackgroundImage(null);
 			}
 		}
+	}
+
+	private static boolean allColorsIdentical(Color[] colors) {
+		if (colors.length <= 1) {
+			return true;
+		}
+		Color first = colors[0];
+		for (int i = 1; i < colors.length; i++) {
+			if (!first.equals(colors[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void setHeadingBackgroundImage(Image image) {

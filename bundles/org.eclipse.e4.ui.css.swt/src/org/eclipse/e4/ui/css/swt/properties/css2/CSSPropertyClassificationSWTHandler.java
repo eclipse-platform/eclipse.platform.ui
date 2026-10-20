@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -21,7 +23,6 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTCursorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyClassificationSWTHandler extends
@@ -53,7 +54,7 @@ AbstractCSSPropertyClassificationHandler {
 	@Override
 	public void applyCSSPropertyCursor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			final Control control = (Control) element;
 			Cursor cursor = (Cursor) engine.convert(value, Cursor.class,
 					control.getDisplay());
@@ -65,10 +66,9 @@ AbstractCSSPropertyClassificationHandler {
 	@Override
 	public void applyCSSPropertyVisibility(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssText text) {
 			Control control = (Control) element;
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			String visibility = primitiveValue.getStringValue();
+			String visibility = text.value();
 			switch (visibility) {
 			case "hidden":
 			case "collapse":
@@ -89,10 +89,6 @@ AbstractCSSPropertyClassificationHandler {
 		try {
 			cursor = control.getCursor();
 		} catch (Throwable e) {
-			//TODO replace with eclipse logging
-			//			if (logger.isWarnEnabled())
-			//				logger
-			//						.warn("Impossible to manage cursor, This SWT version doesn't support control.getCursor() Method");
 		}
 		return engine.convert(cursor, Cursor.class, null);
 	}
@@ -100,9 +96,6 @@ AbstractCSSPropertyClassificationHandler {
 	@Override
 	public String retrieveCSSPropertyVisibility(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// Control control = (Control) element;
-		// if (control.isVisible())
 		return "visible";
-		// return "hidden";
 	}
 }

@@ -10,4 +10,4 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.jface,
  org.eclipse.ui
 Automatic-Module-Name: org.eclipse.ui.examples.perspective
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25

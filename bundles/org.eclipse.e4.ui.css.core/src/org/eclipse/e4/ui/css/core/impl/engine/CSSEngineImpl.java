@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2020 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,86 +10,1098 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     Brian de Alwis (MTI) - move out registry-specific element provisioning
+ *     IBM Corporation - ongoing development
+ *     Red Hat Inc. (mistria) - Fixes suggested by FindBugs
+ *     Red Hat Inc. (mistria) - Bug 413348: fix stream leak
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428715
+ *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 479896
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500402
+ *     Daniel Raap <raap@subshell.com> - Bug 511836
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
-import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParserFactory;
-import org.eclipse.e4.ui.css.core.dom.parsers.ICSSParserFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
+import org.eclipse.e4.ui.css.core.dom.IElementProvider;
+import org.eclipse.e4.ui.css.core.dom.IStreamingNodeList;
+import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
+import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.CSSValueBooleanConverterImpl;
-import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerLazyProviderImpl;
-import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerSimpleProviderImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.CSSConditionFactoryImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.CSSSelectorFactoryImpl;
-import org.w3c.css.sac.ConditionFactory;
+import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSComputedStyleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
+import org.eclipse.e4.ui.css.core.impl.dom.StyleWrapper;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.RuleIndex;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.SelectorMatcher;
+import org.eclipse.e4.ui.css.core.impl.engine.selector.Selectors;
+import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.core.resources.ResourceRegistryKeyFactory;
+import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.utils.StringUtils;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParseException;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParser;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSValue;
 
-public abstract class CSSEngineImpl extends AbstractCSSEngine {
+/**
+ * Abstract CSS Engine which manages stylesheet parsing, the cascade, and
+ * applying styles.
+ *
+ * To apply styles, call the {@link #applyStyles(Object, boolean, boolean)}
+ * method. This method check if {@link ICSSPropertyHandler} is registered for
+ * apply the CSS property.
+ *
+ * @version 1.0.0
+ * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
+ */
+public abstract class CSSEngineImpl implements CSSEngine {
 
-	public static final ConditionFactory CONDITIONFACTORY_INSTANCE = new CSSConditionFactoryImpl(
-			null, "class", null, "id");
+	private static final ILog LOG = ILog.of(CSSEngineImpl.class);
 
-	private CSSPropertyHandlerSimpleProviderImpl handlerProvider;
+	/**
+	 * Archives are deliberately identified by exclamation mark in URLs
+	 */
+	private static final String ARCHIVE_IDENTIFIER = "!";
 
-	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider;
+	/**
+	 * Default {@link IResourcesLocatorManager} used to get InputStream, Reader
+	 * resource like Image.
+	 */
+	private static final IResourcesLocatorManager defaultResourcesLocatorManager = ResourcesLocatorManager.INSTANCE;
+
+	/** The stylesheets added to this engine, in registration order. */
+	private final List<CSSStyleSheetImpl> styleSheets = new ArrayList<>();
+
+	/** Cached rule index over all stylesheets. */
+	private RuleIndex ruleIndex;
+
+	/**
+	 * {@link IElementProvider} used to retrieve w3c Element linked to the
+	 * widget.
+	 */
+	private IElementProvider elementProvider;
+
+	protected boolean computeDefaultStyle = false;
+
+	private Map<Object, CSSElementContext> elementsContext = null;
+
+	/**
+	 * CSS Error Handler to intercept error while parsing, applying styles.
+	 */
+
+	private IResourcesLocatorManager resourcesLocatorManager;
+
+	private IResourcesRegistry resourcesRegistry;
+
+	/**
+	 * An ordered list of ICSSPropertyHandlerProvider
+	 */
+	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<>();
+	// for performance hold a map of handlers to singleton list
+	private final Map<ICSSPropertyHandler, List<ICSSPropertyHandler>> propertyHandlerInstanceMap = new HashMap<>();
+
+	private Map<String, String> currentCSSPropertiesApplied;
+
+	private boolean throwError;
+
+	private Map<Object, ICSSValueConverter> valueConverters = null;
+
+	private int parseImport;
+
+	private ResourceRegistryKeyFactory keyFactory;
 
 	public CSSEngineImpl() {
-		super();
-
-		// Register SWT Boolean CSSValue Converter
-		super.registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
+		keyFactory = new ResourceRegistryKeyFactory();
+		registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
 	}
 
-	public CSSEngineImpl(ExtendedDocumentCSS documentCSS) {
-		super(documentCSS);
-		// Register SWT Boolean CSSValue Converter
-		super.registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
+	/*--------------- Parse style sheet -----------------*/
+
+	@Override
+	public CSSStyleSheetImpl parseStyleSheet(Reader reader) throws IOException {
+		return parseStyleSheet(readFully(reader), null);
 	}
 
 	@Override
-	public CSSParser makeCSSParser() {
-		// Create CSS Parser
-		ICSSParserFactory factory = CSSParserFactory.newInstance();
-		CSSParser parser = factory.makeCSSParser();
-
-		// Register Batik CSS Selector factory.
-		parser.setSelectorFactory(CSSSelectorFactoryImpl.INSTANCE);
-
-		// Register Custom CSS Condition factory.
-		parser.setConditionFactory(CONDITIONFACTORY_INSTANCE);
-
-		return parser;
+	public CSSStyleSheetImpl parseStyleSheet(InputStream stream) throws IOException {
+		return parseStyleSheet(stream, null);
 	}
 
-	public void registerCSSPropertyHandler(Class<?> cl, ICSSPropertyHandler handler) {
-		initHandlerProviderIfNeed();
-		handlerProvider.registerCSSPropertyHandler(cl, handler);
+	@Override
+	public CSSStyleSheetImpl parseStyleSheet(InputStream stream, String uri) throws IOException {
+		return parseStyleSheet(readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)), uri);
 	}
 
-	private void initHandlerProviderIfNeed() {
-		if (handlerProvider == null) {
-			handlerProvider = new CSSPropertyHandlerSimpleProviderImpl();
-			super.registerCSSPropertyHandlerProvider(handlerProvider);
+	private CSSStyleSheetImpl parseStyleSheet(String content, String uri) throws IOException {
+		CSSStyleSheetImpl styleSheet = CssParser.parseStyleSheet(content);
+		reportParseProblems(styleSheet, uri);
+
+		List<CssRule> rules = styleSheet.getRules();
+		List<CssRule> masterList = new ArrayList<>();
+		List<CssParseException> problems = new ArrayList<>(styleSheet.getProblems());
+		int counter;
+		for (counter = 0; counter < rules.size(); counter++) {
+			if (!(rules.get(counter) instanceof CSSImportRuleImpl importRule)) {
+				break;
+			}
+			// processing an import CSS
+			URL url = null;
+			if (importRule.getHref().startsWith("platform")) {
+				url = FileLocator.resolve(new URL(importRule.getHref()));
+			} else {
+				IPath p = IPath.fromOSString(uri);
+				IPath trim = p.removeLastSegments(1);
+				boolean isArchive = uri.contains(ARCHIVE_IDENTIFIER);
+				url = FileLocator
+						.resolve(new URL(trim.addTrailingSeparator().toString() + importRule.getHref()));
+				File testFile = new File(url.getFile());
+				if (!isArchive&&!testFile.exists()) {
+					// look in platform default
+					String path = getResourcesLocatorManager().resolve(importRule.getHref());
+					testFile = new File(new URL(path).getFile());
+					if (testFile.exists()) {
+						url = new URL(path);
+					}
+				}
+			}
+			try (InputStream stream = url.openStream()) {
+				parseImport++;
+				CSSStyleSheetImpl imported;
+				try {
+					imported = parseStyleSheet(
+							readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)), url.toString());
+				} finally {
+					parseImport--;
+				}
+				masterList.addAll(imported.getRules());
+				problems.addAll(imported.getProblems());
+			}
+		}
+
+		// add remaining non import rules
+		masterList.addAll(rules.subList(counter, rules.size()));
+
+		// final stylesheet
+		CSSStyleSheetImpl s = new CSSStyleSheetImpl(masterList, problems);
+		if (parseImport == 0) {
+			addStyleSheet(s);
+		}
+		return s;
+	}
+
+	/** Report the rules and declarations the parser skipped, if any. */
+	private void reportParseProblems(CSSStyleSheetImpl styleSheet, String uri) {
+		String source = uri == null ? "" : " of " + uri; //$NON-NLS-1$ //$NON-NLS-2$
+		for (CssParseException problem : styleSheet.getProblems()) {
+			LOG.error("Skipped malformed CSS" + source + ": " + problem.getMessage(), problem); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
-	public void registerCSSProperty(String propertyName, Class<? extends ICSSPropertyHandler> propertyHandlerClass) {
-		initHandlerProviderIfNeed();
-		handlerProvider.registerCSSProperty(propertyName, propertyHandlerClass);
+	/** Register a parsed stylesheet with this engine's cascade. */
+	public void addStyleSheet(CSSStyleSheetImpl styleSheet) {
+		styleSheets.add(styleSheet);
+		ruleIndex = null;
 	}
 
-	private void initLazyHandlerProviderIfNeed() {
-		if (lazyHandlerProvider == null) {
-			lazyHandlerProvider = new CSSPropertyHandlerLazyProviderImpl();
-			super.registerCSSPropertyHandlerProvider(lazyHandlerProvider);
+	/** The stylesheets registered with this engine, in registration order. */
+	public List<CSSStyleSheetImpl> getStyleSheets() {
+		return Collections.unmodifiableList(styleSheets);
+	}
+
+	private void processNodeList(NodeList nodes, BiConsumer<Node, Boolean> consumer, boolean applyStylesToChildNodes) {
+		if (nodes instanceof IStreamingNodeList) {
+			((IStreamingNodeList) nodes).stream().forEach(child -> {
+				consumer.accept(child, applyStylesToChildNodes);
+			});
+		} else {
+			int length = nodes.getLength();
+			for (int k = 0; k < length; k++) {
+				consumer.accept(nodes.item(k), applyStylesToChildNodes);
+			}
 		}
 	}
 
-	public void registerPackage(String packageName) {
-		initLazyHandlerProviderIfNeed();
-		lazyHandlerProvider.registerPackage(packageName);
+	private static String readFully(Reader reader) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		char[] buffer = new char[4096];
+		int read;
+		while ((read = reader.read(buffer)) != -1) {
+			sb.append(buffer, 0, read);
+		}
+		return sb.toString();
 	}
 
+	/*--------------- Parse style declaration -----------------*/
+
+	@Override
+	public CSSStyleDeclaration parseStyleDeclaration(String style) {
+		return CssParser.parseStyleDeclaration(style);
+	}
+
+	@Override
+	public CSSStyleDeclaration parseStyleDeclaration(Reader reader) throws IOException {
+		return CssParser.parseStyleDeclaration(readFully(reader));
+	}
+
+	@Override
+	public CSSStyleDeclaration parseStyleDeclaration(InputStream stream) throws IOException {
+		return CssParser.parseStyleDeclaration(readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+	}
+
+	/*--------------- Parse CSS Selector -----------------*/
+
+	@Override
+	public Selectors.SelectorList parseSelectors(String selector) {
+		return CssParser.parseSelectors(selector);
+	}
+
+	@Override
+	public Selectors.SelectorList parseSelectors(Reader reader) throws IOException {
+		return CssParser.parseSelectors(readFully(reader));
+	}
+
+	@Override
+	public Selectors.SelectorList parseSelectors(InputStream stream) throws IOException {
+		return CssParser.parseSelectors(readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+	}
+
+	/*--------------- Parse CSS Property Value-----------------*/
+
+	@Override
+	public CSSValue parsePropertyValue(Reader reader) throws IOException {
+		return CssParser.parsePropertyValue(readFully(reader));
+	}
+
+	@Override
+	public CSSValue parsePropertyValue(InputStream stream) throws IOException {
+		return CssParser.parsePropertyValue(readFully(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+	}
+
+	@Override
+	public CSSValue parsePropertyValue(String value) {
+		return CssParser.parsePropertyValue(value);
+	}
+
+	/*--------------- Apply styles -----------------*/
+
+	private final ThreadLocal<Set<Object>> styledElements = new ThreadLocal<>();
+
+	public void startStylingSession() {
+		styledElements.set(new HashSet<>());
+	}
+
+	public void stopStylingSession() {
+		styledElements.remove();
+	}
+
+	public boolean isElementStyled(Object element) {
+		Set<Object> set = styledElements.get();
+		return set != null && set.contains(element);
+	}
+
+	public void markElementStyled(Object element) {
+		Set<Object> set = styledElements.get();
+		if (set != null) {
+			set.add(element);
+		}
+	}
+
+	@Override
+	public void applyStyles(Object element, boolean applyStylesToChildNodes) {
+		applyStyles(element, applyStylesToChildNodes, computeDefaultStyle);
+	}
+
+	@Override
+	public void applyStyles(Object element, boolean applyStylesToChildNodes, boolean computeDefaultStyle) {
+		Element elt = getElement(element);
+		if (elt == null || !isVisible(elt)) {
+			return;
+		}
+
+		if (isElementStyled(element)) {
+			if (applyStylesToChildNodes) {
+				NodeList nodes = elt instanceof ChildVisibilityAwareElement c
+						? c.getVisibleChildNodes()
+						: elt.getChildNodes();
+				if (nodes != null) {
+					processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
+					onStylesAppliedToChildNodes(elt, nodes);
+				}
+			}
+			return;
+		}
+
+		markElementStyled(element);
+
+		/*
+		 * Compute new Style to apply.
+		 */
+		CSSStyleDeclaration style = computeStyle(elt, null);
+		if (computeDefaultStyle) {
+			if (applyStylesToChildNodes) {
+				this.computeDefaultStyle = computeDefaultStyle;
+			}
+			/*
+			 * Apply default style.
+			 */
+			applyDefaultStyleDeclaration(element, false, style, null);
+		}
+
+		/*
+		 * Manage static pseudo instances
+		 */
+		String[] pseudoInstances = getStaticPseudoInstances(elt);
+		if (pseudoInstances != null && pseudoInstances.length > 0) {
+			// there are static pseudo instances defined, loop for it and
+			// apply styles for each pseudo instance.
+			for (String pseudoInstance : pseudoInstances) {
+				CSSStyleDeclaration styleWithPseudoInstance = computeStyle(elt, pseudoInstance);
+				if (computeDefaultStyle) {
+					/*
+					 * Apply default style for the current pseudo instance.
+					 */
+					applyDefaultStyleDeclaration(element, false, styleWithPseudoInstance, pseudoInstance);
+				}
+
+				if (styleWithPseudoInstance != null) {
+					CSSStyleRuleImpl parentRule = styleWithPseudoInstance instanceof CSSStyleDeclarationImpl declaration
+							? declaration.getParentStyleRule()
+							: null;
+					if (parentRule != null) {
+						applyConditionalPseudoStyle(parentRule, pseudoInstance, element, styleWithPseudoInstance);
+					} else {
+						applyStyleDeclaration(elt, styleWithPseudoInstance, pseudoInstance);
+					}
+				}
+			}
+		}
+
+		if (style != null) {
+			applyStyleDeclaration(elt, style, null);
+		}
+		try {
+			// Apply inline style
+			applyInlineStyle(elt, false);
+		} catch (Exception e) {
+			LOG.error("Failed to apply inline style", e); //$NON-NLS-1$
+		}
+
+		if (applyStylesToChildNodes) {
+			/*
+			 * Style all children recursive.
+			 */
+			NodeList nodes = elt instanceof ChildVisibilityAwareElement c
+					? c.getVisibleChildNodes()
+							: elt.getChildNodes();
+					if (nodes != null) {
+						processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
+						onStylesAppliedToChildNodes(elt, nodes);
+					}
+		}
+	}
+
+	/**
+	 * Allow the CSS engine to skip particular elements if they are not visible.
+	 * Elements need to be restyled when they become visible.
+	 *
+	 * @return true if the element is visible, false if not visible.
+	 */
+	protected boolean isVisible(Element elt) {
+		Node parentNode = elt.getParentNode();
+		if (parentNode instanceof ChildVisibilityAwareElement) {
+			NodeList l = ((ChildVisibilityAwareElement) parentNode).getVisibleChildNodes();
+			if (l != null) {
+				if (l instanceof IStreamingNodeList) {
+					return ((IStreamingNodeList) l).stream().anyMatch(node -> node == elt);
+				} else {
+					int length = l.getLength();
+					for (int i = 0; i < length; i++) {
+						if (l.item(i) == elt) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+
+	private void applyConditionalPseudoStyle(CSSStyleRuleImpl parentRule, String pseudoInstance, Object element,
+			CSSStyleDeclaration styleWithPseudoInstance) {
+		Selectors.SelectorList selectorList = parentRule.getSelectorList();
+		for (Selectors.Selector alternative : selectorList.alternatives()) {
+			if (matchesPseudoInstanceAttribute(alternative, pseudoInstance)) {
+				applyStyleDeclaration(element, styleWithPseudoInstance, pseudoInstance);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Returns {@code true} if {@code selector} carries a pseudo-class or
+	 * attribute selector (anywhere in a compound or descendant combinator)
+	 * whose target value equals {@code pseudoInstance}. Mirrors the legacy
+	 * walker, which handled both {@code :selected} (a pseudo-class) and
+	 * {@code Shell[active='true']} (an attribute) through a shared
+	 * condition interface.
+	 */
+	private static boolean matchesPseudoInstanceAttribute(Selectors.Selector selector, String pseudoInstance) {
+		if (selector instanceof Selectors.PseudoClass pc) {
+			return pseudoInstance.equals(pc.name());
+		}
+		if (selector instanceof Selectors.AttributeSelector attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.AttributeIncludes attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.AttributeBeginHyphen attr) {
+			return pseudoInstance.equals(attr.value());
+		}
+		if (selector instanceof Selectors.And and) {
+			return matchesPseudoInstanceAttribute(and.left(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(and.right(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Descendant d) {
+			return matchesPseudoInstanceAttribute(d.descendant(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(d.ancestor(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Child c) {
+			return matchesPseudoInstanceAttribute(c.child(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(c.parent(), pseudoInstance);
+		}
+		if (selector instanceof Selectors.Adjacent a) {
+			return matchesPseudoInstanceAttribute(a.second(), pseudoInstance)
+					|| matchesPseudoInstanceAttribute(a.first(), pseudoInstance);
+		}
+		return false;
+	}
+
+	protected String[] getStaticPseudoInstances(Element element) {
+		if (element instanceof CSSStylableElement stylableElement) {
+			return stylableElement.getStaticPseudoInstances();
+		}
+		return null;
+	}
+
+	/**
+	 * Callback method called when styles applied of <code>nodes</code>
+	 * children of the <code>element</code>.
+	 */
+	protected void onStylesAppliedToChildNodes(Element element, NodeList nodes) {
+		if (element instanceof CSSStylableElement) {
+			((CSSStylableElement) element).onStylesApplied(nodes);
+		}
+	}
+
+	/*--------------- Apply style declaration -----------------*/
+
+	@Override
+	public void applyStyleDeclaration(Object element, CSSStyleDeclaration style, String pseudo) {
+		// Apply style
+		boolean avoidanceCacheInstalled = currentCSSPropertiesApplied == null;
+		if (avoidanceCacheInstalled) {
+			currentCSSPropertiesApplied = new HashMap<>();
+		}
+		List<ICSSPropertyHandler> appliedHandlers = Collections.emptyList();
+		for (int i = 0; i < style.getLength(); i++) {
+			String property = style.item(i);
+			CSSValue value = style.getPropertyCSSValue(property);
+			try {
+				ICSSPropertyHandler handler = this.applyCSSProperty(element, property, value, pseudo);
+				if (handler != null) {
+					switch (appliedHandlers.size()) {
+					case 0:
+						appliedHandlers = propertyHandlerInstanceMap.computeIfAbsent(handler,
+								Collections::singletonList);
+						break;
+					case 1:
+						appliedHandlers = new ArrayList<>(appliedHandlers);
+						appliedHandlers.add(handler);
+						break;
+					default:
+						if (!appliedHandlers.contains(handler)) {
+							appliedHandlers.add(handler);
+						}
+					}
+				}
+			} catch (Exception e) {
+				if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
+					LOG.error("Failed to apply CSS property " + property, e); //$NON-NLS-1$
+				}
+			}
+		}
+		for (ICSSPropertyHandler handler : appliedHandlers) {
+			try {
+				handler.onAllCSSPropertiesApplied(element, this, pseudo);
+			} catch (Exception e) {
+				LOG.error("A CSS property handler failed after all properties were applied", e); //$NON-NLS-1$
+			}
+		}
+		if (avoidanceCacheInstalled) {
+			currentCSSPropertiesApplied = null;
+		}
+
+	}
+
+	@Override
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node,
+			Reader reader) throws IOException {
+		CSSStyleDeclaration style = parseStyleDeclaration(reader);
+		this.applyStyleDeclaration(node, style, null);
+		return style;
+	}
+
+	@Override
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputStream stream) throws IOException {
+		CSSStyleDeclaration style = parseStyleDeclaration(stream);
+		this.applyStyleDeclaration(node, style, null);
+		return style;
+	}
+
+	@Override
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, String style) throws IOException {
+		CSSStyleDeclaration styleDeclaration = parseStyleDeclaration(style);
+		this.applyStyleDeclaration(node, styleDeclaration, null);
+		return styleDeclaration;
+	}
+
+	/*--------------- Apply inline style -----------------*/
+
+	@Override
+	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) {
+		Element elt = getElement(node);
+		if (elt != null) {
+			if (elt instanceof CSSStylableElement stylableElement) {
+				String style = stylableElement.getCSSStyle();
+				if (style != null && style.length() > 0) {
+					try {
+						parseAndApplyStyleDeclaration(stylableElement.getNativeWidget(), style);
+					} catch (IOException e) {
+						LOG.error("Failed to apply inline style", e); //$NON-NLS-1$
+					}
+				}
+			}
+			if (applyStylesToChildNodes) {
+				/*
+				 * Style all children recursive.
+				 */
+				NodeList nodes = elt.getChildNodes();
+				if (nodes != null) {
+					processNodeList(nodes, this::applyInlineStyle, applyStylesToChildNodes);
+				}
+			}
+		}
+	}
+
+	/*--------------- Initial Style -----------------*/
+
+	@Override
+	public CSSStyleDeclaration getDefaultStyleDeclaration(Object element, String pseudoE) {
+		return getDefaultStyleDeclaration(element, null, pseudoE);
+	}
+
+	public CSSStyleDeclaration getDefaultStyleDeclaration(Object widget, CSSStyleDeclaration newStyle, String pseudoE) {
+		CSSStyleDeclaration style = null;
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			try {
+				style = provider.getDefaultCSSStyleDeclaration(this, widget, newStyle, pseudoE);
+			} catch (Exception e) {
+				LOG.error("Failed to compute the default style declaration", e); //$NON-NLS-1$
+			}
+		}
+		return style;
+	}
+
+	@Override
+	public void applyDefaultStyleDeclaration(Object element, boolean applyStylesToChildNodes) {
+		applyDefaultStyleDeclaration(element, applyStylesToChildNodes, null, null);
+	}
+
+	public void applyDefaultStyleDeclaration(Object element, boolean applyStylesToChildNodes,
+			CSSStyleDeclaration newStyle, String pseudoE) {
+		// Initial styles must be computed or applied
+		Element elt = getElement(element);
+		if (elt != null) {
+			if (elt instanceof CSSStylableElement stylableElement) {
+				CSSStyleDeclaration oldDefaultStyleDeclaration = stylableElement.getDefaultStyleDeclaration(pseudoE);
+				CSSStyleDeclaration defaultStyleDeclaration = getDefaultStyleDeclaration(
+						element, newStyle, pseudoE);
+				if (oldDefaultStyleDeclaration != null) {
+					// Second apply styles, apply the initial style
+					// before apply the new style
+					try {
+						throwError = false;
+						applyStyleDeclaration(element, defaultStyleDeclaration, pseudoE);
+					} finally {
+						throwError = true;
+					}
+				}
+			}
+			if (applyStylesToChildNodes) {
+				/*
+				 * Style all children recursive.
+				 */
+				NodeList nodes = elt.getChildNodes();
+				if (nodes != null) {
+					processNodeList(nodes, this::applyDefaultStyleDeclaration, applyStylesToChildNodes);
+					onStylesAppliedToChildNodes(elt, nodes);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Delegates the handle method.
+	 *
+	 * @param element
+	 *            may be a widget or a node or some object
+	 */
+	@Override
+	public ICSSPropertyHandler applyCSSProperty(Object element, String property, CSSValue value, String pseudo)
+			throws Exception {
+		if (currentCSSPropertiesApplied != null && currentCSSPropertiesApplied.containsKey(property)) {
+			// CSS Property was already applied, ignore it.
+			return null;
+		}
+
+		element = getElement(element); // in case we're passed a node
+		if ("inherit".equals(value.getCssText())) {
+			// go to parent node
+			Element actualElement = (Element) element;
+			Node parentNode = actualElement.getParentNode();
+			// get CSS property value
+			String parentValueString = retrieveCSSProperty(parentNode, property, pseudo);
+			// and convert it to a CSS value, overriding the "inherit" setting
+			// with the parent value
+			value = parsePropertyValue(parentValueString);
+		}
+
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			Collection<ICSSPropertyHandler> handlers = provider.getCSSPropertyHandlers(element, property);
+			if (handlers == null) {
+				continue;
+			}
+			for (ICSSPropertyHandler handler : handlers) {
+				try {
+					boolean result = handler.applyCSSProperty(element, property, value, pseudo, this);
+					if (result) {
+						// Add CSS Property to flag that this CSS Property was
+						// applied.
+						if (currentCSSPropertiesApplied != null) {
+							currentCSSPropertiesApplied.put(property, property);
+						}
+						return handler;
+					}
+				} catch (Exception e) {
+					if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
+						LOG.error("Failed to apply CSS property " + property, e); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public String retrieveCSSProperty(Object element, String property, String pseudo) {
+		try {
+			element = getElement(element); // in case we're passed a node
+			for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+				Collection<ICSSPropertyHandler> handlers = provider.getCSSPropertyHandlers(element, property);
+				if (handlers == null) {
+					continue;
+				}
+				for (ICSSPropertyHandler handler : handlers) {
+					String value = handler.retrieveCSSProperty(element, property, pseudo, this);
+					if (!StringUtils.isEmpty(value)) {
+						return value;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOG.error("Failed to retrieve CSS property " + property, e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	@Override
+	public String[] getCSSCompositePropertiesNames(String property) {
+		try {
+			Collection<ICSSPropertyHandler> handlers = getCSSPropertyHandlers(property);
+			if (handlers == null) {
+				return null;
+			}
+			for (ICSSPropertyHandler handler : handlers) {
+				if (handler instanceof ICSSPropertyCompositeHandler compositeHandler) {
+					if (compositeHandler.isCSSPropertyComposite(property)) {
+						return compositeHandler.getCSSPropertiesNames(property);
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOG.error("Failed to resolve the composite CSS property " + property, e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	protected Collection<ICSSPropertyHandler> getCSSPropertyHandlers(String property) throws Exception {
+		Collection<ICSSPropertyHandler> handlers = new ArrayList<>();
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			handlers.addAll(provider.getCSSPropertyHandlers(property));
+		}
+		return handlers;
+	}
+
+	/**
+	 * Return the set of property names and handlers for the provided node.
+	 *
+	 * @return the property names and handlers
+	 */
+	@Override
+	public Collection<String> getCSSProperties(Object element) {
+		Set<String> properties = new HashSet<>();
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			properties.addAll(provider.getCSSProperties(element));
+		}
+		return properties;
+	}
+
+	/*--------------- Dynamic pseudo classes -----------------*/
+
+	@Override
+	public IElementProvider getElementProvider() {
+		return elementProvider;
+	}
+
+	@Override
+	public void setElementProvider(IElementProvider elementProvider) {
+		this.elementProvider = elementProvider;
+	}
+
+	/**
+	 * Return the w3c Element linked to the Object element.
+	 */
+	@Override
+	public Element getElement(Object element) {
+		Element elt = null;
+		if (element == null) {
+			return elt;
+		}
+		CSSElementContext elementContext = getCSSElementContext(element);
+		if (elementContext != null) {
+			if (!elementContext.elementMustBeRefreshed(elementProvider)) {
+				return elementContext.getElement();
+			}
+		}
+		if (element instanceof Element) {
+			elt = (Element) element;
+		} else if (elementProvider != null) {
+			elt = elementProvider.getElement(element, this);
+		}
+		if (elt != null) {
+			if (elementContext == null) {
+				elementContext = new CSSElementContextImpl();
+				Object nativeWidget = getNativeWidget(element);
+				hookNativeWidget(nativeWidget);
+				getElementsContext().put(nativeWidget, elementContext);
+			}
+			elementContext.setElementProvider(elementProvider);
+			elementContext.setElement(elt);
+			if (elt instanceof CSSStylableElement) {
+				// Initialize CSS stylable element
+				((CSSStylableElement)elt).initialize();
+			}
+
+		}
+		return elt;
+	}
+
+	/**
+	 * Called when an element context is created for a native widget and
+	 * registered with this engine. Subclasses should override and install
+	 * a listener on the widget that will call {@link #handleWidgetDisposed(Object)}
+	 * when the widget is disposed.
+	 * <p>
+	 * The default implementation of this method does nothing.
+	 * </p>
+	 *
+	 * @param widget the native widget to hook
+	 */
+	protected void hookNativeWidget(Object widget) {
+	}
+
+	/**
+	 * Called when a widget is disposed. Removes the element context
+	 * from the element contexts map and the widgets map. Overriding
+	 * classes must call the super implementation.
+	 */
+	@Override
+	public void handleWidgetDisposed(Object widget) {
+		if (elementsContext != null) {
+			elementsContext.remove(widget);
+		}
+	}
+
+	@Override
+	public CSSElementContext getCSSElementContext(Object element) {
+		Object o = getNativeWidget(element);
+		return getElementsContext().get(o);
+	}
+
+	public Object getNativeWidget(Object element) {
+		Object o = element;
+		if (element instanceof CSSStylableElement) {
+			o = ((CSSStylableElement) o).getNativeWidget();
+		}
+		return o;
+	}
+
+	protected Map<Object, CSSElementContext> getElementsContext() {
+		if (elementsContext == null) {
+			elementsContext = new HashMap<>();
+		}
+		return elementsContext;
+	}
+
+	@Override
+	public boolean matches(Selectors.Selector selector, Object element, String pseudoElt) {
+		Element elt = getElement(element);
+		if (elt == null) {
+			return false;
+		}
+		int depth = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			depth++;
+		}
+		Element[] hierarchy = new Element[depth];
+		int idx = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			hierarchy[idx++] = (Element) n;
+		}
+		return SelectorMatcher.matches(selector, elt, pseudoElt, hierarchy, 0);
+	}
+
+	/*--------------- Resources Locator Manager -----------------*/
+
+	@Override
+	public IResourcesLocatorManager getResourcesLocatorManager() {
+		if (resourcesLocatorManager == null) {
+			return defaultResourcesLocatorManager;
+		}
+		return resourcesLocatorManager;
+	}
+
+	@Override
+	public void setResourcesLocatorManager(
+			IResourcesLocatorManager resourcesLocatorManager) {
+		this.resourcesLocatorManager = resourcesLocatorManager;
+	}
+
+	/*--------------- Computed style -----------------*/
+
+	@Override
+	public CSSStyleDeclaration computeStyle(Element elt, String pseudoElt) {
+		List<StyleWrapper> styleDeclarations = null;
+		StyleWrapper firstStyleDeclaration = null;
+		int position = 0;
+
+		int depth = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			depth++;
+		}
+		Element[] hierarchy = new Element[depth];
+		int idx = 0;
+		for (Node n = elt; n instanceof Element; n = n.getParentNode()) {
+			hierarchy[idx++] = (Element) n;
+		}
+
+		for (RuleIndex.Candidate candidate : getRuleIndex().candidatesFor(elt)) {
+			if (SelectorMatcher.matches(candidate.selector(), elt, pseudoElt, hierarchy, 0)) {
+				int specificity = candidate.selector().specificity();
+				StyleWrapper wrapper = new StyleWrapper(candidate.rule().getStyle(), specificity, position++);
+				if (firstStyleDeclaration == null) {
+					firstStyleDeclaration = wrapper;
+				} else {
+					// There are several style declarations which match
+					// the current element
+					if (styleDeclarations == null) {
+						styleDeclarations = new ArrayList<>();
+						styleDeclarations.add(firstStyleDeclaration);
+					}
+					styleDeclarations.add(wrapper);
+				}
+			}
+		}
+		if (styleDeclarations != null) {
+			// There are several style declarations which match the element;
+			// merge the CSS property values.
+			return new CSSComputedStyleImpl(styleDeclarations);
+		}
+		if (firstStyleDeclaration != null) {
+			return firstStyleDeclaration.style();
+		}
+		return null;
+	}
+
+	private RuleIndex getRuleIndex() {
+		if (ruleIndex == null) {
+			ruleIndex = RuleIndex.of(styleSheets);
+		}
+		return ruleIndex;
+	}
+
+	@Override
+	public void dispose() {
+		reset();
+		// Call dispose for each CSSStylableElement which was registered
+		Collection<CSSElementContext> contexts = elementsContext.values();
+		for (CSSElementContext context : contexts) {
+			Element element = context.getElement();
+			if (element instanceof CSSStylableElement) {
+				((CSSStylableElement) element).dispose();
+			}
+		}
+		// FIXME: should dispose element provider and the property handler
+		// providers
+		elementsContext = null;
+		if (resourcesRegistry != null) {
+			resourcesRegistry.dispose();
+		}
+	}
+
+	@Override
+	public void reset() {
+		styleSheets.clear();
+		ruleIndex = null;
+	}
+
+	/*--------------- Resources Registry -----------------*/
+
+	@Override
+	public IResourcesRegistry getResourcesRegistry() {
+		return resourcesRegistry;
+	}
+
+	@Override
+	public void setResourcesRegistry(IResourcesRegistry resourcesRegistry) {
+		this.resourcesRegistry = resourcesRegistry;
+	}
+
+	public void registerCSSPropertyHandlerProvider(ICSSPropertyHandlerProvider handlerProvider) {
+		propertyHandlerProviders.add(handlerProvider);
+	}
+
+	public void unregisterCSSPropertyHandlerProvider(ICSSPropertyHandlerProvider handlerProvider) {
+		propertyHandlerProviders.remove(handlerProvider);
+	}
+
+	/*--------------- CSS Value Converter -----------------*/
+
+	@Override
+	public void registerCSSValueConverter(ICSSValueConverter converter) {
+		if (valueConverters == null) {
+			valueConverters = new HashMap<>();
+		}
+		valueConverters.put(converter.getToType(), converter);
+	}
+
+	@Override
+	public void unregisterCSSValueConverter(ICSSValueConverter converter) {
+		if (valueConverters == null) {
+			return;
+		}
+		valueConverters.remove(converter.getToType(), converter);
+	}
+
+	@Override
+	public ICSSValueConverter getCSSValueConverter(Object toType) {
+		if (valueConverters != null) {
+			return valueConverters.get(toType);
+		}
+		return null;
+	}
+
+	@Override
+	public Object convert(CSSValue value, Object toType, Object context) throws Exception {
+		if ("unset".equals(value.getCssText())) {
+			return null;
+		}
+		Object key = keyFactory.createKey(value);
+		Object newValue = getResource(toType, key);
+
+		if (newValue == null) {
+			ICSSValueConverter converter = getCSSValueConverter(toType);
+			if (converter != null) {
+				newValue = converter.convert(value, this, context);
+				// cache it
+				registerResource(toType, key, newValue);
+			}
+		}
+		return newValue;
+	}
+
+	private Object getResource(Object toType, Object key) {
+		if (key != null && getResourcesRegistry() != null) {
+			return getResourcesRegistry().getResource(toType, key);
+		}
+		return null;
+	}
+
+	private void registerResource(Object toType, Object key, Object resource) {
+		if (key != null && resource != null && getResourcesRegistry() != null) {
+			getResourcesRegistry().registerResource(toType, key, resource);
+		}
+	}
+
+	@Override
+	public String convert(Object value, Object toType, Object context)
+			throws Exception {
+		if (value == null) {
+			return null;
+		}
+		ICSSValueConverter converter = getCSSValueConverter(toType);
+		if (converter != null) {
+			return converter.convert(value, this, context);
+		}
+		return null;
+	}
+
+	protected void setResourceRegistryKeyFactory(ResourceRegistryKeyFactory keyFactory) {
+		this.keyFactory = keyFactory;
+	}
 }

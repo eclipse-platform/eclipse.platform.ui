@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 
@@ -40,9 +41,10 @@ public class StringToNumberConverterTest {
 	public void setUp() throws Exception {
 		numberFormat = StringToNumberParser.getDefaultNumberFormat();
 
-		// Use reflection to work for both ICU and java.text
-		numberFormat.getClass().getMethod("setMaximumFractionDigits", int.class).invoke(numberFormat, 305);
-		numberFormat.getClass().getMethod("setParseBigDecimal", boolean.class).invoke(numberFormat, true);
+		if (numberFormat instanceof DecimalFormat) {
+			((DecimalFormat) numberFormat).setMaximumFractionDigits(305);
+			((DecimalFormat) numberFormat).setParseBigDecimal(true);
+		}
 
 		numberIntegerFormat = NumberFormat.getIntegerInstance();
 	}

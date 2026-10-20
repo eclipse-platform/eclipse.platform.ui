@@ -1177,17 +1177,43 @@ public class TextViewer extends Viewer implements
 		 */
 		public void updateSelection(Position[] selections) {
 			fSelectionSet= true;
-			if (selections == null) {
-				fSelections = new Position[0];
-			} else if (fSelections != null && fSelections.length == selections.length) {
+			if (fSelections != null && fSelections.length == selections.length) {
 				for (int i = 0; i < fSelections.length; i++) {
 					updatePosition(fSelections[i], selections[i].getOffset(), selections[i].getLength());
 				}
 			} else {
-				fSelections= Arrays.stream(selections)
-						.map(position -> new Position(position.getOffset(), position.getLength())) /*force deleted=false*/
-						.toArray(Position[]::new);
+				Position[] newSelections= Arrays.stream(selections)
+								.map(position -> new Position(position.getOffset(), position.getLength())) /*force deleted=false*/
+								.toArray(Position[]::new);
+				replaceTrackedSelections(newSelections);
 			}
+		}
+
+		/**
+		 * Replaces the tracked selection positions, keeping the registration with the document in
+		 * sync so that the new positions are updated on document changes.
+		 *
+		 * @param newSelections the new selection positions
+		 */
+		private void replaceTrackedSelections(Position[] newSelections) {
+			if (isConnected()) {
+				try {
+					if (fSelections != null) {
+						for (Position selection : fSelections) {
+							fUpdaterDocument.removePosition(fUpdaterCategory, selection);
+						}
+					}
+					for (Position selection : newSelections) {
+						fUpdaterDocument.addPosition(fUpdaterCategory, selection);
+					}
+				} catch (BadPositionCategoryException e) {
+					// cannot happen
+					Assert.isTrue(false);
+				} catch (BadLocationException e) {
+					// should not happen except on concurrent modification, position stays untracked
+				}
+			}
+			fSelections= newSelections;
 		}
 
 		/**

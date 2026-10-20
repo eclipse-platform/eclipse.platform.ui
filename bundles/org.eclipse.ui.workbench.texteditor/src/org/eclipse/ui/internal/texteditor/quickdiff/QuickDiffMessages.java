@@ -47,6 +47,7 @@ public final class QuickDiffMessages extends NLS {
 	public static String quickdiff_toggle_enable;
 	public static String quickdiff_toggle_disable;
 	public static String quickdiff_initialize;
+	public static String quickdiff_initialize_file;
 	public static String quickdiff_nonsynchronized;
 	public static String quickdiff_annotation_changed;
 	public static String quickdiff_annotation_added;

@@ -187,7 +187,7 @@ public class ColorSelector extends EventManager {
 		RGB color = getColorValue();
 		gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_BORDER));
 		if (color != null) {
-			gc.setBackground(new Color(display, color));
+			gc.setBackground(new Color(color));
 			gc.fillRectangle(image.getBounds());
 		}
 		gc.setLineWidth(2);

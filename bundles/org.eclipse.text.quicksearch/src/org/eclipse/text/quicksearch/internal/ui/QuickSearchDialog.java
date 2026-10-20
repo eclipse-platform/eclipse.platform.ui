@@ -159,7 +159,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
 	private final UIJob refreshJob = UIJob.create(Messages.QuickSearchDialog_RefreshJob,
-			(ICoreRunnable) m -> refreshWidgets());
+			(ICoreRunnable) _ -> refreshWidgets());
 
 	protected void openSelection() {
 		try {
@@ -264,7 +264,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private Image getBlankImage() {
 		if (blankImage==null) {
-			final ImageGcDrawer noOp = (gc, width, height) -> {};
+			final ImageGcDrawer noOp = (_, _, _) -> {};
 			blankImage = new Image(Display.getDefault(), noOp, 1, 1);
 		}
 		return blankImage;
@@ -384,6 +384,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private SourceViewer viewer;
 	private LineNumberRulerColumn lineNumberColumn;
+	private SourceViewerDecorationSupport sourceViewerDecorationSupport;
 	private FixedLineHighlighter targetLineHighlighter;
 	private final IPropertyChangeListener preferenceChangeListener = this::handlePropertyChangeEvent;
 
@@ -561,26 +562,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 */
 	@Override
 	public boolean close() {
-		this.progressJob.cancel();
-		this.progressJob = null;
-//		this.refreshProgressMessageJob.cancel();
-		if (showViewHandler != null) {
-			IHandlerService service = PlatformUI
-					.getWorkbench().getService(IHandlerService.class);
-			service.deactivateHandler(showViewHandler);
-			showViewHandler.getHandler().dispose();
-			showViewHandler = null;
-		}
-		if (menuManager != null) {
-			menuManager.dispose();
-		}
-		if (contextMenuManager != null) {
-			contextMenuManager.dispose();
-		}
 		storeDialog(getDialogSettings());
-		if (searcher!=null) {
-			searcher.cancel();
-		}
 		return super.close();
 	}
 
@@ -793,7 +775,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
 
-		dialogArea.addDisposeListener(e -> QuickSearchDialog.this.dispose());
+		dialogArea.addDisposeListener(_ -> QuickSearchDialog.this.dispose());
 
 		Composite content = createNestedComposite(dialogArea, 1, false);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -898,11 +880,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		createPopupMenu();
 
-		pattern.addModifyListener(e -> {
+		pattern.addModifyListener(_ -> {
 			applyFilter(false);
 		});
 
-		searchIn.addModifyListener(e -> {
+		searchIn.addModifyListener(_ -> {
 			applyPathMatcher();
 		});
 
@@ -926,7 +908,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			handleSelected(selection);
 		});
 
-		list.addDoubleClickListener(event -> handleDoubleClick());
+		list.addDoubleClickListener(_ -> handleDoubleClick());
 
 		list.getTable().addKeyListener(new KeyAdapter() {
 			@Override
@@ -1015,6 +997,32 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	protected void dispose() {
+		if (progressJob != null) {
+			progressJob.cancel();
+			progressJob = null;
+		}
+		if (showViewHandler != null) {
+			IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
+			service.deactivateHandler(showViewHandler);
+			showViewHandler.getHandler().dispose();
+			showViewHandler = null;
+		}
+		if (menuManager != null) {
+			menuManager.dispose();
+			menuManager = null;
+		}
+		if (contextMenuManager != null) {
+			contextMenuManager.dispose();
+			contextMenuManager = null;
+		}
+		if (searcher != null) {
+			searcher.cancel();
+			searcher = null;
+		}
+		if (sourceViewerDecorationSupport != null) {
+			sourceViewerDecorationSupport.dispose();
+			sourceViewerDecorationSupport = null;
+		}
 		if (blankImage!=null) {
 			blankImage.dispose();
 			blankImage = null;
@@ -1030,7 +1038,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		viewer.getTextWidget().setFont(JFaceResources.getFont(TEXT_FONT));
 		createViewerDecorations();
 
-		list.addSelectionChangedListener(event -> refreshDetails());
+		list.addSelectionChangedListener(_ -> refreshDetails());
 
 		viewer.getTextWidget().addControlListener(new ControlAdapter() {
 			@Override
@@ -1086,7 +1094,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		lineNumberColumn.setForeground(getLineNumbersColor());
 		viewer.addVerticalRulerColumn(lineNumberColumn);
 
-		var sourceViewerDecorationSupport = new SourceViewerDecorationSupport(viewer, null, null, EditorsUI.getSharedTextColors());
+		sourceViewerDecorationSupport = new SourceViewerDecorationSupport(viewer, null, null, EditorsUI.getSharedTextColors());
 		sourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(EDITOR_CURRENT_LINE, EDITOR_CURRENT_LINE_COLOR);
 		sourceViewerDecorationSupport.install(EditorsUI.getPreferenceStore());
 		targetLineHighlighter = new FixedLineHighlighter();

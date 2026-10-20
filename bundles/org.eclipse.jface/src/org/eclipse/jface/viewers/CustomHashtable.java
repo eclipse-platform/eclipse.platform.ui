@@ -15,9 +15,6 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
-
 /**
  * CustomHashtable associates keys with values. Keys and values cannot be null.
  * The size of the Hashtable is the number of key/value pairs it contains.
@@ -36,60 +33,19 @@ import java.util.NoSuchElementException;
 	private static class HashMapEntry {
 		Object key, value;
 
+		/**
+		 * The key's hash, kept so that growing the table does not hash the keys again
+		 * and so that a lookup can rule out an entry without comparing the keys. Both
+		 * matter for elements whose hashCode and equals are expensive.
+		 */
+		final int hash;
+
 		HashMapEntry next;
 
-		HashMapEntry(Object theKey, Object theValue) {
+		HashMapEntry(Object theKey, Object theValue, int theHash) {
 			key = theKey;
 			value = theValue;
-		}
-	}
-
-	private static final class EmptyEnumerator implements Enumeration {
-		@Override
-		public boolean hasMoreElements() {
-			return false;
-		}
-
-		@Override
-		public Object nextElement() {
-			throw new NoSuchElementException();
-		}
-	}
-
-	private class HashEnumerator implements Enumeration {
-		boolean key;
-
-		int start;
-
-		HashMapEntry entry;
-
-		HashEnumerator(boolean isKey) {
-			key = isKey;
-			start = firstSlot;
-		}
-
-		@Override
-		public boolean hasMoreElements() {
-			if (entry != null) {
-				return true;
-			}
-			while (start <= lastSlot) {
-				if (elementData[start++] != null) {
-					entry = elementData[start - 1];
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public Object nextElement() {
-			if (hasMoreElements()) {
-				Object result = key ? entry.key : entry.value;
-				entry = entry.next;
-				return result;
-			}
-			throw new NoSuchElementException();
+			hash = theHash;
 		}
 	}
 
@@ -101,13 +57,7 @@ import java.util.NoSuchElementException;
 
 	private int threshold;
 
-	transient int firstSlot = 0;
-
-	transient int lastSlot = -1;
-
 	transient private IElementComparer comparer;
-
-	private static final EmptyEnumerator emptyEnumerator = new EmptyEnumerator();
 
 	/**
 	 * The default capacity used when not specified in the constructor.
@@ -158,7 +108,6 @@ import java.util.NoSuchElementException;
 		if (capacity >= 0) {
 			elementCount = 0;
 			elementData = new HashMapEntry[capacity == 0 ? 1 : capacity];
-			firstSlot = elementData.length;
 			loadFactor = 0.75f;
 			computeMaxSize();
 		} else {
@@ -217,20 +166,6 @@ import java.util.NoSuchElementException;
 	}
 
 	/**
-	 * Answers an Enumeration on the values of this Hashtable. The
-	 * results of the Enumeration may be affected if the contents
-	 * of this Hashtable are modified.
-	 *
-	 * @return		an Enumeration of the values of this Hashtable
-	 */
-	public Enumeration elements() {
-		if (elementCount == 0) {
-			return emptyEnumerator;
-		}
-		return new HashEnumerator(false);
-	}
-
-	/**
 	 * Answers the value associated with the specified key in
 	 * this Hashtable.
 	 *
@@ -239,27 +174,27 @@ import java.util.NoSuchElementException;
 	 *				does not exist
 	 */
 	public Object get(Object key) {
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
-		HashMapEntry entry = elementData[index];
+		HashMapEntry entry = getEntry(key);
+		return entry == null ? null : entry.value;
+	}
+
+	private HashMapEntry getEntry(Object key) {
+		int hash = hashCode(key);
+		HashMapEntry entry = elementData[indexFor(hash)];
 		while (entry != null) {
-			if (keyEquals(key, entry.key)) {
-				return entry.value;
+			if (entry.hash == hash && keyEquals(key, entry.key)) {
+				return entry;
 			}
 			entry = entry.next;
 		}
 		return null;
 	}
 
-	private HashMapEntry getEntry(Object key) {
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
-		HashMapEntry entry = elementData[index];
-		while (entry != null) {
-			if (keyEquals(key, entry.key)) {
-				return entry;
-			}
-			entry = entry.next;
-		}
-		return null;
+	/**
+	 * Answers the slot the given hash belongs into.
+	 */
+	private int indexFor(int hash) {
+		return (hash & 0x7FFFFFFF) % elementData.length;
 	}
 
 	/**
@@ -283,20 +218,6 @@ import java.util.NoSuchElementException;
 	}
 
 	/**
-	 * Answers an Enumeration on the keys of this Hashtable. The
-	 * results of the Enumeration may be affected if the contents
-	 * of this Hashtable are modified.
-	 *
-	 * @return		an Enumeration of the keys of this Hashtable
-	 */
-	public Enumeration keys() {
-		if (elementCount == 0) {
-			return emptyEnumerator;
-		}
-		return new HashEnumerator(true);
-	}
-
-	/**
 	 * Associate the specified value with the specified key in this Hashtable.
 	 * If the key already exists, the old value is replaced. The key and value
 	 * cannot be null.
@@ -308,23 +229,18 @@ import java.util.NoSuchElementException;
 	 */
 	public Object put(Object key, Object value) {
 		if (key != null && value != null) {
-			int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+			int hash = hashCode(key);
+			int index = indexFor(hash);
 			HashMapEntry entry = elementData[index];
-			while (entry != null && !keyEquals(key, entry.key)) {
+			while (entry != null && !(entry.hash == hash && keyEquals(key, entry.key))) {
 				entry = entry.next;
 			}
 			if (entry == null) {
 				if (++elementCount > threshold) {
 					rehash();
-					index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+					index = indexFor(hash);
 				}
-				if (index < firstSlot) {
-					firstSlot = index;
-				}
-				if (index > lastSlot) {
-					lastSlot = index;
-				}
-				entry = new HashMapEntry(key, value);
+				entry = new HashMapEntry(key, value, hash);
 				entry.next = elementData[index];
 				elementData[index] = entry;
 				return null;
@@ -346,19 +262,11 @@ import java.util.NoSuchElementException;
 		if (length == 0) {
 			length = 1;
 		}
-		firstSlot = length;
-		lastSlot = -1;
 		HashMapEntry[] newData = new HashMapEntry[length];
 		for (int i = elementData.length; --i >= 0;) {
 			HashMapEntry entry = elementData[i];
 			while (entry != null) {
-				int index = (hashCode(entry.key) & 0x7FFFFFFF) % length;
-				if (index < firstSlot) {
-					firstSlot = index;
-				}
-				if (index > lastSlot) {
-					lastSlot = index;
-				}
+				int index = (entry.hash & 0x7FFFFFFF) % length;
 				HashMapEntry next = entry.next;
 				entry.next = newData[index];
 				newData[index] = entry;
@@ -377,10 +285,30 @@ import java.util.NoSuchElementException;
 	 *				did not exist
 	 */
 	public Object remove(Object key) {
+		if (elementCount == 0) {
+			return null;
+		}
+		return remove(key, hashCode(key));
+	}
+
+	/**
+	 * Removes the key/value pair for the given key, whose hash the caller has
+	 * already computed. The hash must be the one this table's comparer would
+	 * produce for the key.
+	 *
+	 * @param key  the key to remove
+	 * @param hash the key's hash
+	 * @return the value associated with the key, or <code>null</code> if the key
+	 *         did not exist
+	 */
+	public Object remove(Object key, int hash) {
+		if (elementCount == 0) {
+			return null;
+		}
 		HashMapEntry last = null;
-		int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
+		int index = indexFor(hash);
 		HashMapEntry entry = elementData[index];
-		while (entry != null && !keyEquals(key, entry.key)) {
+		while (entry != null && !(entry.hash == hash && keyEquals(key, entry.key))) {
 			last = entry;
 			entry = entry.next;
 		}

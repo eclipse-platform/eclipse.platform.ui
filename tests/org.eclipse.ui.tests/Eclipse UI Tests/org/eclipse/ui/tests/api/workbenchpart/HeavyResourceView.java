@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -25,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.tests.TestPlugin;
 
 public class HeavyResourceView extends ViewPart {
 
@@ -81,7 +81,7 @@ public class HeavyResourceView extends ViewPart {
 				new Composite(tempShell, SWT.NONE);
 			}
 		} catch (SWTError e) {
-			TestPlugin.getDefault().getLog().log(WorkbenchPlugin.getStatus(e));
+			ILog.of(HeavyResourceView.class).log(WorkbenchPlugin.getStatus(e));
 		}
 	}
 

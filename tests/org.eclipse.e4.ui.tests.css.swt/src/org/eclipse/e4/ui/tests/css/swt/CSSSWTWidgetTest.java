@@ -29,8 +29,12 @@ import org.eclipse.e4.ui.css.swt.dom.html.SWTHTMLElement;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CSSSWTWidgetTest extends CSSSWTTestCase {
+public class CSSSWTWidgetTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	private static final class WidgetElementWithSupplierReturningNull extends WidgetElement {
 		private WidgetElementWithSupplierReturningNull(Widget widget, CSSEngine engine) {
@@ -61,14 +65,14 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 	@Disabled
 	@Test
 	void testEngineKey() {
-		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
-		assertEquals(WidgetElement.getEngine(widget), engine);
+		Widget widget = css.createTestLabel("Label { font: Arial 12px; font-weight: bold }");
+		assertEquals(WidgetElement.getEngine(widget), css.getEngine());
 	}
 
 	@Test
 	void testIDKey() {
 		final String id = "some.test.id";
-		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
+		Widget widget = css.createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		WidgetElement.setID(widget, id);
 		assertEquals(WidgetElement.getID(widget), id);
 	}
@@ -77,14 +81,15 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 	@Test
 	void testCSSClassKey() {
 		final String cssClass = "some.test.cssclassname";
-		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
+		Widget widget = css.createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		WidgetElement.setCSSClass(widget, cssClass);
 		assertEquals(WidgetElement.getCSSClass(widget), cssClass);
 	}
 
 	@Test
 	void testHasAttribute() {
-		Widget widget = createTestLabel("Label { }");
+		Widget widget = css.createTestLabel("Label { }");
+		CSSEngine engine = css.getEngine();
 		String propertySetToEmptyStringKey = "empty-property";
 		widget.setData(propertySetToEmptyStringKey, "");
 		assertTrue(engine.getElement(widget).hasAttribute(propertySetToEmptyStringKey));
@@ -94,31 +99,34 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 
 	@Test
 	void testGetAttributeWithSwtStylesNull() {
-		Widget widget = createTestLabel("Label { }");
-		engine.setElementProvider((element, engine) -> new WidgetElementWithSwtStylesNull((Widget) element, engine));
+		Widget widget = css.createTestLabel("Label { }");
+		CSSEngine cssEngine = css.getEngine();
+		cssEngine.setElementProvider((element, engine) -> new WidgetElementWithSwtStylesNull((Widget) element, engine));
 
-		assertTrue(engine.getElement(widget).hasAttribute("style"));
-		assertEquals("", engine.getElement(widget).getAttribute("style"));
+		assertTrue(cssEngine.getElement(widget).hasAttribute("style"));
+		assertEquals("", cssEngine.getElement(widget).getAttribute("style"));
 	}
 
 	@Test
 	void testGetAttributeWithAttributeTypeNull() {
-		Widget widget = createTestLabel("Label { }");
-		engine.setElementProvider(
+		Widget widget = css.createTestLabel("Label { }");
+		CSSEngine cssEngine = css.getEngine();
+		cssEngine.setElementProvider(
 				(element, engine) -> new SWTHTMLElementWithAttributeTypeNull((Widget) element, engine));
 
-		assertTrue(engine.getElement(widget).hasAttribute("type"));
-		assertEquals("", engine.getElement(widget).getAttribute("type"));
+		assertTrue(cssEngine.getElement(widget).hasAttribute("type"));
+		assertEquals("", cssEngine.getElement(widget).getAttribute("type"));
 	}
 
 	@Test
 	void testGetAttributeWithAttributeSupplierReturningNull() {
-		Widget widget = createTestLabel("Label { }");
-		engine.setElementProvider(
+		Widget widget = css.createTestLabel("Label { }");
+		CSSEngine cssEngine = css.getEngine();
+		cssEngine.setElementProvider(
 				(element, engine) -> new WidgetElementWithSupplierReturningNull((Widget) element, engine));
 
 		// throws exception
-		assertThrows(AssertionFailedException.class, () -> engine.getElement(widget).getAttribute("style"));
+		assertThrows(AssertionFailedException.class, () -> cssEngine.getElement(widget).getAttribute("style"));
 
 	}
 }

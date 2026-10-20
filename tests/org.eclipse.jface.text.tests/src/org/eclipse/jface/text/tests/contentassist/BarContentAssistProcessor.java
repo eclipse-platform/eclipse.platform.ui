@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -134,11 +134,13 @@ public class BarContentAssistProcessor implements IContentAssistProcessorExtensi
 		return new ICompletionProposal[0];
 	}
 
+	@Deprecated
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;

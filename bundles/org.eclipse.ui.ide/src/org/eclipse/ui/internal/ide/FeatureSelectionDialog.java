@@ -157,7 +157,7 @@ public class FeatureSelectionDialog extends AbstractSelectionDialog<AboutInfo> {
 				event -> getButton(IDialogConstants.OK_ID).setEnabled(!event.getSelection().isEmpty()));
 
 		// Add double-click listener
-		listViewer.addDoubleClickListener(event -> okPressed());
+		listViewer.addDoubleClickListener(_ -> okPressed());
 		return composite;
 	}
 

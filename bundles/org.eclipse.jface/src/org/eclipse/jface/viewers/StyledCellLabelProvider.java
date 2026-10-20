@@ -382,9 +382,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			int style = viewer.getColumnViewerOwner(cell.getColumnIndex()).getStyle();
 			int x = textBounds.x;
 			if ((style & SWT.RIGHT) != 0) {
-				x = textBounds.x + textBounds.width - textLayout.getBounds().width;
+				x = textBounds.x + textBounds.width - layoutBounds.width;
 			} else if ((style & SWT.CENTER) != 0) {
-				x = textBounds.x + (textBounds.width - textLayout.getBounds().width)/2;
+				x = textBounds.x + (textBounds.width - layoutBounds.width)/2;
 			}
 			int y = textBounds.y
 					+ Math.max(0, (textBounds.height - layoutBounds.height) / 2);

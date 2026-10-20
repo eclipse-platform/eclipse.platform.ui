@@ -58,7 +58,7 @@ class MarkerResourceUtil {
 	 *         various enabled filters into account.
 	 */
 	static Set<IResource> computeResources(IResource[] selectedResources,
-			Collection<MarkerFieldFilterGroup> enabledFilters, boolean andFilters) {
+			Collection<MarkerFieldFilterGroup> enabledFilters) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		if (enabledFilters==null||enabledFilters.isEmpty()) {
@@ -66,8 +66,7 @@ class MarkerResourceUtil {
 			set.add(root);
 			return set;
 		}
-		Set<IResource> resourceSet = andFilters ? getResourcesFiltersAnded(enabledFilters,
-				selectedResources, root) : getResourcesFiltersOred(
+		Set<IResource> resourceSet = getResourcesFiltersOred(
 				enabledFilters, selectedResources, root);
 
 		//remove duplicates
@@ -136,89 +135,6 @@ class MarkerResourceUtil {
 				set = new HashSet<>(1);
 				set.add(root);
 				return set;
-			}
-		}
-		return resourceSet;
-	}
-
-	/**
-	 * The method may look long and a little time-consuming, but it actually
-	 * performs a short-circuit AND operation on the resources, and therefore
-	 * quick.
-	 *
-	 * Note: This is an optimization; we could have ORed the resources instead.
-	 * Let us say, for example, we had a filter of workspace-scope(ANY), and
-	 * others of scope on Selected element and maybe others.Now, if we computed
-	 * markers by ORing the resources, then we would compute markers for the
-	 * entire Workspace. The filters would anyways keep only the markers that
-	 * are an intersection of all resources (filter by scope) .In other words,
-	 * we spend more system-resources in both gathering and filtering.If we
-	 * ANDed the scopes(resources) we'd, save a good amount of system-resources
-	 * in both phases.
-	 *
-	 * @return set
-	 */
-	static Set<IResource> getResourcesFiltersAnded(Collection<MarkerFieldFilterGroup> enabledFilters,
-			IResource[] selectedResources, IWorkspaceRoot root) {
-		if (enabledFilters==null||enabledFilters.isEmpty()) {
-			HashSet<IResource> set = new HashSet<>(1);
-			set.add(root);
-			return set;
-		}
-		Set<IResource> resourceSet = new HashSet<>();
-
-		Iterator<MarkerFieldFilterGroup> filtersIterator = enabledFilters.iterator();
-		Set<IResource> removeMain = new HashSet<>();
-		while (filtersIterator.hasNext()) {
-			MarkerFieldFilterGroup group = filtersIterator.next();
-			Set<IResource> set = getResourcesForFilter(group, selectedResources, root);
-			if (resourceSet.isEmpty()) {
-				// first time
-				resourceSet.addAll(set);
-			} else {
-				Iterator<IResource> resIterator = resourceSet.iterator();
-				while (resIterator.hasNext()) {
-					boolean remove = true;
-					IResource mainRes = resIterator.next();
-					Iterator<IResource> iterator = set.iterator();
-					while (iterator.hasNext() && remove) {
-						IResource grpRes = iterator.next();
-						remove = !grpRes.equals(mainRes);
-						if (remove && grpRes.getFullPath().isPrefixOf(mainRes.getFullPath())) {
-							remove = false;
-						} else if (remove && mainRes.getFullPath().isPrefixOf(grpRes.getFullPath())) {
-							remove = false;
-							removeMain.add(mainRes);
-						}
-					}
-					if (remove) {
-						resIterator.remove();
-					}
-				}
-				Iterator<IResource> iterator = set.iterator();
-				while (iterator.hasNext()) {
-					boolean remove = true;
-					IResource grpRes = iterator.next();
-					resIterator = resourceSet.iterator();
-					while (resIterator.hasNext()&&remove) {
-						IResource mainRes = resIterator.next();
-						remove = !grpRes.equals(mainRes);
-						if (remove && mainRes.getFullPath().isPrefixOf(grpRes.getFullPath())) {
-							remove = false;
-						}
-					}
-					if (remove) {
-						iterator.remove();
-					}
-				}
-				resourceSet.addAll(set);
-				resourceSet.removeAll(removeMain);
-				removeMain.clear();
-				if (resourceSet.isEmpty()) {
-					// if the And between two is empty
-					// then its empty for all
-					return resourceSet;
-				}
 			}
 		}
 		return resourceSet;

@@ -15,14 +15,23 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,8 +63,35 @@ public class PerspectiveSwitcherTest {
 
 	}
 
-	private static Object getPerspectiveSwitcher(WorkbenchWindow window) {
+	@Test
+	public void testPerspectiveSwitcherFollowsSidePreference() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
+
+		// like a theme's preferences rule, override the default right after the value
+		preferenceMemento.setPreference(store, IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "left");
+		store.setDefault(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "left");
+		try {
+			assertTrue(waitForSide(window, SideValue.LEFT), "The perspective switcher should move to the left trim");
+			assertEquals("left", getPerspectiveSwitcher(window).getPersistedState()
+					.get(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE));
+		} finally {
+			store.setDefault(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "top");
+		}
+
+		preferenceMemento.setPreference(store, IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "top");
+		assertTrue(waitForSide(window, SideValue.TOP), "The perspective switcher should move back to the top trim");
+	}
+
+	private static boolean waitForSide(WorkbenchWindow window, SideValue side) {
+		return DisplayHelper.waitForCondition(getWorkbench().getDisplay(), 5000, () -> {
+			MUIElement parent = getPerspectiveSwitcher(window).getParent();
+			return parent instanceof MTrimBar trimBar && trimBar.getSide() == side;
+		});
+	}
+
+	private static MToolControl getPerspectiveSwitcher(WorkbenchWindow window) {
 		EModelService modelService = window.getService(EModelService.class);
-		return modelService.find("PerspectiveSwitcher", window.getModel());
+		return (MToolControl) modelService.find(WorkbenchWindow.PERSPECTIVE_SWITCHER_ID, window.getModel());
 	}
 }

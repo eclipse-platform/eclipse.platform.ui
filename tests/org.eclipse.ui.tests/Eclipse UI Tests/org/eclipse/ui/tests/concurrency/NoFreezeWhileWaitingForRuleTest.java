@@ -151,7 +151,7 @@ public class NoFreezeWhileWaitingForRuleTest {
 	private Job spinRuleBlockingJob() throws InterruptedException {
 		CountDownLatch jobStarted = new CountDownLatch(1);
 		long timeout = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
-		ICoreRunnable ruleBlockingRunnable = monitor -> {
+		ICoreRunnable ruleBlockingRunnable = _ -> {
 			Job.getJobManager().beginRule(rule, ruleMonitor);
 			jobStarted.countDown();
 			try {

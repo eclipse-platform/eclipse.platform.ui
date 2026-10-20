@@ -58,11 +58,6 @@ import org.osgi.service.event.EventHandler;
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference, ISizeProvider {
 
 	/**
-	 * Internal property ID: Indicates that the underlying part was created
-	 */
-	public static final int INTERNAL_PROPERTY_OPENED = 0x211;
-
-	/**
 	 * Internal property ID: Indicates that the underlying part was destroyed
 	 */
 	public static final int INTERNAL_PROPERTY_CLOSED = 0x212;
@@ -82,18 +77,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * Internal property ID: Indicates that the result of isZoomed() has changed
 	 */
 	public static final int INTERNAL_PROPERTY_ZOOMED = 0x215;
-
-	/**
-	 * Internal property ID: Indicates that the part has an active child and the
-	 * active child has changed. (fired by PartStack)
-	 */
-	public static final int INTERNAL_PROPERTY_ACTIVE_CHILD_CHANGED = 0x216;
-
-	/**
-	 * Internal property ID: Indicates that changed in the min / max state has
-	 * changed
-	 */
-	public static final int INTERNAL_PROPERTY_MAXIMIZED = 0x217;
 
 	// State constants //////////////////////////////
 

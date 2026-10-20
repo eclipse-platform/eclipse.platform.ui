@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -161,7 +162,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 				} catch (CoreException exception) {
 					exceptions[0] = exception;
-					IDEWorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+					ILog.of(FileSystemSupportRegistry.class).log(exception.getStatus());
 				}
 			}
 

@@ -16,6 +16,7 @@ package org.eclipse.jface.text.tests;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
 
+import org.eclipse.jface.text.tests.codemining.CodeMiningAnnotationReattachTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningLineHeaderAnnotationTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
@@ -29,11 +30,16 @@ import org.eclipse.jface.text.tests.reconciler.FastAbstractReconcilerTest;
 import org.eclipse.jface.text.tests.reconciler.ReconcilerResetOrderingTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerZeroLengthTest;
+import org.eclipse.jface.text.tests.rules.RuleBasedScannerDelimitersTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
 import org.eclipse.jface.text.tests.source.AnnotationRulerColumnTest;
 import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
+import org.eclipse.jface.text.tests.source.SourceViewerBackgroundTest;
+import org.eclipse.jface.text.tests.source.SourceViewerComputeStyleRangesTest;
 import org.eclipse.jface.text.tests.source.inlined.AnnotationOnTabTest;
+import org.eclipse.jface.text.tests.source.inlined.InlinedAnnotationFontTest;
+import org.eclipse.jface.text.tests.source.inlined.InlinedAnnotationSupportTest;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest;
 import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDataTest;
 
@@ -46,7 +52,10 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 @SelectClasses({
 		AnnotationRulerColumnTest.class,
 		LineNumberRulerColumnTest.class,
+		SourceViewerBackgroundTest.class,
+		SourceViewerComputeStyleRangesTest.class,
 		HTML2TextReaderTest.class,
+		HyperlinkManagerTest.class,
 		TextHoverPopupTest.class,
 		TextPresentationTest.class,
 		DefaultUndoManagerTest.class,
@@ -67,14 +76,18 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		FastPartitionerZeroLengthTest.class,
 		FastPartitionerTest.class,
 		ScannerColumnTest.class,
+		RuleBasedScannerDelimitersTest.class,
 		WordRuleTest.class,
 
 		TemplatePersistenceDataTest.class,
 		LineContentBoundsDrawingTest.class,
 		AnnotationOnTabTest.class,
+		InlinedAnnotationSupportTest.class,
+		InlinedAnnotationFontTest.class,
 		CodeMiningTest.class,
 		CodeMiningLineHeaderAnnotationTest.class,
 		CodeMiningProjectionViewerTest.class,
+		CodeMiningAnnotationReattachTest.class,
 
 		TabsToSpacesConverterTest.class,
 		DefaultTextDoubleClickStrategyTest.class,

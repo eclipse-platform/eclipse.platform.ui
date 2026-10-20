@@ -92,4 +92,12 @@ final class DerivedImageDescriptor extends ImageDescriptor {
 		image.dispose();
 		return result;
 	}
+
+	@Override
+	public ImageDescriptor asDisabledDescriptor() {
+		if ((flags & SWT.IMAGE_DISABLE) != 0) {
+			return this;
+		}
+		return super.asDisabledDescriptor();
+	}
 }

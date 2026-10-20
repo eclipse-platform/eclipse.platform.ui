@@ -18,13 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,7 +42,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.genericeditor.Messages;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class GenericEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private final ArrayList<SelectionListener> leadFollowerListeners = new ArrayList<>();
@@ -75,7 +75,7 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 			try {
 				scopedStore.save();
 			} catch (IOException e) {
-				Platform.getLog(getClass()).error("Cannot to save preferences.", e); //$NON-NLS-1$
+				ILog.of(getClass()).error("Cannot save preferences.", e); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -172,7 +172,7 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 		textControl.setTextLimit(textLimit);
 		textControl.setToolTipText(meta.description());
 
-		textControl.addModifyListener(e -> {
+		textControl.addModifyListener(_ -> {
 			updateStatus(validateDelay(textControl.getText()));
 		});
 		textFields.put(meta, textControl);

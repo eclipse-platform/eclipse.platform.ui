@@ -3,25 +3,23 @@
 <plugin>
    <extension
          point="org.eclipse.e4.ui.css.swt.theme">
-      <theme
-            basestylesheeturi="css/e4_classic.css"
-            id="org.eclipse.e4.ui.css.theme.e4_classic"
-            label="%theme.classic">
-      </theme>
     <theme
         basestylesheeturi="css/e4-dark_linux.css"
+        isDarkTheme="true"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
         os="linux">
     </theme>
     <theme
         basestylesheeturi="css/e4-dark_win.css"
+        isDarkTheme="true"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
         os="win32">
     </theme>
     <theme
         basestylesheeturi="css/e4-dark_mac1013.css"
+        isDarkTheme="true"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
         os="macosx"
@@ -29,6 +27,7 @@
     </theme>
     <theme
         basestylesheeturi="css/e4-dark_mac.css"
+        isDarkTheme="true"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
         os="macosx">
@@ -52,10 +51,6 @@
             os="win32">
       </theme>
 
-   <themeAssociation
-		themeId="org.eclipse.e4.ui.css.theme.e4_classic"
-		colorAndFontId="org.eclipse.ui.defaultTheme">
-   </themeAssociation>
    <stylesheet
          uri="css/dark/e4-dark_preferencestyle.css">
       <themeid

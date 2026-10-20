@@ -231,7 +231,7 @@ public class MenuContributionHarness extends ViewPart {
 	}
 
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(event -> doubleClickAction.run());
+		viewer.addDoubleClickListener(_ -> doubleClickAction.run());
 	}
 
 	private void showMessage(String message) {

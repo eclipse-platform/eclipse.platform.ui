@@ -69,7 +69,7 @@ public class InfoForm {
 		Display display= parent.getDisplay();
 		fBackgroundColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		fForegroundColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		fSeparatorColor= new Color(display, 152, 170, 203);
+		fSeparatorColor= new Color(152, 170, 203);
 
 		fPropertyChangeListener = this::handlePropertyChange;
 		JFaceResources.getFontRegistry().addListener(fPropertyChangeListener);

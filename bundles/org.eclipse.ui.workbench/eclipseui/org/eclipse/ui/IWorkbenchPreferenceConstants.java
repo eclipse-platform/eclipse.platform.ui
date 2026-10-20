@@ -714,6 +714,19 @@ public interface IWorkbenchPreferenceConstants {
 	String LARGE_VIEW_LIMIT = "largeViewLimit"; //$NON-NLS-1$
 
 	/**
+	 * This preference specifies whether marker views (Problems, Tasks, Bookmarks
+	 * etc.) should initially show the search box used to filter the shown markers.
+	 * <p>
+	 * This preference is a <code>boolean</code> value. This preference has an
+	 * effect only if the user has not explicitly set the visibility of the search
+	 * box using the corresponding toggle in the view menu.
+	 * </p>
+	 *
+	 * @since 3.140
+	 */
+	String INITIALLY_SHOW_FILTER_TEXT_IN_MARKER_VIEWS = "initiallyShowFilterTextInMarkerViews"; //$NON-NLS-1$
+
+	/**
 	 * <p>
 	 * Whether the UI adapts to DPI changes at runtime. It only affects Windows.
 	 * </p>

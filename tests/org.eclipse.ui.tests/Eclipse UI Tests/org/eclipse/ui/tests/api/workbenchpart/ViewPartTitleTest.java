@@ -53,7 +53,7 @@ public class ViewPartTitleTest {
 
 	boolean contentChangeEvent = false;
 
-	private final IPropertyListener propertyListener = (source, propId) -> {
+	private final IPropertyListener propertyListener = (_, propId) -> {
 		switch (propId) {
 		case IWorkbenchPartConstants.PROP_TITLE:
 			titleChangeEvent = true;

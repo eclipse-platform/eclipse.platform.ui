@@ -310,11 +310,6 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	@Override
-	public int getEditorReuseThreshold() {
-		return -1;
-	}
-
-	@Override
 	public IPlaceholderFolderLayout getFolderForView(String id) {
 		MPart view = findPart(perspModel, id);
 		if (view == null) {
@@ -357,11 +352,6 @@ public class ModeledPageLayout implements IPageLayout {
 	@Override
 	public void setEditorAreaVisible(boolean showEditorArea) {
 		eaRef.setToBeRendered(showEditorArea);
-	}
-
-	@Override
-	public void setEditorReuseThreshold(int openEditors) {
-		// ignored, no-op, same as 3.x implementation
 	}
 
 	@Override

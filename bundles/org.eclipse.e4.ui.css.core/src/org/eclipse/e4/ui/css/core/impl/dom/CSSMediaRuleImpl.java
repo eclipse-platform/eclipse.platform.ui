@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2026 Lars Vogel and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,60 +9,45 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.ui.css.core.impl.dom;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.css.CSSMediaRule;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
-import org.w3c.dom.css.CSSStyleSheet;
-import org.w3c.dom.stylesheets.MediaList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
+/**
+ * An {@code @media} rule: a query list plus the style rules it guards. The
+ * rules join the cascade at this rule's position while the query matches.
+ */
+public final class CSSMediaRuleImpl implements CssRule {
 
-	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+	private final List<Media.Query> queries;
+	private final List<CSSStyleRuleImpl> rules;
 
-	public CSSMediaRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
-			MediaListImpl mediaListImpl) {
-		super(parentStyleSheet, parentRule);
+	public CSSMediaRuleImpl(List<Media.Query> queries, List<CSSStyleRuleImpl> rules) {
+		this.queries = List.copyOf(queries);
+		this.rules = List.copyOf(rules);
+	}
+
+	public List<Media.Query> getQueries() {
+		return queries;
+	}
+
+	public List<CSSStyleRuleImpl> getRules() {
+		return rules;
+	}
+
+	public boolean matches(Media.Context context) {
+		return Media.matches(queries, context);
+	}
+
+	public String getMediaText() {
+		return queries.stream().map(Media.Query::text).collect(Collectors.joining(", ")); //$NON-NLS-1$
 	}
 
 	@Override
-	public short getType() {
-		return CSSRule.MEDIA_RULE;
+	public String toString() {
+		return "@media " + getMediaText(); //$NON-NLS-1$
 	}
-
-	// W3C CSSMediaRule API methods
-
-	@Override
-	public void deleteRule(int index) throws DOMException {
-		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
-	}
-
-	@Override
-	public CSSRuleList getCssRules() {
-		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
-	}
-
-	@Override
-	public MediaList getMedia() {
-		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
-	}
-
-	@Override
-	public int insertRule(String rule, int index) throws DOMException {
-		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
-	}
-
-
-	// Additional methods
-
-	public void setRuleList(CSSRuleList rules) {
-		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
-	}
-
 }

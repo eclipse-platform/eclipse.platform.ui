@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -61,6 +61,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Throttler;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -175,6 +176,23 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 
 	private final Throttler uiRefreshThrottler;
+
+	/**
+	 * System property overriding, in milliseconds, the grace period a job must run
+	 * before it is shown in the progress view; {@code 0} disables it and restores
+	 * the immediate display of jobs.
+	 */
+	public static final String GRACE_PERIOD_PROPERTY = "org.eclipse.ui.progress.viewGracePeriod"; //$NON-NLS-1$
+
+	private static final int MINIMUM_GRACE_PERIOD = 200;
+
+	/**
+	 * Scheduled jobs not yet announced, mapped to the {@link System#nanoTime()} at
+	 * which their grace period elapses. Jobs that finish, sleep or are cancelled
+	 * before then are removed here and never appear, which avoids flicker from very
+	 * short running jobs.
+	 */
+	private final Map<Job, Long> pendingJobAdditions = new ConcurrentHashMap<>();
 
 	/**
 	 * Returns the progress manager currently in use.
@@ -360,6 +378,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * Send pending notifications to listeners.
 	 */
 	/* Visible for testing */ public void notifyListeners() {
+		promotePendingJobs();
 		Set<GroupInfo> localPendingGroupUpdates, localPendingGroupRemoval;
 		Map<JobInfo, Set<IJobProgressManagerListener>> localPendingJobUpdates, localPendingJobAddition,
 				localPendingJobRemoval;
@@ -395,6 +414,33 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		localPendingGroupRemoval.forEach(group -> {
 			listeners.forEach(listener -> listener.removeGroup(group));
 		});
+
+		// Keep ticking so pending jobs are announced even when nothing else updates.
+		if (!pendingJobAdditions.isEmpty()) {
+			uiRefreshThrottler.throttledAsyncExec();
+		}
+	}
+
+	/**
+	 * Announces the jobs whose grace period has elapsed. Jobs removed from
+	 * {@link #pendingJobAdditions} meanwhile are never announced.
+	 */
+	private void promotePendingJobs() {
+		if (pendingJobAdditions.isEmpty()) {
+			return;
+		}
+		long now = System.nanoTime();
+		for (Iterator<Entry<Job, Long>> it = pendingJobAdditions.entrySet().iterator(); it.hasNext();) {
+			Entry<Job, Long> entry = it.next();
+			if (now - entry.getValue() < 0) {
+				continue; // still within its grace period
+			}
+			it.remove();
+			Job job = entry.getKey();
+			if (managedJobs.contains(job)) {
+				rememberJobAddition(progressFor(job).getJobInfo());
+			}
+		}
 	}
 
 	private void setUpImages() {
@@ -508,6 +554,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 			@Override
 			public void sleeping(IJobChangeEvent event) {
+				if (cancelPendingAdd(event.getJob())) {
+					// Slept before its grace period elapsed; never announced, nothing to sleep.
+					return;
+				}
 				if (managedJobs.contains(event.getJob())) { // Are we showing this?
 					sleepJobInfo(progressFor(event.getJob()).getJobInfo());
 				}
@@ -629,9 +679,12 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	public void refreshJobInfo(JobInfo info) {
 		checkForStaleness(info.getJob());
+		if (pendingJobAdditions.containsKey(info.getJob())) {
+			// Still within its grace period; state is read when it is announced.
+			return;
+		}
 		synchronized (pendingUpdatesMutex) {
-			Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
-			rememberListenersForJob(info, pendingJobUpdates, predicate);
+			rememberListenersForJob(info, pendingJobUpdates, false);
 		}
 		uiRefreshThrottler.throttledExec();
 	}
@@ -658,10 +711,12 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		JobInfo info;
 		synchronized (runnableMonitors) {
 			info = progressFor(job).getJobInfo();
+			// Drop a pending add so the job is never shown; the removal below still
+			// captures jobs that must be kept (KEEP_PROPERTY or an error result).
+			cancelPendingAdd(job);
 			managedJobs.remove(job);
 			synchronized (pendingUpdatesMutex) {
-				Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
-				rememberListenersForJob(info, pendingJobRemoval, predicate);
+				rememberListenersForJob(info, pendingJobRemoval, false);
 			}
 			runnableMonitors.remove(job);
 		}
@@ -704,18 +759,67 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			refreshGroup(group);
 		}
 
-		managedJobs.add(info.getJob());
-		synchronized (pendingUpdatesMutex) {
-			Predicate<IJobProgressManagerListener> predicate = listener -> !isCurrentDisplaying(info.getJob(), listener.showsDebug());
-			rememberListenersForJob(info, pendingJobAddition, predicate);
+		Job job = info.getJob();
+		managedJobs.add(job);
+
+		int gracePeriod = getViewGracePeriod();
+		if (gracePeriod <= 0) {
+			rememberJobAddition(info);
+		} else {
+			// Defer the announcement; promotePendingJobs picks it up once the grace period elapses.
+			pendingJobAdditions.put(job, System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(gracePeriod));
 		}
 		uiRefreshThrottler.throttledExec();
 	}
 
-	private void rememberListenersForJob(JobInfo info, Map<JobInfo, Set<IJobProgressManagerListener>> listenersMap, Predicate<IJobProgressManagerListener> predicate) {
+	/**
+	 * Remembers a job addition for the registered listeners.
+	 */
+	private void rememberJobAddition(JobInfo info) {
+		synchronized (pendingUpdatesMutex) {
+			rememberListenersForJob(info, pendingJobAddition, true);
+		}
+	}
+
+	/**
+	 * Cancels a still pending grace-period add so the job is never announced.
+	 *
+	 * @return {@code true} if an add was pending and got cancelled
+	 */
+	private boolean cancelPendingAdd(Job job) {
+		return pendingJobAdditions.remove(job) != null;
+	}
+
+	/**
+	 * Returns the grace period in milliseconds a job must run before it is shown,
+	 * overridable through the {@link #GRACE_PERIOD_PROPERTY} system property.
+	 * {@code 0} disables it.
+	 */
+	private int getViewGracePeriod() {
+		String override = System.getProperty(GRACE_PERIOD_PROPERTY);
+		if (override != null) {
+			try {
+				return Math.max(0, Integer.parseInt(override));
+			} catch (NumberFormatException e) {
+				// Ignore and fall back to the computed default.
+			}
+		}
+		return Math.max(MINIMUM_GRACE_PERIOD, getLongOperationTime() / 2);
+	}
+
+	private void rememberListenersForJob(JobInfo info, Map<JobInfo, Set<IJobProgressManagerListener>> listenersMap,
+			boolean hideSleeping) {
 		Set<IJobProgressManagerListener> localListeners = listenersMap.computeIfAbsent(info,
 				k -> new LinkedHashSet<>());
-		listeners.stream().filter(predicate).forEach(localListeners::add);
+		Job job = info.getJob();
+		if (hideSleeping && isSleeping(job)) {
+			return;
+		}
+		for (IJobProgressManagerListener listener : listeners) {
+			if (!isNeverDisplaying(job, listener.showsDebug())) {
+				localListeners.add(listener);
+			}
+		}
 	}
 
 	/**
@@ -725,7 +829,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @return boolean <code>true</code> if the job is not displayed
 	 */
 	boolean isCurrentDisplaying(Job job, boolean debug) {
-		return isNeverDisplaying(job, debug) || job.getState() == Job.SLEEPING;
+		return isNeverDisplaying(job, debug) || isSleeping(job);
+	}
+
+	private static boolean isSleeping(Job job) {
+		return job.getState() == Job.SLEEPING;
 	}
 
 	/**
@@ -844,21 +952,28 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private void busyCursorWhile(Runnable dialogWaitRunnable, ProgressMonitorJobsDialog dialog) {
 		// Create the job that will open the dialog after a delay.
-		scheduleProgressMonitorJob(dialog);
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		if (display == null) {
-			return;
+		Job showDialogJob = scheduleProgressMonitorJob(dialog);
+		try {
+			final Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display == null) {
+				return;
+			}
+			// Show a busy cursor until the dialog opens.
+			BusyIndicator.showWhile(display, dialogWaitRunnable);
+		} finally {
+			// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+			// the operation finishes or unwinds with an exception.
+			showDialogJob.cancel();
 		}
-		// Show a busy cursor until the dialog opens.
-		BusyIndicator.showWhile(display, dialogWaitRunnable);
 	}
 
 	/**
 	 * Schedules the job that will open the progress monitor dialog.
 	 *
 	 * @param dialog the dialog to open
+	 * @return the job that was scheduled to open the dialog
 	 */
-	private void scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
+	private Job scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
 		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.ProgressManager_openJobName) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -871,7 +986,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		};
 		updateJob.setSystem(true);
 		updateJob.schedule(getLongOperationTime());
-
+		return updateJob;
 	}
 
 	/**
@@ -970,15 +1085,36 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
+		final ProgressMonitorJobsDialog dialog;
+		try {
+			dialog = new ProgressMonitorJobsDialog(ProgressManagerUtil.getDefaultParent());
+		} catch (SWTException e) {
+			if (e.code != SWT.ERROR_THREAD_INVALID_ACCESS) {
+				throw e;
+			}
+			throw new IllegalStateException(
+					"IProgressService.run() must be called from the UI thread since it may need to open a progress dialog. Use a Job to run long operations from a background thread.", //$NON-NLS-1$
+					e);
+		}
+		dialog.setOpenOnRun(false);
+		if (shouldRunInBackground()) {
+			// The "Always run in background" preference must suppress the modal
+			// progress dialog for every fork/cancelable combination, not just the
+			// backward compatible (fork==false || cancelable==false) path below.
+			dialog.run(fork, cancelable, runnable);
+			return;
+		}
+
 		if (!fork || !cancelable) {
 			// Backward compatible code.
-			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-					ProgressManagerUtil.getDefaultParent());
-			dialog.setOpenOnRun(false);
-			if (!shouldRunInBackground()) {
-				scheduleProgressMonitorJob(dialog);
+			Job showDialogJob = scheduleProgressMonitorJob(dialog);
+			try {
+				dialog.run(fork, cancelable, runnable);
+			} finally {
+				// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+				// the operation finishes or unwinds with an exception.
+				showDialogJob.cancel();
 			}
-			dialog.run(fork, cancelable, runnable);
 			return;
 		}
 

@@ -130,10 +130,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
 
-				gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
+				// width 0 stays one device pixel on Windows while the zigzag scales
+				int lineWidth= gc.getLineWidth();
+				gc.setLineWidth(1);
 				gc.setLineStyle(SWT.LINE_SOLID);
 				gc.setForeground(color);
+				int antialias= gc.getAntialias();
+				gc.setAntialias(SWT.ON);
 				gc.drawPolyline(polyline);
+				gc.setAntialias(antialias);
+				gc.setLineWidth(lineWidth);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);

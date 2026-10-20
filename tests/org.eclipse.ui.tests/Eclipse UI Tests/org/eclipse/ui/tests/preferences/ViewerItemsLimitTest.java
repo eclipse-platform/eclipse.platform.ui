@@ -298,7 +298,7 @@ public class ViewerItemsLimitTest {
 		assertNotNull("There must be one problems root element", getFirstItem(commonViewer));
 		commonViewer.expandAll();
 
-		processEventsUntil(() -> getFirstItem(commonViewer).getItems().length > VIEW_LIMIT_3, 30_000);
+		waitForLimitedItems(commonViewer, VIEW_LIMIT_3, numberOfMarkers);
 		TreeItem firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, firstItem.getItems());
 		assertEquals("0 project error has occurred", firstItem.getItems()[0].getText());
@@ -310,11 +310,11 @@ public class ViewerItemsLimitTest {
 		attributes.put(IMarker.LOCATION, project.getFullPath().toOSString());
 		IMarker errorMarker = project.createMarker(IMarker.PROBLEM, attributes);
 		numberOfMarkers++;
-		processBackgroundUpdates(1000);
+		waitForLimitedItems(commonViewer, VIEW_LIMIT_3, numberOfMarkers);
 
 		firstItem = getFirstItem(commonViewer);
-		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, getFirstItem(commonViewer).getItems());
-		assertEquals("01 project error has occurred", getFirstItem(commonViewer).getItems()[0].getText());
+		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, firstItem.getItems());
+		assertEquals("01 project error has occurred", firstItem.getItems()[0].getText());
 
 		// create one more marker which will appear inside expandable node.
 		attributes = new HashMap<>();
@@ -323,16 +323,16 @@ public class ViewerItemsLimitTest {
 		attributes.put(IMarker.LOCATION, project.getFullPath().toOSString());
 		errorMarker = project.createMarker(IMarker.PROBLEM, attributes);
 		numberOfMarkers++;
-		processBackgroundUpdates(1000);
+		waitForLimitedItems(commonViewer, VIEW_LIMIT_3, numberOfMarkers);
 
 		firstItem = getFirstItem(commonViewer);
-		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, getFirstItem(commonViewer).getItems());
+		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, firstItem.getItems());
 
 		// change the viewer limit
 		setNewViewerLimit(VIEW_LIMIT_DOUBLE);
 		processBackgroundUpdates(100);
 		commonViewer.expandAll();
-		processEventsUntil(() -> getFirstItem(commonViewer).getItems().length > VIEW_LIMIT_DOUBLE, 30_000);
+		waitForLimitedItems(commonViewer, VIEW_LIMIT_DOUBLE, numberOfMarkers);
 
 		firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_DOUBLE, numberOfMarkers, firstItem.getItems());
@@ -340,7 +340,7 @@ public class ViewerItemsLimitTest {
 
 		errorMarker.delete();
 		numberOfMarkers--;
-		processBackgroundUpdates(1000);
+		waitForLimitedItems(commonViewer, VIEW_LIMIT_DOUBLE, numberOfMarkers);
 
 		firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_DOUBLE, numberOfMarkers, firstItem.getItems());
@@ -348,12 +348,32 @@ public class ViewerItemsLimitTest {
 
 		setNewViewerLimit(DEFAULT_VIEW_LIMIT);
 
-		// job may take some time to create marker.
 		processBackgroundUpdates(100);
 		commonViewer.expandAll();
+		int expectedMarkers = numberOfMarkers;
+		processEventsUntil(() -> getFirstItem(commonViewer).getItems().length == expectedMarkers, 30_000);
 		firstItem = getFirstItem(commonViewer);
 		assertEquals("all the items must be visible with limit more than input", numberOfMarkers,
 				firstItem.getItems().length);
+	}
+
+	/**
+	 * Waits until the first category shows the limited items for the given input
+	 * size.
+	 */
+	private void waitForLimitedItems(MarkersTreeViewer viewer, int currentLimit, int realInputSize) {
+		processEventsUntil(() -> {
+			TreeItem first = getFirstItem(viewer);
+			if (first == null) {
+				return false;
+			}
+			TreeItem[] items = first.getItems();
+			if (items.length != currentLimit + 1
+					|| !(items[items.length - 1].getData() instanceof ExpandableNode node)) {
+				return false;
+			}
+			return node.getLabel().equals(calculateExpandableLabel(node, realInputSize));
+		}, 30_000);
 	}
 
 	private TreeItem getFirstItem(MarkersTreeViewer commonViewer) {

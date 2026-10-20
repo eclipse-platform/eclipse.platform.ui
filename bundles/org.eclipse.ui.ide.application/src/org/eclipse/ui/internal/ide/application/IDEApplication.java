@@ -36,27 +36,36 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.eclipse.jface.preference.ScopedPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -68,8 +77,6 @@ import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -93,6 +100,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 
 	private static final String USER_NAME = "user.name"; //$NON-NLS-1$
+
+	private boolean isDark;
+	private Listener darkThemeShowListener;
 
 	// Use the branding plug-in of the platform feature since this is most likely
 	// to change on an update of the IDE.
@@ -145,6 +155,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		Job.getJobManager().suspend();
 
 		Display display = createDisplay();
+
+		initializeDefaultTheme(display);
+
 		// processor must be created before we start event loop
 		DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
 
@@ -153,11 +166,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// look and see if there's a splash shell we can parent off of
 			Shell shell = WorkbenchPlugin.getSplashShell(display);
 			if (shell != null) {
-				// should should set the icon and message for this shell to be the
-				// same as the chooser dialog - this will be the guy that lives in
-				// the task bar and without these calls you'd have the default icon
-				// with no message.
-				shell.setText(ChooseWorkspaceDialog.getWindowTitle());
+				// Set the taskbar title and icon for the splash shell. The title
+				// is taken from the configured product; if no product is set, the
+				// launcher's default title is kept.
+				IProduct product = Platform.getProduct();
+				if (product != null && product.getName() != null) {
+					shell.setText(product.getName());
+				}
 				shell.setImages(Window.getDefaultImages());
 			}
 
@@ -166,6 +181,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				WorkbenchPlugin.unsetSplashShell(display);
 				return instanceLocationCheck;
 			}
+
+			// Reset early dark theme styling before the workbench starts;
+			// the ThemeEngine will apply the correct theme from here on.
+			resetEarlyDarkTheme(display);
 
 			// create the workbench with this advisor and run it until it exits
 			// N.B. createWorkbench remembers the advisor, and also registers
@@ -244,55 +263,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				return EXIT_OK;
 			}
 			if (result == ReturnCode.VALID) {
-				// at this point its valid, so try to lock it and update the
-				// metadata version information if successful
-				try {
-					if (instanceLoc.lock()) {
-						writeWorkspaceVersion();
-						writeWsLockInfo(instanceLoc.getURL());
-						return null;
-					}
-
-					// we failed to create the directory.
-					// Two possibilities:
-					// 1. directory is already in use
-					// 2. directory could not be created
-					File workspaceDirectory = new File(instanceLoc.getURL().getFile());
-					if (workspaceDirectory.exists()) {
-						if (isDevLaunchMode(applicationArguments)) {
-							return EXIT_WORKSPACE_LOCKED;
-						}
-
-						// check if there is a lock info then append it to error message.
-						String lockInfo = WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL());
-						if (lockInfo != null) {
-							hideSplash(shell);
-							WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(),
-									lockInfo);
-						} else {
-							hideSplash(shell);
-							MessageDialog.openError(shell,
-									IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-									IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-						}
-					} else {
-						hideSplash(shell);
-						MessageDialog.openError(
-								shell,
-								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-					}
-				} catch (IOException e) {
-					hideSplash(shell);
-					IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", e); //$NON-NLS-1$
-					MessageDialog.openError(
-							shell,
-							IDEWorkbenchMessages.InternalError,
-							e.getMessage());
-				}
-				return EXIT_OK;
+				return lockExistingWorkspace(shell, instanceLoc, applicationArguments);
 			}
 			if (result == ReturnCode.INVALID) {
+				// prompt the user for a different location
 				force = true;
 			}
 		}
@@ -309,6 +283,71 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			}
 		}
 
+		return promptAndSetWorkspace(shell, instanceLoc, launchData, force);
+	}
+
+	/**
+	 * Locks the already-set workspace and updates its metadata version.
+	 *
+	 * @return <code>null</code> if the workspace was locked successfully, or an
+	 *         exit code if locking failed and the application should terminate
+	 */
+	@SuppressWarnings("rawtypes")
+	private Object lockExistingWorkspace(Shell shell, Location instanceLoc, Map applicationArguments) {
+		// at this point its valid, so try to lock it and update the
+		// metadata version information if successful
+		try {
+			if (instanceLoc.lock()) {
+				writeWorkspaceVersion();
+				writeWsLockInfo(instanceLoc.getURL());
+				return null;
+			}
+
+			// we failed to create the directory.
+			// Two possibilities:
+			// 1. directory is already in use
+			// 2. directory could not be created
+			File workspaceDirectory = new File(instanceLoc.getURL().getFile());
+			boolean workspaceDirectoryExists = workspaceDirectory.exists();
+
+			// In dev (PDE) launch mode let the launcher report the locked workspace.
+			if (workspaceDirectoryExists && isDevLaunchMode(applicationArguments)) {
+				return EXIT_WORKSPACE_LOCKED;
+			}
+
+			// If the directory exists and carries lock info, show it; otherwise
+			// report that the workspace location could not be set.
+			String lockInfo = workspaceDirectoryExists
+					? WorkspaceLock.getWorkspaceLockDetails(instanceLoc.getURL())
+					: null;
+			hideSplash(shell);
+			if (lockInfo != null) {
+				WorkspaceLock.showWorkspaceLockedDialog(shell, workspaceDirectory.getAbsolutePath(), lockInfo);
+			} else {
+				MessageDialog.openError(shell,
+						IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
+						IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
+			}
+		} catch (IOException e) {
+			hideSplash(shell);
+			IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", e); //$NON-NLS-1$
+			MessageDialog.openError(
+					shell,
+					IDEWorkbenchMessages.InternalError,
+					e.getMessage());
+		}
+		return EXIT_OK;
+	}
+
+	/**
+	 * Repeatedly prompts the user for a workspace location until one is set, the
+	 * user cancels, or a restart is required.
+	 *
+	 * @return <code>null</code> if a workspace was set successfully, or an exit
+	 *         code otherwise
+	 */
+	private Object promptAndSetWorkspace(Shell shell, Location instanceLoc, ChooseWorkspaceData launchData,
+			boolean force) {
 		int returnValue = -1;
 		URL workspaceUrl = null;
 		while (true) {
@@ -366,31 +405,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 			// by this point it has been determined that the workspace is
 			// already in use -- force the user to choose again
-
-			String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
-
-			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
-					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
-					MessageDialog.ERROR, 2, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel) {
-				@Override
-				protected Control createCustomArea(Composite parent) {
-					if (lockInfo == null || lockInfo.isBlank()) {
-						return null;
-					}
-
-					Composite container = new Composite(parent, SWT.NONE);
-					container.setLayout(new FillLayout());
-
-					Label multiLineText = new Label(container, SWT.NONE);
-					multiLineText.setText(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Message, lockInfo));
-
-					return container;
-				}
-			};
-			// the return value influences the next loop's iteration
-			returnValue = dialog.open();
+			returnValue = openWorkspaceInUseDialog(workspaceUrl);
 
 			if (returnValue == CANCEL_LAUNCH || returnValue == CANCEL_LAUNCH_DEFAULT) {
 				return EXIT_OK;
@@ -399,6 +414,36 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			// Remember the locked workspace as recent workspace
 			launchData.writePersistedData();
 		}
+	}
+
+	/**
+	 * Opens the "workspace in use" dialog and returns the index of the button the
+	 * user selected.
+	 */
+	private int openWorkspaceInUseDialog(URL workspaceUrl) {
+		String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
+
+		MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
+				null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
+				MessageDialog.ERROR, 2, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
+				IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose,
+				IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel) {
+			@Override
+			protected Control createCustomArea(Composite parent) {
+				if (lockInfo == null || lockInfo.isBlank()) {
+					return null;
+				}
+
+				Composite container = new Composite(parent, SWT.NONE);
+				container.setLayout(new FillLayout());
+
+				Label multiLineText = new Label(container, SWT.NONE);
+				multiLineText.setText(NLS.bind(IDEWorkbenchMessages.IDEApplication_Ws_Lock_Owner_Message, lockInfo));
+
+				return container;
+			}
+		};
+		return dialog.open();
 	}
 
 	/**
@@ -573,8 +618,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 	/**
 	 * Show the choose workspace dialog to the user (if needed).
-	 * @param shell      parentShell the parent shell for this dialog
-	 * @param launchData launchData the launch data from past launches
+	 * @param shell      the parent shell for this dialog
+	 * @param launchData the launch data from past launches
 	 * @param force      true if the dialog should be opened regardless of the value
 	 *                   of the show dialog checkbox
 	 */
@@ -587,6 +632,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				return null;
 			}
 
+			@Override
+			protected Control createContents(Composite parent) {
+				Control contents = super.createContents(parent);
+				if (isDark) {
+					applyDarkStyles(getShell());
+				}
+				return contents;
+			}
 		}.prompt(force);
 	}
 
@@ -666,6 +719,15 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					// in the task manager of the OS
 					return null;
 				}
+
+				@Override
+				protected Control createContents(Composite parent) {
+					Control contents = super.createContents(parent);
+					if (isDark) {
+						applyDarkStyles(getShell());
+					}
+					return contents;
+				}
 			};
 			// hide splash if any
 			hideSplash(shell);
@@ -705,9 +767,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 *         <ul>
 	 *         <li>A negative integer if the workspace has a version less than that
 	 *         of the IDE.</li>
-	 *         <li>A positive integer if the IDE has a version greater than that of
-	 *         the IDE.</li>
-	 *         <li>{@code 0} if the IDE has version equal to the IDE, or if the
+	 *         <li>A positive integer if the workspace has a version greater than that
+	 *         of the IDE.</li>
+	 *         <li>{@code 0} if the workspace has a version equal to the IDE, or if the
 	 *         workspace has no version at all.</li>
 	 *         </ul>
 	 */
@@ -803,8 +865,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		try (OutputStream output = new FileOutputStream(versionFile)) {
 			props.store(output, null);
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
-					StatusUtil.newError(e));
+			ILog.of(IDEApplication.class).error("Could not write version file", e); //$NON-NLS-1$
 		}
 	}
 
@@ -850,6 +911,95 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 */
 	protected static Version toMajorMinorVersion(Version version) {
 		return new Version(version.getMajor(), version.getMinor(), 0);
+	}
+
+	protected void initializeDefaultTheme(Display display) {
+		IEclipsePreferences themeNode = UserScope.INSTANCE.getNode("org.eclipse.e4.ui.css.swt.theme"); //$NON-NLS-1$
+		String productOrAppId = getProductOrApplicationId();
+		IEclipsePreferences scopedNode = productOrAppId != null ? (IEclipsePreferences) themeNode.node(productOrAppId)
+				: themeNode;
+		String defaultThemeId = scopedNode.get("themeid", null); //$NON-NLS-1$
+		// preferences written before themes declared their appearance only carry the id
+		isDark = defaultThemeId != null
+				&& scopedNode.getBoolean("themeIsDark." + defaultThemeId, defaultThemeId.contains("dark")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (isDark) {
+			display.setDarkThemePreferred(true);
+			darkThemeShowListener = event -> {
+				if (event.widget instanceof Shell shell) {
+					applyDarkStyles(shell);
+					// Re-apply after the current event to cover popup shells (e.g. content
+					// proposal) whose content is populated after the SWT.Show event fires.
+					display.asyncExec(() -> {
+						if (!shell.isDisposed()) {
+							applyDarkStyles(shell);
+						}
+					});
+				}
+			};
+			display.addFilter(SWT.Show, darkThemeShowListener);
+		}
+	}
+
+	/**
+	 * Removes the early dark theme styling applied for the workspace selection
+	 * dialog. Must be called before the workbench starts so the ThemeEngine can
+	 * manage the theme without interference.
+	 */
+	protected void resetEarlyDarkTheme(Display display) {
+		if (darkThemeShowListener != null) {
+			display.removeFilter(SWT.Show, darkThemeShowListener);
+			darkThemeShowListener = null;
+		}
+		if (isDark) {
+			display.setDarkThemePreferred(false);
+		}
+	}
+
+	/**
+	 * Returns the product ID if a product is configured, otherwise falls back to
+	 * the application ID from the system property. Returns {@code null} if neither
+	 * is available.
+	 */
+	private static String getProductOrApplicationId() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getId();
+		}
+		return System.getProperty("eclipse.application"); //$NON-NLS-1$
+	}
+
+	private void applyDarkStyles(Shell shell) {
+		Color bg = new Color(72, 72, 76); // #48484c
+		Color fg = new Color(238, 238, 238); // #eeeeee
+		Color linkColor = new Color(111, 197, 238); // #6FC5EE
+		shell.setBackground(bg);
+		shell.setForeground(fg);
+		applyStylesRecursive(shell, bg, fg, linkColor);
+	}
+
+	private void applyStylesRecursive(Control control, Color bg, Color fg, Color linkColor) {
+		if (control instanceof Button button) {
+			// On Windows, check buttons need an explicit background; otherwise they
+			// appear white because the parent background is not inherited.
+			if (Platform.OS_WIN32.equals(Platform.getOS()) && (button.getStyle() & SWT.CHECK) != 0) {
+				button.setBackground(bg);
+			}
+			// Leave other buttons unstyled so the native dark appearance is used
+			return;
+		}
+		control.setBackground(bg);
+		if (control instanceof Link link) {
+			link.setLinkForeground(linkColor);
+		} else {
+			control.setForeground(fg);
+
+		}
+
+		if (control instanceof Composite composite) {
+			for (Control child : composite.getChildren()) {
+				applyStylesRecursive(child, bg, fg, linkColor);
+			}
+		}
 	}
 
 	@Override

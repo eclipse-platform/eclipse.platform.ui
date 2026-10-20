@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -313,7 +313,7 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	protected Text createFilterText(Composite parent) {
-		fFilterText = new Text(parent, SWT.NONE);
+		fFilterText = new Text(parent, SWT.SEARCH | SWT.ICON_CANCEL);
 
 		GridData data = new GridData();
 		GC gc = new GC(parent);
@@ -326,6 +326,12 @@ public abstract class AbstractTableInformationControl {
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		fFilterText.setLayoutData(data);
+
+		fFilterText.addListener(SWT.DefaultSelection, event -> {
+			if (event.detail == SWT.ICON_CANCEL) {
+				fFilterText.setText(""); //$NON-NLS-1$
+			}
+		});
 
 		fFilterText.addKeyListener(KeyListener.keyPressedAdapter(e -> {
 			switch (e.keyCode) {

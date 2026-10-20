@@ -14,14 +14,16 @@ public class Snippet083NotificationPopupWithFunctions {
 
 	public static void main(String[] args) {
 		Display display = new Display();
+		Shell shell = new Shell(display);
+		shell.setSize(400, 200);
+		shell.open();
 
 		Function<Composite, Control> contentCreator = WidgetFactory.label(SWT.NONE)
 				.text("Just a notification")::create;
 		Function<Composite, Control> titleCreator = WidgetFactory.label(SWT.NONE).text("Test")::create;
 
-		NotificationPopup.forDisplay(display).content(contentCreator).title(titleCreator, true).open();
+		NotificationPopup.forShell(shell).content(contentCreator).title(titleCreator, true).open();
 
-		Shell shell = display.getShells()[0];
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();

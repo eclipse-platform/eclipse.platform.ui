@@ -38,6 +38,8 @@ public class EclipsePreferencesHelper {
 
 	private static final String PROPS_DEFAULT_VALUE_BEFORE_OVERIDDEN_FROM_CSS = "defaultValueBeforeOverriddenFromCSS";
 
+	private static boolean applyingCss;
+
 	public static void appendOverriddenPropertyName(
 			IEclipsePreferences preferences, String name) {
 		String value = preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR);
@@ -48,6 +50,19 @@ public class EclipsePreferencesHelper {
 		if (!isOverriddenByCSS(value, name)) {
 			preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP,
 					String.format(MULTI_VALUE_FORMATTER, value, name));
+		}
+	}
+
+	/**
+	 * Stores a value applied by the CSS engine, which unlike a user edit keeps the
+	 * property marked as overridden by CSS.
+	 */
+	public static void putOverriddenProperty(IEclipsePreferences preferences, String name, String value) {
+		applyingCss = true;
+		try {
+			preferences.put(name, value);
+		} finally {
+			applyingCss = false;
 		}
 	}
 
@@ -114,13 +129,14 @@ public class EclipsePreferencesHelper {
 	IPreferenceChangeListener {
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
-			if (isModified(event) && isRelatedToOverriddenByCss(event)) {
+			if (!applyingCss && isModified(event) && isRelatedToOverriddenByCss(event)) {
 				removeOverriddenByCssProperty(event);
 			}
 		}
 
 		private boolean isModified(PreferenceChangeEvent event) {
-			return event.getOldValue() != null && event.getNewValue() != null;
+			// the old value is null when a user edit follows a reset to the default
+			return event.getNewValue() != null;
 		}
 
 		private boolean isRelatedToOverriddenByCss(PreferenceChangeEvent event) {

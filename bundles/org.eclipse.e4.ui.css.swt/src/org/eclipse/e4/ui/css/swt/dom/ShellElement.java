@@ -72,7 +72,7 @@ public class ShellElement extends CompositeElement {
 
 		Shell shell = getShell();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
@@ -95,7 +95,7 @@ public class ShellElement extends CompositeElement {
 	public void dispose() {
 		super.dispose();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 

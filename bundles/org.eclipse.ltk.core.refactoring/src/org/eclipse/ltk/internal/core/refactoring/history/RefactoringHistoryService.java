@@ -251,9 +251,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					final IFileStore history= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
 					if (enable) {
 						final IFileStore source= history.getChild(name);
-						if (source.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
+						if (exists(source, subMonitor.newChild(20))) {
 							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
+							if (exists(destination, subMonitor.newChild(20))) {
 								destination.delete(EFS.NONE, subMonitor.newChild(20));
 							}
 							destination.mkdir(EFS.NONE, subMonitor.newChild(20));
@@ -262,9 +262,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						}
 					} else {
 						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-						if (source.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
+						if (exists(source, subMonitor.newChild(20))) {
 							IFileStore destination= history.getChild(name);
-							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
+							if (exists(destination, subMonitor.newChild(20))) {
 								destination.delete(EFS.NONE, subMonitor.newChild(20));
 							}
 							destination.mkdir(EFS.NONE, subMonitor.newChild(20));
@@ -848,9 +848,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final String oldName= oldProject.getName();
 			final String newName= newProject.getName();
 			final IFileStore oldStore= historyStore.getChild(oldName);
-			if (oldStore.fetchInfo(EFS.NONE, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+			if (exists(oldStore, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK))) {
 				final IFileStore newStore= historyStore.getChild(newName);
-				if (newStore.fetchInfo(EFS.NONE, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+				if (exists(newStore, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK))) {
 					newStore.delete(EFS.NONE, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));
 				}
 				oldStore.move(newStore, EFS.OVERWRITE, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));
@@ -860,6 +860,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		} finally {
 			subMonitor.done();
 		}
+	}
+
+	/**
+	 * @param monitor just accepted to allow callers to consume the monitors ticks
+	 */
+	static boolean exists(IFileStore store, IProgressMonitor monitor) {
+		return store.exists();
 	}
 
 	private void peformResourceChanged(final IResourceChangeEvent event) {

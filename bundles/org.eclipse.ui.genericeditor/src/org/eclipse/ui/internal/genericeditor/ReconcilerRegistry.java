@@ -22,9 +22,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -59,10 +58,10 @@ public class ReconcilerRegistry {
 	 * Creates the registry and binds it to the extension point.
 	 */
 	public ReconcilerRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> highlightOutOfSync = true,
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> outOfSync = true, EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> highlightOutOfSync = true,
 				HIGHLIGHT_EXTENSION_POINT_ID);
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> foldingOutOfSync = true,
+		Platform.getExtensionRegistry().addRegistryChangeListener(_ -> foldingOutOfSync = true,
 				FOLDING_EXTENSION_POINT_ID);
 	}
 
@@ -157,8 +156,7 @@ public class ReconcilerRegistry {
 				try {
 					this.extensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
-					GenericEditorPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+					ILog.of(ReconcilerRegistry.class).error(ex.getMessage(), ex);
 				}
 			}
 		}
@@ -177,8 +175,7 @@ public class ReconcilerRegistry {
 				try {
 					this.highlightExtensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
-					GenericEditorPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+					ILog.of(ReconcilerRegistry.class).error(ex.getMessage(), ex);
 				}
 			}
 		}
@@ -197,8 +194,7 @@ public class ReconcilerRegistry {
 				try {
 					this.foldingExtensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
-					GenericEditorPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+					ILog.of(ReconcilerRegistry.class).error(ex.getMessage(), ex);
 				}
 			}
 		}

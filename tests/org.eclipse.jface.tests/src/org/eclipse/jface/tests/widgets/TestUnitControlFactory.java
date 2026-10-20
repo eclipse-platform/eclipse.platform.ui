@@ -85,7 +85,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 
 	@Test
 	public void setsForeground() {
-		Color color = new Color(null, 255, 255, 255);
+		Color color = new Color(255, 255, 255);
 		Label label = LabelFactory.newLabel(SWT.NONE).foreground(color).create(shell);
 
 		assertEquals(color, label.getForeground());
@@ -93,7 +93,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 
 	@Test
 	public void setsBackground() {
-		Color color = new Color(null, 0, 0, 0);
+		Color color = new Color(0, 0, 0);
 		Label label = LabelFactory.newLabel(SWT.NONE).background(color).create(shell);
 
 		assertEquals(color, label.getBackground());

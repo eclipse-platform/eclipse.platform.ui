@@ -50,7 +50,7 @@ public class FileBufferOperationRunner extends GenericFileBufferOperationRunner 
 
 	@Override
 	protected void commit(final IFileBuffer[] fileBuffers, final IProgressMonitor progressMonitor) throws CoreException {
-		IWorkspaceRunnable runnable= monitor -> doCommit(fileBuffers, progressMonitor);
+		IWorkspaceRunnable runnable= _ -> doCommit(fileBuffers, progressMonitor);
 		ResourcesPlugin.getWorkspace().run(runnable, computeCommitRule(fileBuffers), IWorkspace.AVOID_UPDATE, progressMonitor);
 	}
 }

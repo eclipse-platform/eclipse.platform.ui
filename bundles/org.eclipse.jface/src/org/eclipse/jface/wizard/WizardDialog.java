@@ -973,7 +973,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		if (control != null) {
 			Boolean b = (Boolean) saveState.get(key);
 			if (b != null) {
-				control.setEnabled(b.booleanValue());
+				setButtonEnabled(control, b.booleanValue());
 			}
 		}
 	}
@@ -1066,8 +1066,23 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	private void saveEnableStateAndSet(Control control, Map<String, Object> saveState, String key, boolean enabled) {
 		if (control != null) {
 			saveState.put(key, control.getEnabled() ? Boolean.TRUE : Boolean.FALSE);
-			control.setEnabled(enabled);
+			setButtonEnabled(control, enabled);
 		}
+	}
+
+	/**
+	 * Sets the enabled state of a button and updates the CSS class name so that
+	 * the dark theme can style disabled buttons differently. The CSS class
+	 * "disabled" is set when the button is disabled, and cleared when enabled.
+	 * This triggers a reskin so that the CSS engine re-applies styles.
+	 *
+	 * @param control the button control
+	 * @param enabled whether the button should be enabled
+	 */
+	private static void setButtonEnabled(Control control, boolean enabled) {
+		control.setEnabled(enabled);
+		control.setData("org.eclipse.e4.ui.css.CssClassName", enabled ? null : "disabled"); //$NON-NLS-1$ //$NON-NLS-2$
+		control.reskin(SWT.NONE);
 	}
 
 	/**
@@ -1332,13 +1347,13 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		boolean canFinish = wizard.canFinish();
 		if (backButton != null) {
 			boolean backEnabled = currentPage != null && currentPage.getPreviousPage() != null;
-			backButton.setEnabled(backEnabled);
+			setButtonEnabled(backButton, backEnabled);
 		}
 		if (nextButton != null) {
 			canFlipToNextPage = currentPage != null && currentPage.canFlipToNextPage();
-			nextButton.setEnabled(canFlipToNextPage);
+			setButtonEnabled(nextButton, canFlipToNextPage);
 		}
-		finishButton.setEnabled(canFinish);
+		setButtonEnabled(finishButton, canFinish);
 		// finish is default unless it is disabled and next is enabled
 		if (canFlipToNextPage && !canFinish) {
 			getShell().setDefaultButton(nextButton);

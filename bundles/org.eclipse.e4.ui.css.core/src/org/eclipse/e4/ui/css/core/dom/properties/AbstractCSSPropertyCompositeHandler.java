@@ -14,8 +14,8 @@
 package org.eclipse.e4.ui.css.core.dom.properties;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 /**
  * Abstract class which manage CSS Property composite like border:solid black
@@ -33,12 +33,9 @@ public abstract class AbstractCSSPropertyCompositeHandler implements
 	 */
 	public void applyCSSPropertyComposite(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			CSSValueList valueList = (CSSValueList) value;
-			int length = valueList.getLength();
-			for (int i = 0; i < length; i++) {
-				CSSValue value2 = valueList.item(i);
-				applyCSSProperty(element, value2, pseudo, engine);
+		if (value instanceof CssList valueList) {
+			for (CSSValue item : valueList.values()) {
+				applyCSSProperty(element, item, pseudo, engine);
 			}
 		} else {
 			applyCSSProperty(element, value, pseudo, engine);

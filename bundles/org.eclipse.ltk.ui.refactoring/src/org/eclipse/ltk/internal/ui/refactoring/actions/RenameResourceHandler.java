@@ -123,7 +123,7 @@ public class RenameResourceHandler extends AbstractResourcesHandler {
 
 	private Change getChange(RenameResourceWizard refactoringWizard) {
 		refactoringWizard.setChangeCreationCancelable(true);
-		refactoringWizard.setInitialComputationContext((boolean fork, boolean cancelable, IRunnableWithProgress runnable) -> runnable.run(new NullProgressMonitor()));
+		refactoringWizard.setInitialComputationContext((boolean _, boolean _, IRunnableWithProgress runnable) -> runnable.run(new NullProgressMonitor()));
 		return refactoringWizard.internalCreateChange(InternalAPI.INSTANCE,
 				new CreateChangeOperation(new CheckConditionsOperation(refactoringWizard.getRefactoring(), CheckConditionsOperation.FINAL_CONDITIONS), RefactoringStatus.FATAL), true);
 	}

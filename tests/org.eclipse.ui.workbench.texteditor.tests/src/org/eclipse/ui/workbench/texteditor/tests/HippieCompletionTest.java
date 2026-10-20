@@ -16,8 +16,8 @@ package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -447,11 +447,7 @@ public class HippieCompletionTest {
 		ArrayList<String> list= new ArrayList<>();
 		Accessor state= null;
 
-		try {
-			state= createAccessor(list.iterator(), 0);
-			fail("Having no items is not valid (at least the empty completion must be there)");
-		} catch (AssertionFailedException ex) {
-		}
+		assertThrows(AssertionFailedException.class, () -> createAccessor(list.iterator(), 0));
 
 		list.add("");
 		state= createAccessor(list.iterator(), 0);

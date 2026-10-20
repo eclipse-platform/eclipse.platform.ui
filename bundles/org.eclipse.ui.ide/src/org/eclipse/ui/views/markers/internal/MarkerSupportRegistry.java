@@ -28,9 +28,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -572,11 +571,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (markerId != null) {
 				MarkerType markerType = filter.getMarkerType(markerId);
 				if (markerType == null) {
-					IStatus status = new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.WARNING,
-							NLS.bind(MarkerMessages.ProblemFilterRegistry_nullType,
-									new Object[] { markerId, filter.getName() }),
-							null);
-					IDEWorkbenchPlugin.getDefault().getLog().log(status);
+					ILog.of(MarkerSupportRegistry.class).warn(NLS.bind(MarkerMessages.ProblemFilterRegistry_nullType,
+							new Object[] { markerId, filter.getName() }));
 				} else {
 					selectedTypes.add(markerType);
 				}

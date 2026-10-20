@@ -15,7 +15,7 @@
 package org.eclipse.jface.tests.labelProviders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
@@ -141,12 +141,7 @@ public class IDecorationContextTest {
 	@Test
 	public void testSetDecorationContextNull() {
 		DecoratingStyledCellLabelProvider label = getDecoratingStyledCellLabelProvider(false);
-		try {
-			label.setDecorationContext(null);
-			fail("DecoratingStyledCellLabelProvider.setDecorationContext did not throw an exception when passed null");
-		} catch (AssertionFailedException e) {
-			// A Good Thing.
-		}
+		assertThrows(AssertionFailedException.class, () -> label.setDecorationContext(null));
 	}
 
 }

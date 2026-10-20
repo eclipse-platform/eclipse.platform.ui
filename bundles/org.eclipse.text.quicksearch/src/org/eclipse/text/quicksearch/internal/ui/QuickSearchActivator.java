@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.ui;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -84,7 +85,7 @@ public class QuickSearchActivator extends AbstractUIPlugin {
 
 	public static void log(IStatus status) {
 //		if (logger == null) {
-			getDefault().getLog().log(status);
+			ILog.get().log(status);
 //		}
 //		else {
 //			logger.logEntry(status);

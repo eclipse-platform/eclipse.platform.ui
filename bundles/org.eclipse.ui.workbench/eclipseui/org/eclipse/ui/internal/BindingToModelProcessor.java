@@ -52,7 +52,8 @@ public class BindingToModelProcessor implements IModelProcessorContribution {
 
 	// define dependencies to CommandToModelProcessor and ContextToModelProcessor to
 	// ensure these two IModelProcessorContributions are registered before this
-	// BindingToModelProcessor
+	// BindingToModelProcessor. Both fields are read in process(), removing them
+	// silently breaks that ordering.
 
 	@Reference
 	private CommandToModelProcessor commandToModelProcessor;
@@ -66,14 +67,10 @@ public class BindingToModelProcessor implements IModelProcessorContribution {
 		gatherCommands(application.getCommands());
 		gatherTables(application.getBindingTables());
 
-		CommandManager commandManager = context.get(CommandManager.class);
-		if (commandManager == null) {
-			WorkbenchPlugin.log("Command manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
-		}
-		ContextManager contextManager = context.get(ContextManager.class);
-		if (contextManager == null) {
-			WorkbenchPlugin.log("Context manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
-		}
+		CommandManager commandManager = requirePrerequisite(context, CommandManager.class,
+				CommandToModelProcessor.class, commandToModelProcessor);
+		ContextManager contextManager = requirePrerequisite(context, ContextManager.class,
+				ContextToModelProcessor.class, contextToModelProcessor);
 		BindingManager bindingManager = new BindingManager(contextManager, commandManager);
 		context.set(BindingManager.class, bindingManager);
 		BindingPersistence persistence = new BindingPersistence(bindingManager, commandManager);
@@ -96,6 +93,24 @@ public class BindingToModelProcessor implements IModelProcessorContribution {
 		commands.clear();
 		tables.clear();
 		keys.clear();
+	}
+
+	/**
+	 * Returns the value stored under the given key, failing with a message that
+	 * names the processor expected to have provided it. The provider instance is
+	 * the DS reference that orders this processor after that one.
+	 */
+	private static <T> T requirePrerequisite(IEclipseContext context, Class<T> key, Class<?> providerType,
+			Object provider) {
+		T value = context.get(key);
+		if (value == null || provider == null) {
+			String message = String.format(
+					"%s did not find %s in the application context. %s must run first; check that its @Reference in %s is still declared and that the OSGi component descriptors of this bundle are up to date.", //$NON-NLS-1$
+					BindingToModelProcessor.class.getName(), key.getName(), providerType.getName(),
+					BindingToModelProcessor.class.getSimpleName());
+			throw new IllegalStateException(message);
+		}
+		return value;
 	}
 
 	private void gatherTables(List<MBindingTable> bindingTables) {

@@ -4,3 +4,4 @@ Bug 416898 - Some Platform UI bundles need to be touched to get API descriptions
 Pick up new signing certificate
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2044
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/3190
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/3927

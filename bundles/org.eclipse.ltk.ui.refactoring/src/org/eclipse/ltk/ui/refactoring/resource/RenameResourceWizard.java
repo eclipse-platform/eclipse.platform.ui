@@ -122,7 +122,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 			fNameField.setText(resourceName);
 			fNameField.setFont(composite.getFont());
 			fNameField.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-			fNameField.addModifyListener(e -> validatePage());
+			fNameField.addModifyListener(_ -> validatePage());
 
 			int lastIndexOfDot= resourceName.lastIndexOf('.');
 			if ((fRefactoringProcessor.getResource().getType() == IResource.FILE) && (lastIndexOfDot > 0)) {

@@ -2435,7 +2435,11 @@ public class PartRenderingEngineTests {
 		partStackForEditor.getChildren().add(editor);
 		partStackForEditor.setSelectedElement(editor);
 
-		ContextInjectionFactory.make(CleanupAddon.class, appContext);
+		// Store the addon in the context so it isn't garbage collected before
+		// its event handlers fire. The DI framework holds injected objects
+		// only via WeakReference, so an addon discarded here can be collected
+		// before its asyncExec runs, silently invalidating the requestor.
+		appContext.set(CleanupAddon.class, ContextInjectionFactory.make(CleanupAddon.class, appContext));
 
 		contextRule.createAndRunWorkbench(window);
 
@@ -2445,8 +2449,6 @@ public class PartRenderingEngineTests {
 
 		assertTrue(partStackForPartBPartC.isToBeRendered(), " PartStack with children should be rendered");
 		partService.hidePart(partB);
-		// Drain pending events between hides so that the event queue is clean
-		// when the second hidePart queues CleanupAddon's asyncExec for visCount==0
 		contextRule.spinEventLoop();
 		partService.hidePart(partC);
 		contextRule.spinEventLoop();
@@ -2494,7 +2496,8 @@ public class PartRenderingEngineTests {
 		partStackB.getChildren().add(partC);
 		partStackB.setSelectedElement(partC);
 
-		ContextInjectionFactory.make(CleanupAddon.class, appContext);
+		// See ensureCleanUpAddonCleansUp for why the addon is stored in the context.
+		appContext.set(CleanupAddon.class, ContextInjectionFactory.make(CleanupAddon.class, appContext));
 
 		contextRule.createAndRunWorkbench(window);
 

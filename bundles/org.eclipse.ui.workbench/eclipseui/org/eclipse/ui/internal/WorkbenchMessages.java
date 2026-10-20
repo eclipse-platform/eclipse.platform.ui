@@ -49,8 +49,17 @@ public class WorkbenchMessages extends NLS {
 	public static String RescaleAtRuntimeSettingChangeWarningText;
 
 	public static String ThemeChangeWarningText;
-
+	public static String ThemeChange_useAsDefault;
 	public static String ThemeChangeWarningTitle;
+	public static String ThemeDefault_manageButton;
+	public static String ThemeDefault_dialogTitle;
+	public static String ThemeDefault_description;
+	public static String ThemeDefault_currentDefault;
+	public static String ThemeDefault_currentDefaultUnscoped;
+	public static String ThemeDefault_noDefault;
+	public static String ThemeDefault_noDefaultUnscoped;
+	public static String ThemeDefault_setDefault;
+	public static String ThemeDefault_removeDefault;
 
 	public static String BundleSigningTray_Cant_Find_Service;
 
@@ -480,6 +489,8 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_viewTabs_icons_and_titles_label;
 	public static String ViewsPreference_showFullTextForViewTabs;
 	public static String ViewsPreference_hideIconsForViewTabs;
+	public static String ViewsPreference_viewTabs_dirty_indicator_label;
+	public static String ViewsPreference_showDirtyIndicatorForTabs;
 	public static String ToggleFullScreenMode_ActivationPopup_Description;
 	public static String ToggleFullScreenMode_ActivationPopup_Description_NoKeybinding;
 	public static String ToggleFullScreenMode_ActivationPopup_DoNotShowAgain;
@@ -552,6 +563,8 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_HeapStatusButton;
 	public static String WorkbenchPreference_HeapStatusButtonToolTip;
 	public static String WorkbenchPreference_inlineRename;
+	public static String WorkbenchPreference_showFilterTextInMarkerViews;
+	public static String WorkbenchPreference_showFilterTextInMarkerViewsToolTip;
 
 	// --- Globalization -----
 	public static String GlobalizationPreference_nlExtensions;
@@ -863,7 +876,6 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredTree_FilteredDialogTitle;
 	public static String FilteredTree_AccessibleListenerFiltered;
 	public static String Workbench_startingPlugins;
-	public static String ScopedPreferenceStore_DefaultAddedError;
 
 	public static String WorkbenchEncoding_invalidCharset;
 
@@ -1039,6 +1051,7 @@ public class WorkbenchMessages extends NLS {
 	// Zoom change messages
 	public static String Workbench_zoomChangedTitle;
 	public static String Workbench_zoomChangedMessage;
+	public static String Workbench_zoomChangedDoNotShowAgain;
 	public static String Workbench_RestartButton;
 	public static String Workbench_DontRestartButton;
 

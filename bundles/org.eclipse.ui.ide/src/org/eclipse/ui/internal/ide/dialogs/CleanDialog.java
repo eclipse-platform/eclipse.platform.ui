@@ -204,7 +204,7 @@ public class CleanDialog extends MessageDialog {
 		alwaysCleanButton = new Button(area, SWT.CHECK);
 		alwaysCleanButton.setText(IDEWorkbenchMessages.CleanDialog_alwaysCleanAllButton);
 		alwaysCleanButton.setSelection(!settings.getBoolean(TOGGLE_SELECTED));
-		alwaysCleanButton.addSelectionListener(widgetSelectedAdapter(e -> {
+		alwaysCleanButton.addSelectionListener(widgetSelectedAdapter(_ -> {
 			updateEnablement();
 			if (!alwaysCleanButton.getSelection()) {
 				setInitialFilterText();
@@ -218,7 +218,7 @@ public class CleanDialog extends MessageDialog {
 		filterText.setMessage(IDEWorkbenchMessages.CleanDialog_typeFilterText);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		filterText.setLayoutData(gd);
-		filterText.addModifyListener(e -> {
+		filterText.addModifyListener(_ -> {
 			String filter = filterText.getText();
 			if (filter.startsWith("*") || filter.startsWith("?")) { //$NON-NLS-1$ //$NON-NLS-2$
 				searchPattern.setPattern(filter);
@@ -233,7 +233,7 @@ public class CleanDialog extends MessageDialog {
 			projectNames.refresh();
 		});
 
-		filterText.addFocusListener(FocusListener.focusLostAdapter(e -> {
+		filterText.addFocusListener(FocusListener.focusLostAdapter(_ -> {
 			if (filterText.getText().equals(IDEWorkbenchMessages.CleanDialog_typeFilterText)) {
 				filterText.setText(""); //$NON-NLS-1$
 			}
@@ -246,7 +246,7 @@ public class CleanDialog extends MessageDialog {
 
 		//only prompt for immediate build if autobuild is off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			SelectionListener updateEnablement = widgetSelectedAdapter(e -> updateEnablement());
+			SelectionListener updateEnablement = widgetSelectedAdapter(_ -> updateEnablement());
 
 			buildNowButton = new Button(parent, SWT.CHECK);
 			buildNowButton.setText(IDEWorkbenchMessages.CleanDialog_buildNowButton);
@@ -272,7 +272,7 @@ public class CleanDialog extends MessageDialog {
 			projectBuildButton.setLayoutData(data);
 			projectBuildButton.setEnabled(buildNowButton.getSelection());
 
-			SelectionListener buildRadioSelected = widgetSelectedAdapter(e -> updateBuildRadioEnablement());
+			SelectionListener buildRadioSelected = widgetSelectedAdapter(_ -> updateBuildRadioEnablement());
 
 			globalBuildButton.addSelectionListener(buildRadioSelected);
 			projectBuildButton.addSelectionListener(buildRadioSelected);
@@ -333,7 +333,7 @@ public class CleanDialog extends MessageDialog {
 		if (checked.length > 0) {
 			projectNames.reveal(checked[0]);
 		}
-		projectNames.addCheckStateListener(event -> checkStateChanged());
+		projectNames.addCheckStateListener(_ -> checkStateChanged());
 	}
 
 	private void checkStateChanged() {

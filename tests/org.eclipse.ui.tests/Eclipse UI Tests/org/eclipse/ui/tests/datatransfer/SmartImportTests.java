@@ -35,26 +35,33 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -71,9 +78,9 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
@@ -139,7 +146,7 @@ public class SmartImportTests {
 	}
 
 	private void proceedSmartImportWizard(SmartImportWizard wizard) throws InterruptedException {
-		Consumer<SmartImportRootWizardPage> doNothing = page -> {};
+		Consumer<SmartImportRootWizardPage> doNothing = _ -> {};
 		proceedSmartImportWizard(wizard, doNothing);
 	}
 
@@ -186,6 +193,44 @@ public class SmartImportTests {
 		File file = new File(url.getFile());
 		runSmartImport(file);
 		assertEquals(6, ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
+	}
+
+	@Test
+	public void testProjectsAreCreatedInASingleWorkspaceOperation() throws Exception {
+		AtomicInteger eventsAddingProjects = new AtomicInteger();
+		IResourceChangeListener listener = event -> {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null && delta.getAffectedChildren(IResourceDelta.ADDED).length > 0) {
+				eventsAddingProjects.incrementAndGet();
+			}
+		};
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportBatch");
+		try {
+			Set<File> directories = new HashSet<>();
+			for (int i = 0; i < 3; i++) {
+				String name = "batchProject" + i;
+				File projectDirectory = new File(tempDir.toFile(), name);
+				projectDirectory.mkdirs();
+				Files.writeString(new File(projectDirectory, ".project").toPath(),
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>" + name
+								+ "</name></projectDescription>");
+				directories.add(projectDirectory);
+			}
+			SmartImportJob job = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), false, false);
+			job.setDirectoriesToImport(directories);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+			IStatus status = job.run(new NullProgressMonitor());
+			// a delta the workspace deferred to its notification job must arrive before counting
+			ResourcesPlugin.getWorkspace().checkpoint(false);
+
+			assertTrue("Import failed: " + status, status.isOK());
+			assertEquals(directories.size(), ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
+			assertEquals("All projects should be created in a single workspace operation", 1,
+					eventsAddingProjects.get());
+		} finally {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
 	}
 
 	@Test
@@ -347,8 +392,7 @@ public class SmartImportTests {
 		if (!importRoot.isDirectory()) {
 			importRoot = File.listRoots()[0];
 		}
-		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
-				"Testing job cancel with root: " + importRoot.getAbsolutePath()));
+		ILog.of(SmartImportTests.class).info("Testing job cancel with root: " + importRoot.getAbsolutePath());
 
 		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(importRoot);
@@ -471,7 +515,7 @@ public class SmartImportTests {
 	@Test
 	public void testBug559600() throws Exception {
 		AtomicInteger errors = new AtomicInteger();
-		ILogListener errorListener = (status, plugin) -> {
+		ILogListener errorListener = (status, _) -> {
 			if (status.getSeverity() == IStatus.ERROR) {
 				errors.incrementAndGet();
 			}
@@ -512,5 +556,127 @@ public class SmartImportTests {
 			}
 		}
 		return null;
+	}
+
+	@Test
+	public void testSmartImportSkipsDotFolders() throws Exception {
+		// Create a temp directory with a project inside a .git folder
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportSkipDotTest");
+		try {
+			// Create a normal project with ImportMe marker file
+			File normalProject = new File(tempDir.toFile(), "normalProject");
+			normalProject.mkdirs();
+			new File(normalProject, "importme").createNewFile();
+
+			// Create a project inside a .git folder (should be skipped)
+			File dotGitFolder = new File(tempDir.toFile(), ".git");
+			File hiddenProject = new File(dotGitFolder, "hiddenProject");
+			hiddenProject.mkdirs();
+			new File(hiddenProject, "importme").createNewFile();
+
+			SmartImportWizard wizard = new SmartImportWizard();
+			wizard.setInitialImportSource(tempDir.toFile());
+			proceedSmartImportWizard(wizard);
+
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (IProject project : projects) {
+				assertFalse("Project inside .git folder should not be imported",
+						project.getLocation().toFile().getAbsolutePath().contains(".git"));
+			}
+		} finally {
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
+	}
+
+	/** Records the directories the proposal scan reports as sub tasks. */
+	private static final class DirectoryRecordingMonitor extends NullProgressMonitor {
+		final List<String> scanned = new CopyOnWriteArrayList<>();
+
+		@Override
+		public void subTask(String name) {
+			scanned.add(name);
+		}
+	}
+
+	@Test
+	public void testSmartImportJobSkipsDotFoldersInProposals() throws Exception {
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportProposalTest");
+		try {
+			// Create a normal Eclipse project
+			File normalProject = new File(tempDir.toFile(), "normalProject");
+			normalProject.mkdirs();
+			Files.writeString(new File(normalProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>normalProject</name></projectDescription>");
+
+			// Create an Eclipse project inside a .git folder
+			File dotGitFolder = new File(tempDir.toFile(), ".git");
+			File hiddenProject = new File(dotGitFolder, "modules/hiddenProject");
+			hiddenProject.mkdirs();
+			Files.writeString(new File(hiddenProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>hiddenProject</name></projectDescription>");
+
+			// Default skipDotFolders=true: .git projects should be filtered out
+			SmartImportJob jobSkip = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), true, true);
+			DirectoryRecordingMonitor monitor = new DirectoryRecordingMonitor();
+			Map<File, ?> proposalsSkip = jobSkip.getImportProposals(monitor);
+			for (File proposed : proposalsSkip.keySet()) {
+				assertFalse("Proposal inside .git folder should be filtered out by default",
+						proposed.getAbsolutePath().contains(".git"));
+			}
+			assertTrue("Normal project should have been scanned",
+					monitor.scanned.stream().anyMatch(task -> task.contains("normalProject")));
+			assertFalse("Dot folder should not be scanned at all",
+					monitor.scanned.stream().anyMatch(task -> task.contains(".git")));
+		} finally {
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
+	}
+
+	@Test
+	public void testAutoBuildingRestoredAfterFailedImport() throws Exception {
+		assertTrue("Test expects auto-building to be enabled", ResourcesPlugin.getWorkspace().isAutoBuilding());
+		// a regular file as import root makes the project creation fail
+		java.nio.file.Path notADirectory = Files.createTempFile("smartImportFailure", ".txt");
+		try {
+			SmartImportJob job = new SmartImportJob(notADirectory.toFile(), Collections.emptySet(), true, true);
+			IStatus status = job.run(new NullProgressMonitor());
+			assertEquals("Import was expected to fail", IStatus.ERROR, status.getSeverity());
+			assertTrue("Auto-building must be restored after a failed import",
+					ResourcesPlugin.getWorkspace().isAutoBuilding());
+		} finally {
+			Files.deleteIfExists(notADirectory);
+		}
+	}
+
+	/**
+	 * Without working sets the import must not touch the working set manager,
+	 * otherwise the job requires a running workbench for nothing.
+	 */
+	@Test
+	public void testImportWithoutWorkingSetsLeavesWorkingSetManagerUntouched() throws Exception {
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.createWorkingSet("testWorkingSet", new IAdaptable[0]);
+		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+		workingSetManager.addWorkingSet(workingSet);
+		AtomicInteger workingSetEvents = new AtomicInteger();
+		IPropertyChangeListener workingSetListener = _ -> workingSetEvents.incrementAndGet();
+		workingSetManager.addPropertyChangeListener(workingSetListener);
+		java.nio.file.Path tempDir = Files.createTempDirectory("smartImportNoWorkingSets");
+		try {
+			SmartImportJob job = new SmartImportJob(tempDir.toFile(), Collections.emptySet(), false, false);
+			// null and empty both mean "no working set involved"
+			job.setWorkingSets(null);
+			IStatus status = job.run(new NullProgressMonitor());
+
+			assertEquals("Import should have succeeded", IStatus.OK, status.getSeverity());
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(tempDir.toFile().getName());
+			assertTrue("Project should have been imported", project.exists());
+			assertEquals("Working set manager must not be modified without working sets", 0, workingSetEvents.get());
+			assertEquals("Project must not be added to any working set", 0, workingSet.getElements().length);
+		} finally {
+			workingSetManager.removePropertyChangeListener(workingSetListener);
+			workingSetManager.removeWorkingSet(workingSet);
+			org.eclipse.core.tests.harness.FileSystemHelper.clear(tempDir.toFile());
+		}
 	}
 }

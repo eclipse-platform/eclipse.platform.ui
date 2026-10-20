@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,12 +78,13 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	 * @return The new ColumnLabelProvider
 	 * @since 3.19
 	 */
-	public static ColumnLabelProvider createTextProvider(Function<Object, String> textFunction) {
+	public static <E> ColumnLabelProvider createTextProvider(Function<? super E, String> textFunction) {
 		Objects.requireNonNull(textFunction);
 		return new ColumnLabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public String getText(Object e) {
-				return textFunction.apply(e);
+				return textFunction.apply((E) e);
 			}
 		};
 	}
@@ -96,12 +97,13 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	 * @return The new ColumnLabelProvider
 	 * @since 3.19
 	 */
-	public static ColumnLabelProvider createImageProvider(Function<Object, Image> imageFunction) {
+	public static <E> ColumnLabelProvider createImageProvider(Function<? super E, Image> imageFunction) {
 		Objects.requireNonNull(imageFunction);
 		return new ColumnLabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public Image getImage(Object e) {
-				return imageFunction.apply(e);
+				return imageFunction.apply((E) e);
 			}
 		};
 	}
@@ -116,18 +118,20 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	 * @return The new ColumnLabelProvider
 	 * @since 3.19
 	 */
-	public static ColumnLabelProvider createTextImageProvider(Function<Object, String> textFunction,
-			Function<Object, Image> imageFunction) {
+	public static <E> ColumnLabelProvider createTextImageProvider(Function<? super E, String> textFunction,
+			Function<? super E, Image> imageFunction) {
 		Objects.requireNonNull(textFunction);
 		Objects.requireNonNull(imageFunction);
 		return new ColumnLabelProvider() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public String getText(Object e) {
-				return textFunction.apply(e);
+				return textFunction.apply((E) e);
 			}
 			@Override
+			@SuppressWarnings("unchecked")
 			public Image getImage(Object e) {
-				return imageFunction.apply(e);
+				return imageFunction.apply((E) e);
 			}
 		};
 	}

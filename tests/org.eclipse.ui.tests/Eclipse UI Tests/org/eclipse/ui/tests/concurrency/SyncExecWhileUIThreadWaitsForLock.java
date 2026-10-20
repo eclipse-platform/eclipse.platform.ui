@@ -59,7 +59,7 @@ public class SyncExecWhileUIThreadWaitsForLock {
 	public void setUp() throws Exception {
 		processEvents();
 		reportedErrors = new ArrayList<>();
-		listener = (status, plugin) -> reportedErrors.add(status);
+		listener = (status, _) -> reportedErrors.add(status);
 		activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		String viewId = "org.eclipse.pde.runtime.LogView";
 		logView = (LogView) activePage.findView(viewId);

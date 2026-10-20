@@ -418,14 +418,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 	private void showOverlayInEditor() {
 		if (overlay == null) {
-			Shell shellToUse = null;
-
-			if (fShell == null) {
-				shellToUse = fWorkbenchPart.getSite().getShell();
-			} else {
-				shellToUse = fShell;
-			}
-			overlay = new FindReplaceOverlay(shellToUse, fWorkbenchPart, fTarget);
+			overlay = new FindReplaceOverlay(fWorkbenchPart, fTarget);
 		}
 
 		overlay.open();

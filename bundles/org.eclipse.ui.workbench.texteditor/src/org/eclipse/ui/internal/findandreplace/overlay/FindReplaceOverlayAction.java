@@ -12,39 +12,74 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 
-class FindReplaceOverlayAction {
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
+
+class FindReplaceOverlayAction extends AbstractHandler {
 	private final Runnable operation;
+	private final String commandId;
 
-	private final List<KeyStroke> shortcuts = new ArrayList<>();
+	private final List<Runnable> executionListeners = new ArrayList<>();
 
-	FindReplaceOverlayAction(Runnable operation) {
+	private final List<Consumer<String>> shortcutHintListeners = new ArrayList<>();
+
+	FindReplaceOverlayAction(Runnable operation, String commandId) {
 		this.operation = operation;
+		this.commandId = commandId;
 	}
 
-	void addShortcuts(List<KeyStroke> shortcutsToAdd) {
-		this.shortcuts.addAll(shortcutsToAdd);
+	FindReplaceOverlayAction(Runnable operation) {
+		this(operation, null);
+	}
+
+	@Override
+	public Object execute(ExecutionEvent event) {
+		execute();
+		return null;
 	}
 
 	void execute() {
 		operation.run();
+		notifyExecutionListeners();
 	}
 
-	boolean executeIfMatching(KeyStroke keystroke) {
-		if (shortcuts.stream().anyMatch(keystroke::equals)) {
-			execute();
-			return true;
-		}
-		return false;
+	void setAvailable(boolean available) {
+		setBaseEnabled(available);
 	}
 
-	String addShortcutHintToTooltipText(String originalTooltipText) {
-		if (shortcuts.isEmpty()) {
-			return originalTooltipText;
+	void addExecutionListener(Runnable listener) {
+		executionListeners.add(listener);
+	}
+
+	void notifyExecutionListeners() {
+		for (Runnable listener : executionListeners) {
+			listener.run();
 		}
-		return originalTooltipText + " (" + shortcuts.get(0).format() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	void addShortcutHintListener(Consumer<String> listener) {
+		shortcutHintListeners.add(listener);
+	}
+
+	String getCommandId() {
+		return commandId;
+	}
+
+	void updateHint() {
+		if (commandId == null) {
+			return;
+		}
+		IBindingService bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
+		if (bindingService == null) {
+			return;
+		}
+		String hint = bindingService.getBestActiveBindingFormattedFor(commandId);
+		shortcutHintListeners.forEach(l -> l.accept(hint == null ? "" : hint)); //$NON-NLS-1$
 	}
 
 }

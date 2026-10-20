@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor; singleton:=true
-Bundle-Version: 3.20.100.qualifier
+Bundle-Version: 3.20.300.qualifier
 Bundle-Activator: org.eclipse.ui.internal.texteditor.TextEditorPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -32,8 +32,11 @@ Require-Bundle:
  org.eclipse.core.expressions;bundle-version="[3.4.100,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.swt;bundle-version="[3.133.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.208.0,4.0.0)",
- org.eclipse.jface.notifications
+ org.eclipse.ui;bundle-version="[3.210.0,4.0.0)",
+ org.eclipse.jface.notifications,
+ org.eclipse.e4.core.contexts;bundle-version="[1.13.0,2.0.0)",
+ org.eclipse.e4.ui.model.workbench;bundle-version="[2.4.0,3.0.0)",
+ org.eclipse.e4.ui.services;bundle-version="[1.6.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"

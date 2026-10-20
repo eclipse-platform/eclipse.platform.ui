@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSExtendedPropertiesImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -42,8 +42,6 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	protected CSSEngine engine;
 
 	private final Map <String, CSSStyleDeclaration> defaultStyleDeclarationMap = new HashMap<>();
-
-	private CSSExtendedProperties style;
 
 	private List<String> staticPseudoInstances;
 
@@ -378,14 +376,6 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	}
 
 	@Override
-	public CSSExtendedProperties getStyle() {
-		if (style == null) {
-			style = new CSSExtendedPropertiesImpl(nativeWidget, engine);
-		}
-		return style;
-	}
-
-	@Override
 	public String[] getStaticPseudoInstances() {
 		if (staticPseudoInstances == null) {
 			return EMPTY_STRING;
@@ -418,7 +408,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		try {
 			engine.applyStyles(getNativeWidget(), false, true);
 		} catch (Exception ex) {
-			engine.handleExceptions(ex);
+			ILog.of(ElementAdapter.class).error("Failed to apply styles", ex); //$NON-NLS-1$
 		}
 	}
 }

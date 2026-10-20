@@ -32,8 +32,6 @@ public class ToolItemElement extends ItemElement {
 
 	private boolean isSelected = false;
 
-	boolean dynamicEnabled = Boolean.getBoolean("org.eclipse.e4.ui.css.dynamic");
-
 	private final SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -48,7 +46,7 @@ public class ToolItemElement extends ItemElement {
 	public ToolItemElement(ToolItem toolItem, CSSEngine engine) {
 		super(toolItem, engine);
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
@@ -64,7 +62,7 @@ public class ToolItemElement extends ItemElement {
 
 		super.dispose();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 

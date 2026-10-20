@@ -61,19 +61,15 @@ Each bundle contains:
 - `src/` or `eclipseui/` - Java source code
 - `.settings/` - Eclipse compiler settings
 
+
 ## Build System
 
-### Critical Limitation
-
-
-Use the `-Pbuild-individual-bundles` profile:
+### Building Individual Bundles
 
 ```bash
-# Compile single bundle
-mvn clean compile -pl :bundle-artifact-id -Pbuild-individual-bundles -q
-
-# Example for building a single bundle
-mvn clean verify -Pbuild-individual-bundles mvn clean verify -pl bundles/org.eclipse.ui -DskipTests
+# Compile single bundle such as org.eclipse.jface
+mvn clean compile -pl :org.eclipse.jface
+```
 
 ### Test Properties
 
@@ -82,8 +78,6 @@ From `pom.xml`:
 - `tycho.surefire.useUIThread=true` - Run tests on UI thread
 - `failOnJavadocErrors=true` - Fail build on Javadoc errors
 
-## Testing
-
 ### Running Tests
 
 **⚠️ IMPORTANT:** Use `mvn verify` (NOT `mvn test`) for Tycho projects. 
@@ -91,31 +85,19 @@ Due to Maven Tycho lifecycle binding, tests run in the `integration-test` phase,
 
 ```bash
 # Run tests for a specific test bundle from repository root
-mvn clean verify -pl :org.eclipse.ui.tests -Pbuild-individual-bundles
+mvn clean verify -pl :org.eclipse.jface.tests
 
-# Run specific test class within a bundle
-mvn clean verify -pl :org.eclipse.ui.tests -Pbuild-individual-bundles -Dtest=StructuredViewerTest
-
-# Skip tests during compilation
-mvn clean compile -Pbuild-individual-bundles -DskipTests
+# Run a specific test class within a bundle
+mvn clean verify -pl :org.eclipse.jface.tests -Dtest=ViewerTest
 ```
 
-**Finding test bundles:** Test bundles mirror production bundles:
-- Production: `bundles/org.eclipse.jface`
-- Tests: `tests/org.eclipse.jface.tests`
-
-### JUnit Guidelines
-
-- Prefer JUnit 5 (`org.junit.jupiter.api.*`) for new tests
-
-## Common Development Commands
-
-### Compilation
-
-
-# Compile and run tests
-mvn clean test -pl :bundle-artifact-id -Pbuild-individual-bundles
+If classes under test have been modified, include both the changed source bundle and the test bundle in `-pl`:
+```bash
+mvn clean verify -pl :org.eclipse.jface,:org.eclipse.jface.tests
 ```
+
+
+## Development Hints
 
 ### Finding Code
 
@@ -130,9 +112,14 @@ cat bundles/org.eclipse.jface/META-INF/MANIFEST.MF
 grep -r "pattern" bundles/org.eclipse.jface/src
 ```
 
-## Git Commits
+**Finding test bundles:** Test bundles mirror production bundles:
+- Production: `bundles/org.eclipse.jface`
+- Tests: `tests/org.eclipse.jface.tests`
 
-**Do NOT add `Co-Authored-By` or similar AI attribution trailers to commits.** This fails the Eclipse license check.
+### JUnit Guidelines
+
+- Prefer JUnit 5 (`org.junit.jupiter.api.*`) for new tests
+
 
 ## Critical Development Rules
 
@@ -204,9 +191,6 @@ output.. = bin/
 - UI tests run with the Eclipse UI harness in headless mode
 
 ## Troubleshooting
-
-### "Non-resolvable parent POM"
-Expected when running `mvn verify` at root. Use `-Pbuild-individual-bundles` for individual bundles.
 
 ### "Package does not exist"
 Check `META-INF/MANIFEST.MF` - add missing package to `Import-Package` or bundle to `Require-Bundle`.

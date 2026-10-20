@@ -36,6 +36,8 @@ import org.eclipse.test.Screenshots;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -74,6 +76,9 @@ import org.eclipse.jface.text.tests.TextViewerTest;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class CodeMiningTest {
+
+	/** Right-edge pixels to skip: GTK paints a frame shadow there without a window manager (Xvfb). */
+	private static final int FRAME_INSET= 4;
 
 	private SourceViewer fViewer;
 	private Shell fShell;
@@ -137,6 +142,7 @@ public class CodeMiningTest {
 
 	@AfterEach
 	public void tearDown() {
+		DelayedEchoCodeMiningProvider.DELAY= 0;
 		if (fReconciler != null) {
 			fReconciler.uninstall();
 			fReconciler = null;
@@ -199,7 +205,7 @@ public class CodeMiningTest {
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000));
 		DisplayHelper.sleep(fViewer.getControl().getDisplay(), 500);
 		AtomicInteger events = new AtomicInteger();
-		fViewer.addViewportListener(offset ->
+		fViewer.addViewportListener(_ ->
 			events.incrementAndGet());
 		TextViewerTest.ctrlHome(fViewer);
 		Assertions.assertTrue(new DisplayHelper() {
@@ -626,7 +632,7 @@ public class CodeMiningTest {
 			starty= lineBounds.y;
 		}
 
-		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {
+		Image image= new Image(widget.getDisplay(), (_, _, _) -> {
 		}, (widget.getSize().x), (widget.getSize().y));
 		try {
 			GC gc= new GC(widget);
@@ -635,7 +641,7 @@ public class CodeMiningTest {
 			int zoom= DPIUtil.getDeviceZoom();
 			ImageData imageData= image.getImageData(zoom);
 			double zoomFactor= zoom / 100.0;
-			for (int x= (int) (zoomFactor * startx + 1); x < image.getBounds().width && x < imageData.width; x++) {
+			for (int x= (int) (zoomFactor * startx + 1); x < imageData.width - FRAME_INSET; x++) {
 				for (int y= (int) (zoomFactor * starty); y < imageData.height - 10 /*do not include the border*/; y++) {
 					if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 						// code mining printed
@@ -670,7 +676,7 @@ public class CodeMiningTest {
 			secondLineBounds= widget.getTextBounds(lineOffset, lineOffset + lineLength);
 		}
 
-		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {
+		Image image= new Image(widget.getDisplay(), (_, _, _) -> {
 		}, (widget.getSize().x), (widget.getSize().y));
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);
@@ -681,7 +687,7 @@ public class CodeMiningTest {
 		secondLineBounds.x += secondLineBounds.width; // look only area after text
 
 		double zoomFactor= zoom / 100.0;
-		for (int x= (int) (zoomFactor * (secondLineBounds.x + 1)); x < image.getBounds().width && x < imageData.width; x++) {
+		for (int x= (int) (zoomFactor * (secondLineBounds.x + 1)); x < imageData.width - FRAME_INSET; x++) {
 			for (int y= (int) (zoomFactor * (secondLineBounds.y)); y < zoomFactor * (secondLineBounds.y + secondLineBounds.height) && y < imageData.height; y++) {
 				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 					// code mining printed
@@ -749,6 +755,63 @@ public class CodeMiningTest {
 		}
 	}
 
+	/**
+	 * A line header annotation reserves its vertical space while it is painted, so
+	 * the lines that are out of view when the font changes must not be left with the
+	 * space of the old font.
+	 */
+	@Test
+	public void testReservedHeightFollowsAFontChange() {
+		StringBuilder text= new StringBuilder();
+		for (int i= 0; i < 200; i++) {
+			text.append("line ").append(i).append('\n');
+		}
+		fViewer.getDocument().set(text.toString());
+		StyledText widget= fViewer.getTextWidget();
+		// let a line far below the view port reserve its space, then scroll back to
+		// the top so that it is out of view when the font changes
+		widget.setTopIndex(150);
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return reservesSpaceFrom(widget, 150);
+			}
+		}.waitForCondition(widget.getDisplay(), 3000), "no code mining below the view port");
+		widget.setTopIndex(0);
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getLineVerticalIndent(0) > 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 3000), "no code mining was rendered");
+
+		FontData[] enlarged= widget.getFont().getFontData();
+		for (FontData data : enlarged) {
+			data.setHeight(data.getHeight() * 2);
+		}
+		Font biggerFont= new Font(widget.getDisplay(), enlarged);
+		try {
+			widget.setFont(biggerFont);
+			// a settle time rather than a condition: waiting for a single line to take
+			// the new size lets the ones out of view keep the old one unnoticed
+			DisplayHelper.sleep(widget.getDisplay(), 500);
+
+			int reserving= 0;
+			for (int line= 0; line < widget.getLineCount(); line++) {
+				int reserved= widget.getLineVerticalIndent(line);
+				if (reserved > 0) {
+					reserving++;
+					Assertions.assertEquals(widget.getLineHeight(), reserved,
+							"line " + line + " still reserves the space of the previous font");
+				}
+			}
+			Assertions.assertTrue(reserving > 0, "no line reserved space for a code mining");
+		} finally {
+			widget.setFont(null);
+			biggerFont.dispose();
+		}
+	}
+
 	private static class ReferenceInLineCodeMining extends LineContentCodeMining {
 
 		public ReferenceInLineCodeMining(String label, int positionOffset, ICodeMiningProvider provider) {
@@ -756,6 +819,19 @@ public class CodeMiningTest {
 			this.setLabel(label);
 		}
 
+	}
+
+	/**
+	 * Reserving the space of a code mining moves the view port by a line or two, so which line ends
+	 * up on top after a scroll is not fixed.
+	 */
+	private static boolean reservesSpaceFrom(StyledText widget, int firstLine) {
+		for (int line= firstLine; line < widget.getLineCount(); line++) {
+			if (widget.getLineVerticalIndent(line) > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static class ReferenceLineHeaderCodeMining extends LineHeaderCodeMining {

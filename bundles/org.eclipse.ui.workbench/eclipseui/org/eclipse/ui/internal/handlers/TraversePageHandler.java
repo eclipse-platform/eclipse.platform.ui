@@ -13,11 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -38,16 +35,9 @@ public class TraversePageHandler extends WidgetMethodHandler {
 		Control focusControl = Display.getCurrent().getFocusControl();
 		if (focusControl != null) {
 			boolean forward = "next".equals(methodName); //$NON-NLS-1$
-			int traversalDirection = translateToTraversalDirection(forward);
+			final int traversalDirection = translateToTraversalDirection(forward);
 			Control control = focusControl;
 			do {
-				if (control instanceof CTabFolder) {
-					CTabFolder folder = getTopLevelCTabFolderInParentHierarchy(control);
-					if (isFinalItemInCTabFolder(folder, forward) && !hasHiddenItem(folder)) {
-						loopToFirstOrLastItem(folder, forward);
-						traversalDirection = translateToTraversalDirection(!forward);
-					}
-				}
 				if (control.traverse(traversalDirection)) {
 					return null;
 				}
@@ -60,63 +50,8 @@ public class TraversePageHandler extends WidgetMethodHandler {
 		return null;
 	}
 
-	/**
-	 * @param c a {@code Control}.
-	 * @return the top-level {@code CTabFolder} in the parent hierarchy.
-	 */
-	private CTabFolder getTopLevelCTabFolderInParentHierarchy(Control c) {
-		Control current = c;
-		CTabFolder ret = null;
-		do {
-			if (current instanceof CTabFolder folder) {
-				ret = folder;
-			}
-			current = current.getParent();
-		} while (current != null);
-		return ret;
-	}
-
-	private boolean hasHiddenItem(CTabFolder folder) {
-		return Arrays.stream(folder.getItems()).anyMatch(i -> !i.isShowing());
-	}
-
 	private int translateToTraversalDirection(boolean forward) {
 		return forward ? SWT.TRAVERSE_PAGE_NEXT : SWT.TRAVERSE_PAGE_PREVIOUS;
-	}
-
-	/**
-	 * Sets the current selection to the first or last item the given direction.
-	 *
-	 * @param folder  the CTabFolder which we want to inspect
-	 * @param forward whether we want to traverse forwards of backwards
-	 */
-	private void loopToFirstOrLastItem(CTabFolder folder, boolean forward) {
-		if (forward) {
-			folder.showItem(folder.getItem(0));
-			folder.setSelection(1);
-		} else {
-			int itemCount = folder.getItemCount();
-			folder.setSelection(itemCount - 2);
-		}
-	}
-
-	/**
-	 * {@return Returns whether the folder has currently selected the final item in
-	 * the given direction.}
-	 *
-	 * @param folder  the CTabFolder which we want to inspect
-	 * @param forward whether we want to traverse forwards of backwards
-	 */
-	private boolean isFinalItemInCTabFolder(CTabFolder folder, boolean forward) {
-		CTabItem currentFolder = folder.getSelection();
-		CTabItem lastFolder = null;
-		if (forward) {
-			int itemCount = folder.getItemCount();
-			lastFolder = folder.getItem(itemCount - 1);
-		} else {
-			lastFolder = folder.getItem(0);
-		}
-		return currentFolder.equals(lastFolder);
 	}
 
 	/**

@@ -186,7 +186,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				}
 			});
 		}
-		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FILE, e -> {
+		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FILE, _ -> {
 			setPageComplete(validatePage());
 			firstLinkCheck = false;
 		}, new CreateLinkedResourceGroup.IStringValue() {
@@ -365,7 +365,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				try {
 					if (resolvedPath.getScheme() != null && resolvedPath.getSchemeSpecificPart() != null) {
 						IFileStore store = EFS.getStore(resolvedPath);
-						if (!store.fetchInfo().exists()) {
+						if (!store.exists()) {
 							MessageDialog dlg = new MessageDialog(getContainer().getShell(),
 									IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle, null,
 									NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion,
@@ -375,7 +375,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 							int result = dlg.open();
 							if (result == Window.OK) {
 								store.getParent().mkdir(0, new NullProgressMonitor());
-								try (OutputStream stream = store.openOutputStream(0, new NullProgressMonitor())) {
+								try (OutputStream _ = store.openOutputStream(0, new NullProgressMonitor())) {
 									// only try to open
 								}
 							}

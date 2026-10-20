@@ -58,24 +58,8 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 
 	@Override
 	public void registerResource(Object type, Object key, Object resource) {
-		if (resource == null)
-		{
+		if (resource == null) {
 			return;
-			//		String hit = getResource(type, key) != null
-			//			? " hit "
-			//			: " ";
-			//TODO replace with eclipse logging
-			//		if (resource instanceof Color) {
-			//			System.out.println("key class = " + key.getClass());
-			//			System.out.println("Cache " + hit + "SWT Color key= " + key);
-			//		} else if (resource instanceof Cursor) {
-			//			System.out.println("Cache" + hit + "SWT Cursor key=" + key);
-			//		} else if (resource instanceof Font) {
-			//			System.out.println("Cache" + hit + "SWT Font key=" + key);
-			//		} else if (resource instanceof Image) {
-			//			System.out.println("Cache" + hit + "SWT Image key=" + key);
-			//		} else
-			//			System.out.println("Cache" + hit + "Resource key=" + key);
 		}
 
 		super.registerResource(type, key, resource);
@@ -86,23 +70,11 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 		// Dispose SWT Resource
 		if (resource instanceof Cursor) {
 			((Cursor)resource).dispose();
-			//TODO replace with eclipse logging
-			//			if (logger.isDebugEnabled())
-			//				logger.debug("Dispose SWT Cursor key=" + key);
 		} else if (resource instanceof Font) {
 			((Font)resource).dispose();
-			//TODO replace with eclipse logging
-			//			if (logger.isDebugEnabled())
-			//				logger.debug("Dispose SWT Font key=" + key);
 		} else if (resource instanceof Image) {
 			((Image) resource).dispose();
-			//TODO replace with eclipse logging
-			//			if (logger.isDebugEnabled())
-			//				logger.debug("Dispose SWT Image key=" + key);
 		}
-		//TODO replace with eclipse logging
-		//		else if (logger.isDebugEnabled())
-		//			logger.debug("Dispose Resource key=" + key);
 	}
 
 	protected boolean isDisposed(Object resource) {

@@ -18,6 +18,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -60,6 +61,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 				false);
 
+		node.putBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 		node.putBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, true);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
@@ -156,7 +158,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 								.getSingleton());
 			}
 		} catch (BackingStoreException e) {
-			UIPlugin.getDefault().getLog().error(e.getLocalizedMessage(), e);
+			ILog.of(UIPreferenceInitializer.class).error(e.getLocalizedMessage(), e);
 		}
 
 		rootNode

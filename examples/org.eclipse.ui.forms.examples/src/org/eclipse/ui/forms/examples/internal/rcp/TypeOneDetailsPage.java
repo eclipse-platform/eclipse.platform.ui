@@ -118,7 +118,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 
 		toolkit.createLabel(client, "Text property:");
 		text = toolkit.createText(client, "", SWT.SINGLE);
-		text.addModifyListener(e -> {
+		text.addModifyListener(_ -> {
 			if (input != null)
 				input.setText(text.getText());
 		});

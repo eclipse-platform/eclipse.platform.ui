@@ -212,8 +212,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 				return;
 			}
 
-			if (autoInsert && count == 1 && !autoActivated &&
-					fContentAssistant.isAutoActivateCompletionOnType() && canAutoInsert(fComputedProposals.get(0))) {
+			if (autoInsert && count == 1 && !autoActivated && canAutoInsert(fComputedProposals.get(0))) {
 				insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
 				hide();
 			} else {

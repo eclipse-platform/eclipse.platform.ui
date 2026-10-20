@@ -86,7 +86,7 @@ public class TestBug105491 {
 			// unstable on Windows with 2 cores, see bug 543693
 			return;
 		}
-		workspace.run((IWorkspaceRunnable) monitor -> {
+		workspace.run((IWorkspaceRunnable) _ -> {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 			try {
 				dialog.run(true, false, new TransferTestOperation());

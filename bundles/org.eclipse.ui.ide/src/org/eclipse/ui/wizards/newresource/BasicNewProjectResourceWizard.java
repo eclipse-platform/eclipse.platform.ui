@@ -72,7 +72,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
@@ -256,19 +255,13 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 				CoreException cause = (CoreException) t.getCause();
 				StatusAdapter status;
 				if (cause.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-					status = new StatusAdapter(
-							StatusUtil
-									.newStatus(
-											IStatus.WARNING,
-											NLS
-													.bind(
-															ResourceMessages.NewProject_caseVariantExistsError,
-															newProjectHandle
-																	.getName()),
-											cause));
+					status = new StatusAdapter(Status.warning(
+							NLS.bind(ResourceMessages.NewProject_caseVariantExistsError,
+									newProjectHandle.getName()),
+							cause));
 				} else {
-					status = new StatusAdapter(StatusUtil.newStatus(cause
-							.getStatus().getSeverity(),
+					status = new StatusAdapter(new Status(cause.getStatus().getSeverity(),
+							IDEWorkbenchPlugin.IDE_WORKBENCH,
 							ResourceMessages.NewProject_errorMessage, cause));
 				}
 				status.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,

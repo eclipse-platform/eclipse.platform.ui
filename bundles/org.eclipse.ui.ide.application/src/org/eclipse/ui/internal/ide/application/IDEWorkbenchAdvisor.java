@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -58,10 +57,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Resource;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -82,7 +80,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchActivityHelper;
 import org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
@@ -157,6 +154,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private final int workspaceWaitDelay;
 
+	/**
+	 * Captured during {@link #initialize(IWorkbenchConfigurer)} so
+	 * {@link #disconnectFromWorkspace()} does not have to reach through
+	 * {@link PlatformUI#getWorkbench()} after the workbench has been shut down.
+	 */
+	private int savedLongOperationTime;
+
 	private final Listener closeListener = event -> {
 		boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
 		event.doit = doExit;
@@ -194,6 +198,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
+
+		savedLongOperationTime = configurer.getWorkbench().getProgressService().getLongOperationTime();
 
 		PluginActionBuilder.setAllowIdeLogging(true);
 
@@ -253,8 +259,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		@Override
 		public void accept(Error allocationStack) {
 			IDEWorkbenchPlugin.log(null,
-					StatusUtil.newStatus(IStatus.ERROR, "Not properly disposed SWT resource", //$NON-NLS-1$
-							allocationStack));
+					Status.error("Not properly disposed SWT resource", allocationStack)); //$NON-NLS-1$
 		}
 
 	}
@@ -466,120 +471,84 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	protected static class CancelableProgressMonitorWrapper extends
-			ProgressMonitorWrapper {
-		private double total = 0;
-		private final ProgressMonitorJobsDialog dialog;
-
-		CancelableProgressMonitorWrapper(IProgressMonitor monitor,
-				ProgressMonitorJobsDialog dialog) {
-			super(monitor);
-			this.dialog = dialog;
-		}
-
-		@Override
-		public void internalWorked(double work) {
-			super.internalWorked(work);
-			total += work;
-			updateProgressDetails();
-		}
-
-		@Override
-		public void worked(int work) {
-			super.worked(work);
-			total += work;
-			updateProgressDetails();
-		}
-
-		@Override
-		public void beginTask(String name, int totalWork) {
-			super.beginTask(name, totalWork);
-			subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
-		}
-
-		private void updateProgressDetails() {
-			if (!isCanceled() && Math.abs(total - 4.0) < 0.0001 /* right before history compacting */) {
-				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
-				dialog.setCancelable(true);
-			}
-			if (Math.abs(total - 5.0) < 0.0001 /* history compacting finished */) {
-				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_postHistoryCompaction);
-				dialog.setCancelable(false);
-			}
-		}
-	}
-
-	protected static class CancelableProgressMonitorJobsDialog extends
-			ProgressMonitorJobsDialog {
-
-		public CancelableProgressMonitorJobsDialog(Shell parent) {
-			super(parent);
-		}
-
-		@Override
-		protected void createButtonsForButtonBar(Composite parent) {
-			super.createButtonsForButtonBar(parent);
-			registerCancelButtonListener();
-		}
-
-		public void registerCancelButtonListener() {
-			cancel.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					subTaskLabel.setText(""); //$NON-NLS-1$
-				}
-			});
-		}
-	}
-
 	/**
 	 * Disconnect from the core workspace.
+	 *
+	 * Shows the progress dialog only if the save operation takes longer than
+	 * the {@link IProgressService#getLongOperationTime() long operation time};
+	 * otherwise a busy cursor is shown while the save runs on a worker thread.
+	 * This avoids a flashing dialog for fast shutdowns.
 	 *
 	 * Locks workspace in a background thread, should not be called while
 	 * holding any workspace locks.
 	 */
 	protected void disconnectFromWorkspace() {
-		// save the workspace
 		final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 				IDEWorkbenchMessages.ProblemSavingWorkbench);
+
+		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null) {
+			@Override
+			protected void configureShell(Shell shell) {
+				super.configureShell(shell);
+				shell.setText(IDEWorkbenchMessages.ShutdownInProgress);
+			}
+
+			@Override
+			protected Image getImage() {
+				return null;
+			}
+		};
+		dialog.setOpenOnRun(false);
+
+		IRunnableWithProgress runnable = monitor -> {
+			try {
+				status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, monitor));
+			} catch (CoreException e) {
+				status.merge(e.getStatus());
+			}
+		};
+
+		final Display display = Display.getCurrent();
+		final int longOperationTime = savedLongOperationTime;
+		final Runnable openDialogLater = () -> {
+			if (!display.isDisposed() && !hasModalShell(display)) {
+				dialog.open();
+			}
+		};
+		display.timerExec(longOperationTime, openDialogLater);
+
 		try {
-			final ProgressMonitorJobsDialog p = new CancelableProgressMonitorJobsDialog(
-					null);
-
-			final boolean applyPolicy = ResourcesPlugin.getWorkspace()
-					.getDescription().isApplyFileStatePolicy();
-
-			IRunnableWithProgress runnable = monitor -> {
+			BusyIndicator.showWhile(display, () -> {
 				try {
-					if (applyPolicy) {
-						monitor = new CancelableProgressMonitorWrapper(monitor, p);
-					}
-
-					status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, monitor));
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
+					dialog.run(true, false, runnable);
+				} catch (InvocationTargetException e) {
+					status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
+							IDEWorkbenchMessages.InternalError, e.getTargetException()));
+				} catch (InterruptedException e) {
+					status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
+							IDEWorkbenchMessages.InternalError, e));
 				}
-			};
+			});
+		} finally {
+			// Cancel openDialogLater if it is still pending; no-op if it already ran.
+			display.timerExec(-1, openDialogLater);
+		}
 
-			p.run(true, false, runnable);
-		} catch (InvocationTargetException e) {
-			status
-					.merge(new Status(IStatus.ERROR,
-							IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-							IDEWorkbenchMessages.InternalError, e
-									.getTargetException()));
-		} catch (InterruptedException e) {
-			status.merge(new Status(IStatus.ERROR,
-					IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-					IDEWorkbenchMessages.InternalError, e));
-		}
 		if (!status.isOK()) {
-			ErrorDialog.openError(null,
-					IDEWorkbenchMessages.ProblemsSavingWorkspace, null, status,
+			ErrorDialog.openError(null, IDEWorkbenchMessages.ProblemsSavingWorkspace, null, status,
 					IStatus.ERROR | IStatus.WARNING);
-			IDEWorkbenchPlugin.log(
-					IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
+			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
 		}
+	}
+
+	private static boolean hasModalShell(Display display) {
+		final int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+		for (Shell shell : display.getShells()) {
+			if (!shell.isDisposed() && shell.isVisible() && (shell.getStyle() & modal) != 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -898,7 +867,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
 		if (disabledSymbolicName != null) {
-			ImageDescriptor disabledDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			ImageDescriptor disabledDescriptor = desc.asDisabledDescriptor();
 			getWorkbenchConfigurer().declareImage(disabledSymbolicName, disabledDescriptor, shared);
 		}
 	}

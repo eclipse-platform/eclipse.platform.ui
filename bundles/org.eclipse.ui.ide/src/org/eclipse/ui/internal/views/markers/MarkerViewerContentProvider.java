@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -60,6 +63,14 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Get the children limited by the marker limits.
+	 * <p>
+	 * When a text search filter is active and the children are concrete markers,
+	 * the filter is applied first (across all children, bypassing the limit
+	 * temporarily) and the configured limit is then applied to the matching
+	 * subset. This ensures markers that sort beyond the limit window are still
+	 * reachable via the search box, while the limit is still honoured on the
+	 * filtered results.
+	 * </p>
 	 *
 	 * @return Object[]
 	 */
@@ -67,6 +78,24 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 		boolean limitsEnabled = markersView.getGenerator().isMarkerLimitsEnabled();
 		int limits = markersView.getGenerator().getMarkerLimits();
+
+		MarkerPatternFilter searchFilter = markersView.getSearchFilter();
+		if (searchFilter != null && children.length > 0
+				&& children[0] instanceof MarkerSupportItem first && first.isConcrete()) {
+			// Filter all concrete children first (across the full set), then
+			// apply the limit to the matching subset so the limit is still
+			// respected while every marker is eligible for the search.
+			List<Object> matching = new ArrayList<>();
+			for (Object child : children) {
+				if (child instanceof MarkerSupportItem item && searchFilter.matches(item)) {
+					matching.add(child);
+					if (limitsEnabled && limits > 0 && matching.size() == limits) {
+						break;
+					}
+				}
+			}
+			return matching.toArray();
+		}
 
 		if (!limitsEnabled || limits <= 0 || limits > children.length) {
 			return children;

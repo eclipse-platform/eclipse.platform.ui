@@ -17,9 +17,9 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.CSSStyleSheet;
 
 /**
  * Assert that <code>@font-face</code> rules are ignored.
@@ -30,9 +30,9 @@ public class FontFaceRulesTest {
 	void testEmptyFontFaceRule() throws Exception {
 		String css = "@font-face {}\n"
 				+ "Label { background-color: #FF0000 }";
-		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSStyleSheetImpl styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
-		assertEquals(1, styleSheet.getCssRules().getLength());
+		assertEquals(1, styleSheet.getRules().size());
 	}
 
 	@Test
@@ -43,8 +43,8 @@ public class FontFaceRulesTest {
 			  src: url("http://site/fonts/rob-celt")
 			}
 			Label { background-color: #FF0000 }""";
-		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSStyleSheetImpl styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
-		assertEquals(1, styleSheet.getCssRules().getLength());
+		assertEquals(1, styleSheet.getRules().size());
 	}
 }

@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
@@ -61,8 +61,7 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 			StatusManager.getManager().handle(StatusUtil.newError(e), StatusManager.LOG);
 		} catch (InterruptedException e) {
 			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.WARNING, e
-							.getLocalizedMessage(), e), StatusManager.LOG);
+					Status.warning(e.getLocalizedMessage(), e), StatusManager.LOG);
 		}
 		return this;
 

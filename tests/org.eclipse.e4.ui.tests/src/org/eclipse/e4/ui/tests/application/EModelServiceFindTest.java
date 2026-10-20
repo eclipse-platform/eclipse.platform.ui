@@ -14,11 +14,11 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,26 +259,9 @@ public class EModelServiceFindTest {
 		EModelService modelService = application.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
-		try {
-			modelService.find("a", null);
-			fail("An exception should have prevented a null parameter to find(*)");
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
-
-		try {
-			modelService.findElements(null, null, null);
-			fail("An exception should have prevented a null parameter to findElements(*)");
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
-
-		try {
-			modelService.findElements(null, null, null, null, EModelService.ANYWHERE);
-			fail("An exception should have prevented a null parameter to findElements(*)");
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
+		assertThrows(IllegalArgumentException.class, () -> modelService.find("a", null));
+		assertThrows(IllegalArgumentException.class, () -> modelService.findElements(null, null, null));
+		assertThrows(IllegalArgumentException.class, () -> modelService.findElements(null, null, null, null, EModelService.ANYWHERE));
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public class TheTestWizardPage extends WizardPage {
 		textInputField = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		textInputField.setLayoutData(gd);
-		textInputField.addModifyListener(e -> dialogChanged());
+		textInputField.addModifyListener(_ -> dialogChanged());
 
 		initialize();
 		dialogChanged();

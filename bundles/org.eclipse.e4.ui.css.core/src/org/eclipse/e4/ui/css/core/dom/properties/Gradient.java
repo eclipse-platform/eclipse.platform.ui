@@ -17,7 +17,7 @@ package org.eclipse.e4.ui.css.core.dom.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 
 /**
  * Generic class to store informations to manage Gradient color.
@@ -28,7 +28,7 @@ public class Gradient {
 	private final List<Integer> percents = new ArrayList<>(2);
 
 	//TODO see bug #278077
-	private final List<CSSPrimitiveValue> values = new ArrayList<>(2);
+	private final List<CssPrimitive> values = new ArrayList<>(2);
 
 	private boolean isLinear = true;
 
@@ -49,7 +49,7 @@ public class Gradient {
 	}
 
 	//TODO see bug #278077
-	public void addRGB(Object rgb, CSSPrimitiveValue value) {
+	public void addRGB(Object rgb, CssPrimitive value) {
 		rgbs.add(rgb);
 		values.add(value);
 	}
@@ -66,7 +66,7 @@ public class Gradient {
 		return rgbs;
 	}
 
-	public List<CSSPrimitiveValue> getValues() {
+	public List<CssPrimitive> getValues() {
 		return values;
 	}
 

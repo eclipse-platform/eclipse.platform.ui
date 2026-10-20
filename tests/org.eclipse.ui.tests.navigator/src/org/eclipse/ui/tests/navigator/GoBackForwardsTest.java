@@ -21,20 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.INavigationLocation;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -42,14 +37,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestUtil.Condition;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.TextSelectionNavigationLocation;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * @since 3.3
@@ -66,86 +62,20 @@ public class GoBackForwardsTest {
 	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 	private static final String SELECTION_STRING = "Selection<offset: 10, length: 5>";
 
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
+
 	private IProject project;
 	private IFile file;
-	private final List<IWorkbenchWindow> testWindows = new ArrayList<>();
-	private IWindowListener windowListener;
-	private Set<Shell> initialShells;
 
 	@BeforeEach
 	public void setUp() throws CoreException, IOException {
-		addWindowListener();
-		storeInitialShells();
-
 		project = FileUtil.createProject(PROJECT_NAME);
 		file = FileUtil.createFile(FILE_NAME, project);
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(FILE_CONTENTS);
 		Files.writeString(Paths.get(file.getLocation().toOSString()), stringBuilder);
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-	}
-
-	@AfterEach
-	public void tearDown() {
-		removeWindowListener();
-		processEvents();
-		closeAllTestWindows();
-		processEvents();
-		checkForLeakedShells();
-	}
-
-	private void addWindowListener() {
-		windowListener = new IWindowListener() {
-			@Override
-			public void windowActivated(IWorkbenchWindow window) {
-			}
-
-			@Override
-			public void windowDeactivated(IWorkbenchWindow window) {
-			}
-
-			@Override
-			public void windowClosed(IWorkbenchWindow window) {
-				testWindows.remove(window);
-			}
-
-			@Override
-			public void windowOpened(IWorkbenchWindow window) {
-				testWindows.add(window);
-			}
-		};
-		PlatformUI.getWorkbench().addWindowListener(windowListener);
-	}
-
-	private void removeWindowListener() {
-		if (windowListener != null) {
-			PlatformUI.getWorkbench().removeWindowListener(windowListener);
-		}
-	}
-
-	private void closeAllTestWindows() {
-		List<IWorkbenchWindow> testWindowsCopy = new ArrayList<>(testWindows);
-		for (IWorkbenchWindow testWindow : testWindowsCopy) {
-			testWindow.close();
-		}
-		testWindows.clear();
-	}
-
-	private void storeInitialShells() {
-		this.initialShells = Set.of(PlatformUI.getWorkbench().getDisplay().getShells());
-	}
-
-	private void checkForLeakedShells() {
-		List<String> leakedModalShellTitles = new ArrayList<>();
-		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
-		for (Shell shell : shells) {
-			if (!shell.isDisposed() && !initialShells.contains(shell)) {
-				leakedModalShellTitles.add(shell.getText());
-				shell.close();
-			}
-		}
-		assertEquals(0, leakedModalShellTitles.size(),
-				"Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]");
 	}
 
 	@Test

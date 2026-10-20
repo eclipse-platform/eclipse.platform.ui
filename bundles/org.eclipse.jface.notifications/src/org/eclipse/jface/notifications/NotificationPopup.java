@@ -21,6 +21,7 @@ import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -243,10 +244,14 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		if (titleImage != null) {
 			numColums++;
 		}
-		GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
+		if (parent.getLayout() instanceof GridLayout layout) {
+			layout.numColumns = numColums;
+		} else {
+			GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
+		}
 
 		if (titleImage != null) {
-			WidgetFactory.label(SWT.NONE).image(titleImage);
+			WidgetFactory.label(SWT.NONE).image(titleImage).create(parent);
 		}
 
 		Control control = this.titleCreator.apply(parent);
@@ -264,12 +269,19 @@ public class NotificationPopup extends AbstractNotificationPopup {
 	}
 
 	@Override
+	protected Image getPopupShellImage(int maximumHeight) {
+		return titleImage;
+	}
+
+	@Override
 	protected void createContentArea(Composite parent) {
 		if (this.contentCreator == null) {
 			super.createContentArea(parent);
 			return;
 		}
-		GridLayoutFactory.fillDefaults().applyTo(parent);
+		if (!(parent.getLayout() instanceof GridLayout)) {
+			GridLayoutFactory.fillDefaults().applyTo(parent);
+		}
 		Control control = this.contentCreator.apply(parent);
 		if (control.getLayoutData() == null) {
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);

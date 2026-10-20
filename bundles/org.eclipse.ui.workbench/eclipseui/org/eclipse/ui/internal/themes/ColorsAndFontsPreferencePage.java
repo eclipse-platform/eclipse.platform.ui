@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,6 +78,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -614,11 +617,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private Button goToDefaultButton;
 
 	/**
-	 * The button to expand the tree.
-	 *
-	 * @since 4.5
+	 * The toolitem to expand the tree.
 	 */
-	private Button expandAllButton;
+	private ToolItem expandAllItem;
+
+	/**
+	 * The toolitem to collapse the tree.
+	 */
+	private ToolItem collapseAllItem;
 
 	/**
 	 * Map of definition FontDefinition-&gt;FontData[] capturing the changes explicitly
@@ -832,40 +838,44 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		});
 
 		final SashForm advancedComposite = new SashForm(parent, SWT.VERTICAL);
-		GridData sashData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		advancedComposite.setLayoutData(sashData);
+		advancedComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite mainColumn = new Composite(advancedComposite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		mainColumn.setFont(parent.getFont());
 		mainColumn.setLayout(layout);
 
-		GridData data = new GridData(GridData.BEGINNING);
-		data.horizontalSpan = 2;
 		Label label = new Label(mainColumn, SWT.LEFT);
 		label.setText(RESOURCE_BUNDLE.getString("colorsAndFonts")); //$NON-NLS-1$
 		myApplyDialogFont(label);
-		label.setLayoutData(data);
+		label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
 
-		createTree(mainColumn);
+		// LEFT COLUMN (tree + filter)
+		Composite leftColumn = new Composite(mainColumn, SWT.NONE);
+		leftColumn.setLayout(new GridLayout(1, false));
+		leftColumn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		// --- buttons
+		createTree(leftColumn);
+
+		// RIGHT COLUMN (toolbar + buttons)
 		Composite controlColumn = new Composite(mainColumn, SWT.NONE);
-		data = new GridData(GridData.FILL_VERTICAL);
-		controlColumn.setLayoutData(data);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		controlColumn.setLayout(layout);
+		controlColumn.setLayout(new GridLayout());
+		controlColumn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 
-		// we need placeholder to offset the filter control of the table
-		Label placeholder = new Label(controlColumn, SWT.NONE);
-		GridData placeholderData = new GridData(SWT.TOP);
-		placeholderData.heightHint = convertVerticalDLUsToPixels(12);
-		placeholder.setLayoutData(placeholderData);
+		// Toolbar at TOP (aligned with filter text)
+		ToolBar treeToolbar = new ToolBar(controlColumn, SWT.FLAT);
+		treeToolbar.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false));
+
+		expandAllItem = new ToolItem(treeToolbar, SWT.PUSH);
+		expandAllItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_EXPANDALL));
+		expandAllItem.setToolTipText(RESOURCE_BUNDLE.getString("expandAll")); //$NON-NLS-1$
+
+		collapseAllItem = new ToolItem(treeToolbar, SWT.PUSH);
+		collapseAllItem
+				.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_COLLAPSEALL));
+		collapseAllItem.setToolTipText("collapseAll"); //$NON-NLS-1$
 
 		fontChangeButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("openChange")); //$NON-NLS-1$
 		fontSystemButton = createButton(controlColumn, WorkbenchMessages.FontsPreference_useSystemFont);
@@ -874,41 +884,28 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		editDefaultButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("editDefault")); //$NON-NLS-1$
 		goToDefaultButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("goToDefault")); //$NON-NLS-1$
 		createSeparator(controlColumn);
-		expandAllButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("expandAll")); //$NON-NLS-1$
-		expandAllButton.setEnabled(true);
-		// --- end of buttons
+		// end of buttons
 
 		createDescriptionControl(mainColumn);
 
 		Composite previewColumn = new Composite(advancedComposite, SWT.NONE);
-		GridLayout previewLayout = new GridLayout();
-		previewLayout.marginTop = 7;
-		previewLayout.marginWidth = 0;
-		previewLayout.marginHeight = 0;
-		previewColumn.setFont(parent.getFont());
-		previewColumn.setLayout(previewLayout);
+		previewColumn.setLayout(new GridLayout());
+		previewColumn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		// --- create preview control
+		// create preview control
 		Composite composite = new Composite(previewColumn, SWT.NONE);
-
-		GridData data2 = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(data2);
-		GridLayout layout2 = new GridLayout(1, true);
-		layout2.marginHeight = 0;
-		layout2.marginWidth = 0;
-		composite.setLayout(layout2);
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Label label2 = new Label(composite, SWT.LEFT);
 		label2.setText(RESOURCE_BUNDLE.getString("preview")); //$NON-NLS-1$
 		myApplyDialogFont(label2);
 
 		previewComposite = new Composite(composite, SWT.NONE);
-		previewComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		previewComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		stackLayout = new StackLayout();
-		stackLayout.marginHeight = 0;
-		stackLayout.marginWidth = 0;
 		previewComposite.setLayout(stackLayout);
-		// -- end of preview control
+		// end of preview control
 
 		defaultFontPreview = createFontPreviewControl();
 		defaultColorPreview = createColorPreviewControl();
@@ -972,9 +969,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		};
 		filter.setIncludeLeadingWildcard(true);
 
-		tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filter, true);
+		tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filter, true, true);
 		tree.setQuickSelectionMode(true);
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
+
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.widthHint = Math.max(285, convertWidthInCharsToPixels(30));
 		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
 		tree.setLayoutData(data);
@@ -989,10 +987,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		tree.getViewer().setComparator(new ViewerComparator() {
 			@Override
 			public int category(Object element) {
-				if (element instanceof ThemeElementCategory) {
-					return 0;
-				}
-				return 1;
+				return (element instanceof ThemeElementCategory) ? 0 : 1;
 			}
 		});
 		tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
@@ -1261,9 +1256,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 			updateControls();
 		}));
-
-		expandAllButton.addSelectionListener(widgetSelectedAdapter(event -> tree.getViewer().expandAll()));
-
+		expandAllItem.addListener(SWT.Selection, e -> viewer.expandAll());
+		collapseAllItem.addListener(SWT.Selection, e -> viewer.collapseAll());
 	}
 
 	@Override

@@ -46,13 +46,14 @@ public class CachedMarkerBuilder {
 	// The MarkerContentGenerator we are using for building
 	private MarkerContentGenerator generator;
 	private MarkerUpdateJob updateJob;
-	private MarkersChangeListener markerListener;
+	private final MarkersChangeListener markerListener;
 	private final MarkerUpdateScheduler scheduler;
 
 	private final Markers markers;
 	private Markers markersClone;
 
-	final Object MARKER_INCREMENTAL_UPDATE_FAMILY = new Object();
+	private final ExtendedMarkersView view;
+
 	final Object CACHE_UPDATE_FAMILY = new Object();
 	final Object MARKERSVIEW_UPDATE_JOB_FAMILY;
 
@@ -80,9 +81,17 @@ public class CachedMarkerBuilder {
 		active = false;
 		changeFlags = new boolean[] { true, false, false };
 		MARKERSVIEW_UPDATE_JOB_FAMILY = view.MARKERSVIEW_UPDATE_JOB_FAMILY;
+		this.view = view;
 		markers = new Markers(this);
 		markerListener = new MarkersChangeListener(view, this);
 		scheduler = new MarkerUpdateScheduler(view, this);
+	}
+
+	/**
+	 * @return the view this builder was created for
+	 */
+	ExtendedMarkersView getView() {
+		return view;
 	}
 
 	void restoreState(IMemento m) {
@@ -126,12 +135,6 @@ public class CachedMarkerBuilder {
 
 		if (workingSetListener != null) {
 			PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(getWorkingSetListener());
-		}
-
-		if (isIncremental()) {
-			if (incrementJob != null) {
-				incrementJob.clearEntries();
-			}
 		}
 	}
 
@@ -402,16 +405,6 @@ public class CachedMarkerBuilder {
 	 *
 	 * schedules marker update job
 	 */
-	MarkerUpdateJob scheduleUpdateJob(long delay) {
-		return scheduleUpdateJob(delay, false, new boolean[] { true, false, false });
-	}
-
-	/**
-	 * The method should not be called directly, see
-	 * {@link MarkerUpdateScheduler}
-	 *
-	 * schedules marker update job
-	 */
 	MarkerUpdateJob scheduleUpdateJob(long delay, boolean clean) {
 		return scheduleUpdateJob(delay, clean, new boolean[] { true, false, false });
 	}
@@ -431,14 +424,7 @@ public class CachedMarkerBuilder {
 			if (generator == null || !active) {
 				return null;
 			}
-			if (updateJob != null) {
-				// ensure cancellation before calling the method
-				// updateJob.cancel();
-			} else {
-				/*
-				 * updateJob = isIncremental() ? new IncrementUpdateJob(this):
-				 * new MarkerUpdateJob(this);
-				 */
+			if (updateJob == null) {
 				updateJob = new MarkerUpdateJob(this);
 				updateJob.setPriority(Job.LONG);
 				updateJob.setSystem(true);
@@ -473,13 +459,6 @@ public class CachedMarkerBuilder {
 	 */
 	MarkersChangeListener getMarkerListener() {
 		return markerListener;
-	}
-
-	/**
-	 * @param markerListener The {@link MarkersChangeListener} to set.
-	 */
-	void setMarkerListener(MarkersChangeListener markerListener) {
-		this.markerListener = markerListener;
 	}
 
 	/**
@@ -543,16 +522,6 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * @return lastUpdateTime
-	 */
-	long getLastUpdateTime() {
-		if (updateJob != null) {
-			return updateJob.getLastUpdateTime();
-		}
-		return -1;
-	}
-
-	/**
 	 * Always work with a clone where thread safety is concerned
 	 * @return the active clone of markers
 	 */
@@ -579,23 +548,6 @@ public class CachedMarkerBuilder {
 		return markersClone;
 	}
 
-///////	<Incremental update code>///////
-		private IncrementUpdateJob incrementJob;
-	/**
-	 * Checks whether the builder should perform incrementally Note : Incremental
-	 * updating method is NOT used and tested yet but left out for further
-	 * investigation(*).
-	 *
-	 * @return Returns true if we should collect markers incrementally.
-	 */
-	boolean isIncremental() {
-		/*
-		 * We do not update incrementally. We have
-		 * code for further investigation(*) for this anyway.
-		 */
-		return false;
-	}
-
 	/**
 	 * @return Returns the changeFlags {added,removed,changed}.
 	 */
@@ -617,23 +569,6 @@ public class CachedMarkerBuilder {
 			this.changeFlags[i] = this.changeFlags[i] | newChangeFlags[i];
 		}
 	}
-
-	/**
-	 * Handles an incremental update
-	 */
-	void incrementalUpdate(MarkerUpdate update) {
-		synchronized (getUpdateScheduler().getSchedulingLock()) {
-			if (incrementJob == null) {
-				scheduleUpdateJob(MarkerUpdateScheduler.SHORT_DELAY, true);
-			}
-		}
-		if (incrementJob != null) {
-			incrementJob.addUpdate(update);
-		}
-	}
-///////	</Incremental update code>///////
-
-///helpers//
 
 	/**
 	 * The WorkingSet listener, since marker filters can be scoped to

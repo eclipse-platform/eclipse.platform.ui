@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
@@ -298,7 +297,7 @@ public class RefreshAction extends WorkspaceAction {
 					String msg = NLS.bind(
 							IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
 									.getName(), e.getTargetException());
-					throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException()));
+					throw new CoreException(Status.error(msg, e.getTargetException()));
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}

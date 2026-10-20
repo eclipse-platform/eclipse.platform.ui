@@ -16,10 +16,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.swt.dom.ItemElement;
@@ -39,8 +40,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
-implements ICSSPropertyHandler2 {
+public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler {
 
 	public static final ICSSPropertyFontHandler INSTANCE = new CSSPropertyFontSWTHandler();
 
@@ -70,6 +70,17 @@ implements ICSSPropertyHandler2 {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Resolves a relative font size against the font the element had before it was
+	 * styled, and an unresolved font definition against the widget's own font.
+	 */
+	private static CSS2FontProperties resolve(CSS2FontProperties fontProperties, CSSElementContext context,
+			Widget widget) {
+		CSS2FontProperties resolved = CSSSWTFontHelper.resolveRelativeSize(fontProperties,
+				CSSSWTFontHelper.getBaseFontData(context));
+		return CSSSWTFontHelper.resolveUnresolvedFontDefinition(resolved, context, widget);
 	}
 
 	private static void updateChildrenFonts(CTabFolder folder, Font font) {
@@ -185,12 +196,6 @@ implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
@@ -205,23 +210,11 @@ implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
 		return CSSSWTFontHelper.getFontStyle(widget);
 
-	}
-
-	@Override
-	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
-			CSSEngine engine) throws Exception {
-		return null;
 	}
 
 	@Override
@@ -232,19 +225,18 @@ implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
+	public void onAllCSSPropertiesApplied(Object element, CSSEngine engine)
 			throws Exception {
 		final Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget == null || widget instanceof CTabItem) {
 			return;
 		}
-		CSS2FontProperties fontProperties = CSSSWTFontHelper
-				.getCSS2FontProperties(widget, engine
-						.getCSSElementContext(widget));
+		CSSElementContext context = engine.getCSSElementContext(widget);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper.getCSS2FontProperties(widget, context);
 		if (fontProperties == null) {
 			return;
 		}
-		Font font = (Font) engine.convert(fontProperties, Font.class, widget);
+		Font font = (Font) engine.convert(resolve(fontProperties, context, widget), Font.class, widget);
 		setFont(widget, font);
 	}
 
@@ -255,9 +247,8 @@ implements ICSSPropertyHandler2 {
 		 * retrieved from the style sheet. This list must be updated if
 		 * AbstractCSSPropertyFontHandler's listing changes.
 		 */
-		private final String[] fontAttributes = { "font", "font-family", "font-size",
-				"font-adjust", "font-stretch", "font-style", "font-variant",
-		"font-weight" };
+		private final String[] fontAttributes = { "font", "font-family", "font-size", "font-style",
+				"font-weight" };
 
 		private CSSEngine engine;
 
@@ -326,18 +317,19 @@ implements ICSSPropertyHandler2 {
 									itemElement, fontAttribute, value,
 									pseudo, engine);
 						} catch (Exception e) {
-							engine.handleExceptions(e);
+							ILog.of(CSSPropertyFontSWTHandler.class).error("Failed to apply the font property " + fontAttribute, e); //$NON-NLS-1$
 						}
 					}
 				}
 
 				try {
 					// set the font
-					Font font = (Font) engine.convert(fontProperties,
+					Font font = (Font) engine.convert(
+							resolve(fontProperties, engine.getCSSElementContext(item), item),
 							Font.class, item);
 					setFont(item, font);
 				} catch (Exception e) {
-					engine.handleExceptions(e);
+					ILog.of(CSSPropertyFontSWTHandler.class).error("Failed to set the font", e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -350,8 +342,7 @@ implements ICSSPropertyHandler2 {
 		 */
 		private void styleUnselected(Item[] items) {
 			for (Item item : items) {
-				CSSStyleDeclaration unselectedStyle = engine.getViewCSS()
-						.getComputedStyle(engine.getElement(item), null);
+				CSSStyleDeclaration unselectedStyle = engine.computeStyle(engine.getElement(item), null);
 				if (unselectedStyle == null) {
 					// no styles defined, just reset the font
 					setFont(item, null);
@@ -369,8 +360,7 @@ implements ICSSPropertyHandler2 {
 		 *            the item to style
 		 */
 		private boolean styleSelected(Item selection) {
-			CSSStyleDeclaration selectedStyle = engine.getViewCSS()
-					.getComputedStyle(engine.getElement(selection), "selected");
+			CSSStyleDeclaration selectedStyle = engine.computeStyle(engine.getElement(selection), "selected");
 			if (selectedStyle == null) {
 				return false;
 			}
@@ -382,11 +372,9 @@ implements ICSSPropertyHandler2 {
 		private void reset(CSS2FontProperties properties) {
 			properties.setFamily(null);
 			properties.setSize(null);
-			properties.setSizeAdjust(null);
+			properties.setSizeFromCSS(false);
 			properties.setWeight(null);
 			properties.setStyle(null);
-			properties.setVariant(null);
-			properties.setStretch(null);
 		}
 
 		@Override

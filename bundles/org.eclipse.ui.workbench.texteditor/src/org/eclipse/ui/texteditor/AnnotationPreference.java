@@ -22,11 +22,10 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -1007,7 +1006,7 @@ public class AnnotationPreference {
 					try {
 						fAnnotationImageProvider= (IAnnotationImageProvider) fConfigurationElement.createExecutableExtension(fAnnotationImageProviderAttribute);
 					} catch (CoreException x) {
-						TextEditorPlugin.getDefault().getLog().log(x.getStatus());
+						ILog.of(AnnotationPreference.class).log(x.getStatus());
 					}
 				}
 			}

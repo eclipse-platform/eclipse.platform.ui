@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -25,11 +25,9 @@ import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSPropertyBorderSWTHandler extends
-AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
+public class CSSPropertyBorderSWTHandler extends AbstractCSSPropertyBorderHandler {
 
 	public static final ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
 
@@ -52,9 +50,8 @@ AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 						.createBorderPaintListener(engine, control));
 			}
 			super.applyCSSProperty(border, property, value, pseudo, engine);
-			if((parent.getData("CSS_SUPPORTS_BORDERS") != null) &&
-					(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
-				int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PT);
+			if ((parent.getData("CSS_SUPPORTS_BORDERS") != null) && value instanceof CssNumeric numeric) {
+				int pixelValue = (int) numeric.value();
 				if(property.equals("border-width")) {
 					((FillLayout) parent.getLayout()).marginWidth = pixelValue;
 					((FillLayout) parent.getLayout()).marginHeight = pixelValue;
@@ -70,7 +67,7 @@ AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 	}
 
 	@Override
-	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
+	public void onAllCSSPropertiesApplied(Object element, CSSEngine engine)
 			throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {

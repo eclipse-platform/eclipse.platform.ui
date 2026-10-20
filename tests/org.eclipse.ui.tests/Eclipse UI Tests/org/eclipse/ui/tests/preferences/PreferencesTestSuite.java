@@ -27,7 +27,6 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
 	FontPreferenceTestCase.class,
 	DeprecatedFontPreferenceTestCase.class,
-	ScopedPreferenceStoreTestCase.class,
 	WorkingCopyPreferencesTestCase.class,
 	PropertyPageEnablementTest.class,
 	ListenerRemovalTestCase.class,

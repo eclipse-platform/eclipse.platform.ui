@@ -16,8 +16,8 @@ public class LabelProviderTest {
 
 	private static final Car HORCH = new Car("Horch");
 
-	private static Image horchImage = new Image(Display.getDefault(), (gc, width, height) -> {}, 50, 10);
-	private static Image defaultImage = new Image(Display.getDefault(), (gc, width, height) -> {}, 1, 1);
+	private static Image horchImage = new Image(Display.getDefault(), (_, _, _) -> {}, 50, 10);
+	private static Image defaultImage = new Image(Display.getDefault(), (_, _, _) -> {}, 1, 1);
 
 	private final Function<Object, String> textFunction = o -> o instanceof Car ? ((Car) o).getMake() : "unknown";
 	private final Function<Object, Image> imageFunction = o -> o instanceof Car ? horchImage : defaultImage;
@@ -73,6 +73,38 @@ public class LabelProviderTest {
 
 		assertEquals("Horch", labelProvider.getText(HORCH));
 		assertEquals("unknown", labelProvider.getText(new Object()));
+	}
+
+	@Test
+	public void typedTextProviderGivesTexts() {
+		LabelProvider labelProvider = LabelProvider.createTextProvider(Car::getMake);
+
+		assertEquals("Horch", labelProvider.getText(HORCH));
+		assertThrows(ClassCastException.class, () -> labelProvider.getText(new Object()));
+	}
+
+	@Test
+	public void typedImageProviderGivesImages() {
+		LabelProvider labelProvider = LabelProvider.createImageProvider((Car _) -> horchImage);
+
+		assertEquals(horchImage, labelProvider.getImage(HORCH));
+		assertThrows(ClassCastException.class, () -> labelProvider.getImage(new Object()));
+	}
+
+	@Test
+	public void typedTextImageProviderGivesBoth() {
+		LabelProvider labelProvider = LabelProvider.createTextImageProvider(Car::getMake, _ -> horchImage);
+
+		assertEquals("Horch", labelProvider.getText(HORCH));
+		assertEquals(horchImage, labelProvider.getImage(HORCH));
+	}
+
+	@Test
+	public void typedTextImageProviderAcceptsObjectImageFunction() {
+		LabelProvider labelProvider = LabelProvider.createTextImageProvider(Car::getMake, imageFunction);
+
+		assertEquals("Horch", labelProvider.getText(HORCH));
+		assertEquals(horchImage, labelProvider.getImage(HORCH));
 	}
 
 	@Test

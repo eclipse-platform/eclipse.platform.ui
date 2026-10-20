@@ -23,10 +23,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
 	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
 }
 
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
-}
-
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #e5e5e5;
 }
@@ -36,10 +32,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
 	color: #f8f8f8; /* same as '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND' cannot use it directly*/
 }
 
@@ -77,6 +69,10 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END {
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 	color: #000000;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_EDITOR_TAB_BG {
+	color: #ffffff;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR {
@@ -191,12 +187,12 @@ CTabFolder Canvas {
 	swt-selected-tab-highlight: #8a8a8a;
 	swt-selected-highlight-top: true;	
 	swt-tab-outline:#e5e5e5; 
-	swt-tab-outer-keyline: #e5e5e5;
 	swt-draw-custom-tab-content-background: true;
 	swt-unselected-hot-tab-color-background:#ffffff;
 }
 
 #org-eclipse-ui-editorss CTabFolder.active {
+	swt-selected-tab-fill: '#org-eclipse-ui-workbench-ACTIVE_EDITOR_TAB_BG';
 	swt-selected-tab-highlight: #2160bb;
 	swt-selected-highlight-top: true;
 }

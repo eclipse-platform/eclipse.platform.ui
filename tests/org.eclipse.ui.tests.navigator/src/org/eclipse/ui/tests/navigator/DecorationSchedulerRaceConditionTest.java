@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.navigator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.Semaphore;
 
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.DecorationSchedulerRaceConditionTestDecorator;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
@@ -42,7 +44,7 @@ import org.junit.jupiter.api.Test;
 public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 
 	private static final long TIMEOUT_DECORATOR = 2000;
-	private static final long TIMEOUT_UPDATE_JOB = 500;
+	private static final long TIMEOUT_UPDATE_JOB = 5000;
 
 	private static final String DECORATION_TEXT_1 = "**1**";
 	private static final String DECORATION_TEXT_2 = "**2**";
@@ -71,6 +73,17 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 		}
 	};
 
+	/**
+	 * Waits for the decoration jobs, including the update job that applies the
+	 * results to the viewer, to finish. The update job runs in the UI thread, so the
+	 * event loop has to keep spinning instead of joining the job family.
+	 */
+	private static void waitForDecorationUpdate() {
+		boolean idle = DisplayHelper.waitForCondition(Display.getCurrent(), TIMEOUT_UPDATE_JOB,
+				() -> Job.getJobManager().find(DecoratorManager.FAMILY_DECORATE).length == 0);
+		assertTrue(idle, "decoration did not finish within " + TIMEOUT_UPDATE_JOB + "ms");
+	}
+
 	private IProject p1Project;
 	private IProject p2Project;
 
@@ -94,8 +107,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 		manager.setEnabled("org.eclipse.ui.tests.navigator.bug417255Decorator", true);
 
 		waitForP1Decoration.waitForCondition(Display.getCurrent(), TIMEOUT_DECORATOR); // wait for decorator to run
-		DisplayHelper.sleep(Display.getCurrent(), TIMEOUT_UPDATE_JOB); // wait for update job following decoration to
-																		// run
+		waitForDecorationUpdate();
 
 		// make sure that initial decoration ran successfully
 		TreeItem[] rootItems = _viewer.getTree().getItems();
@@ -156,7 +168,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 
 		// And finally wait for decorator job to finish and the update job following
 		// decoration to run
-		DisplayHelper.sleep(Display.getCurrent(), TIMEOUT_UPDATE_JOB);
+		waitForDecorationUpdate();
 
 		TreeItem[] rootItemsAfter = _viewer.getTree().getItems();
 		assertEquals(TestWorkspace.P1_PROJECT_NAME + DECORATION_TEXT_3, rootItemsAfter[0].getText());
@@ -195,7 +207,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 		waitForP1Decoration.waitForCondition(Display.getCurrent(), TIMEOUT_DECORATOR); // wait for decorator to run
 
 		// wait for update job following decoration to run
-		DisplayHelper.sleep(Display.getCurrent(), TIMEOUT_UPDATE_JOB);
+		waitForDecorationUpdate();
 
 		TreeItem[] rootItemsAfter = _viewer.getTree().getItems();
 		assertEquals(TestWorkspace.P1_PROJECT_NAME + DECORATION_TEXT_3, rootItemsAfter[0].getText());

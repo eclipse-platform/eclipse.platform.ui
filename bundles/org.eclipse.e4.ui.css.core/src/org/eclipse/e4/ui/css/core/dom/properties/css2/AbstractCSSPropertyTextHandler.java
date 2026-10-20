@@ -16,7 +16,7 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyTextHandler implements
@@ -84,9 +84,8 @@ ICSSPropertyTextHandler {
 
 	protected String getTextTransform(String text, CSSValue value,
 			String defaultText) {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			switch (primitiveValue.getStringValue()) {
+		if (value instanceof CssText cssText) {
+			switch (cssText.value()) {
 			case "capitalize":
 				return StringUtils.capitalize(text);
 			case "uppercase":
@@ -113,11 +112,11 @@ ICSSPropertyTextHandler {
 
 	protected String getTextTransform(String textToInsert, String oldText,
 			CSSValue value) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (!(value instanceof CssText cssText)) {
 			return textToInsert;
 		}
 
-		switch (((CSSPrimitiveValue) value).getStringValue()) {
+		switch (cssText.value()) {
 		case "capitalize":
 			String newText = StringUtils.capitalize(oldText + textToInsert);
 			if (newText.length() > 0) {
@@ -142,13 +141,11 @@ ICSSPropertyTextHandler {
 	}
 
 	protected boolean hasTextTransform(CSSValue value) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
-				|| ((CSSPrimitiveValue) value).getStringValue() == null) {
+		if (!(value instanceof CssText text) || text.value() == null) {
 			return false;
 		}
 
-		String textTransform = ((CSSPrimitiveValue) value).getStringValue();
-		switch (textTransform) {
+		switch (text.value()) {
 		case "capitalize":
 		case "uppercase":
 		case "lowercase":

@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -67,7 +68,6 @@ public class MarkerContentGenerator {
 	private static final String TAG_COLUMN_VISIBILITY = "visible"; //$NON-NLS-1$
 	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
-	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT_ENABLED = "markerLimitEnabled"; //$NON-NLS-1$
 
@@ -83,7 +83,6 @@ public class MarkerContentGenerator {
 	// filters
 	private Collection<MarkerFieldFilterGroup> enabledFilters;
 	private Collection<MarkerFieldFilterGroup> filters;
-	private boolean andFilters;
 	private int markerLimits = 100;
 	private boolean markerLimitsEnabled = true;
 
@@ -362,28 +361,11 @@ public class MarkerContentGenerator {
 	/**
 	 * Update the filters.
 	 */
-	void updateFilters(Collection<MarkerFieldFilterGroup> newFilters, boolean newAndFilters) {
-		setAndFilters(newAndFilters);
+	void updateFilters(Collection<MarkerFieldFilterGroup> newFilters) {
 		this.filters = newFilters;
 		enabledFilters = FILTERS_CHANGED;
 		writeFiltersPreference();
 		requestMarkerUpdate();
-	}
-
-	/**
-	 * Set whether the filters are being ANDed or ORed.
-	 */
-	void setAndFilters(boolean and) {
-		andFilters = and;
-	}
-
-	/**
-	 * Return whether the filters are being ANDed or ORed.
-	 *
-	 * @return boolean
-	 */
-	boolean andFilters() {
-		return andFilters;
 	}
 
 	/**
@@ -460,10 +442,6 @@ public class MarkerContentGenerator {
 			return;
 		}
 
-		Boolean andValue = memento.getBoolean(TAG_AND);
-		if (andValue != null) {
-			setAndFilters(andValue.booleanValue());
-		}
 		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
 
 		for (IMemento element : children) {
@@ -549,7 +527,7 @@ public class MarkerContentGenerator {
 		try {
 			memento.save(writer);
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+			ILog.of(MarkerContentGenerator.class).log(Util.errorStatus(e));
 		}
 		// TODO: We need to migrate this the current class
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
@@ -583,7 +561,6 @@ public class MarkerContentGenerator {
 	 * Write the settings for the filters to the memento.
 	 */
 	private void writeFiltersSettings(XMLMemento memento) {
-		memento.putBoolean(TAG_AND, andFilters());
 		Iterator<MarkerFieldFilterGroup> groups = getAllFilters().iterator();
 		while (groups.hasNext()) {
 			MarkerFieldFilterGroup group = groups.next();
@@ -693,34 +670,10 @@ public class MarkerContentGenerator {
 		return generatorDescriptor.getType(typeId);
 	}
 
-	/**
-	 * Select the given MarkerEntry
-	 * 	@return <code>true</code> if it matches all enabled filters
-	 */
-	boolean select(MarkerEntry entry) {
-		try {
-			return select(entry, getSelectedResources(), getEnabledFilters(), andFilters());
-		} finally {
-			entry.clearCache();
-		}
-	}
-
 	static boolean select(MarkerEntry entry, IResource[] selResources,
-			Collection<MarkerFieldFilterGroup> enabledFilters, boolean andFilters) {
+			Collection<MarkerFieldFilterGroup> enabledFilters) {
 		if (enabledFilters.size() > 0) {
-			Iterator<MarkerFieldFilterGroup> filtersIterator = enabledFilters.iterator();
-			if (andFilters) {
-				while (filtersIterator.hasNext()) {
-					MarkerFieldFilterGroup group = filtersIterator.next();
-					if (!group.selectByScope(entry, selResources) || !group.selectByFilters(entry)) {
-						return false;
-					}
-				}
-				return true;
-			}
-
-			while (filtersIterator.hasNext()) {
-				MarkerFieldFilterGroup group = filtersIterator.next();
+			for (MarkerFieldFilterGroup group : enabledFilters) {
 				if (group.selectByScope(entry, selResources) && group.selectByFilters(entry)) {
 					return true;
 				}
@@ -823,16 +776,14 @@ public class MarkerContentGenerator {
 	 * is a lot more time-consuming than collecting only once,filtering once and
 	 * adding to a list once.As a pre-filtering step, the
 	 * MarkerFieldFilterGroup#selectByScope uses IPath comparison for selection,
-	 * which happens real quickly.Also when filters are Anded we get a chance to
-	 * gather only on resources that actually matter.And we get a tool to check
-	 * at various places.
+	 * which happens real quickly.
 	 *
 	 * @return list of resource we want to collect markers for taking various
 	 *         enabled filters into account.
 	 */
 	Collection<IResource> getResourcesForBuild() {
 		currentResources = MarkerResourceUtil.computeResources(
-				getSelectedResources(), getEnabledFilters(), andFilters());
+				getSelectedResources(), getEnabledFilters());
 		return currentResources;
 	}
 
@@ -965,7 +916,6 @@ public class MarkerContentGenerator {
 		}
 		IResource[] selected = getSelectedResources();
 		Collection<MarkerFieldFilterGroup> enabled = getEnabledFilters();
-		boolean filtersAreANDed = andFilters();
 		Iterator<IResource> iterator = resources.iterator();
 		while (iterator.hasNext()) {
 			IMarker[] markers = null;
@@ -988,7 +938,7 @@ public class MarkerContentGenerator {
 			int lenght = markers.length;
 			for (int i = 0; i < lenght; i++) {
 				entry = new MarkerEntry(markers[i]);
-				if (select(entry, selected, enabled, filtersAreANDed)) {
+				if (select(entry, selected, enabled)) {
 					result.add(entry);
 				}
 				entry.clearCache();

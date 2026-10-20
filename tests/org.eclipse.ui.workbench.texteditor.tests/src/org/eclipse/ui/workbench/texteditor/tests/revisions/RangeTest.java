@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
@@ -128,227 +128,115 @@ public class RangeTest {
 	}
 
 	@Test
-	public void testIllegalOperations() throws Exception {
+	public void testIllegalOperations() {
 
-		try {
-			Range.copy(null);
-			fail();
-		} catch (NullPointerException e) {
-		}
+		assertThrows(NullPointerException.class, () -> Range.copy(null));
 
-		try {
-			Range.createRelative(0, 0);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createRelative(0, 0));
 
-		try {
-			Range.createRelative(0, -1);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createRelative(0, -1));
 
-		try {
-			Range.createRelative(-1, 0);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createRelative(-1, 0));
 
-		try {
-			Range.createRelative(-1, -1);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createRelative(-1, -1));
 
-		try {
-			Range.createAbsolute(0, 0);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(0, 0));
 
-		try {
-			Range.createAbsolute(0, -1);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(0, -1));
 
-		try {
-			Range.createAbsolute(-1, 0);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(-1, 0));
 
-		try {
-			Range.createAbsolute(-1, 12);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(-1, 12));
 
-		try {
-			Range.createAbsolute(10, 10);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(10, 10));
 
-		try {
-			Range.createAbsolute(12, 10);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(12, 10));
 
-		try {
-			Range.createAbsolute(12, -3);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> Range.createAbsolute(12, -3));
 
 		Range r= Range.createRelative(5, 10);
 
-		try {
-			r.moveBy(-6);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.moveBy(-6));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
 		r.moveBy(-4);
-		try {
-			r.moveBy(-2);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			r.moveBy(4);
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.moveBy(-2));
+		r.moveBy(4);
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.resizeBy(-11);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.resizeBy(-11));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.resizeAndMoveBy(-6);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.resizeAndMoveBy(-6));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.resizeAndMoveBy(10);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.resizeAndMoveBy(10));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.resizeAndMoveBy(11);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.resizeAndMoveBy(11));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.resizeAndMoveBy(20);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.resizeAndMoveBy(20));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setLength(0);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setLength(0));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setLength(-1);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setLength(-1));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.moveTo(-1);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.moveTo(-1));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setEnd(5);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setEnd(5));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setEnd(3);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setEnd(3));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setEnd(-5);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setEnd(-5));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setStart(18);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setStart(18));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.moveEndTo(9);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.moveEndTo(9));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 
-		try {
-			r.setLengthAndMove(16);
-			fail();
-		} catch (LineIndexOutOfBoundsException e) {
-			assertEquals(5, r.start());
-			assertEquals(10, r.length());
-			assertConsistency(r);
-		}
+		assertThrows(LineIndexOutOfBoundsException.class, () -> r.setLengthAndMove(16));
+		assertEquals(5, r.start());
+		assertEquals(10, r.length());
+		assertConsistency(r);
 	}
 
 	@Test

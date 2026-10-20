@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Manager for colors used in the Java editor
@@ -49,7 +48,7 @@ public class JavaColorProvider {
 	public Color getColor(RGB rgb) {
 		Color color= fColorTable.get(rgb);
 		if (color == null) {
-			color= new Color(Display.getCurrent(), rgb);
+			color= new Color(rgb);
 			fColorTable.put(rgb, color);
 		}
 		return color;

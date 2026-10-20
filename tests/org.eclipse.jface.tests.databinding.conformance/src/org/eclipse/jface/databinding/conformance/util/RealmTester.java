@@ -15,6 +15,8 @@
 
 package org.eclipse.jface.databinding.conformance.util;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.junit.Assert;
@@ -64,11 +66,8 @@ public class RealmTester {
 				previousRealm.setCurrent(false);
 			}
 
-			try {
-				runnable.run();
-				Assert.fail("Incorrect realm, exception should have been thrown");
-			} catch (AssertionFailedException e) {
-			}
+			assertThrows("Incorrect realm, exception should have been thrown", AssertionFailedException.class,
+					runnable::run);
 		} finally {
 			setDefault(previousRealm);
 		}
@@ -90,10 +89,7 @@ public class RealmTester {
 
 		realm.setCurrent(false);
 
-		try {
-			runnable.run();
-			Assert.fail("Incorrect realm, exception should have been thrown");
-		} catch (AssertionFailedException e) {
-		}
+		assertThrows("Incorrect realm, exception should have been thrown", AssertionFailedException.class,
+				runnable::run);
 	}
 }

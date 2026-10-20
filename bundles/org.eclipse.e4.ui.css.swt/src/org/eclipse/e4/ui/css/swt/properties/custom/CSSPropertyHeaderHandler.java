@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -45,12 +46,12 @@ public class CSSPropertyHeaderHandler implements ICSSPropertyHandler {
 	private boolean setHeaderColor(String property, CSSValue value, CSSEngine engine,
 			IHeaderCustomizationElement headerCustomizationElement, Widget widget) throws Exception {
 		if (SWT_HEADER_COLOR.equals(property)
-				&& value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				&& value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 			headerCustomizationElement.setHeaderColor(newColor);
 			return true;
 		} else if (SWT_HEADER_BACKGROUND_COLOR.equals(property)
-				&& value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				&& value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 			headerCustomizationElement.setHeaderBackgroundColor(newColor);
 			return true;

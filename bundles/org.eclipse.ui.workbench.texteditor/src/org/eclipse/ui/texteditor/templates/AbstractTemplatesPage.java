@@ -52,8 +52,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -1381,8 +1380,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		try {
 			getTemplateStore().save();
 		} catch (IOException e) {
-			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
-					TemplatesMessages.TemplatesPage_save_error_message, e));
+			ILog.of(AbstractTemplatesPage.class).error(TemplatesMessages.TemplatesPage_save_error_message, e);
 			MessageDialog.openError(getShell(),
 					TemplatesMessages.TemplatesPage_save_error_message, e.getMessage());
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -126,7 +126,9 @@ public class CheckboxCellEditor extends CellEditor {
 	 */
 	@Override
 	protected void doSetValue(Object value) {
-		Assert.isTrue(value instanceof Boolean);
+		String valueType = value == null ? "null" : value.getClass().getName(); //$NON-NLS-1$
+		Assert.isTrue(value instanceof Boolean,
+				"CheckboxCellEditor expects a Boolean value but got " + valueType); //$NON-NLS-1$
 		this.value = ((Boolean) value).booleanValue();
 	}
 

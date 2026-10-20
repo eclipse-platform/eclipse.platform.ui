@@ -16,20 +16,18 @@ package org.eclipse.e4.ui.tests.css.core.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
-import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -89,11 +87,7 @@ public class InheritTest {
 	}
 
 	private CSSEngine createEngine(String css) throws IOException {
-		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
-		DocumentCSSImpl docCss = new DocumentCSSImpl();
-		docCss.addStyleSheet(styleSheet);
-
-		return new CSSEngineImpl(docCss) {
+		CSSEngine cssEngine = new CSSEngineImpl() {
 			{
 				registerCSSPropertyHandlerProvider(new TestHandlerProvider());
 			}
@@ -111,6 +105,8 @@ public class InheritTest {
 				return super.getElement(element);
 			}
 		};
+		cssEngine.parseStyleSheet(new StringReader(css));
+		return cssEngine;
 	}
 
 	/**

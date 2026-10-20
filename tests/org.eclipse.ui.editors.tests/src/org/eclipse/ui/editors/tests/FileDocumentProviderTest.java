@@ -344,7 +344,7 @@ class LockJob extends WorkspaceJob {
 
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable workspaceRunnable = pm -> {
+		IWorkspaceRunnable workspaceRunnable = _ -> {
 			try {
 				run2();
 			} catch (Exception e) {

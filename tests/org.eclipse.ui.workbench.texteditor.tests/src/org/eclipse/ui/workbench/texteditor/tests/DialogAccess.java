@@ -11,10 +11,8 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -132,6 +130,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 		Button button= getButtonForSearchOption(option);
 		button.setSelection(true);
 		button.notifyListeners(SWT.Selection, null);
+		assertSelected(option);
 	}
 
 	@Override
@@ -145,6 +144,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 			button.setSelection(false);
 		}
 		button.notifyListeners(SWT.Selection, null);
+		assertUnselected(option);
 	}
 
 
@@ -175,8 +175,13 @@ class DialogAccess implements IFindReplaceUIAccess {
 		if (shiftPressed) {
 			event.stateMask= SWT.SHIFT;
 		}
+		if (keyCode == SWT.CR | keyCode == SWT.KEYPAD_CR) {
+			event.character= '\r';
+		}
 		event.keyCode= keyCode;
 		findCombo.traverse(SWT.TRAVERSE_RETURN, event);
+		// Waited for rather than just carried out, unlike elsewhere: traversing can end up
+		// activating the default button, which GTK delivers on a timer of its own.
 		runEventQueue();
 	}
 
@@ -230,6 +235,11 @@ class DialogAccess implements IFindReplaceUIAccess {
 		}
 	}
 
+	@Override
+	public void selectFindHistoryEntry(int index) {
+		findCombo.select(index);
+	}
+
 	public void performFindNext() {
 		if (findNextButton.getEnabled()) {
 			findNextButton.notifyListeners(SWT.Selection, null);
@@ -277,26 +287,22 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void assertEnabled(SearchOptions option) {
-		Set<SearchOptions> enabled= getEnabledOptions();
-		assertThat(enabled, hasItems(option));
+		assertTrue(getEnabledOptions().contains(option));
 	}
 
 	@Override
 	public void assertDisabled(SearchOptions option) {
-		Set<SearchOptions> enabled= getEnabledOptions();
-		assertThat(enabled, not(hasItems(option)));
+		assertFalse(getEnabledOptions().contains(option));
 	}
 
 	@Override
 	public void assertSelected(SearchOptions option) {
-		Set<SearchOptions> enabled= getSelectedOptions();
-		assertThat(enabled, hasItems(option));
+		assertTrue(getSelectedOptions().contains(option));
 	}
 
 	@Override
 	public void assertUnselected(SearchOptions option) {
-		Set<SearchOptions> enabled= getSelectedOptions();
-		assertThat(enabled, not(hasItems(option)));
+		assertFalse(getSelectedOptions().contains(option));
 	}
 
 	private Set<SearchOptions> getEnabledOptions() {

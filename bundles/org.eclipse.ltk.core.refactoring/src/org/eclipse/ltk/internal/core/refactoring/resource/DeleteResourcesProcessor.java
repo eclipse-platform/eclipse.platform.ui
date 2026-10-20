@@ -16,11 +16,15 @@ package org.eclipse.ltk.internal.core.refactoring.resource;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -28,6 +32,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -120,12 +125,31 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
-		pm.beginTask("", 1); //$NON-NLS-1$
+		SubMonitor subMonitor= SubMonitor.convert(pm, fResources.length);
 		try {
 			RefactoringStatus result= new RefactoringStatus();
 
+			boolean lightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES,
+					ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
+
+			List<IResource> remainingResources= new ArrayList<>(fResources.length);
 			for (IResource resource : fResources) {
-				if (!isSynchronizedExcludingLinkedResources(resource)) {
+				boolean inSync= isSynchronizedExcludingLinkedResources(resource);
+				if (!inSync && lightweightAutoRefresh && resource.isAccessible()) {
+					try {
+						resource.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.split(1));
+					} catch (CoreException e) {
+						// refresh failed; log it and let the out-of-sync warning below cover it
+						ILog.of(getClass()).log(e.getStatus());
+					}
+					if (!resource.exists()) {
+						// deleted externally; the refresh already removed it from the workspace
+						continue;
+					}
+					inSync= isSynchronizedExcludingLinkedResources(resource);
+				}
+				remainingResources.add(resource);
+				if (!inSync) {
 					String pathLabel= BasicElementLabels.getPathLabel(resource.getFullPath(), false);
 
 					String locationLabel= null;
@@ -155,6 +179,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 					}
 					result.addWarning(warning);
 				}
+			}
+			if (remainingResources.size() != fResources.length) {
+				fResources= remainingResources.toArray(IResource[]::new);
 			}
 
 			checkDirtyResources(result);

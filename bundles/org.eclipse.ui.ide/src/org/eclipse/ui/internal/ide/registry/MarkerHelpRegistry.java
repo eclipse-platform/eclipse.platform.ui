@@ -81,17 +81,17 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Placeholder for errors in generator
 	 */
-	private static final IMarkerResolutionGenerator GENERATOR_ERROR = marker -> null;
+	private static final IMarkerResolutionGenerator GENERATOR_ERROR = _ -> null;
 
 	/**
 	 * Placeholder for not yet active generators
 	 */
-	private static final IMarkerResolutionGenerator GENERATOR_NOT_ACTIVE = marker -> new IMarkerResolution[0];
+	private static final IMarkerResolutionGenerator GENERATOR_NOT_ACTIVE = _ -> new IMarkerResolution[0];
 
 	/**
 	 * Placeholder for not yet started generators
 	 */
-	private static final IMarkerResolutionGenerator GENERATOR_NOT_STARTED = marker -> new IMarkerResolution[0];
+	private static final IMarkerResolutionGenerator GENERATOR_NOT_STARTED = _ -> new IMarkerResolution[0];
 
 	/**
 	 * Placeholder for errors in help provider

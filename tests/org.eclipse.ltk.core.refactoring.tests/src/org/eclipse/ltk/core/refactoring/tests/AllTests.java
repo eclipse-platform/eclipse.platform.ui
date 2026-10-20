@@ -25,6 +25,7 @@ import org.eclipse.ltk.core.refactoring.tests.scripting.RefactoringScriptingTest
 @Suite
 @SelectClasses({
 	RefactoringContextTest.class,
+	XmlProcessorFactoryLtkTest.class,
 	ParticipantTests.class,
 	RefactoringHistoryTests.class,
 	RefactoringScriptingTests.class,

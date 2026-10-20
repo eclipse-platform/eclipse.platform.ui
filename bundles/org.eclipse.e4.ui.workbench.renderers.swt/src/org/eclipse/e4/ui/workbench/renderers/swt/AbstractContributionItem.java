@@ -158,7 +158,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		if (iconURI != null && iconURI.length() > 0) {
 			ImageDescriptor iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
 			if (disabled) {
-				iconDescriptor = ImageDescriptor.createWithFlags(iconDescriptor, SWT.IMAGE_DISABLE);
+				iconDescriptor = iconDescriptor.asDisabledDescriptor();
 			}
 			if (iconDescriptor != null) {
 				try {

@@ -16,14 +16,16 @@ package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.reportTimings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -98,26 +100,19 @@ public class ListPopulationTest {
 		openBrowser();
 		final String [] items = getItems(count);
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		java.util.List<Long> timings = new ArrayList<>();
+		exercise(() -> {
+			list.removeAll();
+			long before = System.nanoTime();
+			for (String item : items) {
+				list.add(item);
+			}
+			processEvents();
+			timings.add(System.nanoTime() - before);
+			assertEquals(count, list.getItemCount());
+		});
 
-		try {
-			exercise(() -> {
-				list.removeAll();
-				meter.start();
-				for (String item : items) {
-					list.add(item);
-				}
-				processEvents();
-				meter.stop();
-			});
-
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
-		}
+		reportTimings(scenario(testInfo), timings);
 	}
 
 	/**
@@ -127,24 +122,21 @@ public class ListPopulationTest {
 		openBrowser();
 		final String [] items = getItems(count);
 
-		Performance perf = Performance.getDefault();
-		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
-		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		java.util.List<Long> timings = new ArrayList<>();
+		exercise(() -> {
+			list.removeAll();
+			long before = System.nanoTime();
+			list.setItems(items);
+			processEvents();
+			timings.add(System.nanoTime() - before);
+			assertEquals(count, list.getItemCount());
+		});
 
-		try {
-			exercise(() -> {
-				list.removeAll();
-				meter.start();
-				list.setItems(items);
-				processEvents();
-				meter.stop();
-			});
+		reportTimings(scenario(testInfo), timings);
+	}
 
-			meter.commit();
-			perf.assertPerformance(meter);
-		} finally {
-			meter.dispose();
-		}
+	private String scenario(TestInfo testInfo) {
+		return getClass().getSimpleName() + "." + testInfo.getDisplayName();
 	}
 
 	/**

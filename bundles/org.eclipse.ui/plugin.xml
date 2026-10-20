@@ -1799,6 +1799,15 @@
           </parameter>
          </colorFactory>
       </colorDefinition>
+      <colorDefinition
+            label="%Color.activeEditorTabBG"
+            categoryId="org.eclipse.ui.presentation.default"
+            value="COLOR_LIST_BACKGROUND"
+            id="org.eclipse.ui.workbench.ACTIVE_EDITOR_TAB_BG">
+         <description>
+            %Color.activeEditorTabBGDesc
+         </description>
+      </colorDefinition>
 <!-- Active (Nofocus) Tab Colors -->
       <colorDefinition
             label="%Color.activeNofocusTabText"
@@ -1993,40 +2002,6 @@
                <parameter name="color" value="foreground"></parameter>
             </colorFactory>
       </colorDefinition>
-      <theme
-            id="org.eclipse.ui.r30"
-            name="%ThemeName.R30">
-             <colorOverride
-               id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
-               value="COLOR_TITLE_BACKGROUND">
-         </colorOverride>
-         <colorOverride
-               id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
-            <colorFactory
-                  class="org.eclipse.ui.themes.RGBBlendColorFactory"
-                  plugin="org.eclipse.ui">
-               <parameter
-                     name="color1"
-                     value="COLOR_TITLE_BACKGROUND_GRADIENT">
-               </parameter>
-               <parameter
-                     name="color2"
-                     value="COLOR_TITLE_BACKGROUND_GRADIENT">
-               </parameter>
-            </colorFactory>
-         </colorOverride>
-         <data
-               name="org.eclipse.ui.workbench.ACTIVE_TAB_PERCENT"
-               value="100">
-         </data>
-         <colorOverride
-               id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"
-               value="COLOR_TITLE_FOREGROUND">
-         </colorOverride>
-		 <data
-      		name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="false">
-		 </data>
-      </theme>
       <colorDefinition
             categoryId="org.eclipse.ui.workbenchMisc"
             id="org.eclipse.ui.showkeys.foregroundColor"

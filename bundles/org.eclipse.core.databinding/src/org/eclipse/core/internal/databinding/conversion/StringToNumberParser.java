@@ -14,14 +14,12 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
-import java.util.function.Supplier;
 
 import org.eclipse.core.internal.databinding.BindingMessages;
 
@@ -36,12 +34,6 @@ public class StringToNumberParser {
 
 	private static final BigDecimal DOUBLE_MAX_BIG_DECIMAL = BigDecimal.valueOf(Double.MAX_VALUE);
 	private static final BigDecimal DOUBLE_MIN_BIG_DECIMAL = BigDecimal.valueOf(-Double.MAX_VALUE);
-
-	private static final Supplier<Format> GET_INSTANCE = findMethod(NumberFormat::getInstance, "getInstance"); //$NON-NLS-1$
-	private static final Supplier<Format> GET_NUMBER_INSTANCE = findMethod(NumberFormat::getNumberInstance,
-			"getNumberInstance"); //$NON-NLS-1$
-	private static final Supplier<Format> GET_INTEGER_INSTANCE = findMethod(NumberFormat::getIntegerInstance,
-			"getIntegerInstance"); //$NON-NLS-1$
 
 	/**
 	 * @return result
@@ -181,12 +173,6 @@ public class StringToNumberParser {
 		} else if (number instanceof BigDecimal) {
 			bigInteger = ((BigDecimal) number).toBigInteger();
 		} else {
-			/*
-			 * The else is necessary as the ICU4J plugin has it's own BigDecimal
-			 * implementation which isn't part of the replacement plugin. So
-			 * that this will work we fall back on the double value of the
-			 * number.
-			 */
 			bigInteger = BigDecimal.valueOf(number.doubleValue()).toBigInteger();
 		}
 
@@ -241,16 +227,6 @@ public class StringToNumberParser {
 		} else if (number instanceof BigDecimal) {
 			bigDecimal = (BigDecimal) number;
 		} else {
-			/*
-			 * The else is necessary as the ICU4J plugin has it's own BigDecimal
-			 * implementation which isn't part of the replacement plugin. So
-			 * that this will work we fall back on the double value of the
-			 * number.
-			 */
-			// if this is ever taken out, take care to un-comment the throw
-			// clause and the if condition below, they were commented because
-			// the
-			// compiler complained about dead code..
 			double doubleValue = number.doubleValue();
 
 			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
@@ -262,9 +238,6 @@ public class StringToNumberParser {
 
 		/* if (bigDecimal != null) */return max.compareTo(bigDecimal) >= 0
 				&& min.compareTo(bigDecimal) <= 0;
-
-		// throw new IllegalArgumentException(
-		//				"Number of type [" + number.getClass().getName() + "] is not supported."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -302,24 +275,20 @@ public class StringToNumberParser {
 
 	/**
 	 * Returns the default number format.
-	 * {@code com.ibm.icu.text.NumberFormat.getNumberInstance()} if it is available,
-	 * otherwise {@code java.text.NumberFormat.getNumberInstance()}.
 	 *
 	 * @return the number format
 	 */
 	public static Format getDefaultFormat() {
-		return GET_INSTANCE.get();
+		return NumberFormat.getInstance();
 	}
 
 	/**
 	 * Returns the default number format.
-	 * {@code com.ibm.icu.text.NumberFormat.getNumberInstance()} if it is available,
-	 * otherwise {@code java.text.NumberFormat.getNumberInstance()}.
 	 *
 	 * @return the number format
 	 */
 	public static Format getDefaultBigDecimalFormat() {
-		Format format = GET_NUMBER_INSTANCE.get();
+		Format format = NumberFormat.getNumberInstance();
 		if (format instanceof DecimalFormat) {
 			((DecimalFormat) format).setParseBigDecimal(true);
 		}
@@ -328,59 +297,32 @@ public class StringToNumberParser {
 
 	/**
 	 * Returns the default number format.
-	 * {@code com.ibm.icu.text.NumberFormat.getNumberInstance()} if ICU is
-	 * available, otherwise {@code java.text.NumberFormat.getNumberInstance()}.
 	 *
 	 * @return the number format
 	 */
 	public static Format getDefaultNumberFormat() {
-		return GET_NUMBER_INSTANCE.get();
+		return NumberFormat.getNumberInstance();
 	}
 
 	/**
 	 * Returns the default integer format.
-	 * {@code com.ibm.icu.text.NumberFormat.getIntegerInstance()} if ICU is
-	 * available, otherwise {@code java.text.NumberFormat.getIntegerInstance()}.
 	 *
 	 * @return the number format
 	 */
 	public static Format getDefaultIntegerFormat() {
-		return GET_INTEGER_INSTANCE.get();
+		return NumberFormat.getIntegerInstance();
 	}
 
 	/**
 	 * Returns the default integer format.
-	 * {@code com.ibm.icu.text.NumberFormat.getIntegerInstance()} if ICU is
-	 * available, otherwise {@code java.text.NumberFormat.getIntegerInstance()}.
 	 *
 	 * @return the number format
 	 */
 	public static Format getDefaultIntegerBigDecimalFormat() {
-		Format format = GET_INTEGER_INSTANCE.get();
+		Format format = NumberFormat.getIntegerInstance();
 		if (format instanceof DecimalFormat) {
 			((DecimalFormat) format).setParseBigDecimal(true);
 		}
 		return format;
-	}
-
-	/**
-	 * Creates a factory for {@link Format}s. The factory uses ICU if it is
-	 * available on the class path, otherwise it uses the given supplier.
-	 */
-	private static Supplier<Format> findMethod(Supplier<Format> javaTextMethod, String methodName) {
-		try {
-			Method method = Class.forName("com.ibm.icu.text.NumberFormat").getMethod(methodName); //$NON-NLS-1$
-			return () -> {
-				try {
-					return (Format) method.invoke(null);
-				} catch (ReflectiveOperationException e) {
-					throw new RuntimeException(e); // Should never happen
-				}
-			};
-		} catch (ClassNotFoundException | SecurityException e) {
-			return javaTextMethod;
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException(e); // Should never happen
-		}
 	}
 }

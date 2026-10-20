@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -106,7 +105,7 @@ public/* final */class WorkbenchImages {
 				() -> BundleUtility.find(PlatformUI.PLUGIN_ID, path));
 		declareImage(key, desc, shared);
 		if (disabledKey != null) {
-			ImageDescriptor disabledImageDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			ImageDescriptor disabledImageDescriptor = desc.asDisabledDescriptor();
 			declareImage(disabledKey, disabledImageDescriptor, shared);
 		}
 	}
@@ -115,7 +114,6 @@ public/* final */class WorkbenchImages {
 	 * Declares all the workbench's images, including both "shared" ones and
 	 * internal ones.
 	 */
-	@SuppressWarnings("removal")
 	private static final void declareImages() {
 		declareImage(ISharedImages.IMG_DEF_MISSING, ImageDescriptor.getMissingImageDescriptor(), true);
 
@@ -189,8 +187,8 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_ELCL_SYNCED, ISharedImages.IMG_ELCL_SYNCED_DISABLED, //
 				PATH_ELOCALTOOL + "synced.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, //
-				PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_EXPANDALL, ISharedImages.IMG_ELCL_EXPANDALL_DISABLED, //
+				PATH_ELOCALTOOL + "expandall.svg", true); //$NON-NLS-1$
 
 		declareImage(ISharedImages.IMG_ELCL_REMOVE, ISharedImages.IMG_ELCL_REMOVE_DISABLED, //
 				PATH_ELOCALTOOL + "remove.svg", true); //$NON-NLS-1$
@@ -263,22 +261,6 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT + "warn_tsk.svg", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT + "info_tsk.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE, PATH_POINTER + "left_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_MASK, PATH_POINTER + "left_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE, PATH_POINTER + "right_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_MASK, PATH_POINTER + "right_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOP_SOURCE, PATH_POINTER + "top_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOP_MASK, PATH_POINTER + "top_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_POINTER + "bottom_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK, PATH_POINTER + "bottom_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE, PATH_POINTER + "invalid_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_MASK, PATH_POINTER + "invalid_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_STACK_SOURCE, PATH_POINTER + "stack_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_STACK_MASK, PATH_POINTER + "stack_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_POINTER + "offscreen_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_POINTER + "offscreen_mask.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_POINTER + "tofastview_source.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_POINTER + "tofastview_mask.svg", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_OBJS_DND_LEFT, PATH_POINTER + "left.svg", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT, PATH_POINTER + "right.svg", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_OBJS_DND_TOP, PATH_POINTER + "top.svg", true); //$NON-NLS-1$

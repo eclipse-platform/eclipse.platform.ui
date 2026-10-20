@@ -83,7 +83,7 @@ public class StatusEditorTest {
 		openNonExistentFile(page, new URI("file:/2.txt"));
 		ILog log = ILog.of(Platform.getBundle("org.eclipse.e4.ui.workbench"));
 		List<String> logEvents = new ArrayList<>();
-		ILogListener listener = (status, plugin) -> logEvents.add(status.toString());
+		ILogListener listener = (status, _) -> logEvents.add(status.toString());
 		log.addLogListener(listener);
 		// Clicks are not equivalent to activation from API, so we need this
 		// hack to imitate tab clicks.
@@ -120,7 +120,7 @@ public class StatusEditorTest {
 
 	private static class ErrorDocumentProvider extends ForwardingDocumentProvider {
 		public ErrorDocumentProvider(IDocumentProvider parent) {
-			super("", ignored -> { /**/	}, parent);
+			super("", _ -> { /**/	}, parent);
 		}
 
 		@Override

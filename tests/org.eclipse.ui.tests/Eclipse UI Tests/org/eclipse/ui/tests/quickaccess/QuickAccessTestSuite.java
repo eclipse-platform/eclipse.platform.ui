@@ -17,7 +17,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ CamelUtilTest.class, QuickAccessDialogTest.class, ContentMatchesTest.class,
-		QuickAccessProvidersTest.class })
+@SelectClasses({ CamelUtilTest.class, QuickAccessMatchingTest.class, QuickAccessDialogTest.class,
+		ContentMatchesTest.class, QuickAccessProvidersTest.class })
 public class QuickAccessTestSuite {
 }

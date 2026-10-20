@@ -31,7 +31,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * Preferences for the Web browser.
  */
 public class WebBrowserPreference {
-	protected static final String PREF_BROWSER_HISTORY = "webBrowserHistory"; //$NON-NLS-1$
 
 	protected static final String PREF_INTERNAL_WEB_BROWSER_HISTORY = "internalWebBrowserHistory"; //$NON-NLS-1$
 

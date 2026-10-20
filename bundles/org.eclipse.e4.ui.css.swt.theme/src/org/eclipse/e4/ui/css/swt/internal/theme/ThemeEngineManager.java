@@ -49,7 +49,6 @@ public class ThemeEngineManager implements IThemeManager {
 			return cssEngine;
 		}
 		cssEngine = new CSSSWTEngineImpl(display, true);
-		cssEngine.setErrorHandler(e -> logError(e.getMessage(), e));
 		WidgetElement.setEngine(display, cssEngine);
 		return cssEngine;
 	}

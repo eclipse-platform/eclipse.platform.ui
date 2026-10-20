@@ -86,7 +86,7 @@ This page shows you how to create a simple example application using data bindin
 6.  In the plug-in manifest editor, switch to the 'Dependencies' tab.
 7.  Under 'Required Plug-ins', click 'Add...'.
 8.  In the dialog, type '*databinding'. (Note the leading wildcard character.)
-9.  Multi-select **org.eclipse.core.databinding**, **org.eclipse.core.databinding.beans**, **org.eclipse.core.databinding.property**, **org.eclipse.jface.databinding**, and **com.ibm.icu**, and click 'OK'.
+9.  Multi-select **org.eclipse.core.databinding**, **org.eclipse.core.databinding.beans**, **org.eclipse.core.databinding.property**, and **org.eclipse.jface.databinding**, and click 'OK'.
 10.  Save and then close the plug-in manifest editor.
 11.  Create a new Java package (File > New > Package) and pick a name for it, e.g. 'starting'.
 12.  Create a new Java class (File > New > Class) in that package, called 'GettingStarted'.
@@ -375,7 +375,7 @@ Implementation Design Principles
 --------------------------------
 
 1.  It's best for the converter to be immutable. This will allow for greater reuse of the instance especially across threads.
-2.  Synchronize during convert(...) if necessary. A good example of this is using `com.ibm.icu.text.NumberFormat` in a converter. NumberFormat expects to be externally synchronized as the state of NumberFormat changes during formatting and parsing. In order to be used across threads access to the internal NumberFormat must be synchronized.
+2.  Synchronize during convert(...) if necessary.
 3.  If the converter is converting to a primitive from an object ensure null is handled.
 
 # Validators
@@ -497,7 +497,6 @@ For an example snippet, see the [Master Detail snippet](#Snippets).
 The core Data Binding bundle has the following dependencies:
 
 *   org.eclipse.equinox.common (about 150 KB). We are currently using Assert, IStatus, and ListenerList from equinox.common, but we might potentially use more classes or interfaces from equinox.common in the future, such as e.g. ISafeRunnable/SafeRunner, IProgressMonitor, and IAdaptable.
-*   Databinding in Eclipse versions earlier than 4.16 had a dependency on ICU4J. 4.16 and later can use ICU if it is available but does not depend on it. (ICU4J is about 4MB for the real thing, or 100KB for the replacement bundle com.ibm.icu.base which is available from the Eclipse Project download pages.)
 
 The data binding framework will run without OSGi. There are optional dependencies on the packages org.osgi.framework, org.osgi.util.tracker, and org.eclipse.osgi.framework.log which allow us to log errors and warnings to the common log if OSGi is available. You can also inject a logger yourself by calling org.eclipse.core.databinding.util.Policy.setLog(), very similar to how this is solved in JFace.
 

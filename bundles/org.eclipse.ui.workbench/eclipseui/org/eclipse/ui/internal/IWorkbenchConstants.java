@@ -26,12 +26,6 @@ public interface IWorkbenchConstants {
 	 * @deprecated
 	 */
 	@Deprecated
-	String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
 	String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
 	/**
@@ -54,17 +48,8 @@ public interface IWorkbenchConstants {
 
 	String RESOURCE_TYPE_FILE_NAME = "resourcetypes.xml"; //$NON-NLS-1$
 
-	// Filename containing the workbench's preferences
-	String PREFERENCE_BUNDLE_FILE_NAME = "workbench.ini"; //$NON-NLS-1$
-
-	// Identifier for visible view parts.
-	String WORKBENCH_VISIBLE_VIEW_ID = "Workbench.visibleViewID"; //$NON-NLS-1$
-
 	// Identifier of workbench info properties page
 	String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
-
-	// Various editor.
-	String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
 
 	// Default view category.
 	String DEFAULT_CATEGORY_ID = PlatformUI.PLUGIN_ID;
@@ -163,8 +148,6 @@ public interface IWorkbenchConstants {
 
 	String TAG_VERSION = "version"; //$NON-NLS-1$
 
-	String TAG_PROGRESS_COUNT = "progressCount"; //$NON-NLS-1$
-
 	String TAG_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
 
 	String TAG_PERSPECTIVE = "perspective"; //$NON-NLS-1$
@@ -259,10 +242,6 @@ public interface IWorkbenchConstants {
 
 	String TAG_POSITION = "position";//$NON-NLS-1$
 
-	String TAG_NAVIGATION_HISTORY = "navigationHistory";//$NON-NLS-1$
-
-	String TAG_STICKY_STATE = "stickyState"; //$NON-NLS-1$
-
 	String TAG_ACTIVE = "active";//$NON-NLS-1$
 
 	String TAG_REMOVED = "removed";//$NON-NLS-1$
@@ -283,16 +262,6 @@ public interface IWorkbenchConstants {
 
 	String TAG_PERSPECTIVE_BAR = "perspectiveBar"; //$NON-NLS-1$
 
-	String TAG_TRIM = "trimLayout"; //$NON-NLS-1$
-
-	String TAG_TRIM_AREA = "trimArea"; //$NON-NLS-1$
-
 	String TAG_TRIM_ITEM = "trimItem"; //$NON-NLS-1$
-
-	// Fonts
-	String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
-
-	// Colors
-	String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
 
 }

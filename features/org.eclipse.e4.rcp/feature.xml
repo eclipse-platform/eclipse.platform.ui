@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.rcp"
       label="%featureName"
-      version="4.40.0.qualifier"
+      version="4.42.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -186,6 +186,10 @@
          version="0.0.0"/>
 
    <plugin
+         id="org.eclipse.equinox.spi"
+         version="0.0.0"/>
+
+   <plugin
          id="org.eclipse.osgi.util"
          version="0.0.0"/>
 
@@ -347,16 +351,6 @@
 
    <plugin
          id="org.eclipse.e4.core.di.annotations"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.e4.ui.swt.gtk"
-         ws="gtk"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.e4.ui.swt.win32"
-         ws="win32"
          version="0.0.0"/>
 
    <plugin

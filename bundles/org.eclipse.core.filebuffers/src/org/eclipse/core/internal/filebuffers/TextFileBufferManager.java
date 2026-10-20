@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 
@@ -276,8 +275,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 
 		IContentTypeManager manager= Platform.getContentTypeManager();
-		IFileInfo fileInfo= fileStore.fetchInfo();
-		if (fileInfo.exists()) {
+		if (fileStore.exists()) {
 
 			try(InputStream is= fileStore.openInputStream(EFS.NONE, null)) {
 				IContentDescription description= manager.getDescriptionFor(is, fileStore.getName(), IContentDescription.ALL);

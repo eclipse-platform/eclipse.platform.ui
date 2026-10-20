@@ -589,7 +589,7 @@ public class WelcomeEditor extends EditorPart {
 			final int adjust = HINDENT + bounds.width + layout.verticalSpacing
 					+ (layout.marginWidth * 2);
 			final int adjustFirst = HINDENT + (layout.marginWidth * 2);
-			infoArea.addListener(SWT.Resize, event -> {
+			infoArea.addListener(SWT.Resize, _ -> {
 				int w = scrolledComposite.getClientArea().width;
 				// if the horizontal scroll bar exists, we want to wrap to the
 				// minimum wrap width
@@ -753,7 +753,7 @@ public class WelcomeEditor extends EditorPart {
 			}
 		};
 
-		messageLabel.addDisposeListener(event -> JFaceResources.getFontRegistry().removeListener(fontListener));
+		messageLabel.addDisposeListener(_ -> JFaceResources.getFontRegistry().removeListener(fontListener));
 
 		JFaceResources.getFontRegistry().addListener(fontListener);
 

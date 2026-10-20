@@ -214,7 +214,7 @@ public class LinkedResourceEditor {
 
 		fTree = new TreeViewer(treeComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
-		fTree.addSelectionChangedListener(event -> updateSelection());
+		fTree.addSelectionChangedListener(_ -> updateSelection());
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = fTree.getTree().getItemHeight() * 10;
@@ -493,7 +493,7 @@ public class LinkedResourceEditor {
 		URI uri = res.getLocationURI();
 		if (uri != null) {
 			IFileStore fileStore = EFS.getStore(uri);
-			return (fileStore != null) && fileStore.fetchInfo().exists();
+			return fileStore != null && fileStore.exists();
 		}
 		return false;
 	}

@@ -655,7 +655,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (foreground == null || background == null) {
 			return;
 		}
-		Color statusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+		Color statusLabelForeground= new Color(Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
 		fStatusLabel.setForeground(statusLabelForeground);
 		fStatusLabel.setBackground(background);
 	}

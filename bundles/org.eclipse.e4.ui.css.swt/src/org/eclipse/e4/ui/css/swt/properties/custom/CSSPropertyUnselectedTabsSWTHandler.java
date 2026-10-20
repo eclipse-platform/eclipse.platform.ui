@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
@@ -43,15 +45,13 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			return;
 		}
 
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			Color color = (Color) engine.convert(value, Color.class,
 					control.getDisplay());
-			((ICTabRendering) renderer).setUnselectedTabsColor(color);
-			folder.setBackground(color);
-			removeResizeEventListener(folder);
+			applySolidColor(folder, (ICTabRendering) renderer, color);
 			return;
 		}
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+		if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class, control.getDisplay());
 			if (grad == null) {
 				return;
@@ -62,6 +62,12 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 				colors = CSSSWTColorHelper.getSWTColors(grad,
 						control.getDisplay(), engine);
 				percents = CSSSWTColorHelper.getPercents(grad);
+			}
+			if (isFlat(colors)) {
+				// A flat gradient still leaves CTabFolder.gradientColors set, which makes the
+				// folder paint the controls in its tab row with a background image
+				applySolidColor(folder, (ICTabRendering) renderer, colors[0]);
+				return;
 			}
 			((ICTabRendering) renderer)
 			.setUnselectedTabsColor(colors, percents);
@@ -80,6 +86,24 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 
 	private boolean isUnselectedTabsColorProp(String property) {
 		return UNSELECTED_TABS_COLOR_PROP.equals(property);
+	}
+
+	private void applySolidColor(CTabFolder folder, ICTabRendering renderer, Color color) {
+		renderer.setUnselectedTabsColor(color);
+		folder.setBackground(color);
+		removeResizeEventListener(folder);
+	}
+
+	private static boolean isFlat(Color[] colors) {
+		if (colors == null || colors.length == 0 || colors[0] == null) {
+			return false;
+		}
+		for (Color color : colors) {
+			if (!colors[0].equals(color)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	// TODO: It needs to be refactored when the Bug 33276 gets fixed

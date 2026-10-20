@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 BestSolution.at and others.
+ * Copyright (c) 2010, 2026 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,6 +39,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -208,6 +210,8 @@ public class ModelAssembler {
 	private final AtomicReference<IExtensionRegistry> registry = new AtomicReference<>();
 
 	private final List<ServiceReference<IModelProcessorContribution>> processorContributions = new CopyOnWriteArrayList<>();
+
+	private static final Pattern MESSAGE_FORMAT_BRACKETS_PATTERN = Pattern.compile("\\{\\}"); //$NON-NLS-1$
 
 	private BundleContext bundleContext;
 
@@ -579,12 +583,14 @@ public class ModelAssembler {
 			return new ArrayList<>();
 		}
 
+		List<MApplicationElement> existingElements = new ArrayList<>();
 		for (MApplicationElement el : elements) {
 			EObject o = (EObject) el;
 
 			E4XMIResource r = (E4XMIResource) o.eResource();
 
 			if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
+				existingElements.add(el);
 				continue;
 			}
 
@@ -605,7 +611,63 @@ public class ModelAssembler {
 			}
 		}
 
+		if (!existingElements.isEmpty()) {
+			// elements already in the application model must not replace the existing ones
+			Map<EObject, EObject> existingObjects = getExistingObjects(existingElements, applicationResource);
+			Resource fragmentResource = ((EObject) fragment).eResource();
+			elements.removeAll(existingElements);
+			redirectReferences(existingObjects, applicationResource, fragmentResource);
+			if (elements.isEmpty()) {
+				return new ArrayList<>();
+			}
+		}
 		return fragment.merge(application);
+	}
+
+	/**
+	 * Maps the given fragment elements and their contents to the elements with the
+	 * same id in the application model.
+	 */
+	private Map<EObject, EObject> getExistingObjects(List<MApplicationElement> fragmentElements,
+			E4XMIResource applicationResource) {
+		Map<EObject, EObject> existingObjects = new HashMap<>();
+		for (MApplicationElement el : fragmentElements) {
+			EObject o = (EObject) el;
+			E4XMIResource r = (E4XMIResource) o.eResource();
+			putExistingObject(existingObjects, o, r.getID(o), applicationResource);
+			Iterable<EObject> contents = () -> EcoreUtil.getAllContents(o, true);
+			for (EObject eObj : contents) {
+				putExistingObject(existingObjects, eObj, r.getInternalId(eObj), applicationResource);
+			}
+		}
+		return existingObjects;
+	}
+
+	/**
+	 * Points the references to the given fragment objects, which are not merged,
+	 * at the existing objects. These references can only be in the application
+	 * model or in the resource of the fragment, as fragments reference other
+	 * fragments through imports.
+	 */
+	private void redirectReferences(Map<EObject, EObject> existingObjects, Resource applicationResource,
+			Resource fragmentResource) {
+		Map<EObject, Collection<EStructuralFeature.Setting>> usages = EcoreUtil.UsageCrossReferencer
+				.findAll(existingObjects.keySet(), List.of(applicationResource, fragmentResource));
+		for (Map.Entry<EObject, Collection<EStructuralFeature.Setting>> usage : usages.entrySet()) {
+			for (EStructuralFeature.Setting setting : usage.getValue()) {
+				if (setting.getEStructuralFeature().isChangeable()) {
+					EcoreUtil.replace(setting, usage.getKey(), existingObjects.get(usage.getKey()));
+				}
+			}
+		}
+	}
+
+	private void putExistingObject(Map<EObject, EObject> existingObjects, EObject fragmentObject, String id,
+			E4XMIResource applicationResource) {
+		EObject existingObject = id == null ? null : applicationResource.getIDToEObjectMap().get(id);
+		if (existingObject != null && existingObject.eClass() == fragmentObject.eClass()) {
+			existingObjects.put(fragmentObject, existingObject);
+		}
 	}
 
 	/**
@@ -686,7 +748,7 @@ public class ModelAssembler {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			warn("Could not run processor: {}", e); //$NON-NLS-1$
+			error("Could not run processor {}", ce.getAttribute("class"), e); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
@@ -727,7 +789,9 @@ public class ModelAssembler {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			warn("Could not run processor: {}", e); //$NON-NLS-1$
+			Class<?> processorClass = processor.getProcessorClass() != null ? processor.getProcessorClass()
+					: processor.getClass();
+			error("Could not run processor {}", processorClass.getName(), e); //$NON-NLS-1$
 		}
 	}
 
@@ -771,22 +835,33 @@ public class ModelAssembler {
 						element = null;
 					}
 					commands.add(() -> {
+						MApplicationElement resolved = element;
+						if (resolved != null && !feature.getEType().isInstance(resolved)) {
+							// a different-typed element sharing the id must not abort model assembly
+							warn("Could not resolve import for {}: incompatible with feature {} of {}", //$NON-NLS-1$
+									resolved.getElementId(), feature.getName(), target);
+							resolved = null;
+						}
 						if (feature.isMany()) {
+							@SuppressWarnings("unchecked")
+							List<Object> l = (List<Object>) target.eGet(feature);
+							if (resolved == null) {
+								l.remove(importObject);
+								return;
+							}
 							error("""
 									Replacing in {}.
 									Feature={}.
 									InternalElement={} contributed by {}.
 									ImportObject={}
-									""", target, feature.getName(), element.getElementId(), element.getContributorURI(), //$NON-NLS-1$
+									""", target, feature.getName(), resolved.getElementId(), resolved.getContributorURI(), //$NON-NLS-1$
 									importObject);
-							@SuppressWarnings("unchecked")
-							List<Object> l = (List<Object>) target.eGet(feature);
 							int index = l.indexOf(importObject);
 							if (index >= 0) {
-								l.set(index, element);
+								l.set(index, resolved);
 							}
 						} else {
-							target.eSet(feature, element);
+							target.eSet(feature, resolved);
 						}
 					});
 				}
@@ -820,7 +895,10 @@ public class ModelAssembler {
 			logMethod.invoke(log, message, args);
 		} else {
 			// fallback if no LogService is available
-			stream.println(MessageFormat.format(message, args));
+			stream.println(MessageFormat.format(addIndex(message), args));
+			if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+				t.printStackTrace(stream);
+			}
 		}
 	}
 
@@ -844,5 +922,21 @@ public class ModelAssembler {
 			this.factory = null;
 			this.logger = null;
 		}
+	}
+
+	/**
+	 * Adds missing indices to {@code {}} sequences in {@code format}. See:
+	 * {@link com.sun.org.slf4j.internal.Logger#addIndex(String)}
+	 */
+	private static String addIndex(String format) {
+		Matcher matcher = MESSAGE_FORMAT_BRACKETS_PATTERN.matcher(format);
+		StringBuilder sb = new StringBuilder();
+		int index = 0;
+		while (matcher.find()) {
+			String r = "{" + Integer.toString(index++) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+			matcher.appendReplacement(sb, r);
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
 	}
 }

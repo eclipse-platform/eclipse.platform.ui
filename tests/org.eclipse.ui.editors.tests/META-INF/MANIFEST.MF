@@ -30,7 +30,7 @@ Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)",
  org.hamcrest;version="[3.0.0,4.0.0)",
  org.hamcrest.core;version="[3.0.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.editors.tests

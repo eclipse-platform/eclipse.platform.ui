@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -59,8 +61,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
-		switch (value.getCssValueType()) {
-		case CSSValue.CSS_PRIMITIVE_VALUE:
+		if (value instanceof CssPrimitive) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
 			if (widget instanceof CTabItem) {
@@ -79,12 +80,16 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				CSSSWTColorHelper.setBackground((Control) widget, newColor);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
-			break;
-		case CSSValue.CSS_VALUE_LIST:
+		} else if (value instanceof CssList) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					widget.getDisplay());
 			if (grad == null) {
 				return; // warn?
+			}
+			if (grad.getRGBs().isEmpty()) {
+				// no stop resolved, treated like unset
+				resetGradient(widget, pseudo);
+				return;
 			}
 			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
@@ -102,9 +107,20 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				GradientBackgroundListener.handle((Control) widget, grad);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
-			break;
-		default:
-			break;
+		}
+	}
+
+	private static void resetGradient(Widget widget, String pseudo) {
+		if (widget instanceof CTabItem item) {
+			if ("selected".equals(pseudo)) {
+				item.getParent().setSelectionBackground(null, null, true);
+			} else {
+				item.getParent().setBackground(null, null, true);
+			}
+		} else if (widget instanceof Control control) {
+			GradientBackgroundListener.remove(control);
+			CSSSWTColorHelper.setBackground(control, null);
+			CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
  * EditingSupport is the abstract superclass of the support for cell editing.
@@ -99,7 +100,18 @@ public abstract class EditingSupport {
 	 */
 	protected void initializeCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
 		Object value = getValue(cell.getElement());
-		cellEditor.setValue(value);
+		try {
+			cellEditor.setValue(value);
+		} catch (AssertionFailedException e) {
+			String valueType = value == null ? "null" : value.getClass().getName(); //$NON-NLS-1$
+			Assert.isTrue(false, "Failed to initialize cell editor " + cellEditor.getClass().getName() //$NON-NLS-1$
+					+ " at column index " + cell.getColumnIndex() //$NON-NLS-1$
+					+ " for element " + cell.getElement() //$NON-NLS-1$
+					+ " with value of type " + valueType //$NON-NLS-1$
+					+ ". The value returned by getValue(Object) is incompatible with the cell editor;" //$NON-NLS-1$
+					+ " check that the EditingSupport and the CellEditor for this column match. Cause: " //$NON-NLS-1$
+					+ e.getMessage());
+		}
 	}
 
 	/**

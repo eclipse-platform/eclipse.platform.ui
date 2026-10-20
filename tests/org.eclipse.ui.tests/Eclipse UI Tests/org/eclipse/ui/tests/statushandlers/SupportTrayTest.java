@@ -149,7 +149,7 @@ public class SupportTrayTest {
 			};
 			Map<Object, Object> dialogState = new HashMap<>();
 			dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
-			SupportTray st = new SupportTray(dialogState, event -> td[0].closeTray());
+			SupportTray st = new SupportTray(dialogState, _ -> td[0].closeTray());
 			td[0].setBlockOnOpen(false);
 			td[0].open();
 			td[0].openTray(st);

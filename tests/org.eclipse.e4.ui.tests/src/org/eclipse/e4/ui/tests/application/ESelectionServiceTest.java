@@ -855,7 +855,7 @@ public class ESelectionServiceTest extends UITest {
 		// assertEquals(selection2, partThreeImpl.input); // incorrect
 
 		ESelectionService selectionService = partContextA.get(ESelectionService.class);
-		selectionService.addSelectionListener(partC.getElementId(), (part, selection1) -> partOneImpl.setOtherSelection(selection1));
+		selectionService.addSelectionListener(partC.getElementId(), (_, selection1) -> partOneImpl.setOtherSelection(selection1));
 
 		partThreeImpl.setSelection(selection3);
 

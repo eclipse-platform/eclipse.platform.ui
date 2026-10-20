@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,11 +14,12 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
+
+import jakarta.inject.Named;
 
 /**
  * Exit the workbench. Normal invocation calls {@link IWorkbench#close()}, which
@@ -30,19 +31,16 @@ import org.eclipse.ui.IWorkbench;
  *
  * @since 3.4
  */
-public class QuitHandler extends AbstractHandler {
+public class QuitHandler {
 	private static final String COMMAND_PARAMETER_ID_MAY_PROMPT = "mayPrompt"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
 
-	@Override
-	public Object execute(ExecutionEvent event) {
-		IEvaluationContext context = (IEvaluationContext) event.getApplicationContext();
-		IWorkbench workbench = (IWorkbench) context.getVariable(IWorkbench.class.getName());
-		if (TRUE.equals(event.getParameter(COMMAND_PARAMETER_ID_MAY_PROMPT))) {
+	@Execute
+	public void execute(IWorkbench workbench, @Optional @Named(COMMAND_PARAMETER_ID_MAY_PROMPT) String mayPrompt) {
+		if (TRUE.equals(mayPrompt)) {
 			workbench.getDisplay().close();
 		} else {
 			workbench.close();
 		}
-		return null;
 	}
 }

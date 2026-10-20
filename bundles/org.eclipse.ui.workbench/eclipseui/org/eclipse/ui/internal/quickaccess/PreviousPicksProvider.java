@@ -90,6 +90,8 @@ class PreviousPicksProvider extends QuickAccessProvider {
 	}
 
 	public void addPreviousPick(QuickAccessElement element, Consumer<QuickAccessElement> onRemoveElement) {
+		// Force the restore, in case a pick is made before any query populated the list
+		getElements();
 		elements.remove(element);
 		if (elements.size() == maxNumberOfElements) {
 			QuickAccessElement removedElement = elements.removeLast();

@@ -59,7 +59,7 @@ public class TestBug108162 {
 	@Test
 	public void testBug() throws CoreException {
 		Shell shell = new Shell();
-		workspace.run((IWorkspaceRunnable) monitor -> {
+		workspace.run((IWorkspaceRunnable) _ -> {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 			try {
 				dialog.run(true, false, new LockAcquiringOperation());

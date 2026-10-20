@@ -13,11 +13,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,9 +60,10 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fTextViewer.setDocument(new Document(content));
 		fTextViewer.getControl().setFocus();
-		findReplaceAction= new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", fTextViewer.getControl().getShell(),
-				fTextViewer.getFindReplaceTarget());
+		findReplaceAction= initializeFindReplaceAction();
 	}
+
+	protected abstract FindReplaceAction initializeFindReplaceAction();
 
 	protected void initializeFindReplaceUIForTextViewer() {
 		dialog= openUIFromTextViewer(fTextViewer);
@@ -203,7 +200,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.assertSelected(SearchOptions.WHOLE_WORD);
 
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		assertThat(target.getSelectionText(), is(dialog.getFindText()));
+		assertEquals(dialog.getFindText(), target.getSelectionText());
 
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
@@ -241,16 +238,16 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setFindText("ABCD");
 		dialog.setReplaceText("abcd");
 		dialog.performReplace();
-		assertThat(fTextViewer.getDocument().get(), is("abcd ABCD ABCD"));
+		assertEquals("abcd ABCD ABCD", fTextViewer.getDocument().get());
 
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("abcd abcd abcd"));
+		assertEquals("abcd abcd abcd", fTextViewer.getDocument().get());
 
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("(ab|cd)");
 		dialog.setReplaceText("o");
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("oo oo oo"));
+		assertEquals("oo oo oo", fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -267,7 +264,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setReplaceText("");
 		dialog.performReplaceAll();
 
-		assertThat(fTextViewer.getDocument().get(), is("line" + System.lineSeparator() + System.lineSeparator()));
+		assertEquals("line" + System.lineSeparator() + System.lineSeparator(), fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -298,7 +295,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setFindText("text");
 		dialog.performReplaceAll();
 
-		assertThat(fTextViewer.getDocument().get(), is("text" + System.lineSeparator() + System.lineSeparator()));
+		assertEquals("text" + System.lineSeparator() + System.lineSeparator(), fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -361,7 +358,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertEquals("text\\.\\*", dialog.getFindText());
 
 		dialog.performReplaceAll();
-		assertThat(fTextViewer.getDocument().get(), is("test ;"));
+		assertEquals("test ;", fTextViewer.getDocument().get());
 	}
 
 	@Test
@@ -373,7 +370,81 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setReplaceText("aa");
 		dialog.performReplace();
 
-		assertThat(fTextViewer.getDocument().get(), is("abaaefg"));
+		assertEquals("abaaefg", fTextViewer.getDocument().get());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSearch() {
+		// Performing a search must persist the search term so that the user can
+		// navigate back to it via history in a subsequent session.
+		initializeTextViewerWithFindReplaceUI("foo bar foo");
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchHistoryContainsAllRecentTermsNewestFirst() {
+		// Multiple searches must all appear in history ordered newest-first, so that
+		// index 0 always yields the most recently used term.
+		initializeTextViewerWithFindReplaceUI("foo bar baz foo bar baz");
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		dialog.setFindText("bar");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("bar", dialog.getFindText());
+
+		dialog.selectFindHistoryEntry(1);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchHistoryDeduplicatesRepeatedSearchTerms() {
+		// Searching for the same term twice must not create a duplicate entry in
+		// history. If it did, index 1 would show "foo" again instead of "bar".
+		initializeTextViewerWithFindReplaceUI("foo bar foo bar");
+		dialog.setFindText("bar");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		// Search "foo" a second time — must not insert a second "foo" entry.
+		dialog.setFindText("foo");
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+		// A duplicate "foo" would appear here instead of "bar".
+		dialog.selectFindHistoryEntry(1);
+		assertEquals("bar", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterReplaceAll() {
+		// A replace-all operation must persist the search term to history so that
+		// it is available for future searches.
+		initializeTextViewerWithFindReplaceUI("foo foo foo");
+		dialog.setFindText("foo");
+		dialog.setReplaceText("bar");
+		dialog.performReplaceAll();
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
+	}
+
+	@Test
+	public void testSearchTermStoredInHistoryAfterSingleReplace() {
+		// A single replace operation must also persist the search term to history.
+		initializeTextViewerWithFindReplaceUI("foo bar");
+		dialog.setFindText("foo");
+		dialog.setReplaceText("baz");
+		dialog.performReplace();
+
+		dialog.selectFindHistoryEntry(0);
+		assertEquals("foo", dialog.getFindText());
 	}
 
 	protected AccessType getDialog() {

@@ -49,7 +49,7 @@ public class LifecycleView extends ViewPart {
 		});
 		actionBars.updateActionBars();
 		((ToolBarManager) toolBarManager).getControl().addDisposeListener(
-				e -> callWidgetDispose = true);
+				_ -> callWidgetDispose = true);
 	}
 
 	@Override

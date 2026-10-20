@@ -82,7 +82,7 @@ public class ControlElement extends WidgetElement {
 	public void initialize() {
 		super.initialize();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 
@@ -99,7 +99,7 @@ public class ControlElement extends WidgetElement {
 	public void dispose() {
 		super.dispose();
 
-		if (!dynamicEnabled) {
+		if (!DYNAMIC_ENABLED) {
 			return;
 		}
 

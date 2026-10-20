@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.core.internal.databinding.conversion;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.Format;
@@ -24,8 +22,7 @@ import org.eclipse.core.databinding.conversion.Converter;
 
 /**
  * Converts a Number to a String using <code>Format.format(...)</code>. This
- * class is thread safe. This class is used to share code between converters
- * that are based on ICU and java.text.
+ * class is thread safe.
  *
  * @since 1.9
  */
@@ -36,30 +33,6 @@ public class AbstractNumberToStringConverter extends Converter<Object, String> {
 	private boolean fromTypeIsDecimalType;
 	private boolean fromTypeIsBigInteger;
 	private boolean fromTypeIsBigDecimal;
-
-	static Class<?> icuBigDecimal = null;
-	static Constructor<?> icuBigDecimalCtr = null;
-	static Class<?> icuDecimalFormat = null;
-
-	{
-		/*
-		 * If the full ICU4J library is available, we use the ICU BigDecimal class to
-		 * support proper formatting and parsing of java.math.BigDecimal.
-		 *
-		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes
-		 * support for java.math.BigDecimal, and if used falls back to converting as an
-		 * unknown Number type via doubleValue(), which is undesirable.
-		 *
-		 * See Bug #180392.
-		 */
-		try {
-			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
-			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
-			icuDecimalFormat = Class.forName("com.ibm.icu.text.DecimalFormat"); //$NON-NLS-1$
-//			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+(icuBigDecimal != null)+", icuBigDecimalCtr="+(icuBigDecimalCtr != null)); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (ClassNotFoundException | NoSuchMethodException e) {
-		}
-	}
 
 	/**
 	 * Constructs a new instance.
@@ -123,17 +96,6 @@ public class AbstractNumberToStringConverter extends Converter<Object, String> {
 				result = numberFormat.format(number);
 			}
 		} else if (fromTypeIsBigDecimal) {
-			if (icuBigDecimal != null && icuBigDecimalCtr != null && icuDecimalFormat != null
-					&& icuDecimalFormat.isInstance(numberFormat)) {
-				// Full ICU4J present. Convert java.math.BigDecimal to ICU BigDecimal to format.
-				// Bug #180392.
-				BigDecimal o = (BigDecimal) fromObject;
-				try {
-					fromObject = icuBigDecimalCtr.newInstance(o.unscaledValue(), Integer.valueOf(o.scale()));
-				} catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-				}
-				// Otherwise, replacement plugin present and supports java.math.BigDecimal.
-			}
 			synchronized (numberFormat) {
 				result = numberFormat.format(fromObject);
 			}

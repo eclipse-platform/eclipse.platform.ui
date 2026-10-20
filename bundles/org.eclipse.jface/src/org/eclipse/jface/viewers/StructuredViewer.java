@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -677,7 +677,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected Object[] filter(Object[] elements) {
 		if (filters != null) {
-			List<Object> filtered = new ArrayList<>(elements.length);
+			Object[] filtered = new Object[elements.length];
+			int count = 0;
 			Object root = getRoot();
 			for (Object element : elements) {
 				boolean add = true;
@@ -688,12 +689,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 					}
 				}
 				if (add) {
-					filtered.add(element);
+					filtered[count++] = element;
 				} else if (associateListener != null) {
 					associateListener.filteredOut(element);
 				}
 			}
-			return filtered.toArray();
+			return count == filtered.length ? filtered : Arrays.copyOf(filtered, count);
 		}
 		return elements;
 	}
@@ -1045,6 +1046,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @return a viewer sorter, or <code>null</code> if none or if the comparator is
 	 * 				not an instance of ViewerSorter
 	 */
+	@Deprecated(forRemoval = true, since = "2026-09 (removal in 2028-09 or later)")
 	public ViewerSorter getSorter() {
 		if (sorter instanceof ViewerSorter) {
 			return (ViewerSorter)sorter;

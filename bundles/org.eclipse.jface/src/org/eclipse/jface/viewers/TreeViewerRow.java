@@ -16,8 +16,6 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.LinkedList;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -260,16 +258,20 @@ public class TreeViewerRow extends ViewerRow {
 
 	@Override
 	public TreePath getTreePath() {
+		int depth = 0;
+		for (TreeItem i = item; i != null; i = i.getParentItem()) {
+			depth++;
+		}
+		Object[] segments = new Object[depth];
 		TreeItem tItem = item;
-		LinkedList segments = new LinkedList();
-		while (tItem != null) {
+		for (int i = depth - 1; i >= 0; i--) {
 			Object segment = tItem.getData();
 			Assert.isNotNull(segment);
-			segments.addFirst(segment);
+			segments[i] = segment;
 			tItem = tItem.getParentItem();
 		}
 
-		return new TreePath(segments.toArray());
+		return new TreePath(segments);
 	}
 
 	void setItem(TreeItem item) {

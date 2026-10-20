@@ -29,13 +29,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import java.util.List;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.preference.EclipsePreferencesElement;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssValue;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 public class EclipsePreferencesHandlerTest {
 
@@ -74,13 +77,10 @@ public class EclipsePreferencesHandlerTest {
 
 		EclipsePreferencesElement element = new EclipsePreferencesElement(preferences, engine);
 
-		CSSValue[] values = new CSSValue[] { mock(CSSValue.class), mock(CSSValue.class) };
+		CssValue[] values = new CssValue[] { new CssText(CssText.Kind.IDENT, "one"),
+				new CssText(CssText.Kind.IDENT, "two") };
 
-		CSSValueList listValue = mock(CSSValueList.class);
-		doReturn(CSSValue.CSS_VALUE_LIST).when(listValue).getCssValueType();
-		doReturn(values.length).when(listValue).getLength();
-		doReturn(values[0]).when(listValue).item(0);
-		doReturn(values[1]).when(listValue).item(1);
+		CssList listValue = new CssList(List.of(values));
 
 		EclipsePreferencesHandlerTestable handler = spy(new EclipsePreferencesHandlerTestable());
 

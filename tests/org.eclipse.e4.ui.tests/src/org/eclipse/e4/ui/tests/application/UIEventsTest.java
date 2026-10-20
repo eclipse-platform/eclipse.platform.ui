@@ -324,7 +324,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		assertNotEquals(appEB, childEB, "child context has same IEventBroker");
 
 		final boolean[] seen = { false };
-		childEB.subscribe(testTopic, event -> seen[0] = true);
+		childEB.subscribe(testTopic, _ -> seen[0] = true);
 
 		// ensure the EBs are wired up
 		assertFalse(seen[0]);

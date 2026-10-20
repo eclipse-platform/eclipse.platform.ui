@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.swt.widgets.Control;
@@ -25,7 +26,7 @@ public class CSSPropertyLinesVisibleSWTHandler extends AbstractCSSPropertySWTHan
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			boolean linesVisible = (Boolean) engine.convert(value, Boolean.class, control.getDisplay());
 			if (control instanceof Table) {
 				((Table) control).setLinesVisible(linesVisible);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,15 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.PatternSyntaxException;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -55,20 +52,20 @@ public class FindReplaceDocumentAdapterTest {
 
 		fDocument= new Document();
 
-		String text;
-		text= "package TestPackage;\n" + //$NON-NLS-1$
-		"/*\n" + //$NON-NLS-1$
-		"* comment\n" + //$NON-NLS-1$
-		"*/\n" + //$NON-NLS-1$
-		"	public class Class {\n" + //$NON-NLS-1$
-		"		// comment1\n" + //$NON-NLS-1$
-		"		public void method1() {\n" + //$NON-NLS-1$
-		"		}\n" + //$NON-NLS-1$
-		"		// comment2\n" + //$NON-NLS-1$
-		"		public void method2() {\n" + //$NON-NLS-1$
-		"		}\n" + //$NON-NLS-1$
-		"	}\n" + //$NON-NLS-1$S
-		"// Gel\u00F6st"; //$NON-NLS-1$S
+		String text = """
+				package TestPackage;
+				/*
+				* comment
+				*/
+					public class Class {
+						// comment1
+						public void method1() {
+						}
+						// comment2
+						public void method2() {
+						}
+					}
+				// Gel\u00F6st"""; //$NON-NLS-1$ S
 
 		fDocument.set(text);
 	}
@@ -79,169 +76,126 @@ public class FindReplaceDocumentAdapterTest {
 	}
 
 	@Test
-	public void testFind() {
-		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			IRegion result= new Region(8, 11);
+	public void testFind() throws BadLocationException {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
+		IRegion result = new Region(8, 11);
 
-			// Find case-sensitive
-			IRegion r= findReplaceDocumentAdapter.find(0, "TestPackage", true, true, false, false); //$NON-NLS-1$
-			assertEquals(result, r);
-			r= findReplaceDocumentAdapter.find(0, "testpackage", true, true, false, false); //$NON-NLS-1$
-			assertNull(r);
+		// Find case-sensitive
+		IRegion r = findReplaceDocumentAdapter.find(0, "TestPackage", true, true, false, false); //$NON-NLS-1$
+		assertEquals(result, r);
+		r = findReplaceDocumentAdapter.find(0, "testpackage", true, true, false, false); //$NON-NLS-1$
+		assertNull(r);
 
-			// Find non-case-sensitive
-			r= findReplaceDocumentAdapter.find(0, "TestPackage", true, false, false, false); //$NON-NLS-1$
-			assertEquals(r, result);
-			r= findReplaceDocumentAdapter.find(0, "testpackage", true, false, false, false); //$NON-NLS-1$
-			assertEquals(r, result);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		// Find non-case-sensitive
+		r = findReplaceDocumentAdapter.find(0, "TestPackage", true, false, false, false); //$NON-NLS-1$
+		assertEquals(r, result);
+		r = findReplaceDocumentAdapter.find(0, "testpackage", true, false, false, false); //$NON-NLS-1$
+		assertEquals(r, result);
 	}
 
 	@Test
-	public void testFindCaretInMiddleOfWord() {
-		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
+	public void testFindCaretInMiddleOfWord() throws BadLocationException {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
 
-			// Find forward when caret is inside word
-			IRegion r= findReplaceDocumentAdapter.find(12, "TestPackage", true, false, false, false); //$NON-NLS-1$
-			assertNull(r);
+		// Find forward when caret is inside word
+		IRegion r = findReplaceDocumentAdapter.find(12, "TestPackage", true, false, false, false); //$NON-NLS-1$
+		assertNull(r);
 
-			// Find backward when caret is inside word
-			r= findReplaceDocumentAdapter.find(12, "TestPackage", false, false, false, false); //$NON-NLS-1$
-			assertNull(r);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		// Find backward when caret is inside word
+		r = findReplaceDocumentAdapter.find(12, "TestPackage", false, false, false, false); //$NON-NLS-1$
+		assertNull(r);
 	}
 
 	@Test
-	public void testFindCaretAtWordStart() {
+	public void testFindCaretAtWordStart() throws BadLocationException {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
 
-			// Find forward when caret is just before a word
-			IRegion r= findReplaceDocumentAdapter.find(8, "TestPackage", true, false, false, false); //$NON-NLS-1$
-			assertEquals(new Region(8, 11), r);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		// Find forward when caret is just before a word
+		IRegion r = findReplaceDocumentAdapter.find(8, "TestPackage", true, false, false, false); //$NON-NLS-1$
+		assertEquals(new Region(8, 11), r);
 	}
 
 	@Test
-	public void testFindCaretAtEndStart() {
-		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
+	public void testFindCaretAtEndStart() throws BadLocationException {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
 
-			// Find forward when caret is just before a word
-			IRegion r= findReplaceDocumentAdapter.find(19, "TestPackage", false, false, false, false); //$NON-NLS-1$
-			assertEquals(new Region(8, 11), r);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		// Find forward when caret is just before a word
+		IRegion r = findReplaceDocumentAdapter.find(19, "TestPackage", false, false, false, false); //$NON-NLS-1$
+		assertEquals(new Region(8, 11), r);
 	}
 
 	/**
 	 * Test case for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=74993
 	 */
 	@Test
-	public void testBug74993() {
+	public void testBug74993() throws BadLocationException {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			IRegion r= findReplaceDocumentAdapter.find(12, "\\w+", false, false, false, true); //$NON-NLS-1$
-			assertEquals(new Region(6, 1), r);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		IRegion r = findReplaceDocumentAdapter.find(12, "\\w+", false, false, false, true); //$NON-NLS-1$
+		assertEquals(new Region(6, 1), r);
 	}
 
 	/**
 	 * Test case for: https://bugs.eclipse.org/386751
 	 */
 	@Test
-	public void testBug386751() {
-		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			IRegion result= adapter.find(0, ".", true, false, true, false);
-			assertNull(result);
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+	public void testBug386751() throws BadLocationException {
+		FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(fDocument);
+		IRegion result = adapter.find(0, ".", true, false, true, false);
+		assertNull(result);
 	}
 
 	@Test
-	public void testUTF8Pattern() {
+	public void testUTF8Pattern() throws BadLocationException {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			IRegion result= new Region(153, 6);
+		IRegion result = new Region(153, 6);
 
-			// Find case-sensitive
-			IRegion r= findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
-			assertEquals(result, r);
-			r= findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
-			assertEquals(result, r);
+		// Find case-sensitive
+		IRegion r = findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
+		assertEquals(result, r);
+		r = findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
+		assertEquals(result, r);
 
-			// Find non-case-sensitive
-			r= findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
-			assertEquals(result, r);
-			r= findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
-			assertEquals(result, r);
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		// Find non-case-sensitive
+		r = findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
+		assertEquals(result, r);
+		r = findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
+		assertEquals(result, r);
 	}
 
 	@Test
-	public void testReplace() {
+	public void testReplace() throws BadLocationException {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
-			IRegion r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
-			assertNotNull(r);
+		findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
+		IRegion r = findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
+		assertNotNull(r);
 
-			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
-			r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
-			assertNotNull(r);
+		findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
+		r = findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
+		assertNotNull(r);
 
-			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
-			r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
-			assertNotNull(r);
+		findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
+		r = findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
+		assertNotNull(r);
 
-			// Search again: there will be no match
-			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
-			try {
-				findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
-			} catch (IllegalStateException e) {
-				assertTrue(true);
-			}
+		// Search again: there will be no match
+		findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
+		assertThrows(IllegalStateException.class, () -> findReplaceDocumentAdapter.replace("private", false));
 
-			String text=
-				"package TestPackage;\n" + //$NON-NLS-1$
-				"/*\n" + //$NON-NLS-1$
-				"* comment\n" + //$NON-NLS-1$
-				"*/\n" + //$NON-NLS-1$
-				"	private class Class {\n" + //$NON-NLS-1$
-				"		// comment1\n" + //$NON-NLS-1$
-				"		private void method1() {\n" + //$NON-NLS-1$
-				"		}\n" + //$NON-NLS-1$
-				"		// comment2\n" + //$NON-NLS-1$
-				"		private void method2() {\n" + //$NON-NLS-1$
-				"		}\n" + //$NON-NLS-1$
-				"	}\n" + //$NON-NLS-1$
-				"// Gel\u00f6st"; //$NON-NLS-1$S
-			assertEquals(text, fDocument.get());
-
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		String text = """
+				package TestPackage;
+				/*
+				* comment
+				*/
+					private class Class {
+						// comment1
+						private void method1() {
+						}
+						// comment2
+						private void method2() {
+						}
+					}
+				// Gel\u00f6st"""; //$NON-NLS-1$ S
+		assertEquals(text, fDocument.get());
 	}
 
 	@Test
@@ -348,7 +302,7 @@ public class FindReplaceDocumentAdapterTest {
 
 		Locale currentLocale= Locale.getDefault();
 		try {
-			Locale.setDefault(new Locale("tr"));
+			Locale.setDefault(Locale.of("tr"));
 			fDocument.set("A");
 			regexReplace("A", "\\Ci", findReplaceDocumentAdapter);
 			assertEquals("\u0130", fDocument.get());
@@ -404,12 +358,7 @@ public class FindReplaceDocumentAdapterTest {
 
 		region= adapter.find(n + 1, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
 		assertEquals(new Region(n + 1, rn + 2 - (n + 1)), region);
-		try {
-			adapter.replace("Win\\1$1", true);
-		} catch (PatternSyntaxException ex) {
-			return;
-		}
-		fail();
+		assertThrows(PatternSyntaxException.class, () -> adapter.replace("Win\\1$1", true));
 	}
 
 	@Test
@@ -454,48 +403,21 @@ public class FindReplaceDocumentAdapterTest {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		fDocument.set("\n");
 
-		IRegion region= null;
-		try {
-			region= adapter.find(0, "[\\R]", true, false, false, true);
-		} catch (PatternSyntaxException e) {
-			//expected
-		}
-		assertNull(region);
+		assertThrows(PatternSyntaxException.class, () -> adapter.find(0, "[\\R]", true, false, false, true));
 
-		try {
-			region= adapter.find(0, "[\\s&&[^\\R]]", true, false, false, true);
-		} catch (PatternSyntaxException e) {
-			//expected
-		}
-		assertNull(region);
+		assertThrows(PatternSyntaxException.class, () -> adapter.find(0, "[\\s&&[^\\R]]", true, false, false, true));
 
-		try {
-			region= adapter.find(0, "\\p{\\R}", true, false, false, true);
-		} catch (PatternSyntaxException e) {
-			//expected
-		}
-		assertNull(region);
+		assertThrows(PatternSyntaxException.class, () -> adapter.find(0, "\\p{\\R}", true, false, false, true));
 	}
 
 	@Test
 	public void testIllegalState() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			findReplaceDocumentAdapter.replace("TestPackage", false); //$NON-NLS-1$
-		} catch (IllegalStateException e) {
-			Assertions.assertTrue(true);
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		assertThrows(IllegalStateException.class, () ->
+		findReplaceDocumentAdapter.replace("TestPackage", false));
 
-		findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		try {
-			findReplaceDocumentAdapter.replace("TestPackage", true); //$NON-NLS-1$
-		} catch (IllegalStateException e) {
-			Assertions.assertTrue(true);
-		} catch (BadLocationException e) {
-			Assertions.assertTrue(false);
-		}
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter2 = new FindReplaceDocumentAdapter(fDocument);
+		assertThrows(IllegalStateException.class, () -> findReplaceDocumentAdapter2.replace("TestPackage", true));
 	}
 
 	@Test
@@ -514,11 +436,7 @@ public class FindReplaceDocumentAdapterTest {
 		chars[len - 1]= '}';
 		fDocument.set(new String(chars));
 
-		try {
-			adapter.find(0, "\\{(.|[\\r\\n])*\\}", true, false, false, true);
-		} catch (PatternSyntaxException ex) {
-			return;
-		}
-		fail();
+		assertThrows(PatternSyntaxException.class,
+				() -> adapter.find(0, "\\{(.|[\\r\\n])*\\}", true, false, false, true));
 	}
 }

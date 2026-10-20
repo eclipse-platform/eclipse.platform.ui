@@ -149,9 +149,12 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 
 			@Override
 			public void partBroughtToTop(IWorkbenchPart part) {
-				if (part instanceof IEditorPart && !ignoreEditorActivation) {
-					updateSelectionJob.schedule(NavigatorPlugin.LINK_HELPER_DELAY);
-				}
+				// Do not schedule a selection update here:
+				// 1. when the part is just brought to top (programmatically) but not activated,
+				// no link update is expected.
+				// 2. scheduling from both partActivated and partBroughtToTop can cause
+				// the job to run twice when the two events fire more than
+				// LINK_HELPER_DELAY apart (intermittent on slow machines).
 			}
 
 			@Override

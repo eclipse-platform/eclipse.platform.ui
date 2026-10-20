@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.internal.workbench.PartOnTopManager;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -29,10 +30,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.tests.model.test.util.E4UITestUtils;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -136,6 +139,8 @@ public class PartOnTopManagerTest {
 
 	@Test
 	public void test_PlaceholderOnTopStackSwitch() {
+		Assumptions.assumeFalse(Platform.OS.isMac() && E4UITestUtils.isRunningOnJenkins(),
+				"test fails stably on MacOS I-builds, its unclear how to fix it, see: https://github.com/eclipse-platform/eclipse.platform.ui/issues/3893");
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -44,7 +45,6 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileUtil;
@@ -154,7 +154,7 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> {
 					root.delete(true, null);
 				}
 			} catch (CoreException e1) {
-				TestPlugin.getDefault().getLog().log(e.getStatus());
+				ILog.of(UIWorkingSetWizardsAuto.class).log(e.getStatus());
 				throw createAssertionError(e);
 			}
 		} finally {

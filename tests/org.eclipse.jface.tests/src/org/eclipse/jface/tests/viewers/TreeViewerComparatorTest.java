@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreePathViewerComparator;
+import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -112,6 +115,43 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		team1.addMember("Duong");
 		String[][] expected = { TEAM3_SORTED, TEAM2_SORTED, TEAM1_SORTED_WITH_INSERT };
 		assertSortedResult(expected);
+	}
+
+	@Test
+	@SuppressWarnings({ "deprecation", "removal" })
+	public void test_GH3900_TreePathViewerSorter() {
+		// A TreePathViewerSorter with reversed order.
+		// In GH 3900, the viewer did not call the overridden method and the results
+		// were sorted lexicographically.
+		var sorter = new TreePathViewerSorter() {
+			@Override
+			public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
+				return -super.compare(viewer, parentPath, e1, e2);
+			}
+		};
+		fViewer.setSorter(sorter);
+		getTreeViewer().expandAll();
+		TreeItem[] items = getTreeViewer().getTree().getItems();
+		assertEquals(UI, items[0].getText());
+		assertEquals(RUNTIME, items[1].getText());
+		assertEquals(CORE, items[2].getText());
+	}
+
+	@Test
+	public void test_GH3900_TreePathViewerComparator() {
+		// A TreePathViewerComparator with reversed order.
+		var comparator = new TreePathViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
+				return -super.compare(viewer, parentPath, e1, e2);
+			}
+		};
+		fViewer.setComparator(comparator);
+		getTreeViewer().expandAll();
+		TreeItem[] items = getTreeViewer().getTree().getItems();
+		assertEquals(UI, items[0].getText());
+		assertEquals(RUNTIME, items[1].getText());
+		assertEquals(CORE, items[2].getText());
 	}
 
 	@Test

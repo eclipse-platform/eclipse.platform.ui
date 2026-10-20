@@ -74,6 +74,7 @@ public class SmartImportJob extends Job {
 	private boolean deepChildrenDetection;
 	private final boolean configureProjects;
 	private boolean closeProjectsAfterImport;
+	private boolean skipDotFolders = true;
 	private boolean reconfigureEclipseProjects;
 	private IWorkingSet[] workingSets;
 
@@ -167,13 +168,11 @@ public class SmartImportJob extends Job {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		boolean isAutoBuilding = workspace.isAutoBuilding();
 		try {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceDescription description = workspace.getDescription();
-			boolean isAutoBuilding = workspace.isAutoBuilding();
 			if (isAutoBuilding) {
-				description.setAutoBuilding(false);
-				workspace.setDescription(description);
+				setAutoBuilding(workspace, false);
 			}
 
 			if (directoriesToImport != null) {
@@ -193,24 +192,30 @@ public class SmartImportJob extends Job {
 				SortedMap<File, IProject> leafToRootProjects = new TreeMap<>(Collections.reverseOrder(rootToLeafComparator));
 				final Set<IProject> alreadyConfiguredProjects = new HashSet<>();
 				loopMonitor.worked(1);
-				for (final File directoryToImport : directories) {
-					final boolean alreadyAnEclipseProject = new File(directoryToImport, IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
-					try {
-						IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
-								IResource.BACKGROUND_REFRESH);
-						if (alreadyAnEclipseProject) {
-							alreadyConfiguredProjects.add(newProject);
+				// Create all projects in one workspace operation, so listeners see a single
+				// resource delta instead of one per project. No configurator runs here.
+				// AVOID_UPDATE would defer that delta to the workspace notification job.
+				workspace.run(_ -> {
+					for (final File directoryToImport : directories) {
+						final boolean alreadyAnEclipseProject = new File(directoryToImport,
+								IProjectDescription.DESCRIPTION_FILE_NAME).isFile();
+						try {
+							IProject newProject = toExistingOrNewProject(directoryToImport, loopMonitor.split(1),
+									IResource.BACKGROUND_REFRESH);
+							if (alreadyAnEclipseProject) {
+								alreadyConfiguredProjects.add(newProject);
+							}
+							leafToRootProjects.put(directoryToImport, newProject);
+							loopMonitor.worked(1);
+						} catch (CouldNotImportProjectException ex) {
+							IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
+							if (listener != null) {
+								listener.errorHappened(path, ex);
+							}
+							this.errors.put(path, ex);
 						}
-						leafToRootProjects.put(directoryToImport, newProject);
-						loopMonitor.worked(1);
-					} catch (CouldNotImportProjectException ex) {
-						IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
-						if (listener != null) {
-							listener.errorHappened(path, ex);
-						}
-						this.errors.put(path, ex);
 					}
-				}
+				}, this.workspaceRoot, IResource.NONE, null);
 				if (configureProjects) {
 					JobGroup multiDirectoriesJobGroup = new JobGroup(
 							DataTransferMessages.SmartImportJob_configuringSelectedDirectories, 20, 1);
@@ -269,19 +274,30 @@ public class SmartImportJob extends Job {
 					try {
 						project.close(monitor);
 					} catch (CoreException e) {
-						listener.errorHappened(project.getLocation(), e);
+						if (listener != null) {
+							listener.errorHappened(project.getLocation(), e);
+						}
 					}
 				});
 			}
-
-			if (isAutoBuilding) {
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
 		} catch (Exception ex) {
 			return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, ex.getMessage(), ex);
+		} finally {
+			if (isAutoBuilding) {
+				try {
+					setAutoBuilding(workspace, true);
+				} catch (CoreException ex) {
+					IDEWorkbenchPlugin.log("Could not restore auto-building after import", ex); //$NON-NLS-1$
+				}
+			}
 		}
 		return Status.OK_STATUS;
+	}
+
+	private static void setAutoBuilding(IWorkspace workspace, boolean autoBuilding) throws CoreException {
+		IWorkspaceDescription description = workspace.getDescription();
+		description.setAutoBuilding(autoBuilding);
+		workspace.setDescription(description);
 	}
 
 	protected boolean rootProjectWorthBeingRemoved() {
@@ -347,6 +363,9 @@ public class SmartImportJob extends Job {
 		final Set<IProject> res = Collections.synchronizedSet(new HashSet<>());
 		for (IResource childResource : parentContainer.members()) {
 			if (childResource.getType() == IResource.FOLDER && !childResource.isDerived()) {
+				if (skipDotFolders && childResource.getName().startsWith(".")) { //$NON-NLS-1$
+					continue;
+				}
 				IPath location = childResource.getLocation();
 				if (location == null) {
 					continue;
@@ -447,7 +466,9 @@ public class SmartImportJob extends Job {
 			}
 		}
 
-		if (!mainProjectConfigurators.isEmpty()) {
+		// The container was already refreshed above, so refresh again only if the project
+		// is a different resource (nested project created for a child folder).
+		if (!mainProjectConfigurators.isEmpty() && !project.equals(container)) {
 			project.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.split(1));
 		}
 		for (ProjectConfigurator configurator : mainProjectConfigurators) {
@@ -530,6 +551,18 @@ public class SmartImportJob extends Job {
 		return res;
 	}
 
+	private static boolean isInsideDotFolder(File file) {
+		File current = file;
+		while (current != null) {
+			String name = current.getName();
+			if (!name.isEmpty() && name.startsWith(".")) { //$NON-NLS-1$
+				return true;
+			}
+			current = current.getParentFile();
+		}
+		return false;
+	}
+
 	/**
 	 * @param refreshMode One {@link IResource#BACKGROUND_REFRESH} for background refresh, or {@link IResource#NONE} for immediate refresh
 	 */
@@ -592,7 +625,11 @@ public class SmartImportJob extends Job {
 		desc.setLocation(IPath.fromOSString(directory.getAbsolutePath()));
 		IProject res = this.workspaceRoot.getProject(desc.getName());
 		res.create(desc, progressMonitor);
-		PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);
+		if (this.workingSets != null && this.workingSets.length > 0) {
+			// only touch the workbench if there is something to add, so that the job also
+			// works without a running workbench
+			PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);
+		}
 		return res;
 	}
 
@@ -664,7 +701,7 @@ public class SmartImportJob extends Job {
 			SubMonitor loopMonitor = SubMonitor.convert(monitor, activeConfigurators.size());
 			for (ProjectConfigurator configurator : activeConfigurators) {
 				Set<File> supportedDirectories = configurator.findConfigurableLocations(
-						SmartImportJob.this.rootDirectory,
+						SmartImportJob.this.rootDirectory, this.skipDotFolders,
 						loopMonitor.split(1));
 				if (supportedDirectories != null) {
 					for (File supportedDirectory : supportedDirectories) {
@@ -683,6 +720,9 @@ public class SmartImportJob extends Job {
 			}
 			for (ProjectConfigurator configurator : activeConfigurators) {
 				configurator.removeDirtyDirectories(res);
+			}
+			if (this.skipDotFolders) {
+				res.keySet().removeIf(SmartImportJob::isInsideDotFolder);
 			}
 			this.importProposals = res;
 		}
@@ -721,6 +761,22 @@ public class SmartImportJob extends Job {
 	 */
 	void setCloseProjectsAfterImport(boolean closeProjectsAfterImport) {
 		this.closeProjectsAfterImport = closeProjectsAfterImport;
+	}
+
+	/**
+	 * @param skipDotFolders
+	 *            if true, folders starting with '.' (e.g. .git) are skipped
+	 *            during project scanning
+	 */
+	void setSkipDotFolders(boolean skipDotFolders) {
+		this.skipDotFolders = skipDotFolders;
+	}
+
+	/**
+	 * @return whether folders starting with '.' are skipped during scanning
+	 */
+	public boolean isSkipDotFolders() {
+		return this.skipDotFolders;
 	}
 
 	/**

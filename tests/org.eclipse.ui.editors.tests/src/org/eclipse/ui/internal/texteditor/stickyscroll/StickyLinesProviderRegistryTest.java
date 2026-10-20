@@ -40,7 +40,7 @@ public class StickyLinesProviderRegistryTest {
 		when(extensionRegistry.getConfigurationElementsFor(PLUGIN_ID, STICKY_LINES_PROVIDERS_EXTENSION_POINT))
 				.thenReturn(configurationElement);
 
-		cut = new StickyLinesProviderRegistry(extensionRegistry, e -> stickyLinesProviderDescriptor);
+		cut = new StickyLinesProviderRegistry(extensionRegistry, _ -> stickyLinesProviderDescriptor);
 	}
 
 	@AfterEach

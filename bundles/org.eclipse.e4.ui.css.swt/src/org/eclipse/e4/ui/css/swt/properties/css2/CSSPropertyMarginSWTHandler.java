@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssList;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -23,10 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.css.sac.CSSException;
-import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.CSSValueList;
 
 public class CSSPropertyMarginSWTHandler extends
 AbstractCSSPropertyMarginHandler {
@@ -50,7 +50,7 @@ AbstractCSSPropertyMarginHandler {
 			String pseudo, CSSEngine engine) throws Exception {
 
 		// If single value then assigned to all four margins
-		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value instanceof CssPrimitive) {
 			setMargin(element, TOP, value);
 			setMargin(element, RIGHT, value);
 			setMargin(element, BOTTOM, value);
@@ -58,12 +58,11 @@ AbstractCSSPropertyMarginHandler {
 			return;
 		}
 
-		if(value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			CSSValueList valueList = (CSSValueList) value;
+		if (value instanceof CssList valueList) {
 			int length = valueList.getLength();
 
 			if(length < 2 || length > 4) {
-				throw new CSSException("Invalid margin property list length");
+				throw new IllegalArgumentException("Invalid margin property list length");
 			}
 
 			switch (length) {
@@ -80,6 +79,7 @@ AbstractCSSPropertyMarginHandler {
 				setMargin(element, RIGHT, valueList.item(1));
 				setMargin(element, BOTTOM, valueList.item(2));
 				setMargin(element, LEFT, valueList.item(1));
+				break;
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
 				setMargin(element, TOP, valueList.item(0));
@@ -88,7 +88,7 @@ AbstractCSSPropertyMarginHandler {
 				setMargin(element, LEFT, valueList.item(1));
 			}
 		} else {
-			throw new CSSException("Invalid margin property value");
+			throw new IllegalArgumentException("Invalid margin property value");
 		}
 	}
 
@@ -171,10 +171,10 @@ AbstractCSSPropertyMarginHandler {
 	}
 
 	private void setMargin(Object element, int side, CSSValue value) {
-		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (!(value instanceof CssNumeric numeric)) {
 			return;
 		}
-		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
+		int pixelValue = (int) numeric.value();
 
 		Widget widget = SWTElementHelpers.getWidget(element);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -99,8 +100,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -114,7 +113,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
@@ -213,6 +211,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public static final String PERSPECTIVE_SPACER_ID = "PerspectiveSpacer"; //$NON-NLS-1$
 
+	/**
+	 * The 'elementId' of the perspective switcher in the trim
+	 */
+	public static final String PERSPECTIVE_SWITCHER_ID = "PerspectiveSwitcher"; //$NON-NLS-1$
+
 	public static final String STATUS_LINE_ID = "org.eclipse.ui.StatusLine"; //$NON-NLS-1$
 
 	public static final String TRIM_CONTRIBUTION_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"; //$NON-NLS-1$
@@ -273,6 +276,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private boolean shellActivated = false;
 
+	private boolean destroyed;
+
 	ProgressRegion progressRegion = null;
 
 	private final List<MTrimElement> workbenchTrimElements = new ArrayList<>();
@@ -313,6 +318,16 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	private final ListenerList<IPropertyChangeListener> genericPropertyListeners = new ListenerList<>();
 
+	private final IPropertyChangeListener switcherSideListener = event -> {
+		if (IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE.equals(event.getProperty())) {
+			workbench.getDisplay().asyncExec(() -> {
+				if (!workbench.isClosing() && getShell() != null && !getShell().isDisposed()) {
+					placePerspectiveSwitcher();
+				}
+			});
+		}
+	};
+
 	private final IAdaptable input;
 
 	private IPerspectiveDescriptor perspective;
@@ -328,7 +343,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			MMenu menu = model.getMainMenu();
 			if (menu != null) {
 				engine.removeGui(menu);
-				model.setMainMenu(null);
+				// keep a main menu defined by the application model, so that it is persisted
+				if (menu == mainMenu) {
+					model.setMainMenu(null);
+				}
 			}
 
 			eventBroker.unsubscribe(this.windowWidgetHandler);
@@ -462,26 +480,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			final IEclipseContext windowContext = model.getContext();
 			HandlerServiceImpl.push(windowContext.getParent(), null);
 
-			// Initialize a previous 'saved' state if applicable. We no longer
-			// update the preference store.
-			if (getModel().getPersistedState().containsKey(IPreferenceConstants.COOLBAR_VISIBLE)) {
-				this.coolBarVisible = Boolean
-						.parseBoolean(getModel().getPersistedState().get(IPreferenceConstants.COOLBAR_VISIBLE));
-			} else {
-				this.coolBarVisible = PrefUtil.getInternalPreferenceStore()
-						.getBoolean(IPreferenceConstants.COOLBAR_VISIBLE);
-				getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE,
-						Boolean.toString(this.coolBarVisible));
-			}
-			if (getModel().getPersistedState().containsKey(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE)) {
-				this.perspectiveBarVisible = Boolean
-						.parseBoolean(getModel().getPersistedState().get(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE));
-			} else {
-				this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore()
-						.getBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
-				getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
-						Boolean.toString(this.perspectiveBarVisible));
-			}
+			this.coolBarVisible = resolveTrimVisibility(IPreferenceConstants.COOLBAR_VISIBLE);
+			this.perspectiveBarVisible = resolveTrimVisibility(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+			PrefUtil.getInternalPreferenceStore().addPropertyChangeListener(trimVisibilityListener);
 
 			IServiceLocatorCreator slc = workbench.getService(IServiceLocatorCreator.class);
 			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null, () -> {
@@ -798,17 +799,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			initializeDefaultServices();
 
-			/*
-			 * Remove the second QuickAccess control if an older workspace is opened.
-			 *
-			 * An older workspace will create an ApplicationModel which already contains the
-			 * QuickAccess elements, from the old "popuolateTopTrimContribution()" method.
-			 * The new implementation of this method doesn't add the QuickAccess elements
-			 * anymore but an old workbench.xmi still has these entries in it and so they
-			 * need to be removed.
-			 */
-			cleanLegacyQuickAccessContribution();
-
 			// register with the tracker
 
 			fireWindowOpening();
@@ -928,34 +918,33 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			getShell().setData(this);
 			trackShellActivation();
 			addZoomChangeListenerToPromptForRestart();
+			WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(switcherSideListener);
 		} finally {
 			HandlerServiceImpl.pop();
 		}
 	}
 
+	private static final int ZOOM_RESTART_PROMPT_DELAY_MS = 1000;
+
 	private void addZoomChangeListenerToPromptForRestart() {
-		getShell().addListener(SWT.ZoomChanged, event -> {
-			/**
-			 * Prompt for restart when an SWT zoom change for the primary monitor occurs,
-			 * only when rescaling at runtime is not activated.
-			 */
-			if (getShell().getDisplay().isRescalingAtRuntime()) {
-				return;
-			}
-			if (getShell().getDisplay().getPrimaryMonitor().equals(getShell().getMonitor())) {
-				int dialogResponse = MessageDialog.open(MessageDialog.QUESTION, getShell(),
-						WorkbenchMessages.Workbench_zoomChangedTitle, WorkbenchMessages.Workbench_zoomChangedMessage,
-						SWT.NONE, WorkbenchMessages.Workbench_RestartButton,
-						WorkbenchMessages.Workbench_DontRestartButton);
-				if (event.doit && dialogResponse == 0) {
-					getWorkbenchImpl().restart(true);
-				}
+		Shell shell = getShell();
+		Display display = shell.getDisplay();
+		Runnable promptForRestart = () -> getWorkbenchImpl().promptForRestartIfZoomChanged(shell);
+		shell.addListener(SWT.ZoomChanged, event -> {
+			// Only needed when SWT cannot rescale at runtime
+			if (!display.isRescalingAtRuntime() && display.getPrimaryMonitor().equals(shell.getMonitor())) {
+				// Delay so that a transient zoom change, e.g. on monitor reconnect, does not prompt;
+				// rescheduling the same runnable restarts the timer, which coalesces bursts
+				display.timerExec(ZOOM_RESTART_PROMPT_DELAY_MS, promptForRestart);
 			}
 		});
 	}
 
 	@PreDestroy
 	void preDestroy() {
+		WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(switcherSideListener);
+		destroyed = true;
+		PrefUtil.getInternalPreferenceStore().removePropertyChangeListener(trimVisibilityListener);
 		if (mainMenu != null) {
 			renderer.clearModelToManager(mainMenu, menuManager);
 			mainMenu = null;
@@ -1040,34 +1029,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
 			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 			trimBar.getChildren().add(spacerControl);
-		} else if (!spacerControl.getTags().contains("SHOW_RESTORE_MENU")) { //$NON-NLS-1$
-			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 		}
 
-		MToolControl switcherControl = (MToolControl) modelService.find("PerspectiveSwitcher", model); //$NON-NLS-1$
+		MToolControl switcherControl = (MToolControl) modelService.find(PERSPECTIVE_SWITCHER_ID, model);
 		if (switcherControl == null && getWindowConfigurer().getShowPerspectiveBar()) {
 			switcherControl = modelService.createModelElement(MToolControl.class);
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
-			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+			switcherControl.setElementId(PERSPECTIVE_SWITCHER_ID);
 			switcherControl.getTags().add(IPresentationEngine.DRAGGABLE);
 			switcherControl.getTags().add("HIDEABLE"); //$NON-NLS-1$
 			switcherControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 			switcherControl.setContributionURI(
 					"bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 			trimBar.getChildren().add(switcherControl);
-		} else if (switcherControl != null) {
-			if (!getWindowConfigurer().getShowPerspectiveBar()) {
-				trimBar.getChildren().remove(switcherControl);
-			} else {
-				List<String> tags = switcherControl.getTags();
-				if (!tags.contains("HIDEABLE")) { //$NON-NLS-1$
-					tags.add("HIDEABLE"); //$NON-NLS-1$
-				}
-				if (!tags.contains("SHOW_RESTORE_MENU")) { //$NON-NLS-1$
-					tags.add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
-				}
-			}
+		} else if (switcherControl != null && !getWindowConfigurer().getShowPerspectiveBar()) {
+			trimBar.getChildren().remove(switcherControl);
 		}
+		placePerspectiveSwitcher();
 
 		// render now after everything has been added so contributions can be
 		// inserted in the right place
@@ -1075,20 +1053,48 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Removes the "legacy" QuickAccess related fields from the ApplicationModel.
-	 * <p>
-	 * The "legacy" QuickAccess fields exist in the ApplicationModel if an older
-	 * workspace is opened which was build before the QuickAccess was contributed
-	 * via e4xmi-fragment.
-	 * </p>
+	 * Moves the perspective switcher to the trim side given by
+	 * {@link IPreferenceConstants#PERSPECTIVE_SWITCHER_SIDE} if that value differs
+	 * from the one last applied, so that a placement by the user survives restarts.
 	 */
-	private void cleanLegacyQuickAccessContribution() {
-		for (String quickAccessElementId : QUICK_ACCESS_ELEMENT_IDS) {
-			MToolControl legacyElement = (MToolControl) modelService.find(quickAccessElementId, model);
-			if (legacyElement != null) {
-				EcoreUtil.remove((EObject) legacyElement);
-			}
+	private void placePerspectiveSwitcher() {
+		MToolControl switcherControl = (MToolControl) modelService.find(PERSPECTIVE_SWITCHER_ID, model);
+		if (switcherControl == null) {
+			return;
 		}
+		String side = WorkbenchPlugin.getDefault().getPreferenceStore()
+				.getString(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE).toLowerCase(Locale.ROOT);
+		Map<String, String> state = switcherControl.getPersistedState();
+		// not the preference default, which a theme's preferences rule overrides too
+		if (side.equals(state.getOrDefault(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, "top"))) { //$NON-NLS-1$
+			return;
+		}
+		SideValue sideValue = switch (side) {
+		case "top" -> SideValue.TOP; //$NON-NLS-1$
+		case "bottom" -> SideValue.BOTTOM; //$NON-NLS-1$
+		case "left" -> SideValue.LEFT; //$NON-NLS-1$
+		case "right" -> SideValue.RIGHT; //$NON-NLS-1$
+		default -> null;
+		};
+		if (sideValue == null) {
+			return;
+		}
+		state.put(IPreferenceConstants.PERSPECTIVE_SWITCHER_SIDE, side);
+		MTrimBar trimBar = modelService.getTrim(model, sideValue);
+		if (trimBar.getChildren().contains(switcherControl)) {
+			return;
+		}
+		// re-render so that the switcher picks the orientation of its new trim bar
+		boolean toBeRendered = switcherControl.isToBeRendered();
+		switcherControl.setToBeRendered(false);
+		// vertical bars start with the switcher, horizontal ones end with it
+		if (sideValue == SideValue.LEFT || sideValue == SideValue.RIGHT) {
+			trimBar.getChildren().add(0, switcherControl);
+		} else {
+			trimBar.getChildren().add(switcherControl);
+		}
+		trimBar.setToBeRendered(true);
+		switcherControl.setToBeRendered(toBeRendered);
 	}
 
 	/**
@@ -1499,6 +1505,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean perspectiveBarVisible = true;
 
 	private boolean statusLineVisible = true;
+
+	private static final String TRIM_OVERRIDE_SUFFIX = ".override"; //$NON-NLS-1$
+
+	private final IPropertyChangeListener trimVisibilityListener = this::preferredTrimVisibilityChanged;
 
 	/**
 	 * The handlers for global actions that were last submitted to the workbench
@@ -2767,14 +2777,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.0
 	 */
 	public void setCoolBarVisible(boolean visible) {
+		if (applyCoolBarVisible(visible)) {
+			recordTrimOverride(IPreferenceConstants.COOLBAR_VISIBLE, visible);
+		}
+	}
+
+	private boolean applyCoolBarVisible(boolean visible) {
 		boolean oldValue = coolBarVisible;
 		coolBarVisible = visible;
-		if (oldValue != coolBarVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE, Boolean.toString(visible));
-			updateLayoutDataForContents();
-			firePropertyChanged(PROP_COOLBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
-					coolBarVisible ? Boolean.TRUE : Boolean.FALSE);
+		if (oldValue == coolBarVisible) {
+			return false;
 		}
+		updateLayoutDataForContents();
+		firePropertyChanged(PROP_COOLBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
+				coolBarVisible ? Boolean.TRUE : Boolean.FALSE);
+		return true;
 	}
 
 	/**
@@ -2805,14 +2822,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.0
 	 */
 	public void setPerspectiveBarVisible(boolean visible) {
+		if (applyPerspectiveBarVisible(visible)) {
+			recordTrimOverride(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, visible);
+		}
+	}
+
+	private boolean applyPerspectiveBarVisible(boolean visible) {
 		boolean oldValue = perspectiveBarVisible;
 		perspectiveBarVisible = visible;
-		if (oldValue != perspectiveBarVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, Boolean.toString(visible));
-			updateLayoutDataForContents();
-			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
-					perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
+		if (oldValue == perspectiveBarVisible) {
+			return false;
 		}
+		updateLayoutDataForContents();
+		firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
+				perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
+		return true;
 	}
 
 	/**
@@ -2826,16 +2850,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * @param visible whether the perspective bar should be shown. This is only
-	 *                applicable if the window configurer also wishes either the
-	 *                perspective bar to be visible.
+	 * @param visible whether the status line should be shown
 	 * @since 3.0
 	 */
 	public void setStatusLineVisible(boolean visible) {
 		boolean oldValue = statusLineVisible;
 		statusLineVisible = visible;
 		if (oldValue != statusLineVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, Boolean.toString(visible));
 			updateLayoutDataForContents();
 			firePropertyChanged(PROP_STATUS_LINE_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
 					statusLineVisible ? Boolean.TRUE : Boolean.FALSE);
@@ -2843,9 +2864,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * @return whether the perspective bar should be shown. This is only applicable
-	 *         if the window configurer also wishes either the perspective bar to be
-	 *         visible.
+	 * @return whether the status line should be shown
 	 * @since 3.0
 	 */
 	public boolean getStatusLineVisible() {
@@ -2948,6 +2967,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (getWindowConfigurer().getShowPerspectiveBar()) {
 			setPerspectiveBarVisible(!perspectivebarVisible);
 		}
+		refreshToggleToolbarElements();
+	}
+
+	private void refreshToggleToolbarElements() {
 		ICommandService commandService = getService(ICommandService.class);
 		Map<String, WorkbenchWindow> filter = new HashMap<>();
 		filter.put(IServiceScopes.WINDOW_SCOPE, this);
@@ -2964,6 +2987,64 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public boolean isToolbarVisible() {
 		return (getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
 				|| (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar());
+	}
+
+	/**
+	 * Returns the per-window override of a trim element, or the workspace
+	 * preference, after migrating a value persisted by older versions.
+	 */
+	private boolean resolveTrimVisibility(String key) {
+		Map<String, String> state = getModel().getPersistedState();
+		String overrideKey = key + TRIM_OVERRIDE_SUFFIX;
+		// older versions copied the preference here, so only a hidden bar was a user choice
+		String legacy = state.remove(key);
+		if (legacy != null && !Boolean.parseBoolean(legacy)) {
+			state.putIfAbsent(overrideKey, legacy);
+		}
+		String override = state.get(overrideKey);
+		if (override == null) {
+			return PrefUtil.getInternalPreferenceStore().getBoolean(key);
+		}
+		return Boolean.parseBoolean(override);
+	}
+
+	/**
+	 * Stores a per-window choice, or removes it when it equals the preference.
+	 */
+	private void recordTrimOverride(String key, boolean visible) {
+		String overrideKey = key + TRIM_OVERRIDE_SUFFIX;
+		if (visible == PrefUtil.getInternalPreferenceStore().getBoolean(key)) {
+			getModel().getPersistedState().remove(overrideKey);
+		} else {
+			getModel().getPersistedState().put(overrideKey, Boolean.toString(visible));
+		}
+	}
+
+	/**
+	 * Follows preference changes, for example from a theme.
+	 */
+	private void preferredTrimVisibilityChanged(PropertyChangeEvent event) {
+		String key = event.getProperty();
+		if (!IPreferenceConstants.COOLBAR_VISIBLE.equals(key)
+				&& !IPreferenceConstants.PERSPECTIVEBAR_VISIBLE.equals(key)) {
+			return;
+		}
+		Display display = workbench.getDisplay();
+		if (display == null || display.isDisposed()) {
+			return;
+		}
+		display.asyncExec(() -> {
+			Shell shell = getShell();
+			if (destroyed || closing || (shell != null && shell.isDisposed())) {
+				return;
+			}
+			boolean visible = resolveTrimVisibility(key);
+			boolean changed = IPreferenceConstants.COOLBAR_VISIBLE.equals(key) ? applyCoolBarVisible(visible)
+					: applyPerspectiveBarVisible(visible);
+			if (changed) {
+				refreshToggleToolbarElements();
+			}
+		});
 	}
 
 	private void updateLayoutDataForContents() {

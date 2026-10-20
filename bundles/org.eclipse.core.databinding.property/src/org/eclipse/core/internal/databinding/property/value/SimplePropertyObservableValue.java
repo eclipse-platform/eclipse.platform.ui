@@ -109,10 +109,10 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 		if (hasListeners()) {
 			T oldValue = cachedValue;
 			T newValue = cachedValue = property.getValue(source);
-			if (diff == null) {
-				diff = Diffs.createValueDiff(oldValue, newValue);
-			}
 			if (!Objects.equals(oldValue, newValue) || stale) {
+				if (diff == null) {
+					diff = Diffs.createValueDiff(oldValue, newValue);
+				}
 				stale = false;
 				fireValueChange(Diffs.unmodifiableDiff(diff));
 			}

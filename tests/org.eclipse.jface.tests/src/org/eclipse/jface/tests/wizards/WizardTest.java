@@ -189,9 +189,9 @@ public class WizardTest {
 		pageChanged = false;
 		pageChangingFired = false;
 
-		IPageChangedListener changedListener = event -> pageChanged = true;
+		IPageChangedListener changedListener = _ -> pageChanged = true;
 
-		IPageChangingListener changingListener = event -> {
+		IPageChangingListener changingListener = _ -> {
 			assertFalse(pageChanged, "Page should not have changed yet");
 			pageChangingFired = true;
 		};
@@ -225,7 +225,7 @@ public class WizardTest {
 		Shell shell;
 		ILogger oldLogger = Policy.getLog();
 		try {
-			Policy.setLog(status -> logged[0] = true);
+			Policy.setLog(_ -> logged[0] = true);
 			shell = dialog.getShell();
 			dialog.close();
 		} finally {
@@ -242,7 +242,7 @@ public class WizardTest {
 		final boolean logged[] = new boolean[1];
 		ILogger oldLogger = Policy.getLog();
 		try {
-			Policy.setLog(status -> logged[0] = true);
+			Policy.setLog(_ -> logged[0] = true);
 			dialog.close();
 		} finally {
 			Policy.setLog(oldLogger);

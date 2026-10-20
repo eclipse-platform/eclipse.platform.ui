@@ -57,11 +57,6 @@ public class RefactoringPluginImages {
 	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.svg"; 	//$NON-NLS-1$
 
-	/** @since 3.2 */
-	public static final String IMG_OBJS_REFACTORING_DATE= NAME_PREFIX + "date_obj.svg"; //$NON-NLS-1$
-	/** @since 3.2 */
-	public static final String IMG_OBJS_REFACTORING_TIME= NAME_PREFIX + "time_obj.svg"; //$NON-NLS-1$
-
 	public static final ImageDescriptor DESC_ELCL_FILTER= createUnManaged(T_ELCL, "filter_ps.svg"); //$NON-NLS-1$
 
 	/** @since 3.2 */

@@ -13,7 +13,7 @@ Bundle-Vendor: %Plugin.providerName
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
  org.eclipse.ui.tests.views.properties.tabbed.decorations,
  org.eclipse.ui.tests.views.properties.tabbed.decorations.views,

@@ -37,9 +37,6 @@ public class IDEWorkbenchMessages extends NLS {
 	// package: org.eclipse.ui.ide
 
 	public static String IDEWorkbenchAdvisor_noPerspective;
-	public static String IDEWorkbenchAdvisor_cancelHistoryPruning;
-	public static String IDEWorkbenchAdvisor_preHistoryCompaction;
-	public static String IDEWorkbenchAdvisor_postHistoryCompaction;
 
 	public static String IDE_noFileEditorSelectedUserCanceled;
 	public static String IDE_noFileEditorFound;
@@ -347,6 +344,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CloseUnrelatedProjectsAction_confirmMsgN;
 	public static String CloseUnrelatedProjectsAction_AlwaysClose;
 	public static String CloseUnrelatedProjectsAction_AlwaysCloseWithoutPrompt;
+
+	public static String ProjectReferenceGraph_jobName;
 
 	public static String BuildAction_text;
 	public static String BuildAction_text_plural;
@@ -947,6 +946,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ProblemSavingWorkbench;
 	public static String ProblemsSavingWorkspace;
+	public static String ShutdownInProgress;
 
 	public static String Problems_Opening_Page;
 

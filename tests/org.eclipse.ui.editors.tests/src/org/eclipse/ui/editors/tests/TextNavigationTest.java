@@ -155,7 +155,7 @@ public class TextNavigationTest {
 	@Test
 	void testEndHomeRevealCaret() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
-		fDocument.set(IntStream.range(0, 2000).mapToObj(i -> "a").collect(Collectors.joining()));
+		fDocument.set(IntStream.range(0, 2000).mapToObj(_ -> "a").collect(Collectors.joining()));
 		PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
 		assertTrue(DisplayHelper.waitForCondition(widget.getDisplay(), 2000, () -> widget.isVisible()));
 		int firstCharX = widget.getTextBounds(0, 0).x;

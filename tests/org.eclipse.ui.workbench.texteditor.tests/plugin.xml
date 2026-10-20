@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            id="org.eclipse.ui.workbench.texteditor.tests.testTextEditor"
+            name="Test Text Editor"
+            class="org.eclipse.ui.internal.findandreplace.overlay.TestTextEditor"
+            default="false">
+      </editor>
+   </extension>
+
+</plugin>

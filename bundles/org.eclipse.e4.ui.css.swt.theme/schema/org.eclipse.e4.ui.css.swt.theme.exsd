@@ -134,6 +134,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isDarkTheme" type="boolean">
+            <annotation>
+               <documentation>
+                  whether this theme is a dark theme. Defaults to &lt;code&gt;false&lt;/code&gt;, unless the theme id contains &quot;dark&quot;, which is the legacy heuristic used before this attribute existed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -239,8 +246,8 @@ A stylesheet contributed to all Systems:
 The CSS theme and the legacy Colors and Fonts association:
 &lt;pre&gt;
 &lt;themeAssociation
- themeId=&quot;org.eclipse.e4.ui.css.theme.e4_classic&quot;
- colorAndFontId=&quot;org.eclipse.ui.defaultTheme&quot;&gt; 
+ themeId=&quot;org.eclipse.e4.ui.css.theme.e4_default&quot;
+ colorAndFontId=&quot;org.eclipse.ui.defaultTheme&quot;&gt;
 &lt;/themeassociation&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

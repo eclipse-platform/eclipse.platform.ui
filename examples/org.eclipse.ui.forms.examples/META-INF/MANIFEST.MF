@@ -11,10 +11,9 @@ Export-Package: org.eclipse.ui.forms.examples.internal,
  org.eclipse.ui.forms.examples.internal.rcp,
  org.eclipse.ui.forms.examples.views
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.resources,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide;bundle-version="3.23.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Automatic-Module-Name: org.eclipse.ui.forms.examples

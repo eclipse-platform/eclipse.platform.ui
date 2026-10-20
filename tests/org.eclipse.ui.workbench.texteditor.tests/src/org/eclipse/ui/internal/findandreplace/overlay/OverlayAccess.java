@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.notifyKeyDown;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.processPendingEvents;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -53,13 +52,15 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private final ToolItem searchBackward;
 
+	private final ToolItem selectAll;
+
 	private final ToolItem openReplaceDialog;
 
-	private HistoryTextWrapper replace;
+	private final HistoryTextWrapper replace;
 
-	private ToolItem replaceButton;
+	private final ToolItem replaceButton;
 
-	private ToolItem replaceAllButton;
+	private final ToolItem replaceAllButton;
 
 	private final FindReplaceOverlay overlay;
 
@@ -74,17 +75,13 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		inSelection= widgetExtractor.findToolItem("searchInSelection");
 		searchForward= widgetExtractor.findToolItem("searchForward");
 		searchBackward= widgetExtractor.findToolItem("searchBackward");
+		selectAll= widgetExtractor.findToolItem("selectAll");
 		openReplaceDialog= widgetExtractor.findToolItem("replaceToggle");
-		extractReplaceWidgets();
-	}
-
-	private void extractReplaceWidgets() {
-		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
-			WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, getContainerControl());
-			replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
-			replaceButton= widgetExtractor.findToolItem("replaceOne");
-			replaceAllButton= widgetExtractor.findToolItem("replaceAll");
-		}
+		// The replace bar is created together with the rest of the overlay and merely
+		// hidden while collapsed, so its widgets can be extracted once up front.
+		replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
+		replaceButton= widgetExtractor.findToolItem("replaceOne");
+		replaceAllButton= widgetExtractor.findToolItem("replaceAll");
 	}
 
 	private Composite getContainerControl() {
@@ -92,7 +89,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	private void restoreInitialConfiguration() {
-		find.setText("");
+		setFindText("");
 		select(SearchOptions.GLOBAL);
 		unselect(SearchOptions.REGEX);
 		unselect(SearchOptions.CASE_SENSITIVE);
@@ -113,40 +110,32 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void select(SearchOptions option) {
-		ToolItem button= getButtonForSearchOption(option);
-		if (button == null) {
+		if (getSelectedOptions().contains(option)) {
 			return;
 		}
-		button.setSelection(true);
-		if (option == SearchOptions.GLOBAL) {
-			button.setSelection(false);
+		ToolItem button= getButtonForSearchOption(option);
+		if (button != null) {
+			button.notifyListeners(SWT.Selection, null);
+			assertSelected(option);
 		}
-		button.notifyListeners(SWT.Selection, null);
 	}
 
 	@Override
 	public void unselect(SearchOptions option) {
-		ToolItem button= getButtonForSearchOption(option);
-		if (button == null) {
+		if (!getSelectedOptions().contains(option)) {
 			return;
 		}
-		button.setSelection(false);
-		if (option == SearchOptions.GLOBAL) {
-			button.setSelection(true);
+		ToolItem button= getButtonForSearchOption(option);
+		if (button != null) {
+			button.notifyListeners(SWT.Selection, null);
+			assertUnselected(option);
 		}
-		button.notifyListeners(SWT.Selection, null);
 	}
 
 	@Override
 	public void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed) {
-		final Event event= new Event();
-		event.type= SWT.KeyDown;
-		if (shiftPressed) {
-			event.stateMask= SWT.SHIFT;
-		}
-		event.keyCode= keyCode;
-		find.notifyListeners(SWT.KeyDown, event);
-		runEventQueue();
+		notifyKeyDown(find.getTextBar(), shiftPressed ? SWT.SHIFT : SWT.NONE, keyCode);
+		processPendingEvents();
 	}
 
 	@Override
@@ -208,12 +197,31 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	private Predicate<? super SearchOptions> isOptionSelected() {
 		return option -> {
 			ToolItem buttonForSearchOption= getButtonForSearchOption(option);
-			if (option == SearchOptions.GLOBAL) {
-				return !buttonForSearchOption.getSelection();// The "Global" option is mapped to a button that
-				// selects whether to search in the selection, thus inverting the semantic
+			if (buttonForSearchOption == null) {
+				return false;
 			}
-			return buttonForSearchOption != null && buttonForSearchOption.getSelection();
+			if (option == SearchOptions.GLOBAL) {
+				// The "Global" option is mapped to a button that selects whether to search in
+				// the selection, thus inverting the semantic
+				return !buttonForSearchOption.getSelection();
+			}
+			return buttonForSearchOption.getSelection();
 		};
+	}
+
+	@Override
+	public void selectFindHistoryEntry(int index) {
+		// Clear the field directly (no SWT.Modify, so no incremental search fires),
+		// then step down once per index position. From an empty field ARROW_DOWN
+		// always lands on index 0 (newest); each additional press moves one step older.
+		find.setText("");
+		for (int i = 0; i <= index; i++) {
+			simulateKeyboardInteractionInFindInputField(SWT.ARROW_DOWN, false);
+		}
+	}
+
+	public void pressSelectAll() {
+		selectAll.notifyListeners(SWT.Selection, null);
 	}
 
 	public void pressSearch(boolean forward) {
@@ -236,23 +244,27 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		replaceButton.notifyListeners(SWT.Selection, null);
 	}
 
+	public String getSearchForwardToolTipText() {
+		return searchForward.getToolTipText();
+	}
+
+	public String getReplaceToolTipText() {
+		return replaceButton.getToolTipText();
+	}
+
 	public boolean isReplaceDialogOpen() {
-		return replace != null;
+		return replace.isVisible();
 	}
 
 	public void openReplaceDialog() {
-		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
+		if (!isReplaceDialogOpen()) {
 			openReplaceDialog.notifyListeners(SWT.Selection, null);
-			extractReplaceWidgets();
 		}
 	}
 
 	public void closeReplaceDialog() {
-		if (isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
+		if (isReplaceDialogOpen()) {
 			openReplaceDialog.notifyListeners(SWT.Selection, null);
-			replace= null;
-			replaceButton= null;
-			replaceAllButton= null;
 		}
 	}
 

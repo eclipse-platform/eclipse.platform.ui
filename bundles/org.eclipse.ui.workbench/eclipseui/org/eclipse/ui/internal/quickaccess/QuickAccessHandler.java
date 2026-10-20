@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -37,13 +38,18 @@ public class QuickAccessHandler extends AbstractHandler {
 			return null;
 		}
 
-		Optional<QuickAccessContents> existingContents = Arrays.stream(window.getShell().getDisplay().getShells()) //
+		// Prefer the active shell, so another open dialog cannot claim the toggle
+		Shell activeShell = window.getShell().getDisplay().getActiveShell();
+		Optional<QuickAccessContents> existingContents = Stream
+				.concat(Stream.ofNullable(activeShell),
+						Arrays.stream(window.getShell().getDisplay().getShells())
+								.filter(shell -> shell != activeShell))
 				.filter(Shell::isVisible) //
 				.map(Shell::getData) //
 				.filter(QuickAccessDialog.class::isInstance) //
 				.map(QuickAccessDialog.class::cast) //
 				.map(QuickAccessDialog::getQuickAccessContents) //
-				.findAny();
+				.findFirst();
 		if (existingContents.isPresent()) {
 			QuickAccessContents contents = existingContents.get();
 			contents.setShowAllMatches(!contents.getShowAllMatches());

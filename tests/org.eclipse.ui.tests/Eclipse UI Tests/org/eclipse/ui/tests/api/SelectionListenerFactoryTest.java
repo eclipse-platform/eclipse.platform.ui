@@ -198,7 +198,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	public void testSelectionPartVisibleT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID, null,
 				IWorkbenchPage.VIEW_CREATE);
-		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this, m -> true);
+		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this, _ -> true);
 		fPage.addSelectionListener(listener);
 		clearEventState();
 		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
@@ -211,7 +211,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	@Test
 	public void testSelectionPartVisibleT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
-		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this, m -> true);
+		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this, _ -> true);
 		fPage.addSelectionListener(listener);
 		clearEventState();
 		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
@@ -538,7 +538,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	@Test
 	public void testUserPredicate() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
-		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, m -> false);
+		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, _ -> false);
 		fPage.addSelectionListener(listener);
 		clearEventState();
 		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
@@ -567,7 +567,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
 				m -> m.getTargetPart().equals(view));
-		SelectionListenerFactory.decorate(listener, m -> true);
+		SelectionListenerFactory.decorate(listener, _ -> true);
 		fPage.addSelectionListener(listener);
 		clearEventState();
 		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
@@ -594,7 +594,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	@Test
 	public void testCreateListenerTest() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
-		assertThrows(ClassCastException.class, () -> SelectionListenerFactory.createListener(view, m -> true));
+		assertThrows(ClassCastException.class, () -> SelectionListenerFactory.createListener(view, _ -> true));
 	}
 
 	/**
@@ -604,10 +604,10 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	@Test
 	@Ignore
 	public void testNullListener() throws Throwable {
-		INullSelectionListener nullSelectionListener = (pPart, pSelection) -> fEventReceived = true;
+		INullSelectionListener nullSelectionListener = (_, _) -> fEventReceived = true;
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, nullSelectionListener,
-				m -> true);
+				_ -> true);
 		fPage.addSelectionListener(listener);
 		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
 //		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID_2);
@@ -625,7 +625,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
 
-		Predicate<ISelectionModel> pp = model -> {
+		Predicate<ISelectionModel> pp = _ -> {
 			System.out.println("Return true");
 			return true;
 		};
@@ -656,7 +656,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 	}
 
 	private Predicate<ISelectionModel> getCountingPredicate(boolean bool) {
-		return pT -> {
+		return _ -> {
 			fCounter++;
 			System.out.println("Return " + bool);
 			return bool;

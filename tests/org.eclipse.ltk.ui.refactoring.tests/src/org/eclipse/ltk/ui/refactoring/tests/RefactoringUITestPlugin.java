@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.tests;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -35,7 +36,7 @@ public class RefactoringUITestPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	public static void log(Throwable e) {

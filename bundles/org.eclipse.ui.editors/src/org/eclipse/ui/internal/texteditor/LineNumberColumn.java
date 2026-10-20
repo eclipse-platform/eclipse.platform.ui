@@ -248,43 +248,43 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		// listen to changes
 		fDispatcher= new PropertyEventDispatcher(store);
 
-		fDispatcher.addPropertyChangeListener(FG_COLOR_KEY, event -> {
+		fDispatcher.addPropertyChangeListener(FG_COLOR_KEY, _ -> {
 			updateForegroundColor(store, fDelegate);
 			fDelegate.redraw();
 		});
-		IPropertyChangeListener backgroundHandler= event -> {
+		IPropertyChangeListener backgroundHandler= _ -> {
 			updateBackgroundColor(store, fDelegate);
 			fDelegate.redraw();
 		};
 		fDispatcher.addPropertyChangeListener(BG_COLOR_KEY, backgroundHandler);
 		fDispatcher.addPropertyChangeListener(USE_DEFAULT_BG_KEY, backgroundHandler);
 
-		fDispatcher.addPropertyChangeListener(LINE_NUMBER_KEY, event -> updateLineNumbersVisibility(fDelegate));
+		fDispatcher.addPropertyChangeListener(LINE_NUMBER_KEY, _ -> updateLineNumbersVisibility(fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, event -> updateCharacterMode(store, fDelegate));
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, _ -> updateCharacterMode(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, event -> updateRevisionRenderingMode(store, fDelegate));
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, _ -> updateRevisionRenderingMode(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR, event -> updateRevisionAuthorVisibility(store, fDelegate));
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR, _ -> updateRevisionAuthorVisibility(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION, event -> updateRevisionIdVisibility(store, fDelegate));
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION, _ -> updateRevisionIdVisibility(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, event -> updateQuickDiffVisibility(fDelegate));
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, _ -> updateQuickDiffVisibility(fDelegate));
 
 		if (changedPref != null) {
-			fDispatcher.addPropertyChangeListener(changedPref.getColorPreferenceKey(), event -> {
+			fDispatcher.addPropertyChangeListener(changedPref.getColorPreferenceKey(), _ -> {
 				updateChangedColor(changedPref, store, fDelegate);
 				fDelegate.redraw();
 			});
 		}
 		if (addedPref != null) {
-			fDispatcher.addPropertyChangeListener(addedPref.getColorPreferenceKey(), event -> {
+			fDispatcher.addPropertyChangeListener(addedPref.getColorPreferenceKey(), _ -> {
 				updateAddedColor(addedPref, store, fDelegate);
 				fDelegate.redraw();
 			});
 		}
 		if (deletedPref != null) {
-			fDispatcher.addPropertyChangeListener(deletedPref.getColorPreferenceKey(), event -> {
+			fDispatcher.addPropertyChangeListener(deletedPref.getColorPreferenceKey(), _ -> {
 				updateDeletedColor(deletedPref, store, fDelegate);
 				fDelegate.redraw();
 			});

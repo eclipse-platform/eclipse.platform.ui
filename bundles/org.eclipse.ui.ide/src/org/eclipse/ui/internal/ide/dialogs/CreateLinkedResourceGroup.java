@@ -277,7 +277,7 @@ public class CreateLinkedResourceGroup {
 		linkTargetField.setEnabled(enabled);
 		linkTargetField.setFont(locationGroup.getFont());
 		BidiUtils.applyBidiProcessing(linkTargetField, StructuredTextTypeHandlerFactory.FILE);
-		linkTargetField.addModifyListener(e -> {
+		linkTargetField.addModifyListener(_ -> {
 			linkTarget = linkTargetField.getText();
 			if (isDefaultConfigurationSelected()) {
 				linkTarget = getPathVariableManager().convertFromUserEditableFormat(linkTarget, true);
@@ -467,7 +467,7 @@ public class CreateLinkedResourceGroup {
 
 		if (linkTarget.length() > 0) {
 			store = IDEResourceInfoUtils.getFileStore(linkTarget);
-			if (!store.fetchInfo().exists()) {
+			if (!store.exists()) {
 				store = null;
 			}
 		}
@@ -476,7 +476,7 @@ public class CreateLinkedResourceGroup {
 				FileDialog dialog = new FileDialog(linkTargetField.getShell(), SWT.SHEET);
 				dialog.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionTitle);
 				if (store != null) {
-					if (store.fetchInfo().isDirectory()) {
+					if (store.isDirectory()) {
 						dialog.setFilterPath(linkTarget);
 					} else {
 						dialog.setFileName(linkTarget);
@@ -494,7 +494,7 @@ public class CreateLinkedResourceGroup {
 			String filterPath = null;
 			if (store != null) {
 				IFileStore path = store;
-				if (!store.fetchInfo().isDirectory()) {
+				if (!store.isDirectory()) {
 					path = store.getParent();
 				}
 				if (path != null) {

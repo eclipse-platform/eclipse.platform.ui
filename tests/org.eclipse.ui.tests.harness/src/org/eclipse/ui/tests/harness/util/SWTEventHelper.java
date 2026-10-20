@@ -191,7 +191,7 @@ public class SWTEventHelper {
 					((Control)dropItem).getBounds());
 		}
 
-		startControl.addDragDetectListener(e -> _dragDetected = true);
+		startControl.addDragDetectListener(_ -> _dragDetected = true);
 
 
 		int count = 0;

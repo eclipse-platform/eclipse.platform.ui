@@ -15,25 +15,38 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
+import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.nio.charset.StandardCharsets;
+
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class LabelTest extends CSSSWTTestCase {
+public class LabelTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	@Test
 	void testColor() {
-		Label labelToTest = createTestLabel("Label { background-color: #FF0000; color: #0000FF }");
+		Label labelToTest = css.createTestLabel("Label { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, labelToTest.getBackground().getRGB());
 		assertEquals(BLUE, labelToTest.getForeground().getRGB());
 	}
 
 	@Test
 	void testFontRegular() {
-		Label labelToTest = createTestLabel("Label { font: Verdana 16px }");
+		Label labelToTest = css.createTestLabel("Label { font: Verdana 16pt }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
@@ -43,7 +56,7 @@ public class LabelTest extends CSSSWTTestCase {
 
 	@Test
 	void testFontBold() {
-		Label labelToTest = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
+		Label labelToTest = css.createTestLabel("Label { font: Arial 12pt; font-weight: bold }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
@@ -52,32 +65,231 @@ public class LabelTest extends CSSSWTTestCase {
 	}
 
 	@Test
+	void testFontWeightNumeric() {
+		Label labelToTest = css.createTestLabel("Label { font-weight: 700 }");
+
+		assertEquals(SWT.BOLD, labelToTest.getFont().getFontData()[0].getStyle());
+	}
+
+	@Test
+	void testFontWeightBelowBoldStaysRegular() {
+		Label labelToTest = css.createTestLabel("Label { font-weight: 500 }");
+
+		assertEquals(SWT.NORMAL, labelToTest.getFont().getFontData()[0].getStyle());
+	}
+
+	@Test
+	void testFontWeightSelectsThePangoWeightOnGtk() throws ReflectiveOperationException {
+		assumeTrue("gtk".equals(SWT.getPlatform()));
+
+		Label labelToTest = css.createTestLabel("Label { font-weight: semi-bold }");
+
+		byte[] description = (byte[]) FontData.class.getField("string").get(labelToTest.getFont().getFontData()[0]);
+		assertTrue(new String(description, StandardCharsets.UTF_8).contains("Semi-Bold"));
+	}
+
+	@Test
+	void testFontWeightSelectsTheSemiBoldFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Semibold", true).length > 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 600 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Semibold", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightFallsBackToTheNearestLighterFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Light", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Segoe UI ExtraLight", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 200 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Light", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightFallsBackToTheNearestHeavierFaceOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Segoe UI Black", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Segoe UI ExtraBold", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 800 12pt \"Segoe UI\" }");
+
+		assertEquals("Segoe UI Black", labelToTest.getFont().getFontData()[0].getName());
+	}
+
+	@Test
+	void testFontWeightWithoutSemiBoldFaceIsBoldOnWindows() {
+		assumeTrue("win32".equals(SWT.getPlatform()));
+		assumeTrue(css.getDisplay().getFontList("Calibri", true).length > 0);
+		assumeTrue(css.getDisplay().getFontList("Calibri Semibold", true).length == 0);
+
+		Label labelToTest = css.createTestLabel("Label { font: 600 12pt Calibri }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Calibri", fontData.getName());
+		// GDI reports bold only for a weight of exactly 700
+		assertEquals(SWT.BOLD, fontData.getStyle());
+	}
+
+	@Test
+	void testFontWeightSelectsTheMediumFaceOnMac() throws ReflectiveOperationException {
+		assumeTrue("cocoa".equals(SWT.getPlatform()));
+
+		Label labelToTest = css.createTestLabel("Label { font: 500 12pt \"Helvetica Neue\" }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("HelveticaNeue-Medium", FontData.class.getField("nsName").get(fontData));
+	}
+
+	@Test
+	void testFontWeightInShorthand() {
+		Label labelToTest = css.createTestLabel("Label { font: 700 12pt Arial }");
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+
+		assertEquals("Arial", fontData.getName());
+		assertEquals(12, fontData.getHeight());
+		assertEquals(SWT.BOLD, fontData.getStyle());
+	}
+
+	@Test
 	void testFontItalic() {
-		Label labelToTest = createTestLabel("Label { font-style: italic }");
+		Label labelToTest = css.createTestLabel("Label { font-style: italic }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
 	@Test
+	void testFontSizeInPercent() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font-size: 200% }");
+
+		assertEquals(inheritedHeight * 2, labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeInEm() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font-size: 2em }");
+
+		assertEquals(inheritedHeight * 2, labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeLarger() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font-size: larger }");
+
+		assertEquals(Math.round(inheritedHeight * 1.2), labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeSmallerInShorthand() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+
+		Label labelToTest = css.createTestLabel("Label { font: Verdana smaller }");
+
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Verdana", fontData.getName());
+		assertEquals(Math.round(inheritedHeight / 1.2), fontData.getHeight());
+	}
+
+	@Test
+	void testFontSizeInPixels() {
+		Label labelToTest = css.createTestLabel("Label { font-size: 16px }");
+
+		assertEquals(12, labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeInPoints() {
+		Label labelToTest = css.createTestLabel("Label { font-size: 16pt }");
+
+		assertEquals(16, labelToTest.getFont().getFontData()[0].getHeight());
+	}
+
+	@Test
+	void testFontSizeInPercentIsNotCompoundedWhenStylesAreReapplied() {
+		int inheritedHeight = css.getDisplay().getSystemFont().getFontData()[0].getHeight();
+		Label labelToTest = css.createTestLabel("Label { font-size: 200% }");
+		FontData styledFontData = labelToTest.getFont().getFontData()[0];
+
+		// styling the label again with a cold font cache must scale the font the
+		// label started with, not the one the first pass gave it
+		css.getEngine().getResourcesRegistry().dispose();
+		Font styledFont = new Font(css.getDisplay(), styledFontData);
+		labelToTest.setFont(styledFont);
+		css.getEngine().applyStyles(labelToTest, true);
+
+		assertEquals(inheritedHeight * 2, labelToTest.getFont().getFontData()[0].getHeight());
+		styledFont.dispose();
+	}
+
+	@Test
+	void testFontSizeInPercentIsResolvedPerWidget() {
+		CSSEngine engine = css.createEngine("Label { font-size: 200% }");
+		Shell shell = new Shell(css.getDisplay());
+		Label smallLabel = new Label(shell, SWT.NONE);
+		Label largeLabel = new Label(shell, SWT.NONE);
+		// same family and style, so the two only differ in the size they scale from
+		Font smallFont = new Font(css.getDisplay(), "Arial", 10, SWT.NORMAL);
+		Font largeFont = new Font(css.getDisplay(), "Arial", 20, SWT.NORMAL);
+		smallLabel.setFont(smallFont);
+		largeLabel.setFont(largeFont);
+
+		engine.applyStyles(smallLabel, true);
+		engine.applyStyles(largeLabel, true);
+
+		assertEquals(20, smallLabel.getFont().getFontData()[0].getHeight());
+		assertEquals(40, largeLabel.getFont().getFontData()[0].getHeight());
+		shell.dispose();
+		smallFont.dispose();
+		largeFont.dispose();
+	}
+
+	@Test
+	void testFontWeightKeepsAnInheritedFamilyWithSpacesUnquoted() {
+		Font font = new Font(css.getDisplay(), "Times New Roman", 10, SWT.NORMAL);
+		// macOS reports the font it fell back to when the family is not installed
+		String family = font.getFontData()[0].getName();
+		assumeTrue(family.contains(" "));
+		CSSEngine engine = css.createEngine("Label { font-weight: bold }");
+		Shell shell = new Shell(css.getDisplay());
+		Label label = new Label(shell, SWT.NONE);
+		label.setFont(font);
+
+		engine.applyStyles(label, true);
+
+		assertEquals(family, label.getFont().getFontData()[0].getName());
+		shell.dispose();
+		font.dispose();
+	}
+
+	@Test
 	void testAlignment() {
-		Label labelToTest = createTestLabel("Label { swt-alignment: right }");
+		Label labelToTest = css.createTestLabel("Label { swt-alignment: right }");
 		assertEquals(SWT.RIGHT, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { swt-alignment: center; }");
+		labelToTest = css.createTestLabel("Label { swt-alignment: center; }");
 		assertEquals(SWT.CENTER, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { swt-alignment: left; }");
+		labelToTest = css.createTestLabel("Label { swt-alignment: left; }");
 		assertEquals(SWT.LEFT, labelToTest.getAlignment());
 
 	}
 
 	@Test
 	void testAlignment2() {
-		Label labelToTest = createTestLabel("Label { swt-alignment: trail }");
+		Label labelToTest = css.createTestLabel("Label { swt-alignment: trail }");
 		assertEquals(SWT.TRAIL, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { swt-alignment: lead; }");
+		labelToTest = css.createTestLabel("Label { swt-alignment: lead; }");
 		assertEquals(SWT.LEAD, labelToTest.getAlignment());
 	}
 }

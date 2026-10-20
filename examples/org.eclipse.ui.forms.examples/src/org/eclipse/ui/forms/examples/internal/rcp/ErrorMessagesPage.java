@@ -253,7 +253,7 @@ public class ErrorMessagesPage extends FormPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 150;
 		text.setLayoutData(gd);
-		text.addModifyListener(e -> {
+		text.addModifyListener(_ -> {
 			String s = text.getText();
 			// flag length
 			if (s.length() > 0 && s.length() <= 5) {

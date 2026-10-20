@@ -45,8 +45,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -60,8 +59,6 @@ import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextViewer;
-
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Minimap widget which displays scaled content of the given text editor.
@@ -93,9 +90,7 @@ public class MinimapWidget {
 			try {
 				fMinimapTracker.replaceTextRange(event);
 			} catch (Exception e) {
-				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
-						"Minimap text content synchronization failed", e); //$NON-NLS-1$
-				TextEditorPlugin.getDefault().getLog().log(status);
+				ILog.of(MinimapWidget.class).error("Minimap text content synchronization failed", e); //$NON-NLS-1$
 				synchText();
 			}
 		}
@@ -111,9 +106,7 @@ public class MinimapWidget {
 				addPresentation(presentation);
 			} catch (Exception e) {
 				synchTextAndStyles();
-				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
-						"Minimap styles synchronization failed", e); //$NON-NLS-1$
-				TextEditorPlugin.getDefault().getLog().log(status);
+				ILog.of(MinimapWidget.class).error("Minimap styles synchronization failed", e); //$NON-NLS-1$
 			}
 		}
 

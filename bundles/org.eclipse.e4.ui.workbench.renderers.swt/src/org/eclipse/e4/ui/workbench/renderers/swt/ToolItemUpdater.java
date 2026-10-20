@@ -47,11 +47,13 @@ public class ToolItemUpdater implements Runnable {
 	}
 
 	public void updateContributionItems(Selector selector) {
+		boolean queued = false;
 		boolean doRunNow = false;
 		for (final AbstractContributionItem ci : itemsToCheck) {
 			if (ci.getModel() != null && ci.getModel().getParent() != null) {
 				if (selector.select(ci.getModel())) {
 					itemsToUpdateLater.add(ci);
+					queued = true;
 					if (timestampOfEarliestQueuedUpdate == 0) {
 						timestampOfEarliestQueuedUpdate = System.nanoTime();
 					}
@@ -61,13 +63,15 @@ public class ToolItemUpdater implements Runnable {
 						// again and again in less than given DELAY frequency. TimerExec would then
 						// never be executed.
 						doRunNow = true;
-					} else {
-						Display.getDefault().timerExec(DELAY, this);
 					}
 				}
 			} else {
 				orphanedToolItems.add(ci);
 			}
+		}
+		if (queued && !doRunNow) {
+			// one timer for the whole batch, rescheduling it per item only costs time
+			Display.getDefault().timerExec(DELAY, this);
 		}
 		if (!orphanedToolItems.isEmpty()) {
 			itemsToCheck.removeAll(orphanedToolItems);

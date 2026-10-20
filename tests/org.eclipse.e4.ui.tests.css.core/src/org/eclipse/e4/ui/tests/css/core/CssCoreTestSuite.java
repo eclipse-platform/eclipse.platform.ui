@@ -15,8 +15,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core;
 
-import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngineTest;
-import org.eclipse.e4.ui.tests.css.core.dom.CSSPropertyHandlerProviderTest;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.CascadeTest;
 import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ImportTest;
@@ -25,6 +24,7 @@ import org.eclipse.e4.ui.tests.css.core.parser.MediaRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.RGBColorImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.SelectorTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
+import org.eclipse.e4.ui.tests.css.core.parser.StyleSheetStructureTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ValueTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
 import org.junit.platform.suite.api.SelectClasses;
@@ -36,14 +36,16 @@ import org.junit.platform.suite.api.Suite;
 	MediaRulesTest.class,
 	RGBColorImplTest.class,
 	StyleRuleTest.class,
+	StyleSheetStructureTest.class,
 	ViewCSSTest.class,
 	ValueTest.class,
 	SelectorTest.class,
 	CSSEngineTest.class,
+	CSS2FontHelperTest.class,
+	CSS2ColorHelperTest.class,
 	ImportTest.class,
 	InheritTest.class,
-	AbstractCSSEngineTest.class,
-	CSSPropertyHandlerProviderTest.class
+	CSSEngineImplTest.class
 })
 @Suite
 public class CssCoreTestSuite {

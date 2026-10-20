@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Angelo Zerr and others.
+ * Copyright (c) 2008, 2026 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,13 +19,12 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.AbstractCSSValueConv
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssColor;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.RGBColor;
 
 /**
  * CSS Value converter to convert :
@@ -45,11 +44,15 @@ public class CSSValueSWTColorConverterImpl extends AbstractCSSValueConverter {
 	@Override
 	public Color convert(CSSValue value, CSSEngine engine, Object context)
 			throws DOMException {
+		if (CSSSWTColorHelper.isUnresolvedColorDefinition(value)) {
+			// treated like unset, so the widget keeps its default color instead of black
+			return null;
+		}
 		Display display = (Display) context;
 		Color color = CSSSWTColorHelper.getSWTColor(value, display);
 		if (color == null) {
-			throw new DOMExceptionImpl(DOMException.INVALID_ACCESS_ERR,
-					DOMExceptionImpl.RGBCOLOR_ERROR);
+			throw new DOMException(DOMException.INVALID_ACCESS_ERR,
+					"This isn't an RGBColor type");
 		}
 
 		return color;
@@ -59,7 +62,7 @@ public class CSSValueSWTColorConverterImpl extends AbstractCSSValueConverter {
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		Color color = (Color) value;
-		RGBColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
-		return CSS2ColorHelper.getColorStringValue(rgbColor, config);
+		CssColor rgbColor = CSSSWTColorHelper.getRGBColor(color);
+		return CSS2ColorHelper.getColorStringValue(rgbColor);
 	}
 }

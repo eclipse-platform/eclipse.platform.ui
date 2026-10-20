@@ -13,7 +13,8 @@ package org.eclipse.e4.ui.tests.css.properties.tabbed;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.tests.css.swt.CssSwtEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,12 +23,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class TabbedPropertiesListTest extends CSSSWTTestCase {
+public class TabbedPropertiesListTest {
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	static final RGB RED = new RGB(255, 0, 0);
 	private TabbedPropertySheetWidgetFactory factory;
 	private Shell shell;
+	private CSSEngine engine;
 
 
 	private TabbedPropertyList createTabbedPropertiesList(String stylesheet) {
@@ -37,9 +43,9 @@ public class TabbedPropertiesListTest extends CSSSWTTestCase {
 		} else {
 			s = stylesheet;
 		}
-		engine = createEngine(s, display);
+		engine = css.createEngine(s);
 
-		shell = new Shell(display, SWT.SHELL_TRIM);
+		shell = new Shell(css.getDisplay(), SWT.SHELL_TRIM);
 		FillLayout layout = new FillLayout();
 		shell.setLayout(layout);
 

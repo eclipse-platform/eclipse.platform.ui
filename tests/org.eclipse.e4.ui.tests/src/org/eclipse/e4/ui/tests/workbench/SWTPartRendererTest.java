@@ -59,7 +59,7 @@ public class SWTPartRendererTest {
 
 		context = EclipseContextFactory.create();
 		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),
-				new Class<?>[] { IStylingEngine.class }, (Object proxy, Method method, Object[] args) -> {
+				new Class<?>[] { IStylingEngine.class }, (Object _, Method method, Object[] args) -> {
 					stylingEngineExecutedMethods.put(method.getName(), args);
 					return null;
 				}));

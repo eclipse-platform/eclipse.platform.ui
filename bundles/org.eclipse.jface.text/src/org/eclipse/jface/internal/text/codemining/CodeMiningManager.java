@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2026 Angelo ZERR and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide CodeMining support with CodeMiningManager - Bug 527720
  *  Dietrich Travkin <dietrich.travkin@solunar.de> - Fix code mining redrawing - Issue 3405
+ *  Alexander Fedorov <alexander.fedorov@arsysop.ru> - Remove redundant null checks
  */
 package org.eclipse.jface.internal.text.codemining;
 
@@ -115,9 +116,7 @@ public class CodeMiningManager implements Runnable {
 	 */
 	public void uninstall() {
 		cancel();
-		if (fInlinedAnnotationSupport != null) {
-			fInlinedAnnotationSupport.updateAnnotations(Collections.emptySet());
-		}
+		fInlinedAnnotationSupport.updateAnnotations(Collections.emptySet());
 		if (fCodeMiningProviders != null) {
 			fCodeMiningProviders.forEach(ICodeMiningProvider::dispose);
 		}
@@ -128,7 +127,7 @@ public class CodeMiningManager implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (fViewer == null || fInlinedAnnotationSupport == null || fCodeMiningProviders == null
+		if (fCodeMiningProviders == null
 				|| fCodeMiningProviders.isEmpty() || fViewer.getAnnotationModel() == null) {
 			return;
 		}
@@ -284,7 +283,7 @@ public class CodeMiningManager implements Runnable {
 			IProgressMonitor monitor) {
 		// check if request was canceled.
 		monitor.isCanceled();
-		IDocument document= viewer != null ? viewer.getDocument() : null;
+		IDocument document= viewer.getDocument();
 		if (document == null) {
 			// this case comes from when editor is closed before codemining rendered is
 			// done.

@@ -661,7 +661,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			textControl.setToolTipText(preference.getDescription());
 
 			if (domain != null) {
-				textControl.addModifyListener(e -> {
+				textControl.addModifyListener(_ -> {
 					String value= textControl.getText();
 					IStatus status= domain.validate(value);
 					if (!status.matches(IStatus.ERROR)) {
@@ -1136,7 +1136,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initializeAppearColorTable(Composite tableComposite) {
-		fAppearanceColorTableViewer.addSelectionChangedListener((SelectionChangedEvent event) -> handleAppearanceColorListSelection());
+		fAppearanceColorTableViewer
+				.addSelectionChangedListener((SelectionChangedEvent _) -> handleAppearanceColorListSelection());
 		colorPreviewImages= new ArrayList<>();
 
 		fAppearanceColorTableViewer.setLabelProvider(new LabelProvider() {
@@ -1147,14 +1148,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					return null;
 				}
 				RGB rgb= colorEntry.isSystemDefault() ? colorEntry.systemColorRGB : colorEntry.getRGB();
-				Color color= new Color(tableComposite.getParent().getDisplay(), rgb.red, rgb.green, rgb.blue);
+				Color color= new Color(rgb.red, rgb.green, rgb.blue);
 				int dimensions= 10;
 				final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
 					// Draw color preview
 					gc.setBackground(color);
 					gc.fillRectangle(0, 0, width, height);
 					// Draw outline around color preview
-					gc.setBackground(new Color(tableComposite.getParent().getDisplay(), 0, 0, 0));
+					gc.setBackground(new Color(0, 0, 0));
 					gc.setLineWidth(2);
 					gc.drawRectangle(0, 0, width, height);
 				};
@@ -1477,7 +1478,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		textControl.setToolTipText(preference.getDescription());
 
 		if (domain != null) {
-			textControl.addModifyListener(e -> {
+			textControl.addModifyListener(_ -> {
 				String value= textControl.getText();
 				IStatus status= domain.validate(value);
 				if (!status.matches(IStatus.ERROR)) {

@@ -93,7 +93,7 @@ public class FileSearchQuery implements ISearchQuery {
 			if (stop) {
 				return false;
 			}
-			fCachedMatches.compute(matchRequestor.getFile(), (f, matches) -> {
+			fCachedMatches.compute(matchRequestor.getFile(), (_, matches) -> {
 				// each file is processed by at most one job
 				int matchOffset = matchRequestor.getMatchOffset();
 				LineElement lineElement = getLineElement(matchOffset, matchRequestor, matches);

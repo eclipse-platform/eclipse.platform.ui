@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.addons.swt;singleton:=true
-Bundle-Version: 1.6.100.qualifier
+Bundle-Version: 1.6.200.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -24,7 +24,7 @@ Service-Component: OSGI-INF/org.eclipse.e4.ui.workbench.addons.swt.CleanupProces
  OSGI-INF/org.eclipse.e4.ui.workbench.addons.swt.SplitterProcessor.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
-Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
+Import-Package: jakarta.annotation;version="[2.0.0,4.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
  org.eclipse.e4.ui.internal.workbench.swt,
  org.eclipse.osgi.util;version="[1.1.0,2.0.0)",

@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -122,7 +123,7 @@ public class MultiSelectionTest {
 		//
 		AtomicInteger idx= new AtomicInteger();
 		selectionProcessor.doReplace(selection,
-				Arrays.stream(selection.getRegions()).mapToInt(r -> idx.getAndIncrement()).mapToObj(Integer::toString).collect(Collectors.joining(System.lineSeparator())));
+				Arrays.stream(selection.getRegions()).mapToInt(_ -> idx.getAndIncrement()).mapToObj(Integer::toString).collect(Collectors.joining(System.lineSeparator())));
 		assertEquals("0ab1ab2a\nb3ab4a", document.get());
 		assertArrayEquals(new IRegion[] { new Region(1, 0), new Region(4, 0), new Region(7, 0), new Region(11, 0), new Region(14, 0) },
 				((IMultiTextSelection) textViewer.getSelectionProvider().getSelection()).getRegions());
@@ -165,6 +166,29 @@ public class MultiSelectionTest {
 	}
 
 	@Test
+	public void testSelectionTrackedAfterSelectionCountChangeWhileRedrawDisabled() throws BadLocationException {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			Document document= new Document("foo foo");
+			textViewer.setDocument(document);
+			textViewer.setSelection(new MultiTextSelection(document, new IRegion[] { new Region(0, 3), new Region(4, 3) }));
+
+			textViewer.setRedraw(false); // switch to usage of ViewerState
+			try {
+				textViewer.setSelectedRange(4, 3); // selection count changes from 2 to 1
+				document.replace(0, 4, "");
+				assertEquals(new Point(0, 3), textViewer.getSelectedRange());
+			} finally {
+				textViewer.setRedraw(true);
+			}
+			assertEquals(new Point(0, 3), textViewer.getSelectedRange());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
 	@Disabled("this is currently for manual testing")
 	public void testViewer() {
 		Shell shell= new Shell();
@@ -185,7 +209,7 @@ public class MultiSelectionTest {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(shell);
 		shell.pack();
 		shell.setVisible(true);
-		b.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+		b.addSelectionListener(SelectionListener.widgetSelectedAdapter(_ -> {
 			textViewer.setSelection(selection);
 			textViewer.getTextWidget().setFocus();
 		}));

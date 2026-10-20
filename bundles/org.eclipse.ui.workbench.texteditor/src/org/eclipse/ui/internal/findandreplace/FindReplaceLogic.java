@@ -15,10 +15,16 @@
 package org.eclipse.ui.internal.findandreplace;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -59,12 +65,56 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private String replaceString = ""; //$NON-NLS-1$
 	private ReplaceCounter replaceCounter;
 
+	private final Map<SearchOptions, List<Consumer<Boolean>>> activationChangedListeners = new HashMap<>();
+	private final Map<SearchOptions, List<Consumer<Boolean>>> availabilityChangedListeners = new HashMap<>();
+
+	@Override
+	public void addSearchOptionActivationChangedListener(SearchOptions option, Consumer<Boolean> listener) {
+		Objects.requireNonNull(option);
+		Objects.requireNonNull(listener);
+		activationChangedListeners.computeIfAbsent(option, k -> new CopyOnWriteArrayList<>()).add(listener);
+	}
+
+	@Override
+	public void addSearchOptionAvailabilityChangedListener(SearchOptions option, Consumer<Boolean> listener) {
+		Objects.requireNonNull(option);
+		Objects.requireNonNull(listener);
+		availabilityChangedListeners.computeIfAbsent(option, k -> new CopyOnWriteArrayList<>()).add(listener);
+	}
+
+	private void notifyActivationChangedListeners(SearchOptions option, boolean newState) {
+		List<Consumer<Boolean>> listeners = activationChangedListeners.getOrDefault(option, Collections.emptyList());
+		listeners.forEach(l -> l.accept(newState));
+	}
+
+	private void notifyAvailabilityChangedListeners(SearchOptions option, boolean newAvailability) {
+		List<Consumer<Boolean>> listeners = availabilityChangedListeners.getOrDefault(option, Collections.emptyList());
+		listeners.forEach(l -> l.accept(newAvailability));
+	}
+
+	private Map<SearchOptions, Boolean> captureAvailabilities() {
+		Map<SearchOptions, Boolean> snapshot = new EnumMap<>(SearchOptions.class);
+		availabilityChangedListeners.keySet().forEach(option -> snapshot.put(option, isAvailable(option)));
+		return snapshot;
+	}
+
+	private void notifyAvailabilityChangedIfNeeded(Map<SearchOptions, Boolean> oldAvailabilities) {
+		oldAvailabilities.forEach((option, oldAvailability) -> {
+			boolean newAvailability = isAvailable(option);
+			if (oldAvailability != newAvailability) {
+				notifyAvailabilityChangedListeners(option, newAvailability);
+			}
+		});
+	}
+
 	@Override
 	public void setFindString(String findString) {
+		Map<SearchOptions, Boolean> oldAvailabilities = captureAvailabilities();
 		this.findString = Objects.requireNonNull(findString);
 		if (isAvailableAndActive(SearchOptions.INCREMENTAL)) {
 			performSearch(true);
 		}
+		notifyAvailabilityChangedIfNeeded(oldAvailabilities);
 	}
 
 	@Override
@@ -90,6 +140,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public void activate(SearchOptions searchOption) {
+		Map<SearchOptions, Boolean> oldAvailabilities = captureAvailabilities();
 		if (!searchOptions.add(searchOption)) {
 			return;
 		}
@@ -108,10 +159,13 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		default:
 			break;
 		}
+		notifyActivationChangedListeners(searchOption, true);
+		notifyAvailabilityChangedIfNeeded(oldAvailabilities);
 	}
 
 	@Override
 	public void deactivate(SearchOptions searchOption) {
+		Map<SearchOptions, Boolean> oldAvailabilities = captureAvailabilities();
 		if (!searchOptions.remove(searchOption)) {
 			return;
 		}
@@ -122,6 +176,17 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		if (searchOption == SearchOptions.FORWARD && shouldInitIncrementalBaseLocation()) {
 			resetIncrementalBaseLocation();
+		}
+		notifyActivationChangedListeners(searchOption, false);
+		notifyAvailabilityChangedIfNeeded(oldAvailabilities);
+	}
+
+	@Override
+	public void toggle(SearchOptions searchOption) {
+		if (isActive(searchOption)) {
+			deactivate(searchOption);
+		} else {
+			activate(searchOption);
 		}
 	}
 
@@ -613,6 +678,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		this.isTargetEditable = canEditTarget;
 
 		if (this.target != newTarget) {
+			Map<SearchOptions, Boolean> oldAvailabilities = captureAvailabilities();
 			if (this.target instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) this.target).endSession();
 			}
@@ -625,6 +691,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 				activate(SearchOptions.GLOBAL);
 			}
+			notifyAvailabilityChangedIfNeeded(oldAvailabilities);
 		}
 
 		resetIncrementalBaseLocation();

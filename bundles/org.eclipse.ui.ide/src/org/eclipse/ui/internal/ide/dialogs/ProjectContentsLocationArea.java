@@ -218,7 +218,7 @@ public class ProjectContentsLocationArea {
 					.getLocation().toOSString()));
 		}
 
-		locationPathField.addModifyListener(e -> errorReporter.reportError(checkValidLocation(), false));
+		locationPathField.addModifyListener(_ -> errorReporter.reportError(checkValidLocation(), false));
 	}
 
 	/**

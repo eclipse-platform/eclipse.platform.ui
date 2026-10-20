@@ -2818,8 +2818,4 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fAutoActivateCompletionOnType= enable;
 		}
 	}
-
-	boolean isAutoActivateCompletionOnType() {
-		return fAutoActivateCompletionOnType;
-	}
 }

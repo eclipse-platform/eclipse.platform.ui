@@ -115,7 +115,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	/**
 	 * Storage for preferences.
 	 */
-	private volatile ScopedPreferenceStore preferenceStore;
+	private volatile IPreferenceStore preferenceStore;
 
 	/**
 	 * The registry for all graphic images; <code>null</code> if not yet
@@ -245,7 +245,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		// Create the preference store lazily.
-		ScopedPreferenceStore result = preferenceStore;
+		IPreferenceStore result = preferenceStore;
 		if (result == null) { // First check (no locking)
 			synchronized (this) {
 				result = preferenceStore;

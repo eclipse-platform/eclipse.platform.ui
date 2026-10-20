@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -32,7 +31,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
 import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -408,6 +406,6 @@ final class HippieCompleteAction extends TextEditorAction {
 		if (msg == null) {
 			msg= "unable to access the document"; //$NON-NLS-1$
 		}
-		TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, msg, e));
+		ILog.of(HippieCompleteAction.class).error(msg, e);
 	}
 }

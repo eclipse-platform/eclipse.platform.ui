@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -226,7 +226,10 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 	 */
 	@Override
 	protected void doSetValue(Object value) {
-		Assert.isTrue(comboBox != null && (value instanceof Integer));
+		Assert.isTrue(comboBox != null);
+		String valueType = value == null ? "null" : value.getClass().getName(); //$NON-NLS-1$
+		Assert.isTrue(value instanceof Integer,
+				"ComboBoxCellEditor expects an Integer value but got " + valueType); //$NON-NLS-1$
 		selection = ((Integer) value).intValue();
 		comboBox.select(selection);
 	}

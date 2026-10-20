@@ -32,6 +32,9 @@ public class XmlProcessorFactoryLtk {
 		// static Utility only
 	}
 
+	/** JAXP limit on the attributes of one element, 200 by default since Java 24. */
+	private static final String ELEMENT_ATTRIBUTE_LIMIT= "jdk.xml.elementAttributeLimit"; //$NON-NLS-1$
+
 	private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY_ERROR_ON_DOCTYPE = createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 	private static final SAXParserFactory SAX_FACTORY_ERROR_ON_DOCTYPE = createSAXFactoryWithErrorOnDOCTYPE(false);
 	private static final SAXParserFactory SAX_FACTORY_ERROR_ON_DOCTYPE_NS = createSAXFactoryWithErrorOnDOCTYPE(true);
@@ -66,7 +69,24 @@ public class XmlProcessorFactoryLtk {
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+		try {
+			factory.setAttribute(ELEMENT_ATTRIBUTE_LIMIT, 0);
+		} catch (IllegalArgumentException e) {
+			// not the JDK parser
+		}
 		return factory;
+	}
+
+	/**
+	 * Lifts the JAXP limit on the attributes of one element.
+	 */
+	public static SAXParser withoutElementAttributeLimit(SAXParser parser) {
+		try {
+			parser.setProperty(ELEMENT_ATTRIBUTE_LIMIT, 0);
+		} catch (SAXNotRecognizedException | SAXNotSupportedException e) {
+			// not the JDK parser
+		}
+		return parser;
 	}
 
 	/**
@@ -144,9 +164,9 @@ public class XmlProcessorFactoryLtk {
 	public static SAXParser createSAXParserWithErrorOnDOCTYPE(boolean namespaceAware)
 			throws ParserConfigurationException, SAXException {
 		if (namespaceAware) {
-			return SAX_FACTORY_ERROR_ON_DOCTYPE_NS.newSAXParser();
+			return withoutElementAttributeLimit(SAX_FACTORY_ERROR_ON_DOCTYPE_NS.newSAXParser());
 		}
-		return SAX_FACTORY_ERROR_ON_DOCTYPE.newSAXParser();
+		return withoutElementAttributeLimit(SAX_FACTORY_ERROR_ON_DOCTYPE.newSAXParser());
 	}
 
 	/**
@@ -160,6 +180,6 @@ public class XmlProcessorFactoryLtk {
 		SAXParser parser = SAX_FACTORY_IGNORING_DOCTYPE.newSAXParser();
 		parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, ""); //$NON-NLS-1$
 		parser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); //$NON-NLS-1$
-		return parser;
+		return withoutElementAttributeLimit(parser);
 	}
 }

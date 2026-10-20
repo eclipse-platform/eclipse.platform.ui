@@ -58,6 +58,10 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String ComparePreviewer_refactored_source;
 
+	public static String CopyResourcesHandler_problem_occurred;
+
+	public static String CopyResourcesHandler_incorrect_params;
+
 	public static String DeleteResourcesHandler_title;
 
 	public static String DeleteResourcesWizard_label_multi;

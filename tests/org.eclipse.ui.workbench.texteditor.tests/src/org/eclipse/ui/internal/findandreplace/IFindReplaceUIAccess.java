@@ -49,6 +49,8 @@ public interface IFindReplaceUIAccess {
 
 	void performReplaceAndFind();
 
+	void selectFindHistoryEntry(int index);
+
 	void assertInitialConfiguration();
 
 	void assertUnselected(SearchOptions option);

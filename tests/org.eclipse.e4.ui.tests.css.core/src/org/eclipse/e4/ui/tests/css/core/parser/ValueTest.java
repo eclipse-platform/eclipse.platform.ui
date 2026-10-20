@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.impl.dom.Measure;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,63 +38,63 @@ public class ValueTest {
 	@Test
 	void testFloat() throws Exception {
 		CSSValue value = engine.parsePropertyValue("2.0");
-		assertTrue(value instanceof Measure);
+		assertTrue(value instanceof CSSPrimitiveValue);
 		assertEquals( "2.0", value.getCssText() );
 	}
 
 	@Test
 	void testInt() throws Exception {
 		CSSValue value = engine.parsePropertyValue("34");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_NUMBER, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "34", value.getCssText() );
 	}
 
 	@Test
 	void testIdentifier() throws Exception {
 		CSSValue value = engine.parsePropertyValue("SomeWord");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_IDENT, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_IDENT, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "SomeWord", value.getCssText() );
 	}
 
 	@Test
 	void testPercent() throws Exception {
 		CSSValue value = engine.parsePropertyValue("30%");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_PERCENTAGE, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_PERCENTAGE, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "30.0%", value.getCssText() );
 	}
 
 	@Test
 	void testPixel() throws Exception {
 		CSSValue value = engine.parsePropertyValue("26px");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_PX, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_PX, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "26.0px", value.getCssText() );
 	}
 
 	@Test
 	void testInch() throws Exception {
 		CSSValue value = engine.parsePropertyValue("88in");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_IN, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_IN, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "88.0in", value.getCssText() );
 	}
 
 	@Test
 	void testEm() throws Exception {
 		CSSValue value = engine.parsePropertyValue("75em");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_EMS, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_EMS, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals( "75.0em", value.getCssText() );
 	}
 
 	@Test
 	void testURI() throws Exception {
 		CSSValue value = engine.parsePropertyValue("url(./somepath/picture.gif)");
-		assertTrue(value instanceof Measure);
-		assertEquals(CSSPrimitiveValue.CSS_URI, ((Measure) value).getPrimitiveType());
+		assertTrue(value instanceof CSSPrimitiveValue);
+		assertEquals(CSSPrimitiveValue.CSS_URI, ((CSSPrimitiveValue) value).getPrimitiveType());
 		assertEquals("url(./somepath/picture.gif)", value.getCssText());
 	}
 
@@ -105,15 +104,15 @@ public class ValueTest {
 		assertTrue(value instanceof CSSValueList);
 		assertEquals(CSSValue.CSS_VALUE_LIST, ((CSSValueList) value).getCssValueType());
 		assertEquals(3, ((CSSValueList) value).getLength());
-		assertTrue(((CSSValueList) value).item(0) instanceof Measure);
+		assertTrue(((CSSValueList) value).item(0) instanceof CSSPrimitiveValue);
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) ((CSSValueList) value).item(0)).getPrimitiveType());
-		assertTrue(((CSSValueList) value).item(1) instanceof Measure);
+				((CSSPrimitiveValue) ((CSSValueList) value).item(0)).getPrimitiveType());
+		assertTrue(((CSSValueList) value).item(1) instanceof CSSPrimitiveValue);
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) ((CSSValueList) value).item(1)).getPrimitiveType());
-		assertTrue(((CSSValueList) value).item(2) instanceof Measure);
+				((CSSPrimitiveValue) ((CSSValueList) value).item(1)).getPrimitiveType());
+		assertTrue(((CSSValueList) value).item(2) instanceof CSSPrimitiveValue);
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) ((CSSValueList) value).item(2)).getPrimitiveType());
+				((CSSPrimitiveValue) ((CSSValueList) value).item(2)).getPrimitiveType());
 		assertEquals("34 34 34", value.getCssText());
 	}
 
@@ -126,18 +125,18 @@ public class ValueTest {
 		assertEquals(5, list.getLength());
 		// FIXME: see comments in bug 278139
 		for (int i = 0; i < list.getLength(); i++) {
-			assertTrue(list.item(i) instanceof Measure);
+			assertTrue(list.item(i) instanceof CSSPrimitiveValue);
 		}
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) list.item(0)).getPrimitiveType());
+				((CSSPrimitiveValue) list.item(0)).getPrimitiveType());
 		assertEquals(CSSValue.CSS_CUSTOM,
-				((Measure) list.item(1)).getPrimitiveType());
+				((CSSPrimitiveValue) list.item(1)).getPrimitiveType());
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) list.item(2)).getPrimitiveType());
+				((CSSPrimitiveValue) list.item(2)).getPrimitiveType());
 		assertEquals(CSSValue.CSS_CUSTOM,
-				((Measure) list.item(3)).getPrimitiveType());
+				((CSSPrimitiveValue) list.item(3)).getPrimitiveType());
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
-				((Measure) list.item(4)).getPrimitiveType());
+				((CSSPrimitiveValue) list.item(4)).getPrimitiveType());
 		// use String#matches() as there may be white-space differences
 		assertTrue(value.getCssText().matches("34\\s*,\\s*34\\s*,\\s*34"));
 	}

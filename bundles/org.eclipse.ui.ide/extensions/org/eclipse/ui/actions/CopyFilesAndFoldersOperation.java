@@ -45,6 +45,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -76,7 +77,7 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
@@ -224,7 +225,7 @@ public class CopyFilesAndFoldersOperation {
 				IStatus.OK, getProblemsMessage(), null);
 
 		for (IFileStore store : stores) {
-			if (!store.fetchInfo().exists()) {
+			if (!store.exists()) {
 				String message = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceDeleted,
 								store.getName());
 				IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, null);
@@ -645,10 +646,9 @@ public class CopyFilesAndFoldersOperation {
 	private void display(InvocationTargetException e) {
 		// CoreExceptions are collected above, but unexpected runtime
 		// exceptions and errors may still occur.
-		IDEWorkbenchPlugin.getDefault().getLog().log(
-				StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format(
-						"Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
-						getClass().getName(), e.getTargetException()), null));
+		ILog.of(CopyFilesAndFoldersOperation.class).error(MessageFormat.format(
+				"Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
+				getClass().getName(), e.getTargetException()));
 		displayError(NLS
 				.bind(
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,
@@ -1242,6 +1242,16 @@ public class CopyFilesAndFoldersOperation {
 	private boolean performCopy(IResource[] resources, IPath destination,
 			IProgressMonitor monitor) {
 		try {
+			if (!isMove()) {
+				IPath[] destPaths = new IPath[resources.length];
+				for (int i = 0; i < resources.length; i++) {
+					destPaths[i] = destination.append(resources[i].getName());
+				}
+				if (tryPerformLTKcopy(resources, destPaths)) {
+					return true;
+				}
+			}
+
 			AbstractWorkspaceOperation op = getUndoableCopyOrMoveOperation(
 					resources, destination);
 			op.setModelProviderIds(getModelProviderIds());
@@ -1302,6 +1312,11 @@ public class CopyFilesAndFoldersOperation {
 							workspace);
 				}
 			}
+
+			if (tryPerformLTKcopy(resources, destinationPaths)) {
+				return true;
+			}
+
 			CopyResourcesOperation op = new CopyResourcesOperation(resources,
 					destinationPaths,
 					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
@@ -1323,6 +1338,13 @@ public class CopyFilesAndFoldersOperation {
 			return false;
 		}
 		return true;
+	}
+
+	private boolean tryPerformLTKcopy(IResource[] resources, IPath[] destinationPaths) {
+		if (createLinks || createVirtualFoldersAndLinks) {
+			return false;
+		}
+		return LTKLauncher.copyResources(resources, destinationPaths);
 	}
 
 	/**

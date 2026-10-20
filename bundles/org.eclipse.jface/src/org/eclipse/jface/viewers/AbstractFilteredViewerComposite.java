@@ -279,30 +279,16 @@ public abstract class AbstractFilteredViewerComposite<T extends ViewerFilter> ex
 	}
 
 	/**
-	 * Set the text that will be shown until the first focus. A default value is
-	 * provided, so this method only need be called if overriding the default
-	 * initial text is desired.
+	 * Sets the placeholder hint shown while the filter field is empty.
 	 *
-	 * @param text initial text to appear in text field
+	 * @param text the placeholder hint for the filter field
 	 */
 	public void setInitialText(String text) {
-		initialText = text;
-		if (filterText != null) {
-			filterText.setMessage(text);
-			if (filterText.isFocusControl()) {
-				setFilterText(initialText);
-				textChanged();
-			} else {
-				getDisplay().asyncExec(() -> {
-					if (!filterText.isDisposed() && filterText.isFocusControl()) {
-						setFilterText(initialText);
-						textChanged();
-					}
-				});
-			}
-		} else {
-			setFilterText(initialText);
-			textChanged();
+		initialText = text != null ? text : ""; //$NON-NLS-1$
+		if (filterText != null && !filterText.isDisposed()) {
+			// Show the hint as placeholder only, never as field value (which would
+			// need clear-on-focus handling and read as a value to screen readers).
+			filterText.setMessage(initialText);
 		}
 	}
 

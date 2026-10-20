@@ -209,7 +209,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 		TreeViewer treeViewer = filteredTree.getViewer();
 		Control treeControl = treeViewer.getControl();
 		RGB dimmedRGB = blend(treeControl.getForeground().getRGB(), treeControl.getBackground().getRGB(), 60);
-		dimmedForeground = new Color(treeControl.getDisplay(), dimmedRGB);
+		dimmedForeground = new Color(dimmedRGB);
 
 		treeViewer
 				.setLabelProvider(new ViewLabelProvider(context, modelService, partService, window, dimmedForeground));

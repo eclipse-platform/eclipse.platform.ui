@@ -21,11 +21,14 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 
 @Deprecated
 public class DefaultPartitionerTest extends FastPartitionerTest {
+	@Deprecated
+	@SuppressWarnings("removal")
 	@Override
 	protected IDocumentPartitioner createPartitioner(IPartitionTokenScanner scanner) {
 		return new DefaultPartitioner(scanner, new String[] { DEFAULT, COMMENT });
 	}
 
+	@Deprecated
 	@Override
 	@Test
 	public void testPR130900() throws Exception {

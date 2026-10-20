@@ -298,7 +298,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fIsNextPreviousTargetCheckBox.setLayoutData(gd);
 
 
-		fAnnotationTypeViewer.addSelectionChangedListener(event -> handleAnnotationListSelection());
+		fAnnotationTypeViewer.addSelectionChangedListener(_ -> handleAnnotationListSelection());
 
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
@@ -389,7 +389,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		});
 
-		fDecorationViewer.addSelectionChangedListener(event -> {
+		fDecorationViewer.addSelectionChangedListener(_ -> {
 			String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
 			ListItem item= getSelectedItem();
 

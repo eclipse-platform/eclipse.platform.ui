@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -61,8 +64,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	class BackgroundWorker implements Runnable {
 
-		/** Has the reconciler been canceled. */
-		private boolean fCanceled;
+		/** Has the reconciler been canceled. Set under this worker's lock. */
+		private volatile boolean fCanceled;
 		/** Has the reconciler been reset. */
 		private boolean fReset;
 		/** Some changes need to be processed. */
@@ -71,6 +74,10 @@ abstract public class AbstractReconciler implements IReconciler {
 		private boolean fIsActive;
 
 		private boolean fStarted;
+
+		private volatile boolean fInitialProcessDone;
+		/** Is initialProcess() or process() running. */
+		private volatile boolean fIsProcessing;
 
 		private final String fName;
 
@@ -105,7 +112,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * Cancels the background thread.
 		 */
 		public void cancel() {
-			fCanceled= true;
+			synchronized (this) {
+				fCanceled= true;
+			}
 			IProgressMonitor pm= fProgressMonitor;
 			if (pm != null) {
 				pm.setCanceled(true);
@@ -173,7 +182,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			try {
 				while (!fCanceled) {
 
-					delay();
+					waitForWork();
 
 					if (fCanceled) {
 						break;
@@ -196,11 +205,18 @@ abstract public class AbstractReconciler implements IReconciler {
 						r= fDirtyRegionQueue.removeNextDirtyRegion();
 					}
 
+					if (!startProcessing()) {
+						break;
+					}
 					fIsActive= true;
 
 					fProgressMonitor.setCanceled(false);
 
-					process(r);
+					try {
+						process(r);
+					} finally {
+						fIsProcessing= false;
+					}
 
 					synchronized (fDirtyRegionQueue) {
 						if (fDirtyRegionQueue.isEmpty()) {
@@ -222,6 +238,48 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 
 		/**
+		 * Marks this worker as processing unless it has been canceled, atomically with
+		 * {@link #cancel()} so that a worker reported idle never starts a strategy afterwards.
+		 */
+		private synchronized boolean startProcessing() {
+			if (fCanceled) {
+				return false;
+			}
+			fIsProcessing= true;
+			return true;
+		}
+
+		synchronized boolean isIdle() {
+			if (fCanceled) {
+				return !fIsProcessing;
+			}
+			if (fStarted && !fInitialProcessDone) {
+				return false;
+			}
+			return !isDirty() && !fIsProcessing;
+		}
+
+		/**
+		 * Blocks until there is work. Idle workers wait untimed, dirty workers wait for the delay so
+		 * further changes coalesce.
+		 */
+		private void waitForWork() {
+			synchronized (fDirtyRegionQueue) {
+				if (waitFinish || fCanceled) {
+					return;
+				}
+				try {
+					if (isDirty()) {
+						fDirtyRegionQueue.wait(fDelay);
+					} else {
+						fDirtyRegionQueue.wait();
+					}
+				} catch (InterruptedException x) {
+				}
+			}
+		}
+
+		/**
 		 * Star the reconciling if not running (and calls
 		 * {@link AbstractReconciler#initialProcess()}) or {@link #reset()} otherwise.
 		 */
@@ -233,10 +291,15 @@ abstract public class AbstractReconciler implements IReconciler {
 					//Until we process some code from the job, the reconciler thread is the current thread
 					fThread= Thread.currentThread();
 					delay();
-					if (fCanceled) {
+					if (!startProcessing()) {
 						return Status.CANCEL_STATUS;
 					}
-					initialProcess();
+					try {
+						initialProcess();
+					} finally {
+						fIsProcessing= false;
+					}
+					fInitialProcessDone= true;
 					if (fCanceled) {
 						return Status.CANCEL_STATUS;
 					}
@@ -341,6 +404,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	private DirtyRegionQueue fDirtyRegionQueue;
 	/** The background thread. */
 	private BackgroundWorker fWorker;
+	/** Workers canceled by uninstall() whose strategy may still be running. */
+	private final List<BackgroundWorker> fCanceledWorkers= new ArrayList<>();
 	/** Internal document and text input listener. */
 	private Listener fListener;
 	/** The background thread delay. */
@@ -529,6 +594,8 @@ abstract public class AbstractReconciler implements IReconciler {
 				BackgroundWorker bt= fWorker;
 				fWorker= null;
 				bt.cancel();
+				fCanceledWorkers.removeIf(BackgroundWorker::isIdle);
+				fCanceledWorkers.add(bt);
 			}
 		}
 	}
@@ -680,6 +747,19 @@ abstract public class AbstractReconciler implements IReconciler {
 			return false;
 		}
 		return Thread.currentThread() == fWorker.fThread;
+	}
+
+	/**
+	 * Tells whether this reconciler has nothing to do: no initial process is pending or running,
+	 * no changes wait to be processed and no strategy is running. A reconciler without a document
+	 * is idle. Lets tests wait for the reconciler.
+	 *
+	 * @return <code>true</code> if this reconciler is idle
+	 * @since 3.32
+	 */
+	public synchronized boolean isIdle() {
+		fCanceledWorkers.removeIf(BackgroundWorker::isIdle);
+		return fCanceledWorkers.isEmpty() && (fWorker == null || fWorker.isIdle());
 	}
 
 	private static class ReconcilerJob extends Job {

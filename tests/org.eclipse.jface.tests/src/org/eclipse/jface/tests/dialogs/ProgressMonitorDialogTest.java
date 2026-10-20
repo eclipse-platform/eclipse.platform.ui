@@ -30,7 +30,7 @@ public class ProgressMonitorDialogTest {
 	private static void testRun(boolean fork, boolean cancelable) throws Exception {
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(null);
 		pmd.open();
-		pmd.run(fork, cancelable, monitor -> {
+		pmd.run(fork, cancelable, _ -> {
 			// nothing to do, just need this to happen to test bug 299731
 		});
 

@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -37,11 +38,16 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
@@ -59,7 +65,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.prefs.BackingStoreException;
-import org.w3c.css.sac.InputSource;
+import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -72,6 +78,8 @@ public class ThemeEngine implements IThemeEngine {
 
 	private ITheme currentTheme;
 
+	private boolean effectiveThemeIdPublished;
+
 	private final List<String> globalStyles = new ArrayList<>();
 	private final List<IResourceLocator> globalSourceLocators = new ArrayList<>();
 
@@ -82,9 +90,18 @@ public class ThemeEngine implements IThemeEngine {
 
 	private static final String THEMEID_KEY = "themeid";
 
+	/**
+	 * Prefix of the key recording a theme's appearance. The theme id is part of the
+	 * key, so a record left behind by another installation sharing the preferences
+	 * cannot be mistaken for the appearance of the theme in {@link #THEMEID_KEY}.
+	 */
+	private static final String THEME_IS_DARK_KEY_PREFIX = "themeIsDark.";
+
 	public static final String THEME_PLUGIN_ID = "org.eclipse.e4.ui.css.swt.theme";
 
 	public static final String E4_DARK_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_dark";
+
+	public static final String E4_DEFAULT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 
 	public static final String DISABLE_OS_DARK_THEME_INHERIT = "org.eclipse.e4.ui.css.theme.disableOSDarkThemeInherit";
 
@@ -148,13 +165,14 @@ public class ThemeEngine implements IThemeEngine {
 						final String themeBaseId = id + version;
 						String themeId = themeBaseId;
 						String label = ce.getAttribute("label");
+						boolean dark = isDarkTheme(ce);
 						String originalCSSFile;
 						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
 						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
 							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
 									+ basestylesheeturi;
 						}
-						registerTheme(themeId, label, basestylesheeturi, version);
+						registerTheme(themeId, label, basestylesheeturi, version, dark);
 
 						//check for modified files
 						if (modifiedFiles != null) {
@@ -164,7 +182,6 @@ public class ThemeEngine implements IThemeEngine {
 								for (File modifiedFile : modifiedFiles) {
 									String modifiedFileName = modifiedFile.getName();
 									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
-										//								modifiedStylesheets
 										ArrayList<String> styleSheets = new ArrayList<>();
 										styleSheets.add(modifiedFile.toURI().toString());
 										modifiedStylesheets.put(themeId, styleSheets);
@@ -223,10 +240,22 @@ public class ThemeEngine implements IThemeEngine {
 				"platform:/plugin/org.eclipse.ui.themes/css/"));
 		// register a default resolver for file uri's
 		registerResourceLocator(new FileResourcesLocatorImpl());
-		// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
-		// registerResourceLocator(new HttpResourcesLocatorImpl());
 	}
 
+
+	/**
+	 * Themes declare their appearance with the {@code isDarkTheme} attribute. Themes
+	 * contributed before that attribute existed are classified by their id, which is
+	 * the convention the platform relied on so far.
+	 */
+	private static boolean isDarkTheme(IConfigurationElement themeElement) {
+		String dark = themeElement.getAttribute("isDarkTheme");
+		if (dark != null) {
+			return Boolean.parseBoolean(dark);
+		}
+		String id = themeElement.getAttribute("id");
+		return id != null && id.contains("dark"); //$NON-NLS-1$
+	}
 
 	private boolean isOsVersionMatch(String osVersionList) {
 		boolean found = false;
@@ -255,13 +284,15 @@ public class ThemeEngine implements IThemeEngine {
 
 	public synchronized ITheme registerTheme(String id, String label,
 			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
-		for (Theme t : themes) {
-			if (t.getId().equals(id)) {
-				throw new IllegalArgumentException("A theme with the id '" + id
-						+ "' is already registered");
-			}
+		return registerTheme(id, label, basestylesheetURI, osVersion, id.contains("dark")); //$NON-NLS-1$
+	}
+
+	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI, String osVersion,
+			boolean dark) throws IllegalArgumentException {
+		if (themes.stream().anyMatch(t -> t.getId().equals(id))) {
+			throw new IllegalArgumentException("A theme with the id '" + id + "' is already registered");
 		}
-		Theme theme = new Theme(id, label);
+		Theme theme = new Theme(id, label, dark);
 		if (osVersion != "") {
 			theme.setOsVersion(osVersion);
 		}
@@ -397,6 +428,24 @@ public class ThemeEngine implements IThemeEngine {
 
 	@Override
 	public void setTheme(String themeId, boolean restore) {
+		if (applyTheme(themeId, restore)) {
+			return;
+		}
+		// In OS high-contrast mode keep the native OS colors instead of forcing a theme
+		if (display != null && display.getHighContrast()) {
+			ILog.of(ThemeEngine.class)
+					.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (!E4_DEFAULT_THEME_ID.equals(themeId) && applyTheme(E4_DEFAULT_THEME_ID, restore)) {
+			ILog.of(ThemeEngine.class)
+					.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		ILog.of(ThemeEngine.class).warn("Theme '" + themeId + "' not found."); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private boolean applyTheme(String themeId, boolean restore) {
 		String osVersion = System.getProperty("os.version");
 		if (osVersion != null) {
 			boolean found = false;
@@ -417,16 +466,17 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 			if (found) {
-				return;
+				return true;
 			}
 		}
 		//try generic
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
 				setTheme(t, restore);
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override
@@ -467,10 +517,7 @@ public class ThemeEngine implements IThemeEngine {
 					for (CSSEngine engine : cssEngines) {
 						try {
 							stream = url.openStream();
-							InputSource source = new InputSource();
-							source.setByteStream(stream);
-							source.setURI(url.toString());
-							engine.parseStyleSheet(source);
+							engine.parseStyleSheet(stream, url.toString());
 						} catch (IOException e) {
 							ThemeEngineManager.logError(e.getMessage(), e);
 						} finally {
@@ -484,7 +531,7 @@ public class ThemeEngine implements IThemeEngine {
 						}
 					}
 				} catch (IOException e) {
-					ThemeEngineManager.logError(e.getMessage(), e);
+					ThemeEngineManager.logError("Cannot load stylesheet '" + stylesheet + "' for theme '" + theme.getId() + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
@@ -495,12 +542,17 @@ public class ThemeEngine implements IThemeEngine {
 			EclipsePreferencesHelper.setCurrentThemeId(theme.getId());
 
 			pref.put(THEMEID_KEY, theme.getId());
+			pref.putBoolean(darkKey(theme.getId()), theme.isDark());
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
 				ThemeEngineManager.logError(e.getMessage(), e);
 			}
 		}
+		publishEffectiveThemeId();
+
+		display.setDarkThemePreferred(theme.isDark());
+
 		sendThemeChangeEvent(restore);
 
 		for (CSSEngine engine : cssEngines) {
@@ -555,8 +607,33 @@ public class ThemeEngine implements IThemeEngine {
 		}
 	}
 
+	/**
+	 * Returns the theme that was selected for this installation, which may come from the
+	 * user, from a product customization, or from nowhere at all.
+	 */
 	private String getPreferenceThemeId() {
-		return getPreferences().get(THEMEID_KEY, null);
+		IPreferencesService prefService = Platform.getPreferencesService();
+		if (!effectiveThemeIdPublished) {
+			return prefService.getString(THEME_PLUGIN_ID, THEMEID_KEY, null, null);
+		}
+		// skip the default scope, it now holds the effective id published below
+		return prefService.get(THEMEID_KEY, null, new Preferences[] { InstanceScope.INSTANCE.getNode(THEME_PLUGIN_ID),
+				ConfigurationScope.INSTANCE.getNode(THEME_PLUGIN_ID), UserScope.INSTANCE.getNode(THEME_PLUGIN_ID) });
+	}
+
+	/**
+	 * Publishes the theme that was actually applied into the default scope, so clients
+	 * asking the preference service for the current theme also get an inherited one. The
+	 * default scope is never persisted, which keeps the instance scope meaning "the user
+	 * chose this" and lets a later start follow the operating system again.
+	 */
+	private void publishEffectiveThemeId() {
+		if (currentTheme != null) {
+			IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(THEME_PLUGIN_ID);
+			defaults.put(THEMEID_KEY, currentTheme.getId());
+			defaults.putBoolean(darkKey(currentTheme.getId()), currentTheme.isDark());
+			effectiveThemeIdPublished = true;
+		}
 	}
 
 	private IEclipsePreferences getPreferences() {
@@ -578,35 +655,25 @@ public class ThemeEngine implements IThemeEngine {
 	public void restore(String alternateTheme) {
 		String prefThemeId = getPreferenceThemeId();
 
-		// Bug 562794, 563601: Eclipse once contained two identical themes named
-		// "Classic" and "Windows Classic" and the second was removed with bug 562794.
-		// An old workspace using the removed "Windows Classic" theme would be reseted
-		// to the default theme on update. Since both themes are identical we silently
-		// change the theme to the remaining "Classic" theme and don't disturb the user.
-		if ("org.eclipse.e4.ui.css.theme.e4_classic6.0,6.1,6.2,6.3".equals(prefThemeId)) { //$NON-NLS-1$
-			prefThemeId = "org.eclipse.e4.ui.css.theme.e4_classic"; //$NON-NLS-1$
-		}
-
 		// use theme from preferences if it exists
 		if (prefThemeId != null) {
-			for (ITheme t : getThemes()) {
-				if (prefThemeId.equals(t.getId())) {
-					setTheme(t, false);
-					return;
-				}
+			Optional<ITheme> prefTheme = getThemes().stream().filter(t -> prefThemeId.equals(t.getId())).findFirst();
+			if (prefTheme.isPresent()) {
+				setTheme(prefTheme.get(), false);
+				return;
 			}
 		}
 
-		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
+		Optional<ITheme> darkTheme = findDarkTheme();
 		boolean overrideWithDarkTheme = false;
-		if (hasDarkTheme) {
+		if (darkTheme.isPresent()) {
 			if (prefThemeId != null) {
 				/*
 				 * The user had previously selected a theme which is not available anymore. In
 				 * this case want to fall back to respect whether that previous choice was dark
 				 * or not. https://github.com/eclipse-platform/eclipse.platform.ui/issues/2776
 				 */
-				overrideWithDarkTheme = prefThemeId.contains("dark");
+				overrideWithDarkTheme = isPreferenceThemeDark(prefThemeId);
 			} else {
 				/*
 				 * No previous theme selection in preferences. In this case check if the system
@@ -618,10 +685,41 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 
-		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+		String themeToRestore = overrideWithDarkTheme ? darkTheme.get().getId() : alternateTheme;
 		if (themeToRestore != null) {
 			setTheme(themeToRestore, false);
 		}
+	}
+
+	private static String darkKey(String themeId) {
+		return THEME_IS_DARK_KEY_PREFIX + themeId;
+	}
+
+	/**
+	 * Whether the theme recorded in the preferences is a dark one. Preferences
+	 * written before themes declared their appearance only carry the theme id, so
+	 * fall back to the id based classification.
+	 */
+	private boolean isPreferenceThemeDark(String prefThemeId) {
+		boolean darkById = prefThemeId.contains("dark"); //$NON-NLS-1$
+		IPreferencesService prefService = Platform.getPreferencesService();
+		if (!effectiveThemeIdPublished) {
+			return prefService.getBoolean(THEME_PLUGIN_ID, darkKey(prefThemeId), darkById, null);
+		}
+		String dark = prefService.get(darkKey(prefThemeId), null, new Preferences[] {
+				InstanceScope.INSTANCE.getNode(THEME_PLUGIN_ID), ConfigurationScope.INSTANCE.getNode(THEME_PLUGIN_ID),
+				UserScope.INSTANCE.getNode(THEME_PLUGIN_ID) });
+		return dark != null ? Boolean.parseBoolean(dark) : darkById;
+	}
+
+	/**
+	 * The dark theme to fall back to, preferring the one shipped with the platform
+	 * over a dark theme contributed by someone else.
+	 */
+	private Optional<ITheme> findDarkTheme() {
+		List<ITheme> darkThemes = getThemes().stream().filter(ITheme::isDark).toList();
+		return darkThemes.stream().filter(t -> E4_DARK_THEME_ID.equals(t.getId())).findFirst()
+				.or(() -> darkThemes.stream().findFirst());
 	}
 
 	@Override
@@ -636,7 +734,7 @@ public class ThemeEngine implements IThemeEngine {
 			if (context != null) {
 				Element e = context.getElement();
 				if (e != null) {
-					return engine.getViewCSS().getComputedStyle(e, null);
+					return engine.computeStyle(e, null);
 				}
 			}
 		}

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
+import java.util.function.Consumer;
+
 import org.eclipse.jface.text.IFindReplaceTarget;
 
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
@@ -57,6 +59,47 @@ public interface IFindReplaceLogic {
 	 * @param searchOption option
 	 */
 	public void deactivate(SearchOptions searchOption);
+
+	/**
+	 * Toggles a search option
+	 *
+	 * @param searchOption option
+	 */
+	public void toggle(SearchOptions searchOption);
+
+	/**
+	 * Registers a listener that is notified whenever the given search option is
+	 * activated or deactivated. The listener is called with {@code true} when the
+	 * option becomes active and {@code false} when it becomes inactive.
+	 *
+	 * <p>
+	 * Listeners are only notified when the state actually changes — repeated calls
+	 * to {@link #activate} or {@link #deactivate} for an already-active/inactive
+	 * option do not trigger a notification.
+	 * </p>
+	 *
+	 * @param option   the search option to observe
+	 * @param listener the listener to register
+	 */
+	public void addSearchOptionActivationChangedListener(SearchOptions option, Consumer<Boolean> listener);
+
+	/**
+	 * Registers a listener that is notified whenever the availability of the given
+	 * search option changes. The listener is called with {@code true} when the
+	 * option becomes available and {@code false} when it becomes unavailable.
+	 *
+	 * <p>
+	 * Availability is determined by {@link #isAvailable(SearchOptions)} and depends
+	 * on the state of the target and the compatibility of active options (e.g.
+	 * {@link SearchOptions#WHOLE_WORD} is unavailable when
+	 * {@link SearchOptions#REGEX} is active or the search string is not a single
+	 * word). Listeners are only notified when availability actually changes.
+	 * </p>
+	 *
+	 * @param option   the search option to observe
+	 * @param listener the listener to register
+	 */
+	public void addSearchOptionAvailabilityChangedListener(SearchOptions option, Consumer<Boolean> listener);
 
 	/**
 	 * @param searchOption option

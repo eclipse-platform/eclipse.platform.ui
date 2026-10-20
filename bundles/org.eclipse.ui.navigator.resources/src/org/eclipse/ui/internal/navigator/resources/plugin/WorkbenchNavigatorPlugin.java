@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.plugin;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -51,11 +52,11 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(String message, IStatus status) {
 		if (message != null) {
-			getDefault().getLog().log(
+			ILog.get().log(
 					new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
 		}
 		if(status != null) {
-			getDefault().getLog().log(status);
+			ILog.get().log(status);
 		}
 	}
 

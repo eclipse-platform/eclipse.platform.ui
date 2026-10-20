@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -61,7 +62,7 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		Widget widget = (Widget) element;
 		Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 
-		if (newColor != null && newColor.isDisposed() || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (newColor != null && newColor.isDisposed() || !(value instanceof CssPrimitive)) {
 			return;
 		}
 
@@ -130,10 +131,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 			String pseudo, CSSEngine engine) throws Exception {
 		String text = null;
 		Widget widget = (Widget) element;
-		// if (control instanceof Text) {
-		// final Text controlText = ((Text) element);
-		// text = controlText.getText();
-		// } else {
 		if (widget instanceof Label) {
 			text = ((Label) element).getText();
 			if (text != null) {
@@ -145,7 +142,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 				widget.setData(CSSSWTConstants.TEXT_KEY, text);
 			}
 		}
-		// }
 		return "none";
 	}
 

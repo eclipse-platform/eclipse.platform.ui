@@ -36,7 +36,7 @@ public class Mocks {
 
 	private static EqualityComparator defaultEqualityComparator = (o1, o2) -> o1 == null ? o2 == null : o1.equals(o2);
 
-	private static EqualityComparator indifferentEqualityComparator = (o1, o2) -> true;
+	private static EqualityComparator indifferentEqualityComparator = (_, _) -> true;
 
 	private static interface Mock {
 		public MockInvocationHandler getMockInvocationHandler();

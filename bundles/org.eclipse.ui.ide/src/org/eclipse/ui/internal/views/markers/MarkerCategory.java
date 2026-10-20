@@ -36,6 +36,30 @@ class MarkerCategory extends MarkerSupportItem {
 	private final Markers markers;
 
 	/**
+	 * Caches the last result of {@link #getShownChildrenCount()}, which is
+	 * needed for every label update of this category but is O(children) to
+	 * compute while a search filter is active.
+	 */
+	private volatile ShownChildrenCount shownChildrenCount;
+
+	/**
+	 * The number of children shown for a given search pattern and a given
+	 * (identical) children array, both of which the count only stays valid for.
+	 *
+	 * @param pattern  the search box pattern the count was computed for
+	 * @param children the children array the count was computed from, compared
+	 *                 by identity since a new array is created whenever the
+	 *                 markers of this category change
+	 * @param count    the number of children shown
+	 */
+	private record ShownChildrenCount(String pattern, MarkerSupportItem[] children, int count) {
+
+		boolean isValidFor(String currentPattern, MarkerSupportItem[] currentChildren) {
+			return children == currentChildren && pattern.equals(currentPattern);
+		}
+	}
+
+	/**
 	 * Create a new instance of the receiver that has the markers between
 	 * startIndex and endIndex showing.
 	 *
@@ -77,11 +101,37 @@ class MarkerCategory extends MarkerSupportItem {
 
 	void resetChildren() {
 		children = null;
+		shownChildrenCount = null;
 	}
 
 	@Override
 	int getChildrenCount() {
 		return end - start + 1;
+	}
+
+	/**
+	 * Returns how many children of this category are currently shown, i.e. how
+	 * many of them survive both the marker limit truncation and the view's
+	 * search box filter. The result is cached, since it is needed for every
+	 * label update of this category.
+	 *
+	 * @return the number of children currently shown
+	 */
+	int getShownChildrenCount() {
+		ExtendedMarkersView view = markers.getBuilder().getView();
+		String pattern = view.getSearchFilterPattern();
+		if (pattern == null) {
+			// no search filter: no need to materialize and inspect the children
+			return view.applyMarkerLimit(getChildrenCount());
+		}
+		MarkerSupportItem[] myChildren = getChildren();
+		ShownChildrenCount cached = shownChildrenCount;
+		if (cached != null && cached.isValidFor(pattern, myChildren)) {
+			return cached.count();
+		}
+		int count = view.countMatchingSearchFilter(myChildren);
+		shownChildrenCount = new ShownChildrenCount(pattern, myChildren, count);
+		return count;
 	}
 
 	@Override
@@ -92,21 +142,30 @@ class MarkerCategory extends MarkerSupportItem {
 		//	return NLS.bind(MarkerMessages.Category_building,
 		//			new Object[] { getName() });
 		//}
-		int size = getChildrenCount();
 		MarkerContentGenerator generator = markers.getBuilder().getGenerator();
 		boolean limitsEnabled = generator.isMarkerLimitsEnabled();
 		int limit = generator.getMarkerLimits();
 
-		if (limitsEnabled && size > limit) {
-			return NLS.bind(MarkerMessages.Category_Limit_Label, name, String.valueOf(limit), String.valueOf(getChildrenCount()));
+		int totalSize = getChildrenCount();
+
+		// Reflect what is actually shown for this category, i.e. the markers
+		// left after the marker limit truncation and after the search box's
+		// quick filter, so that the category label stays in sync with its
+		// visible children while searching. With an empty search box this is
+		// the same value the marker limit alone would yield.
+		int shownSize = getShownChildrenCount();
+
+		if (limitsEnabled && totalSize > limit) {
+			return NLS.bind(MarkerMessages.Category_Limit_Label, name, String.valueOf(shownSize),
+					String.valueOf(totalSize));
 		}
-		if (size == 1) {
+		if (shownSize == 1) {
 			return NLS.bind(MarkerMessages.Category_One_Item_Label,
 					new Object[] { name });
 		}
 
 		return NLS.bind(MarkerMessages.Category_Label, new Object[] { name,
-				String.valueOf(size) });
+				String.valueOf(shownSize) });
 
 	}
 
@@ -158,6 +217,7 @@ class MarkerCategory extends MarkerSupportItem {
 	 */
 	@Override
 	void clearCache() {
+		shownChildrenCount = null;
 		for (MarkerSupportItem supportItem : getChildren()) {
 			supportItem.clearCache();
 		}

@@ -17,7 +17,9 @@ package org.eclipse.e4.ui.css.core.dom.properties.css2;
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssNumeric;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 /**
@@ -200,8 +202,8 @@ ICSSPropertyBorderHandler {
 
 	public void applyCSSPropertyBorderColor(CSSBorderProperties border,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			border.setColor((CSSPrimitiveValue) value);
+		if (value instanceof CssPrimitive primitive) {
+			border.setColor(primitive);
 		}
 	}
 
@@ -266,8 +268,8 @@ ICSSPropertyBorderHandler {
 
 	public void applyCSSPropertyBorderStyle(CSSBorderProperties border,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			border.setStyle(((CSSPrimitiveValue) value).getStringValue());
+		if (value instanceof CssText text) {
+			border.setStyle(text.value());
 		}
 	}
 
@@ -310,9 +312,8 @@ ICSSPropertyBorderHandler {
 
 	public void applyCSSPropertyBorderWidth(CSSBorderProperties border,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			border.setWidth((int) ((CSSPrimitiveValue) value)
-					.getFloatValue(CSSPrimitiveValue.CSS_PT));
+		if (value instanceof CssNumeric numeric) {
+			border.setWidth((int) numeric.value());
 		}
 	}
 

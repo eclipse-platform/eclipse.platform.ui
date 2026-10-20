@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
@@ -151,7 +153,7 @@ public class ImportExistingProjectsWizardTest {
 	private void waitForRefresh() {
 		try {
 			getWorkbench().getProgressService().busyCursorWhile(
-					monitor -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
+					_ -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
 							new NullProgressMonitor()));
 		} catch (InvocationTargetException | InterruptedException e) {
 			fail(e.getLocalizedMessage());
@@ -1027,7 +1029,7 @@ public class ImportExistingProjectsWizardTest {
 		ImportTestUtils.deleteWorkspaceProjects();
 		WizardProjectsImportPage wpip = getNewWizard();
 
-		try (AutoCloseable restore = setPageSetting(wpip, "WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID", true)) {
+		try (AutoCloseable _ = setPageSetting(wpip, "WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID", true)) {
 			useDataLocationProject(wpip, "ImportExistingProjectsWizardTestRebuildProject");
 			assertTrue("Failed to import project", wpip.createProjects());
 
@@ -1070,7 +1072,7 @@ public class ImportExistingProjectsWizardTest {
 		ImportTestUtils.deleteWorkspaceProjects();
 		WizardProjectsImportPage wpip = getNewWizard();
 
-		try (AutoCloseable restore = setPageSetting(wpip, "WizardProjectsImportPage.STORE_COPY_PROJECT_ID", true)) {
+		try (AutoCloseable _ = setPageSetting(wpip, "WizardProjectsImportPage.STORE_COPY_PROJECT_ID", true)) {
 			useDataLocationProject(wpip, "ImportExistingProjectsWizardTestRebuildProject");
 
 			ImportTestUtils.TestBuilder.resetCallCount();
@@ -1218,6 +1220,80 @@ public class ImportExistingProjectsWizardTest {
 			if (selectedProject.getProjectName().equals("HelloWorld")) {
 				assertTrue(selectedProject.hasConflicts());
 			}
+		}
+	}
+
+	@Test
+	public void test24CollectProjectFilesSkipsDotFoldersWhenEnabled() throws IOException {
+		File tempDir = Files.createTempDirectory("skipDotFolderTest").toFile();
+		try {
+			// Create a normal project
+			File normalProject = new File(tempDir, "normalProject");
+			normalProject.mkdirs();
+			Files.writeString(new File(normalProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>normalProject</name></projectDescription>");
+
+			// Create a project inside a .git folder
+			File dotGitFolder = new File(tempDir, ".git");
+			File hiddenProject = new File(dotGitFolder, "modules/hiddenProject");
+			hiddenProject.mkdirs();
+			Files.writeString(new File(hiddenProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>hiddenProject</name></projectDescription>");
+
+			// With skipDotFolders=true (default), only normalProject should be found
+			WizardProjectsImportPage wpip = getNewWizard();
+			wpip.getProjectFromDirectoryRadio().setSelection(true);
+			wpip.getNestedProjectsCheckbox().setSelection(true);
+			// skipDotFolders defaults to true
+			wpip.updateProjectsList(tempDir.getAbsolutePath());
+
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
+			ArrayList<String> projectNames = new ArrayList<>();
+			for (ProjectRecord record : selectedProjects) {
+				projectNames.add(record.getProjectName());
+			}
+			assertTrue("normalProject should be found", projectNames.contains("normalProject"));
+			assertFalse("hiddenProject inside .git should be skipped", projectNames.contains("hiddenProject"));
+		} finally {
+			FileSystemHelper.clear(tempDir);
+		}
+	}
+
+	@Test
+	public void test25CollectProjectFilesFindsProjectsInDotFoldersWhenDisabled() throws IOException {
+		File tempDir = Files.createTempDirectory("noSkipDotFolderTest").toFile();
+		try {
+			// Create a normal project
+			File normalProject = new File(tempDir, "normalProject");
+			normalProject.mkdirs();
+			Files.writeString(new File(normalProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>normalProject</name></projectDescription>");
+
+			// Create a project inside a .git folder
+			File dotGitFolder = new File(tempDir, ".git");
+			File hiddenProject = new File(dotGitFolder, "hiddenProject");
+			hiddenProject.mkdirs();
+			Files.writeString(new File(hiddenProject, ".project").toPath(),
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>hiddenProject</name></projectDescription>");
+
+			// With skipDotFolders=false, both projects should be found
+			WizardProjectsImportPage wpip = getNewWizard();
+			wpip.getProjectFromDirectoryRadio().setSelection(true);
+			wpip.getNestedProjectsCheckbox().setSelection(true);
+			wpip.getSkipDotFoldersCheckbox().setSelection(false);
+			wpip.getSkipDotFoldersCheckbox().notifyListeners(SWT.Selection, new Event());
+			wpip.updateProjectsList(tempDir.getAbsolutePath());
+
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
+			ArrayList<String> projectNames = new ArrayList<>();
+			for (ProjectRecord record : selectedProjects) {
+				projectNames.add(record.getProjectName());
+			}
+			assertTrue("normalProject should be found", projectNames.contains("normalProject"));
+			assertTrue("hiddenProject inside .git should be found when skip is disabled",
+					projectNames.contains("hiddenProject"));
+		} finally {
+			FileSystemHelper.clear(tempDir);
 		}
 	}
 

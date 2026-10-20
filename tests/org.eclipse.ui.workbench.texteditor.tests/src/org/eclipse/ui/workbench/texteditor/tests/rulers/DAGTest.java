@@ -15,8 +15,8 @@ package org.eclipse.ui.workbench.texteditor.tests.rulers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,28 +53,12 @@ public class DAGTest {
 	}
 
 	@Test
-	public void testIllegal() throws Exception {
+	public void testIllegal() {
 		assertFalse(fDag.addEdge(A, A));
-		try {
-			fDag.addEdge(A, null);
-			fail();
-		} catch (RuntimeException x) {
-		}
-		try {
-			fDag.addEdge(null, A);
-			fail();
-		} catch (RuntimeException x) {
-		}
-		try {
-			fDag.addEdge(null, null);
-			fail();
-		} catch (RuntimeException x) {
-		}
-		try {
-			fDag.addVertex(null);
-			fail();
-		} catch (RuntimeException x) {
-		}
+		assertThrows(RuntimeException.class, () -> fDag.addEdge(A, null));
+		assertThrows(RuntimeException.class, () -> fDag.addEdge(null, A));
+		assertThrows(RuntimeException.class, () -> fDag.addEdge(null, null));
+		assertThrows(RuntimeException.class, () -> fDag.addVertex(null));
 	}
 
 	@Test

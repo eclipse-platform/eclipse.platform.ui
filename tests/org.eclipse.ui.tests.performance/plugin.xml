@@ -51,7 +51,7 @@
    "regression test" for bug 107121. See OpenNavigatorFolderTest
    for more details. 
    -->
-   <extension point="org.eclipse.core.runtime.contentTypes">
+   <extension point="org.eclipse.core.contenttype.contentTypes">
    	<content-type 
    		file-extensions="htmltestonly" 
    		priority="high"

@@ -43,7 +43,7 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		try (TarFile tarFile = new TarFile(fileName)) {
+		try (TarFile _ = new TarFile(fileName)) {
 		} catch (TarException | IOException ioException) {
 			return false;
 		}
@@ -64,7 +64,7 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		try (ZipFile zipFile = new ZipFile(fileName)) {
+		try (ZipFile _ = new ZipFile(fileName)) {
 			return true;
 		} catch (IOException ioException) {
 			return false;

@@ -18,11 +18,17 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 public class Theme implements ITheme {
 	private final String id;
 	private final String label;
+	private final boolean dark;
 	private String osVersion;
 
 	public Theme(String id, String label) {
+		this(id, label, id != null && id.contains("dark")); //$NON-NLS-1$
+	}
+
+	public Theme(String id, String label, boolean dark) {
 		this.id = id;
 		this.label = label;
+		this.dark = dark;
 	}
 
 	@Override
@@ -35,6 +41,11 @@ public class Theme implements ITheme {
 		return label;
 	}
 
+	@Override
+	public boolean isDark() {
+		return dark;
+	}
+
 	public void setOsVersion(String version) {
 		this.osVersion = version;
 	}
@@ -45,8 +56,8 @@ public class Theme implements ITheme {
 
 	@Override
 	public String toString() {
-		return "Theme [id=" + id + ", label='" + label + "', osVersion="
-				+ osVersion + "]";
+		return "Theme [id=" + id + ", label='" + label + "', dark=" + dark
+				+ ", osVersion=" + osVersion + "]";
 	}
 
 

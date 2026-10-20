@@ -30,6 +30,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -62,7 +64,11 @@ public class AbstratGenericEditorTest {
 		project.setDefaultCharset(StandardCharsets.UTF_8.name(), null);
 		waitForJobs(100, 5000);
 		window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		forceActive(window.getShell());
+		Shell shell= window.getShell();
+		// forceActive() has a one second floor, so skip it when the shell is already active
+		if (shell.getDisplay().getActiveShell() != shell) {
+			forceActive(shell);
+		}
 		createAndOpenFile();
 	 }
 

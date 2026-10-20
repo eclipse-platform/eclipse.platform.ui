@@ -16,6 +16,64 @@ The new **CSS** declarative styling support provides developers with the flexibi
 
 Note that while the support for SWT widgets is the primary focus of the current developers that are working on the CSS code, the core engine is **headless** and can be used to "style" other things such as for applying arbitrary properties to a model.
 
+Platform-specific rules
+-----------------------
+
+An `@media` rule restricts the rules it contains to one platform, so a theme can carve out an exception without shipping a second style sheet.
+Two vendor features name the platform, `-eclipse-os` and `-eclipse-ws`, whose values are the ones `Platform.getOS()` and `Platform.getWS()` report (`linux`, `win32`, `macosx` and `gtk`, `win32`, `cocoa`).
+
+```css
+CTabFolder { background-color: #fafafa; }
+
+@media (-eclipse-os: linux) {
+  CTabFolder { background-color: #2f2f2f; }
+}
+```
+
+Three more features cover the operating system version: `-eclipse-os-version`, `-eclipse-min-os-version` and `-eclipse-max-os-version`.
+Quote a version with more than one dot, since `10.15.7` is not a single CSS number.
+
+```css
+@media (-eclipse-os: macosx) and (-eclipse-min-os-version: "10.15") {
+  CTabFolder { background-color: #2f2f2f; }
+}
+```
+
+Comparison happens over the segments the value gives, so its own precision decides the granularity: `"10.15"` covers all of 10.15.x, and both bounds include the line they name.
+Anything that is not a digit separates segments, which drops a Linux `-33-generic` tail.
+
+A rule can also depend on an installed bundle, which is useful when an optional contribution has to be styled only where it exists.
+The bundle is named in the value, since media features are evaluated one by one and cannot refer to each other, and `-eclipse-bundle-version`, `-eclipse-min-bundle-version` and `-eclipse-max-bundle-version` take a symbolic name followed by a version.
+
+```css
+@media (-eclipse-bundle: "org.eclipse.ui") { ... }
+@media (-eclipse-min-bundle-version: "org.eclipse.ui 3.2") { ... }
+```
+
+Unlike the operating system, the installed bundles can change while the workbench runs.
+A bundle query answers for the moment the rules were indexed, which is when a theme is applied, so a bundle installed afterwards is picked up at the next theme switch.
+
+The usual media query syntax applies: `and` requires every expression, a comma separated list matches when any query does, `not` inverts one query, and the media types `all` and `screen` match while `print` and the rest do not.
+A guarded rule takes part in the cascade at the position of its `@media` block.
+An unknown feature, value or media type simply does not match, so a query written for a browser contributes no rules instead of breaking the sheet.
+
+Rules can also be restricted per platform from the outside, with the `os` and `ws` attributes of the `org.eclipse.e4.ui.css.swt.theme` extension point, which pick a whole style sheet rather than single rules.
+
+Preferences
+-----------
+
+A theme can also set preferences, through an `IEclipsePreferences` element whose id is the preference node with dots replaced by dashes.
+The values a theme sets are removed again when another theme is applied.
+
+```css
+IEclipsePreferences#org-eclipse-ui-workbench {
+	preferences: 'perspectiveSwitcherSide=left';
+}
+```
+
+`perspectiveSwitcherSide` places the perspective switcher in the `top` (default), `bottom`, `left` or `right` trim, and on the left or right it is laid out vertically.
+A position the user drags the switcher to is kept until the value changes again.
+
 Sample
 ------
 
@@ -32,11 +90,6 @@ The sample code below creates a simple Label within a Shell but the Label's fore
      
     CSSEngine engine = new CSSSWTEngineImpl(display);
     engine.parseStyleSheet(new StringReader("Label { color: blue }"));
-    engine.setErrorHandler(new CSSErrorHandler() {
-      public void error(Exception e) {
-        e.printStackTrace();
-      }
-    });
     // applying styles to the child nodes means that the engine
     // should recurse downwards, in this example, the engine
     // should style the children of the Shell
@@ -63,6 +116,48 @@ Many SWT property setting methods can be accessed via CSS.
 These tables show the equivalent mapping from SWT method to CSS property.
 They also show pseudo selectors which can be used to choose styling based on widget state.
 
+
+### Font size
+
+The SWT font height is a point size, so a `font-size` is resolved to points.
+
+| Value | Meaning | Example |
+| --- | --- | --- |
+| unitless | points | `Label { font-size: 12 }` |
+| `pt` | points | `Label { font-size: 12pt }` |
+| `px` | CSS pixels, converted with 1px = 0.75pt | `Label { font-size: 16px }` gives 12pt |
+| `em` | relative to the font the widget had before styling | `Label { font-size: 1.5em }` |
+| `%` | relative to the font the widget had before styling | `Label { font-size: 150% }` |
+| `larger` / `smaller` | one step (factor 1.2) up or down from the font the widget had before styling | `Label { font-size: larger }` |
+
+Relative values are resolved against the font the widget had before styling, so a theme can make a font a bit larger than the rest without overriding the size the user configured.
+The `font` shorthand accepts the same forms, for example `Label { font: Verdana larger }`, except that a unitless 100 to 900 in steps of 100 is a weight there.
+
+### Font weight
+
+`font-weight` accepts `normal`, `bold`, `bolder`, `lighter` and the numbers
+`100` to `900`.
+It also accepts the face names designers use, which are not standard CSS:
+
+| Name | Weight |
+| --- | --- |
+| `thin`, `hairline` | 100 |
+| `extra-light`, `ultra-light` | 200 |
+| `light` | 300 |
+| `regular` | 400 |
+| `medium` | 500 |
+| `semi-bold`, `demi-bold` | 600 |
+| `extra-bold`, `ultra-bold` | 800 |
+| `black`, `heavy` | 900 |
+
+The names are case-insensitive and may be written without the hyphen, as in `semibold`.
+They are only understood by `font-weight`, not in the `font` shorthand, where they could be part of a family name.
+A weight other than `400` or `700` selects the installed face of that weight, for example Semibold for `600`.
+On GTK Pango picks the closest face of the family, on Windows a family such as "Segoe UI Semibold" is used when it is installed, and on macOS a face of the family with a matching name such as `HelveticaNeue-Medium`.
+Where the family has no face of that weight, the nearest one is taken in the order of CSS font matching: below `400` lighter faces first, above `500` heavier ones first, so `200` can select Light and `800` Black.
+If no face is found before regular or bold, a weight of `600` or more selects the bold face and anything below it the regular one.
+In the `font` shorthand a bare `100` to `900` is read as a weight, any other
+bare number as a size in points.
 
 ### Widget: Control
 
@@ -108,7 +203,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | setMaximizeVisible(boolean) | swt-maximize-visible | CTabFolder { swt-maximize-visible: true } |
 | setMinimizeVisible(boolean) | swt-minimize-visible | CTabFolder {swt-minimize-visible: true } |
 | setMRUVisible(boolean) | swt-mru-visible | CTabFolder { swt-mru-visible: true } |
-| setSimple(boolean) | swt-simple | CTabFolder { swt-simple: true } |
+| setSimple(boolean) | swt-simple | CTabFolder { swt-simple: true } (Deprecated, curved tabs are no longer supported) |
 | setSingle(boolean) | swt-single | CTabFolder { swt-single: true } |
 | setUnselectedCloseVisible(boolean) | swt-unselected-close-visible | CTabFolder { swt-unselected-close-visible: true } |
 | setUnselectedImageVisible(boolean) | swt-unselected-image-visible | CTabFolder { swt-unselected-image-visible: true } |

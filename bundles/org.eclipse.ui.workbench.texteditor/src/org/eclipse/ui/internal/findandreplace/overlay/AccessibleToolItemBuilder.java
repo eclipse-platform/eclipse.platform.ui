@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
+import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 /**
  * Builder for ToolItems for {@link AccessibleToolBar}.
@@ -31,8 +30,6 @@ class AccessibleToolItemBuilder {
 	private int styleBits = SWT.NONE;
 	private Image image;
 	private String toolTipText;
-	private List<KeyStroke> shortcuts = Collections.emptyList();
-	private Runnable operation;
 
 	public AccessibleToolItemBuilder(AccessibleToolBar accessibleToolBar) {
 		this.accessibleToolBar = Objects.requireNonNull(accessibleToolBar);
@@ -53,17 +50,71 @@ class AccessibleToolItemBuilder {
 		return this;
 	}
 
-	public AccessibleToolItemBuilder withShortcuts(List<KeyStroke> newShortcuts) {
-		this.shortcuts = newShortcuts;
-		return this;
+	public AccessibleToolItemForActionBuilder withAction(FindReplaceOverlayAction action) {
+		return new AccessibleToolItemForActionBuilder(this, action);
 	}
 
-	public AccessibleToolItemBuilder withOperation(Runnable newOperation) {
-		this.operation = newOperation;
-		return this;
+	public class AccessibleToolItemForActionBuilder {
+		private final AccessibleToolItemBuilder parentBuilder;
+
+		private final FindReplaceOverlayAction action;
+
+		private AccessibleToolItemForActionBuilder(AccessibleToolItemBuilder parentBuilder,
+				FindReplaceOverlayAction action) {
+			this.parentBuilder = parentBuilder;
+			this.action = action;
+		}
+
+		public ToolItem build() {
+			AccessibleToolItem accessibleToolItem = parentBuilder.buildAccessibleToolItem();
+			accessibleToolItem.setAction(action);
+			return accessibleToolItem.getToolItem();
+		}
+	}
+
+	public AccessibleToolItemForSearchOptionBuilder withAction(FindReplaceOverlaySearchOptionAction action) {
+		return new AccessibleToolItemForSearchOptionBuilder(this, action);
+	}
+
+	public class AccessibleToolItemForSearchOptionBuilder extends AccessibleToolItemForActionBuilder {
+		private final FindReplaceOverlaySearchOptionAction searchOptionAction;
+
+		private boolean invertSearchOption;
+
+		private AccessibleToolItemForSearchOptionBuilder(AccessibleToolItemBuilder parentBuilder,
+				FindReplaceOverlaySearchOptionAction searchOptionAction) {
+			super(parentBuilder, searchOptionAction);
+			this.searchOptionAction = searchOptionAction;
+		}
+
+		public AccessibleToolItemForSearchOptionBuilder displayInverted() {
+			this.invertSearchOption = true;
+			return this;
+		}
+
+		@Override
+		public ToolItem build() {
+			ToolItem toolItem = super.build();
+			IFindReplaceLogic findReplaceLogic = searchOptionAction.getFindReplaceLogic();
+			SearchOptions searchOption = searchOptionAction.getSearchOption();
+			boolean initial = findReplaceLogic.isActive(searchOption);
+			toolItem.setSelection(invertSearchOption ? !initial : initial);
+			findReplaceLogic.addSearchOptionActivationChangedListener(searchOption, state -> {
+				if (!toolItem.isDisposed()) {
+					toolItem.setSelection(invertSearchOption ? !state : state);
+				}
+			});
+			searchOptionAction.setAvailable(findReplaceLogic.isAvailable(searchOption));
+			findReplaceLogic.addSearchOptionAvailabilityChangedListener(searchOption, searchOptionAction::setAvailable);
+			return toolItem;
+		}
 	}
 
 	public ToolItem build() {
+		return buildAccessibleToolItem().getToolItem();
+	}
+
+	private AccessibleToolItem buildAccessibleToolItem() {
 		AccessibleToolItem accessibleToolItem = accessibleToolBar.createToolItem(styleBits);
 		if (image != null) {
 			accessibleToolItem.setImage(image);
@@ -71,10 +122,7 @@ class AccessibleToolItemBuilder {
 		if (toolTipText != null) {
 			accessibleToolItem.setToolTipText(toolTipText);
 		}
-		if (operation != null) {
-			accessibleToolItem.setOperation(operation, shortcuts);
-		}
-
-		return accessibleToolItem.getToolItem();
+		return accessibleToolItem;
 	}
+
 }

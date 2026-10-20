@@ -19,12 +19,10 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ui.internal.texteditor.NLSUtility;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -136,11 +134,11 @@ public final class HyperlinkDetectorTargetDescriptor {
 					result.add(desc);
 				} else {
 					String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetectorTarget_invalidExtension_message, new String[] {desc.getId(), element.getContributor().getName()});
-					TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
+					ILog.of(HyperlinkDetectorTargetDescriptor.class).error(message);
 				}
 			} else {
 				String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetectorTarget_invalidElementName_message, new String[] { element.getContributor().getName(), element.getName() });
-				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
+				ILog.of(HyperlinkDetectorTargetDescriptor.class).error(message);
 			}
 
 		}

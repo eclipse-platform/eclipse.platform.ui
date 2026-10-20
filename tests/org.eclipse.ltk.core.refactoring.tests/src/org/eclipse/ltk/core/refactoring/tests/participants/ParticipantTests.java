@@ -21,7 +21,8 @@ import org.junit.platform.suite.api.Suite;
 	FailingParticipantTests.class,
 	SharedTextChangeTests.class,
 	CancelingParticipantTests.class,
-	MoveRefactoringWithRefUpdateTest.class
+	MoveRefactoringWithRefUpdateTest.class,
+	CopyRefactoringWithRefUpdateTest.class
 })
 public class ParticipantTests {
 }

@@ -17,6 +17,9 @@ package org.eclipse.ui.editors.text.templates;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,12 +131,12 @@ public class ContributionTemplateStore extends TemplateStore {
 		String file= element.getAttribute(FILE);
 		if (file != null) {
 			Bundle plugin = Platform.getBundle(element.getContributor().getName());
-			URL url= FileLocator.find(plugin, IPath.fromOSString(file), null);
+			URL url= resolveResource(plugin, file);
 			if (url != null) {
 				ResourceBundle bundle= null;
 				String translations= element.getAttribute(TRANSLATIONS);
 				if (translations != null) {
-					URL bundleURL= FileLocator.find(plugin, IPath.fromOSString(translations), null);
+					URL bundleURL= resolveResource(plugin, translations);
 					if (bundleURL != null) {
 						try (InputStream bundleStream= bundleURL.openStream()) {
 							bundle= new PropertyResourceBundle(bundleStream);
@@ -158,6 +161,30 @@ public class ContributionTemplateStore extends TemplateStore {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Resolves a resource location to a URL. Supports plain bundle-relative paths
+	 * as well as <code>platform:/plugin/</code> URIs, which allow referencing files
+	 * contributed by other plug-ins. Other <code>platform:/</code> schemes (e.g.
+	 * <code>platform:/resource/</code>, <code>platform:/fragment/</code>) are not
+	 * handled here and are treated as bundle-relative paths.
+	 *
+	 * @param plugin   the contributing bundle, used for bundle-relative lookups
+	 * @param location the resource location (a bundle-relative path or a
+	 *                 <code>platform:/plugin/</code> URI)
+	 * @return the resolved URL, or <code>null</code> if it could not be found
+	 */
+	private static URL resolveResource(Bundle plugin, String location) {
+		if (location.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+			try {
+				return FileLocator.find(new URI(location).toURL());
+			} catch (URISyntaxException | MalformedURLException e) {
+				EditorsPlugin.log(e);
+				return null;
+			}
+		}
+		return FileLocator.find(plugin, IPath.fromOSString(location), null);
 	}
 
 	/**

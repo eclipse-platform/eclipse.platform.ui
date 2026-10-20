@@ -148,5 +148,17 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.CopyResourcesHandler"
+            description="%copyResources.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.copyResources"
+            name="%copyResources.name">
+         <commandParameter
+               id="org.eclipse.ltk.ui.refactoring.commands.copyResources.destinationPaths.parameter.key"
+               name="%copyResources.commandParameter.destinationPaths"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
 </plugin>

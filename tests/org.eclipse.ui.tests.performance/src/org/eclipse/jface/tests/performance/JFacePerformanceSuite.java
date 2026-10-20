@@ -24,10 +24,9 @@ import org.junit.platform.suite.api.SelectClasses;
 		ListViewerRefreshTest.class, //
 		ComboViewerRefreshTest.class, //
 		FastTableViewerRefreshTest.class, //
-		FastTreeTest.class, //
-		TreeAddTest.class, //
+		TreeViewerPerformanceTest.class, //
+		TreeViewerExpansionTest.class, //
 		ProgressMonitorDialogPerformanceTest.class, //
-		ShrinkingTreeTest.class, //
 		CollatorPerformanceTest.class, //
 })
 public class JFacePerformanceSuite {

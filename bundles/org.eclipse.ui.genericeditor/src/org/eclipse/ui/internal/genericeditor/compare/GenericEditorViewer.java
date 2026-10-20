@@ -22,10 +22,9 @@ import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -58,7 +57,7 @@ public class GenericEditorViewer extends Viewer {
 
 		// use the same font as the TextMergeViewer
 		sourceViewer.getTextWidget().setFont(JFaceResources.getFont(TextMergeViewer.class.getName()));
-		sourceViewer.getTextWidget().addDisposeListener(e -> disconnect());
+		sourceViewer.getTextWidget().addDisposeListener(_ -> disconnect());
 	}
 
 	@Override
@@ -96,8 +95,7 @@ public class GenericEditorViewer extends Viewer {
 		try {
 			documentProvider.connect(editorInput);
 		} catch (CoreException ex) {
-			GenericEditorPlugin.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+			ILog.of(GenericEditorViewer.class).error(ex.getMessage(), ex);
 		}
 
 		sourceViewer.setDocument(documentProvider.getDocument(editorInput));

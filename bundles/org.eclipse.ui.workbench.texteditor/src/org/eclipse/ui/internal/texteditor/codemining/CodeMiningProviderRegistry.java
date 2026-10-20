@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -77,7 +78,7 @@ public class CodeMiningProviderRegistry {
 				CodeMiningProviderDescriptor descriptor = new CodeMiningProviderDescriptor(element);
 				descriptors.add(descriptor);
 			} catch (CoreException e) {
-				TextEditorPlugin.getDefault().getLog()
+				ILog.of(CodeMiningProviderRegistry.class)
 						.log(new Status(IStatus.ERROR, element.getNamespaceIdentifier(), e.getMessage()));
 			}
 		}

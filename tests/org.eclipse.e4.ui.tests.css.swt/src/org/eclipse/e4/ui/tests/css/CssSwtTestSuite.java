@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.PreferenceOverriddenByCssChangeListenerTest;
+import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpersTest;
 import org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandlerTest;
 import org.eclipse.e4.ui.tests.css.forms.ExpandableCompositeTest;
 import org.eclipse.e4.ui.tests.css.forms.SectionTest;
@@ -33,12 +34,17 @@ import org.eclipse.e4.ui.tests.css.swt.Bug459961Test;
 import org.eclipse.e4.ui.tests.css.swt.ButtonTest;
 import org.eclipse.e4.ui.tests.css.swt.ButtonTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTWidgetTest;
+import org.eclipse.e4.ui.tests.css.swt.CTabFolderActiveClassTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabFolderTest;
+import org.eclipse.e4.ui.tests.css.swt.CTabItemSelectionTest;
 import org.eclipse.e4.ui.tests.css.swt.CTabItemTest;
 import org.eclipse.e4.ui.tests.css.swt.ColorDefinitionTest;
+import org.eclipse.e4.ui.tests.css.swt.CompositeTest;
 import org.eclipse.e4.ui.tests.css.swt.DescendentTest;
 import org.eclipse.e4.ui.tests.css.swt.FontDefinitionTest;
+import org.eclipse.e4.ui.tests.css.swt.FontWeightsTest;
 import org.eclipse.e4.ui.tests.css.swt.GradientTest;
+import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesPseudoKeyTest;
 import org.eclipse.e4.ui.tests.css.swt.IEclipsePreferencesTest;
 import org.eclipse.e4.ui.tests.css.swt.IdClassLabelColorTest;
 import org.eclipse.e4.ui.tests.css.swt.InheritTest;
@@ -47,6 +53,7 @@ import org.eclipse.e4.ui.tests.css.swt.LabelTest;
 import org.eclipse.e4.ui.tests.css.swt.LabelTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.LinkTest;
 import org.eclipse.e4.ui.tests.css.swt.MarginTest;
+import org.eclipse.e4.ui.tests.css.swt.PaddingTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellActiveTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellTest;
 import org.eclipse.e4.ui.tests.css.swt.TableTest;
@@ -59,17 +66,22 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, CSSResourcesHelpersTest.class,
+@SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, SWTStyleHelpersTest.class,
+		CSSResourcesHelpersTest.class,
 		SWTResourceRegistryKeyFactoryTest.class, SWTResourcesRegistryTest.class, FontDefinitionTest.class,
+		FontWeightsTest.class,
 		ColorDefinitionTest.class, ThemesExtensionTest.class, IEclipsePreferencesTest.class,
 		EclipsePreferencesHelperTest.class, CSSSWTWidgetTest.class, LabelTest.class, LinkTest.class,
-		CTabFolderTest.class, CTabItemTest.class, IdClassLabelColorTest.class, ShellTest.class, ButtonTest.class,
+		CTabFolderTest.class, CTabFolderActiveClassTest.class, CTabItemTest.class, CTabItemSelectionTest.class,
+		IEclipsePreferencesPseudoKeyTest.class,
+		IdClassLabelColorTest.class, ShellTest.class, ButtonTest.class,
 		ToolItemTest.class, GradientTest.class, MarginTest.class, InnerClassElementTest.class,
 		EclipsePreferencesHandlerTest.class, PreferenceOverriddenByCssChangeListenerTest.class,
 		ButtonTextTransformTest.class, LabelTextTransformTest.class, TextTextTransformTest.class, DescendentTest.class,
 		ThemeTest.class, Bug459961Test.class, Bug419482Test.class, ShellActiveTest.class, InheritTest.class,
 		TableTest.class, TreeTest.class, TabbedPropertiesListTest.class, TabbedPropertiesTitleTest.class,
-		ExpandableCompositeTest.class, SectionTest.class })
+		ExpandableCompositeTest.class, SectionTest.class,
+		CompositeTest.class, PaddingTest.class })
 public class CssSwtTestSuite {
 
 }

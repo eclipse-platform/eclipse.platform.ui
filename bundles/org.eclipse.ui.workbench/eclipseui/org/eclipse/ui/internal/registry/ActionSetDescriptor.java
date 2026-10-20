@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,13 +17,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * ActionSetDescriptor
@@ -65,7 +69,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 
 		// Sanity check.
 		if (label == null) {
-			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0,
+			throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
 					"Invalid extension (missing label): " + id, //$NON-NLS-1$
 					null));
 		}
@@ -159,9 +163,10 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 		if (id == null) {
 			return visible;
 		}
-		Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
 		String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
-		if (prefs.getBoolean(prefId)) {
+		boolean hidden = Platform.getPreferencesService().getBoolean(
+				PlatformUI.PLUGIN_ID, prefId, false, null);
+		if (hidden) {
 			return false;
 		}
 		return visible;
@@ -178,9 +183,14 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 		if (id == null) {
 			return;
 		}
-		Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(PlatformUI.PLUGIN_ID);
 		String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
-		prefs.setValue(prefId, !newValue);
+		prefs.putBoolean(prefId, !newValue);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			WorkbenchPlugin.log("Failed to persist action set visibility preference for " + prefId, e); //$NON-NLS-1$
+		}
 	}
 
 	@Override

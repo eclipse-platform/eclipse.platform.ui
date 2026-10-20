@@ -60,7 +60,7 @@ public class OpenFilesystemQuickAccessComputer implements IQuickAccessComputerEx
 		@Override
 		public void execute() {
 			UIJob.create(getLabel(),
-					(ICoreRunnable) m -> IDE.openEditorOnFileStore(
+					(ICoreRunnable) _ -> IDE.openEditorOnFileStore(
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
 							EFS.getStore(file.toURI())))
 					.schedule();

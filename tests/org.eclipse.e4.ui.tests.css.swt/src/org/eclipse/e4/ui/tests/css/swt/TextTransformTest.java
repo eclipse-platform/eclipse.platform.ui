@@ -16,12 +16,15 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests the <code>text-transform</code> property.
@@ -38,8 +41,10 @@ import org.junit.jupiter.api.Test;
  * <code>text-transform</code> specification from W3C</a>
  * </p>
  */
-public abstract class TextTransformTest extends CSSSWTTestCase {
+public abstract class TextTransformTest {
 
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
 
 	/**
 	 * Retrieves the name of the widget that is being tested, must not be
@@ -80,7 +85,8 @@ public abstract class TextTransformTest extends CSSSWTTestCase {
 	protected abstract void setText(Control control, String string);
 
 	private Control createTestControl(String styleSheet) {
-		engine = createEngine(styleSheet, display);
+		Display display = css.getDisplay();
+		CSSEngine engine = css.createEngine(styleSheet);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

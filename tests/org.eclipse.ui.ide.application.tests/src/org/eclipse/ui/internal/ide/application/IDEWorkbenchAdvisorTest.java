@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -41,6 +42,7 @@ public class IDEWorkbenchAdvisorTest {
 	private static final String PLUGIN_ID = "org.eclipse.ui.ide.application.tests";
 	private Display display = null;
 	private ISchedulingRule rule;
+	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	private static final class SaveHook implements ISaveParticipant, Closeable {
 		public ISaveContext saving = null;
@@ -197,6 +199,69 @@ public class IDEWorkbenchAdvisorTest {
 			assertEquals(expectedLogs, logs.get(), message);
 		} finally {
 			IDEWorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
+		}
+	}
+
+	/**
+	 * Workbench shutdown should complete cleanly when the workspace save takes
+	 * longer than the progress service's long operation time. In that case the
+	 * progress dialog is expected to open after the delay, but the save must
+	 * still run to completion and the save hooks must fire.
+	 *
+	 * Regression test for issue 1269 (flashing shutdown dialog).
+	 */
+	@Test
+	public void testShutdownWithSlowSave() throws CoreException {
+		try (SaveHook saveHook = new SaveHook()) {
+			// Sleep duration is derived from the live IProgressService#getLongOperationTime()
+			// value in postStartup(), so the test exercises the delayed-open path even if
+			// the platform default ever changes.
+			final long sleepMarginMillis = 500L;
+			final AtomicLong sleepMillis = new AtomicLong();
+			workspace.addSaveParticipant(PLUGIN_ID + ".slow", new ISaveParticipant() {
+				@Override
+				public void saving(ISaveContext context) {
+					try {
+						Thread.sleep(sleepMillis.get());
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+
+				@Override
+				public void prepareToSave(ISaveContext context) {
+				}
+
+				@Override
+				public void doneSaving(ISaveContext context) {
+				}
+
+				@Override
+				public void rollback(ISaveContext context) {
+				}
+			});
+			try {
+				IDEWorkbenchAdvisor advisor = new IDEWorkbenchAdvisor() {
+					@Override
+					public void postStartup() {
+						super.postStartup();
+						long longOperationTime = PlatformUI.getWorkbench().getProgressService()
+								.getLongOperationTime();
+						sleepMillis.set(longOperationTime + sleepMarginMillis);
+						display.asyncExec(() -> PlatformUI.getWorkbench().close());
+					}
+				};
+				int returnCode = PlatformUI.createAndRunWorkbench(display, advisor);
+				assertEquals(PlatformUI.RETURN_OK, returnCode);
+				dispatchDisplay();
+
+				assertNotNull(saveHook.prepareToSave);
+				assertNotNull(saveHook.saving);
+				assertNotNull(saveHook.doneSaving);
+				assertNull(saveHook.rollback);
+			} finally {
+				workspace.removeSaveParticipant(PLUGIN_ID + ".slow");
+			}
 		}
 	}
 

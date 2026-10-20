@@ -26,9 +26,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -38,6 +42,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -118,6 +124,8 @@ public class E4Application implements IApplication {
 	private static final String SHOWLOCATION_ARG_NAME = "showLocation";
 	private static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 	public static final String HIGH_CONTRAST_THEME_ID = "org.eclipse.e4.ui.css.theme.high-contrast";
+	private static final String NL_STATE_FILENAME = "last_nl.properties"; //$NON-NLS-1$
+	private static final String NL_STATE_KEY = "eclipse.last.nl"; //$NON-NLS-1$
 
 	private String[] args;
 
@@ -315,9 +323,20 @@ public class E4Application implements IApplication {
 				: getArgValue(E4Application.THEME_ID, applicationContext, false);
 
 		if (!themeId.isPresent() && !cssURI.isPresent()) {
-			context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
+			String defaultThemeId = getProductScopedThemeId();
+			if (defaultThemeId != null) {
+				context.set(E4Application.THEME_ID, defaultThemeId);
+			} else {
+				context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
+			}
 		} else {
-			context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
+			// Do not let a product/workspace default override the OS high-contrast theme
+			String userThemeId = highContrastMode ? null : getProductScopedThemeId();
+			if (userThemeId != null) {
+				context.set(E4Application.THEME_ID, userThemeId);
+			} else {
+				context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
+			}
 		}
 
 
@@ -358,6 +377,10 @@ public class E4Application implements IApplication {
 		// Persisted state
 		Boolean clearPersistedState = getArgValue(IWorkbench.CLEAR_PERSISTED_STATE, appContext, true)
 				.map(Boolean::parseBoolean).orElse(Boolean.FALSE);
+		// If not already clearing, check if NL locale changed since last run
+		if (!clearPersistedState) {
+			clearPersistedState = hasNlChanged(instanceLocation);
+		}
 		eclipseContext.set(IWorkbench.CLEAR_PERSISTED_STATE, clearPersistedState);
 
 		String resourceHandler = getArgValue(IWorkbench.MODEL_RESOURCE_HANDLER, appContext, false)
@@ -370,6 +393,59 @@ public class E4Application implements IApplication {
 
 		Resource resource = handler.loadMostRecentModel();
 		return (MApplication) resource.getContents().get(0);
+	}
+
+	/**
+	 * Checks whether the Eclipse locale (-nl) has changed since the last launch.
+	 * Persists the current locale in a properties file alongside workbench.xmi.
+	 *
+	 * @return true if the locale has changed since the last launch, false otherwise
+	 */
+	private boolean hasNlChanged(Location instanceLocation) {
+		if (instanceLocation == null || instanceLocation.getURL() == null) {
+			return false;
+		}
+
+		Path stateDir;
+		try {
+			stateDir = Path.of(instanceLocation.getURL().toURI()).resolve(".metadata") //$NON-NLS-1$
+					.resolve(".plugins") //$NON-NLS-1$
+					.resolve("org.eclipse.e4.workbench"); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			return false;
+		}
+		Path nlFile = stateDir.resolve(NL_STATE_FILENAME);
+
+		String currentNL = Platform.getNL();
+		Properties props = new Properties();
+		boolean localeChanged = false;
+
+		// Read previously saved locale if file exists
+		if (Files.isRegularFile(nlFile)) {
+			try (InputStream in = Files.newInputStream(nlFile)) {
+				props.load(in);
+				String savedNL = props.getProperty(NL_STATE_KEY);
+				if (!currentNL.equals(savedNL)) {
+					localeChanged = true;
+				}
+			} catch (IOException e) {
+				// Cannot read - file will be rewritten below
+				localeChanged = true;
+			}
+		}
+		// Write current locale - covers first launch, locale change and recovery cases
+		props.setProperty(NL_STATE_KEY, currentNL);
+		try {
+			Files.createDirectories(stateDir); // ensure directory exists before writing
+			try (OutputStream out = Files.newOutputStream(nlFile)) {
+				props.store(out, "Eclipse last used NL locale"); //$NON-NLS-1$
+			}
+		} catch (IOException e) {
+			// Cannot write - non-fatal, skip clearing to be safe
+			return false;
+		}
+
+		return localeChanged;
 	}
 
 	private URI determineApplicationModelURI(IApplicationContext appContext) {
@@ -396,6 +472,33 @@ public class E4Application implements IApplication {
 		}
 		return applicationModelURI;
 
+	}
+
+	/**
+	 * Returns the product ID if a product is configured, otherwise falls back to
+	 * the application ID from the system property. Returns {@code null} if
+	 * neither is available.
+	 */
+	private static String getProductOrApplicationId() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			return product.getId();
+		}
+		return System.getProperty("eclipse.application"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the user's product-scoped theme preference, or {@code null} if
+	 * none is set.
+	 */
+	private static String getProductScopedThemeId() {
+		String productOrAppId = getProductOrApplicationId();
+		if (productOrAppId != null) {
+			IEclipsePreferences themeNode = UserScope.INSTANCE
+					.getNode("org.eclipse.e4.ui.css.swt.theme");
+			return themeNode.node(productOrAppId).get("themeid", null);
+		}
+		return null;
 	}
 
 	/**

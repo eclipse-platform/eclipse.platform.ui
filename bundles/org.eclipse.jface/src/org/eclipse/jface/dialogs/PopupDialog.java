@@ -43,7 +43,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -876,7 +875,6 @@ public class PopupDialog extends Window {
 
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL,
 				SWT.BEGINNING).applyTo(infoLabel);
-		Display display = parent.getDisplay();
 
 		Color backgroundColor = getBackground();
 		if (backgroundColor == null) {
@@ -886,7 +884,7 @@ public class PopupDialog extends Window {
 		if (foregroundColor == null) {
 			foregroundColor = getDefaultForeground();
 		}
-		Color infoColor = new Color(display, blend(
+		Color infoColor = new Color(blend(
 				backgroundColor.getRGB(), foregroundColor.getRGB(),
 				0.56f));
 

@@ -14,11 +14,9 @@
 
 package org.eclipse.jface.text;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 import java.util.Locale;
-
-import com.ibm.icu.text.BreakIterator;
-
 
 
 /**
@@ -223,7 +221,60 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.5
 	 */
 	protected IRegion findWord(IDocument document, int offset) {
+		IRegion identifier= findIdentifierAt(document, offset);
+		if (identifier != null) {
+			return identifier;
+		}
 		return findWord(document, offset, getWordBreakIterator());
+	}
+
+	/**
+	 * Returns the identifier run containing an underscore at or just before the offset, or
+	 * {@code null}. Needed because {@link BreakIterator} splits runs of underscores.
+	 */
+	private static IRegion findIdentifierAt(IDocument document, int offset) {
+		try {
+			IRegion line= document.getLineInformationOfOffset(offset);
+			int lineStart= line.getOffset();
+			String text= document.get(lineStart, line.getLength());
+			int probe= offset - lineStart;
+			if (probe > text.length()) {
+				return null;
+			}
+			if (probe > 0 && probe < text.length() && Character.isLowSurrogate(text.charAt(probe))
+					&& Character.isHighSurrogate(text.charAt(probe - 1))) {
+				probe--;
+			}
+			if (probe == text.length() || !isIdentifierPart(text.codePointAt(probe))) {
+				if (probe == 0 || !isIdentifierPart(text.codePointBefore(probe))) {
+					return null;
+				}
+				probe-= Character.charCount(text.codePointBefore(probe));
+			}
+			int start= probe;
+			while (start > 0 && isIdentifierPart(text.codePointBefore(start))) {
+				start-= Character.charCount(text.codePointBefore(start));
+			}
+			int end= probe;
+			while (end < text.length() && isIdentifierPart(text.codePointAt(end))) {
+				end+= Character.charCount(text.codePointAt(end));
+			}
+			if (text.substring(start, end).indexOf('_') == -1) {
+				return null;
+			}
+			return new Region(lineStart + start, end - start);
+		} catch (BadLocationException e) {
+			return null;
+		}
+	}
+
+	private static boolean isIdentifierPart(int codePoint) {
+		if (codePoint == '_' || Character.isLetterOrDigit(codePoint)) {
+			return true;
+		}
+		int type= Character.getType(codePoint);
+		return type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK
+				|| type == Character.ENCLOSING_MARK;
 	}
 
 	/**

@@ -17,7 +17,6 @@ import java.net.URL;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -118,7 +117,7 @@ class TemplatesPageImages {
 		}
 		fgImageRegistry.put(key, desc);
 		if (disabledKey != null) {
-			ImageDescriptor disabledDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			ImageDescriptor disabledDescriptor = desc.asDisabledDescriptor();
 			fgImageRegistry.put(disabledKey, disabledDescriptor);
 		}
 	}

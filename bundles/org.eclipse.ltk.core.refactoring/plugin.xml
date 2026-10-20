@@ -52,5 +52,8 @@
             class="org.eclipse.ltk.internal.core.refactoring.resource.CopyProjectRefactoringContribution"
             id="org.eclipse.ltk.core.refactoring.copyproject.resource">
       </contribution>
+      <contribution
+            class="org.eclipse.ltk.internal.core.refactoring.resource.CopyResourcesRefactoringContribution"
+            id="org.eclipse.ltk.core.refactoring.copy.resources"/>
    </extension>        
 </plugin>

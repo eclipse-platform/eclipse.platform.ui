@@ -80,7 +80,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		}
 	};
 
-	private final IPropertyChangeListener workingSetManagerListener = event -> {
+	private final IPropertyChangeListener workingSetManagerListener = _ -> {
 		if (helper != null) {
 			helper.refreshWorkingSetTreeState();
 		}

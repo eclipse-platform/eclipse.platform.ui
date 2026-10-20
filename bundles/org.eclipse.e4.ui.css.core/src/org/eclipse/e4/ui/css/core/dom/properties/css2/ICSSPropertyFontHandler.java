@@ -26,7 +26,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * A shorthand property for setting all of the properties for a font in one
-	 * declaration. Available values are=font-style font-variant font-weight
+	 * declaration. Available values are=font-style font-weight
 	 * font-size/line-height font-family caption icon menu message-box
 	 * small-caption status-bar
 	 */
@@ -47,28 +47,9 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
-	 * Specifies an aspect value for an element that will preserve the x-height
-	 * of the first-choice font.
-	 */
-	void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception;
-
-	/**
-	 * Condenses or expands the current font-family.
-	 */
-	void applyCSSPropertyFontStretch(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception;
-
-	/**
 	 * Sets the style of the font.
 	 */
 	void applyCSSPropertyFontStyle(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception;
-
-	/**
-	 * Displays text in a small-caps font or a normal font.
-	 */
-	void applyCSSPropertyFontVariant(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -83,16 +64,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	String retrieveCSSPropertyFontSize(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
-			CSSEngine engine) throws Exception;
-
-	String retrieveCSSPropertyFontStretch(Object element, String pseudo,
-			CSSEngine engine) throws Exception;
-
 	String retrieveCSSPropertyFontStyle(Object element, String pseudo,
-			CSSEngine engine) throws Exception;
-
-	String retrieveCSSPropertyFontVariant(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
 	String retrieveCSSPropertyFontWeight(Object element, String pseudo,

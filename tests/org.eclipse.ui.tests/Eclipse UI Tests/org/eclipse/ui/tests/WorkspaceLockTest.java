@@ -110,7 +110,7 @@ public class WorkspaceLockTest {
 		Path metadataDir = tempDir.resolve(".metadata");
 		Files.createDirectories(metadataDir);
 		Path lockFile = metadataDir.resolve(".lock");
-		try (RandomAccessFile lock = lock(lockFile.toFile())) {
+		try (RandomAccessFile _ = lock(lockFile.toFile())) {
 			assertTrue(WorkspaceLock.isWorkspaceLocked(workspaceUrl), "Should be locked");
 		}
 	}

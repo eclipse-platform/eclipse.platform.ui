@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssText;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTCursorHelper {
@@ -29,10 +29,10 @@ public class CSSSWTCursorHelper {
 	 *      "http://www.w3schools.com/css/pr_class_cursor.asp">http://www.w3schools.com/css/pr_class_cursor.asp</a>
 	 */
 	public static Cursor getSWTCursor(CSSValue value, Display display) {
-		if (!(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+		if (!(value instanceof CssText text)) {
 			return null;
 		}
-		int i = getSWTCursorId((CSSPrimitiveValue) value);
+		int i = getSWTCursorId(text);
 		if (i == SWT.NONE) {
 			return null;
 		}
@@ -41,68 +41,11 @@ public class CSSSWTCursorHelper {
 	}
 
 	public static String getCSSCursor(Cursor cursor) {
-		if (cursor == null) {
-			return "auto";
-		}
-		// switch (cursor.getType()) {
-		// case Cursor.DEFAULT_CURSOR:
-		// // The default cursor (often an arrow)
-		// return "default";
-		// case Cursor.CROSSHAIR_CURSOR:
-		// // The cursor render as a crosshair
-		// return "crosshair";
-		// case Cursor.HAND_CURSOR:
-		// // The cursor render as a pointer (a hand) that indicates a link
-		// return "pointer";
-		// case Cursor.MOVE_CURSOR:
-		// // The cursor indicates something that should be moved
-		// return "move";
-		// case Cursor.E_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved
-		// // right (east)
-		// return "e-resize";
-		// case Cursor.NE_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved up
-		// // and right (north/east)
-		// return "ne-resize";
-		// case Cursor.NW_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved up
-		// // and left (north/west)
-		// return "nw-resize";
-		// case Cursor.N_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved up
-		// // (north)
-		// return "n-resize";
-		// case Cursor.SE_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved
-		// // down and right (south/east)
-		// return "se-resize";
-		// case Cursor.SW_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved
-		// // down and left (south/west)
-		// return "sw-resize";
-		// case Cursor.S_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved
-		// // down (south)
-		// return "s-resize";
-		// case Cursor.W_RESIZE_CURSOR:
-		// // The cursor indicates that an edge of a box is to be moved
-		// // left (west)
-		// return "w-resize";
-		// case Cursor.TEXT_CURSOR:
-		// // The cursor indicates text
-		// return "text";
-		// case Cursor.WAIT_CURSOR:
-		// // The cursor indicates that the program is busy (often a watch
-		// // or an hourglass)
-		// return "wait";
-		// // TODO : manage help cursor
-		// }
 		return "auto";
 	}
 
-	public static int getSWTCursorId(CSSPrimitiveValue value) {
-		String cursorName = value.getStringValue();
+	public static int getSWTCursorId(CssText value) {
+		String cursorName = value.value();
 		switch (cursorName) {
 		case "default":
 			// The default cursor (often an arrow)

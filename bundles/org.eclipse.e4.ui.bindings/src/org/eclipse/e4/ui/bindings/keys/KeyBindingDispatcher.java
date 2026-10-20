@@ -304,7 +304,7 @@ public class KeyBindingDispatcher {
 		Object obj = HandlerServiceImpl.lookUpHandler(context, command.getId());
 		if (obj != null) {
 			if (obj instanceof IHandler handler) {
-				commandHandled = command.isEnabled() && handler.isHandled();
+				commandHandled = handler.isHandled();
 			} else {
 				commandHandled = true;
 			}
@@ -319,12 +319,12 @@ public class KeyBindingDispatcher {
 			getDisplay()
 					.asyncExec(() -> handleCommandExecution(parameterizedCommand, handlerService, trigger, obj));
 		} else {
-			handleCommandExecution(parameterizedCommand, handlerService, trigger, obj);
+			commandHandled &= handleCommandExecution(parameterizedCommand, handlerService, trigger, obj);
 		}
 		return (commandDefined && commandHandled);
 	}
 
-	private void handleCommandExecution(final ParameterizedCommand parameterizedCommand,
+	private boolean handleCommandExecution(final ParameterizedCommand parameterizedCommand,
 			final EHandlerService handlerService, final Event trigger, Object handler) {
 		final IEclipseContext staticContext = createContext(trigger);
 		try {
@@ -360,6 +360,7 @@ public class KeyBindingDispatcher {
 						}
 					}
 				}
+				return false;
 			}
 		} finally {
 			staticContext.dispose();
@@ -371,6 +372,7 @@ public class KeyBindingDispatcher {
 		if (keyAssistDialog != null) {
 			keyAssistDialog.clearRememberedState();
 		}
+		return true;
 	}
 
 	private boolean isTracingEnabled() {

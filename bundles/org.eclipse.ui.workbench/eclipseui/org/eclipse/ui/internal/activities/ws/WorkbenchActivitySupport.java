@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -55,7 +54,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -229,21 +227,14 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 										try {
 											dialog.run(false, false, runnable);
 										} catch (InvocationTargetException | InterruptedException e2) {
-											log(e2);
+											// ModalContext.run uses InterruptedException to signal
+											// cancellation rather than actual thread interruption, so
+											// we do not re-set the interrupt flag here.
 										}
 									}));
 						}
 					}
 				}
-			}
-
-			/**
-			 * Logs an error message to the workbench log.
-			 *
-			 * @param e the exception to log
-			 */
-			private void log(Exception e) {
-				StatusUtil.newStatus(IStatus.ERROR, "Could not update contribution managers", e); //$NON-NLS-1$
 			}
 		});
 	}

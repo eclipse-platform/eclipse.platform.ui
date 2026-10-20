@@ -58,7 +58,7 @@ public class TestBug98621 {
 		public void execute(final IProgressMonitor pm) {
 			Display.getDefault().asyncExec(() -> {
 				try {
-					workspace.run((IWorkspaceRunnable) mon -> {
+					workspace.run((IWorkspaceRunnable) _ -> {
 						//
 					}, workspace.getRoot(), IResource.NONE, null);
 				} catch (CoreException ex) {
@@ -87,7 +87,7 @@ public class TestBug98621 {
 	@Test
 	public void testBug() throws CoreException {
 		Shell shell = new Shell();
-		workspace.run((IWorkspaceRunnable) monitor -> {
+		workspace.run((IWorkspaceRunnable) _ -> {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 			try {
 				dialog.run(true, false, new TransferTestOperation());

@@ -111,18 +111,12 @@ public interface IPreferenceConstants {
 	// Selection scope for EditorList
 	String EDITORLIST_SELECTION_SCOPE = "EDITORLIST_SELECTION_SCOPE"; //$NON-NLS-1$
 
-	int EDITORLIST_SET_WINDOW_SCOPE = 0;
-
 	int EDITORLIST_SET_PAGE_SCOPE = 1;
-
-	int EDITORLIST_SET_TAB_GROUP_SCOPE = 2;
 
 	// Sort criteria for EditorList
 	String EDITORLIST_SORT_CRITERIA = "EDITORLIST_SORT_CRITERIA"; //$NON-NLS-1$
 
 	int EDITORLIST_NAME_SORT = 0;
-
-	int EDITORLIST_MRU_SORT = 1;
 
 	// Max entries shown in the progress view (see DetailedProgressViewer)
 	String MAX_PROGRESS_ENTRIES = "MAX_PROGRESS_ENTRIES"; //$NON-NLS-1$
@@ -231,16 +225,6 @@ public interface IPreferenceConstants {
 	String PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
 
 	/**
-	 * Preference is not supported anymore
-	 *
-	 * @since 3.4
-	 *
-	 * @deprecated
-	 */
-	@Deprecated
-	String USE_32_THREADING = "use32Threading"; //$NON-NLS-1$
-
-	/**
 	 * Preference value that specifies the time interval in minutes between
 	 * workbench auto-saves. If the value is zero it disables workbench auto-save.
 	 *
@@ -326,5 +310,25 @@ public interface IPreferenceConstants {
 	 * @since 3.115
 	 */
 	String SHOW_KEYS_TIME_TO_CLOSE = "showCommandKeys_timeToClose"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for whether to prompt for a restart when the zoom of
+	 * the primary monitor changes.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (prompt)
+	 * </p>
+	 */
+	String PROMPT_RESTART_ON_ZOOM_CHANGE = "promptRestartOnZoomChange"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for the trim side of the perspective switcher, one of
+	 * <code>top</code>, <code>bottom</code>, <code>left</code> or <code>right</code>,
+	 * typically set by a theme. A user's own placement is kept until the value
+	 * changes.
+	 * <p>
+	 * The default value for this preference is: <code>top</code>
+	 * </p>
+	 */
+	String PERSPECTIVE_SWITCHER_SIDE = "perspectiveSwitcherSide"; //$NON-NLS-1$
 
 }

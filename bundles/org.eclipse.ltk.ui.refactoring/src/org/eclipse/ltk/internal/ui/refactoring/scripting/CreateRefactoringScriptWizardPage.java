@@ -127,7 +127,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fHistoryControl.setLayoutData(data);
 		final RefactoringHistory history= fWizard.getRefactoringHistory();
 		fHistoryControl.setInput(history);
-		fHistoryControl.addCheckStateListener(event -> fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors()));
+		fHistoryControl.addCheckStateListener(_ -> fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors()));
 		final Group group= new Group(composite, SWT.NONE);
 		group.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
 		final GridLayout layout= new GridLayout();

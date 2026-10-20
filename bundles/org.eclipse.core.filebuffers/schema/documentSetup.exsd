@@ -80,7 +80,7 @@ As of 3.2, a warning is written to the log file if this isn&apos;t followed.
          <attribute name="contentTypeId" type="string">
             <annotation>
                <documentation>
-                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point for which this participant should be used.
+                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.contenttype.contentTypes&lt;/code&gt; extension point for which this participant should be used.
                </documentation>
             </annotation>
          </attribute>

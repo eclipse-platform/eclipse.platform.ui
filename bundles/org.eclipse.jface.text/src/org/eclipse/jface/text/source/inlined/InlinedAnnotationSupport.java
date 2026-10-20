@@ -16,7 +16,6 @@ package org.eclipse.jface.text.source.inlined;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +30,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -50,6 +51,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -57,6 +59,7 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -137,11 +140,13 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Class to track start/end offset of visible lines.
 	 */
-	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener {
+	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener, ITextListener {
 
-		private int startOffset;
+		/** The document offsets of the first and the last visible line. */
+		private record Range(int start, int end) {}
 
-		private Integer endOffset;
+		/** Published as a whole, so that a reader never pairs a start with a foreign end. */
+		private volatile Range range;
 
 		public VisibleLines() {
 			install();
@@ -157,13 +162,20 @@ public class InlinedAnnotationSupport {
 
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			endOffset= null;
+			range= null;
+		}
+
+		@Override
+		public void textChanged(TextEvent event) {
+			// folding changes what is shown without a view port or document event
+			range= null;
 		}
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
-			if (endOffset != null && event != null && event.fDocument != null && event.fDocument.getLength() > endOffset) {
-				endOffset= null;
+			Range current= range;
+			if (current != null && event != null && event.fDocument != null && event.fDocument.getLength() > current.end()) {
+				range= null;
 			}
 		}
 
@@ -178,8 +190,7 @@ public class InlinedAnnotationSupport {
 		}
 
 		private void compute() {
-			startOffset= getInclusiveTopIndexStartOffset();
-			endOffset= getExclusiveBottomIndexEndOffset();
+			range= new Range(getInclusiveTopIndexStartOffset(), getExclusiveBottomIndexEndOffset());
 		}
 
 		/**
@@ -231,15 +242,17 @@ public class InlinedAnnotationSupport {
 		 *         otherwise.
 		 */
 		boolean isInVisibleLines(int documentOffset) {
-			if (endOffset == null) {
-				Display display= fViewer.getTextWidget().getDisplay();
-				if (display.getThread() == Thread.currentThread()) {
-					endOffset= getExclusiveBottomIndexEndOffset();
-				} else {
-					display.syncExec(() -> endOffset= getExclusiveBottomIndexEndOffset());
-				}
+			Display display= fViewer.getTextWidget().getDisplay();
+			if (display.getThread() == Thread.currentThread()) {
+				// a scroll that reports no view port event, such as a programmatic one,
+				// is only noticed by asking the widget again
+				compute();
+			} else if (range == null) {
+				display.syncExec(this::compute);
 			}
-			return documentOffset >= startOffset && documentOffset <= endOffset;
+			// another thread may have invalidated the range in between
+			Range current= range;
+			return current != null && documentOffset >= current.start() && documentOffset <= current.end();
 		}
 
 		/**
@@ -248,6 +261,7 @@ public class InlinedAnnotationSupport {
 		void uninstall() {
 			if (fViewer != null) {
 				fViewer.removeViewportListener(this);
+				fViewer.removeTextListener(this);
 				if (fViewer.getDocument() != null) {
 					fViewer.getDocument().removeDocumentListener(this);
 				}
@@ -259,6 +273,7 @@ public class InlinedAnnotationSupport {
 
 		void install() {
 			fViewer.addViewportListener(this);
+			fViewer.addTextListener(this);
 			fViewer.getDocument().addDocumentListener(this);
 			fViewer.getTextWidget().addControlListener(this);
 		}
@@ -332,9 +347,14 @@ public class InlinedAnnotationSupport {
 	private AnnotationPainter fPainter;
 
 	/**
-	 * Holds the current inlined annotations.
+	 * Holds the current inlined annotations; replaced from the code mining thread, so read it once.
 	 */
-	private Set<AbstractInlinedAnnotation> fInlinedAnnotations;
+	private volatile Set<AbstractInlinedAnnotation> fInlinedAnnotations;
+
+	/**
+	 * Keeps an update that is still running from adding annotations after uninstall.
+	 */
+	private volatile boolean fUninstalled;
 
 	/**
 	 * The mouse tracker used to support hover, click on inlined annotation.
@@ -342,6 +362,19 @@ public class InlinedAnnotationSupport {
 	private final MouseTracker fMouseTracker= new MouseTracker();
 
 	private FontMetrics fFontMetrics;
+
+	/**
+	 * The line height the reserved heights of the line header annotations were computed
+	 * with, {@code 0} when none were computed yet.
+	 */
+	private int fReservedHeightsLineHeight;
+
+	private boolean fReservedHeightsRefreshPending;
+
+	/**
+	 * Notices a changed line height of the text widget, as SWT reports none.
+	 */
+	private PaintListener fLineHeightTracker;
 
 	/**
 	 * Install the inlined annotation support for the given viewer.
@@ -354,6 +387,7 @@ public class InlinedAnnotationSupport {
 		Assert.isNotNull(painter);
 		fViewer= viewer;
 		fPainter= painter;
+		fUninstalled= false;
 		initPainter();
 		StyledText text= fViewer.getTextWidget();
 		if (text == null || text.isDisposed()) {
@@ -376,6 +410,70 @@ public class InlinedAnnotationSupport {
 		gc.setFont(viewer.getTextWidget().getFont());
 		fFontMetrics= gc.getFontMetrics();
 		gc.dispose();
+		fReservedHeightsLineHeight= lineHeight(text);
+		fLineHeightTracker= e -> refreshReservedHeightsOnLineHeightChange();
+		text.addPaintListener(fLineHeightTracker);
+	}
+
+	/**
+	 * The height a line header annotation reserves per line of its label.
+	 */
+	private static int lineHeight(StyledText text) {
+		return text.getLineHeight() + text.getLineSpacing();
+	}
+
+	/**
+	 * A line header annotation reserves its vertical space while it is painted, so an
+	 * annotation that is out of view keeps the space of the font it was last painted
+	 * with. That leaves the lines below it misplaced until they are scrolled into
+	 * view, which is why the reserved heights are refreshed here. SWT reports no font
+	 * change, so the redraw such a change triggers is what this notices.
+	 */
+	private void refreshReservedHeightsOnLineHeightChange() {
+		StyledText text= fViewer != null ? fViewer.getTextWidget() : null;
+		if (text == null || text.isDisposed() || fReservedHeightsRefreshPending
+				|| lineHeight(text) == fReservedHeightsLineHeight) {
+			return;
+		}
+		fReservedHeightsRefreshPending= true;
+		// the widget is painting itself with the new line height right now, so wait
+		text.getDisplay().asyncExec(() -> {
+			fReservedHeightsRefreshPending= false;
+			if (!text.isDisposed()) {
+				refreshReservedHeights(text);
+			}
+		});
+	}
+
+	private void refreshReservedHeights(StyledText text) {
+		fReservedHeightsLineHeight= lineHeight(text);
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations == null) {
+			return;
+		}
+		GC gc= new GC(text);
+		try {
+			for (AbstractInlinedAnnotation annotation : annotations) {
+				if (!(annotation instanceof LineHeaderAnnotation header) || annotation.isMarkedDeleted()) {
+					continue;
+				}
+				// only the lines that already reserve space, the others reserve it as
+				// soon as they are painted
+				int line= header.oldLine;
+				if (line < 0 || line >= text.getLineCount() || text.getLineVerticalIndent(line) <= 0) {
+					continue;
+				}
+				int height= header instanceof CodeMiningLineHeaderAnnotation mining ? mining.getHeight(gc)
+						: header.getHeight();
+				// a height of zero is left to the painting, which can tell an annotation
+				// that lost its content from one that is not resolved yet
+				if (height > 0) {
+					text.setLineVerticalIndent(line, height);
+				}
+			}
+		} finally {
+			gc.dispose();
+		}
 	}
 
 	/**
@@ -403,7 +501,12 @@ public class InlinedAnnotationSupport {
 		if (text != null && !text.isDisposed()) {
 			text.removeMouseListener(this.fMouseTracker);
 			text.removeMouseMoveListener(this.fMouseTracker);
+			if (fLineHeightTracker != null) {
+				text.removePaintListener(fLineHeightTracker);
+			}
 		}
+		fLineHeightTracker= null;
+		fReservedHeightsLineHeight= 0;
 		if (fViewer != null) {
 			if (fViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fViewer).removeTextPresentationListener(updateStylesWidth);
@@ -413,6 +516,7 @@ public class InlinedAnnotationSupport {
 			visibleLines.uninstall();
 			visibleLines= null;
 		}
+		fUninstalled= true;
 		removeInlinedAnnotations();
 		disposeFont();
 		fViewer= null;
@@ -425,23 +529,30 @@ public class InlinedAnnotationSupport {
 	 * @param annotations the inlined annotation.
 	 */
 	public void updateAnnotations(Set<AbstractInlinedAnnotation> annotations) {
-		IDocument document= fViewer != null ? fViewer.getDocument() : null;
+		ISourceViewer viewer= fViewer;
+		if (viewer == null) {
+			return;
+		}
+		IDocument document= viewer.getDocument();
 		if (document == null) {
 			// this case comes from when editor is closed before rendered is done.
 			return;
 		}
-		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
+		IAnnotationModel annotationModel= viewer.getAnnotationModel();
 		if (annotationModel == null) {
 			return;
 		}
 		Map<AbstractInlinedAnnotation, Position> annotationsToAdd= new HashMap<>();
-		List<AbstractInlinedAnnotation> annotationsToRemove= fInlinedAnnotations != null
-				? new ArrayList<>(fInlinedAnnotations)
+		Set<AbstractInlinedAnnotation> previousAnnotations= fInlinedAnnotations;
+		List<AbstractInlinedAnnotation> annotationsToRemove= previousAnnotations != null
+				? new ArrayList<>(previousAnnotations)
 				: Collections.emptyList();
 		// Loop for annotations to update
 		for (AbstractInlinedAnnotation ann : annotations) {
-			if (!annotationsToRemove.remove(ann)) {
-				// The annotation was not created, add it
+			boolean known= annotationsToRemove.remove(ann);
+			// An annotation a client removed from the annotation model behind our back is
+			// still known here, but invisible, so add it again.
+			if (!known || annotationModel.getPosition(ann) == null) {
 				annotationsToAdd.put(ann, ann.getPosition());
 			}
 		}
@@ -452,6 +563,9 @@ public class InlinedAnnotationSupport {
 		}
 		// Update annotation model
 		synchronized (getLockObject(annotationModel)) {
+			if (fUninstalled) {
+				return;
+			}
 			if (annotationsToAdd.isEmpty() && annotationsToRemove.isEmpty()) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
@@ -463,10 +577,10 @@ public class InlinedAnnotationSupport {
 					((IAnnotationModelExtension) annotationModel).replaceAnnotations(
 							annotationsToRemove.toArray(new Annotation[annotationsToRemove.size()]), annotationsToAdd);
 				} else {
-					removeInlinedAnnotations();
-					Iterator<Entry<AbstractInlinedAnnotation, Position>> iter= annotationsToAdd.entrySet().iterator();
-					while (iter.hasNext()) {
-						Entry<AbstractInlinedAnnotation, Position> mapEntry= iter.next();
+					for (AbstractInlinedAnnotation ann : annotationsToRemove) {
+						annotationModel.removeAnnotation(ann);
+					}
+					for (Entry<AbstractInlinedAnnotation, Position> mapEntry : annotationsToAdd.entrySet()) {
 						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 					}
 				}
@@ -485,10 +599,11 @@ public class InlinedAnnotationSupport {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractInlinedAnnotation> T findExistingAnnotation(Position pos) {
-		if (fInlinedAnnotations == null) {
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations == null) {
 			return null;
 		}
-		for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+		for (AbstractInlinedAnnotation ann : annotations) {
 			if (pos.equals(ann.getPosition()) && !ann.getPosition().isDeleted()) {
 				try {
 					return (T) ann;
@@ -522,16 +637,20 @@ public class InlinedAnnotationSupport {
 	private void removeInlinedAnnotations() {
 
 		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
-		if (annotationModel == null || fInlinedAnnotations == null) {
+		if (annotationModel == null) {
 			return;
 		}
 
 		synchronized (getLockObject(annotationModel)) {
+			Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+			if (annotations == null) {
+				return;
+			}
 			if (annotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension) annotationModel).replaceAnnotations(
-						fInlinedAnnotations.toArray(new Annotation[fInlinedAnnotations.size()]), null);
+						annotations.toArray(new Annotation[annotations.size()]), null);
 			} else {
-				for (AbstractInlinedAnnotation annotation : fInlinedAnnotations) {
+				for (AbstractInlinedAnnotation annotation : annotations) {
 					annotationModel.removeAnnotation(annotation);
 				}
 			}
@@ -547,8 +666,9 @@ public class InlinedAnnotationSupport {
 	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 */
 	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(int x, int y) {
-		if (fInlinedAnnotations != null) {
-			for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+		Set<AbstractInlinedAnnotation> annotations= fInlinedAnnotations;
+		if (annotations != null) {
+			for (AbstractInlinedAnnotation ann : annotations) {
 				ann.setSupport(this);
 				if (ann.contains(x, y) && isInVisibleLines(ann.getPosition().getOffset())) {
 					return ann;

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,7 +36,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
-import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
@@ -43,7 +43,6 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  * Provides a resolution for warning markers on projects without an explicit
  * encoding setting.
  */
-@SuppressWarnings("restriction")
 public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	@Override
@@ -54,7 +53,7 @@ public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResoluti
 			IMarkerResolution[] resolutions = { new ExplicitEncodingResolution(defaultCharset) };
 			return resolutions;
 		} catch (CoreException e) {
-			UIPlugin.getDefault().getLog().log(e.getStatus());
+			ILog.of(ProjectEncodingMarkerResolutionGenerator.class).log(e.getStatus());
 			return new IMarkerResolution[0];
 		}
 	}
@@ -117,7 +116,7 @@ public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResoluti
 					try {
 						charsetManager.setCharsetFor(project.getFullPath(), charset);
 					} catch (CoreException e) {
-						UIPlugin.getDefault().getLog().log(e.getStatus());
+						ILog.of(ProjectEncodingMarkerResolutionGenerator.class).log(e.getStatus());
 					}
 				}
 			}

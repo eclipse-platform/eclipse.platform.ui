@@ -14,93 +14,69 @@
 package org.eclipse.e4.ui.css.core.dom.properties.css2;
 
 import org.w3c.dom.DOMException;
-import org.w3c.dom.css.CSSPrimitiveValue;
+import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssPrimitive;
 import org.w3c.dom.css.CSSValue;
 
 public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 
-	private CSSPrimitiveValue family;
+	private CssPrimitive family;
 
-	private CSSPrimitiveValue size;
+	private CssPrimitive size;
 
-	private CSSPrimitiveValue sizeAdjust;
+	private boolean sizeFromCSS;
 
-	private CSSPrimitiveValue weight;
+	private CssPrimitive weight;
 
-	private CSSPrimitiveValue style;
-
-	private CSSPrimitiveValue variant;
-
-	private CSSPrimitiveValue stretch;
+	private CssPrimitive style;
 
 	@Override
-	public CSSPrimitiveValue getFamily() {
+	public CssPrimitive getFamily() {
 		return family;
 	}
 
 	@Override
-	public void setFamily(CSSPrimitiveValue family) {
+	public void setFamily(CssPrimitive family) {
 		this.family = family;
 	}
 
 	@Override
-	public CSSPrimitiveValue getSize() {
+	public CssPrimitive getSize() {
 		return size;
 	}
 
 	@Override
-	public void setSize(CSSPrimitiveValue size) {
+	public void setSize(CssPrimitive size) {
 		this.size = size;
 	}
 
 	@Override
-	public CSSPrimitiveValue getSizeAdjust() {
-		return sizeAdjust;
+	public boolean isSizeFromCSS() {
+		return sizeFromCSS;
 	}
 
 	@Override
-	public void setSizeAdjust(CSSPrimitiveValue sizeAdjust) {
-		this.sizeAdjust = sizeAdjust;
+	public void setSizeFromCSS(boolean sizeFromCSS) {
+		this.sizeFromCSS = sizeFromCSS;
 	}
 
 	@Override
-	public CSSPrimitiveValue getWeight() {
+	public CssPrimitive getWeight() {
 		return weight;
 	}
 
 	@Override
-	public void setWeight(CSSPrimitiveValue weight) {
+	public void setWeight(CssPrimitive weight) {
 		this.weight = weight;
 	}
 
 	@Override
-	public CSSPrimitiveValue getStyle() {
+	public CssPrimitive getStyle() {
 		return style;
 	}
 
 	@Override
-	public void setStyle(CSSPrimitiveValue style) {
+	public void setStyle(CssPrimitive style) {
 		this.style = style;
-	}
-
-	@Override
-	public CSSPrimitiveValue getVariant() {
-		return variant;
-	}
-
-	@Override
-	public void setVariant(CSSPrimitiveValue variant) {
-		this.variant = variant;
-	}
-
-	@Override
-	public CSSPrimitiveValue getStretch() {
-		return stretch;
-	}
-
-	@Override
-	public void setStretch(CSSPrimitiveValue stretch) {
-		this.stretch = stretch;
 	}
 
 	@Override

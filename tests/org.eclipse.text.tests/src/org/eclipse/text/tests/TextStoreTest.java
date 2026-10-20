@@ -16,8 +16,8 @@ package org.eclipse.text.tests;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -120,11 +120,7 @@ public abstract class TextStoreTest {
 		for (int i= 0; i < fTextStore.getLength(); i++)
 			assertEquals(expected.charAt(i), fTextStore.get(i));
 
-		try {
-			fTextStore.get(fTextStore.getLength());
-			fail();
-		} catch (IndexOutOfBoundsException e) {
-		}
+		assertThrows(IndexOutOfBoundsException.class, () -> fTextStore.get(fTextStore.getLength()));
 	}
 
 	@Test
@@ -399,19 +395,10 @@ public abstract class TextStoreTest {
 			assertEquals(lengths[i], line.getLength(), "line: " + i);
 			assertEquals(offsets[i], line.getOffset(), "line: " + i);
 		}
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
-
-		/* phantom last line when the last line is not empty */
+		int numLines1= lengths.length;
+		int outOfRange1= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines1));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange1));
 		set("x\nx");
 		assertTextStoreContents("x\nx");
 		offsets= new int[]{0, 2, 3};
@@ -434,17 +421,10 @@ public abstract class TextStoreTest {
 			assertEquals(offset, line.getOffset(), "offset of line: " + i);
 		}
 
-		try {
-			fTracker.getLineInformation(lengths.length);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
-			fail();
-		} catch (Exception e) {
-		}
+		int numLines2= lengths.length;
+		int outOfRange2= offsets[offsets.length - 1] + lengths[lengths.length - 1] + 1;
+		assertThrows(Exception.class, () -> fTracker.getLineInformation(numLines2));
+		assertThrows(Exception.class, () -> fTracker.getLineInformationOfOffset(outOfRange2));
 
 	}
 

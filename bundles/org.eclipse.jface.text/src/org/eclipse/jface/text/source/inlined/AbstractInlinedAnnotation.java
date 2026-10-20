@@ -13,6 +13,8 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
@@ -26,6 +28,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -298,6 +301,17 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	void setLocation(int x, int y) {
 		this.fX= x;
 		this.fY= y;
+	}
+
+	/**
+	 * Returns the list of code minings associated with this annotation, or an empty list if this
+	 * annotation has no associated minings.
+	 *
+	 * @return an unmodifiable list of code minings, never <code>null</code>
+	 * @since 3.31
+	 */
+	public List<ICodeMining> getMinings() {
+		return Collections.emptyList();
 	}
 
 	/**

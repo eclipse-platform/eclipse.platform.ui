@@ -1356,7 +1356,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					if (e == null) {
 						return null;
 					}
-					return cssEngine.getViewCSS().getComputedStyle(e, null);
+					return cssEngine.computeStyle(e, null);
 				}
 
 				@Override

@@ -103,8 +103,8 @@ public class ResourceManagerTest {
 		globalResourceManager = new DeviceResourceManager(display);
 		testImage = getImage("icons/anything.gif").createImage(display);
 		testImage2 = getImage("icons/binary_co.gif").createImage(display);
-		testColor = new Color(display, new RGB(10, 40, 20));
-		testColor2 = new Color(display, new RGB(230, 100, 26));
+		testColor = new Color(new RGB(10, 40, 20));
+		testColor2 = new Color(new RGB(230, 100, 26));
 
 		// Array of resource descriptors containing at least one duplicate of each type.
 		// If you modify this array, be sure to adjust numDupes as well. Note that some

@@ -40,7 +40,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressConstants2;
 
@@ -324,7 +323,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 			String msg = NLS.bind(
 					IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
 							.getName(), e.getTargetException());
-			IDEWorkbenchPlugin.log(msg, StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException()));
+			IDEWorkbenchPlugin.log(msg, Status.error(msg, e.getTargetException()));
 			displayError(e.getTargetException().getMessage());
 		}
 		// If errors occurred, open an Error dialog & build a multi status error

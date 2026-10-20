@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The TableViewerRefreshTest is a test for refreshing the TableViewer.
@@ -80,8 +80,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -100,8 +99,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -124,8 +122,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		}, MIN_ITERATIONS, ITERATIONS,
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 	/**
@@ -152,8 +149,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
-		commitMeasurements();
-		assertPerformance();
+		reportTimings();
 	}
 
 }

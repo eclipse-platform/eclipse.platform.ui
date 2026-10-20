@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import static org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService.exists;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -785,7 +787,7 @@ public final class RefactoringHistoryManager {
 				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 				final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 				final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[] { new DefaultRefactoringDescriptorProxy(descriptor.getDescription(), descriptor.getProject(), descriptor.getTimeStamp())};
-				if (history.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+				if (exists(history, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK))) {
 					InputStream input= null;
 					try {
 						input= new BufferedInputStream(history.openInputStream(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)));
@@ -933,11 +935,11 @@ public final class RefactoringHistoryManager {
 			SubMonitor subMon= SubMonitor.convert(monitor, RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 200);
 			final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 			try {
-				if (fHistoryStore.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+				if (exists(fHistoryStore, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK))) {
 					readRefactoringDescriptorProxies(fHistoryStore, fProjectName, set, start, end, subMon.newChild(80), RefactoringCoreMessages.RefactoringHistoryService_retrieving_history);
 				}
 				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT);
-				if (store.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+				if (exists(store, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK))) {
 					readRefactoringDescriptorProxies(store, null, set, start, end, subMon.newChild(80), RefactoringCoreMessages.RefactoringHistoryService_retrieving_history);
 				}
 			} catch (CoreException exception) {
@@ -974,29 +976,19 @@ public final class RefactoringHistoryManager {
 			SubMonitor subMon= SubMonitor.convert(monitor, task, 5);
 			final IFileStore folder= fHistoryStore.getFileStore(path);
 			final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
-			if (index.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+			if (exists(index, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK))) {
 				final Set<RefactoringDescriptorProxy> resultingProxies= new HashSet<>(64);
 				readRefactoringDescriptorProxies(index, null, resultingProxies, 0, Long.MAX_VALUE, subMon.newChild(1), task);
 				if (resultingProxies.size() == proxies.length) {
 					removeIndexTree(folder, subMon.newChild(1), task);
 				} else {
 					final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
-					if (history.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
-						InputStream input= null;
+					if (exists(history, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK))) {
 						Document document= null;
-						try {
-							input= new BufferedInputStream(history.openInputStream(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)));
+						try (InputStream input= new BufferedInputStream(history.openInputStream(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)));) {
 							document= getCachedDocument(path, input);
 						} catch (ParserConfigurationException | IOException | SAXException exception) {
 							throw createCoreException(exception);
-						} finally {
-							if (input != null) {
-								try {
-									input.close();
-								} catch (IOException exception) {
-									// Do nothing
-								}
-							}
 						}
 						final Set<Node> removedNodes= new HashSet<>(proxies.length);
 						final NodeList list= document.getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
@@ -1091,7 +1083,7 @@ public final class RefactoringHistoryManager {
 				try {
 					final IFileStore folder= fHistoryStore.getFileStore(stampToPath(stamp));
 					final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
-					if (file.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
+					if (exists(file, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK))) {
 						input= new BufferedInputStream(file.openInputStream(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)));
 						final RefactoringSessionDescriptor descriptor= getCachedSession(file, fProjectName, input);
 						if (descriptor != null) {
@@ -1141,14 +1133,11 @@ public final class RefactoringHistoryManager {
 				final IPath path= stampToPath(stamp);
 				final IFileStore folder= fHistoryStore.getFileStore(path);
 				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
-				if (history.fetchInfo(EFS.NONE, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
-					InputStream input= null;
-					try {
-						input= new BufferedInputStream(history.openInputStream(EFS.NONE, subMonitor.newChild(40, SubMonitor.SUPPRESS_SUBTASK)));
+				if (exists(history, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK))) {
+					try (InputStream input= new BufferedInputStream(history.openInputStream(EFS.NONE, subMonitor.newChild(40, SubMonitor.SUPPRESS_SUBTASK)));) {
 						final Document document= getCachedDocument(path, input);
 						try {
 							input.close();
-							input= null;
 						} catch (IOException exception) {
 							// Do nothing
 						}
@@ -1165,14 +1154,6 @@ public final class RefactoringHistoryManager {
 						writeHistoryEntry(history, document, subMonitor.newChild(40, SubMonitor.SUPPRESS_SUBTASK), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 					} catch (ParserConfigurationException | IOException | SAXException exception) {
 						throw createCoreException(exception);
-					} finally {
-						if (input != null) {
-							try {
-								input.close();
-							} catch (IOException exception) {
-								// Do nothing
-							}
-						}
 					}
 				}
 			}

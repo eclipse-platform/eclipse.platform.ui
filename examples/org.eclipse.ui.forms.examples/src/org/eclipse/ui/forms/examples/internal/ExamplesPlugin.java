@@ -13,11 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.examples.internal;
 import java.net.URL;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -33,8 +29,6 @@ import org.osgi.framework.BundleContext;
 public class ExamplesPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ExamplesPlugin plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 	private FormColors formColors;
 	public static final String IMG_FORM_BG = "formBg";
 	public static final String IMG_LARGE = "large";
@@ -57,12 +51,6 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	 */
 	public ExamplesPlugin() {
 		plugin = this;
-		try {
-			resourceBundle = ResourceBundle
-					.getBundle("org.eclipse.ui.forms.examples.internal.ExamplesPluginResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
 	@Override
@@ -110,30 +98,6 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static ExamplesPlugin getDefault() {
 		return plugin;
 	}
-	/**
-	 * Returns the workspace instance.
-	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-	/**
-	 * Returns the string from the plugin's resource bundle, or 'key' if not
-	 * found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = ExamplesPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle != null ? bundle.getString(key) : key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
@@ -147,8 +111,5 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	}
 	public Image getImage(String key) {
 		return getImageRegistry().get(key);
-	}
-	public ImageDescriptor getImageDescriptor(String key) {
-		return getImageRegistry().getDescriptor(key);
 	}
 }

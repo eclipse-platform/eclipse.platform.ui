@@ -113,7 +113,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		fExternalLocationControl= new RefactoringLocationControl(fWizard, this, SETTING_HISTORY);
 		fExternalLocationControl.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
 		fExternalLocationControl.setEnabled(!clipboard);
-		fExternalLocationControl.getControl().addModifyListener(event -> handleExternalLocationChanged());
+		fExternalLocationControl.getControl().addModifyListener(_ -> handleExternalLocationChanged());
 		fExternalLocationControl.getControl().addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -136,7 +136,7 @@ public class RefactoringScriptLocationControl extends Composite {
 				handleBrowseExternalLocation();
 			}
 		});
-		addDisposeListener(event -> {
+		addDisposeListener(_ -> {
 			if (settings != null) {
 				settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());
 			}

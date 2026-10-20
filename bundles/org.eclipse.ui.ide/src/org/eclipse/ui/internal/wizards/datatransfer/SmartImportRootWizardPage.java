@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2020 Red Hat Inc., and others
+ * Copyright (c) 2014, 2026 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Rüdiger Herrmann <ruediger.herrmann@gmx.de>
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500836
  *     Lucas Bullen (Red Hat Inc.) - Bug 526490
+ *     IBM Corporation
  ******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -85,6 +86,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -120,6 +122,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	private static final String STORE_CONFIGURE_NATURES = "SmartImportRootWizardPage.STORE_CONFIGURE_NATURES"; //$NON-NLS-1$
 
+	private static final String STORE_SKIP_DOT_FOLDERS = "SmartImportRootWizardPage.STORE_SKIP_DOT_FOLDERS"; //$NON-NLS-1$
+
 	// Root
 	private File selection;
 	private Combo rootDirectoryText;
@@ -135,6 +139,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private boolean closeProjectsAfterImport = false;
 	private boolean detectNestedProjects = true;
 	private boolean configureProjects = true;
+	private boolean skipDotFolders = true;
 	// Working sets
 	private Set<IWorkingSet> workingSets;
 	private WorkingSetGroup workingSetsGroup;
@@ -475,12 +480,25 @@ public class SmartImportRootWizardPage extends WizardPage {
 	 * Creates the UI elements for the import options
 	 */
 	private void createConfigurationOptions(Composite parent) {
+		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
+		final Button skipDotFoldersCheckbox = new Button(parent, SWT.CHECK);
+		skipDotFoldersCheckbox.setText(DataTransferMessages.SmartImportWizardPage_skipDotFolders);
+		skipDotFoldersCheckbox.setLayoutData(layoutData);
+		skipDotFoldersCheckbox.setSelection(this.skipDotFolders);
+		skipDotFoldersCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				SmartImportRootWizardPage.this.skipDotFolders = skipDotFoldersCheckbox.getSelection();
+				refreshProposals();
+			}
+		});
+
 		Button closeProjectsCheckbox = new Button(parent, SWT.CHECK);
 		closeProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_closeProjectsAfterImport);
 		closeProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
 		closeProjectsCheckbox.addSelectionListener(SelectionListener
-				.widgetSelectedAdapter(e -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
+				.widgetSelectedAdapter(_ -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
 
 		Link showDetectorsLink = new Link(parent, SWT.NONE);
 		showDetectorsLink.setText(DataTransferMessages.SmartImportWizardPage_showAvailableDetectors);
@@ -508,10 +526,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 						DataTransferMessages.SmartImportWizardPage_availableDetectors_title, message.toString());
 			}
 		});
-		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
 		final Button detectNestedProjectsCheckbox = new Button(parent, SWT.CHECK);
 		detectNestedProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_detectNestedProjects);
-		detectNestedProjectsCheckbox.setLayoutData(layoutData);
+		detectNestedProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		detectNestedProjectsCheckbox.setSelection(this.detectNestedProjects);
 		detectNestedProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -523,7 +540,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		final Button configureProjectsCheckbox = new Button(parent, SWT.CHECK);
 		configureProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_configureProjects);
-		configureProjectsCheckbox.setLayoutData(layoutData);
+		configureProjectsCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		configureProjectsCheckbox.setSelection(this.configureProjects);
 		configureProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -550,7 +567,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		};
 		tree = (CheckboxTreeViewer) filterTree.getViewer();
 		GridData treeGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		treeGridData.heightHint = 90;
+		treeGridData.heightHint = 150;
 		tree.getControl().setLayoutData(treeGridData);
 		tree.setContentProvider(new ITreeContentProvider() {
 			@Override
@@ -574,12 +591,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 
 		});
-		tree.setComparator(new ViewerComparator() {
-			@Override
-			public int compare(Viewer v, Object o1, Object o2) {
-				return ((File) o1).getAbsolutePath().compareTo(((File) o2).getAbsolutePath());
-			}
-		});
+
+		ProjectConfiguratorLabelProvider projectLP = new ProjectConfiguratorLabelProvider();
+		ImportsComparator comparator = new ImportsComparator(projectLP);
+		tree.setComparator(comparator);
 		tree.setCheckStateProvider(new ICheckStateProvider() {
 			@Override
 			public boolean isGrayed(Object element) {
@@ -610,10 +625,33 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.getTree().getColumn(0).setText(DataTransferMessages.SmartImportProposals_folder);
 		tree.getTree().getColumn(0).setWidth(500);
 		ViewerColumn projectTypeColumn = new TreeViewerColumn(tree, SWT.NONE);
-		projectTypeColumn.setLabelProvider(new ProjectConfiguratorLabelProvider());
+		projectTypeColumn.setLabelProvider(projectLP);
 		tree.getTree().getColumn(1).setText(DataTransferMessages.SmartImportProposals_importAs);
 		tree.getTree().getColumn(1).setWidth(150);
+		TreeColumn folderCol = ((TreeViewerColumn) pathColumn).getColumn();
+		folderCol.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(0);
+				tree.getTree().setSortColumn(folderCol);
+				tree.getTree().setSortDirection(comparator.getDirection());
+				tree.refresh();
+			}
+		});
 
+		TreeColumn impAsCol = ((TreeViewerColumn) projectTypeColumn).getColumn();
+		impAsCol.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(1);
+				tree.getTree().setSortColumn(impAsCol);
+				tree.getTree().setSortDirection(comparator.getDirection());
+				tree.refresh();
+			}
+		});
+		comparator.setColumn(0);
+		tree.getTree().setSortColumn(folderCol);
+		tree.getTree().setSortDirection(SWT.UP);
 		this.proposalSelectionDecorator = new ControlDecoration(tree.getTree(), SWT.TOP | SWT.LEFT);
 		Image errorImage = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
 				.getImage();
@@ -700,14 +738,68 @@ public class SmartImportRootWizardPage extends WizardPage {
 		return res;
 	}
 
-	protected boolean isExistingProject(File element) {
+	private static final class ImportsComparator extends ViewerComparator {
+		private int column = -1;
+		private int direction = SWT.UP;
+		private final ProjectConfiguratorLabelProvider projectLP;
+
+		public ImportsComparator(ProjectConfiguratorLabelProvider projectLP) {
+			this.projectLP = projectLP;
+		}
+
+		public void setColumn(int column) {
+			if (this.column == column) {
+				direction = (direction == SWT.UP) ? SWT.DOWN : SWT.UP;
+			} else {
+				this.column = column;
+				direction = SWT.UP;
+			}
+		}
+
+		public int getDirection() {
+			return direction;
+		}
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			File f1 = (File) e1;
+			File f2 = (File) e2;
+
+			int res = 0;
+
+			switch (column) {
+			case 0:
+				res = f1.getAbsolutePath().compareToIgnoreCase(f2.getAbsolutePath());
+				break;
+
+			case 1:
+				String t1 = getValue(projectLP.getText(f1));
+				String t2 = getValue(projectLP.getText(f2));
+				res = t1.compareToIgnoreCase(t2);
+				break;
+			}
+
+			return direction == SWT.UP ? res : -res;
+		}
+
+		private String getValue(String s) {
+			return s == null ? "" : s; //$NON-NLS-1$
+		}
+
+	}
+
+	private IProject findExistingProject(File element) {
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			IPath location = project.getLocation();
 			if (location != null && element.equals(location.toFile())) {
-				return true;
+				return project;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	protected boolean isExistingProject(File element) {
+		return findExistingProject(element) != null;
 	}
 
 	protected boolean isExistingProjectName(File element) {
@@ -823,6 +915,13 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	boolean isCloseProjectsAfterImport() {
 		return closeProjectsAfterImport;
+	}
+
+	/**
+	 * @return whether folders starting with '.' should be skipped during scanning
+	 */
+	boolean isSkipDotFolders() {
+		return skipDotFolders;
 	}
 
 	private void refreshProposals() {
@@ -956,6 +1055,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 			closeProjectsAfterImport = dialogSettings.getBoolean(STORE_CLOSE_IMPORTED);
 			detectNestedProjects = dialogSettings.getBoolean(STORE_NESTED_PROJECTS);
 			configureProjects = dialogSettings.getBoolean(STORE_CONFIGURE_NATURES);
+			if (dialogSettings.get(STORE_SKIP_DOT_FOLDERS) != null) {
+				skipDotFolders = dialogSettings.getBoolean(STORE_SKIP_DOT_FOLDERS);
+			}
 		}
 	}
 
@@ -969,6 +1071,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 			dialogSettings.put(STORE_CLOSE_IMPORTED, closeProjectsAfterImport);
 			dialogSettings.put(STORE_NESTED_PROJECTS, detectNestedProjects);
 			dialogSettings.put(STORE_CONFIGURE_NATURES, configureProjects);
+			dialogSettings.put(STORE_SKIP_DOT_FOLDERS, skipDotFolders);
 		}
 	}
 

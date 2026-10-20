@@ -33,6 +33,7 @@ import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -52,7 +53,6 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
@@ -73,7 +73,7 @@ public class IEditorRegistryTest {
 	private final AtomicInteger loggedErrors = new AtomicInteger();
 
 	/** Listener to count error messages while testing. */
-	private final ILogListener errorLogListener = (IStatus status, String plugin) -> {
+	private final ILogListener errorLogListener = (IStatus status, String _) -> {
 		if (status.matches(IStatus.ERROR)) {
 			System.out.println(status);
 			loggedErrors.incrementAndGet();
@@ -93,7 +93,7 @@ public class IEditorRegistryTest {
 			try {
 				FileUtil.deleteProject(proj);
 			} catch (CoreException e) {
-				TestPlugin.getDefault().getLog().log(e.getStatus());
+				ILog.of(IEditorRegistryTest.class).log(e.getStatus());
 				throw e;
 			}
 		}

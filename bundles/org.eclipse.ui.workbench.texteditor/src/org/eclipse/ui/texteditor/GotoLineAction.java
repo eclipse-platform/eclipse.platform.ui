@@ -23,8 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -39,7 +38,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -215,8 +213,7 @@ public class GotoLineAction extends TextEditorAction {
 		try {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 		} catch (BadLocationException ex) {
-			IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Go to Line failed", ex); //$NON-NLS-1$
-			TextEditorPlugin.getDefault().getLog().log(status);
+			ILog.of(GotoLineAction.class).error("Go to Line failed", ex); //$NON-NLS-1$
 			return;
 		}
 

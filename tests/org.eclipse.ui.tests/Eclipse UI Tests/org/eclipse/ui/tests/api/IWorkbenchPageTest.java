@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,7 +48,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.ShellEvent;
@@ -80,7 +83,9 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
@@ -120,7 +125,7 @@ public class IWorkbenchPageTest {
 		return logStatus==null?"No message":logStatus.getMessage();
 	}
 
-	ILogListener openAndHideListener = (status, plugin) -> {
+	ILogListener openAndHideListener = (status, _) -> {
 		logStatus = status;
 		logCount++;
 	};
@@ -3347,6 +3352,43 @@ public class IWorkbenchPageTest {
 		assertEquals(1, stack.length);
 
 		assertEquals(part, stack[0]);
+	}
+
+	@Test
+	public void testE4PerspectiveNotConvertedToLocalCopy() {
+		IWorkbenchWindow window = openTestWindow();
+		EModelService modelService = window.getService(EModelService.class);
+
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
+		List<MPerspectiveStack> stacks = modelService.findElements(workbenchWindow.getModel(), null,
+				MPerspectiveStack.class);
+		assertFalse("Perspective stack should exist in the window model", stacks.isEmpty());
+		MPerspectiveStack perspectiveStack = stacks.get(0);
+
+		String e4Id = "org.eclipse.ui.tests.internal.e4.perspective.model";
+		String e4Label = "E4ModelPerspective";
+
+		assertNull("e4 perspective ID should not be in perspective registry",
+				PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(e4Id));
+
+		MPerspective e4Perspective = modelService.createModelElement(MPerspective.class);
+		e4Perspective.setElementId(e4Id);
+		e4Perspective.setLabel(e4Label);
+		e4Perspective.setContributorURI("platform:/plugin/org.eclipse.ui.tests");
+
+		perspectiveStack.getChildren().add(e4Perspective);
+		perspectiveStack.setSelectedElement(e4Perspective);
+		processEvents();
+
+		assertEquals("Element ID should not have changed", e4Id, e4Perspective.getElementId());
+
+		IPerspectiveDescriptor descriptor = PlatformUI.getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(e4Id);
+		assertNotNull(descriptor);
+
+		assertFalse(((PerspectiveDescriptor) descriptor).hasCustomDefinition());
+
+		PlatformUI.getWorkbench().getPerspectiveRegistry().deletePerspective(descriptor);
 	}
 
 	private static class ShellStateListener implements ShellListener {

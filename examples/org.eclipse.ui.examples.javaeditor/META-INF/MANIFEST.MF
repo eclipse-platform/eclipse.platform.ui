@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.examples.javaeditor; singleton:=true
-Bundle-Version: 3.5.0.qualifier
+Bundle-Version: 3.5.200.qualifier
 Bundle-Activator: org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -20,5 +20,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.editors,
  org.eclipse.ui.views
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Automatic-Module-Name: org.eclipse.ui.examples.javaeditor

@@ -2543,6 +2543,8 @@ public abstract class AbstractTextEditor extends EditorPart
 	private SourceViewerConfiguration fConfiguration;
 	/** The editor's source viewer. */
 	private ISourceViewer fSourceViewer;
+	/** Whether a full re-style of the text presentation is already scheduled. */
+	private boolean fInvalidateTextPresentationPending;
 	/**
 	 * The editor's selection provider.
 	 *
@@ -4147,14 +4149,13 @@ public abstract class AbstractTextEditor extends EditorPart
 	 * Creates a color from the information stored in the given preference store.
 	 * Returns <code>null</code> if there is no such information available.
 	 *
-	 * @param store   the store to read from
-	 * @param key     the key used for the lookup in the preference store
-	 * @param display the display used create the color
+	 * @param store the store to read from
+	 * @param key   the key used for the lookup in the preference store
 	 * @return the created color according to the specification in the preference
 	 *         store
 	 * @since 2.0
 	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
+	private Color createColor(IPreferenceStore store, String key) {
 
 		RGB rgb = null;
 
@@ -4167,7 +4168,7 @@ public abstract class AbstractTextEditor extends EditorPart
 			}
 
 			if (rgb != null) {
-				return new Color(display, rgb);
+				return new Color(rgb);
 			}
 		}
 
@@ -4190,22 +4191,22 @@ public abstract class AbstractTextEditor extends EditorPart
 
 			// ----------- foreground color --------------------
 			Color color = store.getBoolean(PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT) ? null
-					: createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
+					: createColor(store, PREFERENCE_COLOR_FOREGROUND);
 			styledText.setForeground(color);
 
 			// ---------- background color ----------------------
 			color = store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT) ? null
-					: createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+					: createColor(store, PREFERENCE_COLOR_BACKGROUND);
 			styledText.setBackground(color);
 
 			// ----------- selection foreground color --------------------
 			color = store.getBoolean(PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT) ? null
-					: createColor(store, PREFERENCE_COLOR_SELECTION_FOREGROUND, styledText.getDisplay());
+					: createColor(store, PREFERENCE_COLOR_SELECTION_FOREGROUND);
 			styledText.setSelectionForeground(color);
 
 			// ---------- selection background color ----------------------
 			color = store.getBoolean(PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT) ? null
-					: createColor(store, PREFERENCE_COLOR_SELECTION_BACKGROUND, styledText.getDisplay());
+					: createColor(store, PREFERENCE_COLOR_SELECTION_BACKGROUND);
 			styledText.setSelectionBackground(color);
 
 		}
@@ -4223,9 +4224,7 @@ public abstract class AbstractTextEditor extends EditorPart
 		IPreferenceStore store = getPreferenceStore();
 		if (store != null) {
 
-			StyledText styledText = viewer.getTextWidget();
-
-			Color color = createColor(store, PREFERENCE_COLOR_FIND_SCOPE, styledText.getDisplay());
+			Color color = createColor(store, PREFERENCE_COLOR_FIND_SCOPE);
 
 			IFindReplaceTarget target = viewer.getFindReplaceTarget();
 			if (target instanceof IFindReplaceTargetExtension) {
@@ -4752,6 +4751,28 @@ public abstract class AbstractTextEditor extends EditorPart
 	}
 
 	/**
+	 * Re-styles the whole document once per UI event loop turn, so a burst of
+	 * preference changes costs one re-style instead of one per key.
+	 */
+	private void invalidateTextPresentationLater() {
+		if (fInvalidateTextPresentationPending) {
+			return;
+		}
+		StyledText widget= fSourceViewer.getTextWidget();
+		if (widget == null || widget.isDisposed()) {
+			return;
+		}
+		fInvalidateTextPresentationPending= true;
+		widget.getDisplay().asyncExec(() -> {
+			fInvalidateTextPresentationPending= false;
+			ISourceViewer viewer= fSourceViewer;
+			if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed()) {
+				viewer.invalidateTextPresentation();
+			}
+		});
+	}
+
+	/**
 	 * Determines whether the given preference change affects the editor's
 	 * presentation. This implementation always returns <code>false</code>. May be
 	 * reimplemented by subclasses.
@@ -4846,7 +4867,7 @@ public abstract class AbstractTextEditor extends EditorPart
 		}
 
 		if (affectsTextPresentation(event)) {
-			fSourceViewer.invalidateTextPresentation();
+			invalidateTextPresentationLater();
 		}
 
 		if (PREFERENCE_HYPERLINKS_ENABLED.equals(property)) {

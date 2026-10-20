@@ -51,10 +51,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * </p>
  * <p>
  * Clients who need a preference store may implement this interface or
- * instantiate the standard implementation <code>PreferenceStore</code>.
+ * instantiate either the standard implementation <code>PreferenceStore</code>
+ * or the <code>ScopedPreferenceStore</code>.
  * </p>
  *
  * @see PreferenceStore
+ * @see ScopedPreferenceStore
  */
 public interface IPreferenceStore {
 

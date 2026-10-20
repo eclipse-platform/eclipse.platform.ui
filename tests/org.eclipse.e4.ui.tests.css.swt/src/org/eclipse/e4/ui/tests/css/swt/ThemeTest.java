@@ -14,14 +14,26 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.ui.css.swt.internal.theme.Theme;
+import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -29,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -37,15 +50,24 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
-public class ThemeTest extends CSSSWTTestCase {
+public class ThemeTest {
+
+	private static final String THEMEID_KEY = "themeid";
+
+	private static final String PERSISTED_THEME_ID = "persisted.test";
+
+	// the appearance is recorded under a key carrying the theme id it belongs to
+	private static final String PERSISTED_THEME_DARK_KEY = "themeIsDark." + PERSISTED_THEME_ID;
+
+	@RegisterExtension
+	CssSwtEngine css = new CssSwtEngine();
+
 	private BundleContext context;
 	private ServiceRegistration<EventHandler> themeListenerRegistration;
 	private ServiceReference<IThemeManager> themeManagerReference;
 
-	@Override
 	@BeforeEach
 	public void setUp() {
-		super.setUp();
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		assertNotNull(b, "Not running in an OSGi environment");
 		context = b.getBundleContext();
@@ -54,11 +76,11 @@ public class ThemeTest extends CSSSWTTestCase {
 				.getServiceReference(IThemeManager.class);
 	}
 
-	@Override
 	@AfterEach
 	public void tearDown() {
-		themeListenerRegistration.unregister();
-		super.tearDown();
+		if (themeListenerRegistration != null) {
+			themeListenerRegistration.unregister();
+		}
 	}
 
 	@Test
@@ -86,6 +108,122 @@ public class ThemeTest extends CSSSWTTestCase {
 		assertFalse(success[0]);
 		themer.setTheme(new Theme("test", "Test"), true);
 		assertTrue(success[0]);
+	}
+
+	@Test
+	void testInheritedThemeIsReadableFromPreferenceService() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		IEclipsePreferences[] explicitNodes = { InstanceScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID),
+				ConfigurationScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID),
+				UserScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID) };
+		String[] previousIds = new String[explicitNodes.length];
+
+		// an inherited theme is applied without any scope recording an explicit choice
+		for (int i = 0; i < explicitNodes.length; i++) {
+			previousIds[i] = explicitNodes[i].get(THEMEID_KEY, null);
+			explicitNodes[i].remove(THEMEID_KEY);
+		}
+		try {
+			themer.setTheme(new Theme("inherited.test", "Inherited"), false);
+
+			assertEquals("inherited.test",
+					Platform.getPreferencesService().getString(ThemeEngine.THEME_PLUGIN_ID, THEMEID_KEY, null, null));
+			assertNull(explicitNodes[0].get(THEMEID_KEY, null), "an inherited theme must not be persisted");
+		} finally {
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			for (int i = 0; i < explicitNodes.length; i++) {
+				if (previousIds[i] != null) {
+					explicitNodes[i].put(THEMEID_KEY, previousIds[i]);
+				}
+			}
+		}
+	}
+
+	@Test
+	void testDarkAttributeIsReadFromThemeExtension() {
+		List<ITheme> themes = getThemeEngine(Display.getDefault()).getThemes();
+
+		assertTrue(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.declaredDark").isDark());
+		assertFalse(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.declaredLight").isDark());
+		// themes contributed before the attribute existed are classified by their id
+		assertTrue(findTheme(themes, "org.eclipse.e4.ui.tests.css.swt.theme.legacydark").isDark());
+	}
+
+	@Test
+	void testLegacyThemesKeepTheirIdBasedClassification() {
+		assertTrue(new Theme("com.example.theme.dark", "Legacy dark").isDark());
+		assertFalse(new Theme("com.example.theme.light", "Legacy light").isDark());
+		// implementations predating isDark() are classified by their id as well
+		ITheme legacy = new ITheme() {
+			@Override
+			public String getId() {
+				return "com.example.theme.dark";
+			}
+
+			@Override
+			public String getLabel() {
+				return "Legacy dark";
+			}
+		};
+		assertTrue(legacy.isDark());
+	}
+
+	@Test
+	void testDarkFlagIsPersistedWithTheThemeId() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID);
+		ITheme previousTheme = themer.getActiveTheme();
+		String previousId = node.get(THEMEID_KEY, null);
+		String previousDark = node.get(PERSISTED_THEME_DARK_KEY, null);
+
+		try {
+			themer.setTheme(new Theme(PERSISTED_THEME_ID, "Persisted", true), true);
+
+			assertEquals(PERSISTED_THEME_ID, node.get(THEMEID_KEY, null));
+			assertTrue(node.getBoolean(PERSISTED_THEME_DARK_KEY, false));
+		} finally {
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			putOrRemove(node, THEMEID_KEY, previousId);
+			putOrRemove(node, PERSISTED_THEME_DARK_KEY, previousDark);
+		}
+	}
+
+	@Test
+	void testMissingStylesheetIsReportedWithItsUri() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		String themeId = "org.eclipse.e4.ui.tests.css.swt.theme.missingStylesheet";
+		List<String> messages = new ArrayList<>();
+		ILogListener listener = (status, plugin) -> messages.add(status.getMessage());
+		ILog log = ILog.of(Platform.getBundle(ThemeEngine.THEME_PLUGIN_ID));
+		log.addLogListener(listener);
+		try {
+			themer.setTheme(findTheme(themer.getThemes(), themeId), false);
+		} finally {
+			log.removeLogListener(listener);
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+		}
+		assertTrue(messages.contains("Cannot load stylesheet 'platform:/plugin/org.eclipse.e4.ui.tests.css.swt/css/missing.css' for theme '" + themeId + "'"), messages.toString());
+	}
+
+	private static void putOrRemove(IEclipsePreferences node, String key, String value) {
+		if (value != null) {
+			node.put(key, value);
+		} else {
+			node.remove(key);
+		}
+	}
+
+	private static ITheme findTheme(List<ITheme> themes, String id) {
+		return themes.stream().filter(t -> id.equals(t.getId())).findFirst()
+				.orElseThrow(() -> new AssertionError("Theme not registered: " + id));
 	}
 
 	private IThemeEngine getThemeEngine(Display display) {

@@ -260,7 +260,7 @@ public class QuickFixPage extends WizardPage {
 		});
 
 		resolutionsList
-				.addSelectionChangedListener(event -> {
+				.addSelectionChangedListener(_ -> {
 					markersTable.refresh();
 					setPageComplete(markersTable.getCheckedElements().length > 0);
 				});
