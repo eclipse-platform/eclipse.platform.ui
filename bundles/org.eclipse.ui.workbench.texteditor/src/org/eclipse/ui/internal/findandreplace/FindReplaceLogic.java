@@ -63,6 +63,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	private String findString = ""; //$NON-NLS-1$
 	private String replaceString = ""; //$NON-NLS-1$
+	private ReplaceCounter replaceCounter;
 
 	private final Map<SearchOptions, List<Consumer<Boolean>>> activationChangedListeners = new HashMap<>();
 	private final Map<SearchOptions, List<Consumer<Boolean>>> availabilityChangedListeners = new HashMap<>();
@@ -119,6 +120,22 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	@Override
 	public void setReplaceString(String replaceString) {
 		this.replaceString = Objects.requireNonNull(replaceString);
+		this.replaceCounter = ReplaceCounter.parse(replaceString);
+	}
+
+	/**
+	 * Returns the effective replace string for the current replacement. If the
+	 * replace string contains a counter placeholder ({@code #{start,step,pad}}),
+	 * the placeholder is replaced by the next counter value. Otherwise the raw
+	 * replace string is returned unchanged.
+	 *
+	 * @return the replace string with counter placeholder expanded (if any)
+	 */
+	private String buildReplaceString() {
+		if (replaceCounter != null) {
+			return replaceCounter.expand(replaceString);
+		}
+		return replaceString;
 	}
 
 	@Override
@@ -432,6 +449,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		List<Point> replacements = new ArrayList<>();
+		if (replaceCounter != null) {
+			replaceCounter.reset();
+		}
 		executeInForwardMode(() -> {
 			executeWithReplaceAllEnabled(() -> {
 				Point currentSelection = new Point(0, 0);
@@ -546,11 +566,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * @return the selection after replacing, i.e. the inserted text
 	 */
 	private Point replaceSelection() {
+		String effectiveReplaceString = buildReplaceString();
 		if (target instanceof IFindReplaceTargetExtension3) {
-			((IFindReplaceTargetExtension3) target).replaceSelection(replaceString,
+			((IFindReplaceTargetExtension3) target).replaceSelection(effectiveReplaceString,
 					isAvailableAndActive(SearchOptions.REGEX));
 		} else {
-			target.replaceSelection(replaceString);
+			target.replaceSelection(effectiveReplaceString);
 		}
 
 		return target.getSelection();

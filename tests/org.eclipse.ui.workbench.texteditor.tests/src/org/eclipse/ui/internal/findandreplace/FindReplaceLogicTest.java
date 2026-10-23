@@ -1147,4 +1147,138 @@ public class FindReplaceLogicTest {
 		assertEquals(message, ((InvalidRegExStatus) findReplaceLogic.getStatus()).getMessage());
 	}
 
+	// -----------------------------------------------------------------------
+	// Counter placeholder #{start,step,pad} integration tests
+	// -----------------------------------------------------------------------
+
+	@Test
+	public void testReplaceAll_withCounter_paddedAscending() {
+		TextViewer textViewer= setupTextViewer("a a a");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,3}");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("001 002 003", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_unpaddedLargeStep() {
+		TextViewer textViewer= setupTextViewer("x x x");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "x", "#{10,10,0}");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("10 20 30", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_resetsOnNewReplaceString() {
+		TextViewer textViewer= setupTextViewer("a a");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
+		findReplaceLogic.performReplaceAll();
+		assertEquals("1 2", textViewer.getDocument().get());
+
+		// Reset document and perform again with the same replace string set anew
+		textViewer.setDocument(new Document("a a"));
+		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
+		findReplaceLogic.performReplaceAll();
+		assertEquals("1 2", textViewer.getDocument().get());
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_counterResetsBetweenReplaceAllCalls() {
+		TextViewer textViewer= setupTextViewer("a a");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
+		findReplaceLogic.performReplaceAll();
+		assertEquals("1 2", textViewer.getDocument().get());
+
+		// Second Replace All on new content must restart from 1, not continue from 3
+		textViewer.setDocument(new Document("a a"));
+		findReplaceLogic.performReplaceAll();
+		assertEquals("1 2", textViewer.getDocument().get());
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_descendingSequence() {
+		TextViewer textViewer= setupTextViewer("z z z z");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "z", "#{10,-2,0}");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("10 8 6 4", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_combinedWithLiteralText() {
+		TextViewer textViewer= setupTextViewer("x x");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "x", "item_#{1,1,2}");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("item_01 item_02", textViewer.getDocument().get());
+	}
+
+	@Test
+	public void testReplaceAll_withoutCounter_behavesAsPlainReplace() {
+		TextViewer textViewer= setupTextViewer("a a a");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "a", "b");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("b b b", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	@Test
+	public void testReplaceAll_withCounter_andRegex() {
+		TextViewer textViewer= setupTextViewer("aa bb cc");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		setFindAndReplaceString(findReplaceLogic, "(\\w+)", "$1_#{1,1,2}");
+		findReplaceLogic.performReplaceAll();
+
+		assertEquals("aa_01 bb_02 cc_03", textViewer.getDocument().get());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 3);
+	}
+
+	@Test
+	public void testSelectAndReplace_withCounter_incrementsAcrossCalls() {
+		TextViewer textViewer= setupTextViewer("a a a");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		setFindAndReplaceString(findReplaceLogic, "a", "#{1,1,0}");
+
+		findReplaceLogic.performSearch();
+		findReplaceLogic.performSelectAndReplace();
+		assertEquals("1 a a", textViewer.getDocument().get());
+
+		findReplaceLogic.performSelectAndReplace();
+		assertEquals("1 2 a", textViewer.getDocument().get());
+
+		findReplaceLogic.performSelectAndReplace();
+		assertEquals("1 2 3", textViewer.getDocument().get());
+	}
+
 }
