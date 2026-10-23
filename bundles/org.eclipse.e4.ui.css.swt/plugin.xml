@@ -88,6 +88,14 @@
          </property-name>
       </handler>
       <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.ShellElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySVGCurrentColorHandler">
+         <property-name
+               name="swt-svg-current-color">
+         </property-name>
+      </handler>
+      <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabRendererSWTHandler">

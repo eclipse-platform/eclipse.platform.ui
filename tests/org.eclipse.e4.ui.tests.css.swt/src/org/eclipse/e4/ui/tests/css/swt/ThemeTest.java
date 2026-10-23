@@ -32,12 +32,17 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.UserScope;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.internal.theme.Theme;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySVGCurrentColorHandler;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.internal.image.SVGFileFormat;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -108,6 +113,55 @@ public class ThemeTest {
 		assertFalse(success[0]);
 		themer.setTheme(new Theme("test", "Test"), true);
 		assertTrue(success[0]);
+	}
+
+	@Test
+	void testSvgCurrentColorFrozenByThemeSwitch() {
+		IThemeEngine themer = getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		RGB initialColor = SVGFileFormat.getCurrentColor();
+		CSSPropertySVGCurrentColorHandler.reset();
+		Shell shell = new Shell(css.getDisplay());
+		try {
+			// neither theme sets a color, so one applied after the switch must be ignored
+			themer.setTheme(new Theme("svg.first", "First"), false);
+			themer.setTheme(new Theme("svg.second", "Second"), false);
+			CSSEngine engine = css.createEngine("Shell { swt-svg-current-color: #0000FF }");
+			engine.applyStyles(shell, true);
+
+			assertEquals(initialColor, SVGFileFormat.getCurrentColor());
+		} finally {
+			shell.dispose();
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			CSSPropertySVGCurrentColorHandler.reset();
+			SVGFileFormat.setCurrentColor(null);
+		}
+	}
+
+	@Test
+	void testSvgCurrentColorNotFrozenByThemeReapply() {
+		ThemeEngine themer = (ThemeEngine) getThemeEngine(Display.getDefault());
+		ITheme previousTheme = themer.getActiveTheme();
+		Shell shell = new Shell(css.getDisplay());
+		try {
+			Theme theme = new Theme("svg.same", "Same");
+			themer.setTheme(theme, false);
+			CSSPropertySVGCurrentColorHandler.reset();
+			themer.setTheme(theme, false, true);
+			CSSEngine engine = css.createEngine("Shell { swt-svg-current-color: #0000FF }");
+			engine.applyStyles(shell, true);
+
+			assertEquals(new RGB(0, 0, 255), SVGFileFormat.getCurrentColor());
+		} finally {
+			shell.dispose();
+			if (previousTheme != null) {
+				themer.setTheme(previousTheme, false);
+			}
+			CSSPropertySVGCurrentColorHandler.reset();
+			SVGFileFormat.setCurrentColor(null);
+		}
 	}
 
 	@Test

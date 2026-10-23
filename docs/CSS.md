@@ -177,6 +177,19 @@ bare number as a size in points.
 
 
 
+### Widget: Shell
+
+| SWT Method | CSS Property Name | CSS Example |
+| --- | --- | --- |
+| SVGFileFormat.setCurrentColor(RGB) | swt-svg-current-color | Shell { swt-svg-current-color: #CCCCCC; } |
+
+`swt-svg-current-color` sets the color that SVG images use for `currentColor`.
+It is a single process-wide default, applied once at startup, so a theme switch takes effect after a restart.
+It does not follow the foreground of the widget showing the image, so an icon drawn on a selected or otherwise colored background keeps this color.
+Images created before the theme is applied, such as the product window icons, keep SWT's default black.
+
+
+
 ### Widget: Button
 
 | SWT Method | CSS Property Name | CSS Example |
