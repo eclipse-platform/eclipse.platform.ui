@@ -24,7 +24,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -104,7 +103,7 @@ public class Section extends ExpandableComposite {
 	}
 
 	private static int getBackgroundStyle(int estyle) {
-		return ((estyle & TITLE_BAR) != 0) ? SWT.NO_BACKGROUND : SWT.NULL;
+		return ((estyle & TITLE_BAR) != 0) ? SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED : SWT.NULL;
 	}
 
 	@Override
@@ -331,7 +330,6 @@ public class Section extends ExpandableComposite {
 		Color border = (titleColors != null) ? titleColors.getOrDefault(COLOR_BORDER, fg) : fg;
 
 		GC gc = e.gc;
-		Image buffer = null;
 		Rectangle bounds = getClientArea();
 
 		if (bounds.width == 0 || bounds.height == 0) {
@@ -341,85 +339,89 @@ public class Section extends ExpandableComposite {
 		int tvmargin = IGAP;
 
 		if (hasTitleBar) {
-			final ImageGcDrawer imageGcDrawer = (iGc, width, height) -> {
-				// calculate height
-				int gradientheight = 0;
-				int theight = 5;
-				Point tsize = null;
-				Point tcsize = null;
-				if (toggle != null) {
-					tsize = toggle.getSize();
-				}
-				if (getTextClient() != null) {
-					tcsize = getTextClient().getSize();
-				}
-				Point size = textLabel == null ? new Point(0, 0) : textLabel.getSize();
-				if (tsize != null) {
-					theight += Math.max(theight, tsize.y);
-				}
-				gradientheight = theight;
-				if (tcsize != null) {
-					theight = Math.max(theight, tcsize.y);
-				}
-				theight = Math.max(theight, size.y);
-				gradientheight = Math.max(gradientheight, size.y);
-				theight += tvmargin + tvmargin;
-				gradientheight += tvmargin + tvmargin;
+			// the paint GC is shared with other paint listeners
+			Color oldForeground = gc.getForeground();
+			Color oldBackground = gc.getBackground();
+			int oldAntialias = gc.getAntialias();
+			int width = bounds.width;
+			int height = bounds.height;
+			// calculate height
+			int gradientheight = 0;
+			int theight = 5;
+			Point tsize = null;
+			Point tcsize = null;
+			if (toggle != null) {
+				tsize = toggle.getSize();
+			}
+			if (getTextClient() != null) {
+				tcsize = getTextClient().getSize();
+			}
+			Point size = textLabel == null ? new Point(0, 0) : textLabel.getSize();
+			if (tsize != null) {
+				theight += Math.max(theight, tsize.y);
+			}
+			gradientheight = theight;
+			if (tcsize != null) {
+				theight = Math.max(theight, tcsize.y);
+			}
+			theight = Math.max(theight, size.y);
+			gradientheight = Math.max(gradientheight, size.y);
+			theight += tvmargin + tvmargin;
+			gradientheight += tvmargin + tvmargin;
 
-				// Background
-				if (getBackgroundImage() == null) {
-					updateHeaderImage(bg, bounds, gradientheight, theight);
-				}
-				iGc.setBackground(getBackground());
-				iGc.fillRectangle(bounds.x, bounds.y, width, height);
-				drawBackground(iGc, bounds.x, bounds.y, width, theight - 2);
-				if (marginWidth > 0) {
-					// fix up margins
-					iGc.setBackground(getBackground());
-					iGc.fillRectangle(0, 0, marginWidth, theight);
-					iGc.fillRectangle(bounds.x + width - marginWidth, 0, marginWidth, theight);
-				}
-				iGc.setBackground(getBackground());
-				FormUtil.setAntialias(iGc, SWT.ON);
-				iGc.setForeground(border);
+			// Background
+			if (getBackgroundImage() == null) {
+				updateHeaderImage(bg, bounds, gradientheight, theight);
+			}
+			gc.setBackground(getBackground());
+			gc.fillRectangle(bounds.x, bounds.y, width, height);
+			drawBackground(gc, bounds.x, bounds.y, width, theight - 2);
+			if (marginWidth > 0) {
+				// fix up margins
+				gc.setBackground(getBackground());
+				gc.fillRectangle(0, 0, marginWidth, theight);
+				gc.fillRectangle(bounds.x + width - marginWidth, 0, marginWidth, theight);
+			}
+			gc.setBackground(getBackground());
+			FormUtil.setAntialias(gc, SWT.ON);
+			gc.setForeground(border);
 
-				if (border.equals(bg)) {
-					// top edge - draw a straight line across
-					iGc.drawLine(marginWidth, marginHeight, width - marginWidth - 1, marginHeight);
-				} else {
-					// repair the upper left corner
-					iGc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth, marginHeight + 2, marginWidth + 2,
-							marginHeight });
-					// repair the upper right corner
-					iGc.fillPolygon(new int[] { width - marginWidth - 3, marginHeight, width - marginWidth, marginHeight,
-							width - marginWidth, marginHeight + 3 });
+			if (border.equals(bg)) {
+				// top edge - draw a straight line across
+				gc.drawLine(marginWidth, marginHeight, width - marginWidth - 1, marginHeight);
+			} else {
+				// repair the upper left corner
+				gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth, marginHeight + 2, marginWidth + 2,
+						marginHeight });
+				// repair the upper right corner
+				gc.fillPolygon(new int[] { width - marginWidth - 3, marginHeight, width - marginWidth, marginHeight,
+						width - marginWidth, marginHeight + 3 });
 
-					// Draw Lines
-					// top left curve
-					iGc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2, marginHeight);
-					// top edge
-					iGc.drawLine(marginWidth + 2, marginHeight, width - marginWidth - 3, marginHeight);
-					// top right curve
-					iGc.drawLine(width - marginWidth - 3, marginHeight, width - marginWidth - 1,
-							marginHeight + 2);
+				// Draw Lines
+				// top left curve
+				gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2, marginHeight);
+				// top edge
+				gc.drawLine(marginWidth + 2, marginHeight, width - marginWidth - 3, marginHeight);
+				// top right curve
+				gc.drawLine(width - marginWidth - 3, marginHeight, width - marginWidth - 1,
+						marginHeight + 2);
 
-					// left vertical edge gradient
-					iGc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
-					// right vertical edge gradient
-					iGc.fillGradientRectangle(width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+				// left vertical edge gradient
+				gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
+				// right vertical edge gradient
+				gc.fillGradientRectangle(width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
 
-					// New in 3.3 - edge treatment
-					iGc.setForeground(getBackground());
-					iGc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
-							marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
-							width - marginWidth - 3, marginHeight + 1, width - marginWidth - 3, marginHeight + 2,
-							width - marginWidth - 2, marginHeight + 2, width - marginWidth - 2,
-							marginHeight + gradientheight + 4 });
-				}
-			};
-
-			buffer = new Image(getDisplay(), imageGcDrawer, bounds.width, bounds.height);
-			buffer.setBackground(getBackground());
+				// New in 3.3 - edge treatment
+				gc.setForeground(getBackground());
+				gc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
+						marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
+						width - marginWidth - 3, marginHeight + 1, width - marginWidth - 3, marginHeight + 2,
+						width - marginWidth - 2, marginHeight + 2, width - marginWidth - 2,
+						marginHeight + gradientheight + 4 });
+			}
+			gc.setForeground(oldForeground);
+			gc.setBackground(oldBackground);
+			gc.setAntialias(oldAntialias);
 		} else if (isExpanded()) {
 			int theight = 5;
 			if (bg.equals(getBackground())) {
@@ -455,11 +457,6 @@ public class Section extends ExpandableComposite {
 				gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
 						marginHeight);
 			}
-		}
-
-		if (buffer != null) {
-			e.gc.drawImage(buffer, 0, 0);
-			buffer.dispose();
 		}
 	}
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight, int realtheight) {
