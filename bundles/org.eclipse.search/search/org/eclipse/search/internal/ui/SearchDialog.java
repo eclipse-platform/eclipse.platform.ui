@@ -182,6 +182,8 @@ public class SearchDialog extends ExtendedDialogWindow
 
 		fPageChangeListeners= null;
 		setUseEmbeddedProgressMonitorPart(false);
+		setShellStyle(getShellStyle() ^ SWT.APPLICATION_MODAL | SWT.MODELESS);
+		setBlockOnOpen(false);
 	}
 
 	public static String evaluateEnclosingProject(IAdaptable adaptable) {
