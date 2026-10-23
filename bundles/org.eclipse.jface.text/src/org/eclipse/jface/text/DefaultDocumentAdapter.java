@@ -16,6 +16,7 @@ package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -222,7 +223,26 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	@Override
 	public void replaceTextRange(int pos, int length, String text) {
 		try {
-			fDocument.replace(pos, length, text);
+			String[][] bracketTypes= {
+					{ SpecialCharacterConstants.openParentheses, SpecialCharacterConstants.openSquareBracket, SpecialCharacterConstants.openCurlyBracket, SpecialCharacterConstants.openAngleBracket,
+							SpecialCharacterConstants.singleQuote, SpecialCharacterConstants.doubleQuotes },
+					{ SpecialCharacterConstants.closeParentheses, SpecialCharacterConstants.closeSquareBracket, SpecialCharacterConstants.closeCurlyBracket,
+							SpecialCharacterConstants.closeAngleBracket, SpecialCharacterConstants.singleQuote, SpecialCharacterConstants.doubleQuotes }
+			};
+			boolean containsSpecialBrackets= Arrays.asList(bracketTypes[0]).contains(text);
+			TextSelection textSelection= new TextSelection(fDocument, pos, length);
+			//Checks if the text contains special type of brackets, the length of the selected text is greater than 0 & the selected text is not empty.
+			if (containsSpecialBrackets && textSelection.getLength() > 0 && !textSelection.getText().trim().isEmpty()) {
+				int index= Arrays.asList(bracketTypes[0]).indexOf(text);
+				if (index >= 0) {
+					String currentOpeningBracket= bracketTypes[0][index];
+					String currentClosingBracket= bracketTypes[1][index];
+					text= currentOpeningBracket + textSelection.getText() + currentClosingBracket;
+					fDocument.replace(pos, length, text);
+				}
+			} else {
+				fDocument.replace(pos, length, text);
+			}
 		} catch (BadLocationException x) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
