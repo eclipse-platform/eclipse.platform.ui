@@ -62,6 +62,7 @@ public class JobsView {
 	private Text quantityField, delayField, rescheduleDelay;
 	private Button schedulingRuleField;
 	private Button noPromptField;
+	private Button cancelableField;
 
 	Composite parent;
 
@@ -79,13 +80,14 @@ public class JobsView {
 		try {
 			final long duration = getDuration();
 			final boolean shouldLock = lockField.getSelection();
+			final boolean cancelable = cancelableField.getSelection();
 			progressService.busyCursorWhile(
 					monitor -> {
 						if (shouldLock)
 							doRunInWorkspace(duration, monitor);
 						else
 							doRun(duration, monitor);
-					});
+					}, cancelable);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -201,7 +203,13 @@ public class JobsView {
 		});
 
 		// busy cursor while
-		Button busyWhile = new Button(group, SWT.PUSH);
+		Composite busyWhileRow = new Composite(group, SWT.NONE);
+		GridLayout busyWhileLayout = new GridLayout(2, false);
+		busyWhileLayout.marginWidth = 0;
+		busyWhileLayout.marginHeight = 0;
+		busyWhileRow.setLayout(busyWhileLayout);
+		busyWhileRow.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button busyWhile = new Button(busyWhileRow, SWT.PUSH);
 		busyWhile.setText("busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setToolTipText("Uses IProgressService.busyCursorWhile"); //$NON-NLS-1$
 		busyWhile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -211,6 +219,10 @@ public class JobsView {
 				busyCursorWhile();
 			}
 		});
+		cancelableField = new Button(busyWhileRow, SWT.CHECK);
+		cancelableField.setText("cancelable"); //$NON-NLS-1$
+		cancelableField.setToolTipText("Whether the Cancel button of busyCursorWhile is enabled"); //$NON-NLS-1$
+		cancelableField.setSelection(true);
 		// progress monitor dialog with fork=false
 		Button noFork = new Button(group, SWT.PUSH);
 		noFork.setText("runInUI"); //$NON-NLS-1$
