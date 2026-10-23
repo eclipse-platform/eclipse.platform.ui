@@ -15,7 +15,9 @@ package org.eclipse.jface.text.tests.codemining;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +38,7 @@ import org.eclipse.test.Screenshots;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -605,6 +608,62 @@ public class CodeMiningTest {
 				return widget.getStyleRangeAtOffset(index) != null && widget.getLineVerticalIndent(0) == 0;
 			}
 		}.waitForCondition(widget.getDisplay(), 1000), "Line header code minigs were used. Expected in-line code minings instead.");
+	}
+
+	@Test
+	public void testLineHeaderCodeMiningPlaceholder() {
+		String placeholderText= "Placeholder";
+		String labelText= "Mining";
+		Set<String> drawnLabels= Collections.synchronizedSet(new HashSet<>());
+		CompletableFuture<String> resolvedLabel= new CompletableFuture<>();
+
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] {
+				new AbstractCodeMiningProvider() {
+					@Override
+					public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+						try {
+							ICodeMining mining= new PlaceholderLineHeaderCodeMining(0, viewer.getDocument(), this) {
+								{
+									setLabel(placeholderText);
+								}
+
+								@Override
+								protected CompletableFuture<Void> doResolve(ITextViewer theViewer, IProgressMonitor theMonitor) {
+									return resolvedLabel.thenAccept(this::setLabel);
+								}
+
+								@Override
+								public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
+									drawnLabels.add(getLabel());
+									return super.draw(gc, textWidget, color, x, y);
+								}
+							};
+
+							return CompletableFuture.completedFuture(List.of(mining));
+						} catch (BadLocationException e) {
+							return CompletableFuture.failedFuture(e);
+						}
+					}
+				}
+		});
+
+		fViewer.getDocument().set("Document");
+
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return drawnLabels.contains(placeholderText);
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000), "Placeholder label was not rendered");
+
+		resolvedLabel.complete(labelText);
+
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return drawnLabels.contains(labelText);
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000), "Resolved label was not rendered");
 	}
 
 	private static boolean hasCodeMiningPrintedBelowLine(ITextViewer viewer, int line) throws BadLocationException {
