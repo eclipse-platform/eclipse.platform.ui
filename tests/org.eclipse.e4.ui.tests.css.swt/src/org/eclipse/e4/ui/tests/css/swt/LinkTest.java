@@ -65,4 +65,16 @@ public class LinkTest {
 		assertEquals(BLUE, widgetToTest.getLinkForeground().getRGB());
 	}
 
+	@Test
+	void testLinkForegroundColorReset() {
+		Link widgetToTest = createTestLink("Link { swt-link-foreground-color: #0000FF;}");
+		assertEquals(BLUE, widgetToTest.getLinkForeground().getRGB());
+
+		Link unstyledLink = new Link(widgetToTest.getParent(), SWT.NONE);
+
+		css.getEngine().reset();
+
+		assertEquals(unstyledLink.getLinkForeground().getRGB(), widgetToTest.getLinkForeground().getRGB());
+	}
+
 }
