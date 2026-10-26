@@ -17,14 +17,21 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
@@ -44,6 +51,14 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private final FileSearchPage fPage;
 	private final AbstractTreeViewer fTreeViewer;
 	private Map<Object, Set<Object>> fChildrenMap;
+	/**
+	 * Upper bound for the number of children of an element in
+	 * {@link #fChildrenMap}. Only updated while inserting, so it may be bigger than
+	 * the real maximum after elements have been removed. A too big value is not a
+	 * problem: it only disables the shortcut in {@link #isTruncated(Object)}, which
+	 * then traverses the shown elements to compute the correct answer.
+	 */
+	private int fMaxChildrenCount;
 
 	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
 		fPage= page;
@@ -75,6 +90,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private synchronized void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 		fChildrenMap= new HashMap<>();
+		fMaxChildrenCount= 0;
 		// the result may be provided by a client that doesn't use a FileSearchQuery
 		boolean showLineMatches= fResult.getQuery() instanceof FileSearchQuery query && !query.isFileNameSearch();
 
@@ -88,11 +104,24 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 							insert(((FileMatch) match).getLineElement(), false);
 						}
 					}
-				} else {
+				} else if (hasDisplayedMatches(result, element)) {
+					// files whose matches are all filtered are not shown
 					insert(element, false);
 				}
 			}
 		}
+	}
+
+	private static boolean hasDisplayedMatches(AbstractTextSearchResult result, Object element) {
+		if (!result.hasActiveMatchFilters()) {
+			return true;
+		}
+		for (Match match : result.getMatches(element)) {
+			if (!match.isFiltered()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void insert(Object child, boolean refreshViewer) {
@@ -100,7 +129,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		while (parent != null) {
 			if (insertChild(parent, child)) {
 				if (refreshViewer) {
-					fTreeViewer.add(parent, child);
+					addToViewer(parent, child);
 				}
 			} else {
 				if (refreshViewer) {
@@ -113,9 +142,40 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 		if (insertChild(fResult, child)) {
 			if (refreshViewer) {
-				fTreeViewer.add(fResult, child);
+				addToViewer(fResult, child);
 			}
 		}
+	}
+
+	/**
+	 * Adds a child that was just inserted into {@link #fChildrenMap} to the viewer,
+	 * respecting the element limit: the viewer must show the same children as
+	 * {@link #getChildren(Object)} returns.
+	 *
+	 * @param parent the parent of the child
+	 * @param child  the child that was just inserted
+	 */
+	private void addToViewer(Object parent, Object child) {
+		int elementLimit= getElementLimit();
+		Set<Object> children= fChildrenMap.get(parent);
+		if (elementLimit == -1 || children == null || children.size() <= elementLimit) {
+			fTreeViewer.add(parent, child);
+			return;
+		}
+		if (elementLimit <= 0) {
+			return; // no child is shown at all
+		}
+		// The parent already had at least elementLimit children before the child was
+		// inserted, so the first elementLimit of them were shown. If the new child is
+		// among the first elementLimit children now, it displaces the last of the
+		// previously shown children, otherwise it is hidden and nothing changes.
+		List<Object> firstChildren= selectShownChildren(children, elementLimit + 1);
+		int index= firstChildren.indexOf(child);
+		if (index < 0 || index >= elementLimit) {
+			return; // the new child is hidden by the element limit
+		}
+		fTreeViewer.remove(parent, new Object[] { firstChildren.get(elementLimit) });
+		fTreeViewer.add(parent, child);
 	}
 
 	/**
@@ -132,7 +192,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 			children= new HashSet<>();
 			fChildrenMap.put(parent, children);
 		}
-		return children.add(child);
+		boolean added= children.add(child);
+		if (added && children.size() > fMaxChildrenCount) {
+			fMaxChildrenCount= children.size();
+		}
+		return added;
 	}
 
 	private boolean hasChild(Object parent, Object child) {
@@ -193,9 +257,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private int getMatchCount(Object element) {
 		if (fResult.hasActiveMatchFilters()) {
 			return fPage.getDisplayedMatchCount(element);
-		} else {
-			return fResult.getMatchCount();
 		}
+		// the matches of the element, not of the whole result: otherwise an element
+		// whose matches were all removed stays in the tree as long as any other
+		// element has matches
+		return fResult.getMatchCount(element);
 	}
 
 	private void removeFromSiblings(Object element, Object parent) {
@@ -205,39 +271,236 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 	}
 
+	/**
+	 * A child of an element in {@link #fChildrenMap} together with its precomputed
+	 * sort key: comparing resources means comparing their paths, so the key of an
+	 * element is computed once and not again for every comparison.
+	 * <p>
+	 * The order is deterministic and resembles the order of the viewer (containers
+	 * before files, resources by path ignoring the case, the lines of a file by
+	 * their offset), but it
+	 * is not exactly the order of
+	 * {@link FileSearchPage.DecoratorIgnoringViewerSorter}: that one compares the
+	 * (locale dependent) texts of the label provider, which also depend on the sort
+	 * order chosen by the user. Only the determinism matters here: the children are
+	 * stored in a hash set, so without an explicit order the elements hidden by the
+	 * element limit would be chosen arbitrarily and could differ for every search,
+	 * even if the very same search is repeated.
+	 * </p>
+	 */
+	private record SortedChild(Object element, int category, int offset, String sortKey)
+			implements Comparable<SortedChild> {
+
+		private static final int LINE_CATEGORY= 0;
+		private static final int CONTAINER_CATEGORY= 1;
+		private static final int FILE_CATEGORY= 2;
+
+		static SortedChild of(Object element) {
+			if (element instanceof LineElement line) {
+				// a children set contains the lines of one single file, and the lines
+				// of a file have distinct offsets: no tie breaker needed. Don't compute
+				// the path of the file for every line.
+				return new SortedChild(element, LINE_CATEGORY, line.getOffset(), ""); //$NON-NLS-1$
+			}
+			if (element instanceof IResource resource) {
+				int category= element instanceof IContainer ? CONTAINER_CATEGORY : FILE_CATEGORY;
+				return new SortedChild(element, category, 0, resource.getFullPath().toString());
+			}
+			// unknown element type: don't break the sort, even if the order of such
+			// elements isn't stable
+			return new SortedChild(element, FILE_CATEGORY, 0, String.valueOf(element));
+		}
+
+		@Override
+		public int compareTo(SortedChild other) {
+			if (category != other.category) {
+				return Integer.compare(category, other.category);
+			}
+			if (offset != other.offset) {
+				return Integer.compare(offset, other.offset);
+			}
+			// ignore the case like the collator used by the viewer, but fall back to a
+			// case sensitive comparison: siblings that differ only in case (possible
+			// on case sensitive file systems) must not be equal, otherwise the shown
+			// children at the element limit would be chosen arbitrarily
+			int result= sortKey.compareToIgnoreCase(other.sortKey);
+			return result != 0 ? result : sortKey.compareTo(other.sortKey);
+		}
+	}
+
+	/**
+	 * Returns the children the viewer shows for an element: if the element has more
+	 * children than the element limit allows, only the first children in the stable
+	 * order defined by {@link SortedChild} are shown.
+	 * <p>
+	 * Note that the shown children are not necessarily the first ones in the order
+	 * the viewer displays them: the viewer sorts the shown children by the texts of
+	 * the label provider and the sort order chosen by the user, which is not known
+	 * here. For the default sort orders both orders are close to each other.
+	 * </p>
+	 *
+	 * @param children all children of an element, never <code>null</code>
+	 * @return the children shown in the viewer
+	 */
+	private Collection<Object> getShownChildren(Set<Object> children) {
+		int elementLimit= getElementLimit();
+		if (elementLimit == -1 || elementLimit >= children.size()) {
+			return children;
+		}
+		if (elementLimit <= 0) {
+			return List.of();
+		}
+		return selectShownChildren(children, elementLimit);
+	}
+
+	/**
+	 * Selects the first <code>elementLimit</code> children in the order defined by
+	 * {@link SortedChild}. Only the selected children are kept while scanning, so
+	 * that an element with a huge number of children isn't sorted completely just
+	 * to show a few of them.
+	 *
+	 * @param children     all children of an element
+	 * @param elementLimit maximum number of children to select, always greater
+	 *                     than zero and not bigger than the number of children
+	 * @return the selected children, sorted in the order defined by
+	 *         {@link SortedChild}
+	 */
+	private static List<Object> selectShownChildren(Set<Object> children, int elementLimit) {
+		// max-heap with the smallest children seen so far: the biggest of them is on
+		// top and is dropped as soon as a smaller child shows up
+		PriorityQueue<SortedChild> smallest= new PriorityQueue<>(elementLimit, Comparator.reverseOrder());
+		for (Object child : children) {
+			SortedChild candidate= SortedChild.of(child);
+			if (smallest.size() < elementLimit) {
+				smallest.add(candidate);
+			} else if (candidate.compareTo(smallest.peek()) < 0) {
+				smallest.poll();
+				smallest.add(candidate);
+			}
+		}
+		List<SortedChild> shown= new ArrayList<>(smallest);
+		Collections.sort(shown);
+		List<Object> elements= new ArrayList<>(shown.size());
+		for (SortedChild child : shown) {
+			elements.add(child.element());
+		}
+		return elements;
+	}
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		Set<Object> children= fChildrenMap.get(parentElement);
 		if (children == null) {
 			return EMPTY_ARR;
 		}
-
-		int elementLimit = getElementLimit();
-		if (elementLimit != -1 && elementLimit < children.size()) {
-			Object[] limitedChildren = new Object[elementLimit];
-			System.arraycopy(children.toArray(), 0, limitedChildren, 0, elementLimit);
-			return limitedChildren;
-		}
-
-		return children.toArray();
+		return getShownChildren(children).toArray();
 	}
 
 	@Override
 	public int getLeafCount(Object parentElement) {
-		Object[] children = getChildren(parentElement);
-		if (children.length == 0) {
+		Set<Object> children = fChildrenMap.get(parentElement);
+		if (children == null || children.isEmpty()) {
 			return 0;
 		}
+		return countShownLeafs(parentElement);
+	}
+
+	/**
+	 * Counts the leafs below the given element that are shown in the viewer. Like
+	 * {@link #getChildren(Object)} only the children shown in the viewer are
+	 * considered, subtrees hidden by the element limit are not traversed.
+	 *
+	 * @param element the element to count the shown leafs for
+	 * @return number of leafs shown below the given element
+	 */
+	private int countShownLeafs(Object element) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null || children.isEmpty()) {
+			return 1; // the element itself is a leaf
+		}
 		int count = 0;
-		for (Object object : children) {
-			boolean leaf = !hasChildren(object);
-			if (leaf) {
-				count++;
-			} else {
-				count += getLeafCount(object);
-			}
+		for (Object child : getShownChildren(children)) {
+			count += countShownLeafs(child);
 		}
 		return count;
+	}
+
+	@Override
+	public boolean isTruncated(Object parentElement) {
+		int elementLimit = getElementLimit();
+		if (elementLimit == -1 || fMaxChildrenCount <= elementLimit) {
+			// no element can have more children than the element limit allows
+			return false;
+		}
+		return isTruncated(parentElement, elementLimit);
+	}
+
+	/**
+	 * Elements are hidden if and only if a shown element has more children than the
+	 * element limit allows, so only shown subtrees have to be traversed, and the
+	 * traversal can stop at the first truncated element.
+	 *
+	 * @param element      the element to check
+	 * @param elementLimit the element limit, never <code>-1</code>
+	 * @return <code>true</code> if elements below the given element are hidden
+	 */
+	private boolean isTruncated(Object element, int elementLimit) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null) {
+			return false;
+		}
+		if (children.size() > elementLimit) {
+			return true;
+		}
+		for (Object child : children) { // all children are shown
+			if (isTruncated(child, elementLimit)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int getShownMatchCount(AbstractTextSearchResult result) {
+		if (result == null || !fChildrenMap.containsKey(result)) {
+			return 0;
+		}
+		Map<Object, Set<LineElement>> shownLines = new HashMap<>();
+		List<Object> shownFiles = new ArrayList<>();
+		collectShownLeafs(result, shownLines, shownFiles);
+
+		int count = 0;
+		boolean useFilterState = result.hasActiveMatchFilters();
+		// count the matches of the shown lines with one pass over the matches of
+		// each file instead of scanning them once per line
+		for (Entry<Object, Set<LineElement>> entry : shownLines.entrySet()) {
+			for (Match match : result.getMatches(entry.getKey())) {
+				if (!(useFilterState && match.isFiltered())
+						&& entry.getValue().contains(((FileMatch) match).getLineElement())) {
+					count++;
+				}
+			}
+		}
+		for (Object file : shownFiles) {
+			count += fPage.getDisplayedMatchCount(file);
+		}
+		return count;
+	}
+
+	private void collectShownLeafs(Object element, Map<Object, Set<LineElement>> shownLines,
+			List<Object> shownFiles) {
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null || children.isEmpty()) {
+			if (element instanceof LineElement line) {
+				shownLines.computeIfAbsent(line.getParent(), _ -> new HashSet<>()).add(line);
+			} else {
+				shownFiles.add(element);
+			}
+			return;
+		}
+		for (Object child : getShownChildren(children)) {
+			collectShownLeafs(child, shownLines, shownFiles);
+		}
 	}
 
 	@Override
