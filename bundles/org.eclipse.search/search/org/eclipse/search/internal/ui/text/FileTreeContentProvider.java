@@ -75,7 +75,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private synchronized void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 		fChildrenMap= new HashMap<>();
-		boolean showLineMatches= !((FileSearchQuery) fResult.getQuery()).isFileNameSearch();
+		// the result may be provided by a client that doesn't use a FileSearchQuery
+		boolean showLineMatches= fResult.getQuery() instanceof FileSearchQuery query && !query.isFileNameSearch();
 
 		if (result != null) {
 			Object[] elements= result.getElements();
