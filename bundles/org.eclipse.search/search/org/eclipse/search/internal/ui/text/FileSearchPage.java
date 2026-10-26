@@ -296,8 +296,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		addSortActions(mgr);
 		fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
 		fActionGroup.fillContextMenu(mgr);
-		FileSearchQuery query= (FileSearchQuery) getInput().getQuery();
-		if (!query.getSearchString().isEmpty()) {
+		// the result may be provided by a client that doesn't use a FileSearchQuery
+		if (getInput().getQuery() instanceof FileSearchQuery query && !query.getSearchString().isEmpty()) {
 			IStructuredSelection selection = getViewer().getStructuredSelection();
 			if (!selection.isEmpty()) {
 				ReplaceAction replaceSelection= new ReplaceAction(getSite().getShell(), (FileSearchResult)getInput(), selection.toArray());
@@ -572,7 +572,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	private boolean showLineMatches() {
 		AbstractTextSearchResult input= getInput();
-		return getLayout() == FLAG_LAYOUT_TREE && input != null && !((FileSearchQuery) input.getQuery()).isFileNameSearch();
+		// the result may be provided by a client that doesn't use a FileSearchQuery
+		return getLayout() == FLAG_LAYOUT_TREE && input != null
+				&& input.getQuery() instanceof FileSearchQuery query && !query.isFileNameSearch();
 	}
 
 }
