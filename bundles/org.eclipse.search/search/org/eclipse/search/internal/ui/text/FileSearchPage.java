@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -532,10 +531,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	public int getDisplayedMatchCount(Object element) {
 		if (showLineMatches()) {
 			if (element instanceof LineElement lineEntry) {
-				IResource res = lineEntry.getParent();
-				if (super.getDisplayedMatchCount(res) > 0) {
-					return lineEntry.getNumberOfMatches(getInput());
-				}
+				// matches hidden by an active match filter must not be counted,
+				// otherwise the tree shows more matches than the label of the page.
+				// No need to check the file first: a line has no displayed matches
+				// if its file has none
+				return lineEntry.getNumberOfDisplayedMatches(getInput());
 			}
 			return 0;
 		}
@@ -546,10 +546,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	public Match[] getDisplayedMatches(Object element) {
 		if (showLineMatches()) {
 			if (element instanceof LineElement lineEntry) {
-				IResource res = lineEntry.getParent();
-				if (super.getDisplayedMatchCount(res) > 0) {
-					return lineEntry.getMatches(getInput());
-				}
+				return lineEntry.getDisplayedMatches(getInput());
 			}
 			return new Match[0];
 		}
