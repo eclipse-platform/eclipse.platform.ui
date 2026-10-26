@@ -61,7 +61,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 				System.arraycopy(elements, 0, shownElements, 0, elementLimit);
 				return shownElements;
 			}
-			if (fileSearchResult.getActiveMatchFilters().length > 0) {
+			if (fileSearchResult.hasActiveMatchFilters()) {
 				List<Object> elementList = new ArrayList<>();
 				for (Object element : elements) {
 					if (fPage.getDisplayedMatchCount(element) > 0) {

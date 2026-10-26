@@ -461,7 +461,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 							new Object[] { label, Integer.valueOf(itemCount), Integer.valueOf(fileCount) });
 				}
 			}
-			if (result.getActiveMatchFilters() != null && result.getActiveMatchFilters().length > 0) {
+			if (result.hasActiveMatchFilters()) {
 				if (isQueryRunning()) {
 					String message = SearchMessages.FileSearchPage_filtered_message;
 					return Messages.format(message, new Object[] { msg });
