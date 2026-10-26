@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -117,7 +117,10 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 
 		StyledString str= new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
 
-		FileMatch[] matches= lineElement.getMatches(fPage.getInput());
+		// only highlight the matches that are counted by
+		// FileSearchPage#getDisplayedMatchCount(Object), matches hidden by an active
+		// match filter must not be highlighted
+		FileMatch[] matches= lineElement.getDisplayedMatches(fPage.getInput());
 		Arrays.sort(matches, fMatchComparator);
 
 		String content= lineElement.getContents();

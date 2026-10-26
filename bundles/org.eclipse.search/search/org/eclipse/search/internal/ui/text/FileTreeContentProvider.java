@@ -150,17 +150,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 			}
 		} else {
 			if (!hasMatches(element)) {
-				fChildrenMap.remove(element);
-				Object parent= getParent(element);
-				if (parent != null) {
-					removeFromSiblings(element, parent);
-					remove(parent, refreshViewer);
-				} else {
-					removeFromSiblings(element, fResult);
-					if (refreshViewer) {
-						fTreeViewer.refresh();
-					}
-				}
+				removeWithoutMatches(element, refreshViewer);
 			} else {
 				if (refreshViewer) {
 					fTreeViewer.refresh(element);
@@ -169,22 +159,35 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 	}
 
-	private boolean hasMatches(Object element) {
-		if (element instanceof LineElement lineElement) {
-			IResource resource = lineElement.getParent();
-			if (hasMatches(resource)) {
-				return lineElement.hasMatches(fResult);
+	/**
+	 * Removes an element that has no children and no matches shown from the tree,
+	 * and its parents as far as they don't have children or matches anymore.
+	 *
+	 * @param element       the element to remove, the caller has checked that it
+	 *                      has no children and no matches shown
+	 * @param refreshViewer whether the viewer is updated
+	 */
+	private void removeWithoutMatches(Object element, boolean refreshViewer) {
+		fChildrenMap.remove(element);
+		Object parent= getParent(element);
+		if (parent != null) {
+			removeFromSiblings(element, parent);
+			remove(parent, refreshViewer);
+		} else {
+			removeFromSiblings(element, fResult);
+			if (refreshViewer) {
+				fTreeViewer.refresh();
 			}
 		}
-		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 
-	private boolean hasMatches(IResource element) {
-		if (fResult.hasActiveMatchFilters()) {
-			return fPage.getDisplayedMatchCount(element) > 0;
-		} else {
-			return fResult.hasMatches();
+	private boolean hasMatches(Object element) {
+		if (element instanceof LineElement lineElement) {
+			// a line without matches that are shown must not stay in the tree,
+			// otherwise it is counted as shown but contributes no match
+			return lineElement.hasDisplayedMatches(fResult);
 		}
+		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 
 	private int getMatchCount(Object element) {
@@ -282,7 +285,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 							insert(lineElement, singleElement);
 						}
 					} else {
-						remove(lineElement, singleElement);
+						// Lines are leafs, and getUpdatedLinesWithMatches(..) has already
+						// scanned all matches of the file and found none shown for this
+						// line: don't scan them again for every removed line, which takes
+						// O(lines * matches) if a filter hides all matches of a big file
+						removeWithoutMatches(lineElement, singleElement);
 					}
 				}
 			}

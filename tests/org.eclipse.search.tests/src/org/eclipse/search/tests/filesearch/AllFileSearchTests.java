@@ -24,6 +24,7 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		AnnotationManagerTest.class,
 		FileSearchTests.class,
 		LineAnnotationManagerTest.class,
+		LineElementTest.class,
 		MatchFilterStateTest.class,
 		NestedProjectFilterTest.class,
 		PositionTrackerTest.class,
