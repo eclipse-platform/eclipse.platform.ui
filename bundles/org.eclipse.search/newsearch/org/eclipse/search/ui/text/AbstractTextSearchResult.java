@@ -519,6 +519,21 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 
 	/**
+	 * Returns whether this result has active match filters, i.e. whether
+	 * {@link #getActiveMatchFilters()} returns a non-empty array.
+	 *
+	 * @return {@code true} if there are active match filters, {@code false}
+	 *         otherwise
+	 * @see #getActiveMatchFilters()
+	 * @see #setActiveMatchFilters(MatchFilter[])
+	 * @since 3.20
+	 */
+	public boolean hasActiveMatchFilters() {
+		MatchFilter[] matchFilters = getActiveMatchFilters();
+		return matchFilters != null && matchFilters.length > 0;
+	}
+
+	/**
 	 * Returns all applicable filters for this result or null if match filters are not supported. If match filters are returned,
 	 * the {@link AbstractTextSearchViewPage} will contain menu entries in the view menu.
 	 *

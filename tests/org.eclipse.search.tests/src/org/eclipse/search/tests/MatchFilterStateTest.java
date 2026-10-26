@@ -14,6 +14,7 @@
 package org.eclipse.search.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ import org.eclipse.search.ui.text.MatchFilter;
 
 /**
  * Tests that the filter state of the matches of an
- * {@link AbstractTextSearchResult} is computed when a match is added.
+ * {@link AbstractTextSearchResult} is computed when a match is added, and that
+ * {@link AbstractTextSearchResult#hasActiveMatchFilters()} reports active match
+ * filters.
  */
 public class MatchFilterStateTest {
 
@@ -47,6 +50,50 @@ public class MatchFilterStateTest {
 
 		assertTrue(match.isFiltered());
 		assertEquals(1, filter.evaluations);
+	}
+
+	/**
+	 * Neither <code>null</code> nor an empty array are active match filters.
+	 */
+	@Test
+	public void testHasActiveMatchFilters() {
+		TestResult result= new TestResult();
+		assertFalse(result.hasActiveMatchFilters(), "filtering is disabled by default");
+
+		result.setActiveMatchFilters(new MatchFilter[0]);
+		assertFalse(result.hasActiveMatchFilters(), "an empty array contains no active filter");
+
+		result.setActiveMatchFilters(new MatchFilter[] { new FilterAll() });
+		assertTrue(result.hasActiveMatchFilters());
+
+		result.setActiveMatchFilters(null);
+		assertFalse(result.hasActiveMatchFilters(), "null disables filtering");
+	}
+
+	/**
+	 * Subclasses may override {@link AbstractTextSearchResult#getActiveMatchFilters()},
+	 * {@link AbstractTextSearchResult#hasActiveMatchFilters()} must respect that.
+	 */
+	@Test
+	public void testHasActiveMatchFiltersUsesOverriddenGetter() {
+		MatchFilter[] filters= { new FilterAll() };
+		TestResult result= new TestResult() {
+			@Override
+			public MatchFilter[] getActiveMatchFilters() {
+				return filters;
+			}
+		};
+		assertTrue(result.hasActiveMatchFilters());
+
+		// like CSearchResult in CDT: report an empty array instead of null
+		TestResult emptyResult= new TestResult() {
+			@Override
+			public MatchFilter[] getActiveMatchFilters() {
+				MatchFilter[] active= super.getActiveMatchFilters();
+				return active == null ? new MatchFilter[0] : active;
+			}
+		};
+		assertFalse(emptyResult.hasActiveMatchFilters());
 	}
 
 	private static final class FilterAll extends TestFilter {
@@ -83,7 +130,7 @@ public class MatchFilterStateTest {
 		}
 	}
 
-	private static final class TestResult extends AbstractTextSearchResult {
+	private static class TestResult extends AbstractTextSearchResult {
 
 		@Override
 		public String getLabel() {

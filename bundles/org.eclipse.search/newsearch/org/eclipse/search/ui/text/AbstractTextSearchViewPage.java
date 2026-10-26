@@ -1044,12 +1044,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Returns the matches that are currently displayed for the given element.
-	 * If {@link AbstractTextSearchResult#getActiveMatchFilters()} is not null, only matches are returned
-	 * that are not filtered by the match filters. If {@link AbstractTextSearchResult#getActiveMatchFilters()} is
-	 * null all matches of the given element are returned.
-	 * Any action operating on the visible matches in the search
-	 * result page should use this method to get the matches for a search
-	 * result (instead of asking the search result directly).
+	 * If {@link AbstractTextSearchResult#hasActiveMatchFilters()} is
+	 * {@code true}, only matches are returned that are not filtered by the
+	 * match filters. If
+	 * {@link AbstractTextSearchResult#hasActiveMatchFilters()} is {@code false}
+	 * all matches of the given element are returned. Any action operating on
+	 * the visible matches in the search result page should use this method to
+	 * get the matches for a search result (instead of asking the search result
+	 * directly).
 	 *
 	 * @param element
 	 *            The element to get the matches for
@@ -1063,7 +1065,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			return EMPTY_MATCH_ARRAY;
 		}
 		Match[] matches= result.getMatches(element);
-		if (result.getActiveMatchFilters() == null) { // default behaviour: filter state not used, all matches shown
+		if (!result.hasActiveMatchFilters()) { // default behaviour: filter state not used, all matches shown
 			return matches;
 		}
 
@@ -1115,17 +1117,16 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Returns the number of matches that are currently displayed for the given
-	 * element. If {@link AbstractTextSearchResult#getActiveMatchFilters()} is not null, only matches
-	 * are returned that are not filtered by the match filters.
-	 * Any action operating on the visible matches in the
-	 * search result page should use this method to get the match count for a
-	 * search result (instead of asking the search result directly).
+	 * element. If {@link AbstractTextSearchResult#hasActiveMatchFilters()} is
+	 * {@code true}, only matches are counted that are not filtered by the
+	 * match filters. Any action operating on the visible matches in the search
+	 * result page should use this method to get the match count for a search
+	 * result (instead of asking the search result directly).
 	 *
 	 * @param element
 	 *            The element to get the matches for
 	 * @return The number of matches displayed for the given element. If the
-	 *         current input of this page is <code>null</code>, 0 is
-	 *         returned
+	 *         current input of this page is <code>null</code>, 0 is returned
 	 * @see AbstractTextSearchResult#getMatchCount(Object)
 	 */
 	public int getDisplayedMatchCount(Object element) {
@@ -1133,7 +1134,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (result == null) {
 			return 0;
 		}
-		if (result.getActiveMatchFilters() == null) { // default behaviour: filter state not used, all matches shown
+		if (!result.hasActiveMatchFilters()) { // default behaviour: filter state not used, all matches shown
 			return result.getMatchCount(element);
 		}
 

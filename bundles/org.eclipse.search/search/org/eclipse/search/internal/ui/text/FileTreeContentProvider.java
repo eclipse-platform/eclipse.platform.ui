@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
-import org.eclipse.search.ui.text.MatchFilter;
 
 
 public class FileTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
@@ -180,7 +179,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	}
 
 	private boolean hasMatches(IResource element) {
-		if (hasActiveMatchFilters()) {
+		if (fResult.hasActiveMatchFilters()) {
 			return fPage.getDisplayedMatchCount(element) > 0;
 		} else {
 			return fResult.hasMatches();
@@ -188,7 +187,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	}
 
 	private int getMatchCount(Object element) {
-		if (hasActiveMatchFilters()) {
+		if (fResult.hasActiveMatchFilters()) {
 			return fPage.getDisplayedMatchCount(element);
 		} else {
 			return fResult.getMatchCount();
@@ -293,11 +292,6 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 	}
 
-	private boolean hasActiveMatchFilters() {
-		MatchFilter[] activeMatchFilters = fResult.getActiveMatchFilters();
-		return activeMatchFilters != null && activeMatchFilters.length > 0;
-	}
-
 	/**
 	 * Collects the updated line elements that still have matches. The matches of a
 	 * file are enumerated only once, no matter how many lines of that file have been
@@ -328,7 +322,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		// once per match by the search result (see AbstractTextSearchResult), it must
 		// not be computed again here: match filters can be expensive and this code
 		// runs in the UI thread for every batch of search results.
-		boolean useFilterState = hasActiveMatchFilters();
+		boolean useFilterState = fResult.hasActiveMatchFilters();
 		Set<LineElement> linesWithMatches = Collections.newSetFromMap(new IdentityHashMap<>());
 		for (IResource file : files) {
 			Enumeration<Match> matches = fResult.getMatchSet(file);
