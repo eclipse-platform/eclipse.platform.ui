@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.ui.tests.dialogs;
 
 import org.eclipse.ui.tests.compare.UIComparePreferencesAuto;
-
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -25,7 +24,7 @@ import org.junit.platform.suite.api.Suite;
 		DeprecatedUIPreferencesAuto.class, UIMessageDialogsAuto.class, UINewWorkingSetWizardAuto.class,
 		UIEditWorkingSetWizardAuto.class, SearchPatternAuto.class, InfixSearchPatternAuto.class,
 		UIFilteredResourcesSelectionDialogAuto.class,
-		TreeManagerTest.class, ContainerCheckedTreeViewerTest.class })
+		TreeManagerTest.class, ContainerCheckedTreeViewerTest.class, TwoPaneElementSelectorOrderTest.class })
 public class UIAutomatedSuite {
 
 }

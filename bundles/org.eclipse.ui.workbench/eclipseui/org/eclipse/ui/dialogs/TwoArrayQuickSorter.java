@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,8 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Quick sort to sort key-value pairs. The keys and arrays are specified in
- * separate arrays.
+ * Stable sort to sort key-value pairs. The keys and values are specified in
+ * separate arrays. Elements with equal keys keep their relative order.
  *
  * @since 2.0
  */
@@ -64,7 +64,8 @@ import org.eclipse.core.runtime.Assert;
 	}
 
 	/**
-	 * Sorts keys and values in parallel.
+	 * Sorts keys and values in parallel. The sort is stable: values whose keys
+	 * compare as equal keep their relative order.
 	 *
 	 * @param keys   the keys to use for sorting.
 	 * @param values the values associated with the keys.
@@ -79,47 +80,47 @@ import org.eclipse.core.runtime.Assert;
 			return;
 		}
 
-		internalSort(keys, values, 0, keys.length - 1);
-	}
-
-	private void internalSort(Object[] keys, Object[] values, int left, int right) {
-		int original_left = left;
-		int original_right = right;
-
-		Object mid = keys[(left + right) / 2];
-		do {
-			while (fComparator.compare(keys[left], mid) < 0) {
-				left++;
-			}
-
-			while (fComparator.compare(mid, keys[right]) < 0) {
-				right--;
-			}
-
-			if (left <= right) {
-				swap(keys, left, right);
-				swap(values, left, right);
-				left++;
-				right--;
-			}
-		} while (left <= right);
-
-		if (original_left < right) {
-			internalSort(keys, values, original_left, right);
-		}
-
-		if (left < original_right) {
-			internalSort(keys, values, left, original_right);
-		}
+		mergeSort(keys, values, new Object[keys.length / 2], new Object[keys.length / 2], 0, keys.length);
 	}
 
 	/*
-	 * Swaps x[a] with x[b].
+	 * Sorts keys[low, high) and values[low, high). The buffers must hold at least
+	 * half of the elements; only the left run is copied into them when merging.
 	 */
-	private static final void swap(Object x[], int a, int b) {
-		Object t = x[a];
-		x[a] = x[b];
-		x[b] = t;
-	}
+	private void mergeSort(Object[] keys, Object[] values, Object[] keyBuffer, Object[] valueBuffer, int low,
+			int high) {
+		if (high - low < 2) {
+			return;
+		}
 
+		int mid = (low + high) >>> 1;
+		mergeSort(keys, values, keyBuffer, valueBuffer, low, mid);
+		mergeSort(keys, values, keyBuffer, valueBuffer, mid, high);
+
+		if (fComparator.compare(keys[mid - 1], keys[mid]) <= 0) {
+			return; // already in order
+		}
+
+		int leftCount = mid - low;
+		System.arraycopy(keys, low, keyBuffer, 0, leftCount);
+		System.arraycopy(values, low, valueBuffer, 0, leftCount);
+		int left = 0;
+		int right = mid;
+		int target = low;
+		while (left < leftCount && right < high) {
+			// take from the right run only if strictly smaller, to keep the sort stable
+			if (fComparator.compare(keys[right], keyBuffer[left]) < 0) {
+				keys[target] = keys[right];
+				values[target++] = values[right++];
+			} else {
+				keys[target] = keyBuffer[left];
+				values[target++] = valueBuffer[left++];
+			}
+		}
+		// what is left of the right run is already in its place
+		while (left < leftCount) {
+			keys[target] = keyBuffer[left];
+			values[target++] = valueBuffer[left++];
+		}
+	}
 }
