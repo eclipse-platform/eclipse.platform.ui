@@ -339,7 +339,9 @@ public class FindReplaceOverlayInEditorTest {
 	/**
 	 * The editor acts on its keys again once the overlay no longer has focus. Only
 	 * asserting the other direction would be satisfied by an overlay that disabled
-	 * the editor's keys for good.
+	 * the editor's keys for good. It uses Delete Line, which only the editor binds:
+	 * Select All, for example, would also reach the editor's text through the
+	 * workbench's default handler.
 	 */
 	@Test
 	public void testTheEditorActsOnKeysAgainOnceTheOverlayLostFocus() {
@@ -347,10 +349,10 @@ public class FindReplaceOverlayInEditorTest {
 		editor.setFocus();
 		waitForFocus(editorWidget()::isFocusControl, testName);
 
-		type(editorWidget(), SWT.MOD1, 'a');
+		type(editorWidget(), SWT.MOD1, 'd');
 
-		assertEquals(CONTENT.length(), editorSelectionLength(),
-				"Select All must apply to the document again once the editor has focus"); //$NON-NLS-1$
+		assertNotEquals(CONTENT, documentText(),
+				"Delete Line must apply to the document again once the editor has focus"); //$NON-NLS-1$
 	}
 
 	private void focusSearchField() {
