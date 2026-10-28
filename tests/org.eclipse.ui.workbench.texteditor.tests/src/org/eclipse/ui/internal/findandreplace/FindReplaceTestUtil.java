@@ -28,6 +28,8 @@ import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 public final class FindReplaceTestUtil {
 
+	private static int lastKeyEventTime;
+
 	private FindReplaceTestUtil() {
 	}
 
@@ -72,6 +74,10 @@ public final class FindReplaceTestUtil {
 	 */
 	public static void notifyKeyDown(Control target, int stateMask, int keyCode) {
 		Event keyEvent= new Event();
+		// A time of its own, since the key binding dispatcher handles Escape and Delete
+		// only once per event time. Left unset, SWT uses the time of the last native
+		// event, which on GTK stays the same while no native input arrives.
+		keyEvent.time= ++lastKeyEventTime;
 		keyEvent.stateMask= stateMask;
 		keyEvent.keyCode= keyCode;
 		keyEvent.character= characterFor(stateMask, keyCode);
