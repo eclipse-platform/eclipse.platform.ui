@@ -225,16 +225,24 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		if (isInlinedAnnotationDeleted(textWidget, offset, annotation)) {
 			return;
 		}
+		if (annotation instanceof CodeMiningDocumentFooterAnnotation footer) {
+			if (gc != null) {
+				footer.updateReservedHeight();
+				Point location= getDocumentFooterLocation(footer, textWidget, offset);
+				if (location != null) {
+					annotation.setLocation(location.x, location.y);
+					annotation.draw(gc, textWidget, offset, length, color, location.x, location.y);
+				}
+			} else {
+				redrawDocumentFooter(textWidget, offset);
+			}
+			return;
+		}
 		int line= textWidget.getLineAtOffset(offset);
 		int charCount= textWidget.getCharCount();
 		if (gc != null) {
 			// Setting vertical indent first, before computing bounds
-			int height;
-			if (annotation instanceof CodeMiningDocumentFooterAnnotation) { // this is different here
-				height= 0;
-			} else {
-				height= annotation.getHeight();
-			}
+			int height= annotation.getHeight();
 			if (height != 0) {
 				if (height != textWidget.getLineVerticalIndent(line)) {
 					textWidget.setLineVerticalIndent(line, height);
@@ -270,6 +278,43 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			redrawLine(textWidget, offset, charCount);
 		} else {
 			redrawAll(textWidget, offset, charCount, length);
+		}
+	}
+
+	/**
+	 * Returns the location of a document footer: directly below the last row of the last line, in
+	 * the space the footer reserves there, see
+	 * {@link CodeMiningDocumentFooterAnnotation#updateReservedHeight()}.
+	 *
+	 * @param footer the document footer
+	 * @param textWidget the text widget
+	 * @param widgetOffset the widget offset of the footer
+	 * @return the location of the footer, or <code>null</code> when it is empty or outside of the
+	 *         client area
+	 */
+	private static Point getDocumentFooterLocation(CodeMiningDocumentFooterAnnotation footer, StyledText textWidget, int widgetOffset) {
+		int height= footer.getHeight();
+		if (height <= 0) {
+			return null;
+		}
+		int lineOffset= textWidget.getOffsetAtLine(textWidget.getLineAtOffset(widgetOffset));
+		Point end= textWidget.getLocationAtOffset(widgetOffset);
+		Point location= new Point(textWidget.getLocationAtOffset(lineOffset).x, end.y + textWidget.getLineHeight(widgetOffset));
+		if (location.y >= textWidget.getClientArea().height || location.y + height <= 0) {
+			return null;
+		}
+		return location;
+	}
+
+	/**
+	 * Redraws the last line together with the footer below it, as the annotation painter draws the
+	 * footer, and so reserves its space, only when it paints the last line.
+	 */
+	private static void redrawDocumentFooter(StyledText textWidget, int widgetOffset) {
+		Rectangle client= textWidget.getClientArea();
+		int y= Math.max(0, textWidget.getLinePixel(textWidget.getLineAtOffset(widgetOffset)));
+		if (y < client.height) {
+			textWidget.redraw(0, y, client.width, client.height - y, false);
 		}
 	}
 
