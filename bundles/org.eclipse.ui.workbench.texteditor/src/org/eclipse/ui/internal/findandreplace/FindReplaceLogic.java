@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 Vector Informatik GmbH and others.
+ * Copyright (c) 2023, 2026 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
+ *     Edward Lo - fix replaceAll rematching line-start regex (issue 2820)
  *******************************************************************************/
 
 package org.eclipse.ui.internal.findandreplace;
@@ -422,6 +423,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	/**
 	 * Replaces all occurrences of the user's findString with the replace string.
 	 * Returns the number of replacements that occur.
+	 * <p>
+	 * Matches are collected first and then replaced from last to first. This
+	 * avoids re-matching the same logical position after a replacement (for
+	 * example regex {@code ^ } with an empty replacement would otherwise keep
+	 * matching at the line start and remove all leading spaces).
+	 * </p>
 	 *
 	 * @return the number of occurrences
 	 *
@@ -434,14 +441,39 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		List<Point> replacements = new ArrayList<>();
 		executeInForwardMode(() -> {
 			executeWithReplaceAllEnabled(() -> {
-				Point currentSelection = new Point(0, 0);
-				while (findAndSelect(currentSelection.x + currentSelection.y) != -1) {
-					currentSelection = replaceSelection();
-					replacements.add(currentSelection);
+				List<Point> matches = findAllMatches();
+				// Replace from last to first so earlier match offsets stay valid
+				for (int i = matches.size() - 1; i >= 0; i--) {
+					Point match = matches.get(i);
+					// replaceSelection() reads the adapter's current match and expands $n from it,
+					// so the match has to be re-established before each replacement.
+					findAndSelect(match.x);
+					replacements.add(replaceSelection());
 				}
 			});
 		});
 		return replacements.size();
+	}
+
+	/**
+	 * Finds all matches going forward, advancing the search past each match. For
+	 * zero-length matches the search continues one character after the match to
+	 * avoid an infinite loop.
+	 *
+	 * @return the match regions in document order (offset, length)
+	 */
+	private List<Point> findAllMatches() {
+		List<Point> matches = new ArrayList<>();
+		int searchOffset = 0;
+		while (findAndSelect(searchOffset) != -1) {
+			Point match = target.getSelection();
+			matches.add(new Point(match.x, match.y));
+			searchOffset = match.x + match.y;
+			if (match.y == 0) {
+				searchOffset++;
+			}
+		}
+		return matches;
 	}
 
 	private void executeInForwardMode(Runnable runnable) {
@@ -476,11 +508,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private int selectAll() {
 		List<Point> selections = new ArrayList<>();
 		executeInForwardMode(() -> {
-			Point currentSeletion = new Point(0, 0);
-			while (findAndSelect(currentSeletion.x + currentSeletion.y) != -1) {
-				currentSeletion = target.getSelection();
-				selections.add(currentSeletion);
-			}
+			selections.addAll(findAllMatches());
 			if (target instanceof IFindReplaceTargetExtension4 selectableTarget) {
 				IRegion[] selectedRegions = selections.stream().map(selection -> new Region(selection.x, selection.y))
 						.toArray(IRegion[]::new);
