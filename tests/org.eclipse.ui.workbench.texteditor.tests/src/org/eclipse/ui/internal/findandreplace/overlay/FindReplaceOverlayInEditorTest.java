@@ -244,6 +244,28 @@ public class FindReplaceOverlayInEditorTest {
 				"Enter in the replace field must replace the current match in the document"); //$NON-NLS-1$
 	}
 
+	@Test
+	public void testReplaceAgainAfterUndoInEditor() throws Exception {
+		focusSearchField();
+		searchField.setText("word"); //$NON-NLS-1$
+		Text replaceField = showReplaceField();
+		replaceField.setText("X"); //$NON-NLS-1$
+		type(replaceField, SWT.NONE, SWT.CR);
+		assertEquals("X one word two", documentText()); //$NON-NLS-1$
+
+		editor.setFocus();
+		waitForFocus(editorWidget()::isFocusControl, testName);
+		executeCommand("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+		assertEquals(CONTENT, documentText());
+		assertTrue(searchField.isVisible(), "Undo must leave the overlay open"); //$NON-NLS-1$
+
+		replaceField.forceFocus();
+		waitForFocus(replaceField::isFocusControl, testName);
+		type(replaceField, SWT.NONE, SWT.CR);
+
+		assertEquals("X one word two", documentText()); //$NON-NLS-1$
+	}
+
 	/**
 	 * The editor's Find Next and Find Previous stay meaningful while an input field
 	 * has focus, so they must search on for what is typed there, exactly as the
