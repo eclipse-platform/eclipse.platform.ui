@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -57,6 +58,15 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	 */
 	private IProgressMonitor fMonitor;
 
+	/** The key of the line spacing provider of the footer that reserves space in a text widget. */
+	private static final String LINE_SPACING_PROVIDER_KEY= CodeMiningDocumentFooterAnnotation.class.getName() + ".lineSpacingProvider"; //$NON-NLS-1$
+
+	/** The height reserved below the last line of the text widget, <code>0</code> if none. */
+	private int fReservedHeight;
+
+	/** The line spacing provider that reserves the space, <code>null</code> if none. */
+	private StyledTextLineSpacingProvider fLineSpacingProvider;
+
 	/**
 	 * Code mining annotation constructor.
 	 *
@@ -81,6 +91,53 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 		return hasAtLeastOneResolvedMiningNotEmpty(minings, fResolvedMinings)
 				? getMultilineHeight(null, minings, super.getTextWidget(), super.getHeight())
 				: 0;
+	}
+
+	/**
+	 * Reserves the space needed to display this footer below the last line of the text widget, as
+	 * line spacing of that line: unlike a bottom margin, which StyledText keeps at the bottom of
+	 * every view port, it scrolls with the document.
+	 * <p>
+	 * StyledText adds the line spacing below each row of a wrapped line, so no space is reserved
+	 * while the last line is wrapped.
+	 * </p>
+	 */
+	public void updateReservedHeight() {
+		StyledText textWidget= getTextWidget();
+		if (textWidget == null || textWidget.isDisposed()) {
+			return;
+		}
+		int footerHeight= getHeight();
+		int height= footerHeight > 0 && isLastLineWrapped(textWidget) ? 0 : footerHeight;
+		if (height == fReservedHeight) {
+			return;
+		}
+		// replace the provider, so that StyledText measures the last line again
+		releaseReservedHeight(textWidget);
+		if (height > 0) {
+			fReservedHeight= height;
+			fLineSpacingProvider= lineIndex -> lineIndex == textWidget.getLineCount() - 1
+					? Integer.valueOf(textWidget.getLineSpacing() + height)
+					: null;
+			textWidget.setData(LINE_SPACING_PROVIDER_KEY, fLineSpacingProvider);
+			textWidget.setLineSpacingProvider(fLineSpacingProvider);
+		}
+	}
+
+	private static boolean isLastLineWrapped(StyledText textWidget) {
+		int lastLineOffset= textWidget.getOffsetAtLine(textWidget.getLineCount() - 1);
+		return textWidget.getLocationAtOffset(lastLineOffset).y != textWidget.getLocationAtOffset(textWidget.getCharCount()).y;
+	}
+
+	private void releaseReservedHeight(StyledText textWidget) {
+		// a footer created for the new end of the document may have reserved the space already
+		if (fLineSpacingProvider != null && textWidget != null && !textWidget.isDisposed()
+				&& textWidget.getData(LINE_SPACING_PROVIDER_KEY) == fLineSpacingProvider) {
+			textWidget.setData(LINE_SPACING_PROVIDER_KEY, null);
+			textWidget.setLineSpacingProvider(null);
+		}
+		fLineSpacingProvider= null;
+		fReservedHeight= 0;
 	}
 
 	@Override
@@ -109,6 +166,11 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	public void markDeleted(boolean deleted) {
 		super.markDeleted(deleted);
 		if (deleted) {
+			StyledText textWidget= getTextWidget();
+			if (textWidget != null && !textWidget.isDisposed()) {
+				// annotations are updated outside of the UI thread
+				textWidget.getDisplay().execute(() -> releaseReservedHeight(textWidget));
+			}
 			List<ICodeMining> oldMinings= fMinings;
 			fMinings= List.of();
 			fResolvedMinings= null;
