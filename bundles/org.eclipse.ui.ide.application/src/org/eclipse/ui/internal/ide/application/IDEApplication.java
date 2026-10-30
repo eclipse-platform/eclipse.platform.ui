@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2025 IBM Corporation and others.
+ * Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -287,23 +287,25 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Locks the already-set workspace and updates its metadata version.
+	 * Locks the already-set workspace, updates its metadata version and writes lock
+	 * file.
 	 *
+	 * @param shell                the shell to use for any dialogs
+	 * @param instanceLoc          the instance location of the workspace
+	 * @param applicationArguments the command line arguments
 	 * @return <code>null</code> if the workspace was locked successfully, or an
 	 *         exit code if locking failed and the application should terminate
 	 */
 	@SuppressWarnings("rawtypes")
-	private Object lockExistingWorkspace(Shell shell, Location instanceLoc, Map applicationArguments) {
+	protected Object lockExistingWorkspace(Shell shell, Location instanceLoc, Map applicationArguments) {
 		// at this point its valid, so try to lock it and update the
 		// metadata version information if successful
 		try {
-			if (instanceLoc.lock()) {
-				writeWorkspaceVersion();
-				writeWsLockInfo(instanceLoc.getURL());
+			if (lockWorkspace(instanceLoc, instanceLoc.getURL())) {
 				return null;
 			}
 
-			// we failed to create the directory.
+			// we failed to lock the workspace.
 			// Two possibilities:
 			// 1. directory is already in use
 			// 2. directory could not be created
@@ -337,6 +339,45 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					e.getMessage());
 		}
 		return EXIT_OK;
+	}
+
+	/**
+	 * Locks the workspace, updates its metadata version and writes lock info file.
+	 * <p>
+	 * This is used both for a workspace given on the command line (the instance
+	 * location is already set) and for a workspace selected by the user (the
+	 * instance location is not yet set). In the latter case the location is set
+	 * and locked in one step.
+	 * </p>
+	 * <p>
+	 * Overriding implementations must leave an unset instance location unset if
+	 * locking fails, so that the user can retry or choose another workspace.
+	 * </p>
+	 *
+	 * @param instanceLoc  the instance location of the workspace
+	 * @param workspaceUrl the workspace URL to set if the instance location is not
+	 *                     set yet; ignored if it is already set
+	 * @return <code>true</code> if the workspace was locked successfully, or
+	 *         <code>false</code> if locking failed
+	 * @throws IOException           if an error occurs while locking the workspace
+	 * @throws IllegalStateException if the instance location cannot be set
+	 */
+	protected boolean lockWorkspace(Location instanceLoc, URL workspaceUrl) throws IOException {
+		boolean locked = instanceLoc.isSet() ? instanceLoc.lock() : instanceLoc.set(workspaceUrl, true);
+		if (locked) {
+			writeWorkspaceMetadata(instanceLoc);
+		}
+		return locked;
+	}
+
+	/**
+	 * Writes the workspace metadata, including the version and lock information.
+	 *
+	 * @param instanceLoc the instance location of the workspace
+	 */
+	protected void writeWorkspaceMetadata(Location instanceLoc) {
+		writeWorkspaceVersion(instanceLoc);
+		writeWsLockInfo(instanceLoc.getURL());
 	}
 
 	/**
@@ -389,10 +430,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 				// the operation will fail if the url is not a valid
 				// instance data area, so other checking is unneeded
-				if (instanceLoc.set(workspaceUrl, true)) {
+				if (lockWorkspace(instanceLoc, workspaceUrl)) {
 					launchData.writePersistedData();
-					writeWorkspaceVersion();
-					writeWsLockInfo(instanceLoc.getURL());
 					return null;
 				}
 			} catch (IOException | IllegalStateException e) {
@@ -419,8 +458,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	/**
 	 * Opens the "workspace in use" dialog and returns the index of the button the
 	 * user selected.
+	 *
+	 * @param workspaceUrl the URL of the workspace that is in use
 	 */
-	private int openWorkspaceInUseDialog(URL workspaceUrl) {
+	protected int openWorkspaceInUseDialog(URL workspaceUrl) {
 		String lockInfo = WorkspaceLock.getWorkspaceLockDetails(workspaceUrl);
 
 		MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
@@ -833,18 +874,19 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Write the version of the metadata into a known file overwriting any
-	 * existing file contents. Writing the version file isn't really crucial,
-	 * so the function is silent about failure
+	 * Write the version of the metadata into a known file overwriting any existing
+	 * file contents. Writing the version file isn't really crucial, so the function
+	 * is silent about failure
+	 *
+	 * @param instanceLoc the instance location of the workspace
 	 */
-	private static void writeWorkspaceVersion() {
+	protected void writeWorkspaceVersion(Location instanceLoc) {
 		if (WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION == null) {
 			// no reference bundle installed, no check possible
 			return;
 		}
 
-		Location instanceLoc = Platform.getInstanceLocation();
-		if (instanceLoc == null || instanceLoc.isReadOnly()) {
+		if (instanceLoc.isReadOnly()) {
 			return;
 		}
 
