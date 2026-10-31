@@ -25,8 +25,11 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.IPageChangingListener;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -251,6 +254,40 @@ public class WizardTest {
 		assertTrue(wizard.page1.getControl().isDisposed());
 		assertTrue(wizard.page3.getControl().isDisposed());
 
+	}
+
+	/**
+	 * A wizard dialog is resizable, so a zoom change must not install the
+	 * adaptation to the computed size that non-resizable dialogs get: a size
+	 * requested afterwards has to stay.
+	 */
+	@Test
+	public void testResizableWizardKeepsRequestedSizeAfterZoomChange() {
+		assertTrue(dialog.isResizable(), "a wizard dialog with the default shell style is resizable");
+		Shell shell = dialog.getShell();
+
+		shell.getChildren()[0].notifyListeners(SWT.ZoomChanged, new Event());
+		Point requestedSize = new Point(shell.getSize().x + 60, shell.getSize().y + 40);
+		shell.setSize(requestedSize);
+		shell.notifyListeners(SWT.Resize, new Event());
+
+		assertEquals(requestedSize, shell.getSize(), "the requested size is kept after a zoom change");
+	}
+
+	/**
+	 * Removing SWT.RESIZE from the shell style before the shell is created gives a
+	 * fixed-size wizard dialog.
+	 */
+	@Test
+	public void testWizardWithoutResizeStyleIsNotResizable() {
+		TheTestWizardDialog fixedSizeDialog = new TheTestWizardDialog(null, new TheTestWizard());
+		fixedSizeDialog.setShellStyle(fixedSizeDialog.getShellStyle() & ~SWT.RESIZE);
+		try {
+			fixedSizeDialog.create();
+			assertFalse(fixedSizeDialog.isResizable(), "a wizard dialog without SWT.RESIZE is not resizable");
+		} finally {
+			fixedSizeDialog.close();
+		}
 	}
 
 	//----------------------------------------------------
