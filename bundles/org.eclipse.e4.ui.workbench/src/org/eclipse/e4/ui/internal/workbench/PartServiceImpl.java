@@ -21,10 +21,13 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -188,6 +191,25 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
+	// Keep successful activation separate from the candidate exposed during callbacks.
+	private MPart committedPart;
+
+	// Only a part whose activation was announced may receive a deactivation event.
+	private MPart notifiedPart;
+
+	private final List<MPart> activatingParts = new ArrayList<>();
+
+	// Queued activation callbacks remain part of the same causal activation chain
+	// even after their nested activate() calls have returned.
+	private final Set<MPart> notificationActivations = Collections.newSetFromMap(new IdentityHashMap<>());
+
+	private record PartNotification(MPart part, boolean activated) {
+	}
+
+	private final ArrayDeque<PartNotification> partNotifications = new ArrayDeque<>();
+
+	private boolean notifyingPartListeners;
+
 	private final ListenerList<IPartListener> listeners = new ListenerList<>();
 
 	private boolean constructed = false;
@@ -243,34 +265,86 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void firePartActivated(final MPart part) {
-		for (final IPartListener listener : listeners) {
-			SafeRunner.run(new ISafeRunnable() {
-				@Override
-				public void run() throws Exception {
-					listener.partActivated(part);
-				}
-
-				@Override
-				public void handleException(Throwable throwable) {
-					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
-				}
-			});
-		}
+		committedPart = part;
+		notifiedPart = part;
+		queuePartNotification(part, true);
 	}
 
 	private void firePartDeactivated(final MPart part) {
-		for (final IPartListener listener : listeners) {
-			SafeRunner.run(new ISafeRunnable() {
-				@Override
-				public void run() throws Exception {
-					listener.partDeactivated(part);
-				}
+		if (part != null && part == notifiedPart) {
+			notifiedPart = null;
+			if (constructed) {
+				queuePartNotification(part, false);
+			}
+		}
+	}
 
-				@Override
-				public void handleException(Throwable throwable) {
-					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+	private void queuePartNotification(MPart part, boolean activated) {
+		if (activated) {
+			notificationActivations.add(part);
+			// Retain requested composites as well as effective inner parts until the
+			// entire notification drain finishes. A composite's leaf may change.
+			notificationActivations.addAll(activatingParts);
+		}
+		partNotifications.addLast(new PartNotification(part, activated));
+		if (notifyingPartListeners) {
+			// Finish the current event for every listener before delivering nested events.
+			return;
+		}
+		notifyingPartListeners = true;
+		try {
+			while (!partNotifications.isEmpty()) {
+				PartNotification notification = partNotifications.removeFirst();
+				for (final IPartListener listener : listeners) {
+					SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void run() throws Exception {
+							if (notification.activated()) {
+								listener.partActivated(notification.part());
+							} else {
+								listener.partDeactivated(notification.part());
+							}
+						}
+
+						@Override
+						public void handleException(Throwable throwable) {
+							logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+						}
+					});
 				}
-			});
+				if (notification.activated()) {
+					UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, notification.part());
+				}
+				if (partNotifications.isEmpty()) {
+					restoreNotificationContext();
+				}
+			}
+		} finally {
+			notifyingPartListeners = false;
+			partNotifications.clear();
+			notificationActivations.clear();
+		}
+	}
+
+	private void restoreNotificationContext() {
+		MPart settledPart = activePart;
+		if (settledPart == null || settledPart != notifiedPart) {
+			return;
+		}
+		MWindow window = getWindow();
+		IEclipseContext windowContext = window == null ? null : window.getContext();
+		if (windowContext == null) {
+			return;
+		}
+		Object contextPart = windowContext.get(IServiceConstants.ACTIVE_PART);
+		if (contextPart != settledPart && contextPart instanceof MPart
+				&& notificationActivations.contains(contextPart)) {
+			// A listener can change the branch before injection reaches the cycle
+			// guard. Restore the last announced part while that guard is still held.
+			IEclipseContext context = settledPart.getContext();
+			if (context != null) {
+				context.activateBranch();
+			}
 		}
 	}
 
@@ -697,106 +771,210 @@ public class PartServiceImpl implements EPartService {
 
 	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
 		if (part == null) {
-			if (constructed && activePart != null) {
-				if (Policy.DEBUG_FOCUS) {
-					Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + activePart, null);//$NON-NLS-1$
-				}
-				firePartDeactivated(activePart);
+			// Clear state before notifying listeners, so reentrant deactivation is idempotent.
+			activePart = null;
+			committedPart = null;
+			if (notifiedPart != null) {
+				firePartDeactivated(notifiedPart);
 			}
-			activePart = part;
 			return;
 		}
-
-		if (Policy.DEBUG_FOCUS) {
-			Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activating " + part, null);//$NON-NLS-1$
+		// Guard the requested composite as well as its effective inner part. Its active
+		// leaf can change during a callback, but the composite activation is still pending.
+		if (activatingParts.contains(part) || notificationActivations.contains(part)) {
+			return;
 		}
-
-		// Delegate activations to a CompositePart's inner part (if any)
-		if (part instanceof MCompositePart) {
-			if (part.getContext() != null) {
+		activatingParts.add(part);
+		MPart effectivePart = part;
+		boolean innerPartAdded = false;
+		try {
+			if (part instanceof MCompositePart) {
 				IEclipseContext pContext = part.getContext();
-				if (pContext.getActiveLeaf() != null) {
-					MPart inner = pContext.getActiveLeaf().get(MPart.class);
-					if (inner != null) {
-						part = inner;
+				if (pContext != null) {
+					IEclipseContext activeLeaf = pContext.getActiveLeaf();
+					if (activeLeaf != null) {
+						MPart inner = activeLeaf.get(MPart.class);
+						if (inner != null) {
+							effectivePart = inner;
+						}
 					}
 				}
 			}
-		}
-
-		// only activate parts that is under our control
-		if (!isInContainer(part)) {
-			if (Policy.DEBUG_FOCUS) {
-				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activation failed, part is not in container: " + part, null);//$NON-NLS-1$
+			if (effectivePart != part) {
+				if (activatingParts.contains(effectivePart) || notificationActivations.contains(effectivePart)) {
+					return;
+				}
+				activatingParts.add(effectivePart);
+				innerPartAdded = true;
 			}
+			activatePart(effectivePart, requiresFocus, activateBranch);
+		} finally {
+			if (innerPartAdded) {
+				activatingParts.remove(activatingParts.size() - 1);
+			}
+			activatingParts.remove(activatingParts.size() - 1);
+		}
+	}
+
+	private void activatePart(MPart part, boolean requiresFocus, boolean activateBranch) {
+		if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activating " + part, null);//$NON-NLS-1$
+		}
+		MWindow window = getWindow();
+		if (window == null) {
 			return;
 		}
-
-		MWindow window = getWindow();
 		IEclipseContext windowContext = window.getContext();
-		// check if the active part has changed or if we are no longer the active window
-		if (windowContext.getParent().getActiveChild() == windowContext && part == activePart) {
-			// insert it in the beginning of the activation history, it may not have been inserted
-			// pending when this service was instantiated
+		if (windowContext == null) {
+			return;
+		}
+		if (!isInContainer(part)) {
+			return;
+		}
+		IEclipseContext parentContext = windowContext.getParent();
+		if (parentContext != null && parentContext.getActiveChild() == windowContext
+				&& part == activePart && part == notifiedPart) {
 			partActivationHistory.prepend(part);
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
-			if (Policy.DEBUG_FOCUS) {
-				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Trying to activate already active part: " + part, null);//$NON-NLS-1$
-			}
 			return;
 		}
-		if (contextService != null) {
-			contextService.deferUpdates(true);
-		}
-		if (contextManager != null) {
-			contextManager.deferUpdates(true);
-		}
 
-		MPart lastActivePart = activePart;
 		activePart = part;
-
-		if (constructed && lastActivePart != null && lastActivePart != activePart) {
-			if (Policy.DEBUG_FOCUS) {
-				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + lastActivePart, null);//$NON-NLS-1$
-			}
-			firePartDeactivated(lastActivePart);
-		}
-
 		try {
-			// record any sibling into the activation history if necessary, this will allow it to be
-			// reselected again in the future as it will be an activation candidate in the future,
-			// this
-			// prevents other unrendered elements from being selected arbitrarily which would cause
-			// unwanted bundle activation
-			recordStackActivation(part);
-
-			delegateBringToTop(part);
-			window.getParent().setSelectedElement(window);
-
-			partActivationHistory.activate(part, activateBranch);
-
+			// A tentative part has no activation event to pair with a deactivation.
+			// Notify outside the command-context batch so listener changes are not held
+			// until this activation's flush.
+			if (notifiedPart != null && notifiedPart != part) {
+				firePartDeactivated(notifiedPart);
+			}
+			if (activePart != part) {
+				return;
+			}
+			EContextService deferredContextService = contextService;
+			ContextManager deferredContextManager = contextManager;
+			boolean contextDeferred = false;
+			boolean managerDeferred = false;
+			try {
+				if (deferredContextService != null) {
+					deferredContextService.deferUpdates(true);
+					contextDeferred = true;
+				}
+				if (deferredContextManager != null) {
+					deferredContextManager.deferUpdates(true);
+					managerDeferred = true;
+				}
+				recordStackActivation(part);
+				delegateBringToTop(part);
+				MElementContainer<MUIElement> windowParent = window.getParent();
+				if (windowParent != null) {
+					windowParent.setSelectedElement(window);
+				}
+				if (activePart != part) {
+					return;
+				}
+				partActivationHistory.activate(part, activateBranch);
+			} finally {
+				// Flush while the requested and effective parts are still in the cycle guard.
+				try {
+					if (contextDeferred) {
+						deferredContextService.deferUpdates(false);
+					}
+				} finally {
+					if (managerDeferred) {
+						deferredContextManager.deferUpdates(false);
+					}
+				}
+			}
+			if (activePart != part) {
+				if (windowContext.get(IServiceConstants.ACTIVE_PART) != part) {
+					if (activePart != null) {
+						partActivationHistory.prepend(activePart);
+					}
+					return;
+				}
+				activePart = part;
+			}
+			if (notifiedPart != null && notifiedPart != part) {
+				firePartDeactivated(notifiedPart);
+			}
+			if (activePart != part) {
+				return;
+			}
 			if (requiresFocus) {
 				IEclipseContext context = part.getContext();
 				if (context != null) {
 					IPresentationEngine pe = context.get(IPresentationEngine.class);
-					pe.focusGui(part);
+					if (pe != null) {
+						pe.focusGui(part);
+					}
 				}
 			}
-
-			// store the activation time to sort the parts in MRU order
+			if (activePart != part) {
+				return;
+			}
 			part.getTransientData().put(PART_ACTIVATION_TIME, Long.valueOf(System.currentTimeMillis()));
-
-			firePartActivated(part);
-			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
+			if (notifiedPart != part) {
+				firePartActivated(part);
+			}
+		} catch (RuntimeException | Error failure) {
+			if (activePart == part && committedPart != part) {
+				restoreCommittedPart(part, failure);
+			}
+			throw failure;
 		} finally {
-			if (contextService != null) {
-				contextService.deferUpdates(false);
-			}
-			if (contextManager != null) {
-				contextManager.deferUpdates(false);
-			}
 			if (Policy.DEBUG_FOCUS) {
 				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activation done: " + part, null);//$NON-NLS-1$
+			}
+		}
+	}
+
+	private void restoreCommittedPart(MPart failedPart, Throwable failure) {
+		MPart previousPart = committedPart;
+		// A callback may have closed the committed part while the candidate was
+		// activating. Never recreate a hidden part or restore a removed part.
+		activePart = null;
+		committedPart = null;
+		try {
+			if (previousPart != null && (previousPart.getContext() == null || getWindow() == null
+					|| !isInContainer(previousPart) || !partActivationHistory.isValid(previousPart))) {
+				previousPart = null;
+			}
+			activePart = previousPart;
+			committedPart = previousPart;
+			if (previousPart != null) {
+				// Selection changes can inject ACTIVE_PART synchronously. Keep the
+				// restored part guarded until its model and context agree again.
+				activatingParts.add(previousPart);
+				try {
+					delegateBringToTop(previousPart);
+					if (activePart != previousPart) {
+						return;
+					}
+					IEclipseContext context = previousPart.getContext();
+					if (context != null) {
+						context.activateBranch();
+					}
+					if (activePart == previousPart) {
+						partActivationHistory.prepend(previousPart);
+						if (notifiedPart != null && notifiedPart != previousPart) {
+							firePartDeactivated(notifiedPart);
+						}
+						if (activePart == previousPart && notifiedPart != previousPart) {
+							firePartActivated(previousPart);
+						}
+					}
+				} finally {
+					activatingParts.remove(activatingParts.size() - 1);
+				}
+			} else {
+				IEclipseContext context = failedPart.getContext();
+				if (context != null) {
+					context.deactivate();
+				}
+			}
+		} catch (RuntimeException | Error rollbackFailure) {
+			if (rollbackFailure != failure) {
+				failure.addSuppressed(rollbackFailure);
 			}
 		}
 	}

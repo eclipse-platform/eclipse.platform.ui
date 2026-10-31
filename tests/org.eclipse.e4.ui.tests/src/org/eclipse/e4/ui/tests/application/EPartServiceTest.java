@@ -17,8 +17,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -26,7 +33,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
@@ -37,14 +47,18 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.services.ContextServiceAddon;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.model.test.util.TestException;
 import org.eclipse.e4.ui.tests.workbench.TargetedView;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -55,6 +69,840 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.junit.jupiter.api.Test;
 
 public class EPartServiceTest extends UITest {
+
+	private record ActivationFixture(MWindow window, EPartService service, MPart partA, MPart partB, MPart partC) {
+	}
+
+	private ActivationFixture createActivationFixture() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService service = window.getContext().get(EPartService.class);
+		MPart a = service.findPart("partA");
+		MPart b = service.findPart("partB");
+		MPart c = service.findPart("partC");
+		getEngine().createGui(b);
+		getEngine().createGui(c);
+		service.activate(a);
+		return new ActivationFixture(window, service, a, b, c);
+	}
+
+	@Test
+	public void testActivate_CompositeReentryWithAnotherLeafDoesNotBypassGuard() {
+		ActivationFixture f = createActivationFixture();
+		MCompositePart composite = ems.createModelElement(MCompositePart.class);
+		MPartStack stack = (MPartStack) f.window().getChildren().get(0);
+		stack.getChildren().add(composite);
+		composite.getChildren().add(f.partB());
+		composite.getChildren().add(f.partC());
+		getEngine().createGui(composite);
+		f.service().activate(f.partA());
+		IEclipseContext original = composite.getContext();
+		IEclipseContext switching = mock(IEclipseContext.class, delegatesTo(original));
+		doReturn(f.partB().getContext()).when(switching).getActiveLeaf();
+		composite.setContext(switching);
+		List<MPart> focused = new ArrayList<>();
+		f.partB().setObject(new Object() {
+			@Focus
+			public void focus() {
+				focused.add(f.partB());
+				doReturn(f.partC().getContext()).when(switching).getActiveLeaf();
+				f.service().activate(composite);
+			}
+		});
+		f.partC().setObject(new Object() {
+			@Focus
+			public void focus() {
+				focused.add(f.partC());
+			}
+		});
+		PairingPartListener listener = new PairingPartListener(f.partA());
+		f.service().addPartListener(listener);
+		try {
+			f.service().activate(composite);
+			assertEquals(List.of(f.partB()), focused);
+			assertEquals(f.partB(), f.service().getActivePart());
+			listener.assertPairedEvents(f.partB());
+			// A later, independent request may activate the composite's other leaf.
+			f.service().activate(composite);
+			assertEquals(List.of(f.partB(), f.partC()), focused);
+			assertEquals(f.partC(), f.service().getActivePart());
+			listener.assertPairedEvents(f.partC());
+		} finally {
+			f.service().removePartListener(listener);
+			f.partB().setObject(null);
+			f.partC().setObject(null);
+			composite.setContext(original);
+		}
+	}
+
+	@Test
+	public void testActivate_ReentrantNullDoesNotLeaveListenerStateStale() {
+		ActivationFixture f = createActivationFixture();
+		PairingPartListener listener = new PairingPartListener(f.partA()) {
+			@Override
+			public void partDeactivated(MPart part) {
+				super.partDeactivated(part);
+				if (part == f.partA()) {
+					f.service().activate(f.partC());
+					f.service().activate(null);
+				}
+			}
+		};
+		f.service().addPartListener(listener);
+		try {
+			f.service().activate(null);
+			assertNull(f.service().getActivePart());
+			assertEquals(List.of(f.partC()), listener.getActivatedParts());
+			assertEquals(List.of(f.partA(), f.partC()), listener.getDeactivatedParts());
+			listener.assertPairedEvents(null);
+		} finally {
+			f.service().removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_ReentrantEventsStayPairedForEveryListener() {
+		ActivationFixture f = createActivationFixture();
+		PairingPartListener redirecting = new PairingPartListener(f.partA()) {
+			@Override
+			public void partActivated(MPart part) {
+				super.partActivated(part);
+				if (part == f.partB()) {
+					f.service().activate(f.partC());
+				}
+			}
+		};
+		PairingPartListener observing = new PairingPartListener(f.partA());
+		f.service().addPartListener(redirecting);
+		f.service().addPartListener(observing);
+		try {
+			f.service().activate(f.partB());
+			assertEquals(f.partC(), f.service().getActivePart());
+			assertEquals(f.partC(), f.window().getContext().get(IServiceConstants.ACTIVE_PART));
+			redirecting.assertPairedEvents(f.partC());
+			observing.assertPairedEvents(f.partC());
+			assertEquals(List.of(f.partB(), f.partC()), observing.getActivatedParts());
+			assertEquals(List.of(f.partA(), f.partB()), observing.getDeactivatedParts());
+		} finally {
+			f.service().removePartListener(redirecting);
+			f.service().removePartListener(observing);
+		}
+	}
+
+	@Test
+	public void testActivate_StopsCycleFromQueuedActivationListeners() {
+		testActivate_StopsCycleFromQueuedActivationListeners(false);
+	}
+
+	@Test
+	public void testActivate_StopsContextCycleFromQueuedActivationListeners() {
+		testActivate_StopsCycleFromQueuedActivationListeners(true);
+	}
+
+	private void testActivate_StopsCycleFromQueuedActivationListeners(boolean closeThroughContext) {
+		createApplication("partA", "partB", "partC", "partD");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService service = window.getContext().get(EPartService.class);
+		MPart a = service.findPart("partA");
+		MPart b = service.findPart("partB");
+		MPart c = service.findPart("partC");
+		MPart d = service.findPart("partD");
+		getEngine().createGui(b);
+		getEngine().createGui(c);
+		getEngine().createGui(d);
+		service.activate(a);
+		AtomicBoolean redirect = new AtomicBoolean(true);
+		List<MPart> requests = new ArrayList<>();
+		PairingPartListener listener = new PairingPartListener(a) {
+			@Override
+			public void partActivated(MPart part) {
+				super.partActivated(part);
+				if (redirect.get()) {
+					MPart next = part == b || part == d ? c : d;
+					requests.add(next);
+					// Bound the reproduction so broken code fails instead of hanging.
+					if (requests.size() <= 8) {
+						if (part == d && closeThroughContext) {
+							c.getContext().activateBranch();
+						} else {
+							service.activate(next);
+						}
+					}
+				}
+			}
+		};
+		service.addPartListener(listener);
+		try {
+			service.activate(b);
+			assertEquals(List.of(c, d, c), requests);
+			assertEquals(List.of(b, c, d), listener.getActivatedParts());
+			assertEquals(List.of(a, b, c), listener.getDeactivatedParts());
+			assertEquals(d, service.getActivePart());
+			assertEquals(d, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			listener.assertPairedEvents(d);
+			redirect.set(false);
+			service.activate(c);
+			assertEquals(List.of(b, c, d, c), listener.getActivatedParts());
+			listener.assertPairedEvents(c);
+		} finally {
+			service.removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_QueuedCompositeCallbackRetainsRequestedPartGuard() {
+		ActivationFixture f = createActivationFixture();
+		MCompositePart composite = ems.createModelElement(MCompositePart.class);
+		MPart d = ems.createModelElement(MPart.class);
+		MPartStack stack = (MPartStack) f.window().getChildren().get(0);
+		stack.getChildren().add(composite);
+		composite.getChildren().add(f.partC());
+		composite.getChildren().add(d);
+		getEngine().createGui(composite);
+		getEngine().createGui(d);
+		f.service().activate(f.partA());
+		IEclipseContext original = composite.getContext();
+		IEclipseContext switching = mock(IEclipseContext.class, delegatesTo(original));
+		doReturn(f.partC().getContext()).when(switching).getActiveLeaf();
+		composite.setContext(switching);
+		PairingPartListener listener = new PairingPartListener(f.partA()) {
+			@Override
+			public void partActivated(MPart part) {
+				super.partActivated(part);
+				if (part == f.partB()) {
+					f.service().activate(composite);
+				} else if (part == f.partC()) {
+					doReturn(d.getContext()).when(switching).getActiveLeaf();
+					f.service().activate(composite);
+				}
+			}
+		};
+		f.service().addPartListener(listener);
+		try {
+			f.service().activate(f.partB());
+			assertEquals(List.of(f.partB(), f.partC()), listener.getActivatedParts());
+			assertEquals(f.partC(), f.service().getActivePart());
+			assertEquals(f.partC(), f.window().getContext().get(IServiceConstants.ACTIVE_PART));
+			listener.assertPairedEvents(f.partC());
+			f.service().activate(composite);
+			assertEquals(List.of(f.partB(), f.partC(), d), listener.getActivatedParts());
+			listener.assertPairedEvents(d);
+		} finally {
+			f.service().removePartListener(listener);
+			composite.setContext(original);
+		}
+	}
+
+	@Test
+	public void testActivate_FailurePreservesReentrantSuccessfulActivation() {
+		ActivationFixture f = createActivationFixture();
+		IEclipseContext original = f.partB().getContext();
+		IEclipseContext failing = mock(IEclipseContext.class, delegatesTo(original));
+		doAnswer(invocation -> {
+			f.partC().getContext().activateBranch();
+			throw new IllegalStateException("Activation failed after redirect");
+		}).when(failing).activateBranch();
+		f.partB().setContext(failing);
+		PairingPartListener listener = new PairingPartListener(f.partA());
+		f.service().addPartListener(listener);
+		try {
+			assertThrows(IllegalStateException.class, () -> f.service().activate(f.partB()));
+			assertEquals(f.partC(), f.service().getActivePart());
+			assertEquals(f.partC(), f.window().getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(List.of(f.partA()), listener.getDeactivatedParts());
+			listener.assertPairedEvents(f.partC());
+		} finally {
+			f.service().removePartListener(listener);
+			f.partB().setContext(original);
+		}
+	}
+
+	@Test
+	public void testActivate_FailureDoesNotReopenHiddenCommittedPart() {
+		testActivate_FailureDoesNotRestoreClosedCommittedPart(false);
+	}
+
+	@Test
+	public void testActivate_FailureDoesNotRestoreRemovedCommittedPart() {
+		testActivate_FailureDoesNotRestoreClosedCommittedPart(true);
+	}
+
+	private void testActivate_FailureDoesNotRestoreClosedCommittedPart(boolean remove) {
+		ActivationFixture f = createActivationFixture();
+		IEclipseContext original = f.partB().getContext();
+		IEclipseContext failing = mock(IEclipseContext.class, delegatesTo(original));
+		doAnswer(invocation -> {
+			original.activateBranch();
+			f.service().hidePart(f.partA(), remove);
+			throw new IllegalStateException("Activation failed after closing previous part");
+		}).when(failing).activateBranch();
+		f.partB().setContext(failing);
+		PairingPartListener listener = new PairingPartListener(f.partA());
+		f.service().addPartListener(listener);
+		try {
+			assertThrows(IllegalStateException.class, () -> f.service().activate(f.partB()));
+			assertFalse(f.partA().isToBeRendered(), "Rollback must not reopen the closed part");
+			if (remove) {
+				assertNull(f.partA().getParent());
+			}
+			assertNull(f.service().getActivePart());
+			assertNull(f.window().getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(List.of(f.partA()), listener.getDeactivatedParts());
+			assertTrue(listener.getActivatedParts().isEmpty());
+			listener.assertPairedEvents(null);
+		} finally {
+			f.service().removePartListener(listener);
+			f.partB().setContext(original);
+		}
+	}
+
+	@Test
+	public void testActivate_DeactivationListenerCommandUpdatesAreNotDeferred() {
+		ContextInjectionFactory.make(ContextServiceAddon.class, applicationContext);
+		ActivationFixture f = createActivationFixture();
+		IEclipseContext context = f.window().getContext();
+		EContextService contexts = context.get(EContextService.class);
+		assertNotNull(contexts);
+		AtomicBoolean delivered = new AtomicBoolean();
+		AtomicBoolean deliveredBeforeListenerReturned = new AtomicBoolean();
+		context.runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext c) {
+				Object locals = c.getLocal("localContexts");
+				if (locals instanceof Collection<?> ids && ids.contains("review.listener")) {
+					delivered.set(true);
+				}
+				return true;
+			}
+		});
+		PairingPartListener listener = new PairingPartListener(f.partA()) {
+			@Override
+			public void partDeactivated(MPart part) {
+				super.partDeactivated(part);
+				if (part == f.partA()) {
+					contexts.activateContext("review.listener");
+					deliveredBeforeListenerReturned.set(delivered.get());
+				}
+			}
+		};
+		f.service().addPartListener(listener);
+		try {
+			f.service().activate(f.partB());
+			assertTrue(deliveredBeforeListenerReturned.get());
+			listener.assertPairedEvents(f.partB());
+		} finally {
+			f.service().removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_CommandContextFlushFailureRestoresStateAndUnwindsDeferral() {
+		ContextInjectionFactory.make(ContextServiceAddon.class, applicationContext);
+		ActivationFixture f = createActivationFixture();
+		IEclipseContext context = f.window().getContext();
+		EContextService originalContexts = context.get(EContextService.class);
+		assertNotNull(originalContexts);
+		EContextService failingContexts = spy(originalContexts);
+		AtomicBoolean fail = new AtomicBoolean(true);
+		doAnswer(invocation -> {
+			invocation.callRealMethod();
+			if (!(Boolean) invocation.getArgument(0) && fail.getAndSet(false)) {
+				throw new IllegalStateException("Command-context flush failed");
+			}
+			return null;
+		}).when(failingContexts).deferUpdates(anyBoolean());
+		context.set(EContextService.class, failingContexts);
+		PairingPartListener listener = new PairingPartListener(f.partA());
+		f.service().addPartListener(listener);
+		try {
+			assertThrows(IllegalStateException.class, () -> f.service().activate(f.partB()));
+			assertEquals(f.partA(), f.service().getActivePart());
+			assertEquals(f.partA(), context.get(IServiceConstants.ACTIVE_PART));
+			assertFalse(listener.getActivatedParts().contains(f.partB()));
+			assertFalse(listener.getDeactivatedParts().contains(f.partB()));
+			listener.assertPairedEvents(f.partA());
+			AtomicBoolean delivered = new AtomicBoolean();
+			context.runAndTrack(new RunAndTrack() {
+				@Override
+				public boolean changed(IEclipseContext c) {
+					Object locals = c.getLocal("localContexts");
+					if (locals instanceof Collection<?> ids && ids.contains("review.after-failure")) {
+						delivered.set(true);
+					}
+					return true;
+				}
+			});
+			failingContexts.activateContext("review.after-failure");
+			assertTrue(delivered.get(), "Command updates must no longer be deferred after failure");
+		} finally {
+			f.service().removePartListener(listener);
+			context.set(EContextService.class, originalContexts);
+		}
+	}
+
+	@Test
+	public void testActivate_CommandContextFlushKeepsCycleGuardAndRedirection() {
+		ContextInjectionFactory.make(ContextServiceAddon.class, applicationContext);
+		ActivationFixture f = createActivationFixture();
+		IEclipseContext context = f.window().getContext();
+		EContextService contexts = context.get(EContextService.class);
+		assertNotNull(contexts);
+		AtomicBoolean requestUpdate = new AtomicBoolean(true);
+		AtomicBoolean redirect = new AtomicBoolean(true);
+		AtomicBoolean observedDeferral = new AtomicBoolean();
+		context.runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext c) {
+				if (c.getActiveLeaf().get(MPart.class) == f.partB() && requestUpdate.getAndSet(false)) {
+					contexts.activateContext("review.flush");
+					observedDeferral.set(c.getLocal("localContexts.updates") != null);
+				}
+				return true;
+			}
+		});
+		context.runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext c) {
+				Object locals = c.getLocal("localContexts");
+				if (locals instanceof Collection<?> ids && ids.contains("review.flush")
+						&& redirect.getAndSet(false)) {
+					f.partC().getContext().activateBranch();
+				}
+				return true;
+			}
+		});
+		f.partC().setObject(new Object() {
+			@Focus
+			public void focus() {
+				f.service().activate(f.partB());
+			}
+		});
+		PairingPartListener listener = new PairingPartListener(f.partA());
+		f.service().addPartListener(listener);
+		try {
+			f.service().activate(f.partB());
+			assertTrue(observedDeferral.get());
+			assertEquals(f.partC(), f.service().getActivePart());
+			assertEquals(f.partC(), context.get(IServiceConstants.ACTIVE_PART));
+			assertEquals(List.of(f.partC()), listener.getActivatedParts());
+			assertEquals(List.of(f.partA()), listener.getDeactivatedParts());
+			listener.assertPairedEvents(f.partC());
+		} finally {
+			f.service().removePartListener(listener);
+			f.partC().setObject(null);
+		}
+	}
+
+	@Test
+	public void testActivate_CompositePartWithNoActiveLeaf() {
+		testActivate_CompositePartWithActiveLeaf(null);
+	}
+
+	@Test
+	public void testActivate_CompositePartWithNoInnerPart() {
+		testActivate_CompositePartWithActiveLeaf(mock(IEclipseContext.class));
+	}
+
+	private void testActivate_CompositePartWithActiveLeaf(IEclipseContext activeLeaf) {
+		createApplication("partA");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MCompositePart composite = ems.createModelElement(MCompositePart.class);
+		MPartStack stack = (MPartStack) window.getChildren().get(0);
+		stack.getChildren().add(composite);
+		getEngine().createGui(composite);
+		partService.activate(partA);
+		IEclipseContext partContext = composite.getContext();
+		IEclipseContext compositeContext = mock(IEclipseContext.class, delegatesTo(partContext));
+		doReturn(activeLeaf).when(compositeContext).getActiveLeaf();
+		composite.setContext(compositeContext);
+		try {
+			partService.activate(composite);
+			assertEquals(composite, partService.getActivePart());
+			assertEquals(composite, window.getContext().get(IServiceConstants.ACTIVE_PART));
+		} finally {
+			composite.setContext(partContext);
+		}
+	}
+
+	@Test
+	public void testActivate_WindowWithNoContext() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		IEclipseContext windowContext = window.getContext();
+		window.setContext(null);
+		try {
+			partService.activate(partB);
+			assertEquals(partA, partService.getActivePart());
+		} finally {
+			window.setContext(windowContext);
+		}
+	}
+
+	@Test
+	public void testActivate_WindowContextWithNoParent() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		IEclipseContext windowContext = window.getContext();
+		IEclipseContext rootContext = spy(windowContext);
+		doReturn(null).when(rootContext).getParent();
+		try {
+			window.setContext(rootContext);
+			partService.activate(partB);
+			assertEquals(partB, partService.getActivePart());
+			assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
+		} finally {
+			window.setContext(windowContext);
+		}
+	}
+
+	@Test
+	public void testActivate_PartContextWithNoPresentationEngine() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		IEclipseContext partContext = partB.getContext();
+		IEclipseContext contextWithoutEngine = mock(IEclipseContext.class, delegatesTo(partContext));
+		doReturn(null).when(contextWithoutEngine).get(IPresentationEngine.class);
+		partB.setContext(contextWithoutEngine);
+		try {
+			partService.activate(partB);
+			assertEquals(partB, partService.getActivePart());
+			assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
+		} finally {
+			partB.setContext(partContext);
+		}
+	}
+
+	@Test
+	public void testActivate_StopsContextInjectionCycle() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		partService.activate(partA);
+		getEngine().createGui(partB);
+
+		IEclipseContext partContext = partB.getContext();
+		IEclipseContext switchingContext = mock(IEclipseContext.class, delegatesTo(partContext));
+		AtomicBoolean firstActivation = new AtomicBoolean(true);
+		doAnswer(invocation -> {
+			// Model a notification of the old part while activateBranch is still updating
+			// the context chain. Limit the injection to one notification so a regression
+			// fails an assertion instead of hanging the test process.
+			if (firstActivation.getAndSet(false)) {
+				window.getContext().set(IServiceConstants.ACTIVE_PART, partA);
+				window.getContext().remove(IServiceConstants.ACTIVE_PART);
+			}
+			partContext.activateBranch();
+			return null;
+		}).when(switchingContext).activateBranch();
+		partB.setContext(switchingContext);
+
+		PartListener listener = new PartListener();
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			// A is allowed to activate, but returning to the unfinished B activation
+			// must not activate B a second time.
+			assertEquals(List.of(partA, partB), listener.getActivatedParts());
+			assertEquals(partB, partService.getActivePart());
+			assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
+
+			// An independent context activation must still be handled after the update.
+			partA.getContext().activateBranch();
+			assertEquals(List.of(partA, partB, partA), listener.getActivatedParts());
+			assertEquals(partA, partService.getActivePart());
+		} finally {
+			partService.removePartListener(listener);
+			partB.setContext(partContext);
+		}
+	}
+
+	@Test
+	public void testActivate_ContextListenerRedirectsActivation() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		MPart partC = partService.findPart("partC");
+		getEngine().createGui(partB);
+		getEngine().createGui(partC);
+		partService.activate(partA);
+		AtomicBoolean redirect = new AtomicBoolean(true);
+		window.getContext().runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext context) {
+				MPart actual = context.getActiveLeaf().get(MPart.class);
+				if (actual == partB && redirect.getAndSet(false)) {
+					partC.getContext().activateBranch();
+				}
+				return true;
+			}
+		});
+		PartListener listener = new PartListener();
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			assertEquals(partC, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(partC, partService.getActivePart());
+			assertEquals(List.of(partC), listener.getActivatedParts());
+		} finally {
+			partService.removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_DeactivationListenerRedirectsActivation() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		MPart partC = partService.findPart("partC");
+		getEngine().createGui(partB);
+		getEngine().createGui(partC);
+		partService.activate(partA);
+		PairingPartListener listener = new PairingPartListener(partA) {
+			@Override
+			public void partDeactivated(MPart part) {
+				super.partDeactivated(part);
+				if (part == partA) {
+					partService.activate(partC);
+				}
+			}
+		};
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			assertEquals(partC, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(partC, partService.getActivePart());
+			assertEquals(List.of(partC), listener.getActivatedParts());
+			assertEquals(List.of(partA), listener.getDeactivatedParts());
+			listener.assertPairedEvents(partC);
+		} finally {
+			partService.removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_StopsContextListenerCycle() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		MPart partC = partService.findPart("partC");
+		getEngine().createGui(partB);
+		getEngine().createGui(partC);
+		partService.activate(partA);
+		// Each redirect runs once, so the unfixed implementation also terminates.
+		AtomicBoolean redirectToC = new AtomicBoolean(true);
+		AtomicBoolean redirectToB = new AtomicBoolean(true);
+		window.getContext().runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext context) {
+				MPart actual = context.getActiveLeaf().get(MPart.class);
+				if (actual == partB && redirectToC.getAndSet(false)) {
+					partC.getContext().activateBranch();
+				} else if (actual == partC && redirectToB.getAndSet(false)) {
+					partB.getContext().activateBranch();
+				}
+				return true;
+			}
+		});
+		PairingPartListener listener = new PairingPartListener(partA);
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(partB, partService.getActivePart());
+			List<MPart> activatedParts = listener.getActivatedParts();
+			// Depending on listener order, C may finish activating before returning to B.
+			// B must be announced once and remain the final activation in either case.
+			assertEquals(partB, activatedParts.get(activatedParts.size() - 1));
+			assertEquals(1L, activatedParts.stream().filter(p -> p == partB).count());
+			assertTrue(activatedParts.size() <= 2);
+			listener.assertPairedEvents(partB);
+		} finally {
+			partService.removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_StopsCycleFromFocusHandlers() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		List<MPart> focusedParts = new ArrayList<>();
+		class RedirectingPart {
+			private final MPart part;
+			private final MPart target;
+
+			RedirectingPart(MPart part, MPart target) {
+				this.part = part;
+				this.target = target;
+			}
+
+			@Focus
+			public void focus() {
+				focusedParts.add(part);
+				// Bound the unfixed implementation, which would otherwise recurse forever.
+				if (focusedParts.size() < 10) {
+					partService.activate(target);
+				}
+			}
+		}
+		partA.setObject(new RedirectingPart(partA, partB));
+		partB.setObject(new RedirectingPart(partB, partA));
+		PartListener listener = new PartListener();
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			assertEquals(List.of(partB, partA), focusedParts);
+			assertEquals(partA, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(partA, partService.getActivePart());
+			assertEquals(List.of(partA), listener.getActivatedParts());
+		} finally {
+			partService.removePartListener(listener);
+			partA.setObject(null);
+			partB.setObject(null);
+		}
+	}
+
+	@Test
+	public void testActivate_ContextListenerDeactivatesPart() {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		AtomicBoolean deactivate = new AtomicBoolean(true);
+		window.getContext().runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext context) {
+				if (context.getActiveLeaf().get(MPart.class) == partB && deactivate.getAndSet(false)) {
+					partB.getContext().deactivate();
+				}
+				return true;
+			}
+		});
+		PartListener listener = new PartListener();
+		partService.addPartListener(listener);
+		try {
+			partService.activate(partB);
+			assertNull(window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertNull(partService.getActivePart());
+			assertTrue(listener.getActivatedParts().isEmpty());
+		} finally {
+			partService.removePartListener(listener);
+		}
+	}
+
+	@Test
+	public void testActivate_CanRetryAfterContextActivationFails() {
+		testActivate_CanRetryAfterContextActivationFails(false);
+	}
+
+	@Test
+	public void testActivate_CanRetryAfterPartialContextActivationFails() {
+		testActivate_CanRetryAfterContextActivationFails(true);
+	}
+
+	@Test
+	public void testActivate_RollbackKeepsSelectionOnAlreadyActiveRetry() {
+		testActivate_CanRetryAfterContextActivationFails(false, true);
+	}
+
+	private void testActivate_CanRetryAfterContextActivationFails(boolean failAfterBranchChange) {
+		testActivate_CanRetryAfterContextActivationFails(failAfterBranchChange, false);
+	}
+
+	private void testActivate_CanRetryAfterContextActivationFails(boolean failAfterBranchChange,
+			boolean retryAlreadyActivePart) {
+		createApplication("partA", "partB");
+		MWindow window = application.getChildren().get(0);
+		MPartStack stack = (MPartStack) window.getChildren().get(0);
+		getEngine().createGui(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPart partA = partService.findPart("partA");
+		MPart partB = partService.findPart("partB");
+		getEngine().createGui(partB);
+		partService.activate(partA);
+		IEclipseContext partContext = partB.getContext();
+		IEclipseContext switchingContext = mock(IEclipseContext.class, delegatesTo(partContext));
+		AtomicBoolean fail = new AtomicBoolean(true);
+		doAnswer(invocation -> {
+			if (fail.getAndSet(false)) {
+				if (failAfterBranchChange) {
+					partContext.activateBranch();
+				}
+				throw new IllegalStateException("Context activation failed");
+			}
+			partContext.activateBranch();
+			return null;
+		}).when(switchingContext).activateBranch();
+		partB.setContext(switchingContext);
+		PairingPartListener listener = new PairingPartListener(partA);
+		partService.addPartListener(listener);
+		try {
+			assertThrows(IllegalStateException.class, () -> partService.activate(partB));
+			assertEquals(partA, partService.getActivePart());
+			assertEquals(partA, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			assertEquals(partA, stack.getSelectedElement(), "Rollback must restore the visible tab");
+			assertFalse(listener.getDeactivatedParts().contains(partB));
+			assertFalse(listener.getActivatedParts().contains(partB));
+			listener.assertPairedEvents(partA);
+			if (retryAlreadyActivePart) {
+				partService.activate(partA);
+				assertEquals(partA, stack.getSelectedElement());
+				listener.assertPairedEvents(partA);
+			}
+			partService.activate(partB);
+			assertEquals(partB, partService.getActivePart());
+			assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
+			listener.assertPairedEvents(partB);
+			assertEquals(partB, stack.getSelectedElement());
+		} finally {
+			partService.removePartListener(listener);
+			partB.setContext(partContext);
+		}
+	}
 
 	@Test
 	public void testFindPart_PartInWindow() {
@@ -9947,6 +10795,38 @@ public class EPartServiceTest extends UITest {
 			}
 
 		});
+	}
+
+	static class PairingPartListener extends PartListener {
+		private MPart reportedPart;
+		private final List<String> pairingErrors = new ArrayList<>();
+
+		PairingPartListener(MPart initialPart) {
+			reportedPart = initialPart;
+		}
+
+		@Override
+		public void partActivated(MPart part) {
+			if (reportedPart != null) {
+				pairingErrors.add("Activation without preceding deactivation");
+			}
+			reportedPart = part;
+			super.partActivated(part);
+		}
+
+		@Override
+		public void partDeactivated(MPart part) {
+			if (reportedPart != part || part == null) {
+				pairingErrors.add("Deactivation without matching activation");
+			}
+			reportedPart = null;
+			super.partDeactivated(part);
+		}
+
+		void assertPairedEvents(MPart expectedPart) {
+			assertTrue(pairingErrors.isEmpty(), pairingErrors.toString());
+			assertEquals(expectedPart, reportedPart);
+		}
 	}
 
 	static class PartListener implements IPartListener {
