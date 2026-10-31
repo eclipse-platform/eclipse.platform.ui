@@ -260,6 +260,12 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;This is a reference to the Command for which this is an execution candidate.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="enabledWhen" eType="#//ui/Expression"
+          containment="true">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="&lt;p>&#xD;&#xA;An optional core expression to control handler enablement. When specified, this takes precedence over the @CanExecute annotation.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.4"/>
+        </eAnnotations>
+      </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="HandlerContainer" abstract="true"
         interface="true">
