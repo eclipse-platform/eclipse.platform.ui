@@ -16,6 +16,8 @@ package org.eclipse.e4.ui.tests.css.swt;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.BLUE;
 import static org.eclipse.e4.ui.tests.css.swt.CssSwtEngine.RED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
@@ -65,6 +67,16 @@ public class TreeTest {
 		Tree tableToTest = createTestTree("Tree { swt-header-background-color: #FF0000; swt-header-color: #0000FF }");
 		assertEquals(RED, tableToTest.getHeaderBackground().getRGB());
 		assertEquals(BLUE, tableToTest.getHeaderForeground().getRGB());
+	}
+
+	@Test
+	void testTreeLinesVisibleReset() {
+		Tree widgetToTest = createTestTree("Tree { swt-lines-visible: true; }");
+		assertTrue(widgetToTest.getLinesVisible());
+
+		css.getEngine().reset();
+
+		assertFalse(widgetToTest.getLinesVisible());
 	}
 
 }
