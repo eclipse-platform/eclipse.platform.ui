@@ -830,7 +830,7 @@ public abstract class Window implements IShellProvider {
 
 	/**
 	 * Sets whether the <code>open</code> method should block until the window
-	 * closes.
+	 * closes. (May display different behavior depending on the operating system.)
 	 *
 	 * @param shouldBlock
 	 *            <code>true</code> if the <code>open</code> method should
