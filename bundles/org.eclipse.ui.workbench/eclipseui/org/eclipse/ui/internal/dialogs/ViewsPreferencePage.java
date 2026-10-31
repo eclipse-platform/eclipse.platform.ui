@@ -52,6 +52,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
+import org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -125,6 +126,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private Button showFullTextForViewTabs;
 
 	private Button showDirtyIndicatorForTabs;
+
+	private Button detachedWindowsTopLevel;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -258,6 +261,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
 		createShowDirtyIndicatorForTabs(comp);
+		createDetachedWindowsTopLevelPref(comp);
 	}
 
 	protected void createShowFullTextForViewTabs(Composite composite) {
@@ -283,6 +287,16 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_dirty_indicator_label);
 		showDirtyIndicatorForTabs = createCheckButton(composite,
 				WorkbenchMessages.ViewsPreference_showDirtyIndicatorForTabs, actualValue);
+	}
+
+	protected void createDetachedWindowsTopLevelPref(Composite composite) {
+		boolean actualValue = getSwtRendererPreference(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL,
+				WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL_DEFAULT);
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, WorkbenchMessages.ViewsPreference_detachedWindows_label);
+		detachedWindowsTopLevel = createCheckButton(composite, WorkbenchMessages.ViewsPreference_detachedWindowsTopLevel,
+				actualValue);
+		detachedWindowsTopLevel.setToolTipText(WorkbenchMessages.ViewsPreference_detachedWindowsTopLevel_tooltip);
 	}
 
 	private boolean getSwtRendererPreference(String prefName, boolean defaultValue) {
@@ -459,6 +473,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		// Dirty indicator is independent of CSS theming, so always store it
 		prefs.putBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS, showDirtyIndicatorForTabs.getSelection());
+		prefs.putBoolean(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL, detachedWindowsTopLevel.getSelection());
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
@@ -600,6 +615,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 		showDirtyIndicatorForTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
 				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT));
+		detachedWindowsTopLevel.setSelection(defaultPrefs.getBoolean(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL,
+				WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL_DEFAULT));
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
