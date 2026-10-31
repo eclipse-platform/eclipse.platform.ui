@@ -40,8 +40,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -85,7 +83,6 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	private Shell completionShell;
 
 	@Test
-	@DisabledOnOs(value = OS.MAC, disabledReason = "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906")
 	public void testCompletion() throws Exception {
 		editor.selectAndReveal(3, 0);
 		Shell shell = openContentAssistWithLongRunningProposalComputation();
@@ -110,7 +107,6 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
-	@DisabledOnOs(value = OS.MAC, disabledReason = "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906")
 	public void testCompletionService() throws Exception {
 		Bundle bundle= FrameworkUtil.getBundle(CompletionTest.class);
 		assertNotNull(bundle);
@@ -129,7 +125,6 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
-	@DisabledOnOs(value = OS.MAC, disabledReason = "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906")
 	public void testCompletionUsingViewerSelection() throws Exception {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
 		editor.selectAndReveal(0, 3);
@@ -255,7 +250,6 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
-	@DisabledOnOs(value = OS.MAC, disabledReason = "test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906")
 	public void testCompletionFreeze_bug521484() throws Exception {
 		editor.selectAndReveal(3, 0);
 		final Shell shell = openContentAssistWithLongRunningProposalComputation();
