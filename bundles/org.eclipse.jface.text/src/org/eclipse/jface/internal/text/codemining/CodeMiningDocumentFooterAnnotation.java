@@ -12,7 +12,7 @@ package org.eclipse.jface.internal.text.codemining;
 
 import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.disposeMinings;
 import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.getMultilineHeight;
-import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.hasAtLeastOneResolvedMiningNotEmpty;
+import static org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation.hasAtLeastOneMiningNotEmpty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	@Override
 	public int getHeight() {
 		List<ICodeMining> minings= fMinings;
-		return hasAtLeastOneResolvedMiningNotEmpty(minings, fResolvedMinings)
+		return hasAtLeastOneMiningNotEmpty(minings, fResolvedMinings)
 				? getMultilineHeight(null, minings, super.getTextWidget(), super.getHeight())
 				: 0;
 	}
@@ -95,7 +95,7 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 		int length= Math.min(oldMinings.size(), minings.size());
 		for (int i= 0; i < length; i++) {
 			ICodeMining mining= oldMinings.get(i);
-			if (mining.getLabel() != null) {
+			if (mining.getLabel() != null && CodeMiningManager.isNotUnresolvedPlaceholder(mining)) {
 				resolvedMinings[i]= mining;
 			}
 		}
