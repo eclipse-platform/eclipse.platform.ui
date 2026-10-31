@@ -230,6 +230,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 				addBracketProposal("\\c", 2, RegExMessages.getString("displayString_bs_c"), RegExMessages.getString("additionalInfo_bs_c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				addBsProposal("\\C", RegExMessages.getString("displayString_replace_bs_C"), RegExMessages.getString("additionalInfo_replace_bs_C")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
+			addBracketProposal("#{1,1,3}", 8, RegExMessages.getString("displayString_counter"), RegExMessages.getString("additionalInfo_counter")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			fPriorityProposals.addAll(fProposals);
 			return fPriorityProposals.toArray(new IContentProposal[fPriorityProposals.size()]);
 		}
