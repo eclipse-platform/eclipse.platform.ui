@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -24,7 +26,11 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractFilteredViewerComposite;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -399,6 +405,7 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 				}
 
 				Control redrawFalseControl = treeComposite != null ? treeComposite : treeViewer.getControl();
+				ITreeSelection selection = treeViewer.getStructuredSelection();
 				try {
 					// don't want the user to see updates that will be made to
 					// the tree
@@ -437,6 +444,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 						updateToolbar(false);
 					}
 				} finally {
+					if (!narrowingDown) {
+						revealSelection(selection);
+					}
 					// done updating the tree - set redraw back to true
 					TreeItem[] items = getViewer().getTree().getItems();
 					if (items.length > 0 && getViewer().getTree().getSelectionCount() == 0) {
@@ -483,6 +493,47 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 			}
 
 		};
+	}
+
+	/**
+	 * Keeps the selection visible after a wider filter collapsed the tree.
+	 */
+	private void revealSelection(ITreeSelection selection) {
+		if (selection.isEmpty()) {
+			return;
+		}
+		// backwards, so the first selected item ends up scrolled into view
+		TreePath[] paths = selection.getPaths();
+		for (int i = paths.length - 1; i >= 0; i--) {
+			treeViewer.reveal(paths[i]);
+		}
+		if (!selection.equals(treeViewer.getStructuredSelection())) {
+			// the collapse selected an ancestor: restore the paths still shown, else keep the ancestor
+			TreePath[] shown = Arrays.stream(paths).filter(this::isShown).toArray(TreePath[]::new);
+			if (shown.length > 0) {
+				treeViewer.setSelection(new TreeSelection(shown, treeViewer.getComparer()), true);
+			}
+		}
+	}
+
+	/**
+	 * Returns whether every segment of the path has an item, so a repeated element
+	 * under another parent does not count.
+	 */
+	private boolean isShown(TreePath path) {
+		IElementComparer comparer = treeViewer.getComparer();
+		TreeItem[] items = treeViewer.getTree().getItems();
+		for (int i = 0; i < path.getSegmentCount(); i++) {
+			Object segment = path.getSegment(i);
+			TreeItem match = Arrays.stream(items).filter(item -> item.getData() != null
+					&& (comparer == null ? segment.equals(item.getData()) : comparer.equals(segment, item.getData())))
+					.findFirst().orElse(null);
+			if (match == null) {
+				return false;
+			}
+			items = match.getItems();
+		}
+		return true;
 	}
 
 	/**
