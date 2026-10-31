@@ -110,6 +110,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private ComboFieldEditor openReferencesEditor;
 
+	private ComboFieldEditor openNestedEditor;
+
+	private ComboFieldEditor closeNestedEditor;
+
 	private StringFieldEditor systemExplorer;
 
 	private ComboFieldEditor missingNatureSeverityCombo;
@@ -143,7 +147,12 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		createSpace(composite);
 		Composite comboParent = new Composite(composite, SWT.NONE);
 		comboParent.setLayout(new GridLayout(2, false));
-		createOpenPrefControls(comboParent);
+		openReferencesEditor = createPromptPrefControls(comboParent, IDEInternalPreferences.OPEN_REQUIRED_PROJECTS,
+				IDEWorkbenchMessages.IDEWorkspacePreference_openReferencedProjects);
+		openNestedEditor = createPromptPrefControls(comboParent, IDEInternalPreferences.OPEN_NESTED_PROJECTS,
+				IDEWorkbenchMessages.IDEWorkspacePreference_openNestedProjects);
+		closeNestedEditor = createPromptPrefControls(comboParent, IDEInternalPreferences.CLOSE_NESTED_PROJECTS,
+				IDEWorkbenchMessages.IDEWorkspacePreference_closeNestedProjects);
 		createMissingNaturePref(comboParent);
 		createMissingEncodingPref(comboParent);
 
@@ -217,23 +226,18 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	}
 
 	/**
-	 * Creates controls for the preference to open required projects when opening a
-	 * project.
-	 *
-	 * @param parent
-	 *            The parent control
+	 * Creates an Always/Never/Prompt combo for the given preference.
 	 */
-	private void createOpenPrefControls(Composite parent) {
-		String name = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
-		String label = IDEWorkbenchMessages.IDEWorkspacePreference_openReferencedProjects;
+	private ComboFieldEditor createPromptPrefControls(Composite parent, String name, String label) {
 		String[][] namesAndValues = {
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Always), IDEInternalPreferences.PSPM_ALWAYS },
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Never), IDEInternalPreferences.PSPM_NEVER },
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Prompt), IDEInternalPreferences.PSPM_PROMPT } };
-		openReferencesEditor = new ComboFieldEditorInGrid(name, label, namesAndValues, parent);
-		openReferencesEditor.setPreferenceStore(getIDEPreferenceStore());
-		openReferencesEditor.setPage(this);
-		openReferencesEditor.load();
+		ComboFieldEditor editor = new ComboFieldEditorInGrid(name, label, namesAndValues, parent);
+		editor.setPreferenceStore(getIDEPreferenceStore());
+		editor.setPage(this);
+		editor.load();
+		return editor;
 	}
 
 	/**
@@ -562,6 +566,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		encodingEditor.loadDefault();
 		lineSeparatorEditor.loadDefault();
 		openReferencesEditor.loadDefault();
+		openNestedEditor.loadDefault();
+		closeNestedEditor.loadDefault();
 		missingNatureSeverityCombo.loadDefault();
 		missingEncodingSeverityCombo.loadDefault();
 
@@ -628,6 +634,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		encodingEditor.store();
 		lineSeparatorEditor.store();
 		openReferencesEditor.store();
+		openNestedEditor.store();
+		closeNestedEditor.store();
 		missingNatureSeverityCombo.store();
 		missingEncodingSeverityCombo.store();
 

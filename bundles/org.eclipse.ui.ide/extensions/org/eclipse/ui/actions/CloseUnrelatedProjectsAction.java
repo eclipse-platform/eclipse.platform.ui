@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
+ *     Lars Vogel <Lars.Vogel@vogella.com> - ask before closing nested projects
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -111,6 +112,15 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		if (promptForConfirmation()) {
 			super.run();
 		}
+	}
+
+	/**
+	 * The projects to close come from the project graph, not from the selection,
+	 * and {@link #promptForConfirmation()} already confirms them.
+	 */
+	@Override
+	boolean promptForRelatedProjects() {
+		return false;
 	}
 
 	/**
