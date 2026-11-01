@@ -926,39 +926,40 @@ public class FormHeading extends Canvas {
 		if (carea.width == 0 || carea.height == 0) {
 			return;
 		}
-		final ImageGcDrawer imageGcDrawer = (igc, width, height) -> {
-			igc.setBackground(getBackground());
-			igc.fillRectangle(0, 0, width, height);
-			if (getBackgroundImage() != null) {
-				if (gradientInfo != null) {
-					drawBackground(igc, carea.x, carea.y, width, height);
-				} else {
-					Image bgImage = getBackgroundImage();
-					Rectangle ibounds = bgImage.getBounds();
-					drawBackground(igc, carea.x, carea.y, ibounds.width, ibounds.height);
-				}
+		// the paint GC is shared with other paint listeners
+		Color oldForeground = gc.getForeground();
+		Color oldBackground = gc.getBackground();
+		gc.setBackground(getBackground());
+		gc.fillRectangle(carea);
+		if (getBackgroundImage() != null) {
+			if (gradientInfo != null) {
+				drawBackground(gc, carea.x, carea.y, carea.width, carea.height);
+			} else {
+				Image bgImage = getBackgroundImage();
+				Rectangle ibounds = bgImage.getBounds();
+				drawBackground(gc, carea.x, carea.y, ibounds.width, ibounds.height);
 			}
+		}
 
-			if (isSeparatorVisible()) {
-				// bg separator
-				if (hasColor(IFormColors.H_BOTTOM_KEYLINE1)) {
-					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
-				} else {
-					igc.setForeground(getBackground());
-				}
-				igc.drawLine(carea.x, height - 2, carea.x + width - 1, height - 2);
-				if (hasColor(IFormColors.H_BOTTOM_KEYLINE2)) {
-					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
-				} else {
-					igc.setForeground(getForeground());
-				}
-				igc.drawLine(carea.x, height - 1, carea.x + width - 1, height - 1);
+		if (isSeparatorVisible()) {
+			int bottom = carea.y + carea.height;
+			int right = carea.x + carea.width - 1;
+			// bg separator
+			if (hasColor(IFormColors.H_BOTTOM_KEYLINE1)) {
+				gc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
+			} else {
+				gc.setForeground(getBackground());
 			}
-		};
-		Image buffer = new Image(getDisplay(), imageGcDrawer, carea.width, carea.height);
-		buffer.setBackground(getBackground());
-		gc.drawImage(buffer, carea.x, carea.y);
-		buffer.dispose();
+			gc.drawLine(carea.x, bottom - 2, right, bottom - 2);
+			if (hasColor(IFormColors.H_BOTTOM_KEYLINE2)) {
+				gc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
+			} else {
+				gc.setForeground(getForeground());
+			}
+			gc.drawLine(carea.x, bottom - 1, right, bottom - 1);
+		}
+		gc.setForeground(oldForeground);
+		gc.setBackground(oldBackground);
 	}
 
 	private void updateTitleRegionHoverState(MouseEvent e) {

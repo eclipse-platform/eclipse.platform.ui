@@ -174,7 +174,7 @@ public class Form extends Composite {
 	public Form(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND | style);
 		super.setLayout(new FormLayout());
-		head = new FormHeading(this, SWT.NULL);
+		head = new FormHeading(this, SWT.DOUBLE_BUFFERED);
 		head.setMenu(parent.getMenu());
 		body = new Composite(this, SWT.NULL);
 		body.setMenu(parent.getMenu());
