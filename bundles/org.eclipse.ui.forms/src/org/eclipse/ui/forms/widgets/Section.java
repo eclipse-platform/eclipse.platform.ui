@@ -90,13 +90,7 @@ public class Section extends ExpandableComposite {
 			descriptionControl = new Label(this, SWT.WRAP | rtl);
 		}
 		if ((style & TITLE_BAR) != 0) {
-			Listener listener = e -> {
-				Image image = Section.super.getBackgroundImage();
-				if (image != null) {
-					FormImages.getInstance().markFinished(image, getDisplay());
-				}
-				Section.super.setBackgroundImage(null);
-			};
+			Listener listener = e -> clearHeaderImage();
 			addListener(SWT.Dispose, listener);
 			addListener(SWT.Resize, listener);
 		}
@@ -184,7 +178,11 @@ public class Section extends ExpandableComposite {
 	 */
 	@Override
 	public void setBackground(Color bg) {
+		boolean changed = !getBackground().equals(bg);
 		super.setBackground(bg);
+		if (changed) {
+			clearHeaderImage();
+		}
 		if (descriptionControl != null
 				&& (getExpansionStyle() & DESCRIPTION) != 0) {
 			descriptionControl.setBackground(bg);
@@ -320,7 +318,19 @@ public class Section extends ExpandableComposite {
 		if (titleColors == null) {
 			titleColors = new Hashtable<>();
 		}
-		titleColors.put(key, color);
+		if (!color.equals(titleColors.put(key, color))) {
+			clearHeaderImage();
+			redraw();
+		}
+	}
+
+	/** Drops the cached title bar image so that the next paint rebuilds it. */
+	private void clearHeaderImage() {
+		Image image = super.getBackgroundImage();
+		if (image != null) {
+			FormImages.getInstance().markFinished(image, getDisplay());
+		}
+		super.setBackgroundImage(null);
 	}
 
 	@Override
