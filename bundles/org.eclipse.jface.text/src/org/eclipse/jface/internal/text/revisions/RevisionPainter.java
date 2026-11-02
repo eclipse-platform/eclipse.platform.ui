@@ -254,7 +254,7 @@ public final class RevisionPainter {
 				}
 			}
 
-			return Colors.blend(background, color, scale);
+			return background.blend(color, scale);
 		}
 
 		private long computeAge(Revision revision) {

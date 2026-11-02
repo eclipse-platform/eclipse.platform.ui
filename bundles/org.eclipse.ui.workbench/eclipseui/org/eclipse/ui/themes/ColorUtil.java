@@ -91,15 +91,7 @@ public final class ColorUtil {
 	 * @since 3.3
 	 */
 	public static RGB blend(RGB c1, RGB c2, int ratio) {
-		int r = blend(c1.red, c2.red, ratio);
-		int g = blend(c1.green, c2.green, ratio);
-		int b = blend(c1.blue, c2.blue, ratio);
-		return new RGB(r, g, b);
-	}
-
-	private static int blend(int v1, int v2, int ratio) {
-		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
-		return Math.min(255, b);
+		return c2.blend(c1, ratio / 100.0);
 	}
 
 	/**
@@ -110,21 +102,7 @@ public final class ColorUtil {
 	 * @return the blended color
 	 */
 	public static RGB blend(RGB val1, RGB val2) {
-		int red = blend(val1.red, val2.red);
-		int green = blend(val1.green, val2.green);
-		int blue = blend(val1.blue, val2.blue);
-		return new RGB(red, green, blue);
-	}
-
-	/**
-	 * Blend the two color values returning a value that is halfway between them.
-	 *
-	 * @param temp1 the first value
-	 * @param temp2 the second value
-	 * @return the blended int value
-	 */
-	private static int blend(int temp1, int temp2) {
-		return (Math.abs(temp1 - temp2) / 2) + Math.min(temp1, temp2);
+		return val1.blend(val2, 0.5);
 	}
 
 	/**
