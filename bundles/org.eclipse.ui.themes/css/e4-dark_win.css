@@ -45,6 +45,11 @@ Tree, Table {
 	swt-lines-visible: false;
 }
 
+/* A color of its own would paint the item as a block over the background of its toolbar */
+ToolItem {
+	background-color: unset;
+}
+
 /* ##################### Bottom Status Bar ####################### */
 
 StatusLine,
