@@ -104,6 +104,10 @@ public class FindReplaceOverlayInEditorTest {
 		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		editor = (StatusTextEditor) page.openEditor(new TestTextEditorInput(CONTENT), TestTextEditor.ID);
+		// The overlay hides its tool bars where the editor is too narrow for them, as
+		// it is between the views of a full product's perspective, and a hidden tool bar
+		// cannot take the focus. Maximizing gives the editor the width of the window.
+		page.setPartState(page.getReference(editor), IWorkbenchPage.STATE_MAXIMIZED);
 		processPendingEvents();
 
 		// Opening through the action rather than through its internals also asserts
@@ -148,7 +152,11 @@ public class FindReplaceOverlayInEditorTest {
 		findReplaceAction = null;
 		searchField = null;
 		if (editor != null) {
-			editor.getSite().getPage().closeEditor(editor, false);
+			IWorkbenchPage page = editor.getSite().getPage();
+			// Restored before closing, since closing a maximized part leaves the window
+			// maximized on a part that is gone, which would hide what opens afterwards.
+			page.setPartState(page.getReference(editor), IWorkbenchPage.STATE_RESTORED);
+			page.closeEditor(editor, false);
 			editor = null;
 		}
 	}
@@ -449,6 +457,8 @@ public class FindReplaceOverlayInEditorTest {
 				.findToolItem(id);
 		assertNotNull(toolItem, "precondition: the overlay has a '" + id + "' button"); //$NON-NLS-1$ //$NON-NLS-2$
 		ToolBar toolBar = toolItem.getParent();
+		assertTrue(toolBar.isVisible(),
+				"precondition: the overlay shows its '" + id + "' button rather than hiding it for lack of space"); //$NON-NLS-1$ //$NON-NLS-2$
 		toolBar.forceFocus();
 		waitForFocus(toolBar::isFocusControl, testName);
 		// Lets the overlay evaluate the focus loss of the previously focused control,
