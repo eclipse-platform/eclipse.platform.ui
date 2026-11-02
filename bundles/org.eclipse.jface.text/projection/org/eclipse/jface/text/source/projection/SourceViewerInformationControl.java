@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,8 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.resource.JFaceResources;
 
@@ -169,39 +166,13 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			fStatusField.setLayoutData(gd2);
 
 			Color statusTextForegroundColor= new Color(
-					blend(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(), display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56f));
+					display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB().blend(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56));
 			fStatusField.setForeground(statusTextForegroundColor);
 
 			fStatusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
 		addDisposeListener(this);
-	}
-
-	/**
-	 * Returns an RGB that lies between the given foreground and background
-	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
-	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
-	 * equal to <code>bg</code>.
-	 * @param bg the background color
-	 * @param fg the foreground color
-	 * @param factor the mixing factor, must be in [0,&nbsp;1]
-	 *
-	 * @return the interpolated color
-	 * @since 3.6
-	 */
-	private static RGB blend(RGB bg, RGB fg, float factor) {
-		// copy of org.eclipse.jface.internal.text.revisions.Colors#blend(..)
-		Assert.isLegal(bg != null);
-		Assert.isLegal(fg != null);
-		Assert.isLegal(factor >= 0f && factor <= 1f);
-
-		float complement= 1f - factor;
-		return new RGB(
-				(int) (complement * bg.red + factor * fg.red),
-				(int) (complement * bg.green + factor * fg.green),
-				(int) (complement * bg.blue + factor * fg.blue)
-		);
 	}
 
 	/**

@@ -333,12 +333,7 @@ public class HeapStatus extends Composite {
 
 	/** 40% foreground keeps the used-memory bar a light gray on light themes. */
 	private static Color blend(Color fg, Color bg) {
-		return new Color(mix(fg.getRed(), bg.getRed()), mix(fg.getGreen(), bg.getGreen()),
-				mix(fg.getBlue(), bg.getBlue()));
-	}
-
-	private static int mix(int fg, int bg) {
-		return Math.round(bg + (fg - bg) * 0.4f);
+		return new Color(bg.getRGB().blend(fg.getRGB(), 0.4));
 	}
 
 	/** A one pixel separator; drawLine would leave half-covered end pixels. */
