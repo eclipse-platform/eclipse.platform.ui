@@ -26,26 +26,6 @@
          id="stop4894" />
     </linearGradient>
     <linearGradient
-       id="linearGradient4996-4">
-      <stop
-         style="stop-color:#02468c;stop-opacity:1"
-         offset="0"
-         id="stop4998-5" />
-      <stop
-         style="stop-color:#0e62a4;stop-opacity:1"
-         offset="1"
-         id="stop5000-5" />
-    </linearGradient>
-    <linearGradient
-       y2="1051.7347"
-       x2="13.903196"
-       y1="1062.1353"
-       x1="13.903196"
-       gradientTransform="translate(38.469436,55.035191)"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient5028"
-       xlink:href="#linearGradient4996-4" />
-    <linearGradient
        xlink:href="#linearGradient4890"
        id="linearGradient4896"
        x1="14.256123"
@@ -91,16 +71,6 @@
            style="fill:url(#linearGradient4898);fill-opacity:1"
            id="path5058" />
       </g>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;line-height:0%;font-family:'Kozuka Mincho Pr6N H';-inkscape-font-specification:'Kozuka Mincho Pr6N H Heavy';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient5028);fill-opacity:1;stroke:none"
-         x="50.288464"
-         y="1117.2119"
-         id="text4140-1-8-1"><tspan
-           id="tspan4142-7-8-7"
-           x="50.288464"
-           y="1117.2119"
-           style="font-size:15.0724px;line-height:1.25;fill:url(#linearGradient5028);fill-opacity:1">Kozuka Mincho Pr6N H</tspan></text>
     </g>
   </g>
 </svg>
