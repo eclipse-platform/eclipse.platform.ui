@@ -27,9 +27,6 @@
       <stop id="stop3965" offset="1" style="stop-color:#ba772f;stop-opacity:0"/>
     </linearGradient>
     <linearGradient xlink:href="#linearGradient3967" id="linearGradient3939" gradientUnits="userSpaceOnUse" gradientTransform="translate(-58.381352,-1.4843182)" x1="529.21912" y1="366.78851" x2="531.09253" y2="371.17883"/>
-    <mask maskUnits="userSpaceOnUse" id="mask4917">
-      <path style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" d="m 462.77563,373.22885 29.11636,0 c 1.45425,0 2.625,1.17075 2.625,2.625 l 0,18.76896 c 0,1.45425 -1.17412,2.52598 -2.625,2.625 l -29.11636,1.98708 c -1.45088,0.099 -2.625,-1.17075 -2.625,-2.625 l 0,-20.75604 c 0,-1.45425 1.17075,-2.625 2.625,-2.625 z" id="path4919"/>
-    </mask>
     <linearGradient xlink:href="#linearGradient4772" id="linearGradient4779" x1="392.46814" y1="356.2869" x2="446.22526" y2="356.2869" gradientUnits="userSpaceOnUse" gradientTransform="translate(71.676102,0)"/>
     <linearGradient xlink:href="#linearGradient4830" id="linearGradient5950" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.0790773,0,0,0.99598149,-101.72166,1.5483971)" x1="548.45923" y1="398.98798" x2="548.45923" y2="373.77069"/>
     <linearGradient xlink:href="#linearGradient3955" id="linearGradient5952" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.0790773,0,0,0.99598149,-101.72167,1.54839)" x1="523.00781" y1="373.2294" x2="543.91406" y2="373.2294"/>
