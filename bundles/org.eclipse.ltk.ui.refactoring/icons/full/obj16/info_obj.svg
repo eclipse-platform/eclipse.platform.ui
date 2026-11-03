@@ -6,12 +6,34 @@
    height="16"
    id="svg2"
    version="1.1"
+   sodipodi:docname="info_obj.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="54.5625"
+     inkscape:cx="8.0183276"
+     inkscape:cy="8"
+     inkscape:window-width="1454"
+     inkscape:window-height="1022"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
   <defs
      id="defs4">
     <linearGradient
@@ -27,20 +49,13 @@
     </linearGradient>
     <linearGradient
        xlink:href="#linearGradient4890"
-       id="linearGradient4896"
-       x1="14.256123"
-       y1="1056.5471"
-       x2="18.340696"
-       y2="1056.5471"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       xlink:href="#linearGradient4890"
        id="linearGradient4898"
        gradientUnits="userSpaceOnUse"
        x1="16.307018"
        y1="1055.0179"
        x2="16.307018"
-       y2="1060.6793" />
+       y2="1060.6793"
+       gradientTransform="matrix(1.0865583,0,0,1,-9.940237,-1049.3111)" />
   </defs>
   <metadata
      id="metadata7">
@@ -54,23 +69,8 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     id="layer1"
-     style="display:inline"
-     transform="translate(0,-1036.3622)">
-    <g
-       style="display:inline"
-       id="g8159"
-       transform="translate(-8.2201163,-12.904699)">
-      <g
-         style="font-size:15.07241725999999993px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient4896);fill-opacity:1;stroke:none;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
-         id="text4140-1-8"
-         transform="matrix(1.0865583,0,0,1,-1.7201207,-0.04419418)">
-        <path
-           d="m 16.245657,1050.9177 c -0.355456,0.01 -0.65062,0.1291 -0.885494,0.3674 -0.234876,0.2383 -0.35671,0.5529 -0.365501,0.9439 0.0088,0.3981 0.130625,0.7172 0.365502,0.9571 0.234873,0.2399 0.530037,0.363 0.885493,0.3692 0.362672,-0.01 0.662232,-0.1293 0.898681,-0.3692 0.236442,-0.2399 0.358903,-0.559 0.367386,-0.9571 -0.0057,-0.3778 -0.122466,-0.6886 -0.35043,-0.9326 -0.227971,-0.244 -0.533183,-0.3702 -0.915637,-0.3787 z m 0.94955,3.3912 c -1.039986,0.4346 -2.019679,0.6808 -2.939084,0.7386 l 0,0.6029 c 0.435838,-0.02 0.70965,0.039 0.821436,0.1771 0.111784,0.1381 0.159513,0.476 0.143187,1.0136 l 0,3.4515 c 0.01539,0.5401 -0.03423,0.888 -0.148838,1.0438 -0.114613,0.1557 -0.386541,0.2248 -0.815785,0.2072 l 0,0.633 4.084573,0 0,-0.633 c -0.386544,0.017 -0.634608,-0.051 -0.744192,-0.2054 -0.109591,-0.1541 -0.157947,-0.4977 -0.145069,-1.0305 l 0,-5.8631 z"
-           style="fill:url(#linearGradient4898);fill-opacity:1"
-           id="path5058" />
-      </g>
-    </g>
-  </g>
+  <path
+     d="m 7.7116167,1.6066 c -0.386224,0.01 -0.706937,0.1291 -0.962141,0.3674 -0.255207,0.2383 -0.387586,0.5529 -0.397138,0.9439 0.0096,0.3981 0.141931,0.7172 0.397139,0.9571 0.255203,0.2399 0.575916,0.363 0.96214,0.3692 0.394064,-0.01 0.719553,-0.1293 0.976469,-0.3692 C 8.9449937,3.6351 9.0780547,3.316 9.0872717,2.9179 9.0810717,2.5401 8.9542057,2.2293 8.7065097,1.9853 8.4588057,1.7413 8.1271747,1.6151 7.7116167,1.6066 Z m 1.031741,3.3912 c -1.130005,0.4346 -2.194499,0.6808 -3.193486,0.7386 v 0.6029 c 0.473563,-0.02 0.771076,0.039 0.892538,0.1771 0.12146,0.1381 0.17332,0.476 0.155581,1.0136 v 3.4515 c 0.01672,0.5401 -0.03719,0.888 -0.161721,1.0438 -0.124534,0.1557 -0.419999,0.2248 -0.886398,0.2072 v 0.633 h 4.438127 v -0.633 c -0.420003,0.017 -0.689539,-0.051 -0.808608,-0.2054 -0.119077,-0.1541 -0.171619,-0.4977 -0.157626,-1.0305 V 5.1335 Z"
+     id="path5058"
+     style="fill:url(#linearGradient4898)" />
 </svg>
