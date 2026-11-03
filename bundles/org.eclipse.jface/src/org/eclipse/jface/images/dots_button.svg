@@ -1,74 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   width="16"
-   height="16"
-   id="svg2"
-   version="1.1"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs4">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" width="16" height="16" id="svg2" version="1.1">
+  <defs id="defs4">
   </defs>
-  <metadata
-     id="metadata7">
+  <metadata id="metadata7">
     <rdf:RDF>
-      <cc:Work
-         rdf:about="">
+      <cc:Work rdf:about="">
         <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     id="layer1"
-     style="display:inline"
-     transform="translate(0,-1036.3622)">
-    <g
-       style="display:inline"
-       id="g8159"
-       transform="translate(-8.2201163,-12.904699)">
-      <g
-         transform="translate(1.790992,32.464778)"
-         style="display:inline"
-         id="layer1-8">
-        <g
-           transform="translate(-8.2201163,-12.904699)"
-           id="g8159-9"
-           style="display:inline">
-        </g>
-      </g>
-      <rect
-         style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect4174"
-         width="1"
-         height="1"
-         x="13.220117"
-         y="1056.2668"
-         ry="1.3877788e-16" />
-      <rect
-         style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect4174-1"
-         width="1"
-         height="1"
-         x="16.217623"
-         y="1056.2668"
-         ry="1.3877788e-16" />
-      <rect
-         style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect4174-1-4"
-         width="1"
-         height="1"
-         x="19.221529"
-         y="1056.2668"
-         ry="1.3877788e-16" />
+  <g id="layer1" style="display:inline" transform="translate(0,-1036.3622)">
+    <g style="display:inline" id="g8159" transform="translate(-8.2201163,-12.904699)">
+      <rect style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="rect4174" width="1" height="1" x="13.220117" y="1056.2668" ry="1.3877788e-16"/>
+      <rect style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="rect4174-1" width="1" height="1" x="16.217623" y="1056.2668" ry="1.3877788e-16"/>
+      <rect style="display:inline;opacity:1;fill:#485d8c;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="rect4174-1-4" width="1" height="1" x="19.221529" y="1056.2668" ry="1.3877788e-16"/>
     </g>
   </g>
 </svg>
