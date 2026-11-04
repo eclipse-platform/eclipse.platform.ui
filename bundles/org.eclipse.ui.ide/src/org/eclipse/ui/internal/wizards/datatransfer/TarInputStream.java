@@ -253,9 +253,9 @@ public class TarInputStream extends FilterInputStream
 		if(size.charAt(0) != '0') {
 			size.insert(0, '0');
 		}
-		int fileSize;
+		long fileSize;
 		try {
-			fileSize = Integer.decode(size.toString()).intValue();
+			fileSize = Long.decode(size.toString()).longValue();
 		} catch(NumberFormatException nfe) {
 			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe);
 		}
