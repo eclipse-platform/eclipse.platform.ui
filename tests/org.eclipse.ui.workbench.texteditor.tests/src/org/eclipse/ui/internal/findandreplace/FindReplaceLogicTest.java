@@ -232,6 +232,60 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
+	public void testReplaceAfterMovingSelectionToAnotherMatch() {
+		assertReplaceAfterMovingSelection(true, false);
+	}
+
+	@Test
+	public void testReplaceAfterMovingSelectionToAnotherMatchBackwards() {
+		assertReplaceAfterMovingSelection(false, false);
+	}
+
+	@Test
+	public void testRegexReplaceAfterMovingSelectionToAnotherMatch() {
+		assertReplaceAfterMovingSelection(true, true);
+	}
+
+	@Test
+	public void testRegexReplaceAfterMovingSelectionToAnotherMatchBackwards() {
+		assertReplaceAfterMovingSelection(false, true);
+	}
+
+	private void assertReplaceAfterMovingSelection(boolean forward, boolean regex) {
+		TextViewer textViewer= setupTextViewer("word one word two");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		if (forward) {
+			findReplaceLogic.activate(SearchOptions.FORWARD);
+		}
+		if (regex) {
+			findReplaceLogic.activate(SearchOptions.REGEX);
+		}
+		setFindAndReplaceString(findReplaceLogic, regex ? "w(\\w+)" : "word", regex ? "$1" : "X");
+		assertEquals(9, findReplaceLogic.findAndSelect(forward ? 9 : 12));
+		textViewer.setSelectedRange(0, 4);
+
+		assertTrue(findReplaceLogic.performSelectAndReplace());
+		assertEquals(regex ? "ord one word two" : "X one word two", textViewer.getDocument().get());
+		expectStatusEmpty(findReplaceLogic);
+	}
+
+	@Test
+	public void testReplaceAfterDocumentChangeShiftsMatch() throws Exception {
+		TextViewer textViewer= setupTextViewer("word one word two");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		setFindAndReplaceString(findReplaceLogic, "word", "X");
+		assertEquals(9, findReplaceLogic.findAndSelect(9));
+
+		textViewer.getDocument().replace(0, 0, "prefix ");
+		textViewer.setSelectedRange(16, 4);
+
+		assertTrue(findReplaceLogic.performSelectAndReplace());
+		assertEquals("prefix word one X two", textViewer.getDocument().get());
+		expectStatusEmpty(findReplaceLogic);
+	}
+
+	@Test
 	public void testPerformSelectAndReplaceRegEx() {
 		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);

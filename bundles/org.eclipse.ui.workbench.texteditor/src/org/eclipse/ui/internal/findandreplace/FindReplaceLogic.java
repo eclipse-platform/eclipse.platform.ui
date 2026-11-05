@@ -522,8 +522,11 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public int findAndSelect(int offset) {
+		return findAndSelect(offset, isAvailableAndActive(SearchOptions.FORWARD));
+	}
+
+	private int findAndSelect(int offset, boolean forwardSearch) {
 		boolean wholeWordSearch = isAvailableAndActive(SearchOptions.WHOLE_WORD);
-		boolean forwardSearch = isAvailableAndActive(SearchOptions.FORWARD);
 		boolean caseSensitiveSearch = isAvailableAndActive(SearchOptions.CASE_SENSITIVE);
 		boolean regexSearch = isAvailableAndActive(SearchOptions.REGEX);
 
@@ -616,7 +619,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	@Override
 	public boolean performSelectAndReplace() {
 		resetStatus();
-		if (!isFindStringSelected()) {
+		if (!selectMatchAtSelection()) {
 			performSearch();
 		}
 		if (getStatus().wasSuccessful()) {
@@ -630,6 +633,28 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 				status = new InvalidRegExStatus(ex);
 			} catch (IllegalStateException ex) {
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Searches again for the find string at the start of the current selection.
+	 * The target replaces the match of its most recent search, which becomes stale
+	 * as soon as the document changes, e.g., by an undo. Searching again ensures
+	 * that a subsequent replace refers to the selected text.
+	 *
+	 * @return whether the selection is exactly a match of the find string
+	 */
+	private boolean selectMatchAtSelection() {
+		if (target == null || !isFindStringSelected()) {
+			return false;
+		}
+		Point selection = target.getSelection();
+		if (findAndSelect(selection.x, true) == selection.x && selection.equals(target.getSelection())) {
+			return true;
+		}
+		if (target instanceof IFindReplaceTargetExtension extension) {
+			extension.setSelection(selection.x, selection.y);
 		}
 		return false;
 	}

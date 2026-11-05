@@ -13,7 +13,9 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,18 +23,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.TextViewerUndoManager;
 
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.FindReplaceAction;
 
 public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess> {
-	
+
 	protected TestInfo testInfo;
 
 	private TextViewer fTextViewer;
@@ -248,6 +252,56 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.setReplaceText("o");
 		dialog.performReplaceAll();
 		assertEquals("oo oo oo", fTextViewer.getDocument().get());
+	}
+
+	@Test
+	public void testReplaceAgainAfterUndoWithNoRemainingMatch() {
+		assertReplaceAgainAfterUndo("word", false);
+	}
+
+	@Test
+	public void testReplaceAgainAfterUndoWithAnotherMatch() {
+		assertReplaceAgainAfterUndo("word one word two", false);
+	}
+
+	@Test
+	public void testRegexReplaceAgainAfterUndo() {
+		assertReplaceAgainAfterUndo("word one word two", true);
+	}
+
+	private void assertReplaceAgainAfterUndo(String content, boolean regex) {
+		initializeTextViewerWithFindReplaceUI(content);
+		TextViewerUndoManager undoManager= new TextViewerUndoManager(10);
+		undoManager.connect(fTextViewer);
+		try {
+			dialog.select(SearchOptions.INCREMENTAL);
+			dialog.select(SearchOptions.WRAP);
+			if (regex) {
+				dialog.select(SearchOptions.REGEX);
+			}
+			dialog.setFindText(regex ? "w(\\w+)" : "word");
+			dialog.setReplaceText(regex ? "$1" : "X");
+			String expected= (regex ? "ord" : "X") + content.substring(4);
+
+			dialog.performReplace();
+			assertEquals(expected, fTextViewer.getDocument().get());
+			Control inputField= fTextViewer.getTextWidget().getDisplay().getFocusControl();
+			fTextViewer.getTextWidget().getShell().forceActive();
+			fTextViewer.getTextWidget().forceFocus();
+			waitForFocus(fTextViewer.getTextWidget()::isFocusControl, testInfo.getTestMethod().get().getName());
+			assertTrue(undoManager.undoable());
+			undoManager.undo();
+			assertEquals(content, fTextViewer.getDocument().get());
+			assertTrue(dialog.isShown());
+			assertTrue(undoManager.redoable());
+			inputField.getShell().forceActive();
+			inputField.forceFocus();
+			waitForFocus(inputField::isFocusControl, testInfo.getTestMethod().get().getName());
+			dialog.performReplace();
+			assertEquals(expected, fTextViewer.getDocument().get());
+		} finally {
+			undoManager.disconnect();
+		}
 	}
 
 	@Test
