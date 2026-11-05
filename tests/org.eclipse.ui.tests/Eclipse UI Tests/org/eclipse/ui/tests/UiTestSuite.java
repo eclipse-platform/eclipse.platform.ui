@@ -35,6 +35,7 @@ import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTableTests;
+import org.eclipse.ui.tests.filteredtree.E4FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
@@ -90,6 +91,7 @@ import org.junit.platform.suite.api.Suite;
 	ConcurrencyTestSuite.class,
 	FilteredTableTests.class,
 	FilteredTreeTests.class,
+	E4FilteredTreeTests.class,
 	PatternFilterTest.class,
 	StatusHandlingTestSuite.class,
 	MenusTestSuite.class,
