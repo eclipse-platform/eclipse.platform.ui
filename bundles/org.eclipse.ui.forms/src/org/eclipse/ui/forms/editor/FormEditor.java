@@ -191,7 +191,10 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 *            the form page to add
 	 */
 	public int addPage(IFormPage page) throws PartInitException {
-		int i = super.addPage(page.getPartControl());
+		int i = getPageCount();
+		// Call the superclass directly: this.addPage(int, Control) would also
+		// add the control to 'pages'; configurePage registers the form page.
+		super.addPage(i, page.getPartControl());
 		configurePage(i, page);
 		return i;
 	}
