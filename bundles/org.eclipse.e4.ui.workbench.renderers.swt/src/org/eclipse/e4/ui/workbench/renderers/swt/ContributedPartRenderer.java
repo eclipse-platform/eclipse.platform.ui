@@ -21,11 +21,13 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Point;
@@ -58,6 +60,12 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		// actually bound to a model element
 		MPart part = (MPart) event.widget.getData(OWNING_ME);
 		if (part != null) {
+			// focus moved by an activation in progress, which sets the focus itself afterwards
+			IEclipseContext context = getContext(part);
+			if (context != null && context.get(EPartService.class) instanceof PartServiceImpl ps
+					&& ps.isActivating()) {
+				return;
+			}
 			try {
 				partToActivate = part;
 				activate(partToActivate);
