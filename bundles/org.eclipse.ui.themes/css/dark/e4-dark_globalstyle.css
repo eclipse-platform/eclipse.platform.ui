@@ -142,9 +142,14 @@ CompareViewerPane > * {
     color: '#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }
 
-ProgressIndicator {
-    background-color: #777;
-    color: '#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
+/* Element selectors match the exact widget class name, so the bars inside a
+ * ProgressIndicator need the child selector. Inside a part the bar is styled by
+ * the '.MPart' copies in e4-dark_partstyle.css. */
+ProgressIndicator,
+ProgressIndicator > *,
+ProgressBar {
+    background-color: #5A5F62;
+    color: '#org-eclipse-ui-workbench-LINK_COLOR';
 }
 
 DiscoveryItem,
