@@ -6,7 +6,9 @@ Bundle-Version: 3.11.100.qualifier
 Require-Bundle: org.eclipse.ui;bundle-version="3.208.0",
  org.eclipse.core.runtime,
  org.eclipse.test.performance,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.mockito.mockito-core;bundle-version="[5.21.0,6.0.0)",
+ junit-jupiter-api;bundle-version="[5.14.3,6.0.0)"
 Bundle-Vendor: Eclipse.org
 Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
  org.junit.jupiter.api.function;version="[5.14.0,6.0.0)",
