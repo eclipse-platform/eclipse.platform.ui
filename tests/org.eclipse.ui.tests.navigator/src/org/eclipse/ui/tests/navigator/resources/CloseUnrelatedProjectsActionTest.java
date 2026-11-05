@@ -120,6 +120,17 @@ public class CloseUnrelatedProjectsActionTest {
 	}
 
 	@Test
+	public void testDisabledWhenSelectionHasNoResources() throws Exception {
+		CloseUnrelatedProjectsAction action = new CloseUnrelatedProjectsAction(() -> shell);
+
+		select(action, a);
+		assertTrue(action.isEnabled(), "action must be enabled while unrelated open project C exists");
+
+		select(action, new Object());
+		assertFalse(action.isEnabled(), "action must not keep the targets of the previous selection");
+	}
+
+	@Test
 	public void testDisabledAfterAllUnrelatedProjectsClosedAndSelectionChanges() throws Exception {
 		CloseUnrelatedProjectsAction action = new CloseUnrelatedProjectsAction(() -> shell);
 
