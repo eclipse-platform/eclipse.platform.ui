@@ -188,6 +188,19 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
+	/**
+	 * Part whose activation is currently showing its tab and activating its
+	 * context branch; focus changes caused by that must not start a competing
+	 * activation.
+	 */
+	private MPart partBeingActivated;
+
+	/** Part made active whose partActivated notification has not been sent yet. */
+	private MPart unannouncedPart;
+
+	/** Whether an activation is showing its part or activating its context branch. */
+	private boolean showingPart;
+
 	private final ListenerList<IPartListener> listeners = new ListenerList<>();
 
 	private boolean constructed = false;
@@ -209,6 +222,10 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
+		// the activation in progress sets the active part of the context itself
+		if (showingPart) {
+			return;
+		}
 		if (activePart != p) {
 			if (p != null) {
 				MPerspective persp = modelService.getPerspectiveFor(p);
@@ -697,7 +714,7 @@ public class PartServiceImpl implements EPartService {
 
 	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
 		if (part == null) {
-			if (constructed && activePart != null) {
+			if (constructed && activePart != null && activePart != unannouncedPart) {
 				if (Policy.DEBUG_FOCUS) {
 					Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + activePart, null);//$NON-NLS-1$
 				}
@@ -753,9 +770,12 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		MPart lastActivePart = activePart;
+		MPart lastUnannounced = unannouncedPart;
 		activePart = part;
+		unannouncedPart = part;
 
-		if (constructed && lastActivePart != null && lastActivePart != activePart) {
+		if (constructed && lastActivePart != null && lastActivePart != activePart
+				&& lastActivePart != lastUnannounced) {
 			if (Policy.DEBUG_FOCUS) {
 				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + lastActivePart, null);//$NON-NLS-1$
 			}
@@ -770,10 +790,28 @@ public class PartServiceImpl implements EPartService {
 			// unwanted bundle activation
 			recordStackActivation(part);
 
-			delegateBringToTop(part);
-			window.getParent().setSelectedElement(window);
-
-			partActivationHistory.activate(part, activateBranch);
+			MPart outer = partBeingActivated;
+			boolean outerShowing = showingPart;
+			// only an activation that sets the focus afterwards may ignore focus changes
+			partBeingActivated = requiresFocus ? part : null;
+			showingPart = true;
+			try {
+				delegateBringToTop(part);
+				window.getParent().setSelectedElement(window);
+				// a nested explicit activation has superseded this one; activating our
+				// branch now would flip the context back and restart this activation
+				if (activePart != part) {
+					return;
+				}
+				partActivationHistory.activate(part, activateBranch);
+			} finally {
+				partBeingActivated = outer;
+				showingPart = outerShowing;
+			}
+			// the superseding activation has already focused and notified its part
+			if (activePart != part) {
+				return;
+			}
 
 			if (requiresFocus) {
 				IEclipseContext context = part.getContext();
@@ -786,9 +824,13 @@ public class PartServiceImpl implements EPartService {
 			// store the activation time to sort the parts in MRU order
 			part.getTransientData().put(PART_ACTIVATION_TIME, Long.valueOf(System.currentTimeMillis()));
 
+			unannouncedPart = null;
 			firePartActivated(part);
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 		} finally {
+			if (unannouncedPart == part) {
+				unannouncedPart = null;
+			}
 			if (contextService != null) {
 				contextService.deferUpdates(false);
 			}
@@ -804,6 +846,14 @@ public class PartServiceImpl implements EPartService {
 	private void delegateBringToTop(MPart part) {
 		modelService.bringToTop(part);
 		createElement(part);
+	}
+
+	/**
+	 * Whether an activation is currently showing its part or activating its context
+	 * branch; focus events fired by that must not start a competing activation.
+	 */
+	public boolean isActivating() {
+		return partBeingActivated != null;
 	}
 
 	/**
