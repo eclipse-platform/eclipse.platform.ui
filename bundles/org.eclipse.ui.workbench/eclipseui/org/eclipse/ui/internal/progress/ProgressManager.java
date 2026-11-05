@@ -919,6 +919,12 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
+		busyCursorWhile(runnable, true);
+	}
+
+	@Override
+	public void busyCursorWhile(final IRunnableWithProgress runnable, final boolean cancelable)
+			throws InvocationTargetException, InterruptedException {
 		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(ProgressManagerUtil.getDefaultParent());
 		dialog.setOpenOnRun(false);
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
@@ -928,7 +934,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			try {
 				dialog.setOpenOnRun(false);
 				setUserInterfaceActive(false);
-				dialog.run(true, true, runnable);
+				dialog.run(true, cancelable, runnable);
 			} catch (InvocationTargetException e1) {
 				invokes[0] = e1;
 			} catch (InterruptedException e2) {
