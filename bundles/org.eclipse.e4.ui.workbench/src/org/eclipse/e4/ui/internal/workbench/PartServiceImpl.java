@@ -24,7 +24,9 @@ import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -38,6 +40,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -188,6 +191,21 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
+	// Only context-injected activations participate in this guard. Explicit client
+	// requests, including returning to a part from its activation listener, remain valid.
+	private final Set<MPart> contextActivations = Collections.newSetFromMap(new IdentityHashMap<MPart, Boolean>());
+
+	// Set when the guard drops a context-injected activation, so the outermost
+	// context activation can reconcile the active part with the context.
+	private boolean contextActivationDropped;
+
+	// While reconciling, every context-injected activation is dropped, so the
+	// correction cannot be redirected into the same cycle again.
+	private boolean reconcilingWithContext;
+
+	// Number of unfinished activations, explicit or context-injected.
+	private int activationDepth;
+
 	private final ListenerList<IPartListener> listeners = new ListenerList<>();
 
 	private boolean constructed = false;
@@ -209,18 +227,135 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
-		if (activePart != p) {
-			if (p != null) {
-				MPerspective persp = modelService.getPerspectiveFor(p);
-				boolean inCurrentPerspective = persp == null
-						|| persp == persp.getParent().getSelectedElement();
-				if (inCurrentPerspective) {
-					activate(p, true, true);
-				}
-			} else {
+		if (activePart == p) {
+			return;
+		}
+		if (reconcilingWithContext) {
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Ignored context part activation while reconciling: " + p, //$NON-NLS-1$
+						null);
+			}
+			return;
+		}
+		if (!contextActivations.add(p)) {
+			contextActivationDropped = true;
+			reportActivationCycle(p);
+			return;
+		}
+		// only reconcile when no other activation is in progress that could still
+		// change the active part or the context
+		boolean outermost = contextActivations.size() == 1 && activationDepth == 0;
+		try {
+			activateFromContext(p);
+		} finally {
+			contextActivations.remove(p);
+		}
+		if (outermost && contextActivationDropped) {
+			reconcileWithContext();
+		}
+	}
+
+	private void activateFromContext(MPart p) {
+		if (p != null) {
+			MPerspective persp = modelService.getPerspectiveFor(p);
+			boolean inCurrentPerspective = persp == null || persp == persp.getParent().getSelectedElement();
+			if (inCurrentPerspective) {
 				activate(p, true, true);
 			}
+		} else {
+			activate(p, true, true);
 		}
+	}
+
+	/**
+	 * A dropped context activation can leave the active part out of sync with the
+	 * context, e.g. when the tail of an outer activation finishes after a nested
+	 * one. Activates the part the context reports, ignoring further context
+	 * activations meanwhile, so the correction cannot restart the cycle. If a
+	 * listener of the correction moves the context to another part, that part is
+	 * activated as well; each part is activated at most once, which keeps this
+	 * bounded.
+	 */
+	private void reconcileWithContext() {
+		contextActivationDropped = false;
+		IEclipseContext context = workbenchWindow != null ? workbenchWindow.getContext() : null;
+		if (context == null) {
+			return;
+		}
+		Set<MPart> reconciled = Collections.newSetFromMap(new IdentityHashMap<>());
+		reconcilingWithContext = true;
+		try {
+			MPart contextPart = getContextActivePart(context);
+			while (contextPart != activePart && reconciled.add(contextPart)) {
+				if (Policy.DEBUG_FOCUS) {
+					Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Reconciling active part " + activePart //$NON-NLS-1$
+							+ " with context part " + contextPart, null); //$NON-NLS-1$
+				}
+				activateFromContext(contextPart);
+				contextPart = getContextActivePart(context);
+			}
+		} finally {
+			reconcilingWithContext = false;
+			contextActivationDropped = false;
+		}
+	}
+
+	private static MPart getContextActivePart(IEclipseContext context) {
+		return context.get(IServiceConstants.ACTIVE_PART) instanceof MPart part ? part : null;
+	}
+
+	private void reportActivationCycle(MPart repeatedPart) {
+		StringBuilder message = new StringBuilder("Ignored recursive context part activation; active context activations: "); //$NON-NLS-1$
+		String separator = ""; //$NON-NLS-1$
+		for (MPart part : contextActivations) {
+			message.append(separator).append(describePart(part));
+			separator = ", "; //$NON-NLS-1$
+		}
+		message.append("; repeated part: ").append(describePart(repeatedPart)); //$NON-NLS-1$
+		message.append("; active part: ").append(describePart(activePart)); //$NON-NLS-1$
+		message.append("; active context chain: ").append(describeActiveContextChain()); //$NON-NLS-1$
+		if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG, message.toString(), null);
+		}
+		logger.warn(new IllegalStateException("Recursive context part activation"), message.toString()); //$NON-NLS-1$
+	}
+
+	private String describePart(MPart part) {
+		if (part == null) {
+			return "null"; //$NON-NLS-1$
+		}
+		return describeElement(part) + " (window: " + describeElement(modelService.getTopLevelWindowFor(part)) //$NON-NLS-1$
+				+ ", perspective: " + describeElement(modelService.getPerspectiveFor(part)) + ')'; //$NON-NLS-1$
+	}
+
+	private static String describeElement(MApplicationElement element) {
+		if (element == null) {
+			return "null"; //$NON-NLS-1$
+		}
+		return element.getElementId() + '@' + Integer.toHexString(System.identityHashCode(element));
+	}
+
+	/**
+	 * Describes the contexts from the root to the active leaf, since the stack of
+	 * the dropped activation cannot show computations that already returned.
+	 */
+	private String describeActiveContextChain() {
+		IEclipseContext context = workbenchWindow != null ? workbenchWindow.getContext() : null;
+		if (context == null) {
+			return "unknown"; //$NON-NLS-1$
+		}
+		while (context.getParent() != null) {
+			context = context.getParent();
+		}
+		StringBuilder chain = new StringBuilder();
+		for (; context != null; context = context.getActiveChild()) {
+			if (!chain.isEmpty()) {
+				chain.append(" > "); //$NON-NLS-1$
+			}
+			Object element = context.getLocal(MApplicationElement.class);
+			chain.append(element instanceof MApplicationElement e ? describeElement(e) : context.toString());
+		}
+		return chain.toString();
 	}
 
 	@PostConstruct
@@ -696,6 +831,21 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
+		activationDepth++;
+		try {
+			doActivate(part, requiresFocus, activateBranch);
+		} finally {
+			activationDepth--;
+		}
+		// a listener of this activation may have entered a context activation cycle;
+		// its nested setPart calls could not reconcile while this activation was running
+		if (activationDepth == 0 && contextActivations.isEmpty() && contextActivationDropped
+				&& !reconcilingWithContext) {
+			reconcileWithContext();
+		}
+	}
+
+	private void doActivate(MPart part, boolean requiresFocus, boolean activateBranch) {
 		if (part == null) {
 			if (constructed && activePart != null) {
 				if (Policy.DEBUG_FOCUS) {
