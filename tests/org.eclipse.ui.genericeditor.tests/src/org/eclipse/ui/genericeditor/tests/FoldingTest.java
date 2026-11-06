@@ -116,4 +116,15 @@ public class FoldingTest extends AbstratGenericEditorTest {
 		Command collapseAllCommand = commandService.getCommand(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
 		assertTrue(collapseAllCommand.isEnabled() && collapseAllCommand.isHandled());
 	}
+
+	@Test
+	public void testFoldingRestoredWhenReenabled() throws Exception {
+		createAndOpenFile("bar.xml", "<a>\n b</a>");
+		assertFoldingAsync(pos(0, 10));
+		ProjectionViewer viewer = (ProjectionViewer) editor.getAdapter(ITextViewer.class);
+		viewer.doOperation(ProjectionViewer.TOGGLE);
+		viewer.doOperation(ProjectionViewer.TOGGLE);
+		assertTrue(DisplayHelper.waitForCondition(editor.getSite().getShell().getDisplay(), 5000,
+				() -> !getAnnotationsFromAnnotationModel().isEmpty()));
+	}
 }
