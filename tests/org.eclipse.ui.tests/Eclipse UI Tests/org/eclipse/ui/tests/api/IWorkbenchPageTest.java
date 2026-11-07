@@ -84,6 +84,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.Util;
@@ -2561,6 +2562,24 @@ public class IWorkbenchPageTest {
 		} finally {
 			APITestUtils.saveableHelperSetAutomatedResponse(-1);
 		}
+	}
+
+	/**
+	 * Tests that views outside of any perspective (e.g. the intro view) are still
+	 * returned by getViewReferences() after all perspectives are closed. See
+	 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/2978
+	 */
+	@Test
+	public void testGetViewReferencesWithoutPerspective() throws PartInitException {
+		IViewPart intro = fActivePage.showView(IIntroConstants.INTRO_VIEW_ID);
+		assertTrue(fActivePage.isPartVisible(intro));
+		assertTrue(hasView(intro));
+
+		fActivePage.closeAllPerspectives(false, false);
+
+		assertEquals(0, fActivePage.getOpenPerspectives().length);
+		assertTrue(fActivePage.isPartVisible(intro));
+		assertTrue(hasView(intro));
 	}
 
 	/**
