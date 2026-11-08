@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -408,7 +409,7 @@ public class E4Application implements IApplication {
 
 		Path stateDir;
 		try {
-			stateDir = Path.of(instanceLocation.getURL().toURI()).resolve(".metadata") //$NON-NLS-1$
+			stateDir = Path.of(URIUtil.toURI(instanceLocation.getURL())).resolve(".metadata") //$NON-NLS-1$
 					.resolve(".plugins") //$NON-NLS-1$
 					.resolve("org.eclipse.e4.workbench"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
