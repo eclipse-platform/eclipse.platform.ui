@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,6 +78,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void styleElement(MUIElement element, boolean active) {
 		if (!active) {
 			element.getTags().remove(CSSConstants.CSS_ACTIVE_CLASS);
+			// The focus state only qualifies the active element. Left on an element
+			// that is no longer active, it would come back with its next activation.
+			element.getTags().remove(CSSConstants.CSS_NO_FOCUS_CLASS);
 		} else {
 			element.getTags().add(CSSConstants.CSS_ACTIVE_CLASS);
 		}

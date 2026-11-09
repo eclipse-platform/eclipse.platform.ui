@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2023 IBM Corporation and others.
+ * Copyright (c) 2013, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,6 +49,7 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -619,6 +620,33 @@ public class StackRendererTest {
 		// Verify order in Widget
 		assertEquals("Part 2", tabFolder.getItem(0).getText());
 		assertEquals("Part 1", tabFolder.getItem(1).getText());
+	}
+
+	@Test
+	public void testNoFocusTagRemovedWhenStackIsDeactivated() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		partStack.getChildren().add(part1);
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
+		window.getChildren().add(partStack2);
+		MPart part2 = ems.createModelElement(MPart.class);
+		partStack2.getChildren().add(part2);
+
+		contextRule.createAndRunWorkbench(window);
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(part1);
+		assertTrue(partStack.getTags().contains(CSSConstants.CSS_ACTIVE_CLASS));
+
+		// as WBWRenderer does while the window is deactivated, e.g. by a dialog
+		partStack.getTags().add(CSSConstants.CSS_NO_FOCUS_CLASS);
+		// another part is activated before the window gets activated again
+		partService.activate(part2);
+
+		assertFalse(partStack.getTags().contains(CSSConstants.CSS_ACTIVE_CLASS));
+		assertFalse(partStack.getTags().contains(CSSConstants.CSS_NO_FOCUS_CLASS));
+
+		partService.activate(part1);
+		assertTrue(partStack.getTags().contains(CSSConstants.CSS_ACTIVE_CLASS));
+		assertFalse(partStack.getTags().contains(CSSConstants.CSS_NO_FOCUS_CLASS));
 	}
 
 	// helper functions
