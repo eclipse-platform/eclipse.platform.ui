@@ -52,6 +52,7 @@ import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
 import org.eclipse.e4.ui.tests.workbench.SWTPartRendererTest;
 import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
 import org.eclipse.e4.ui.tests.workbench.TopoSortTests;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRenderingTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.TabStateHandlerTest;
@@ -94,6 +95,7 @@ import org.junit.platform.suite.api.Suite;
 		PartFocusTest.class,
 		ModelElementTest.class,
 		StackRendererTest.class,
+		CTabRenderingTest.class,
 		TabStateHandlerTest.class,
 		ThemeDefinitionChangedHandlerTest.class,
 		ToolBarManagerRendererTest.class,
