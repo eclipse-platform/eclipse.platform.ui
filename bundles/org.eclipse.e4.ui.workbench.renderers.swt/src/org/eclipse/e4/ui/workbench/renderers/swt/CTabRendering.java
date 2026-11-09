@@ -695,7 +695,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	/**
-	 * Draws tab content background, deriving the colors from the tab colors.
+	 * Draws tab content background, deriving the colors from the tab colors. The
+	 * content area below the tabs only gets the selected tab fill if there is a
+	 * selected tab whose content it belongs to; a folder without selected tab
+	 * (e.g., an empty editor area) keeps the folder background there.
 	 */
 	private void drawCustomBackground(GC gc, Rectangle bounds, int state) {
 		boolean selected = (state & SWT.SELECTED) != 0;
@@ -703,7 +706,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		Rectangle partHeaderBounds = computeTrim(PART_HEADER, state, bounds.x, bounds.y, bounds.width, bounds.height);
 
 		drawUnselectedTabBackground(gc, partHeaderBounds, state, vertical, parent.getBackground());
-		drawSelectedTabBackground(gc, partHeaderBounds, state, vertical, parent.getBackground());
+		if (parent.getSelectionIndex() >= 0) {
+			drawSelectedTabBackground(gc, partHeaderBounds, state, vertical, parent.getBackground());
+		}
 	}
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
