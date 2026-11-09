@@ -94,6 +94,15 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
 	background-color: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
 }
 
+CTabFolder.MArea {
+	background-color: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
+	swt-selected-tab-fill: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
+	swt-unselected-tabs-color: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
+	swt-outer-keyline-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR';
+	swt-inner-keyline-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR';
+	swt-tab-outline: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';
+}
+
 CTabFolder Canvas {
 	  background-color: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
 }
