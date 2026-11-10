@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -422,14 +423,31 @@ public class StackRendererTest {
 		assertEquals(4, tabFolder.getChildren().length);
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
-		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,
-				tabFolder.getSize().x - 2 * StackRenderer.ONBOARDING_SPACING,
-				tabFolder.getSize().y - StackRenderer.ONBOARDING_TOP_SPACING - StackRenderer.ONBOARDING_SPACING);
-		assertEquals(expected, outerOnboardingComposite.getBounds());
+		assertEquals(tabFolder.getClientArea(), outerOnboardingComposite.getBounds());
 		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
 		assertEquals(2, innerOnboardingComposite.getChildren().length);
 		assertNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
 		assertEquals("", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
+	}
+
+	@Test
+	public void testOnboardingFollowsClientAreaOfEditorStack() {
+		PartStackUtil.makeEditorStack(partStack);
+
+		contextRule.createAndRunWorkbench(window);
+
+		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
+		Rectangle clientArea = tabFolder.getClientArea();
+		assertEquals(clientArea, outerOnboardingComposite.getBounds());
+
+		// a higher tab row shrinks the client area without resizing the folder
+		tabFolder.setTabHeight(tabFolder.getTabHeight() + 20);
+		DisplayHelper.waitForCondition(tabFolder.getDisplay(), 5000,
+				() -> !clientArea.equals(tabFolder.getClientArea()));
+
+		assertNotEquals(clientArea, tabFolder.getClientArea());
+		assertEquals(tabFolder.getClientArea(), outerOnboardingComposite.getBounds());
 	}
 
 	@Test
@@ -551,17 +569,15 @@ public class StackRendererTest {
 		assertEquals(4, tabFolder.getChildren().length);
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
-		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,
-				tabFolder.getSize().x - 2 * StackRenderer.ONBOARDING_SPACING,
-				tabFolder.getSize().y - StackRenderer.ONBOARDING_TOP_SPACING - StackRenderer.ONBOARDING_SPACING);
-		assertEquals(expected, outerOnboardingComposite.getBounds());
+		Rectangle clientArea = tabFolder.getClientArea();
+		assertEquals(clientArea, outerOnboardingComposite.getBounds());
 
 		MPart part1 = ems.createModelElement(MPart.class);
 		partStack.getChildren().add(part1);
 		partStack.setSelectedElement(part1);
 
-		expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING, 0, 0);
-		assertEquals(expected, outerOnboardingComposite.getBounds());
+		assertFalse(outerOnboardingComposite.getVisible());
+		assertEquals(new Rectangle(clientArea.x, clientArea.y, 0, 0), outerOnboardingComposite.getBounds());
 	}
 
 	/**
