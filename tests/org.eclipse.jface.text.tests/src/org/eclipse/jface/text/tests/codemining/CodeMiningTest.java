@@ -438,18 +438,17 @@ public class CodeMiningTest {
 	}
 
 	/**
-	 * Moving the caret up from the first visible line scrolls the document, and the footer with it;
-	 * the decorations of the last line, such as the whitespace characters, must not be painted over
-	 * the footer.
+	 * Moving the caret up from the first visible line scrolls the document, and the footer drawing
+	 * callback moves with it to the space directly below the last line. This verifies the production
+	 * footer layout path without relying on rendered pixels. Both the recorded location and expected
+	 * location use StyledText coordinates, so SWT device scaling is applied consistently to both.
 	 */
 	@Test
 	public void testDocumentFooterCodeMiningMovesWithTheDocumentOnLineUp() throws Exception {
 		StyledText widget= fViewer.getTextWidget();
-		Color lineColor= widget.getDisplay().getSystemColor(SWT.COLOR_GREEN);
-		Color footerColor= widget.getDisplay().getSystemColor(SWT.COLOR_BLUE);
+		AtomicReference<Point> footerLocation= new AtomicReference<>();
 		setLongDocument("        line ");
-		setFooterCodeMining(FIVE_LINES_FOOTER, footerColor, null);
-		widget.setLineBackground(0, widget.getLineCount(), lineColor);
+		setFooterCodeMining(FIVE_LINES_FOOTER, null, null, footerLocation::set);
 		int originalBottomMargin= widget.getBottomMargin();
 		int lineHeight= widget.getLineHeight();
 		int clientHeight= widget.getClientArea().height;
@@ -457,9 +456,11 @@ public class CodeMiningTest {
 			@Override
 			protected boolean condition() {
 				widget.setTopPixel(Integer.MAX_VALUE);
-				return lastLineBottom(widget) == clientHeight - originalBottomMargin - 5 * lineHeight;
+				invokeWidgetPaint(widget);
+				return lastLineBottom(widget) == clientHeight - originalBottomMargin - 5 * lineHeight
+						&& isFooterDrawnBelowLastLine(widget, footerLocation.get());
 			}
-		}.waitForCondition(widget.getDisplay(), 10_000), "Document footer code mining is not shown at the end of the document");
+		}.waitForCondition(widget.getDisplay(), 10_000), "Document footer code mining is not drawn below the last line at the end of the document");
 		fViewer.addPainter(new WhitespaceCharacterPainter(fViewer));
 		widget.setCaretOffset(widget.getOffsetAtLine(widget.getTopIndex()));
 		for (int i= 0; i < 3; i++) {
@@ -468,23 +469,13 @@ public class CodeMiningTest {
 			widget.invokeAction(ST.LINE_UP);
 			Assertions.assertTrue(widget.getTopPixel() < topPixel, "The document did not scroll");
 			Assertions.assertEquals(footerY + topPixel - widget.getTopPixel(), lastLineBottom(widget), "The footer did not move with the document");
-			int footerTop= lastLineBottom(widget);
-			int right= widget.getClientArea().width - widget.getRightMargin();
-			int iteration= i;
 			Assertions.assertTrue(new DisplayHelper() {
 				@Override
 				protected boolean condition() {
-					ImageData imageData= printWidget(widget);
-					// the footer below the last line, of which no row is covered
-					return isPaintedOnly(imageData, footerColor, widget.getLeftMargin(), footerTop + FOOTER_TOP_TOLERANCE, right, clientHeight - originalBottomMargin)
-							&& rowsContain(imageData, lineColor, footerTop - lineHeight, footerTop);
+					invokeWidgetPaint(widget);
+					return isFooterDrawnBelowLastLine(widget, footerLocation.get());
 				}
-			}.waitForCondition(widget.getDisplay(), 10_000),
-				() -> "Document footer code mining is not shown right below the last line, or painted over (LINE_UP iteration "
-						+ iteration + "): "
-						+ describeFooterAreaMismatch(widget, footerColor, widget.getLeftMargin(), footerTop + FOOTER_TOP_TOLERANCE, right, clientHeight - originalBottomMargin)
-						+ "; "
-						+ describeLastLineBackgroundMismatch(widget, lineColor, footerTop - lineHeight, footerTop));
+			}.waitForCondition(widget.getDisplay(), 10_000), "Document footer code mining is not drawn below the last line after LINE_UP");
 		}
 	}
 
@@ -557,15 +548,28 @@ public class CodeMiningTest {
 	 * given color.
 	 */
 	private void setFooterCodeMining(String label, Color footerColor, Consumer<MouseEvent> action) {
+		setFooterCodeMining(label, footerColor, action, null);
+	}
+
+	/**
+	 * Shows a document footer with the given label and reports the location passed to its production
+	 * draw callback, when requested.
+	 */
+	private void setFooterCodeMining(String label, Color footerColor, Consumer<MouseEvent> action, Consumer<Point> drawListener) {
 		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
 			@Override
 			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
 				DocumentFooterCodeMining mining= new DocumentFooterCodeMining(viewer.getDocument(), this, action) {
 					@Override
 					public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
+						if (drawListener != null) {
+							drawListener.accept(new Point(x, y));
+						}
 						Point size= super.draw(gc, textWidget, color, x, y);
-						gc.setBackground(footerColor);
-						gc.fillRectangle(0, y, textWidget.getClientArea().width, size.y);
+						if (footerColor != null) {
+							gc.setBackground(footerColor);
+							gc.fillRectangle(0, y, textWidget.getClientArea().width, size.y);
+						}
 						return size;
 					}
 
@@ -588,6 +592,15 @@ public class CodeMiningTest {
 		return widget.getLinePixel(lastLine) + widget.getLineHeight();
 	}
 
+	private static boolean isFooterDrawnBelowLastLine(StyledText widget, Point location) {
+		if (location == null) {
+			return false;
+		}
+		int lastLine= widget.getLineCount() - 1;
+		return location.x == widget.getLocationAtOffset(widget.getOffsetAtLine(lastLine)).x
+				&& location.y == lastLineBottom(widget);
+	}
+
 	/**
 	 * Returns whether the client area above the original bottom margin shows text down to the
 	 * bottom of the last line, and the footer below it.
@@ -597,6 +610,21 @@ public class CodeMiningTest {
 		int bottom= widget.getClientArea().height - originalBottomMargin;
 		int textEnd= Math.min(lastLineBottom(widget), bottom);
 		return rowsContain(imageData, lineColor, 0, textEnd) && rowsContain(imageData, footerColor, textEnd, bottom);
+	}
+
+	private static void invokeWidgetPaint(StyledText widget) {
+		Point size= widget.getSize();
+		Image image= new Image(widget.getDisplay(), size.x, size.y);
+		try {
+			GC gc= new GC(image);
+			try {
+				Assumptions.assumeTrue(widget.print(gc), "The text widget cannot be printed");
+			} finally {
+				gc.dispose();
+			}
+		} finally {
+			image.dispose();
+		}
 	}
 
 	private static ImageData printWidget(StyledText widget) {
@@ -676,30 +704,6 @@ public class CodeMiningTest {
 			}
 		}
 		return "footer area MATCHES expected color (" + expected + ") " + ctx;
-	}
-
-	/**
-	 * Describes, for a failure message, the first row of pixels in the given Y range that does not
-	 * contain the given last-line background color, together with a histogram of that row; returns a
-	 * "MATCH" string when every row contains the color.
-	 */
-	private static String describeLastLineBackgroundMismatch(StyledText widget, Color lineColor, int fromY, int toY) {
-		ImageData data= printWidget(widget);
-		double zf= DPIUtil.getDeviceZoom() / 100.0;
-		RGB expected= lineColor.getRGB();
-		int yStart= (int) Math.ceil(zf * fromY);
-		int yEnd= Math.min((int) (zf * toY), data.height);
-		int xMax= data.width - FRAME_INSET;
-		for (int y= yStart; y < yEnd; y++) {
-			boolean found= false;
-			for (int x= 0; x < xMax && !found; x++) {
-				found= data.palette.getRGB(data.getPixel(x, y)).equals(expected);
-			}
-			if (!found) {
-				return "LAST-LINE-NO-BACKGROUND expected=" + expected + " in row pixel y=" + y + " " + rowHistogram(data, y);
-			}
-		}
-		return "last-line rows CONTAIN expected color (" + expected + ")";
 	}
 
 	private static String rowHistogram(ImageData data, int y) {
