@@ -275,8 +275,16 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 		}
 
 		try {
+			final IDocument document= getDocument();
 			final Consumer<MouseEvent> action= createAction(annotation);
-			return new AnnotationCodeMining(getAnnotationAccess(), annotation, lineNumber, getDocument(), this, action);
+			final AnnotationCodeMining mining= new AnnotationCodeMining(getAnnotationAccess(), annotation, lineNumber, document, this, action);
+			final Position position= mining.getPosition();
+			if (position.offset < 0 || position.length < 0 || position.offset > document.getLength()
+					|| position.length > document.getLength() - position.offset) {
+				mining.dispose();
+				return null;
+			}
+			return mining;
 		} catch (BadLocationException e) {
 			return null;
 		}

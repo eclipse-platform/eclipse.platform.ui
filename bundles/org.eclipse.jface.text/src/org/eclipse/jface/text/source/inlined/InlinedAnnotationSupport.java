@@ -16,6 +16,7 @@ package org.eclipse.jface.text.source.inlined;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -548,7 +549,18 @@ public class InlinedAnnotationSupport {
 				? new ArrayList<>(previousAnnotations)
 				: Collections.emptyList();
 		// Loop for annotations to update
+		Set<AbstractInlinedAnnotation> validAnnotations= new HashSet<>();
 		for (AbstractInlinedAnnotation ann : annotations) {
+			Position position= ann.getPosition();
+			int documentLength= document.getLength();
+			// One invalid position would abort replaceAnnotations and suppress the
+			// model change event, leaving the other code minings invisible as well.
+			if (position.isDeleted() || position.offset < 0 || position.length < 0
+					|| position.offset > documentLength || position.length > documentLength - position.offset) {
+				ann.markDeleted(true);
+				continue;
+			}
+			validAnnotations.add(ann);
 			boolean known= annotationsToRemove.remove(ann);
 			// An annotation a client removed from the annotation model behind our back is
 			// still known here, but invisible, so add it again.
@@ -585,7 +597,7 @@ public class InlinedAnnotationSupport {
 					}
 				}
 			}
-			fInlinedAnnotations= annotations;
+			fInlinedAnnotations= validAnnotations;
 		}
 	}
 
