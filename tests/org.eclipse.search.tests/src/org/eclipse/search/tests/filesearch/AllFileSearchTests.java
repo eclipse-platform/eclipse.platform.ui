@@ -34,6 +34,7 @@ import org.eclipse.search.tests.TextSearchResultTest;
 		SortingTest.class,
 		TextSearchResultTest.class,
 		RestrictedFilesSearchTest.class,
+		EditorOpenerTest.class,
 })
 public class AllFileSearchTests {
 }
