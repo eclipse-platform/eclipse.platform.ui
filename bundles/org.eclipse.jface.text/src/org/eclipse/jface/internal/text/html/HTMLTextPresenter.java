@@ -86,7 +86,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			return null;
 		}
 
-		Font[] fonts= new Font[(SWT.BOLD | SWT.ITALIC)];
+		Font[] fonts= new Font[(SWT.BOLD | SWT.ITALIC) + 1];
 		GC gc= new GC(drawable);
 		Font baseFont= gc.getFont(); // the html reader does not set font info, so ranges will based on the default font of the drawable
 		fonts[0]= baseFont;
