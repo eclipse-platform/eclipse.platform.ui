@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,19 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -30,25 +40,65 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiPageEditorPart;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 
 public class EditorOpener {
 
+	/**
+	 * Family of the background jobs that create and delete the temporary search
+	 * markers. It lets tests wait for these jobs.
+	 */
+	public static final Object MARKER_JOB_FAMILY = new Object();
+
+	/**
+	 * Lets the marker jobs (creation and deletion) run one after the other, so that
+	 * at most one of them waits for the workspace lock. Static, because openers can
+	 * be created per call.
+	 */
+	private static final ISchedulingRule MARKER_RULE = new ISchedulingRule() {
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
+
 	private IEditorReference fReusedEditor;
 
+	/**
+	 * The latest request that goes through a temporary marker, shared by all
+	 * openers so that only the latest click counts.
+	 */
+	private static final AtomicReference<MarkerRequest> fgMarkerRequest = new AtomicReference<>();
+
 	public IEditorPart open(IWorkbenchPage wbPage, IFile file, boolean activate) throws PartInitException {
+		cancelMarkerRequest();
 		if (NewSearchUI.reuseEditor()) {
 			return showWithReuse(file, wbPage, getEditorID(file), activate);
 		}
 		return showWithoutReuse(file, wbPage, getEditorID(file), activate);
 	}
 
+	/**
+	 * Opens the file and selects the given range. Unless the editor is or adapts to
+	 * an {@link ITextEditor} (for a multi-page editor: the text editor of a page
+	 * that shows the file), the range is selected asynchronously through a
+	 * temporary marker, so that the UI thread does not wait for the workspace lock.
+	 */
 	public IEditorPart openAndSelect(IWorkbenchPage wbPage, IFile file, int offset, int length, boolean activate) throws PartInitException {
+		cancelMarkerRequest();
 		String editorId= null;
 		IEditorDescriptor desc = IDE.getEditorDescriptor(file, true, true);
 		if (desc == null || !desc.isInternal()) {
@@ -64,12 +114,68 @@ public class EditorOpener {
 			editor= showWithoutReuse(file, wbPage, editorId, activate);
 		}
 
-		if (editor instanceof ITextEditor textEditor) {
+		if (editor == null) {
+			return null;
+		}
+
+		// Editors that are not an ITextEditor but adapt to one, or
+		// MultiPageEditorPart subclasses (e.g. FormEditor) with
+		// a text page for the file, get the range selected directly, so their
+		// own IGotoMarker is not called.
+		ITextEditor textEditor = findTextEditor(editor, file);
+		if (textEditor != null) {
 			textEditor.selectAndReveal(offset, length);
-		} else if (editor != null) {
-			showWithMarker(editor, file, offset, length);
+		} else {
+			showWithMarker(wbPage, editor, file, offset, length);
 		}
 		return editor;
+	}
+
+	/**
+	 * Returns the text editor in which to select the match, or {@code null}. This
+	 * is the text editor the editor is or adapts to. For a multi-page editor, it is
+	 * the text editor it adapts to, if a page is or hosts it, otherwise the text
+	 * editor of a page that shows the file. That page gets activated.
+	 */
+	private static ITextEditor findTextEditor(IEditorPart editor, IFile file) {
+		ITextEditor textEditor = Adapters.adapt(editor, ITextEditor.class);
+		if (!(editor instanceof MultiPageEditorPart multiPage)) {
+			return textEditor;
+		}
+		// a multi-page editor adapts to the text editor of its active page, which may
+		// show another file. Only pages can be activated, so activate the page that is
+		// or hosts the adapted text editor.
+		if (textEditor != null && showsFile(textEditor, file)) {
+			for (IEditorPart page : multiPage.findEditors(textEditor.getEditorInput())) {
+				if (page == textEditor || Adapters.adapt(page, ITextEditor.class) == textEditor) {
+					activatePage(multiPage, page);
+					return textEditor;
+				}
+			}
+		}
+		for (IEditorPart page : multiPage.findEditors(new FileEditorInput(file))) {
+			ITextEditor pageTextEditor = Adapters.adapt(page, ITextEditor.class);
+			if (pageTextEditor != null) {
+				activatePage(multiPage, page);
+				return pageTextEditor;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Activates the page of the given editor, unless it is already active. Has no
+	 * effect if the editor is not a page of the multi-page editor.
+	 */
+	private static void activatePage(MultiPageEditorPart multiPage, IEditorPart page) {
+		if (multiPage.getSelectedPage() != page) {
+			multiPage.setActiveEditor(page);
+		}
+	}
+
+	private static boolean showsFile(ITextEditor textEditor, IFile file) {
+		IEditorInput input = textEditor.getEditorInput();
+		return input != null && file.equals(ResourceUtil.getFile(input));
 	}
 
 	private IEditorPart showWithoutReuse(IFile file, IWorkbenchPage wbPage, String editorID, boolean activate) throws PartInitException {
@@ -128,26 +234,139 @@ public class EditorOpener {
 		return editor;
 	}
 
-	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
-		IMarker marker= null;
-		try {
-			marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
-			HashMap<String, Integer> attributes= new HashMap<>(4);
-			attributes.put(IMarker.CHAR_START, Integer.valueOf(offset));
-			attributes.put(IMarker.CHAR_END, Integer.valueOf(offset + length));
-			marker.setAttributes(attributes);
-			IDE.gotoMarker(editor, marker);
-		} catch (CoreException e) {
-			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e);
-		} finally {
-			if (marker != null) {
-				try {
-					marker.delete();
-				} catch (CoreException e) {
-					// ignore
+	private void showWithMarker(IWorkbenchPage page, IEditorPart editor, IFile file, int offset, int length) {
+		MarkerRequest request = new MarkerRequest(page, editor, file, offset, length);
+		MarkerRequest previous = fgMarkerRequest.getAndSet(request);
+		if (previous != null) {
+			previous.cancel();
+		}
+		request.schedule();
+	}
+
+	private static void cancelMarkerRequest() {
+		MarkerRequest request = fgMarkerRequest.getAndSet(null);
+		if (request != null) {
+			request.cancel();
+		}
+	}
+
+	/**
+	 * Creates the temporary marker in the background, reveals it in the editor in
+	 * the UI thread and deletes it in the background again.
+	 */
+	private static final class MarkerRequest extends Job {
+
+		private final Display fDisplay;
+		private final IWorkbenchPage fPage;
+		private final IEditorPart fEditor;
+		private final IEditorInput fInput;
+		private final IFile fFile;
+		private final int fOffset;
+		private final int fLength;
+
+		MarkerRequest(IWorkbenchPage page, IEditorPart editor, IFile file, int offset, int length) {
+			super(SearchMessages.EditorOpener_selectMatch_jobName);
+			fDisplay = Display.getCurrent();
+			fPage = page;
+			fEditor = editor;
+			fInput = editor.getEditorInput();
+			fFile = file;
+			fOffset = offset;
+			fLength = length;
+			setSystem(true);
+			setRule(MARKER_RULE);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == MARKER_JOB_FAMILY;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			if (monitor.isCanceled()) {
+				clearIfLatest();
+				return Status.CANCEL_STATUS;
+			}
+			IMarker marker;
+			try {
+				marker = fFile.createMarker(NewSearchUI.SEARCH_MARKER, Map.of(IMarker.CHAR_START,
+						Integer.valueOf(fOffset), IMarker.CHAR_END, Integer.valueOf(fOffset + fLength)));
+			} catch (CoreException e) {
+				SearchPlugin.log(
+						new Status(IStatus.ERROR, SearchPlugin.getID(), SearchMessages.FileSearchPage_error_marker, e));
+				clearIfLatest();
+				return Status.OK_STATUS;
+			}
+			if (monitor.isCanceled() || fDisplay == null || fDisplay.isDisposed()) {
+				deleteMarkerNow(marker);
+				clearIfLatest();
+				return Status.CANCEL_STATUS;
+			}
+			try {
+				fDisplay.asyncExec(() -> {
+					boolean latest = clearIfLatest();
+					try {
+						if (latest && isEditorStillShowingInput()) {
+							IDE.gotoMarker(fEditor, marker);
+						}
+					} finally {
+						deleteMarker(marker);
+					}
+				});
+			} catch (RuntimeException e) {
+				// display disposed in the meantime
+				deleteMarkerNow(marker);
+				clearIfLatest();
+			}
+			return Status.OK_STATUS;
+		}
+
+		/**
+		 * Clears the latest request if it still is this one and tells whether it was.
+		 */
+		private boolean clearIfLatest() {
+			return fgMarkerRequest.compareAndSet(this, null);
+		}
+
+		private boolean isEditorStillShowingInput() {
+			return isOpen() && Objects.equals(fInput, fEditor.getEditorInput());
+		}
+
+		private boolean isOpen() {
+			for (IEditorReference reference : fPage.getEditorReferences()) {
+				if (reference.getEditor(false) == fEditor) {
+					return true;
 				}
 			}
+			return false;
 		}
+	}
+
+	private static void deleteMarkerNow(IMarker marker) {
+		try {
+			marker.delete();
+		} catch (CoreException e) {
+			// the resource is gone already
+		}
+	}
+
+	private static void deleteMarker(IMarker marker) {
+		Job deleteJob = new Job(SearchMessages.EditorOpener_deleteMarker_jobName) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				deleteMarkerNow(marker);
+				return Status.OK_STATUS;
+			}
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == MARKER_JOB_FAMILY;
+			}
+		};
+		deleteJob.setSystem(true);
+		deleteJob.setRule(MARKER_RULE);
+		deleteJob.schedule();
 	}
 
 }
