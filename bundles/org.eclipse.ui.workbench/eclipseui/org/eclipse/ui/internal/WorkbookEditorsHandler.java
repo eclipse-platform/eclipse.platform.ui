@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.DirtyIndicatorPainter;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.PinnedEditorsOrder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
@@ -117,7 +118,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				refs.add((EditorReference) ier);
 			}
 		}
-		return refs;
+		return PinnedEditorsOrder.pinnedFirst(refs, EditorReference::isPinned);
 	}
 
 	/**
@@ -483,12 +484,12 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	@Override
 	protected int getCurrentItemIndex() {
-		if (isMruEnabled()) {
+		if (isMruEnabled() && !PinnedEditorsOrder.isEnabled()) {
 			return 0;
 		}
 		// We need to find previously selected part and return the index of the
-		// part before this part in our list, which ordered not by use but by
-		// position
+		// part before this part in our list, which is not ordered purely by use
+		// (positional order, or pinned editors moved to the top)
 
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 		List<EditorReference> sortedByUse = page.getSortedEditorReferences();
