@@ -451,18 +451,17 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 		IAnnotationMap annotations= getAnnotationMap();
-		if (!annotations.containsKey(annotation)) {
-
-			addPosition(fDocument, position);
-			annotations.put(annotation, position);
+		synchronized (getLockObject()) {
+			if (annotations.containsKey(annotation)) {
+				return;
+			}
 			fPositions.put(position, annotation);
-			synchronized (getLockObject()) {
-				getAnnotationModelEvent().annotationAdded(annotation);
-			}
-
-			if (fireModelChanged) {
-				fireModelChanged();
-			}
+			annotations.put(annotation, position);
+			getAnnotationModelEvent().annotationAdded(annotation);
+		}
+		addPosition(fDocument, position);
+		if (fireModelChanged) {
+			fireModelChanged();
 		}
 	}
 
@@ -679,9 +678,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 			ArrayList<Annotation> deleted= new ArrayList<>();
 			IAnnotationMap annotations= getAnnotationMap();
-			Object mapLock = annotations.getLockObject();
 
-			synchronized (mapLock) {
+			synchronized (getLockObject()) {
 				annotations.forEach((a, p) -> {
 					if (p == null || p.isDeleted()) {
 						deleted.add(a);
@@ -693,10 +691,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				removeAnnotations(deleted, false, false);
 				synchronized (getLockObject()) {
 					if (fModelEvent != null) {
+						final AnnotationModelEvent event = fModelEvent;
+						fModelEvent = null;
 						new Thread() {
 							@Override
 							public void run() {
-								fireModelChanged();
+								fireModelChanged(event);
 							}
 						}.start();
 					}
@@ -760,7 +760,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		try {
 			Position[] positions= document.getPositions(IDocument.DEFAULT_CATEGORY, offset, length, canStartBefore, canEndAfter);
-			return new AnnotationsInterator(positions, fPositions);
+			IdentityHashMap<Position, Annotation> positionsMap;
+			synchronized (getLockObject()) {
+				positionsMap= new IdentityHashMap<>(fPositions);
+			}
+			return new AnnotationsInterator(positions, positionsMap);
 		} catch (BadPositionCategoryException e) {
 			// can happen if e.g. the document doesn't contain such a category, or when removed in a different thread
 			return Collections.<Annotation>emptyList().iterator();
@@ -784,11 +788,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			return iter;
 		}
 
-		List<Iterator<Annotation>> iterators= new ArrayList<>(fAttachments.size() + 1);
-		iterators.add(iter);
-		Iterator<Object> it= fAttachments.keySet().iterator();
-		while (it.hasNext()) {
-			iterators.add(fAttachments.get(it.next()).getAnnotationIterator());
+		List<Iterator<Annotation>> iterators;
+		synchronized (getLockObject()) {
+			iterators= new ArrayList<>(fAttachments.size() + 1);
+			iterators.add(iter);
+			Iterator<Object> it= fAttachments.keySet().iterator();
+			while (it.hasNext()) {
+				iterators.add(fAttachments.get(it.next()).getAnnotationIterator());
+			}
 		}
 
 		return new MetaIterator<>(iterators.iterator());
@@ -837,22 +844,21 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void removeAllAnnotations(boolean fireModelChanged) {
 		IAnnotationMap annotations= getAnnotationMap();
-		if (fDocument != null) {
+		List<Position> positionsToRemove = new ArrayList<>();
+		synchronized (getLockObject()) {
 			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
 				Annotation a= e.next();
 				Position p= annotations.get(a);
-				removePosition(fDocument, p);
-//				p.delete();
-				synchronized (getLockObject()) {
-					getAnnotationModelEvent().annotationRemoved(a, p);
-				}
+				positionsToRemove.add(p);
+				getAnnotationModelEvent().annotationRemoved(a, p);
 			}
+			annotations.clear();
+			fPositions.clear();
 		}
-
-		annotations.clear();
-		fPositions.clear();
-
+		for (Position position : positionsToRemove) {
+			removePosition(fDocument, position);
+		}
 		if (fireModelChanged) {
 			fireModelChanged();
 		}
@@ -872,24 +878,22 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 		IAnnotationMap annotations= getAnnotationMap();
-		if (annotations.containsKey(annotation)) {
-
-			Position p= null;
+		Position p;
+		synchronized (getLockObject()) {
 			p= annotations.get(annotation);
-			if (fDocument != null) {
-				removePosition(fDocument, p);
-//				p.delete();
+			if (p == null) {
+				return;
 			}
-
 			annotations.remove(annotation);
 			fPositions.remove(p);
-			synchronized (getLockObject()) {
-				getAnnotationModelEvent().annotationRemoved(annotation, p);
-			}
+			getAnnotationModelEvent().annotationRemoved(annotation, p);
+		}
+		if (fDocument != null) {
+			removePosition(fDocument, p);
+		}
 
-			if (fireModelChanged) {
-				fireModelChanged();
-			}
+		if (fireModelChanged) {
+			fireModelChanged();
 		}
 	}
 
@@ -982,13 +986,20 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	@Override
 	public void addAnnotationModel(Object key, IAnnotationModel attachment) {
 		Assert.isNotNull(attachment);
-		if (!fAttachments.containsValue(attachment)) {
-			fAttachments.put(key, attachment);
-			for (int i= 0; i < fOpenConnections; i++) {
-				attachment.connect(fDocument);
+		Assert.isNotNull(key);
+		synchronized (getLockObject()) {
+			if (fAttachments.containsValue(attachment)) {
+				return;
 			}
-			attachment.addAnnotationModelListener(fModelListener);
+			fAttachments.put(key, attachment);
 		}
+		IDocument document= fDocument;
+		if (document != null) {
+			for (int i= 0; i < fOpenConnections; i++) {
+				attachment.connect(document);
+			}
+		}
+		attachment.addAnnotationModelListener(fModelListener);
 	}
 
 	/*
@@ -1006,13 +1017,21 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	@Override
 	public IAnnotationModel removeAnnotationModel(Object key) {
-		IAnnotationModel ret= fAttachments.remove(key);
-		if (ret != null) {
-			for (int i= 0; i < fOpenConnections; i++) {
-				ret.disconnect(fDocument);
+		Assert.isNotNull(key);
+		IAnnotationModel ret;
+		synchronized (getLockObject()) {
+			ret= fAttachments.remove(key);
+			if (ret == null) {
+				return null;
 			}
-			ret.removeAnnotationModelListener(fModelListener);
 		}
+		IDocument document= fDocument;
+		if (document != null) {
+			for (int i= 0; i < fOpenConnections; i++) {
+				ret.disconnect(document);
+			}
+		}
+		ret.removeAnnotationModelListener(fModelListener);
 		return ret;
 	}
 
