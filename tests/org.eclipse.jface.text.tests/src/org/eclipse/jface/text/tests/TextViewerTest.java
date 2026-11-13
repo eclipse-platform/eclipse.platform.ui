@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2025 Google, Inc and others.
+ * Copyright (c) 2014, 2026 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -433,6 +433,42 @@ public class TextViewerTest {
 		TextViewer textViewer= new TextViewer(fShell, SWT.NONE);
 		textViewer.setSelection(TextSelection.emptySelection());
 		// assert no exception is thrown
+	}
+
+	@Test
+	public void testSetRedrawKeepsHorizontalScrollPosition() {
+		TextViewer textViewer= createViewerScrolledToEndOfLongLine();
+		StyledText textWidget= textViewer.getTextWidget();
+		int horizontalPixel= textWidget.getHorizontalPixel();
+		assertTrue(horizontalPixel > 0, "viewer must be scrolled horizontally");
+		textViewer.setRedraw(false);
+		textViewer.setRedraw(true);
+		assertEquals(horizontalPixel, textWidget.getHorizontalPixel());
+	}
+
+	@Test
+	public void testSetRedrawRevealsSelectionSetWhileRedrawDisabled() {
+		TextViewer textViewer= createViewerScrolledToEndOfLongLine();
+		StyledText textWidget= textViewer.getTextWidget();
+		assertTrue(textWidget.getHorizontalPixel() > 0, "viewer must be scrolled horizontally");
+		textViewer.setRedraw(false);
+		textViewer.setSelectedRange(textViewer.getDocument().get().indexOf('x'), 0);
+		textViewer.setRedraw(true);
+		assertEquals(0, textWidget.getHorizontalPixel());
+	}
+
+	private TextViewer createViewerScrolledToEndOfLongLine() {
+		fShell.setLayout(new FillLayout());
+		fShell.setSize(200, 200);
+		TextViewer textViewer= new TextViewer(fShell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		String longLine= "x".repeat(500);
+		String content= "short\n" + longLine + "\nshort";
+		textViewer.setDocument(new Document(content));
+		fShell.open();
+		int endOfLongLine= content.indexOf(longLine) + longLine.length();
+		textViewer.setSelectedRange(endOfLongLine, 0);
+		textViewer.revealRange(endOfLongLine, 0);
+		return textViewer;
 	}
 
 	@Test
