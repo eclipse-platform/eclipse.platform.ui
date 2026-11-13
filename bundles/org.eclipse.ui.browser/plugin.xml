@@ -54,6 +54,16 @@
 
    <extension point="org.eclipse.ui.editors">
       <editor
+            class="org.eclipse.ui.internal.browser.ImageViewerEditor"
+            default="true"
+            icon="$nl$/icons/obj16/internal_browser.svg"
+            id="org.eclipse.ui.browser.imageViewer"
+            name="%editorImageViewerTitle">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.ui.content-type.images">
+         </contentTypeBinding>
+      </editor>
+      <editor
             class="org.eclipse.ui.internal.browser.WebBrowserEditor"
             contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
             icon="$nl$/icons/obj16/internal_browser.svg"
@@ -259,7 +269,7 @@
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-            file-extensions="png,jpg,jpeg,gif,bmp,ico,svg"
+            file-extensions="png,jpg,jpe,jpeg,gif,bmp,ico,svg,tif,tiff"
             id="org.eclipse.ui.content-type.images"
             name="%contentType_images"
             priority="normal">
