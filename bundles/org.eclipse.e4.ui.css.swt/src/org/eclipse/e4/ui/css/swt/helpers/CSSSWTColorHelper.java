@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Control;
@@ -47,6 +48,14 @@ import org.eclipse.e4.ui.css.core.impl.dom.CssValues.CssUnit;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTColorHelper {
+
+	private static final String APPLIED_BACKGROUND = "org.eclipse.e4.ui.css.swt.appliedBackground"; //$NON-NLS-1$
+
+	private static final String APPLIED_FOREGROUND = "org.eclipse.e4.ui.css.swt.appliedForeground"; //$NON-NLS-1$
+
+	/** Recorded when a control that had its own color is reset. */
+	private static final Object NOT_OWNED = new Object();
+
 	public static final String COLOR_DEFINITION_MARKER = "#";
 
 	private static final Pattern HEX_COLOR_VALUE_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
@@ -337,20 +346,51 @@ public class CSSSWTColorHelper {
 		return null;
 	}
 
-	/** Helper function to avoid setting colors unnecessarily */
+	/**
+	 * Sets the color unless the control already has it. A control reset after
+	 * having a CSS color gets it even when it equals the default one.
+	 */
 	public static void setForeground(Control control, Color newColor) {
-		if (!Objects.equals(control.getForeground(), newColor)) {
+		Object applied = control.getData(APPLIED_FOREGROUND);
+		if (newColor == null) {
+			control.setForeground(null);
+			if (applied != null) {
+				control.setData(APPLIED_FOREGROUND, NOT_OWNED);
+			}
+		} else if (needsColor(applied, control.getForeground(), newColor)) {
 			control.setForeground(newColor);
+			control.setData(APPLIED_FOREGROUND, newColor);
 		}
 	}
 
-	/** Helper function to avoid setting colors unnecessarily */
+	/**
+	 * Sets the color unless the control already has it. A control that loses its
+	 * own color on reset gets the next one even when it equals the inherited one.
+	 */
 	public static void setBackground(Control control, Color newColor) {
-		if (!Objects.equals(control.getBackground(), newColor)) {
+		Object applied = control.getData(APPLIED_BACKGROUND);
+		if (newColor == null) {
+			Color color = control.getBackground();
+			Image image = control.getBackgroundImage();
+			control.setBackground(null);
+			// the color may predate CSS, e.g. from FormToolkit.adapt, and SWT cannot tell
+			if (applied != null || !Objects.equals(color, control.getBackground())
+					|| image != control.getBackgroundImage()) {
+				control.setData(APPLIED_BACKGROUND, NOT_OWNED);
+			}
+		} else if (needsColor(applied, control.getBackground(), newColor)) {
 			control.setBackground(newColor);
+			control.setData(APPLIED_BACKGROUND, newColor);
 		}
 	}
 
+	/**
+	 * The current color may be inherited. A control that never had its own color
+	 * keeps inheriting it, since its parent may paint an image behind it.
+	 */
+	private static boolean needsColor(Object applied, Color current, Color newColor) {
+		return (applied != null && !applied.equals(newColor)) || !newColor.equals(current);
+	}
 
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setSelectionForeground(CTabFolder folder, Color newColor) {

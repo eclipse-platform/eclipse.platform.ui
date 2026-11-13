@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTCursorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
@@ -160,8 +161,8 @@ public class ControlElement extends WidgetElement {
 			control.setForeground(control.getDisplay().getSystemColor(
 					SWT.COLOR_LINK_FOREGROUND));
 		} else {
-			control.setBackground(null);
-			control.setForeground(null);
+			CSSSWTColorHelper.setBackground(control, null);
+			CSSSWTColorHelper.setForeground(control, null);
 		}
 		super.reset();
 	}
