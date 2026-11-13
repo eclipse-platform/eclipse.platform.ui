@@ -142,11 +142,34 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	 */
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		String title= getLabel() != null ? getLabel() : "no command"; //$NON-NLS-1$
+		String title= getLabelOrPlaceholder();
+
+		if (title == null) {
+			title= "no command"; //$NON-NLS-1$
+		}
+
 		gc.drawString(title, x, y, true);
 		Point result= gc.stringExtent(title);
 		result.y= textWidget.getLineHeight() + textWidget.getLineSpacing();
 		return result;
+	}
+
+	/**
+	 * Returns the label, unless the label is {@code null} and {@code this} is an unresolved
+	 * {@link IPlaceholderCodeMining}, then the {@link IPlaceholderCodeMining#getPlaceholderLabel()
+	 * placeholder} is returned.
+	 *
+	 * @since 3.32
+	 * @return The label, or the placeholder if {@code null} and not resolved
+	 */
+	protected final String getLabelOrPlaceholder() {
+		String title= getLabel();
+
+		if (title == null && this instanceof IPlaceholderCodeMining placeHolderMining && !isResolved()) {
+			return placeHolderMining.getPlaceholderLabel();
+		}
+
+		return title;
 	}
 
 	@Override
