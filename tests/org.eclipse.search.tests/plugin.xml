@@ -9,5 +9,22 @@
             label="Test Search Engine">
       </textSearchEngine>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.search.tests.GotoMarkerOnlyEditor"
+            default="true"
+            extensions="gotomarker"
+            id="org.eclipse.search.tests.GotoMarkerOnlyEditor"
+            name="Goto Marker Only Test Editor">
+      </editor>
+      <editor
+            class="org.eclipse.search.tests.TextEditorWrapper"
+            default="true"
+            extensions="wrappedtext"
+            id="org.eclipse.search.tests.TextEditorWrapper"
+            name="Text Editor Wrapper Test Editor">
+      </editor>
+   </extension>
 
 </plugin>
