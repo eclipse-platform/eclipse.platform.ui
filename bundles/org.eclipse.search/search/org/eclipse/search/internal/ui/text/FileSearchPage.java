@@ -77,6 +77,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchFilter;
 
 import org.eclipse.search2.internal.ui.OpenSearchPreferencesAction;
 
@@ -232,7 +233,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	@Override
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
-		IFile file = mostNestedEquivalent((IFile) match.getElement());
+		IFile file = getOpenTargetFile((IFile) match.getElement());
 		IWorkbenchPage page= getSite().getPage();
 		if (offset >= 0 && length != 0) {
 			openAndSelect(page, file, offset, length, activate);
@@ -248,7 +249,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
 					try {
-						open(getSite().getPage(), mostNestedEquivalent((IFile) firstElement), false);
+						open(getSite().getPage(), getOpenTargetFile((IFile) firstElement), false);
 					} catch (PartInitException e) {
 						ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus());
 					}
@@ -267,6 +268,30 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				autoExpand(treeViewer, firstElement);
 			}
 		}
+	}
+
+	private IFile getOpenTargetFile(IFile file) {
+		// Preserve the exact file the user selected unless the innermost-project
+		// filter is active; otherwise opening can jump to a sibling linked file
+		// which is inconsistent with the visible result entry.
+		if (!isInnermostProjectFilterActive()) {
+			return file;
+		}
+		return mostNestedEquivalent(file);
+	}
+
+	private boolean isInnermostProjectFilterActive() {
+		if (!(getInput() instanceof FileSearchResult fileSearchResult)) {
+			return false;
+		}
+		for (MatchFilter filter : fileSearchResult.getActiveMatchFilters()) {
+			// Accept both identity checks so persisted/recreated filters still
+			// trigger the same open-target behavior.
+			if (filter instanceof OuterProjectFileFilter) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private IFile mostNestedEquivalent(IFile resource) {
