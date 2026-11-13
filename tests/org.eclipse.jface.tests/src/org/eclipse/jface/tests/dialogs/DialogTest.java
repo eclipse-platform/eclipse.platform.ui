@@ -13,19 +13,29 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class DialogTest {
+
+	/** Width the growing test content adds per size computation. */
+	private static final int GROWTH = 50;
 
 	/**
 	 * The dialog being tested.
@@ -75,6 +85,106 @@ public class DialogTest {
 		}
 
 		forceLayoutDialog.close();
+	}
+
+	/**
+	 * A default-sized, non-resizable dialog adapts its size after a zoom change.
+	 * The adaptation calls <code>Shell.setSize</code>, which sends the next
+	 * <code>SWT.Resize</code> to the same listener. The listener must not recurse
+	 * when the computed size keeps changing, must still adapt on a later resize,
+	 * and must not resize when the computed size is unchanged.
+	 */
+	@Test
+	public void testZoomChangeAdaptationOfDefaultSizedDialogTerminates() {
+		GrowingContentDialog growingDialog = new GrowingContentDialog();
+		dialog = growingDialog;
+		growingDialog.setBlockOnOpen(false);
+		growingDialog.create();
+		Shell shell = growingDialog.getShell();
+		Control firstChild = shell.getChildren()[0];
+		Point initialSize = shell.getSize();
+		// the adaptation is hooked only for a dialog that reports its default size
+		// after creation; where the platform reports another size for a shell that
+		// is not open yet, there is nothing to test
+		assumeFalse(growingDialog.resizeOccurredBeforeInitializeBounds(),
+				"a resize before initializeBounds marks the dialog as custom-sized");
+		assumeTrue(initialSize.equals(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true)),
+				"the dialog must report its default size for the adaptation to be hooked");
+
+		// every computed size differs from the previous one, so a listener without
+		// re-entrancy guard recurses until the stack is exhausted
+		int widthBeforeZoomChange = growingDialog.content.preferredWidth;
+		growingDialog.content.growOnEveryComputeSize = true;
+		firstChild.notifyListeners(SWT.ZoomChanged, new Event());
+		shell.notifyListeners(SWT.Resize, new Event());
+		assertTrue(growingDialog.content.preferredWidth > widthBeforeZoomChange,
+				"the adaptation computes the size after the zoom change");
+		Point adaptedSize = shell.getSize();
+		assertNotEquals(initialSize, adaptedSize, "the dialog adapts its size once after the zoom change");
+
+		// a later independent resize adapts to the new preferred size
+		growingDialog.content.growOnEveryComputeSize = false;
+		growingDialog.content.preferredWidth += GROWTH;
+		shell.notifyListeners(SWT.Resize, new Event());
+		Point resizedSize = shell.getSize();
+		assertNotEquals(adaptedSize, resizedSize, "a later resize adapts the dialog to its new preferred size");
+
+		// an unchanged computed size causes no further resize
+		int[] resizeEvents = { 0 };
+		shell.addListener(SWT.Resize, _ -> resizeEvents[0]++);
+		shell.notifyListeners(SWT.Resize, new Event());
+		assertEquals(resizedSize, shell.getSize(), "an unchanged computed size keeps the size");
+		assertEquals(1, resizeEvents[0], "an unchanged computed size sends no further resize");
+	}
+
+	/**
+	 * A dialog whose content reports a preferred width that can grow with every
+	 * computation, so that the computed shell size is never a fixed point while
+	 * growing is on.
+	 */
+	private class GrowingContentDialog extends Dialog {
+
+		GrowingContent content;
+
+		GrowingContentDialog() {
+			super((Shell) null);
+		}
+
+		boolean resizeOccurredBeforeInitializeBounds() {
+			return resizeHasOccurred;
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite area = (Composite) super.createDialogArea(parent);
+			content = new GrowingContent(area);
+			content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			return area;
+		}
+	}
+
+	/**
+	 * The content has to be wider and higher than the rest of the dialog, so that
+	 * its preferred size determines the computed shell size on every platform. A
+	 * narrow content would leave the button bar as the widest part, and growing it
+	 * would not change the size of the shell.
+	 */
+	private static class GrowingContent extends Composite {
+
+		int preferredWidth = 600;
+		boolean growOnEveryComputeSize;
+
+		GrowingContent(Composite parent) {
+			super(parent, SWT.NONE);
+		}
+
+		@Override
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			if (growOnEveryComputeSize) {
+				preferredWidth += GROWTH;
+			}
+			return new Point(preferredWidth, 400);
+		}
 	}
 
 	/**

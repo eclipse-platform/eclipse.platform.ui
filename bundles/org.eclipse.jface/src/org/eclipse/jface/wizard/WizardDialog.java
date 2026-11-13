@@ -342,6 +342,16 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		return super.getShellStyle();
 	}
 
+	/**
+	 * A wizard dialog is resizable unless a caller has stripped {@link SWT#RESIZE} from its shell
+	 * style, so the answer is read from that style instead of being inherited from
+	 * <code>Dialog</code>, which always answers <code>false</code>.
+	 */
+	@Override
+	protected boolean isResizable() {
+		return (getShellStyle() & SWT.RESIZE) != 0;
+	}
+
 	private static int getShellModality(boolean modal) {
 		return modal ? SWT.PRIMARY_MODAL : SWT.NONE;
 	}
