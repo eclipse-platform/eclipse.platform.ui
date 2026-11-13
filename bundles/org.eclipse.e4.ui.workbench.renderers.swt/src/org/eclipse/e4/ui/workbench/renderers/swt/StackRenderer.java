@@ -190,17 +190,6 @@ public class StackRenderer extends LazyStackRenderer {
 	private static int MIN_EDITOR_CHARS = 15;
 
 	/**
-	 * Top spacing for onboarding composite, needed so that tabfolder borders are
-	 * shown
-	 */
-	public static final int ONBOARDING_TOP_SPACING = 30;
-	/**
-	 * (Left, Right, Bottom) Spacing for onboarding composite, needed so that
-	 * tabfolder borders are shown
-	 */
-	public static final int ONBOARDING_SPACING = 2;
-
-	/**
 	 * The threshold to show the onbarding image. If tabfolder height gets below
 	 * this threshold, the image is hidden.
 	 */
@@ -883,7 +872,8 @@ public class StackRenderer extends LazyStackRenderer {
 		WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
 				.data(ID, ONBOARDING_TEXT).create(onboardingComposite);
 
-		onBoardingContainer.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
+		// CTabFolder sends a resize event whenever its client area changes, also when
+		// the tab height or the renderer's trim changes
 		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoardingContainer,
 				onboardingComposite, onboardingImage);
 		tabFolder.addControlListener(ControlListener.controlResizedAdapter(sizeUpdate));
@@ -912,13 +902,15 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!compositeVisible) {
 				onBoarding.setVisible(true);
 			}
-			Rectangle folderBounds = tabFolder.getBounds();
-			int width = folderBounds.width - 2 * ONBOARDING_SPACING;
-			int height = folderBounds.height - ONBOARDING_TOP_SPACING - ONBOARDING_SPACING;
-			if (!new Point(width, height).equals(onBoarding.getSize())) {
-				onBoarding.setSize(width, height);
+			// The client area leaves out the tabs and the frame the folder's renderer
+			// draws, so the onboarding area does not cover them
+			Rectangle clientArea = tabFolder.getClientArea();
+			Rectangle bounds = new Rectangle(clientArea.x, clientArea.y, Math.max(0, clientArea.width),
+					Math.max(0, clientArea.height));
+			if (!bounds.equals(onBoarding.getBounds())) {
+				onBoarding.setBounds(bounds);
 
-				boolean showImage = height > ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
+				boolean showImage = bounds.height > ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
 				if (imageVisible != showImage || showComposite != compositeVisible) {
 					onBoardingImage.setVisible(showImage);
 					((GridData) onBoardingImage.getLayoutData()).exclude = !showImage;
