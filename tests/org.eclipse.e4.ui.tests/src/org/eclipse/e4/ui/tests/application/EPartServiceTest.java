@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
@@ -45,6 +46,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.model.test.util.TestException;
 import org.eclipse.e4.ui.tests.workbench.TargetedView;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -53,6 +55,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.common.notify.Notifier;
 import org.junit.jupiter.api.Test;
+import org.osgi.service.event.EventHandler;
 
 public class EPartServiceTest extends UITest {
 
@@ -1226,6 +1229,114 @@ public class EPartServiceTest extends UITest {
 		windowA.getContext().get(EPartService.class).activate(partB);
 		assertEquals(windowA, application.getSelectedElement());
 		assertEquals(partB, windowA.getContext().get(EPartService.class).getActivePart());
+	}
+
+	@Test
+	public void testActivate_RedirectDuringSelectionDoesNotDeactivateUnannouncedPart() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partA = (MPart) partStack.getChildren().get(0);
+		MPart partB = (MPart) partStack.getChildren().get(1);
+		MPart partC = (MPart) partStack.getChildren().get(2);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partC);
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		// selecting partA redirects the activation to partB before partA is announced
+		IEventBroker broker = window.getContext().get(IEventBroker.class);
+		EventHandler handler = event -> {
+			if (event.getProperty(UIEvents.EventTags.NEW_VALUE) == partA) {
+				partService.activate(partB);
+			}
+		};
+		broker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, handler);
+		try {
+			partService.activate(partA);
+		} finally {
+			broker.unsubscribe(handler);
+		}
+
+		// listeners were never told that partA was activated, so they must not be
+		// told that it was deactivated either
+		assertEquals(List.of(partB), partListener.getActivatedParts());
+		assertEquals(List.of(partC), partListener.getDeactivatedParts());
+		assertEquals(partB, partService.getActivePart());
+	}
+
+	@Test
+	public void testActivate_DeactivationDuringSelectionSupersedesActivation() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partA = (MPart) partStack.getChildren().get(0);
+		MPart partC = (MPart) partStack.getChildren().get(2);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partC);
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		// selecting partA deactivates the context of the previously active part,
+		// which clears the active part through context injection (setPart(null))
+		IEventBroker broker = window.getContext().get(IEventBroker.class);
+		boolean[] armed = { true };
+		EventHandler handler = event -> {
+			if (armed[0] && event.getProperty(UIEvents.EventTags.NEW_VALUE) == partA) {
+				armed[0] = false;
+				partC.getContext().deactivate();
+			}
+		};
+		broker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, handler);
+		try {
+			partService.activate(partA);
+		} finally {
+			broker.unsubscribe(handler);
+		}
+
+		// the superseded outer activation must neither announce partA a second time
+		// nor leave the service and the context disagreeing about the active part
+		long partAActivations = partListener.getActivatedParts().stream().filter(p -> p == partA).count();
+		assertTrue(partAActivations <= 1, "partA activated " + partAActivations + " times");
+		assertEquals(window.getContext().get(IServiceConstants.ACTIVE_PART), partService.getActivePart());
+	}
+
+	@Test
+	public void testActivate_ListenerActivatesOtherPartDuringSelection() {
+		createApplication("partA", "partB", "partC");
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart partA = (MPart) partStack.getChildren().get(0);
+		MPart partB = (MPart) partStack.getChildren().get(1);
+		MPart partC = (MPart) partStack.getChildren().get(2);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partC);
+		PartListener partListener = new PartListener();
+		partService.addPartListener(partListener);
+
+		// selecting partA always activates partB: the nested activation wins without recursing
+		IEventBroker broker = window.getContext().get(IEventBroker.class);
+		EventHandler handler = event -> {
+			if (event.getProperty(UIEvents.EventTags.NEW_VALUE) == partA) {
+				partService.activate(partB);
+			}
+		};
+		broker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, handler);
+		try {
+			partService.activate(partA);
+		} finally {
+			broker.unsubscribe(handler);
+		}
+
+		assertEquals(List.of(partB), partListener.getActivatedParts());
+		assertEquals(partB, partService.getActivePart());
+		assertEquals(partB, window.getContext().get(IServiceConstants.ACTIVE_PART));
 	}
 
 	@Test

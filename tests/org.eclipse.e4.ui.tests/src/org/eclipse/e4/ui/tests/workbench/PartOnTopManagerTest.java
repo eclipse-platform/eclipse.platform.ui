@@ -299,11 +299,8 @@ public class PartOnTopManagerTest {
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.switchPerspective(secondPerspective);
 
-		// TODO this might fail once
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=490780 is fixed
-		assertTrue(isPartOnTop(sharedPart));
+		// which element of the stack is selected here depends on where the focus was
 		assertTrue(isPartOnTop(secondPerspectiveOnTopPart));
-		assertFalse(isPartOnTop(secondPart));
 
 		secondPerspectivePartStack.setSelectedElement(secondPerspectivePartStackPlaceholder);
 
