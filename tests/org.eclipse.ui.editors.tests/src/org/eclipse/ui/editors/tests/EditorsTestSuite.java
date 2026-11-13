@@ -18,6 +18,7 @@ package org.eclipse.ui.editors.tests;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
 
+import org.eclipse.jface.text.tests.codemining.AnnotationCodeMiningProviderTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 
 import org.eclipse.ui.internal.texteditor.stickyscroll.DefaultStickyLinesProviderTest;
@@ -56,6 +57,7 @@ import org.eclipse.ui.texteditor.stickyscroll.StickyLineTest;
 		StickyLineTest.class,
 		StickyLinesProviderRegistryTest.class,
 
+		AnnotationCodeMiningProviderTest.class,
 		CodeMiningTest.class,
 })
 public class EditorsTestSuite {
