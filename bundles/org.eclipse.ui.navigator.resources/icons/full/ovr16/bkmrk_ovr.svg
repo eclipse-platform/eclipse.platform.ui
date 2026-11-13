@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="8"
+   height="8"
+   viewBox="0 0 8 8"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg">
+  <path
+     style="fill:#71baff;fill-opacity:1;stroke:#1e6cbe;stroke-width:1;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 1.5,0.5 L 6.5,0.5 L 6.5,7.5 L 4,5.5 L 1.5,7.5 Z" />
+</svg>
