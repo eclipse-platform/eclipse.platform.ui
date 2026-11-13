@@ -142,6 +142,23 @@ public interface IProgressService extends IRunnableContext {
 			throws InvocationTargetException, InterruptedException;
 
 	/**
+	 * Same as {@link #busyCursorWhile(IRunnableWithProgress)}, but the Cancel
+	 * button of the progress dialog is disabled from the start if
+	 * <code>cancelable</code> is <code>false</code>. User input is blocked in the
+	 * same way in both cases, so prefer a cancelable operation or a
+	 * {@link Job} for operations that may take long.
+	 *
+	 * @param runnable   The runnable to execute and show the progress for.
+	 * @param cancelable <code>true</code> if the user may cancel the operation,
+	 *                   <code>false</code> if it can't be canceled
+	 * @throws InvocationTargetException if executed operation failed
+	 * @throws InterruptedException      if operation is interrupted
+	 * @since 0.6
+	 */
+	public void busyCursorWhile(IRunnableWithProgress runnable, boolean cancelable)
+			throws InvocationTargetException, InterruptedException;
+
+	/**
 	 * This specialization of IRunnableContext#run(boolean, boolean,
 	 * IRunnableWithProgress) might run the runnable asynchronously
 	 * if <code>fork</code> is <code>true</code>.
