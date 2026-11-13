@@ -19,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -29,9 +32,11 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.UserScope;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.internal.theme.Theme;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
@@ -42,6 +47,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.InOrder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -224,6 +230,33 @@ public class ThemeTest {
 	private static ITheme findTheme(List<ITheme> themes, String id) {
 		return themes.stream().filter(t -> id.equals(t.getId())).findFirst()
 				.orElseThrow(() -> new AssertionError("Theme not registered: " + id));
+	}
+
+	@Test
+	void testDarkPreferenceIsSetBeforeReset() {
+		String themeId = "order.test";
+		String darkKey = "themeIsDark." + themeId;
+		Display display = mock(Display.class);
+		CSSEngine cssEngine = mock(CSSEngine.class, RETURNS_DEEP_STUBS);
+		ThemeEngine themer = new ThemeEngine(display);
+		themer.addCSSEngine(cssEngine);
+		IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(ThemeEngine.THEME_PLUGIN_ID);
+		String previousId = defaults.get(THEMEID_KEY, null);
+		String previousDark = defaults.get(darkKey, null);
+
+		try {
+			themer.setTheme(new Theme(themeId, "Order", true), false);
+			themer.setTheme(new Theme(themeId, "Order", false), false);
+		} finally {
+			putOrRemove(defaults, THEMEID_KEY, previousId);
+			putOrRemove(defaults, darkKey, previousDark);
+		}
+
+		InOrder order = inOrder(display, cssEngine);
+		order.verify(display).setDarkThemePreferred(true);
+		order.verify(cssEngine).reset();
+		order.verify(display).setDarkThemePreferred(false);
+		order.verify(cssEngine).reset();
 	}
 
 	private IThemeEngine getThemeEngine(Display display) {
