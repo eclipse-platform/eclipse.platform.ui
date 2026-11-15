@@ -70,6 +70,7 @@ public class StickyScrollingControlTest {
 	private Color backgroundColor;
 	private Color separatorColor;
 	private Color lineBackgroundColor;
+	private Font font;
 	private StickyScrollingControl stickyScrollingControl;
 	private IVerticalRuler ruler;
 	private StickyScrollingControlSettings settings;
@@ -118,9 +119,9 @@ public class StickyScrollingControlTest {
 	void teardown() {
 		shell.dispose();
 		stickyScrollingControl.dispose();
-		lineNumberColor.dispose();
-		hoverColor.dispose();
-		backgroundColor.dispose();
+		if (font != null) {
+			font.dispose();
+		}
 		TestUtil.cleanUp();
 	}
 
@@ -356,7 +357,7 @@ public class StickyScrollingControlTest {
 
 	@Test
 	void testStyling() {
-		Font font = new Font(shell.getDisplay(), new FontData("Arial", 12, SWT.BOLD));
+		font = new Font(shell.getDisplay(), new FontData("Arial", 12, SWT.BOLD));
 		sourceViewer.getTextWidget().setLineSpacing(10);
 		sourceViewer.getTextWidget().setFont(font);
 		sourceViewer.getTextWidget().setForeground(hoverColor);
