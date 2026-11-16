@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -559,6 +560,34 @@ public class ToolBarManagerRendererTest {
 		// Item1 should be hidden again
 		assertFalse(toolItem1.isVisible(), "Item1 should be hidden after removing context variable");
 		assertTrue(toolItem2.isVisible(), "Item2 should still be visible");
+	}
+
+	@Test
+	public void testToolBarContributionWithVisibleWhen() {
+		MToolItem contributedItem = ems.createModelElement(MDirectToolItem.class);
+		contributedItem.setElementId("contributedItem");
+		MToolBarContribution contribution = ems.createModelElement(MToolBarContribution.class);
+		contribution.setParentId(toolBarId);
+		MImperativeExpression exp = ems.createModelElement(MImperativeExpression.class);
+		exp.setTracking(true);
+		exp.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRendererTest$TestVisibilityExpression");
+		contribution.setVisibleWhen(exp);
+		contribution.getChildren().add(contributedItem);
+		application.getToolBarContributions().add(contribution);
+
+		contextRule.createAndRunWorkbench(window);
+		assertEquals(1, getToolBarManager().getSize());
+		MToolBarElement merged = toolBar.getChildren().get(0);
+		assertEquals("contributedItem", merged.getElementId());
+		assertFalse(merged.isVisible());
+
+		window.getContext().set("showItem1", Boolean.TRUE);
+		contextRule.spinEventLoop();
+		assertTrue(merged.isVisible());
+
+		window.getContext().set("showItem1", Boolean.FALSE);
+		contextRule.spinEventLoop();
+		assertFalse(merged.isVisible());
 	}
 
 	/**
