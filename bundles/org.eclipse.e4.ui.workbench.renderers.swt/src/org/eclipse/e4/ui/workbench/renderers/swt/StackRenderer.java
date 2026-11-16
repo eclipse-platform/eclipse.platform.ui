@@ -614,6 +614,9 @@ public class StackRenderer extends LazyStackRenderer {
 		// Ensure that it's a View part's menu or toolbar
 		MUIElement uiElement = (MUIElement) objElement;
 		MUIElement parent = modelService.getContainer(uiElement);
+		while (parent instanceof MMenu && !(parent instanceof MPopupMenu)) {
+			parent = modelService.getContainer(parent);
+		}
 		if (!(parent instanceof MPart)) {
 			return;
 		}
