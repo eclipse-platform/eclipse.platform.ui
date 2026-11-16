@@ -111,6 +111,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	private final Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
 
+	/** Managers to update once the outermost processContributions call ends, null outside of it. */
+	private Collection<IContributionManager> deferredUpdates;
+
 	@Inject
 	private Logger logger;
 
@@ -475,13 +478,33 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (elementId == null) {
 			return;
 		}
+		if (deferredUpdates != null) {
+			doProcessContributions(menuModel, elementId, isMenuBar, isPopup);
+			return;
+		}
+		Collection<IContributionManager> managers = new LinkedHashSet<>();
+		deferredUpdates = managers;
+		try {
+			doProcessContributions(menuModel, elementId, isMenuBar, isPopup);
+		} finally {
+			deferredUpdates = null;
+			// menus created by these updates fill themselves when first shown
+			List<IContributionManager> existing = managers.stream()
+					.filter(m -> !(m instanceof MenuManager mm) || mm.getMenu() != null).toList();
+			for (IContributionManager mgr : existing) {
+				scheduleManagerUpdate(mgr);
+			}
+		}
+	}
+
+	private void doProcessContributions(MMenu menuModel, String elementId, boolean isMenuBar, boolean isPopup) {
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<>();
 		ContributionsAnalyzer.XXXgatherMenuContributions(menuModel, application.getMenuContributions(), elementId,
 				toContribute, isPopup);
 		generateContributions(menuModel, toContribute, isMenuBar);
 		for (MMenuElement element : menuModel.getChildren()) {
-			if (element instanceof MMenu) {
-				processContributions((MMenu) element, element.getElementId(), false, isPopup);
+			if (element instanceof MMenu && element.getElementId() != null) {
+				doProcessContributions((MMenu) element, element.getElementId(), false, isPopup);
 			}
 		}
 	}
@@ -1142,6 +1165,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	private void scheduleManagerUpdate(IContributionManager mgr) {
+		if (deferredUpdates != null) {
+			deferredUpdates.add(mgr);
+			return;
+		}
 		// Bug 467000: Avoid repeatedly updating menu managers
 		// This workaround is opt-in for 4.5
 		boolean workaroundEnabled = Boolean.getBoolean("eclipse.workaround.bug467000"); //$NON-NLS-1$

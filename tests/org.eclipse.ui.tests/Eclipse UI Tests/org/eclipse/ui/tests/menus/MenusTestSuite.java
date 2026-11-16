@@ -35,6 +35,7 @@ import org.junit.platform.suite.api.Suite;
 		Bug264804Test.class,
 		MenuHelperTest.class,
 		Bug410426Test.class,
+		PopupMenuDynamicFillTest.class,
 })
 public class MenusTestSuite {
 }
