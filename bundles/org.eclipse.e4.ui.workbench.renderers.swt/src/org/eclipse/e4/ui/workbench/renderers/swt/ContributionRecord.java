@@ -89,7 +89,16 @@ public class ContributionRecord {
 	}
 
 	public void updateVisibility(IEclipseContext context) {
-		ExpressionContext exprContext = new ExpressionContext(context);
+		updateVisibility(context, true);
+	}
+
+	/**
+	 * Updates the visibility of the contributed elements. Without plug-in
+	 * activation, an expression whose property tester is not loaded yet counts as
+	 * visible.
+	 */
+	void updateVisibility(IEclipseContext context, boolean allowPluginActivation) {
+		ExpressionContext exprContext = createExpressionContext(context, allowPluginActivation);
 		updateIsVisible(exprContext);
 		HashSet<ContributionRecord> recentlyUpdated = new HashSet<>();
 		recentlyUpdated.add(this);
@@ -117,6 +126,18 @@ public class ContributionRecord {
 				manager.markDirty();
 			}
 		}
+	}
+
+	static ExpressionContext createExpressionContext(IEclipseContext context, boolean allowPluginActivation) {
+		if (allowPluginActivation) {
+			return new ExpressionContext(context);
+		}
+		return new ExpressionContext(context) {
+			@Override
+			public boolean getAllowPluginActivation() {
+				return false;
+			}
+		};
 	}
 
 	public void collectInfo(ExpressionInfo info) {

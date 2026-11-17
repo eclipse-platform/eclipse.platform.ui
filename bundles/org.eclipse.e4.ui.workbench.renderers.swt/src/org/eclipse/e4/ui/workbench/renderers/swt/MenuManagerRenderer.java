@@ -531,7 +531,8 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			parentContext.runAndTrack(new RunAndTrack() {
 				@Override
 				public boolean changed(IEclipseContext context) {
-					record.updateVisibility(parentContext.getActiveLeaf());
+					// a closed view menu is evaluated with plug-in activation when it is shown
+					record.updateVisibility(parentContext.getActiveLeaf(), menuBar);
 					scheduleManagerUpdate(manager);
 					return true;
 				}

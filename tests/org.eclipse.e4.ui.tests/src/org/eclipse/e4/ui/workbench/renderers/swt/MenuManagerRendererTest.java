@@ -19,14 +19,27 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -139,6 +152,84 @@ public class MenuManagerRendererTest {
 
 		assertEquals(1, mm.getSize());
 		assertTrue(mm.getItems()[0].isVisible());
+	}
+
+	@Test
+	public void testSubmenusAreEvaluatedWithoutPluginActivation() {
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
+		fileMenu.setLabel("File");
+		menu.getChildren().add(fileMenu);
+		RecordingExpression fileItemExpression = new RecordingExpression();
+		fileMenu.getChildren().add(createItem("item", fileItemExpression));
+		MMenu subMenu = ems.createModelElement(MMenu.class);
+		subMenu.setLabel("Sub");
+		fileMenu.getChildren().add(subMenu);
+		RecordingExpression subItemExpression = new RecordingExpression();
+		subMenu.getChildren().add(createItem("subItem", subItemExpression));
+
+		contextRule.createAndRunWorkbench(window);
+		fileItemExpression.activations.clear();
+		subItemExpression.activations.clear();
+		MenuManagerRendererFilter.updateElementVisibility(fileMenu, getMenuManagerRenderer(),
+				getMenuManagerRenderer().getManager(fileMenu), window.getContext(), 1, false);
+
+		assertEquals(List.of(Boolean.TRUE), fileItemExpression.activations);
+		assertEquals(List.of(Boolean.FALSE), subItemExpression.activations);
+	}
+
+	@Test
+	public void testViewMenuIsEvaluatedWithPluginActivationOnlyWhenShown() {
+		MPartStack stack = ems.createModelElement(MPartStack.class);
+		window.getChildren().add(stack);
+		MPart part = ems.createModelElement(MPart.class);
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(part);
+		MMenu viewMenu = ems.createModelElement(MMenu.class);
+		viewMenu.setElementId("test.viewmenu");
+		viewMenu.getTags().add(StackRenderer.TAG_VIEW_MENU);
+		part.getMenus().add(viewMenu);
+		RecordingExpression expression = new RecordingExpression();
+		MMenuContribution contribution = ems.createModelElement(MMenuContribution.class);
+		contribution.setParentId("test.viewmenu");
+		contribution.getChildren().add(createItem("item", null));
+		contribution.setVisibleWhen(createCoreExpression(expression));
+		application.getMenuContributions().add(contribution);
+
+		contextRule.createAndRunWorkbench(window);
+		window.getContext().get(EPartService.class).activate(part);
+		contextRule.spinEventLoop();
+		assertFalse(expression.activations.isEmpty());
+		assertFalse(expression.activations.contains(Boolean.TRUE));
+
+		expression.activations.clear();
+		Menu swtMenu = getMenuManagerRenderer().getManager(viewMenu).getMenu();
+		swtMenu.notifyListeners(SWT.Show, new Event());
+		assertTrue(expression.activations.contains(Boolean.TRUE));
+	}
+
+	private static class RecordingExpression extends Expression {
+		final List<Boolean> activations = new ArrayList<>();
+
+		@Override
+		public EvaluationResult evaluate(IEvaluationContext context) {
+			activations.add(Boolean.valueOf(context.getAllowPluginActivation()));
+			return EvaluationResult.TRUE;
+		}
+	}
+
+	private MMenuItem createItem(String label, Expression visibleWhen) {
+		MMenuItem item = ems.createModelElement(MDirectMenuItem.class);
+		item.setLabel(label);
+		if (visibleWhen != null) {
+			item.setVisibleWhen(createCoreExpression(visibleWhen));
+		}
+		return item;
+	}
+
+	private MCoreExpression createCoreExpression(Expression expression) {
+		MCoreExpression coreExpression = ems.createModelElement(MCoreExpression.class);
+		coreExpression.setCoreExpression(expression);
+		return coreExpression;
 	}
 
 	private MenuManagerRenderer getMenuManagerRenderer() {
