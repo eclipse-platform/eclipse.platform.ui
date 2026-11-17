@@ -20,9 +20,8 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -31,7 +30,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.PerformanceTestCaseJunit5;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
@@ -41,39 +40,30 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class OpenClosePerspectiveTest extends PerformanceTestCaseJunit4 {
+class OpenClosePerspectiveTest extends PerformanceTestCaseJunit5 {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
-	private final String id;
-
-	@Parameters(name = "{index}: {0}")
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2 }, { UIPerformanceTestRule.PERSPECTIVE1 },
-				{ "org.eclipse.ui.resourcePerspective" }, { "org.eclipse.jdt.ui.JavaPerspective" },
-				{ "org.eclipse.debug.ui.DebugPerspective" } });
+	static Stream<Arguments> data() {
+		return Stream.of(Arguments.of(EmptyPerspective.PERSP_ID2), Arguments.of(UIPerformanceTestRule.PERSPECTIVE1),
+				Arguments.of("org.eclipse.ui.resourcePerspective"), Arguments.of("org.eclipse.jdt.ui.JavaPerspective"),
+				Arguments.of("org.eclipse.debug.ui.DebugPerspective"));
 	}
 
-	public OpenClosePerspectiveTest(String id) {
-		this.id = id;
-	}
-
-	@Test
-	public void test() throws Throwable {
+	@ParameterizedTest(name = "{index}: {0}")
+	@MethodSource("data")
+	void test(String id) throws Throwable {
 		// Get the two perspectives to switch between.
 		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry();
