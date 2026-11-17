@@ -81,9 +81,12 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.Util;
@@ -2560,6 +2563,32 @@ public class IWorkbenchPageTest {
 					.isPartVisible(view));
 		} finally {
 			APITestUtils.saveableHelperSetAutomatedResponse(-1);
+		}
+	}
+
+	/**
+	 * Tests that views outside of any perspective (e.g. the intro view) are still
+	 * returned by getViewReferences() after all perspectives are closed. See
+	 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/2978
+	 */
+	@Test
+	public void testGetViewReferencesWithoutPerspective() throws PartInitException {
+		Workbench workbench = Workbench.getInstance();
+		IntroDescriptor oldIntroDescriptor = workbench.getIntroDescriptor();
+		workbench.setIntroDescriptor(
+				(IntroDescriptor) WorkbenchPlugin.getDefault().getIntroRegistry().getIntro("org.eclipse.ui.testintro"));
+		try {
+			IViewPart intro = fActivePage.showView(IIntroConstants.INTRO_VIEW_ID);
+			assertTrue(fActivePage.isPartVisible(intro));
+			assertTrue(hasView(intro));
+
+			fActivePage.closeAllPerspectives(false, false);
+
+			assertEquals(0, fActivePage.getOpenPerspectives().length);
+			assertTrue(fActivePage.isPartVisible(intro));
+			assertTrue(hasView(intro));
+		} finally {
+			workbench.setIntroDescriptor(oldIntroDescriptor);
 		}
 	}
 
