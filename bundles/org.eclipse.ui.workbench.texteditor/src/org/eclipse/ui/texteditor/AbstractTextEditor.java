@@ -359,6 +359,9 @@ public abstract class AbstractTextEditor extends EditorPart
 	 */
 	private static final String BLOCK_SELECTION_MODE_FONT = "org.eclipse.ui.workbench.texteditor.blockSelectionModeFont"; //$NON-NLS-1$
 
+	private static final String COMPARED_WITH_SUFFIX_PREFIX = " [compared with "; //$NON-NLS-1$
+	private static final String COMPARED_WITH_SUFFIX_END = "]"; //$NON-NLS-1$
+
 	/**
 	 * The text input listener.
 	 *
@@ -4570,6 +4573,8 @@ public abstract class AbstractTextEditor extends EditorPart
 	@Override
 	public void dispose() {
 
+		clearComparedWithLabel();
+
 		if (fActivationListener != null) {
 			fActivationListener.dispose();
 			fActivationListener = null;
@@ -4725,6 +4730,50 @@ public abstract class AbstractTextEditor extends EditorPart
 		}
 
 		super.dispose();
+	}
+
+	@Override
+	public String getPartName() {
+		String baseName = super.getPartName();
+		IEditorInput input = getEditorInput();
+		if (input == null) {
+			return baseName;
+		}
+
+		String comparedWith = getComparedWithLabel(input);
+		if (comparedWith == null || comparedWith.isBlank()) {
+			return baseName;
+		}
+
+		String suffix = COMPARED_WITH_SUFFIX_PREFIX + comparedWith + COMPARED_WITH_SUFFIX_END;
+		if (baseName != null && baseName.endsWith(suffix)) {
+			return baseName;
+		}
+		return baseName == null ? suffix.trim() : baseName + suffix;
+	}
+
+	private void clearComparedWithLabel() {
+		IEditorInput input = getEditorInput();
+		if (input == null) {
+			return;
+		}
+		IComparedWithProvider provider = getComparedWithProvider(input);
+		if (provider == null) {
+			return;
+		}
+		provider.clearComparedWithLabel(input, this);
+	}
+
+	private String getComparedWithLabel(IEditorInput input) {
+		IComparedWithProvider provider = getComparedWithProvider(input);
+		if (provider == null) {
+			return null;
+		}
+		return provider.getComparedWithLabel(input, this);
+	}
+
+	private IComparedWithProvider getComparedWithProvider(IEditorInput input) {
+		return input.getAdapter(IComparedWithProvider.class);
 	}
 
 	/**
