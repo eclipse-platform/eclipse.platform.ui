@@ -74,7 +74,10 @@ import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.AbstractGroupMarker;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ExternalActionManager;
+import org.eclipse.jface.action.ExternalActionManager.IBindingManagerCallback;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -82,8 +85,14 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.SubContributionItem;
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.internal.MenuManagerEventHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
@@ -1142,6 +1151,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	private void scheduleManagerUpdate(IContributionManager mgr) {
+		if (isClosedDropDown(mgr)) {
+			// stays dirty, MenuManager updates it when the menu is shown
+			return;
+		}
 		// Bug 467000: Avoid repeatedly updating menu managers
 		// This workaround is opt-in for 4.5
 		boolean workaroundEnabled = Boolean.getBoolean("eclipse.workaround.bug467000"); //$NON-NLS-1$
@@ -1176,5 +1189,72 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				this.mgrToUpdate.add(mgr);
 			}
 		}
+	}
+
+	private static boolean isClosedDropDown(IContributionManager mgr) {
+		if (!(mgr instanceof MenuManager menuManager)) {
+			return false;
+		}
+		Menu menu = menuManager.getMenu();
+		return menu != null && !menu.isDisposed() && (menu.getStyle() & SWT.DROP_DOWN) != 0 && !menu.isVisible()
+				&& !hasNativeAccelerator(menu) && !hasNativeAccelerator(menuManager);
+	}
+
+	/**
+	 * Native accelerators only work while their menu item exists, so such menus
+	 * keep being updated while closed.
+	 */
+	private static boolean hasNativeAccelerator(Menu menu) {
+		for (MenuItem item : menu.getItems()) {
+			Menu subMenu = item.getMenu();
+			if (item.getAccelerator() != 0 || (subMenu != null && hasNativeAccelerator(subMenu))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasNativeAccelerator(IContributionManager manager) {
+		ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+		for (IContributionItem item : manager.getItems()) {
+			if (item instanceof SubContributionItem subItem) {
+				item = subItem.getInnerItem();
+			}
+			if (item instanceof IContributionManager subManager && hasNativeAccelerator(subManager)) {
+				return true;
+			}
+			if (item instanceof ActionContributionItem actionItem) {
+				IAction action = actionItem.getAction();
+				int accelerator = action.getAccelerator();
+				if ((accelerator != 0 && (callback == null || !callback.isAcceleratorInUse(accelerator)))
+						|| hasGtkReservedBinding(action, callback)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * ActionContributionItem puts Ctrl+Shift+[0-9A-FU] bindings on the menu item
+	 * on GTK, so that the input method does not take them.
+	 */
+	private static boolean hasGtkReservedBinding(IAction action, ExternalActionManager.ICallback callback) {
+		String commandId = action.getActionDefinitionId();
+		if (!Util.isGtk() || commandId == null || !(callback instanceof IBindingManagerCallback bindings)) {
+			return false;
+		}
+		IKeyLookup lookup = KeyLookupFactory.getDefault();
+		for (TriggerSequence sequence : bindings.getActiveBindingsFor(commandId)) {
+			Trigger[] triggers = sequence.getTriggers();
+			if (triggers.length == 1 && triggers[0] instanceof KeyStroke stroke
+					&& stroke.getModifierKeys() == (lookup.getCtrl() | lookup.getShift())) {
+				int key = stroke.getNaturalKey();
+				if ((key >= '0' && key <= '9') || (key >= 'A' && key <= 'F') || key == 'U') {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
