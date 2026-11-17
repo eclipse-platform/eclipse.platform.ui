@@ -111,8 +111,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	private final Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
 
-	/** Managers to update once the outermost processContributions call ends, null outside of it. */
+	/** Managers to update once the outermost coalescing section ends, null outside of one. */
 	private Collection<IContributionManager> deferredUpdates;
+
+	private int coalescingDepth;
 
 	@Inject
 	private Logger logger;
@@ -478,22 +480,48 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (elementId == null) {
 			return;
 		}
-		if (deferredUpdates != null) {
-			doProcessContributions(menuModel, elementId, isMenuBar, isPopup);
-			return;
-		}
-		Collection<IContributionManager> managers = new LinkedHashSet<>();
-		deferredUpdates = managers;
+		beginCoalescedUpdates();
 		try {
 			doProcessContributions(menuModel, elementId, isMenuBar, isPopup);
 		} finally {
-			deferredUpdates = null;
-			// menus created by these updates fill themselves when first shown
-			List<IContributionManager> existing = managers.stream()
-					.filter(m -> !(m instanceof MenuManager mm) || mm.getMenu() != null).toList();
-			for (IContributionManager mgr : existing) {
-				scheduleManagerUpdate(mgr);
-			}
+			endCoalescedUpdates();
+		}
+	}
+
+	/**
+	 * Starts collecting menu manager updates instead of running them, until the
+	 * matching {@link #endCoalescedUpdates()}.
+	 */
+	void beginCoalescedUpdates() {
+		if (coalescingDepth++ == 0) {
+			deferredUpdates = new LinkedHashSet<>();
+		}
+	}
+
+	/**
+	 * Ends a section started by {@link #beginCoalescedUpdates()}; the outermost
+	 * one updates each collected manager once.
+	 */
+	void endCoalescedUpdates() {
+		endCoalescedUpdates(null);
+	}
+
+	/**
+	 * Like {@link #endCoalescedUpdates()}, but leaves out a manager its caller
+	 * updates right afterwards.
+	 */
+	void endCoalescedUpdates(IContributionManager updatedByCaller) {
+		if (coalescingDepth == 0 || --coalescingDepth > 0) {
+			return;
+		}
+		Collection<IContributionManager> managers = deferredUpdates;
+		deferredUpdates = null;
+		managers.remove(updatedByCaller);
+		// menus created by these updates fill themselves when first shown
+		List<IContributionManager> existing = managers.stream()
+				.filter(m -> !(m instanceof MenuManager mm) || mm.getMenu() != null).toList();
+		for (IContributionManager mgr : existing) {
+			scheduleManagerUpdate(mgr);
 		}
 	}
 

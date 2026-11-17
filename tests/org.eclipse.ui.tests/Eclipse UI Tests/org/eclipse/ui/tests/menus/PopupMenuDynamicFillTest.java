@@ -17,6 +17,7 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -83,6 +84,7 @@ public class PopupMenuDynamicFillTest {
 			menu.notifyListeners(SWT.Show, new Event());
 			processEvents();
 			int fills = dynamic.fills - before;
+			assertEquals(contributions, staticItemCount(menu));
 			menu.notifyListeners(SWT.Hide, new Event());
 			processEvents();
 			page.hideView(view);
@@ -90,6 +92,10 @@ public class PopupMenuDynamicFillTest {
 		} finally {
 			factories.forEach(menuService::removeContributionFactory);
 		}
+	}
+
+	private static long staticItemCount(Menu menu) {
+		return Arrays.stream(menu.getItems()).filter(item -> item.getText().startsWith("static ")).count();
 	}
 
 	private static AbstractContributionFactory factory(IContributionItem item) {
