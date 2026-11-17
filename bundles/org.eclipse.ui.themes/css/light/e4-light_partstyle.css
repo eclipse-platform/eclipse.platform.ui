@@ -27,3 +27,9 @@
 .MPartStack, .MPart {
 	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
 }
+
+/* the FormToolkit color, which a theme switch would otherwise reset to the widget default */
+.Editor Form FormText,
+.Editor Form Sash {
+	background-color: '#COLOR_LIST_BACKGROUND';
+}
