@@ -20,7 +20,7 @@ import org.junit.platform.suite.api.Suite;
  * Tests forms widgets (automated).
  */
 @Suite
-@SelectClasses({ ExpandableCompositeTest.class, FormTextModelTest.class, ScrolledFormTest.class })
+@SelectClasses({ ExpandableCompositeTest.class, FormTextModelTest.class, ScrolledFormTest.class, SectionTest.class })
 public class AllWidgetsTests {
 
 }
