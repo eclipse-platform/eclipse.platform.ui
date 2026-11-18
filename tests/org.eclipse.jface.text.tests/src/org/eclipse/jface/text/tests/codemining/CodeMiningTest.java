@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2025 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -795,6 +795,54 @@ public class CodeMiningTest {
 				}
 			}
 		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 10_000), "Code mining is not visible at end of document");
+	}
+
+	@Test
+	public void testInvalidMiningDoesNotBlockOtherMinings() {
+		fViewer.getDocument().set("first\nsecond\n");
+		AtomicInteger disposed= new AtomicInteger();
+		ICodeMiningProvider mixedProvider= new AbstractCodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				try {
+					LineHeaderCodeMining invalid= new LineHeaderCodeMining(new Position(viewer.getDocument().getLength(), 1), this, null) {
+						@Override
+						public void dispose() {
+							super.dispose();
+							disposed.incrementAndGet();
+						}
+					};
+					invalid.setLabel("invalid");
+					LineHeaderCodeMining valid= new LineHeaderCodeMining(0, viewer.getDocument(), this) {};
+					valid.setLabel("valid from mixed provider");
+					return CompletableFuture.completedFuture(List.of(invalid, valid));
+				} catch (BadLocationException e) {
+					throw new AssertionError(e);
+				}
+			}
+		};
+		ICodeMiningProvider otherProvider= new AbstractCodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				try {
+					LineHeaderCodeMining valid= new LineHeaderCodeMining(1, viewer.getDocument(), this) {};
+					valid.setLabel("valid from other provider");
+					return CompletableFuture.completedFuture(List.of(valid));
+				} catch (BadLocationException e) {
+					throw new AssertionError(e);
+				}
+			}
+		};
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { mixedProvider, otherProvider });
+		fViewer.updateCodeMinings();
+		StyledText widget= fViewer.getTextWidget();
+		Assertions.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return widget.getLineVerticalIndent(0) > 0 && widget.getLineVerticalIndent(1) > 0;
+			}
+		}.waitForCondition(widget.getDisplay(), 10_000), "An invalid mining prevented valid minings from rendering");
+		Assertions.assertTrue(disposed.get() > 0, "Invalid mining was not disposed");
 	}
 
 	@Test
