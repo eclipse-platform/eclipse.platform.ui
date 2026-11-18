@@ -768,6 +768,16 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int HANDLER__COMMAND = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Enabled When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.4
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLER__ENABLED_WHEN = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Handler</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -775,7 +785,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLER_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 1;
+	public static final int HANDLER_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Handler</em>' class.
@@ -1802,6 +1812,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.commands.MHandler#getEnabledWhen <em>Enabled When</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Enabled When</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MHandler#getEnabledWhen()
+	 * @see #getHandler()
+	 * @since 1.4
+	 * @generated
+	 */
+	public EReference getHandler_EnabledWhen() {
+		return (EReference) handlerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MHandlerContainer <em>Handler Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2097,6 +2121,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 		handlerEClass = createEClass(HANDLER);
 		createEReference(handlerEClass, HANDLER__COMMAND);
+		createEReference(handlerEClass, HANDLER__ENABLED_WHEN);
 
 		handlerContainerEClass = createEClass(HANDLER_CONTAINER);
 		createEReference(handlerContainerEClass, HANDLER_CONTAINER__HANDLERS);
@@ -2244,6 +2269,9 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEReference(getHandler_Command(), this.getCommand(), null, "command", null, 1, 1, MHandler.class, //$NON-NLS-1$
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getHandler_EnabledWhen(), theUiPackageImpl.getExpression(), null, "enabledWhen", null, 0, 1, //$NON-NLS-1$
+				MHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(handlerContainerEClass, MHandlerContainer.class, "HandlerContainer", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
 				IS_GENERATED_INSTANCE_CLASS);
@@ -2565,6 +2593,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
+
+		/**
+		 * The meta object literal for the '<em><b>Enabled When</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.4
+		 * @generated
+		 */
+		public static final EReference HANDLER__ENABLED_WHEN = eINSTANCE.getHandler_EnabledWhen();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.MHandlerContainer <em>Handler Container</em>}' class.
