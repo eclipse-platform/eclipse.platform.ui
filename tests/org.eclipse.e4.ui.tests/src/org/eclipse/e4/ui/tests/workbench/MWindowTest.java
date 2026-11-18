@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2024 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import jakarta.inject.Inject;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -39,6 +41,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
+import org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -413,6 +417,143 @@ public class MWindowTest {
 		assertNotEquals(window, ems.getContainer(detachedWindow));
 		assertNotNull(topShell.getImage());
 		assertNull(detachedShell.getImage());
+	}
+
+	@Test
+	public void testDetachedWindowIsChildShellByDefault() {
+		final MWindow window = ems.createModelElement(MWindow.class);
+		window.setLabel("MyWindow");
+		final MWindow detachedWindow = ems.createModelElement(MWindow.class);
+		detachedWindow.setLabel("DetachedWindow");
+		window.getWindows().add(detachedWindow);
+
+		application.getChildren().add(window);
+		contextRule.createAndRunWorkbench(window);
+
+		Shell topShell = (Shell) window.getWidget();
+		Shell detachedShell = (Shell) detachedWindow.getWidget();
+		assertEquals(topShell, detachedShell.getParent(), "Detached shell should be a child of the window shell");
+	}
+
+	@Test
+	public void testDetachedWindowTopLevelPreference() {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		prefs.putBoolean(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL, true);
+		try {
+			final MWindow window = ems.createModelElement(MWindow.class);
+			window.setLabel("MyWindow");
+			final MWindow detachedWindow = ems.createModelElement(MWindow.class);
+			detachedWindow.setLabel("DetachedWindow");
+			window.getWindows().add(detachedWindow);
+
+			application.getChildren().add(window);
+			contextRule.createAndRunWorkbench(window);
+
+			Shell detachedShell = (Shell) detachedWindow.getWidget();
+			assertNotNull(detachedShell);
+			assertNull(detachedShell.getParent(), "Detached shell should be a top level shell");
+			assertEquals(window, ems.getContainer(detachedWindow));
+		} finally {
+			prefs.remove(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL);
+		}
+	}
+
+	@Test
+	public void testDetachedPartTopLevelPreference() {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		prefs.putBoolean(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL, true);
+		try {
+			final MWindow window = createWindowWithOneView();
+			application.getChildren().add(window);
+			contextRule.createAndRunWorkbench(window);
+
+			// Detach the part of a rendered window, as the Detach menu does
+			MPart part = getContributedPart(window);
+			ems.detach(part, 100, 100, 300, 200);
+
+			assertEquals(1, window.getWindows().size());
+			MWindow detachedWindow = window.getWindows().get(0);
+			Shell detachedShell = (Shell) detachedWindow.getWidget();
+			assertNotNull(detachedShell);
+			assertNull(detachedShell.getParent(), "Detached shell should be a top level shell");
+			assertTrue((detachedShell.getStyle() & SWT.MIN) != 0, "Top level detached shell should be minimizable");
+			assertEquals("Sample View", detachedShell.getText(), "Title should be the label of the detached part");
+
+			part.setLabel("Renamed View");
+			while (detachedShell.getDisplay().readAndDispatch()) {
+			}
+			assertEquals("Renamed View", detachedShell.getText(), "Title should follow the label of the part");
+		} finally {
+			prefs.remove(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL);
+		}
+	}
+
+	@Test
+	public void testDetachedWindowTitleFollowsSelectedPart() {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
+		prefs.putBoolean(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL, true);
+		try {
+			final MWindow window = createWindowWithOneView();
+			final MWindow detachedWindow = ems.createModelElement(MWindow.class);
+			MPartStack stack = ems.createModelElement(MPartStack.class);
+			detachedWindow.getChildren().add(stack);
+			MPart partA = createSampleView("Part A");
+			MPart partB = createSampleView("Part B");
+			stack.getChildren().add(partA);
+			stack.getChildren().add(partB);
+			stack.setSelectedElement(partA);
+			window.getWindows().add(detachedWindow);
+
+			application.getChildren().add(window);
+			contextRule.createAndRunWorkbench(window);
+
+			Shell detachedShell = (Shell) detachedWindow.getWidget();
+			assertNull(detachedShell.getParent(), "Detached shell should be a top level shell");
+			assertEquals("Part A", detachedShell.getText());
+
+			stack.setSelectedElement(partB);
+			while (detachedShell.getDisplay().readAndDispatch()) {
+			}
+			assertEquals("Part B", detachedShell.getText());
+
+			// A label of the window itself wins over the label of its parts
+			detachedWindow.setLabel("Window Label");
+			while (detachedShell.getDisplay().readAndDispatch()) {
+			}
+			partB.setLabel("Renamed Part B");
+			while (detachedShell.getDisplay().readAndDispatch()) {
+			}
+			assertEquals("Window Label", detachedShell.getText());
+
+			// The main window keeps its own title
+			assertEquals("MyWindow", ((Shell) window.getWidget()).getText());
+		} finally {
+			prefs.remove(WBWRenderer.DETACHED_WINDOWS_TOP_LEVEL);
+		}
+	}
+
+	@Test
+	public void testDetachedWindowTitleUnchangedByDefault() {
+		final MWindow window = createWindowWithOneView();
+		application.getChildren().add(window);
+		contextRule.createAndRunWorkbench(window);
+
+		MPart part = getContributedPart(window);
+		ems.detach(part, 100, 100, 300, 200);
+
+		Shell detachedShell = (Shell) window.getWindows().get(0).getWidget();
+		assertEquals(window.getWidget(), detachedShell.getParent());
+		assertEquals("", detachedShell.getText(), "A child detached shell keeps its empty title");
+	}
+
+	private MPart createSampleView(String label) {
+		MPart part = ems.createModelElement(MPart.class);
+		part.setLabel(label);
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		return part;
 	}
 
 	private MPart getContributedPart(MWindow window) {
