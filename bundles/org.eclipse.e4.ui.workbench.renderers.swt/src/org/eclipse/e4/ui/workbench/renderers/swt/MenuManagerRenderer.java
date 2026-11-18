@@ -111,6 +111,11 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	private final Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
 
+	/** Managers to update once the outermost coalescing section ends, null outside of one. */
+	private Collection<IContributionManager> deferredUpdates;
+
+	private int coalescingDepth;
+
 	@Inject
 	private Logger logger;
 
@@ -475,13 +480,59 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (elementId == null) {
 			return;
 		}
+		beginCoalescedUpdates();
+		try {
+			doProcessContributions(menuModel, elementId, isMenuBar, isPopup);
+		} finally {
+			endCoalescedUpdates();
+		}
+	}
+
+	/**
+	 * Starts collecting menu manager updates instead of running them, until the
+	 * matching {@link #endCoalescedUpdates()}.
+	 */
+	void beginCoalescedUpdates() {
+		if (coalescingDepth++ == 0) {
+			deferredUpdates = new LinkedHashSet<>();
+		}
+	}
+
+	/**
+	 * Ends a section started by {@link #beginCoalescedUpdates()}; the outermost
+	 * one updates each collected manager once.
+	 */
+	void endCoalescedUpdates() {
+		endCoalescedUpdates(null);
+	}
+
+	/**
+	 * Like {@link #endCoalescedUpdates()}, but leaves out a manager its caller
+	 * updates right afterwards.
+	 */
+	void endCoalescedUpdates(IContributionManager updatedByCaller) {
+		if (coalescingDepth == 0 || --coalescingDepth > 0) {
+			return;
+		}
+		Collection<IContributionManager> managers = deferredUpdates;
+		deferredUpdates = null;
+		managers.remove(updatedByCaller);
+		// menus created by these updates fill themselves when first shown
+		List<IContributionManager> existing = managers.stream()
+				.filter(m -> !(m instanceof MenuManager mm) || mm.getMenu() != null).toList();
+		for (IContributionManager mgr : existing) {
+			scheduleManagerUpdate(mgr);
+		}
+	}
+
+	private void doProcessContributions(MMenu menuModel, String elementId, boolean isMenuBar, boolean isPopup) {
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<>();
 		ContributionsAnalyzer.XXXgatherMenuContributions(menuModel, application.getMenuContributions(), elementId,
 				toContribute, isPopup);
 		generateContributions(menuModel, toContribute, isMenuBar);
 		for (MMenuElement element : menuModel.getChildren()) {
-			if (element instanceof MMenu) {
-				processContributions((MMenu) element, element.getElementId(), false, isPopup);
+			if (element instanceof MMenu && element.getElementId() != null) {
+				doProcessContributions((MMenu) element, element.getElementId(), false, isPopup);
 			}
 		}
 	}
@@ -1142,6 +1193,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	private void scheduleManagerUpdate(IContributionManager mgr) {
+		if (deferredUpdates != null) {
+			deferredUpdates.add(mgr);
+			return;
+		}
 		// Bug 467000: Avoid repeatedly updating menu managers
 		// This workaround is opt-in for 4.5
 		boolean workaroundEnabled = Boolean.getBoolean("eclipse.workaround.bug467000"); //$NON-NLS-1$
