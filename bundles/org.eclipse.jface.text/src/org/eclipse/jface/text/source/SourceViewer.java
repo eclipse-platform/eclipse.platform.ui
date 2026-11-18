@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -69,6 +70,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
@@ -107,7 +109,7 @@ import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
 public class SourceViewer extends TextViewer
-		implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
+		implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5, ISourceViewerExtension6 {
 
 	/**
 	 * Layout of a source viewer. Vertical ruler, text widget, and overview ruler are shown side by side.
@@ -411,6 +413,8 @@ public class SourceViewer extends TextViewer
 	 * @since 3.13
 	 */
 	private CodeMiningManager fCodeMiningManager;
+
+	private final List<Predicate<? super ICodeMining>> fCodeMiningFilters= new ArrayList<>();
 
 	private final List<ITextViewerLifecycle> lifecycles;
 
@@ -852,6 +856,7 @@ public class SourceViewer extends TextViewer
 	@Override
 	protected void handleDispose() {
 		unconfigure();
+		fCodeMiningFilters.clear();
 
 		disposeVisualAnnotationModel();
 
@@ -1380,7 +1385,7 @@ public class SourceViewer extends TextViewer
 				fInlinedAnnotationSupport.install(this, fAnnotationPainter);
 			}
 			if (fCodeMiningManager == null) {
-				fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders);
+				fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders, fCodeMiningFilters);
 			}
 			// now trigger an update
 			updateCodeMinings();
@@ -1390,6 +1395,43 @@ public class SourceViewer extends TextViewer
 	@Override
 	public boolean hasCodeMiningProviders() {
 		return fCodeMiningManager != null; // manager always has at least one provider
+	}
+
+	/**
+	 * @since 3.32
+	 */
+	@Override
+	public void addCodeMiningFilter(Predicate<? super ICodeMining> filter) {
+		checkCodeMiningFilterAccess();
+		Assert.isNotNull(filter);
+		if (fCodeMiningFilters.stream().noneMatch(registered -> registered == filter)) {
+			fCodeMiningFilters.add(filter);
+			if (fCodeMiningManager != null) {
+				fCodeMiningManager.setCodeMiningFilters(fCodeMiningFilters);
+			}
+		}
+	}
+
+	/**
+	 * @since 3.32
+	 */
+	@Override
+	public void removeCodeMiningFilter(Predicate<? super ICodeMining> filter) {
+		checkCodeMiningFilterAccess();
+		Assert.isNotNull(filter);
+		if (fCodeMiningFilters.removeIf(registered -> registered == filter) && fCodeMiningManager != null) {
+			fCodeMiningManager.setCodeMiningFilters(fCodeMiningFilters);
+		}
+	}
+
+	private void checkCodeMiningFilterAccess() {
+		StyledText textWidget= getTextWidget();
+		if (textWidget == null || textWidget.isDisposed()) {
+			SWT.error(SWT.ERROR_WIDGET_DISPOSED);
+		}
+		if (Display.getCurrent() != textWidget.getDisplay()) {
+			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
+		}
 	}
 
 	@Override

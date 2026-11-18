@@ -33,6 +33,12 @@ public interface ICodeMiningProvider {
 	 * possible and if computing the content of {@link ICodeMining} is expensive implementors should
 	 * only return code mining objects with the position and implement resolve
 	 * {@link ICodeMining#resolve(ITextViewer, IProgressMonitor)}.
+	 * <p>
+	 * Each invocation must return fresh mining instances. Ownership is transferred
+	 * to the viewer, which may dispose them without rendering, for example when a
+	 * request is canceled or a mining is rejected by a filter. Mining instances must
+	 * not be shared between requests or viewers.
+	 * </p>
 	 *
 	 * @param viewer the viewer in which the command was invoked.
 	 * @param monitor A progress monitor.

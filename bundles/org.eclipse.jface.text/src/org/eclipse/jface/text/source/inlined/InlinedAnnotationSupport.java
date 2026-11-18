@@ -566,6 +566,7 @@ public class InlinedAnnotationSupport {
 			if (fUninstalled) {
 				return;
 			}
+			fInlinedAnnotations= annotations;
 			if (annotationsToAdd.isEmpty() && annotationsToRemove.isEmpty()) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
@@ -578,14 +579,19 @@ public class InlinedAnnotationSupport {
 							annotationsToRemove.toArray(new Annotation[annotationsToRemove.size()]), annotationsToAdd);
 				} else {
 					for (AbstractInlinedAnnotation ann : annotationsToRemove) {
-						annotationModel.removeAnnotation(ann);
+						Set<AbstractInlinedAnnotation> latestAnnotations= fInlinedAnnotations;
+						if (latestAnnotations == null || !latestAnnotations.contains(ann)) {
+							annotationModel.removeAnnotation(ann);
+						}
 					}
 					for (Entry<AbstractInlinedAnnotation, Position> mapEntry : annotationsToAdd.entrySet()) {
+						if (fInlinedAnnotations != annotations) {
+							return;
+						}
 						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 					}
 				}
 			}
-			fInlinedAnnotations= annotations;
 		}
 	}
 
