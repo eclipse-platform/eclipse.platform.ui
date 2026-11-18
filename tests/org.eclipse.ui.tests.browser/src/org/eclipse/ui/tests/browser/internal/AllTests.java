@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,7 @@ import org.junit.platform.suite.api.Suite;
 		ExistenceTestCase.class, InternalBrowserViewTestCase.class, InternalBrowserEditorTestCase.class,
 		// ExternalBrowserTestCase.class);
 		DialogsTestCase.class, PreferencesTestCase.class, TestInput.class, ToolbarBrowserTestCase.class,
-		WebBrowserUtilTestCase.class
+		WebBrowserUtilTestCase.class, ImageZoomModelTest.class, ImageViewerEditorTest.class
 })
 public class AllTests {
 }

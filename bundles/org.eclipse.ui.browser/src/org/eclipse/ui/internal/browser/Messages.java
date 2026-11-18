@@ -42,6 +42,11 @@ public class Messages extends NLS {
 	public static String dialogResourceDeletedMessage;
 	public static String dialogResourceDeletedIgnore;
 	public static String errorInvalidEditorInput;
+	public static String errorInvalidImageInput;
+	public static String errorImageNotShown;
+	public static String imageViewerLoading;
+	public static String imageViewerFit;
+	public static String imageViewerActualSize;
 	public static String preferenceWebBrowserDescription;
 	public static String prefInternalBrowser;
 	public static String prefExternalBrowser;
