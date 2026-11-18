@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -70,5 +70,16 @@ public interface IStructuredSelection extends ISelection, Iterable {
 	@SuppressWarnings("unchecked")
 	default Stream<Object> stream() {
 		return StreamSupport.stream(spliterator(), false);
+	}
+
+	/**
+	 * Returns the elements in this selection that are instances of the given
+	 * type, in selection order, as an unmodifiable <code>List</code>.
+	 *
+	 * @return the selected elements of the given type
+	 * @since 3.41
+	 */
+	default <T> List<T> toList(Class<T> type) {
+		return stream().filter(type::isInstance).map(type::cast).toList();
 	}
 }
