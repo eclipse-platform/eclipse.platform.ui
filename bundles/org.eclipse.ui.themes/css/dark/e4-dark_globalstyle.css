@@ -314,3 +314,8 @@ TabbedPropertyList {
 	swt-tabBackground-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START';
 	color                       : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR'; /* text color in the tab / tab area */
 }
+
+/* Color SVG images use for currentColor, applied once at startup */
+Shell {
+	swt-svg-current-color: #CCCCCC;
+}
