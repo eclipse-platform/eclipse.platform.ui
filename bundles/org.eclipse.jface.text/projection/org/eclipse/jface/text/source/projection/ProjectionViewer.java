@@ -953,6 +953,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 
 			int topIndex= getTopIndex();
+			int horizontalPixel= textWidget != null && !textWidget.isDisposed() ? textWidget.getHorizontalPixel() : 0;
 			Point selection= getSelectedRange();
 			setVisibleDocument(visibleDocument);
 			Point currentSelection= getSelectedRange();
@@ -960,6 +961,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				setSelectedRange(selection.x, selection.y);
 			}
 			setTopIndex(topIndex);
+			// setting the visible document resets the widget, which scrolls it back to the start of the lines
+			if (horizontalPixel > 0 && textWidget != null && !textWidget.isDisposed()) {
+				textWidget.setHorizontalPixel(horizontalPixel);
+			}
 
 		} finally {
 			if (textWidget != null && !textWidget.isDisposed()) {

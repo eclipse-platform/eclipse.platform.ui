@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1725,6 +1725,11 @@ public class TextViewer extends Viewer implements
 	 * @since 3.3
 	 */
 	private ViewerState fViewerState;
+	/**
+	 * The horizontal scroll offset of the text widget in pixels when the redraw was disabled,
+	 * <code>-1</code> when in redraw state.
+	 */
+	private int fHorizontalPixel= -1;
 	/**
 	 * The editor's tab converter.
 	 * @since 3.3
@@ -5236,14 +5241,22 @@ public class TextViewer extends Viewer implements
 			}
 		}
 
+		boolean selectionRevealed= false;
 		if (fViewerState != null) {
-			fViewerState.restore(topIndex == -1);
+			boolean restoreViewport= topIndex == -1;
+			selectionRevealed= restoreViewport && fViewerState.fSelectionSet;
+			fViewerState.restore(restoreViewport);
 			fViewerState= null;
 		}
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
+			// resuming the forwarding of the document changes resets the widget, which scrolls it back to the start of the lines
+			if (fHorizontalPixel > 0 && !selectionRevealed) {
+				fTextWidget.setHorizontalPixel(fHorizontalPixel);
+			}
 			fTextWidget.setRedraw(true);
 		}
+		fHorizontalPixel= -1;
 
 		fireRedrawChanged();
 	}
@@ -5262,6 +5275,7 @@ public class TextViewer extends Viewer implements
 		}
 
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
+			fHorizontalPixel= fTextWidget.getHorizontalPixel();
 			fTextWidget.setRedraw(false);
 		}
 

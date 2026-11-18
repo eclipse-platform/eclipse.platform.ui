@@ -15,11 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.FillLayout;
@@ -37,6 +41,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.projection.ProjectionDocument;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -826,5 +831,69 @@ public class ProjectionViewerTest {
 		viewer.enableProjection();
 		viewer.setVisibleRegion(start, end - start);
 		assertEquals(documentContent.substring(start), viewer.getVisibleDocument().get());
+	}
+
+	@Test
+	void testReinitializeProjectionKeepsHorizontalScrollPosition() throws BadLocationException {
+		Shell shell= new Shell(Display.getCurrent());
+		try {
+			String longLine= "x".repeat(500);
+			String content= "folded\nhidden\n" + longLine + "\n";
+			ProjectionViewer viewer= createScrolledViewerWithCollapsedRegion(shell, content, content.indexOf(longLine), longLine);
+			StyledText textWidget= viewer.getTextWidget();
+			int horizontalPixel= textWidget.getHorizontalPixel();
+			assertTrue(horizontalPixel > 0, "viewer must be scrolled horizontally");
+			viewer.reinitializeProjection();
+			assertEquals(horizontalPixel, textWidget.getHorizontalPixel());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	void testChangingManyProjectionAnnotationsKeepsHorizontalScrollPosition() {
+		Shell shell= new Shell(Display.getCurrent());
+		try {
+			StringBuilder builder= new StringBuilder("folded\nhidden\n");
+			for (int i= 0; i < 20; i++) {
+				builder.append("block").append(i).append("\nbody\n");
+			}
+			String longLine= "x".repeat(500);
+			String content= builder.append(longLine).append('\n').toString();
+			ProjectionViewer viewer= createScrolledViewerWithCollapsedRegion(shell, content, content.indexOf("block0"), longLine);
+			StyledText textWidget= viewer.getTextWidget();
+			int horizontalPixel= textWidget.getHorizontalPixel();
+			assertTrue(horizontalPixel > 0, "viewer must be scrolled horizontally");
+			// enough annotation changes for the viewer to disable the redraw while applying them
+			Map<Annotation, Position> additions= new HashMap<>();
+			for (int i= 0; i < 20; i++) {
+				int start= content.indexOf("block" + i + "\n");
+				additions.put(new ProjectionAnnotation(), new Position(start, content.indexOf('\n', content.indexOf("body", start)) + 1 - start));
+			}
+			viewer.getProjectionAnnotationModel().modifyAnnotations(null, additions, null);
+			assertEquals(horizontalPixel, textWidget.getHorizontalPixel());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	/**
+	 * Creates a viewer whose content starts with a collapsed region and scrolls it to the end of
+	 * the given long line.
+	 */
+	private ProjectionViewer createScrolledViewerWithCollapsedRegion(Shell shell, String content, int collapsedRegionLength, String longLine) {
+		shell.setLayout(new FillLayout());
+		shell.setSize(200, 200);
+		ProjectionViewer viewer= new ProjectionViewer(shell, null, null, false, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setDocument(new Document(content), new AnnotationModel());
+		viewer.enableProjection();
+		ProjectionAnnotation annotation= new ProjectionAnnotation();
+		viewer.getProjectionAnnotationModel().addAnnotation(annotation, new Position(0, collapsedRegionLength));
+		viewer.getProjectionAnnotationModel().collapse(annotation);
+		shell.open();
+		int endOfLongLine= content.indexOf(longLine) + longLine.length();
+		viewer.setSelectedRange(endOfLongLine, 0);
+		viewer.revealRange(endOfLongLine, 0);
+		return viewer;
 	}
 }
