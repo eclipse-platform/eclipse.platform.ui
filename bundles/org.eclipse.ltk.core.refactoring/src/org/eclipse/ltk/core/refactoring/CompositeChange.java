@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,9 +16,12 @@ package org.eclipse.ltk.core.refactoring;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +29,9 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubMonitor;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -510,22 +516,51 @@ public class CompositeChange extends Change {
 	}
 
 	/**
-	 * @return Amount of changed files
+	 * Returns the number of distinct workspace files identified by this change tree.
+	 * Nested composite changes are traversed, and files affected by more than one
+	 * change are counted only once. For non-composite changes, files are obtained
+	 * from {@link Change#getAffectedObjects()}; when those objects are unknown,
+	 * {@link Change#getModifiedElement()} is used instead. Elements can be files or
+	 * adapt to {@link IFile} or {@link IResource}.
+	 * <p>
+	 * Elements that do not identify a file are not counted. This method does not
+	 * inspect workspace contents or expand folders. It counts all changes,
+	 * independently of their enablement state, without modifying the change tree.
+	 * </p>
+	 *
+	 * @return the number of distinct identified files
 	 * @since 3.13
 	 */
 	public int getFilenumber() {
-		if(fChanges.size()>0) {
-			if (fChanges.get(0) instanceof CompositeChange) {
-				CompositeChange obj= (CompositeChange) fChanges.get(0);
-				return obj.getAmount();
-			}
-			return 1;
-		}
-		return 0;
+		Set<IFile> files= new HashSet<>();
+		collectFiles(this, files);
+		return files.size();
 	}
 
-	private int getAmount() {
-		return fChanges.size();
+	private static void collectFiles(Change change, Set<IFile> files) {
+		if (change instanceof CompositeChange composite) {
+			for (Change child : composite.getChildren()) {
+				collectFiles(child, files);
+			}
+		} else {
+			Object[] affectedObjects= change.getAffectedObjects();
+			if (affectedObjects == null) {
+				addFile(change.getModifiedElement(), files);
+			} else {
+				for (Object affected : affectedObjects) {
+					addFile(affected, files);
+				}
+			}
+		}
+	}
+
+	private static void addFile(Object element, Set<IFile> files) {
+		IFile file= Adapters.adapt(element, IFile.class);
+		if (file != null) {
+			files.add(file);
+		} else if (Adapters.adapt(element, IResource.class) instanceof IFile resourceFile) {
+			files.add(resourceFile);
+		}
 	}
 
 }
