@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 Tom Schindl and others.
+ * Copyright (c) 2010, 2026 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,6 +56,7 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.theme.ThemeDefinition;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
@@ -128,76 +129,40 @@ public class ThemeEngine implements IThemeEngine {
 		}
 
 		File[] modifiedFiles = modDir.listFiles();
-		String currentOS = Platform.getOS();
-		boolean e4_dark_mac_found = false;
 
-		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
-				if (ce.getName().equals("theme")) {
-					try {
-						String id = ce.getAttribute("id");
-						String os = ce.getAttribute("os");
-						String version = ce.getAttribute("os_version");
+		for (ThemeDefinition definition : ThemeDefinition.readAll()) {
+			try {
+				String themeId = definition.id();
+				String originalCSSFile = definition.stylesheet();
+				String basestylesheeturi = originalCSSFile;
+				if (!basestylesheeturi.startsWith("platform:/plugin/")) {
+					basestylesheeturi = "platform:/plugin/" + definition.contributor() + "/" + basestylesheeturi;
+				}
+				registerTheme(themeId, definition.label(), basestylesheeturi, definition.osVersion(),
+						definition.dark());
 
-						/*
-						 * Code to support e4 dark theme on Mac 10.13 and older. For e4 dark theme on
-						 * Mac, register the theme with matching OS version if specified.
-						 */
-						if (E4_DARK_THEME_ID.equals(id) && Platform.OS_MACOSX.equals(currentOS) && os != null
-								&& os.equals(currentOS)) {
-							// If e4 dark theme on Mac was already registered, don't try to match or
-							// register again.
-							if (e4_dark_mac_found) {
-								continue;
-							}
-							if (version != null && !isOsVersionMatch(version)) {
-								continue;
-							} else {
-								e4_dark_mac_found = true;
-								version = "";
+				//check for modified files
+				if (modifiedFiles != null) {
+					int slash = originalCSSFile.lastIndexOf('/');
+					if (slash != -1) {
+						originalCSSFile = originalCSSFile.substring(slash + 1);
+						for (File modifiedFile : modifiedFiles) {
+							String modifiedFileName = modifiedFile.getName();
+							if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
+								ArrayList<String> styleSheets = new ArrayList<>();
+								styleSheets.add(modifiedFile.toURI().toString());
+								modifiedStylesheets.put(themeId, styleSheets);
 							}
 						}
-
-						if (version == null) {
-							version = "";
-						}
-
-						final String themeBaseId = id + version;
-						String themeId = themeBaseId;
-						String label = ce.getAttribute("label");
-						boolean dark = isDarkTheme(ce);
-						String originalCSSFile;
-						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
-						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
-							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
-									+ basestylesheeturi;
-						}
-						registerTheme(themeId, label, basestylesheeturi, version, dark);
-
-						//check for modified files
-						if (modifiedFiles != null) {
-							int slash = originalCSSFile.lastIndexOf('/');
-							if (slash != -1) {
-								originalCSSFile = originalCSSFile.substring(slash + 1);
-								for (File modifiedFile : modifiedFiles) {
-									String modifiedFileName = modifiedFile.getName();
-									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
-										ArrayList<String> styleSheets = new ArrayList<>();
-										styleSheets.add(modifiedFile.toURI().toString());
-										modifiedStylesheets.put(themeId, styleSheets);
-									}
-								}
-							}
-						}
-					} catch (IllegalArgumentException e1) {
-						ThemeEngineManager.logError(e1.getMessage(), e1);
 					}
 				}
+			} catch (IllegalArgumentException e1) {
+				ThemeEngineManager.logError(e1.getMessage(), e1);
 			}
 		}
 
 		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
+			for (IConfigurationElement ce : ThemeDefinition.getPlatformMatches(e.getConfigurationElements())) {
 				if (ce.getName().equals("stylesheet")) {
 					IConfigurationElement[] cces = ce.getChildren("themeid");
 					if (cces.length == 0) {
@@ -242,39 +207,6 @@ public class ThemeEngine implements IThemeEngine {
 		registerResourceLocator(new FileResourcesLocatorImpl());
 	}
 
-
-	/**
-	 * Themes declare their appearance with the {@code isDarkTheme} attribute. Themes
-	 * contributed before that attribute existed are classified by their id, which is
-	 * the convention the platform relied on so far.
-	 */
-	private static boolean isDarkTheme(IConfigurationElement themeElement) {
-		String dark = themeElement.getAttribute("isDarkTheme");
-		if (dark != null) {
-			return Boolean.parseBoolean(dark);
-		}
-		String id = themeElement.getAttribute("id");
-		return id != null && id.contains("dark"); //$NON-NLS-1$
-	}
-
-	private boolean isOsVersionMatch(String osVersionList) {
-		boolean found = false;
-		String osVersion = System.getProperty("os.version");
-		if (osVersion != null) {
-			if (osVersionList != null) {
-				String[] osVersions = osVersionList.split(","); //$NON-NLS-1$
-				for (String osVersionFromTheme : osVersions) {
-					if (osVersionFromTheme != null) {
-						if (osVersion.contains(osVersionFromTheme)) {
-							found = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return found;
-	}
 
 	@Override
 	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI)
@@ -401,31 +333,6 @@ public class ThemeEngine implements IThemeEngine {
 		return list;
 	}
 
-	/**
-	 * Get all elements that have os/ws attributes that best match the current
-	 * platform.
-	 *
-	 * @param elements the elements to check
-	 * @return the best matches, if any
-	 */
-	private IConfigurationElement[] getPlatformMatches(IConfigurationElement[] elements) {
-		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
-		String osname = bundle.getBundleContext().getProperty("osgi.os");
-		// TODO: Need to differentiate win32 versions
-		String wsname = bundle.getBundleContext().getProperty("osgi.ws");
-		ArrayList<IConfigurationElement> matchingElements = new ArrayList<>();
-		for (IConfigurationElement element : elements) {
-			String elementOs = element.getAttribute("os");
-			String elementWs = element.getAttribute("ws");
-			if (osname != null && (elementOs == null || elementOs.contains(osname))) {
-				matchingElements.add(element);
-			} else if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
-				matchingElements.add(element);
-			}
-		}
-		return matchingElements.toArray(new IConfigurationElement[matchingElements.size()]);
-	}
-
 	@Override
 	public void setTheme(String themeId, boolean restore) {
 		if (applyTheme(themeId, restore)) {
@@ -434,12 +341,12 @@ public class ThemeEngine implements IThemeEngine {
 		// In OS high-contrast mode keep the native OS colors instead of forcing a theme
 		if (display != null && display.getHighContrast()) {
 			ILog.of(ThemeEngine.class)
-					.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
+			.warn("Theme '" + themeId + "' not found; using OS high contrast colors."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		if (!E4_DEFAULT_THEME_ID.equals(themeId) && applyTheme(E4_DEFAULT_THEME_ID, restore)) {
 			ILog.of(ThemeEngine.class)
-					.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
+			.warn("Theme '" + themeId + "' not found; falling back to default theme."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		ILog.of(ThemeEngine.class).warn("Theme '" + themeId + "' not found."); //$NON-NLS-1$ //$NON-NLS-2$

@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.theme.ThemeDefinition;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -103,8 +104,23 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private static final String E4_THEME_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.theme"; //$NON-NLS-1$
 
+	/**
+	 * Key under which the theme engine remembers the selected theme, in the
+	 * preference node named like the extension point.
+	 */
+	private static final String THEMEID_KEY = "themeid"; //$NON-NLS-1$
+
 	/** The workbench theme engine; may be {@code null} if no engine */
 	private IThemeEngine engine;
+	/**
+	 * Whether there is no theme engine because theming was switched off in the
+	 * preferences, as opposed to the engine being missing for another reason, like
+	 * <code>-cssTheme none</code>. Only in the first case can ticking the checkbox
+	 * enable theming after a restart.
+	 */
+	private boolean themingOffByPreference;
+	private List<ITheme> availableThemes;
+	private final List<Control> themeDependentControls = new ArrayList<>();
 	private ComboViewer themeIdCombo;
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
@@ -135,27 +151,22 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		Composite comp = new Composite(parent, SWT.NONE);
 
 		highContrastMode = parent.getDisplay().getHighContrast();
-		// Deactivate theming in high contrast mode
+		themingOffByPreference = engine == null && !InstanceScope.INSTANCE
+				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT)
+				.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true);
+		// Deactivate theming in high contrast mode. Without an engine there is
+		// nothing to switch on either, unless theming was switched off by the user.
 		themingEnabled = createCheckButton(comp, WorkbenchMessages.ThemingEnabled, isThemingPossible());
-		themingEnabled.setEnabled(!highContrastMode);
-
-		// if started with "-cssTheme none" or if high contrast mode is active,
-		// CSS settings should be disabled but other appearance settings should be *not*
-		// disabled
-		if (!isThemingPossible()) {
-			GridLayout layout = new GridLayout(1, false);
-			layout.horizontalSpacing = 10;
-			comp.setLayout(layout);
-			createThemeIndependentComposits(comp);
-			createRescaleAtRuntimeCheckButton(comp);
-			return comp;
-		}
+		themingEnabled.setEnabled(!highContrastMode && (engine != null || themingOffByPreference));
 
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 10;
 		comp.setLayout(layout);
 
-		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
+		int firstThemeControl = comp.getChildren().length;
+		Label themeLabel = new Label(comp, SWT.NONE);
+		themeLabel.setText(WorkbenchMessages.ViewsPreferencePage_Theme);
+		themeLabel.setLayoutData(new GridData());
 
 		Composite themeComposite = new Composite(comp, SWT.NONE);
 		GridLayout themeLayout = new GridLayout(2, false);
@@ -167,11 +178,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		themeIdCombo = new ComboViewer(themeComposite, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
 		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
-		themeIdCombo.setInput(engine.getThemes());
+		// Without an engine (theming was disabled at startup) the themes still have
+		// to be offered, so that one can be chosen while enabling theming again
+		availableThemes = engine != null ? engine.getThemes() : readRegisteredThemes();
+		themeIdCombo.setInput(availableThemes);
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.currentTheme = engine.getActiveTheme();
-		if (this.currentTheme != null) {
-			themeIdCombo.setSelection(new StructuredSelection(currentTheme));
+		this.currentTheme = engine != null ? engine.getActiveTheme() : null;
+		ITheme initialTheme = currentTheme != null ? currentTheme : findInitialTheme();
+		if (initialTheme != null) {
+			themeIdCombo.setSelection(new StructuredSelection(initialTheme));
 		}
 		themeComboDecorator = new ControlDecoration(themeIdCombo.getCombo(), SWT.TOP | SWT.LEFT);
 
@@ -195,26 +210,90 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		currentColorsAndFontsTheme = getCurrentColorsAndFontsTheme();
 		createColorsAndFontsThemeCombo(comp);
+		collectControls(comp, firstThemeControl, themeDependentControls);
 
 		createThemeIndependentComposits(comp);
 
 		// Theme dependent controls for Tab icons and titles in view areas
+		int firstTabControl = comp.getChildren().length;
 		createShowFullTextForViewTabs(comp);
 		createHideIconsForViewTabs(comp);
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
+		collectControls(comp, firstTabControl, themeDependentControls);
 
 		createRescaleAtRuntimeCheckButton(comp);
 
-		if (currentTheme != null) {
-			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
+		if (initialTheme != null) {
+			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(initialTheme.getId());
 			if (colorsAndFontsThemeId != null && !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
 				colorsAndFontsThemeId = currentColorsAndFontsTheme.getId();
 			}
 			selectColorsAndFontsTheme(colorsAndFontsThemeId);
 		}
 
+		setThemeControlsVisible(themingEnabled.getSelection());
+		themingEnabled.addSelectionListener(widgetSelectedAdapter(e -> {
+			setThemeControlsVisible(themingEnabled.getSelection());
+			comp.requestLayout();
+		}));
+
 		Dialog.applyDialogFont(comp);
 		return comp;
+	}
+
+	/** Adds the children of {@code composite} created since {@code fromIndex}. */
+	private static void collectControls(Composite composite, int fromIndex, List<Control> target) {
+		Control[] children = composite.getChildren();
+		for (int i = fromIndex; i < children.length; i++) {
+			target.add(children[i]);
+		}
+	}
+
+	/**
+	 * Shows or hides the theme dependent controls. Hidden controls are also
+	 * excluded from the layout, so that they leave no gap.
+	 */
+	private void setThemeControlsVisible(boolean visible) {
+		for (Control control : themeDependentControls) {
+			((GridData) control.getLayoutData()).exclude = !visible;
+			control.setVisible(visible);
+		}
+	}
+
+	/**
+	 * Reads the themes for the case that there is no theme engine. These are the
+	 * ones the engine registers, so the offered ids are the ones it will know
+	 * after the next start. The engine refuses to register an id twice, so a
+	 * repeated id is dropped here as well.
+	 */
+	private static List<ITheme> readRegisteredThemes() {
+		List<ITheme> result = new ArrayList<>();
+		for (ThemeDefinition definition : ThemeDefinition.readAll()) {
+			if (result.stream().noneMatch(theme -> theme.getId().equals(definition.getId()))) {
+				result.add(definition);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Chooses the theme to preselect when there is no active theme: the one
+	 * remembered for the next start, the theme the workbench was configured to
+	 * start with (which already reflects the product default), or else the first
+	 * theme.
+	 */
+	private ITheme findInitialTheme() {
+		String preferredId = Platform.getPreferencesService().getString(E4_THEME_EXTENSION_POINT, THEMEID_KEY, null,
+				null);
+		if (preferredId == null) {
+			preferredId = defaultTheme;
+		}
+		for (ITheme theme : availableThemes) {
+			if (theme.getId().equals(preferredId)) {
+				return theme;
+			}
+		}
+		return availableThemes.isEmpty() ? null : availableThemes.get(0);
 	}
 
 	/**
@@ -360,7 +439,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		String currentDefaultLabel = null;
 		if (currentDefaultId != null) {
-			for (ITheme t : engine.getThemes()) {
+			for (ITheme t : availableThemes) {
 				if (t.getId().equals(currentDefaultId)) {
 					currentDefaultLabel = t.getLabel();
 					break;
@@ -448,10 +527,28 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	public boolean performOk() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
-		if (isThemingPossible()) {
+		// Theming is being switched on although the workbench runs without a theme
+		// engine, so the engine cannot apply the selection now
+		boolean enablingTheming = themingOffByPreference && themingEnabled.isEnabled()
+				&& themingEnabled.getSelection();
+		// Theming is being switched off, so no theme dependent change may stay
+		boolean disablingTheming = themingEnabled.isEnabled() && !themingEnabled.getSelection();
+		if (disablingTheming) {
+			setColorsAndFontsTheme(currentColorsAndFontsTheme);
+			selectColorsAndFontsTheme(currentColorsAndFontsTheme.getId());
+		}
+		boolean applyThemeSettings = (isThemingPossible() && !disablingTheming) || enablingTheming;
+		if (applyThemeSettings) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
-				engine.setTheme(getSelectedTheme(), true);
+				if (isThemingPossible()) {
+					engine.setTheme(theme, true);
+				} else {
+					storeThemeForNextStart(theme);
+				}
+			}
+			if (enablingTheming) {
+				setColorsAndFontsTheme(getSelectedColorsAndFontsTheme());
 			}
 			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
 			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
@@ -500,7 +597,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		String restartDialogMessage = null;
 		ITheme changedTheme = null;
 
-		if (isThemingPossible()) {
+		if (isThemingPossible() && !disablingTheming) {
 			ITheme theme = getSelectedTheme();
 			boolean themeChanged = theme != null && !theme.equals(currentTheme);
 			changedTheme = themeChanged ? theme : null;
@@ -515,19 +612,20 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 				currentTheme = theme;
 			}
 
-			ColorsAndFontsTheme colorsAndFontsTheme = getSelectedColorsAndFontsTheme();
-			if (colorsAndFontsTheme != null) {
-				currentColorsAndFontsTheme = colorsAndFontsTheme;
-			}
-
-			themeComboDecorator.hide();
-			colorFontsDecorator.hide();
-
 			if (appearanceChanged || colorsAndFontsThemeChanged) {
 				showRestartDialog = true;
 				restartDialogTitle = WorkbenchMessages.ThemeChangeWarningTitle;
 				restartDialogMessage = WorkbenchMessages.ThemeChangeWarningText;
 			}
+		}
+		if (applyThemeSettings) {
+			// Remember what is applied now, so that Cancel after Apply keeps it
+			ColorsAndFontsTheme colorsAndFontsTheme = getSelectedColorsAndFontsTheme();
+			if (colorsAndFontsTheme != null) {
+				currentColorsAndFontsTheme = colorsAndFontsTheme;
+			}
+			themeComboDecorator.hide();
+			colorFontsDecorator.hide();
 		}
 		if (themingEnabledChanged) {
 			showRestartDialog = true;
@@ -545,6 +643,21 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		return super.performOk();
+	}
+
+	/**
+	 * Remembers the theme for the next start in the same place and under the same
+	 * key the theme engine uses, so that it restores the selected theme when it is
+	 * created after the restart.
+	 */
+	private void storeThemeForNextStart(ITheme theme) {
+		IEclipsePreferences themePrefs = InstanceScope.INSTANCE.getNode(E4_THEME_EXTENSION_POINT);
+		themePrefs.put(THEMEID_KEY, theme.getId());
+		try {
+			themePrefs.flush();
+		} catch (BackingStoreException e) {
+			WorkbenchPlugin.log("Failed to store the selected theme", e); //$NON-NLS-1$
+		}
 	}
 
 	private void showRestartDialog(String title, String warningText, ITheme theme) {
@@ -585,12 +698,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	protected void performDefaults() {
 		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
 				.getNode(CTabRendering.PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
-		if (isThemingPossible()) {
-			setColorsAndFontsTheme(currentColorsAndFontsTheme);
+		if (isThemingPossible() || themingOffByPreference) {
+			if (isThemingPossible()) {
+				setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
-			engine.setTheme(defaultTheme, true);
-			if (engine.getActiveTheme() != null) {
-				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
+				engine.setTheme(defaultTheme, true);
+				if (engine.getActiveTheme() != null) {
+					themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
+				}
+			} else {
+				availableThemes.stream().filter(theme -> theme.getId().equals(defaultTheme)).findFirst()
+						.ifPresent(theme -> themeIdCombo.setSelection(new StructuredSelection(theme)));
 			}
 			hideIconsForViewTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
 					CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT));
@@ -615,9 +733,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performCancel() {
-		if (isThemingPossible()) {
-			setColorsAndFontsTheme(currentColorsAndFontsTheme);
+		setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
+		if (isThemingPossible()) {
 			if (currentTheme != null && !currentTheme.equals(engine.getActiveTheme())) {
 				engine.setTheme(currentTheme, false);
 			}
@@ -627,7 +745,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void createColorsAndFontsThemeCombo(Composite composite) {
-		new Label(composite, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentTheme);
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(WorkbenchMessages.ViewsPreference_currentTheme);
+		label.setLayoutData(new GridData());
 		colorsAndFontsThemeCombo = new ComboViewer(composite, SWT.READ_ONLY);
 		colorsAndFontsThemeCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		colorsAndFontsThemeCombo.setLabelProvider(new LabelProvider() {
@@ -651,7 +771,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			} else {
 				colorFontsDecorator.hide();
 			}
-			setColorsAndFontsTheme(colorsAndFontsTheme);
+			// Without an engine the change is applied by performOk(), if theming is enabled
+			if (isThemingPossible()) {
+				setColorsAndFontsTheme(colorsAndFontsTheme);
+			}
 		});
 	}
 
