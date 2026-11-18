@@ -101,8 +101,10 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 	/**
 	 * Tells whether this filtered tree is used to make quick selections. In this
-	 * mode the first match in the tree is automatically selected while filtering
-	 * and the 'Enter' key is not used to move the focus to the tree.
+	 * mode the best match in the tree is automatically selected while filtering
+	 * and the 'Enter' key is not used to move the focus to the tree. An item with
+	 * a label equal to the filter text is the best match, then an item with a
+	 * label that starts with the filter text, then the first other match.
 	 *
 	 * @since 3.105
 	 */
@@ -368,6 +370,64 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the item to select in quick selection mode. An item with a label
+	 * equal to the filter text is the best match, then an item with a label that
+	 * starts with the filter text, then all other matches. Equal matches are
+	 * compared by their position in the tree. The selected item stays selected
+	 * while it matches, unless the new filter text starts with the previous one
+	 * and another item is a better match.
+	 */
+	private TreeItem getBestMatchingItem(Tree tree, String text) {
+		TreeItem selected = tree.getSelectionCount() == 1 ? tree.getSelection()[0] : null;
+		if (selected != null && !isSelectableMatch(selected)) {
+			selected = null;
+		}
+		if (selected != null && !narrowingDown) {
+			return selected;
+		}
+		TreeItem[] best = new TreeItem[1];
+		int[] bestRank = { Integer.MAX_VALUE };
+		findBestMatchingItem(tree.getItems(), text, best, bestRank);
+		if (selected != null && matchRank(selected, text) <= bestRank[0]) {
+			return selected;
+		}
+		return best[0];
+	}
+
+	private void findBestMatchingItem(TreeItem[] items, String text, TreeItem[] best, int[] bestRank) {
+		for (TreeItem item : items) {
+			if (bestRank[0] == 0) {
+				return;
+			}
+			if (isSelectableMatch(item)) {
+				int rank = matchRank(item, text);
+				if (rank < bestRank[0]) {
+					best[0] = item;
+					bestRank[0] = rank;
+				}
+			}
+			findBestMatchingItem(item.getItems(), text, best, bestRank);
+		}
+	}
+
+	private boolean isSelectableMatch(TreeItem item) {
+		Object element = item.getData();
+		return element != null && getPatternFilter().isLeafMatch(treeViewer, element)
+				&& getPatternFilter().isElementSelectable(element);
+	}
+
+	private static int matchRank(TreeItem item, String text) {
+		String label = item.getText();
+		if (label.equalsIgnoreCase(text)) {
+			return 0;
+		}
+		if (label.regionMatches(true, 0, text, 0, text.length())) {
+			return 1;
+		}
+		return 2;
 	}
 
 	/**
@@ -648,7 +708,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 		boolean textChanged = !getInitialText().equals(filterText.getText().trim());
 		if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
 			TreeItem item;
-			if (tree.getSelectionCount() > 0) {
+			if (quickSelectionMode) {
+				item = getBestMatchingItem(tree, filterText.getText().trim());
+			} else if (tree.getSelectionCount() > 0) {
 				item = getFirstMatchingItem(tree.getSelection());
 			} else {
 				item = getFirstMatchingItem(tree.getItems());
@@ -691,8 +753,10 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 	/**
 	 * Sets whether this filtered tree is used to make quick selections. In this
-	 * mode the first match in the tree is automatically selected while filtering
-	 * and the 'Enter' key is not used to move the focus to the tree.
+	 * mode the best match in the tree is automatically selected while filtering
+	 * and the 'Enter' key is not used to move the focus to the tree. An item with
+	 * a label equal to the filter text is the best match, then an item with a
+	 * label that starts with the filter text, then the first other match.
 	 * <p>
 	 * By default, this is set to <code>false</code>.
 	 * </p>

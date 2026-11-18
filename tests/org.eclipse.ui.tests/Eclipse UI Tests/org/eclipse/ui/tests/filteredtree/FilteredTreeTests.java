@@ -256,6 +256,54 @@ public class FilteredTreeTests {
 	}
 
 	@Test
+	public void testQuickSelectionPrefersEqualLabel() {
+		createQuickSelectionDialog();
+
+		assertQuickSelection("File", "File");
+	}
+
+	@Test
+	public void testQuickSelectionMovesToBetterMatchWhileTyping() {
+		createQuickSelectionDialog();
+
+		assertQuickSelection("Fil", "Files");
+		assertQuickSelection("File", "File");
+	}
+
+	@Test
+	public void testQuickSelectionKeepsEqualMatchWhileTyping() {
+		createQuickSelectionDialog();
+		TreeViewer viewer = fTreeViewer.getViewer();
+
+		assertQuickSelection("Fi", "Files");
+		viewer.setSelection(new TreeSelection(new TreePath(new Object[] { "General", "File" })));
+		int count = viewer.getTree().getItemCount();
+		fTreeViewer.getFilterControl().setText("Fil");
+		// "Fix" goes away when the refresh job runs
+		assertTrue("Filter was not applied", DisplayHelper.waitForCondition(viewer.getControl().getDisplay(), 5000,
+				() -> viewer.getTree().getItemCount() < count));
+		assertEquals("File", viewer.getStructuredSelection().getFirstElement());
+	}
+
+	// "Project from File" is the first match for "File", but not the best one
+	private void createQuickSelectionDialog() {
+		StringTreeContentProvider contentProvider = new StringTreeContentProvider();
+		contentProvider.children.clear();
+		contentProvider.children.put("", List.of("Project from File", "Files", "General", "Fix"));
+		contentProvider.children.put("General", List.of("File", "Untitled Text File"));
+		createStringTreeDialog(SWT.SINGLE, contentProvider);
+		fTreeViewer.setQuickSelectionMode(true);
+	}
+
+	private void assertQuickSelection(String filter, String expected) {
+		TreeViewer viewer = fTreeViewer.getViewer();
+		fTreeViewer.getFilterControl().setText(filter);
+		DisplayHelper.waitForCondition(viewer.getControl().getDisplay(), 5000,
+				() -> expected.equals(viewer.getStructuredSelection().getFirstElement()));
+		assertEquals(expected, viewer.getStructuredSelection().getFirstElement());
+	}
+
+	@Test
 	public void testClearingFilterRevealsSelectionInE4Tree() {
 		var tree = createE4Tree();
 		TreeViewer viewer = tree.getViewer();
