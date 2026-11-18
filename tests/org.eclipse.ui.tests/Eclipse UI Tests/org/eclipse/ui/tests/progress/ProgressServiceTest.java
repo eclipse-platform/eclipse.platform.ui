@@ -3,16 +3,23 @@ package org.eclipse.ui.tests.progress;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -365,6 +372,123 @@ public class ProgressServiceTest extends ProgressTestCase {
 				String.format(
 						"Expected progress dialog shown=%s for fork=%s, cancelable=%s, runInBackground=%s, pumpUiEventsWhileRunning=%s",
 						expectDialogShown, fork, cancelable, runInBackgroundPref, pumpUiEventsWhileRunning));
+	}
+
+	@Test
+	public void testBusyCursorWhile_cancelButtonIsEnabled() throws Exception {
+		assertTrue(isCancelButtonEnabledInBusyCursorDialog(r -> progressService.busyCursorWhile(r)));
+	}
+
+	@Test
+	public void testBusyCursorWhile_cancelable_cancelButtonIsEnabled() throws Exception {
+		assertTrue(isCancelButtonEnabledInBusyCursorDialog(r -> progressService.busyCursorWhile(r, true)));
+	}
+
+	@Test
+	public void testBusyCursorWhile_notCancelable_cancelButtonIsDisabled() throws Exception {
+		assertFalse(isCancelButtonEnabledInBusyCursorDialog(r -> progressService.busyCursorWhile(r, false)));
+	}
+
+	/**
+	 * Runs the given {@code busyCursorWhile} call with a runnable that waits for
+	 * the progress dialog to open and returns whether the Cancel button of that
+	 * dialog was enabled.
+	 */
+	private boolean isCancelButtonEnabledInBusyCursorDialog(BusyCursorCall call) throws Exception {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Set<Shell> preexistingShells = new HashSet<>(Arrays.asList(display.getShells()));
+		AtomicReference<Boolean> cancelEnabled = new AtomicReference<>();
+		call.run(monitor -> {
+			// The dialog opens after getLongOperationTime(), the UI thread is pumping
+			// events
+			long deadline = System.currentTimeMillis() + progressService.getLongOperationTime() * 10L;
+			while (cancelEnabled.get() == null && System.currentTimeMillis() < deadline) {
+				display.syncExec(() -> {
+					for (Shell shell : display.getShells()) {
+						if (!shell.isDisposed() && shell.isVisible() && !preexistingShells.contains(shell)) {
+							Button cancel = findCancelButton(shell);
+							if (cancel != null) {
+								cancelEnabled.set(cancel.isEnabled());
+							}
+						}
+					}
+				});
+				Thread.sleep(20);
+			}
+		});
+		assertNotNull(cancelEnabled.get(), "The progress dialog with a Cancel button was not shown");
+		return cancelEnabled.get();
+	}
+
+	@Test
+	public void testBusyCursorWhile_closingDialogIsIgnored() throws Exception {
+		assertClosingDialogIsIgnored(closeBusyCursorDialog(r -> progressService.busyCursorWhile(r)));
+	}
+
+	@Test
+	public void testBusyCursorWhile_cancelable_closingDialogIsIgnored() throws Exception {
+		assertClosingDialogIsIgnored(closeBusyCursorDialog(r -> progressService.busyCursorWhile(r, true)));
+	}
+
+	@Test
+	public void testBusyCursorWhile_notCancelable_closingDialogIsIgnored() throws Exception {
+		assertClosingDialogIsIgnored(closeBusyCursorDialog(r -> progressService.busyCursorWhile(r, false)));
+	}
+
+	private static void assertClosingDialogIsIgnored(CloseResult result) {
+		assertFalse(result.canceled(), "Closing the dialog must not cancel the operation");
+		assertFalse(result.closed(), "The dialog must stay open while the operation runs");
+	}
+
+	private record CloseResult(boolean canceled, boolean closed) {
+	}
+
+	/**
+	 * Waits for the progress dialog of the given {@code busyCursorWhile} call,
+	 * closes its shell like the close box does and returns what happened.
+	 */
+	private CloseResult closeBusyCursorDialog(BusyCursorCall call) throws Exception {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Set<Shell> preexistingShells = new HashSet<>(Arrays.asList(display.getShells()));
+		AtomicReference<CloseResult> result = new AtomicReference<>();
+		call.run(monitor -> {
+			long deadline = System.currentTimeMillis() + progressService.getLongOperationTime() * 10L;
+			while (result.get() == null && System.currentTimeMillis() < deadline) {
+				display.syncExec(() -> {
+					for (Shell shell : display.getShells()) {
+						if (!shell.isDisposed() && shell.isVisible() && !preexistingShells.contains(shell)
+								&& findCancelButton(shell) != null) {
+							shell.close();
+							boolean closed = shell.isDisposed() || !shell.isVisible();
+							result.set(new CloseResult(monitor.isCanceled(), closed));
+						}
+					}
+				});
+				Thread.sleep(20);
+			}
+		});
+		assertNotNull(result.get(), "The progress dialog with a Cancel button was not shown");
+		return result.get();
+	}
+
+	private static Button findCancelButton(Composite parent) {
+		for (Control child : parent.getChildren()) {
+			if (child instanceof Button button
+					&& Integer.valueOf(IDialogConstants.CANCEL_ID).equals(button.getData())) {
+				return button;
+			}
+			if (child instanceof Composite composite) {
+				Button found = findCancelButton(composite);
+				if (found != null) {
+					return found;
+				}
+			}
+		}
+		return null;
+	}
+
+	interface BusyCursorCall {
+		void run(IRunnableWithProgress runnable) throws Exception;
 	}
 
 	private static void runInBackground(boolean value) {

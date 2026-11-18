@@ -122,6 +122,12 @@ public class ProgressServiceImpl implements IProgressService {
 	@Override
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
+		busyCursorWhile(runnable, true);
+	}
+
+	@Override
+	public void busyCursorWhile(final IRunnableWithProgress runnable, final boolean cancelable)
+			throws InvocationTargetException, InterruptedException {
 		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
 				ProgressManagerUtil.getDefaultParent(), this, progressManager,
 				contentProviderFactory, finishedJobs);
@@ -133,7 +139,7 @@ public class ProgressServiceImpl implements IProgressService {
 			try {
 				dialog.setOpenOnRun(false);
 				setUserInterfaceActive(false);
-				dialog.run(true, true, runnable);
+				dialog.run(true, cancelable, runnable);
 			} catch (InvocationTargetException e1) {
 				invokes[0] = e1;
 			} catch (InterruptedException e2) {
@@ -257,13 +263,19 @@ public class ProgressServiceImpl implements IProgressService {
 	private void busyCursorWhile(Runnable dialogWaitRunnable,
 			ProgressMonitorJobsDialog dialog) {
 		// create the job that will open the dialog after a delay
-		scheduleProgressMonitorJob(dialog);
-		final Display display = getDisplay();
-		if (display == null) {
-			return;
+		Job showDialogJob = scheduleProgressMonitorJob(dialog);
+		try {
+			final Display display = getDisplay();
+			if (display == null) {
+				return;
+			}
+			// show a busy cursor until the dialog opens
+			BusyIndicator.showWhile(display, dialogWaitRunnable);
+		} finally {
+			// In case the dialog hasn't popped up yet, cancel it so it doesn't pop up after
+			// the operation finishes or unwinds with an exception.
+			showDialogJob.cancel();
 		}
-		// show a busy cursor until the dialog opens
-		BusyIndicator.showWhile(display, dialogWaitRunnable);
 	}
 
 	/**
@@ -271,8 +283,9 @@ public class ProgressServiceImpl implements IProgressService {
 	 *
 	 * @param dialog
 	 *            the dialog to open
+	 * @return the job that was scheduled to open the dialog
 	 */
-	private void scheduleProgressMonitorJob(
+	private Job scheduleProgressMonitorJob(
 			final ProgressMonitorJobsDialog dialog) {
 
 		Job updateJob = UIJob.create(ProgressMessages.ProgressManager_openJobName, monitor -> {
@@ -283,7 +296,7 @@ public class ProgressServiceImpl implements IProgressService {
 		});
 		updateJob.setSystem(true);
 		updateJob.schedule(getLongOperationTime());
-
+		return updateJob;
 	}
 
 	/**
