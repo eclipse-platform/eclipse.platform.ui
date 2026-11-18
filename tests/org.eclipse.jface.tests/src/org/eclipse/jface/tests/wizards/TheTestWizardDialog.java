@@ -36,6 +36,11 @@ public class TheTestWizardDialog extends WizardDialog {
 	}
 
 	@Override
+	public boolean isResizable() {
+		return super.isResizable();
+	}
+
+	@Override
 	public Button getCancelButton() {
 		return getButton(IDialogConstants.CANCEL_ID);
 	}
