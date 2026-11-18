@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ILog;
@@ -47,6 +46,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.DocumentFooterCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.IPlaceholderCodeMining;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.Annotation;
@@ -353,42 +353,46 @@ public class CodeMiningManager implements Runnable {
 	}
 
 	/**
-	 * Returns the valid code mining at the given location by using the bounds of codemining
-	 * annotations which stores only the valid code mining.
+	 * Return the label of the code mining. If the label is {@code null} and the mining is an
+	 * unresolved {@link IPlaceholderCodeMining}, then the
+	 * {@linkplain IPlaceholderCodeMining#getPlaceholderLabel() placeholder label} is returned.
 	 *
-	 * @param minings the list of mining of the codemining annotation.
-	 * @param bounds  the bounds of the valid minings of the codemining annotation.
-	 * @param x       the x location
-	 * @param y       the y location
-	 * @return the valid code mining at the given location by using the bounds of codemining
-	 *         annotations which stores only the valid code mining.
+	 * @param mining the mining
+	 * @return The label, or the placeholder if {@code null} and not resolved
 	 */
-	static ICodeMining getValidCodeMiningAtLocation(ICodeMining[] minings, List<Rectangle> bounds, int x, int y) {
-		for (int i= 0; i < bounds.size(); i++) {
-			Rectangle bound= bounds.get(i);
-			if (bound.contains(x, y)) {
-				return getCodeValidMiningAtIndex(minings, i);
-			}
+	static String getLabelOrPlaceholder(ICodeMining mining) {
+		String label= mining.getLabel();
+
+		if (label == null && mining instanceof IPlaceholderCodeMining placeHolderMining && !mining.isResolved()) {
+			return placeHolderMining.getPlaceholderLabel();
 		}
-		return null;
+
+		return label;
 	}
 
 	/**
-	 * Returns the valid code mining at the given index.
+	 * Returns the valid code mining at the given location by using the list of drawn code minings
+	 * and their bounds.
 	 *
-	 * @param minings the list of minings
-	 * @param index   the index
-	 * @return the valid code mining at the given index.
+	 * @param drawnMinings the list of drawn minings of the codemining annotation.
+	 * @param x the x location
+	 * @param y the y location
+	 * @return the valid code mining at the given location by using the bounds of codemining
+	 *         annotations which stores only the valid code mining.
 	 */
-	private static ICodeMining getCodeValidMiningAtIndex(ICodeMining[] minings, int index) {
-		int validIndex= 0;
-		for (ICodeMining mining : minings) {
-			if (isValidMining(mining)) {
-				if (validIndex == index) {
-					return mining;
-				}
-				validIndex++;
+	static ICodeMining getValidCodeMiningAtLocation(List<DrawnMining> drawnMinings, int x, int y) {
+		for (DrawnMining drawnMining : drawnMinings) {
+			if (!drawnMining.bounds().contains(x, y)) {
+				continue;
 			}
+
+			ICodeMining mining= drawnMining.mining();
+
+			if (isValidMining(mining)) {
+				return mining;
+			}
+
+			return null;
 		}
 		return null;
 	}
