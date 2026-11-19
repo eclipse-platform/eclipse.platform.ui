@@ -1087,6 +1087,17 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	public void validateState(Object element, final Object computationContext) throws CoreException {
 		final FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
+			if (info.fElement instanceof IFileEditorInput && info.fTextFileBuffer.computeValidateStateRule() == null) {
+				IProgressMonitor progressMonitor= getProgressMonitor();
+				try {
+					info.fTextFileBuffer.validateState(progressMonitor, computationContext);
+				} finally {
+					if (progressMonitor != null) {
+						progressMonitor.done();
+					}
+				}
+				return;
+			}
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
 				@Override
 				protected void execute(IProgressMonitor monitor) throws CoreException {
