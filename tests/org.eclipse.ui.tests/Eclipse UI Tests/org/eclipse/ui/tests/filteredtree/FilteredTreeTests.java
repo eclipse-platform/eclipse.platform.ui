@@ -285,13 +285,80 @@ public class FilteredTreeTests {
 		assertEquals("File", viewer.getStructuredSelection().getFirstElement());
 	}
 
+	@Test
+	public void testQuickSelectionKeepsMultiSelectionWhenFilterIsShorter() {
+		createQuickSelectionDialog(SWT.MULTI);
+		TreeViewer viewer = fTreeViewer.getViewer();
+		assertQuickSelection("File", "File");
+		TreeSelection both = new TreeSelection(new TreePath[] { new TreePath(new Object[] { "General", "File" }),
+				new TreePath(new Object[] { "General", "Untitled Text File" }) });
+		viewer.setSelection(both);
+		int count = viewer.getTree().getItemCount();
+
+		fTreeViewer.getFilterControl().setText("Fil");
+		// "Filter" comes back when the refresh job runs
+		assertTrue("Filter was not applied", DisplayHelper.waitForCondition(viewer.getControl().getDisplay(), 5000,
+				() -> viewer.getTree().getItemCount() > count));
+		assertEquals(both, viewer.getStructuredSelection());
+	}
+
+	@Test
+	public void testQuickSelectionAfterEditsBeforeRefresh() {
+		createQuickSelectionDialog();
+		assertQuickSelection("Fil", "Files");
+
+		fTreeViewer.getFilterControl().setText("Filex");
+		assertQuickSelection("File", "File");
+	}
+
+	@Test
+	public void testQuickSelectionFindsMatchInCollapsedBranch() {
+		// slow item creation stops the expansion of the tree before "z"
+		StringTreeContentProvider contentProvider = new StringTreeContentProvider() {
+			@Override
+			public Object[] getChildren(Object parentElement) {
+				if (StackWalker.getInstance()
+						.walk(frames -> frames.anyMatch(f -> f.getMethodName().equals("createChildren")))) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+				return super.getChildren(parentElement);
+			}
+		};
+		contentProvider.children.clear();
+		List<String> roots = new ArrayList<>();
+		for (int i = 10; i < 70; i++) {
+			roots.add("c" + i);
+			contentProvider.children.put("c" + i, List.of("File " + i));
+		}
+		roots.add("z");
+		contentProvider.children.put("z", List.of("File"));
+		contentProvider.children.put("", roots);
+		createQuickSelectionDialog(SWT.SINGLE, contentProvider);
+
+		assertQuickSelection("File", "File");
+		assertEquals(new TreePath(new Object[] { "z", "File" }),
+				fTreeViewer.getViewer().getStructuredSelection().getPaths()[0]);
+	}
+
 	// "Project from File" is the first match for "File", but not the best one
 	private void createQuickSelectionDialog() {
+		createQuickSelectionDialog(SWT.SINGLE);
+	}
+
+	private void createQuickSelectionDialog(int selectionStyle) {
 		StringTreeContentProvider contentProvider = new StringTreeContentProvider();
 		contentProvider.children.clear();
-		contentProvider.children.put("", List.of("Project from File", "Files", "General", "Fix"));
+		contentProvider.children.put("", List.of("Project from File", "Files", "General", "Fix", "Filter"));
 		contentProvider.children.put("General", List.of("File", "Untitled Text File"));
-		createStringTreeDialog(SWT.SINGLE, contentProvider);
+		createQuickSelectionDialog(selectionStyle, contentProvider);
+	}
+
+	private void createQuickSelectionDialog(int selectionStyle, StringTreeContentProvider contentProvider) {
+		createStringTreeDialog(selectionStyle, contentProvider);
 		fTreeViewer.setQuickSelectionMode(true);
 	}
 
