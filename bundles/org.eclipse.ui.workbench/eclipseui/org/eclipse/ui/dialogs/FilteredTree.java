@@ -40,7 +40,7 @@ import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreePathViewerSorter;
+import org.eclipse.jface.viewers.TreePathViewerComparator;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -478,8 +478,8 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 		ViewerComparator comparator = treeViewer.getComparator();
 		if (comparator != null) {
 			children = children.clone();
-			if (comparator instanceof TreePathViewerSorter sorter) {
-				sorter.sort(treeViewer, parentPath, children);
+			if (comparator instanceof TreePathViewerComparator pathComparator) {
+				pathComparator.sort(treeViewer, parentPath, children);
 			} else {
 				comparator.sort(treeViewer, children);
 			}
