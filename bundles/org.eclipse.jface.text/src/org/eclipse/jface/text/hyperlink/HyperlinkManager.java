@@ -115,10 +115,10 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	public static final DETECTION_STRATEGY LONGEST_REGION_FIRST= new DETECTION_STRATEGY("first with longest region"); //$NON-NLS-1$
 
 	/**
-	 * Time in milliseconds the mouse must rest while the modifier is held before detection runs,
+	 * Time in milliseconds the mouse must stay on one offset while the modifier is held before detection runs,
 	 * so that modifier+mouse gestures such as copy or drag do not trigger detectors.
 	 */
-	private static final int DETECTION_DELAY= 200;
+	private static final int DETECTION_DELAY= 30;
 
 
 	/** The text viewer on which this hyperlink manager works. */
@@ -142,6 +142,8 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private final DETECTION_STRATEGY fDetectionStrategy;
 	/** Runs the delayed detection scheduled by {@link #mouseMove(MouseEvent)}. */
 	private final Runnable fDelayedDetection= this::detectDelayed;
+	/** Offset of the pending or last completed delayed detection, or -1. */
+	private int fDetectionOffset= -1;
 
 
 	/**
@@ -206,6 +208,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 				fHyperlinkDetectors= hyperlinkDetectors;
 			}
 		}
+		fDetectionOffset= -1;
 	}
 
 	/**
@@ -223,6 +226,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public void setHyperlinkStateMask(int eventStateMask) {
 		fHyperlinkStateMask= eventStateMask;
+		fDetectionOffset= -1;
 	}
 
 	/**
@@ -381,6 +385,10 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		fActive= true;
 
 		// do not show hyperlink, since that would often be confusing (e.g. when pressing Ctrl+C)
+		if ((event.keyCode & SWT.MODIFIER_MASK) == 0) {
+			// held keys are deliberately not tracked, so moving while Ctrl+C is down can detect after the delay
+			cancelDelayedDetection();
+		}
 	}
 
 	@Override
@@ -486,10 +494,16 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
+		// repeated moves over the same offset, frequent on macOS, must not postpone detection
+		if (sameStateMask && offset != -1 && offset == fDetectionOffset) {
+			return;
+		}
+
 		if (fActiveHyperlinks != null) {
 			fActiveHyperlinks= null;
 			fHyperlinkPresenter.hideHyperlinks();
 		}
+		fDetectionOffset= offset;
 		text.getDisplay().timerExec(DETECTION_DELAY, fDelayedDetection);
 	}
 
@@ -515,13 +529,17 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension extension && !extension.canHideHyperlinks()) {
+			fDetectionOffset= -1;
 			return;
 		}
+		// the text may have scrolled under the mouse since detection was scheduled
+		fDetectionOffset= getCurrentTextOffset();
 		fActiveHyperlinks= findHyperlinks();
 		showHyperlinks(false);
 	}
 
 	private void cancelDelayedDetection() {
+		fDetectionOffset= -1;
 		StyledText text= fTextViewer != null ? fTextViewer.getTextWidget() : null;
 		if (text != null && !text.isDisposed()) {
 			text.getDisplay().timerExec(-1, fDelayedDetection);
@@ -570,6 +588,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	public void textChanged(TextEvent event) {
 		if (event.getDocumentEvent() != null) {
 			deactivate();
+		} else {
+			// the widget content was replaced, for example by setDocument
+			fDetectionOffset= -1;
 		}
 	}
 
@@ -662,6 +683,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		fActiveHyperlinks= findHyperlinks(region);
 		boolean found= showHyperlinks(true);
 		fActiveHyperlinks= null;
+		fDetectionOffset= -1;
 		return found;
 	}
 }
