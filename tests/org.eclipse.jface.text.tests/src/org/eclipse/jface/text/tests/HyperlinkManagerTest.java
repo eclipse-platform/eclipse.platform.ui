@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -48,6 +49,7 @@ public class HyperlinkManagerTest {
 	private TestHyperlinkManager fManager;
 	private int fDetections;
 	private IHyperlink[] fShownLinks;
+	private boolean fNoLinks;
 
 	@BeforeEach
 	public void before() {
@@ -84,6 +86,26 @@ public class HyperlinkManagerTest {
 
 		waitUntil(() -> fDetections > 0);
 		runEventLoop(500);
+		assertEquals(1, fDetections);
+	}
+
+	@Test
+	public void testMovesOverSameOffsetDoNotPostponeDetection() {
+		Display display= fShell.getDisplay();
+		int[] moves= { 0 };
+		Runnable move= new Runnable() {
+			@Override
+			public void run() {
+				if (fDetections == 0 && moves[0]++ < 50) {
+					fManager.mouseMove(mouseEvent(SWT.MOD1));
+					display.timerExec(10, this);
+				}
+			}
+		};
+		move.run();
+
+		waitUntil(() -> fDetections > 0);
+		assertTrue(moves[0] < 50, "detection was postponed by moves over the same offset");
 		assertEquals(1, fDetections);
 	}
 
@@ -147,6 +169,58 @@ public class HyperlinkManagerTest {
 		assertEquals(2, fDetections);
 	}
 
+	@Test
+	public void testHoverDetectsAgainAfterOpenHyperlink() {
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		waitUntil(() -> fDetections == 1);
+
+		fViewer.setSelectedRange(1, 0);
+		assertTrue(fManager.openHyperlink());
+
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		waitUntil(() -> fDetections == 3);
+	}
+
+	@Test
+	public void testHoverDetectsAgainAfterSetDocument() {
+		fNoLinks= true;
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		waitUntil(() -> fDetections == 1);
+		assertNull(fShownLinks);
+
+		fNoLinks= false;
+		fViewer.setDocument(new Document("hello world"));
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		waitUntil(() -> fShownLinks != null);
+		assertEquals(2, fDetections);
+	}
+
+	@Test
+	public void testKeyPressCancelsDetection() {
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		Event event= new Event();
+		event.widget= fViewer.getTextWidget();
+		event.keyCode= 'c';
+		event.stateMask= SWT.MOD1;
+		fManager.keyPressed(new KeyEvent(event));
+
+		runEventLoop(500);
+		assertEquals(0, fDetections);
+	}
+
+	@Test
+	public void testHoverDetectsAgainAfterScrollBeforeDetection() {
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		fManager.offset= 7;
+		waitUntil(() -> fDetections == 1);
+		assertNull(fShownLinks);
+
+		fManager.offset= 1;
+		fManager.mouseMove(mouseEvent(SWT.MOD1));
+		waitUntil(() -> fShownLinks != null);
+		assertEquals(2, fDetections);
+	}
+
 	private MouseEvent mouseEvent(int stateMask) {
 		Event event= new Event();
 		event.widget= fViewer.getTextWidget();
@@ -191,7 +265,7 @@ public class HyperlinkManagerTest {
 		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 			fDetections++;
 			int offset= region.getOffset();
-			if (offset < LINK_REGION.getOffset() || offset >= LINK_REGION.getOffset() + LINK_REGION.getLength()) {
+			if (fNoLinks || offset < LINK_REGION.getOffset() || offset >= LINK_REGION.getOffset() + LINK_REGION.getLength()) {
 				return null;
 			}
 			return new IHyperlink[] { new TestHyperlink() };
