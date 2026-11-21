@@ -151,6 +151,8 @@ public class AsyncContentAssistTest {
 		Display display= shell.getDisplay();
 		DisplayHelper.runEventLoop(display, 0);
 		Control control= viewer.getTextWidget();
+		// Auto activation needs an active shell for the focus check on macOS.
+		shell.forceActive();
 		control.forceFocus();
 		DisplayHelper.runEventLoop(display, 0);
 		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
@@ -243,6 +245,8 @@ public class AsyncContentAssistTest {
 		shell.open();
 		Display display= shell.getDisplay();
 		DisplayHelper.runEventLoop(display, 0);
+		// Auto activation needs an active shell for the focus check on macOS.
+		shell.forceActive();
 		viewer.getTextWidget().forceFocus();
 		DisplayHelper.runEventLoop(display, 0);
 		return viewer;

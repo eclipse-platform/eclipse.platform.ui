@@ -228,11 +228,13 @@ public class AbstractContentAssistTest {
 	}
 
 	protected static Shell findNewShell(Collection<Shell> beforeShells) {
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return findNewShells(beforeShells).size() == 1;
+			}
+		}.waitForCondition(getDisplay(), 10_000);
 		List<Shell> afterShells= findNewShells(beforeShells);
-		for (int attempt= 0; afterShells.size() != 1 && attempt < 50; attempt++) {
-			DisplayHelper.sleep(getDisplay(), 100);
-			afterShells= findNewShells(beforeShells);
-		}
 		assertEquals(1, afterShells.size(), "Not unique new shell found");
 		return afterShells.get(0);
 	}
