@@ -146,12 +146,12 @@ public class LineContentBoundsDrawingTest {
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {
-		Image image= new Image(widget.getDisplay(), (_, _, _) -> {
-		}, (widget.getSize().x), (widget.getSize().y));
-		GC gc = new GC(widget);
-		gc.copyArea(image, 0, 0);
+		// print() paints with the widget background, unlike copyArea() in dark mode
+		Image image= new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		GC gc= new GC(image);
+		widget.print(gc);
 		gc.dispose();
-		RGB backgroundRgb = widget.getBackground().getRGB();
+		RGB backgroundRgb= widget.getBackground().getRGB();
 		int zoom= DPIUtil.getDeviceZoom();
 		ImageData imageData= image.getImageData(zoom);
 		double zoomFactor= zoom / 100.0;
