@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -711,7 +711,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fPopupCloser.install(fContentAssistant, fProposalTable, fAdditionalInfoController);
 
-		fProposalShell.addDisposeListener(event -> unregister());
+		fProposalShell.addDisposeListener(event -> {
+			unregister();
+			// Remove the popup closer's display filters however the shell gets disposed, e.g. also when
+			// it is disposed directly instead of through hide(), see https://github.com/eclipse-platform/eclipse.platform.ui/issues/3582
+			fPopupCloser.uninstall();
+		});
 
 		fProposalTable.setHeaderVisible(false);
 
@@ -1103,11 +1108,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 			registry.unregister(fFocusHelper);
 		}
 
+		// Safety net: the dispose listener of the proposal shell normally uninstalls the popup closer,
+		// but make sure it is uninstalled even if there is no valid shell left to dispose here
+		fPopupCloser.uninstall();
+		fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
+
 		if (isValid(fProposalShell)) {
-
-			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
-
-			fPopupCloser.uninstall();
 			fProposalShell.setVisible(false);
 			fProposalShell.dispose();
 			fProposalShell= null;

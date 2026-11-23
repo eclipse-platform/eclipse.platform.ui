@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2021 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,9 +48,13 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -224,6 +234,71 @@ public class AsyncContentAssistTest {
 		contentAssistant.setAutoActivationDelay(0);
 		contentAssistant.enableAutoActivateCompletionOnType(true);
 		typeAndAssertNotInserted(contentAssistant, 'b');
+	}
+
+	/**
+	 * Regression test for https://github.com/eclipse-platform/eclipse.platform.ui/issues/3582: the
+	 * popup closer must not accumulate display filters when the proposal popup is recreated while
+	 * typing.
+	 * <p>
+	 * The popup closer's mouse move filter asks the additional info control whether it contains the
+	 * event's widget. Each mouse move event must therefore lead to exactly one such call; more
+	 * calls mean that the filter is registered several times on the display.
+	 * </p>
+	 */
+	@Test
+	public void testPopupCloserFiltersDoNotAccumulate() throws Exception {
+		Document document= new Document("b");
+		ContentAssistant contentAssistant= new ContentAssistant(true);
+		contentAssistant.addContentAssistProcessor(new ImmediateContentAssistProcessor() {
+			@Override
+			public ICompletionProposal[] computeCompletionProposals(ITextViewer textViewer, int offset) {
+				return new ICompletionProposal[] { new CompletionProposal("bar", offset, 0, 3, null, "bar", null, "additional info") };
+			}
+		}, IDocument.DEFAULT_CONTENT_TYPE);
+		DefaultInformationControl[] spiedInformationControl= new DefaultInformationControl[1];
+		contentAssistant.setInformationControlCreator(parent -> {
+			// Construct the spy through the real constructor, so that the listeners the control
+			// registers on itself during construction are registered on the spy as well
+			spiedInformationControl[0]= mock(DefaultInformationControl.class,
+					withSettings().useConstructor(parent).defaultAnswer(CALLS_REAL_METHODS));
+			return spiedInformationControl[0];
+		});
+		SourceViewer viewer= installAndOpen(contentAssistant, document);
+		Display display= shell.getDisplay();
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		contentAssistant.showPossibleCompletions();
+		assertProposalShown(beforeShells, "bar");
+		assertPopupCloserHandlesMouseMoveOnce(viewer.getTextWidget(), spiedInformationControl);
+
+		// Simulate typing while the popup is open; each change recomputes the proposals and recreates the popup
+		for (char c : "abc".toCharArray()) {
+			Shell proposalShell= findProposalShell(display);
+			assertNotNull(proposalShell, "Proposal popup not found before typing '" + c + "'");
+			document.replace(document.getLength(), 0, String.valueOf(c));
+			viewer.setSelectedRange(document.getLength(), 0);
+			// Make sure the bug scenario is exercised: typing must recreate the popup, which reinstalls the popup closer
+			assertTrue(DisplayHelper.waitForCondition(display, 4000, () -> proposalShell.isDisposed() && findProposalShell(display) != null),
+					"Proposal popup was not recreated after typing '" + c + "'");
+		}
+		assertPopupCloserHandlesMouseMoveOnce(viewer.getTextWidget(), spiedInformationControl);
+	}
+
+	private Shell findProposalShell(Display display) {
+		return Arrays.stream(display.getShells())
+				.filter(s -> s != shell && s.isVisible() && findCompletionSelectionControl(s) != null)
+				.findFirst()
+				.orElse(null);
+	}
+
+	private static void assertPopupCloserHandlesMouseMoveOnce(Control control, DefaultInformationControl[] spiedInformationControl) {
+		assertTrue(DisplayHelper.waitForCondition(control.getDisplay(), 4000, () -> spiedInformationControl[0] != null && spiedInformationControl[0].isVisible()), "Additional info not shown");
+		clearInvocations(spiedInformationControl[0]);
+		Event mouseMove= new Event();
+		mouseMove.widget= control;
+		mouseMove.type= SWT.MouseMove;
+		control.notifyListeners(SWT.MouseMove, mouseMove);
+		verify(spiedInformationControl[0], times(1)).containsControl(control);
 	}
 
 	private static ContentAssistant createAutoInsertingContentAssistant(BarContentAssistProcessor processor) {
