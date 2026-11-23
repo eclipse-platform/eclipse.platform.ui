@@ -11,18 +11,17 @@
 package org.eclipse.ui.tests.progress;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -30,12 +29,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.FinishedJobs;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ProgressServiceTest extends ProgressTestCase {
+
+	/** Upper bound for waiting until an expected progress dialog is shown. */
+	private static final long DIALOG_TIMEOUT_MILLIS = 10_000;
 
 	private IProgressService progressService;
 
@@ -66,7 +69,7 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_notCancelable_runInForeground_callFromUIThread_blockingUiThread_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, false, false, true, false, false);
+		assertDialogShown(false, false, false, false, false);
 	}
 
 	/**
@@ -78,7 +81,7 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_notCancelable_runInForeground_callFromUIThread_pumpingUiEventsWhileRunning_dialogShown()
 			throws Exception {
-		assertDialogShown(false, false, false, true, true, true);
+		assertDialogShown(false, false, false, true, true);
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_notCancelable_runInBackground_callFromUIThread_blockingUiThread_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, false, true, true, false, false);
+		assertDialogShown(false, false, true, false, false);
 	}
 
 	/**
@@ -100,40 +103,13 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_notCancelable_runInBackground_callFromUIThread_pumpingUiEventsWhileRunning_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, false, true, true, true, false);
-	}
-
-	/**
-	 * This is the direct counterpart of the naive assumption that
-	 * "{@code fork == false} called from a non-UI thread is fine, since the
-	 * calling (non-UI) thread just blocks while the UI thread stays
-	 * responsive". That assumption is <b>wrong</b>: {@link IProgressService#run}
-	 * cannot be called off the UI thread <b>at all</b>, independently of
-	 * {@code fork} - see
-	 * {@link #assertDialogShown(boolean, boolean, boolean, boolean, boolean, boolean)}
-	 * for why, and
-	 * {@link #testRun_fork_cancelable_runInForeground_callFromNonUIThread_notPumpingUiEvents_throwsIllegalStateException()}
-	 * for the {@code fork == true} counterpart of this test, showing the
-	 * restriction is unconditional on {@code fork}.
-	 * <p>
-	 * We deliberately do not repeat this for every {@code cancelable} /
-	 * {@code runInBackground} combination: the failure happens before those
-	 * parameters are ever read, so varying them cannot change the outcome.
-	 */
-	@Test
-	public void testRun_noFork_cancelable_runInForeground_callFromNonUIThread_notPumpingUiEvents_throwsIllegalStateException()
-			throws Exception {
-		assertDialogShown(false, true, false, false, false, false);
+		assertDialogShown(false, false, true, true, false);
 	}
 
 	/**
 	 * With {@code fork == false}, {@link IProgressService#run} executes the
-	 * runnable <b>synchronously on the calling thread</b>, which here (like in
-	 * the vast majority of real callers, e.g. drag-and-drop handlers) is the UI
-	 * thread - {@code fork == false} can only ever be meaningfully invoked from
-	 * the UI thread in the first place, since calling it from any other thread
-	 * fails immediately (see
-	 * {@link #testRun_noFork_cancelable_runInForeground_callFromNonUIThread_notPumpingUiEvents_throwsIllegalStateException()}).
+	 * runnable <b>synchronously on the calling thread</b>, which here (like in the
+	 * vast majority of real callers, e.g. drag-and-drop handlers) is the UI thread.
 	 * <p>
 	 * The progress dialog is only opened by a {@code WorkbenchJob} that is
 	 * scheduled to run <b>on the UI thread</b> after a delay
@@ -171,7 +147,7 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_cancelable_runInForeground_callFromUIThread_blockingUiThread_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, true, false, true, false, false);
+		assertDialogShown(false, true, false, false, false);
 	}
 
 	/**
@@ -183,13 +159,12 @@ public class ProgressServiceTest extends ProgressTestCase {
 	 * "long operation" delay a chance to actually run, so the dialog is shown.
 	 * This is the only way {@code fork == false} can show a dialog, since (see
 	 * {@link #testRun_noFork_cancelable_runInForeground_callFromUIThread_blockingUiThread_noDialogShown()})
-	 * {@code fork == false} can only ever be invoked from the UI thread in the
-	 * first place.
+	 * {@code fork == false} can only show a dialog when invoked from the UI thread.
 	 */
 	@Test
 	public void testRun_noFork_cancelable_runInForeground_callFromUIThread_pumpingUiEventsWhileRunning_dialogShown()
 			throws Exception {
-		assertDialogShown(false, true, false, true, true, true);
+		assertDialogShown(false, true, false, true, true);
 	}
 
 	/**
@@ -216,7 +191,7 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_cancelable_runInBackground_callFromUIThread_blockingUiThread_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, true, true, true, false, false);
+		assertDialogShown(false, true, true, false, false);
 	}
 
 	/**
@@ -228,176 +203,101 @@ public class ProgressServiceTest extends ProgressTestCase {
 	@Test
 	public void testRun_noFork_cancelable_runInBackground_callFromUIThread_pumpingUiEventsWhileRunning_noDialogShown()
 			throws Exception {
-		assertDialogShown(false, true, true, true, true, false);
+		assertDialogShown(false, true, true, true, false);
 	}
 
 	@Test
 	public void testRun_fork_notCancelable_runInForeground_callFromUIThread_notPumpingUiEvents_dialogShown()
 			throws Exception {
-		assertDialogShown(true, false, false, true, false, true);
+		assertDialogShown(true, false, false, false, true);
 	}
 
 	@Test
 	public void testRun_fork_notCancelable_runInBackground_callFromUIThread_notPumpingUiEvents_noDialogShown()
 			throws Exception {
-		assertDialogShown(true, false, true, true, false, false);
-	}
-
-	/**
-	 * One might assume {@code fork == true} is always safe to call from any
-	 * thread, since the actual runnable executes on a separate (forked)
-	 * thread anyway. This is <b>not</b> the case: {@code ProgressManager.run}
-	 * may need to open a progress dialog, so it rejects calls off the UI
-	 * thread before it even looks at {@code fork}. See
-	 * {@link #assertDialogShown(boolean, boolean, boolean, boolean, boolean, boolean)}
-	 * for details, and
-	 * {@link #testRun_noFork_cancelable_runInForeground_callFromNonUIThread_notPumpingUiEvents_throwsIllegalStateException()}
-	 * for the {@code fork == false} counterpart of this test.
-	 * <p>
-	 * We deliberately do not repeat this for every {@code cancelable} /
-	 * {@code runInBackground} combination: the failure happens before those
-	 * parameters are ever read, so varying them cannot change the outcome.
-	 */
-	@Test
-	public void testRun_fork_cancelable_runInForeground_callFromNonUIThread_notPumpingUiEvents_throwsIllegalStateException()
-			throws Exception {
-		assertDialogShown(true, true, false, false, false, false);
+		assertDialogShown(true, false, true, false, false);
 	}
 
 	@Test
 	public void testRun_fork_cancelable_runInForeground_callFromUIThread_notPumpingUiEvents_dialogShown()
 			throws Exception {
-		assertDialogShown(true, true, false, true, false, true);
+		assertDialogShown(true, true, false, false, true);
 	}
 
 	@Test
 	public void testRun_fork_cancelable_runInBackground_callFromUIThread_notPumpingUiEvents_noDialogShown()
 			throws Exception {
-		assertDialogShown(true, true, true, true, false, false);
+		assertDialogShown(true, true, true, false, false);
 	}
 
 	/**
 	 * Runs {@link IProgressService#run(boolean, boolean, IRunnableWithProgress)}
-	 * with the given {@code fork}/{@code cancelable} arguments and the given
-	 * "Always run in background" preference, detects whether the progress dialog
-	 * popped up while it was running (or that the call failed with the expected
-	 * {@link IllegalStateException} wrapping the original {@link SWTException}
-	 * when {@code callFromUIThread} is {@code false}), and
-	 * asserts the outcome against {@code expectDialogShown}.
+	 * from the UI thread with the given {@code fork}/{@code cancelable} arguments
+	 * and the given "Always run in background" preference, detects whether the
+	 * progress dialog popped up while it was running, and asserts the outcome
+	 * against {@code expectDialogShown}.
 	 *
-	 * @param callFromUIThread whether {@link IProgressService#run} itself is
-	 *                         called from this (UI) thread or from a plain
-	 *                         background thread. <b>Regardless of
-	 *                         {@code fork}</b>: {@code ProgressManager.run}
-	 *                         throws an {@link IllegalStateException} (caused by
-	 *                         an {@link SWTException} with
-	 *                         {@link SWT#ERROR_THREAD_INVALID_ACCESS}) when
-	 *                         called from any thread other than the UI thread,
-	 *                         before it even looks at {@code fork},
-	 *                         {@code cancelable} or the "Always run in
-	 *                         background" preference. So calling
-	 *                         {@link IProgressService#run} off the UI thread
-	 *                         always fails immediately and the operation never
-	 *                         even starts - this is <b>not</b> specific to
-	 *                         {@code fork == false}. When {@code false},
-	 *                         {@code expectDialogShown} must be {@code false}
-	 *                         and {@code pumpUiEventsWhileRunning} is
-	 *                         meaningless (the runnable's body is never
-	 *                         reached).
-	 * @param pumpUiEventsWhileRunning whether the runnable itself keeps pumping
-	 *                                 SWT events (rather than just blocking, e.g.
-	 *                                 via {@code Thread.sleep}) while it
-	 *                                 "works". Only matters - and is only safe
-	 *                                 to set - when {@code fork == false} and
-	 *                                 {@code callFromUIThread == true}: see
+	 * @param pumpUiEventsWhileRunning whether the runnable itself keeps pumping SWT
+	 *                                 events (rather than just blocking, e.g. via
+	 *                                 {@code Thread.sleep}) while it "works". Only
+	 *                                 matters - and is only safe to set - when
+	 *                                 {@code fork == false}: see
 	 *                                 {@link #testRun_noFork_cancelable_runInForeground_callFromUIThread_blockingUiThread_noDialogShown()}
 	 *                                 and
 	 *                                 {@link #testRun_noFork_cancelable_runInForeground_callFromUIThread_pumpingUiEventsWhileRunning_dialogShown()}.
 	 */
 	private void assertDialogShown(boolean fork, boolean cancelable, boolean runInBackgroundPref,
-			boolean callFromUIThread, boolean pumpUiEventsWhileRunning, boolean expectDialogShown) throws Exception {
+			boolean pumpUiEventsWhileRunning, boolean expectDialogShown) throws Exception {
 		runInBackground(runInBackgroundPref);
 
 		Display display = PlatformUI.getWorkbench().getDisplay();
-		IRunnableWithProgress longRunningRunnable = monitor -> {
-			int workUnits = 3;
-			// Give it enough time so that the progress dialog can appear
-			long workDurationMillis = (long) (progressService.getLongOperationTime() / workUnits * 1.5);
-			SubMonitor sub = SubMonitor.convert(monitor, workUnits);
-			for (int i = 0; i < workUnits; i++) {
+		boolean dialogShown = runAndDetectProgressDialog(shown -> progressService.run(fork, cancelable,
+				monitor -> work(monitor, display, pumpUiEventsWhileRunning, expectDialogShown, shown)));
+
+		assertEquals(expectDialogShown, dialogShown, String.format(
+				"Expected progress dialog shown=%s for fork=%s, cancelable=%s, runInBackground=%s, pumpUiEventsWhileRunning=%s",
+				expectDialogShown, fork, cancelable, runInBackgroundPref, pumpUiEventsWhileRunning));
+	}
+
+	/**
+	 * Simulates a long-running operation. If a dialog is expected, it keeps working
+	 * until the dialog was shown (bounded by {@link #DIALOG_TIMEOUT_MILLIS}),
+	 * otherwise it works long enough for a dialog to have appeared if it was going
+	 * to.
+	 */
+	private void work(IProgressMonitor monitor, Display display, boolean pumpUiEvents, boolean expectDialogShown,
+			BooleanSupplier dialogShown) {
+		int workUnits = 3;
+		SubMonitor sub = SubMonitor.convert(monitor, workUnits);
+		// Without an expected dialog: work long enough for the dialog to appear if it
+		// was going to
+		long workDurationMillis = (long) (progressService.getLongOperationTime() / workUnits * 1.5);
+		long dialogDeadline = System.currentTimeMillis() + DIALOG_TIMEOUT_MILLIS;
+		for (int i = 0; i < workUnits; i++) {
+			long deadline = System.currentTimeMillis() + workDurationMillis;
+			while (expectDialogShown ? !dialogShown.getAsBoolean() && System.currentTimeMillis() < dialogDeadline
+					: System.currentTimeMillis() < deadline) {
 				try {
-					if (pumpUiEventsWhileRunning) {
+					if (pumpUiEvents) {
 						// Behave like a real, responsive long-running operation: keep
 						// dispatching UI events instead of freezing the UI thread, so
 						// that the job opening the progress dialog gets a chance to run.
-						long deadline = System.currentTimeMillis() + workDurationMillis;
-						while (System.currentTimeMillis() < deadline) {
-							if (!display.readAndDispatch()) {
-								Thread.sleep(5);
-							}
+						if (!display.readAndDispatch()) {
+							Thread.sleep(5);
 						}
 					} else {
-						Thread.sleep(workDurationMillis);
+						Thread.sleep(5);
 					}
 				} catch (InterruptedException e) {
 					// do nothing
 				}
-				sub.worked(1);
 			}
-		};
-
-		if (!callFromUIThread) {
-			assertFalse(expectDialogShown,
-					"callFromUIThread=false always fails before any dialog could ever show - pass expectDialogShown=false");
-			Throwable thrown = runOnNonUiThreadAndCaptureThrowable(
-					() -> progressService.run(fork, cancelable, longRunningRunnable));
-			assertInstanceOf(IllegalStateException.class, thrown,
-					() -> String.format(
-							"Expected IProgressService#run(fork=%s, cancelable=%s) called off the UI thread to fail "
-									+ "with an IllegalStateException (regardless of fork/cancelable/runInBackground), "
-									+ "but got: %s",
-							fork, cancelable, thrown));
-			SWTException cause = assertInstanceOf(SWTException.class, thrown.getCause(),
-					"Expected the original SWTException as the cause of the IllegalStateException");
-			assertEquals(SWT.ERROR_THREAD_INVALID_ACCESS, cause.code,
-					"Expected the invalid-thread-access SWTException as the cause, but got: " + cause);
-			return;
+			sub.worked(1);
 		}
-
-		boolean dialogShown = runAndDetectProgressDialog(
-				() -> progressService.run(fork, cancelable, longRunningRunnable));
-
-		assertEquals(expectDialogShown, dialogShown,
-				String.format(
-						"Expected progress dialog shown=%s for fork=%s, cancelable=%s, runInBackground=%s, pumpUiEventsWhileRunning=%s",
-						expectDialogShown, fork, cancelable, runInBackgroundPref, pumpUiEventsWhileRunning));
 	}
 
 	private static void runInBackground(boolean value) {
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.RUN_IN_BACKGROUND, value);
-	}
-
-	/**
-	 * Runs {@code action} on a plain, non-UI thread (i.e. not the SWT display
-	 * thread) and returns whatever {@link Throwable} it throws - or
-	 * {@code null} if it completes without throwing - after joining that
-	 * thread. Used to verify that {@link IProgressService#run} refuses to be
-	 * called off the UI thread; see
-	 * {@link #assertDialogShown(boolean, boolean, boolean, boolean, boolean, boolean)}
-	 * for why.
-	 */
-	private Throwable runOnNonUiThreadAndCaptureThrowable(ThrowingRunnable action) throws InterruptedException {
-		Throwable[] thrown = new Throwable[1];
-		Thread nonUiThread = new Thread(() -> {
-			try {
-				action.run();
-			} catch (Throwable t) {
-				thrown[0] = t;
-			}
-		}, "ProgressServiceTest-non-UI-caller");
-		nonUiThread.start();
-		nonUiThread.join();
-		return thrown[0];
 	}
 
 	/**
@@ -410,14 +310,16 @@ public class ProgressServiceTest extends ProgressTestCase {
 	 * matters because with {@code fork == false} the calling (UI) thread never gets
 	 * to pump events again once the runnable starts (it just freezes), so a
 	 * poll-based approach would never see a dialog that was already opened
-	 * synchronously right before the freeze.
+	 * synchronously right before the freeze. The action gets a supplier telling
+	 * whether a dialog was shown so far.
 	 */
-	private boolean runAndDetectProgressDialog(ThrowingRunnable action) throws Exception {
+	private boolean runAndDetectProgressDialog(DialogAwareRunnable action) throws Exception {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Set<Shell> preexistingShells = new HashSet<>(Arrays.asList(display.getShells()));
 		AtomicBoolean dialogShown = new AtomicBoolean(false);
 		Listener showListener = event -> {
-			if (event.widget instanceof Shell shell && !preexistingShells.contains(shell)) {
+			if (event.widget instanceof Shell shell && !preexistingShells.contains(shell)
+					&& shell.getData() instanceof ProgressMonitorJobsDialog) {
 				dialogShown.set(true);
 			}
 		};
@@ -426,15 +328,15 @@ public class ProgressServiceTest extends ProgressTestCase {
 		// it will fire even during the frozen, non-pumping case (i.e. fork == false).
 		display.addFilter(SWT.Show, showListener);
 		try {
-			action.run();
+			action.run(dialogShown::get);
 		} finally {
 			display.removeFilter(SWT.Show, showListener);
 		}
 		return dialogShown.get();
 	}
 
-	interface ThrowingRunnable {
-		void run() throws Exception;
+	private interface DialogAwareRunnable {
+		void run(BooleanSupplier dialogShown) throws Exception;
 	}
 
 }

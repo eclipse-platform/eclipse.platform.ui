@@ -31,6 +31,8 @@ import org.junit.platform.suite.api.Suite;
 		JobInfoTestOrdering.class, //
 		ProgressAnimationItemTest.class, //
 		ProgressServiceTest.class, //
+		ProgressServiceOffUIThreadTest.class, //
+		E4ProgressServiceOffUIThreadTest.class, //
 		AccumulatingProgressMonitorTest.class })
 public class ProgressTestSuite {
 

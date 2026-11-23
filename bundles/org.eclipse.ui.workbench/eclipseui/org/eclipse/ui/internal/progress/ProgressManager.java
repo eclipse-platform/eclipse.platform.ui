@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2022 IBM Corporation and others.
+ * Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,13 +55,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.internal.NonUIThreadRunner;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Throttler;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -1085,17 +1085,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		final ProgressMonitorJobsDialog dialog;
-		try {
-			dialog = new ProgressMonitorJobsDialog(ProgressManagerUtil.getDefaultParent());
-		} catch (SWTException e) {
-			if (e.code != SWT.ERROR_THREAD_INVALID_ACCESS) {
-				throw e;
-			}
-			throw new IllegalStateException(
-					"IProgressService.run() must be called from the UI thread since it may need to open a progress dialog. Use a Job to run long operations from a background thread.", //$NON-NLS-1$
-					e);
+		if (Display.getCurrent() == null) {
+			NonUIThreadRunner.run(fork, runnable);
+			return;
 		}
+		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(ProgressManagerUtil.getDefaultParent());
 		dialog.setOpenOnRun(false);
 		if (shouldRunInBackground()) {
 			// The "Always run in background" preference must suppress the modal
