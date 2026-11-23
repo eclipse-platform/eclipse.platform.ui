@@ -15,6 +15,7 @@ package org.eclipse.jface.text.source.inlined;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -772,5 +773,46 @@ public class InlinedAnnotationSupport {
 	static InlinedAnnotationSupport getSupport(StyledText widget) {
 		return widget.getData(InlinedAnnotationSupport.INLINED_STRATEGY_ID) instanceof InlinedAnnotationSupport support ?
 			support : null;
+	}
+
+	/** Compute one reservation for all annotations sharing a glyph, independent of paint order. */
+	LineContentAnnotation.Layout getLayout(LineContentAnnotation annotation) {
+		if (fViewer == null || fViewer.getAnnotationModel() == null) {
+			return new LineContentAnnotation.Layout(annotation.getWidth(), 0, 0);
+		}
+		int host= annotation.getHostOffset(fViewer);
+		if (host < 0) {
+			return new LineContentAnnotation.Layout(annotation.getWidth(), 0, 0);
+		}
+		IRegion region= new Region(host, Math.min(2, fViewer.getTextWidget().getCharCount() - host));
+		if (fViewer instanceof ITextViewerExtension5 projectionViewer) {
+			region= projectionViewer.widgetRange2ModelRange(region);
+		}
+		List<LineContentAnnotation> sharing= new ArrayList<>();
+		IAnnotationModel model= fViewer.getAnnotationModel();
+		var iterator= region != null && model instanceof IAnnotationModelExtension2 indexedModel
+				? indexedModel.getAnnotationIterator(region.getOffset(), region.getLength(), true, true)
+				: model.getAnnotationIterator();
+		iterator.forEachRemaining(candidate -> {
+			if (candidate instanceof LineContentAnnotation content && content.getHostOffset(fViewer) == host) {
+				sharing.add(content);
+			}
+		});
+		if (!sharing.contains(annotation)) {
+			sharing.add(annotation);
+		}
+		sharing.sort(Comparator.comparingInt((LineContentAnnotation content) -> content.getPosition().offset)
+				.thenComparingInt(content -> content.getPosition().length));
+		int width= 0, offset= 0, characterOffset= 0;
+		for (LineContentAnnotation content : sharing) {
+			if (content == annotation) {
+				offset= width;
+			}
+			width+= content.getWidth();
+			if (content.computeWidgetPosition(fViewer).offset == host) {
+				characterOffset+= content.getWidth();
+			}
+		}
+		return new LineContentAnnotation.Layout(width, offset, characterOffset);
 	}
 }

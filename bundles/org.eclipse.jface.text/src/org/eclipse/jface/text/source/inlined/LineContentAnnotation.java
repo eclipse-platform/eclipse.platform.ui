@@ -23,6 +23,8 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
@@ -45,6 +47,41 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	private int redrawnCharacterWidth;
 
 	private boolean isZeroWidthCharacter;
+
+	/** Widths sharing a host character, excluding the character itself. */
+	record Layout(int width, int annotationOffset, int characterOffset) {}
+
+	int getHostOffset(ITextViewer viewer) {
+		Position position= computeWidgetPosition(viewer);
+		if (position == null || isMarkedDeleted() || getPosition().isDeleted()) {
+			return -1;
+		}
+		int offset= position.getOffset();
+		StyledText text= viewer.getTextWidget();
+		if (offset < 0 || offset >= text.getCharCount() || position.length == 0 || isEmptyLine(offset, text)) {
+			return -1;
+		}
+		boolean after= this instanceof CodeMiningLineContentAnnotation mining && mining.isAfterPosition();
+		if (!after && drawRightToPreviousChar(offset, text)) {
+			return offset - 1;
+		}
+		String character= text.getText(offset, offset);
+		return !after && ("\r".equals(character) || "\n".equals(character)) ? -1 : offset; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	Layout getLayout(ITextViewer viewer) {
+		StyledText text= viewer != null ? viewer.getTextWidget() : null;
+		if (text == null || text.isDisposed()) {
+			return new Layout(width, 0, 0);
+		}
+		InlinedAnnotationSupport support= InlinedAnnotationSupport.getSupport(text);
+		if (support != null) {
+			return support.getLayout(this);
+		}
+		Position position= computeWidgetPosition(viewer);
+		boolean left= position != null && position.getOffset() == getHostOffset(viewer);
+		return new Layout(width, 0, left ? width : 0);
+	}
 
 	/**
 	 * Line content annotation constructor.
@@ -154,10 +191,11 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		if (!afterPosition) {
 			usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset(), textWidget);
 		}
-		if (isZeroWidthCharacter == false && (width == 0 || getRedrawnCharacterWidth() == 0)) {
+		int reservedWidth= getLayout(viewer).width();
+		if (isZeroWidthCharacter == false && (reservedWidth == 0 || getRedrawnCharacterWidth() == 0)) {
 			return null;
 		}
-		int fullWidth= width + getRedrawnCharacterWidth();
+		int fullWidth= reservedWidth + getRedrawnCharacterWidth();
 		if (style == null) {
 			style= new StyleRange();
 			style.start= widgetPosition.getOffset();

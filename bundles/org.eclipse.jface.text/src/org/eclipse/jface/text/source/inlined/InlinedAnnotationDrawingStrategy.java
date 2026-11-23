@@ -471,6 +471,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			} else {
 				x= bounds.x;
 			}
+			if (!isEndOfLine || isAfterPosition(annotation)) {
+				x+= annotation.getLayout(annotation.getViewer()).annotationOffset();
+			}
 			int y= bounds.y;
 			if (isAfterPosition(annotation)) {
 				isEndOfLine= false;
@@ -485,7 +488,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.setLocation(x, y);
 			annotation.draw(gc, textWidget, widgetOffset, length, color, x, y);
 			int width= annotation.getWidth();
-			if (width != 0) {
+			if (width != 0 || annotation.getLayout(annotation.getViewer()).width() != 0) {
 				if (isEndOfLine) {
 					if (!gc.getClipping().contains(x, y)) {
 						// The draw of mining is not inside the gc clipping, redraw the area which contains the mining to draw.
@@ -494,8 +497,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					}
 				} else {
 					// Get size of the character where GlyphMetrics width is added
-					Point charBounds= gc.stringExtent(hostCharacter);
-					int charWidth= charBounds.x;
+					int charWidth= getHostCharacterWidth(gc, textWidget, hostCharacter);
 					boolean isZeroWidthCharacter= false;
 					if (hostCharacter.length() == 1 && ZW_CHARACTERS.contains(hostCharacter.charAt(0))) {
 						isZeroWidthCharacter= true;
@@ -523,7 +525,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// GlyphMetrics
 					// Here we need to redraw this first character because GlyphMetrics clip this
 					// character.
-					int redrawnHostCharX= x + bounds.width - charWidth;
+					int redrawnHostCharX= bounds.x + annotation.getLayout(annotation.getViewer()).characterOffset();
 					int redrawnHostCharY= y;
 					gc.setForeground(textWidget.getForeground());
 					gc.setBackground(textWidget.getBackground());
@@ -568,6 +570,17 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		return false;
 	}
 
+	/**
+	 * Both drawing branches must measure the host identically when annotations share a glyph
+	 * reservation. Tabs use the widget's tab width rather than the GC's raw string extent.
+	 */
+	private static int getHostCharacterWidth(GC gc, StyledText textWidget, String hostCharacter) {
+		if ("\t".equals(hostCharacter)) { //$NON-NLS-1$
+			return textWidget.getTabs() * gc.stringExtent(" ").x; //$NON-NLS-1$
+		}
+		return gc.stringExtent(hostCharacter).x;
+	}
+
 	protected static void drawAsRightOfPreviousCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		StyleRange style= null;
 		try {
@@ -586,14 +599,15 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		if (gc != null) {
 			char hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1).charAt(0);
 			// use gc.stringExtent instead of gc.geCharWidth because of bug 548866
-			int redrawnCharacterWidth= hostCharacter != '\t' ? gc.stringExtent(Character.toString(hostCharacter)).x : textWidget.getTabs() * gc.stringExtent(" ").x; //$NON-NLS-1$
+			int redrawnCharacterWidth= getHostCharacterWidth(gc, textWidget, Character.toString(hostCharacter));
 			boolean isZeroWidthCharacter= false;
 			if (ZW_CHARACTERS.contains(hostCharacter)) {
 				redrawnCharacterWidth= 0;
 				isZeroWidthCharacter= true;
 			}
 			Rectangle charBounds= textWidget.getTextBounds(widgetOffset - 1, widgetOffset - 1);
-			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
+			LineContentAnnotation.Layout layout= annotation.getLayout(annotation.getViewer());
+			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth + layout.annotationOffset(), charBounds.y, annotation.getWidth(), charBounds.height);
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			int verticalDrawingOffset= charBounds.height - textWidget.getLineHeight();
@@ -605,7 +619,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.setLocation(annotationBounds.x, annotationBounds.y);
 			annotation.draw(gc, textWidget, widgetOffset, length, color, annotationBounds.x, annotationBounds.y);
 			int width= annotation.getWidth();
-			if (width != 0) {
+			if (width != 0 || annotation.getLayout(annotation.getViewer()).width() != 0) {
 				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 				// START TO REMOVE
 				annotation.setRedrawnCharacterWidth(redrawnCharacterWidth, isZeroWidthCharacter);
@@ -627,10 +641,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				gc.setForeground(textWidget.getForeground());
 				gc.setBackground(textWidget.getBackground());
 				gc.setFont(textWidget.getFont());
+				int redrawnHostCharX= charBounds.x + annotation.getLayout(annotation.getViewer()).characterOffset();
 				if (style != null) {
 					if (style.background != null) {
 						gc.setBackground(style.background);
-						gc.fillRectangle(charBounds.x, annotationBounds.y, redrawnCharacterWidth, charBounds.height);
+						gc.fillRectangle(redrawnHostCharX, annotationBounds.y, redrawnCharacterWidth, charBounds.height);
 					}
 					if (style.foreground != null) {
 						gc.setForeground(style.foreground);
@@ -648,7 +663,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				if ("\n".equals(characterToBeDrawn)) { //$NON-NLS-1$
 					characterToBeDrawn= ""; //$NON-NLS-1$
 				}
-				gc.drawString(characterToBeDrawn, charBounds.x, charBounds.y + verticalDrawingOffset, true);
+				gc.drawString(characterToBeDrawn, redrawnHostCharX, charBounds.y + verticalDrawingOffset, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it
