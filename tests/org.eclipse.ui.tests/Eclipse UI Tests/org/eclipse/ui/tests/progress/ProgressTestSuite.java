@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,14 +25,13 @@ import org.junit.platform.suite.api.Suite;
  * @author Prakash G.R. (grprakash@in.ibm.com)
  */
 @Suite
-@SelectClasses({
-	ProgressContantsTest.class,
-	ProgressViewTests.class,
-	JobInfoTest.class,
-	JobInfoTestOrdering.class,
-	ProgressAnimationItemTest.class,
-	AccumulatingProgressMonitorTest.class
-})
+@SelectClasses({ ProgressContantsTest.class, //
+		ProgressViewTests.class, //
+		JobInfoTest.class, //
+		JobInfoTestOrdering.class, //
+		ProgressAnimationItemTest.class, //
+		ProgressServiceTest.class, //
+		AccumulatingProgressMonitorTest.class })
 public class ProgressTestSuite {
 
 }
