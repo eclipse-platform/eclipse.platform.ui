@@ -510,14 +510,15 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 			for (String stylesheet : getAllStyles(theme)) {
-				URL url;
 				InputStream stream = null;
 				try {
-					url = FileLocator.resolve(new URL(stylesheet));
+					URL source = new URL(stylesheet);
+					String uri = FileLocator.resolve(source).toString();
 					for (CSSEngine engine : cssEngines) {
 						try {
-							stream = url.openStream();
-							engine.parseStyleSheet(stream, url.toString());
+							// the unresolved URL reads through the bundle, a jar: URL would verify the jar signature
+							stream = source.openStream();
+							engine.parseStyleSheet(stream, uri);
 						} catch (IOException e) {
 							ThemeEngineManager.logError(e.getMessage(), e);
 						} finally {

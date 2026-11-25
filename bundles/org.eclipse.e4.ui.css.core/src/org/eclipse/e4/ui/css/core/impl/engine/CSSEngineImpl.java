@@ -178,8 +178,10 @@ public abstract class CSSEngineImpl implements CSSEngine {
 			}
 			// processing an import CSS
 			URL url = null;
+			URL source = null;
 			if (importRule.getHref().startsWith("platform")) {
-				url = FileLocator.resolve(new URL(importRule.getHref()));
+				source = new URL(importRule.getHref());
+				url = FileLocator.resolve(source);
 			} else {
 				IPath p = IPath.fromOSString(uri);
 				IPath trim = p.removeLastSegments(1);
@@ -196,7 +198,8 @@ public abstract class CSSEngineImpl implements CSSEngine {
 					}
 				}
 			}
-			try (InputStream stream = url.openStream()) {
+			// the unresolved URL reads through the bundle, a jar: URL would verify the jar signature
+			try (InputStream stream = (source != null ? source : url).openStream()) {
 				parseImport++;
 				CSSStyleSheetImpl imported;
 				try {
