@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -109,6 +110,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 */
 	private TableItem[] getVisibleItems() {
 		return visibleItems.toArray(new TableItem[visibleItems.size()]);
+	}
+
+	@Test
+	public void testNullInputRemovesItems() {
+		fViewer.setInput(null);
+		fViewer.setContentProvider(ArrayContentProvider.getInstance());
+		assertEquals(0, ((TableViewer) fViewer).getTable().getItemCount());
 	}
 
 	@Test
