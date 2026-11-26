@@ -663,7 +663,7 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 
 	@Override
 	protected Text doCreateFilterText(Composite parent) {
-		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
+		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
 	}
 
 	private String previousFilterText;
