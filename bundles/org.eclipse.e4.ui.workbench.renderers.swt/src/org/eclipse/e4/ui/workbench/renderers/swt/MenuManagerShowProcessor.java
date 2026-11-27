@@ -73,10 +73,20 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 	@Optional
 	private Logger logger;
 
+	private boolean coalescing;
+
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		if (!(manager instanceof MenuManager menuManager)) {
 			return;
+		}
+		if (!coalescing) {
+			// the about-to-show listeners and menuAboutToHide change the menu
+			// several times, MenuManager rebuilds it once afterwards
+			coalescing = true;
+			renderer.beginCoalescedUpdates();
+			// ends the section even if a listener throws before menuAboutToHide
+			menuManager.getMenu().getDisplay().asyncExec(() -> endCoalescedUpdates(null));
 		}
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
 		final Menu menu = menuManager.getMenu();
@@ -102,13 +112,25 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 	@Override
 	public void menuAboutToHide(IMenuManager manager) {
-		if (!(manager instanceof MenuManager menuManager)) {
-			return;
+		try {
+			if (!(manager instanceof MenuManager menuManager)) {
+				return;
+			}
+			final MMenu menuModel = renderer.getMenuModel(menuManager);
+			if (menuModel != null) {
+				processDynamicElements(menuModel, menuManager);
+				showMenu(menuModel, menuManager);
+			}
+		} finally {
+			// MenuManager updates the shown menu right after this call
+			endCoalescedUpdates(manager);
 		}
-		final MMenu menuModel = renderer.getMenuModel(menuManager);
-		if (menuModel != null) {
-			processDynamicElements(menuModel, menuManager);
-			showMenu(menuModel, menuManager);
+	}
+
+	private void endCoalescedUpdates(IMenuManager updatedByCaller) {
+		if (coalescing) {
+			coalescing = false;
+			renderer.endCoalescedUpdates(updatedByCaller);
 		}
 	}
 
