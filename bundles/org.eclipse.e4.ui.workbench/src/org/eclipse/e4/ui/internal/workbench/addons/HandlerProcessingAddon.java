@@ -131,7 +131,14 @@ public class HandlerProcessingAddon {
 			handler.setObject(contributionFactory.create(handler.getContributionURI(), context));
 		}
 		EHandlerService handlerService = context.get(EHandlerService.class);
-		handlerService.activateHandler(commandId, handler.getObject());
+		
+		// Wrap handler with enabledWhen support if expression is defined
+		Object handlerObj = handler.getObject();
+		if (handler.getEnabledWhen() != null) {
+			handlerObj = new HandlerEnabledWhenWrapper(handlerObj, handler);
+		}
+		
+		handlerService.activateHandler(commandId, handlerObj);
 	}
 
 }
