@@ -23,16 +23,40 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyLinesVisibleSWTHandler extends AbstractCSSPropertySWTHandler {
 
+	private static final String DEFAULT_LINES_VISIBLE = "org.eclipse.e4.ui.css.swt.defaultLinesVisible"; //$NON-NLS-1$
+
+	/**
+	 * Restores the lines visibility the control had before CSS styled it.
+	 */
+	public static void restoreDefaultLinesVisible(Control control) {
+		if (control.getData(DEFAULT_LINES_VISIBLE) instanceof Boolean linesVisible) {
+			control.setData(DEFAULT_LINES_VISIBLE, null);
+			if (control instanceof Table table) {
+				table.setLinesVisible(linesVisible);
+			} else if (control instanceof Tree tree) {
+				tree.setLinesVisible(linesVisible);
+			}
+		}
+	}
+
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
 		if (value instanceof CssPrimitive) {
 			boolean linesVisible = (Boolean) engine.convert(value, Boolean.class, control.getDisplay());
-			if (control instanceof Table) {
-				((Table) control).setLinesVisible(linesVisible);
-			} else if (control instanceof Tree) {
-				((Tree) control).setLinesVisible(linesVisible);
+			if (control instanceof Table table) {
+				storeDefaultLinesVisible(table, table.getLinesVisible());
+				table.setLinesVisible(linesVisible);
+			} else if (control instanceof Tree tree) {
+				storeDefaultLinesVisible(tree, tree.getLinesVisible());
+				tree.setLinesVisible(linesVisible);
 			}
+		}
+	}
+
+	private static void storeDefaultLinesVisible(Control control, boolean linesVisible) {
+		if (control.getData(DEFAULT_LINES_VISIBLE) == null) {
+			control.setData(DEFAULT_LINES_VISIBLE, Boolean.valueOf(linesVisible));
 		}
 	}
 
