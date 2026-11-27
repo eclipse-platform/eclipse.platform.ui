@@ -487,6 +487,9 @@ public class ThemeEngine implements IThemeEngine {
 	public void setTheme(ITheme theme, boolean restore, boolean force) {
 		Assert.isNotNull(theme, "The theme must not be null");
 
+		// on GTK a reset resolves null colors against the system colors, which must match the new theme
+		display.setDarkThemePreferred(theme.isDark());
+
 		if (this.currentTheme != theme || force) {
 			if (currentTheme != null) {
 				for (IResourceLocator l : getResourceLocators(currentTheme
@@ -550,8 +553,6 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 		publishEffectiveThemeId();
-
-		display.setDarkThemePreferred(theme.isDark());
 
 		sendThemeChangeEvent(restore);
 
