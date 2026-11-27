@@ -17,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.jface.text.tests.codemining.CodeMiningAnnotationReattachTest;
+import org.eclipse.jface.text.tests.codemining.CodeMiningFilterTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningLineHeaderAnnotationTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
@@ -88,6 +89,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		CodeMiningLineHeaderAnnotationTest.class,
 		CodeMiningProjectionViewerTest.class,
 		CodeMiningAnnotationReattachTest.class,
+		CodeMiningFilterTest.class,
 
 		TabsToSpacesConverterTest.class,
 		DefaultTextDoubleClickStrategyTest.class,

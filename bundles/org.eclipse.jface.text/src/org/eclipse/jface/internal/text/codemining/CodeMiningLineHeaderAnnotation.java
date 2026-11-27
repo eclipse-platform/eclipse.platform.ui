@@ -229,7 +229,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	}
 
 	static void disposeMinings(List<ICodeMining> minings) {
-		minings.forEach(ICodeMining::dispose);
+		CodeMiningManager.disposeMinings(minings);
 	}
 
 	@Override
@@ -326,5 +326,11 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	@Override
 	public List<ICodeMining> getMinings() {
 		return fMinings;
+	}
+
+	@Override
+	public ICodeMining[] getCachedMinings() {
+		ICodeMining[] cached= fResolvedMinings;
+		return cached == null ? new ICodeMining[0] : cached.clone();
 	}
 }

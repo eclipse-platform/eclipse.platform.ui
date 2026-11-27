@@ -27,6 +27,21 @@ import org.eclipse.jface.text.codemining.ICodeMining;
 public interface ICodeMiningAnnotation {
 
 	/**
+	 * Returns the mining instances currently owned by this annotation.
+	 *
+	 * @return the current minings
+	 */
+	List<ICodeMining> getMinings();
+
+	/**
+	 * Returns a snapshot of the cached minings used while new minings resolve.
+	 * Entries may be {@code null}. Cached instances may already have been disposed.
+	 *
+	 * @return the cached minings
+	 */
+	ICodeMining[] getCachedMinings();
+
+	/**
 	 * Update code minings.
 	 *
 	 * @param minings the minings to update.

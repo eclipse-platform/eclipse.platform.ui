@@ -15,6 +15,7 @@
  */
 package org.eclipse.jface.internal.text.codemining;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,12 +28,14 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ILog;
@@ -66,6 +69,8 @@ public class CodeMiningManager implements Runnable {
 	 */
 	private final ISourceViewer fViewer;
 
+	private final Display fDisplay;
+
 	/**
 	 * The inlined annotation support used to draw CodeMining in the line spacing.
 	 */
@@ -81,6 +86,10 @@ public class CodeMiningManager implements Runnable {
 	 */
 	private IProgressMonitor fMonitor;
 
+	private List<Predicate<? super ICodeMining>> fCodeMiningFilters= List.of();
+
+	private Set<AbstractInlinedAnnotation> fCurrentAnnotations= Collections.emptySet();
+
 	/**
 	 * Constructor of codemining manager with the given arguments.
 	 *
@@ -90,12 +99,56 @@ public class CodeMiningManager implements Runnable {
 	 */
 	public CodeMiningManager(ISourceViewer viewer, InlinedAnnotationSupport inlinedAnnotationSupport,
 			ICodeMiningProvider[] codeMiningProviders) {
+		this(viewer, inlinedAnnotationSupport, codeMiningProviders, List.of());
+	}
+
+	/**
+	 * Creates a manager with the initial filters.
+	 *
+	 * @param viewer the source viewer
+	 * @param inlinedAnnotationSupport the installed annotation support
+	 * @param codeMiningProviders the installed providers
+	 * @param filters the initial filters
+	 */
+	public CodeMiningManager(ISourceViewer viewer, InlinedAnnotationSupport inlinedAnnotationSupport,
+			ICodeMiningProvider[] codeMiningProviders, List<Predicate<? super ICodeMining>> filters) {
 		Assert.isNotNull(viewer);
 		Assert.isNotNull(inlinedAnnotationSupport);
 		Assert.isNotNull(codeMiningProviders);
 		fViewer= viewer;
+		fDisplay= viewer.getTextWidget().getDisplay();
 		fInlinedAnnotationSupport= inlinedAnnotationSupport;
 		setCodeMiningProviders(codeMiningProviders);
+		fCodeMiningFilters= List.copyOf(filters);
+	}
+
+	/**
+	 * Replaces the filters and refreshes minings on the viewer's UI thread.
+	 *
+	 * @param filters the filters to apply
+	 */
+	public void setCodeMiningFilters(List<Predicate<? super ICodeMining>> filters) {
+		List<Predicate<? super ICodeMining>> snapshot= List.copyOf(filters);
+		synchronized (this) {
+			cancel();
+			fCodeMiningFilters= snapshot;
+		}
+		Set<AbstractInlinedAnnotation> retained= new HashSet<>();
+		for (AbstractInlinedAnnotation annotation : fCurrentAnnotations) {
+			try {
+				ICodeMiningAnnotation miningAnnotation= (ICodeMiningAnnotation) annotation;
+				if (miningAnnotation.getMinings().stream().allMatch(mining -> acceptsMining(mining, snapshot))
+						&& Arrays.stream(miningAnnotation.getCachedMinings()).filter(Objects::nonNull)
+								.allMatch(mining -> acceptsMining(mining, snapshot))) {
+					retained.add(annotation);
+				}
+			} catch (Throwable e) {
+				logCodeMiningProviderException(e);
+			}
+		}
+		fCurrentAnnotations= retained;
+		fInlinedAnnotationSupport.updateAnnotations(retained);
+		run();
 	}
 
 	/**
@@ -104,21 +157,31 @@ public class CodeMiningManager implements Runnable {
 	 * @param codeMiningProviders the codemining providers.
 	 */
 	public void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders) {
-		cancel();
-		if (fCodeMiningProviders != null) {
-			fCodeMiningProviders.stream().forEach(ICodeMiningProvider::dispose);
+		List<ICodeMiningProvider> previous;
+		synchronized (this) {
+			cancel();
+			previous= fCodeMiningProviders;
+			fCodeMiningProviders= List.copyOf(Arrays.asList(codeMiningProviders));
 		}
-		fCodeMiningProviders= Arrays.asList(codeMiningProviders);
+		if (previous != null) {
+			previous.forEach(ICodeMiningProvider::dispose);
+		}
 	}
 
 	/**
 	 * Uninstalls this codemining manager.
 	 */
 	public void uninstall() {
-		cancel();
+		List<ICodeMiningProvider> previous;
+		synchronized (this) {
+			cancel();
+			previous= fCodeMiningProviders;
+			fCodeMiningProviders= List.of();
+		}
+		fCurrentAnnotations= Collections.emptySet();
 		fInlinedAnnotationSupport.updateAnnotations(Collections.emptySet());
-		if (fCodeMiningProviders != null) {
-			fCodeMiningProviders.forEach(ICodeMiningProvider::dispose);
+		if (previous != null) {
+			previous.forEach(ICodeMiningProvider::dispose);
 		}
 	}
 
@@ -127,14 +190,9 @@ public class CodeMiningManager implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (fCodeMiningProviders == null
-				|| fCodeMiningProviders.isEmpty() || fViewer.getAnnotationModel() == null) {
+		if (fViewer.getAnnotationModel() == null) {
 			return;
 		}
-		// Cancel the last progress monitor to cancel last resolve and render of code
-		// minings
-		cancel();
-		// Update the code minings
 		updateCodeMinings();
 	}
 
@@ -142,22 +200,86 @@ public class CodeMiningManager implements Runnable {
 	 * Update the code minings.
 	 */
 	private void updateCodeMinings() {
-		// Refresh the code minings by using the new progress monitor.
-		fMonitor= new CancellationExceptionMonitor();
-		IProgressMonitor monitor= fMonitor;
+		IProgressMonitor monitor;
+		List<ICodeMiningProvider> providers;
+		List<Predicate<? super ICodeMining>> filters;
+		synchronized (this) {
+			if (fCodeMiningProviders == null || fCodeMiningProviders.isEmpty()) {
+				return;
+			}
+			cancel();
+			fMonitor= new CancellationExceptionMonitor();
+			monitor= fMonitor;
+			providers= fCodeMiningProviders;
+			filters= fCodeMiningFilters;
+		}
 		// Collect the code minings for the viewer
-		getCodeMinings(fViewer, fCodeMiningProviders, monitor).thenAccept(symbols -> {
+		getCodeMinings(fViewer, providers, monitor).thenAccept(symbols -> {
+			List<ICodeMining> accepted= new ArrayList<>();
+			List<ICodeMining> rejected= new ArrayList<>();
 			try {
-				// check if request was canceled.
 				monitor.isCanceled();
-				// then group code minings by lines position
-				Map<Position, List<ICodeMining>> groups= groupByLines(symbols, fCodeMiningProviders);
-				// resolve and render code minings
-				renderCodeMinings(groups, fViewer, monitor);
+				for (ICodeMining mining : symbols) {
+					if (acceptsMining(mining, filters)) {
+						accepted.add(mining);
+					} else {
+						rejected.add(mining);
+					}
+				}
+			} catch (Throwable e) {
+				disposeMinings(symbols);
+				logCodeMiningProviderException(e);
+				return;
+			}
+			disposeMinings(rejected);
+			Runnable render= () -> {
+				try {
+					monitor.isCanceled();
+					if (fViewer.getDocument() == null || fViewer.getTextWidget() == null
+							|| fViewer.getTextWidget().isDisposed()) {
+						disposeMinings(accepted);
+						return;
+					}
+				} catch (CancellationException e) {
+					disposeMinings(accepted);
+					return;
+				}
+				try {
+					renderCodeMinings(groupByLines(accepted, providers), fViewer, monitor);
+				} catch (Throwable e) {
+					logCodeMiningProviderException(e);
+				}
+			};
+			if (Display.getCurrent() == fDisplay) {
+				render.run();
+			} else {
+				try {
+					fDisplay.asyncExec(render);
+				} catch (RuntimeException e) {
+					disposeMinings(accepted);
+					logCodeMiningProviderException(e);
+				}
+			}
+		});
+	}
+
+	static void disposeMinings(List<? extends ICodeMining> minings) {
+		for (ICodeMining mining : minings) {
+			try {
+				mining.dispose();
 			} catch (Throwable e) {
 				logCodeMiningProviderException(e);
 			}
-		});
+		}
+	}
+
+	private static boolean acceptsMining(ICodeMining mining, List<Predicate<? super ICodeMining>> filters) {
+		for (Predicate<? super ICodeMining> filter : filters) {
+			if (!filter.test(mining)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -207,7 +329,8 @@ public class CodeMiningManager implements Runnable {
 				}))
 				.collect(Collectors.toList());
 		return CompletableFuture.allOf(com.toArray(new CompletableFuture[com.size()])).thenApply(
-				v -> com.stream().map(CompletableFuture::join).filter(Objects::nonNull).flatMap(java.util.Collection::stream).collect(Collectors.toList()));
+				v -> com.stream().map(CompletableFuture::join).filter(Objects::nonNull)
+						.flatMap(java.util.Collection::stream).filter(Objects::nonNull).collect(Collectors.toList()));
 	}
 
 	/**
@@ -335,7 +458,9 @@ public class CodeMiningManager implements Runnable {
 		});
 		// check if request was canceled.
 		monitor.isCanceled();
+		fCurrentAnnotations= currentAnnotations;
 		fInlinedAnnotationSupport.updateAnnotations(currentAnnotations);
+		monitor.isCanceled();
 		// redraw the existing codemining annotations since their content can change
 		annotationsToRedraw.stream().forEach(ICodeMiningAnnotation::redraw);
 	}
