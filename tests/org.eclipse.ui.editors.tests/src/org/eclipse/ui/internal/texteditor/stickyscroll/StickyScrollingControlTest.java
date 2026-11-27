@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,11 +48,20 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.tests.harness.util.SWTEventHelper;
+
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
 
 import org.eclipse.ui.editors.tests.TestUtil;
 
 public class StickyScrollingControlTest {
+
+	/**
+	 * {@code true} to use Display.post for events, {@code false} to notify
+	 * listeners directly. Disabled by default because it is unreliable in
+	 * automated tests
+	 */
+	private static boolean USE_DISPLAY_EVENTS = false;
 
 	private Shell shell;
 	private SourceViewer sourceViewer;
@@ -59,6 +69,8 @@ public class StickyScrollingControlTest {
 	private Color hoverColor;
 	private Color backgroundColor;
 	private Color separatorColor;
+	private Color lineBackgroundColor;
+	private Font font;
 	private StickyScrollingControl stickyScrollingControl;
 	private IVerticalRuler ruler;
 	private StickyScrollingControlSettings settings;
@@ -69,26 +81,47 @@ public class StickyScrollingControlTest {
 		shell.setSize(200, 200);
 		shell.setLayout(new FillLayout());
 		ruler = mock(IVerticalRuler.class);
-		sourceViewer = new SourceViewer(shell, ruler, SWT.V_SCROLL | SWT.H_SCROLL);
-		sourceViewer.setDocument(new Document());
-		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
 		backgroundColor = new Color(2, 2, 2);
 		separatorColor = new Color(3, 3, 3);
+		lineBackgroundColor = new Color(4, 4, 4);
 		settings = new StickyScrollingControlSettings(2, lineNumberColor, hoverColor, backgroundColor, separatorColor,
 				true);
+
+		create(SWT.V_SCROLL | SWT.H_SCROLL);
+	}
+
+	private void create(int sourceViewerFlags) {
+		if (stickyScrollingControl != null) {
+			stickyScrollingControl.dispose();
+		}
+		if (sourceViewer != null) {
+			sourceViewer.getControl().dispose();
+		}
+
+		sourceViewer = new SourceViewer(shell, ruler, sourceViewerFlags);
+		sourceViewer.setDocument(new Document());
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+
 		stickyScrollingControl = new StickyScrollingControl(sourceViewer, ruler, settings, null);
+	}
+
+	private void createVisible() {
+		ruler = null;
+		create(SWT.V_SCROLL | SWT.H_SCROLL);
+		shell.setLocation(10, 10);
+		shell.setVisible(true);
 	}
 
 	@AfterEach
 	void teardown() {
 		shell.dispose();
 		stickyScrollingControl.dispose();
-		lineNumberColor.dispose();
-		hoverColor.dispose();
-		backgroundColor.dispose();
+		if (font != null) {
+			font.dispose();
+		}
 		TestUtil.cleanUp();
 	}
 
@@ -138,28 +171,49 @@ public class StickyScrollingControlTest {
 		assertEquals(expStickyLineText, stickyLineText.getText());
 	}
 
+	private StyleRange createStyleRange1() {
+		return new StyleRange(0, 1, lineNumberColor, backgroundColor);
+	}
+
+	private void assertStyleRange1(int lineOffset, StyleRange actual) {
+		assertEquals(lineOffset, actual.start);
+		assertEquals(1, actual.length);
+		assertEquals(lineNumberColor, actual.foreground);
+		assertEquals(backgroundColor, actual.background);
+	}
+
+	private StyleRange createStyleRange2() {
+		return new StyleRange(0, 2, hoverColor, separatorColor);
+	}
+
+	private void assertStyleRange2(int lineOffset, StyleRange actual) {
+		assertEquals(lineOffset, actual.start);
+		assertEquals(2, actual.length);
+		assertEquals(hoverColor, actual.foreground);
+		assertEquals(separatorColor, actual.background);
+	}
+
+	private int getLineOffset(List<? extends IStickyLine> lines, int line) {
+		int offset = 0;
+		for (int i = 0; i < line; i++) {
+			offset += lines.get(i).getText().length() + System.lineSeparator().length();
+		}
+		return offset;
+	}
+
 	@Test
 	void testCopyStyleRanges() {
-		StyleRange styleRangeLine1 = new StyleRange(0, 1, lineNumberColor, backgroundColor);
-		StyleRange styleRangeLine2 = new StyleRange(0, 2, hoverColor, separatorColor);
 		List<IStickyLine> stickyLines = List.of(//
-				new StickyLineStub("line 1", 0, new StyleRange[] { styleRangeLine1 }),
-				new StickyLineStub("line 2", 0, new StyleRange[] { styleRangeLine2 }));
+				new StickyLineStub("line 1", 0, new StyleRange[] { createStyleRange1() }),
+				new StickyLineStub("line 2", 0, new StyleRange[] { createStyleRange2() }));
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		StyledText stickyLineText = getStickyLineText();
 
 		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
 		assertEquals(2, styleRanges.length);
-		assertEquals(0, styleRanges[0].start);
-		assertEquals(1, styleRanges[0].length);
-		assertEquals(lineNumberColor, styleRanges[0].foreground);
-		assertEquals(backgroundColor, styleRanges[0].background);
-		int startRangeLine2 = stickyLines.get(0).getText().length() + System.lineSeparator().length();
-		assertEquals(startRangeLine2, styleRanges[1].start);
-		assertEquals(2, styleRanges[1].length);
-		assertEquals(hoverColor, styleRanges[1].foreground);
-		assertEquals(separatorColor, styleRanges[1].background);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
 	}
 
 	@Test
@@ -168,21 +222,105 @@ public class StickyScrollingControlTest {
 				true);
 		stickyScrollingControl.applySettings(settings);
 
-		StyleRange styleRangeLine1 = new StyleRange(0, 1, lineNumberColor, backgroundColor);
-		StyleRange styleRangeLine2 = new StyleRange(0, 2, hoverColor, separatorColor);
 		List<IStickyLine> stickyLines = List.of(//
-				new StickyLineStub("line 1", 0, new StyleRange[] { styleRangeLine1 }),
-				new StickyLineStub("line 2", 0, new StyleRange[] { styleRangeLine2 }));
+				new StickyLineStub("line 1", 0, new StyleRange[] { createStyleRange1() }),
+				new StickyLineStub("line 2", 0, new StyleRange[] { createStyleRange2() }));
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		StyledText stickyLineText = getStickyLineText();
 
 		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
 		assertEquals(1, styleRanges.length);
-		assertEquals(0, styleRanges[0].start);
-		assertEquals(1, styleRanges[0].length);
-		assertEquals(lineNumberColor, styleRanges[0].foreground);
-		assertEquals(backgroundColor, styleRanges[0].background);
+		assertStyleRange1(0, styleRanges[0]);
+	}
+
+	@Test
+	void testLineBrackground() {
+		List<IStickyLine> stickyLines = List.of(//
+				new StickyLineStub("line 1", 0, new StyleRange[] { createStyleRange1() }, this.lineBackgroundColor),
+				new StickyLineStub("line 2", 0, new StyleRange[] { createStyleRange2() }));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		StyledText stickyLineText = getStickyLineText();
+
+		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.lineBackgroundColor, stickyLineText.getLineBackground(0));
+		assertNull(stickyLineText.getLineBackground(1));
+	}
+
+	@Test
+	void testMouseHover_MouseMove() {
+		createVisible();
+		Canvas canvas = getStickyControlCanvas(shell);
+		Display display = canvas.getDisplay();
+		Rectangle bounds = display.map(canvas, null, canvas.getBounds());
+		StyledText stickyLineText = getStickyLineText();
+
+		SWTEventHelper.mouseMoveEvent(display, bounds.x + 10, bounds.y + 100, true);
+
+		List<IStickyLine> stickyLines = List.of(//
+				new StickyLineStub("line 1", 0, new StyleRange[] { createStyleRange1() }, this.lineBackgroundColor),
+				new StickyLineStub("line 2", 0, new StyleRange[] { createStyleRange2() }));
+		stickyScrollingControl.setStickyLines(stickyLines);
+		drainDisplayEventQueue();
+
+		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.lineBackgroundColor, stickyLineText.getLineBackground(0));
+		assertNull(stickyLineText.getLineBackground(1));
+
+		moveMouse(canvas, bounds.x + 10, bounds.y + stickyLineText.getLinePixel(0) + 2);
+		styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.hoverColor, stickyLineText.getLineBackground(0));
+		assertNull(stickyLineText.getLineBackground(1));
+
+		moveMouse(canvas, bounds.x + 10, bounds.y + stickyLineText.getLinePixel(1) + 2);
+		styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.lineBackgroundColor, stickyLineText.getLineBackground(0));
+		assertEquals(this.hoverColor, stickyLineText.getLineBackground(1));
+
+		moveMouse(canvas, bounds.x + 10, bounds.y + bounds.y + 100);
+		styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.lineBackgroundColor, stickyLineText.getLineBackground(0));
+		assertNull(stickyLineText.getLineBackground(1));
+	}
+
+	@Test
+	void testMouseHover_MouseAlreadyPresent() {
+		createVisible();
+		Canvas canvas = getStickyControlCanvas(shell);
+		Display display = canvas.getDisplay();
+		Rectangle bounds = display.map(canvas, null, canvas.getBounds());
+		StyledText stickyLineText = getStickyLineText();
+
+		SWTEventHelper.mouseMoveEvent(display, bounds.x + 10, bounds.y + stickyLineText.getLinePixel(0) + 2, true);
+
+		List<IStickyLine> stickyLines = List.of(//
+				new StickyLineStub("line 1", 0, new StyleRange[] { createStyleRange1() }, this.lineBackgroundColor),
+				new StickyLineStub("line 2", 0, new StyleRange[] { createStyleRange2() }));
+		stickyScrollingControl.setStickyLines(stickyLines);
+		drainDisplayEventQueue();
+
+		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(2, styleRanges.length);
+		assertStyleRange1(0, styleRanges[0]);
+		assertStyleRange2(getLineOffset(stickyLines, 1), styleRanges[1]);
+		assertEquals(this.hoverColor, stickyLineText.getLineBackground(0));
+		assertNull(stickyLineText.getLineBackground(1));
 	}
 
 	@Test
@@ -219,7 +357,7 @@ public class StickyScrollingControlTest {
 
 	@Test
 	void testStyling() {
-		Font font = new Font(shell.getDisplay(), new FontData("Arial", 12, SWT.BOLD));
+		font = new Font(shell.getDisplay(), new FontData("Arial", 12, SWT.BOLD));
 		sourceViewer.getTextWidget().setLineSpacing(10);
 		sourceViewer.getTextWidget().setFont(font);
 		sourceViewer.getTextWidget().setForeground(hoverColor);
@@ -469,20 +607,41 @@ public class StickyScrollingControlTest {
 		}
 	}
 
-	private class StickyLineStub implements IStickyLine {
+	private void moveMouse(Canvas canvas, int x, int y) {
+		if (USE_DISPLAY_EVENTS) {
+			SWTEventHelper.mouseMoveEvent(canvas.getDisplay(), x, y, true);
+		} else {
+			Point cPoint = canvas.getDisplay().map(null, canvas, x, y);
+			Point cSize = canvas.getSize();
+			Event event = new Event();
+			event.type = (cPoint.x >= 0 && cPoint.y >= 0 && cPoint.x < cSize.x && cPoint.y < cSize.y) ? SWT.MouseMove
+					: SWT.MouseExit;
+			event.x = cPoint.x;
+			event.y = cPoint.y;
+			canvas.notifyListeners(event.type, event);
+		}
+	}
+
+	private static class StickyLineStub implements IStickyLine {
 
 		private final String text;
 		private final int lineNumber;
 		private StyleRange[] styleRanges;
+		private Color backgroundColor;
 
-		public StickyLineStub(String text, int lineNumber) {
-			this(text, lineNumber, null);
-		}
-
-		public StickyLineStub(String text, int lineNumber, StyleRange[] styleRanges) {
+		public StickyLineStub(String text, int lineNumber, StyleRange[] styleRanges, Color backgroundColor) {
 			this.text = text;
 			this.lineNumber = lineNumber;
 			this.styleRanges = styleRanges;
+			this.backgroundColor = backgroundColor;
+		}
+
+		public StickyLineStub(String text, int lineNumber) {
+			this(text, lineNumber, null, null);
+		}
+
+		public StickyLineStub(String text, int lineNumber, StyleRange[] styleRanges) {
+			this(text, lineNumber, styleRanges, null);
 		}
 
 		@Override
@@ -499,5 +658,11 @@ public class StickyScrollingControlTest {
 		public StyleRange[] getStyleRanges() {
 			return styleRanges;
 		}
+
+		@Override
+		public Color getBackgroundColor() {
+			return this.backgroundColor;
+		}
+
 	}
 }
