@@ -681,6 +681,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				}
 				return contents;
 			}
+
+			@Override
+			protected void recentWorkspacesRefreshed() {
+				if (isDark) {
+					applyDarkStyles(getShell());
+				}
+			}
 		}.prompt(force);
 	}
 
