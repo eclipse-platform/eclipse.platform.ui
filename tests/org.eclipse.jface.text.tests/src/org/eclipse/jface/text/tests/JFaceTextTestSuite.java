@@ -19,6 +19,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.eclipse.jface.text.tests.codemining.CodeMiningAnnotationReattachTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningLineHeaderAnnotationTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
+import org.eclipse.jface.text.tests.codemining.CodeMiningRepaintTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
 import org.eclipse.jface.text.tests.contentassist.ContextInformationPresenterTest;
@@ -85,6 +86,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		InlinedAnnotationSupportTest.class,
 		InlinedAnnotationFontTest.class,
 		CodeMiningTest.class,
+		CodeMiningRepaintTest.class,
 		CodeMiningLineHeaderAnnotationTest.class,
 		CodeMiningProjectionViewerTest.class,
 		CodeMiningAnnotationReattachTest.class,
