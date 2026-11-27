@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -122,10 +122,15 @@ public class BasicPartList extends AbstractTableInformationControl {
 		this.renderer = renderer;
 		// this.saveHandler = saveHandler;
 		if (mru && getTableViewer() != null) {
+			boolean pinnedFirst = shouldShowPinnedEditorsFirst();
 			getTableViewer().setComparator(new ViewerComparator() {
 				@Override
 				public int category(Object element) {
 					if (element instanceof MPart part) {
+						if (pinnedFirst && PinnedEditorsOrder.isPinned(part)) {
+							// pinned editors form one block above all others
+							return -2;
+						}
 						CTabItem item = BasicPartList.this.renderer.findItemForPart(part);
 						if (item != null && !item.isShowing()) {
 							return -1;
@@ -170,7 +175,15 @@ public class BasicPartList extends AbstractTableInformationControl {
 				list.add(element);
 			}
 		}
+		if (PartStackUtil.isEditorStack(input)) {
+			return PinnedEditorsOrder.pinnedFirst(list,
+					element -> element instanceof MPart part && PinnedEditorsOrder.isPinned(part));
+		}
 		return list;
+	}
+
+	private boolean shouldShowPinnedEditorsFirst() {
+		return PartStackUtil.isEditorStack(input) && PinnedEditorsOrder.isEnabled();
 	}
 
 	public void setInput() {
