@@ -160,13 +160,26 @@ public class MenuManagerRendererFilter implements Listener {
 			MenuManagerRenderer renderer, MenuManager menuManager,
 			final IEclipseContext evalContext, final int recurseLevel,
 			boolean updateEnablement) {
-		final ExpressionContext exprContext = new ExpressionContext(evalContext);
+		updateElementVisibility(menuModel, renderer, menuManager, evalContext, recurseLevel, updateEnablement, true);
+	}
+
+	/**
+	 * Updates the visibility of the children of the given menu, activating the
+	 * plug-ins of their property testers only if allowed. Submenus are always
+	 * evaluated without plug-in activation, since they are evaluated again when
+	 * they are shown.
+	 */
+	static void updateElementVisibility(final MMenu menuModel, MenuManagerRenderer renderer,
+			MenuManager menuManager, final IEclipseContext evalContext, final int recurseLevel,
+			boolean updateEnablement, boolean allowPluginActivation) {
+		final ExpressionContext exprContext = ContributionRecord.createExpressionContext(evalContext,
+				allowPluginActivation);
 		HashSet<ContributionRecord> records = new HashSet<>();
 		for (MMenuElement element : menuModel.getChildren()) {
 			ContributionRecord record = renderer.getContributionRecord(element);
 			if (record != null) {
 				if (records.add(record)) {
-					record.updateVisibility(evalContext);
+					record.updateVisibility(evalContext, allowPluginActivation);
 				}
 			} else {
 				MenuManagerRenderer.updateVisibility(menuManager, element,
@@ -177,7 +190,7 @@ public class MenuManagerRendererFilter implements Listener {
 				MenuManager childManager = renderer.getManager(childMenu);
 				if (childManager != null) {
 					updateElementVisibility(childMenu, renderer, childManager,
-							evalContext, recurseLevel - 1, false);
+							evalContext, recurseLevel - 1, false, false);
 				}
 			}
 
