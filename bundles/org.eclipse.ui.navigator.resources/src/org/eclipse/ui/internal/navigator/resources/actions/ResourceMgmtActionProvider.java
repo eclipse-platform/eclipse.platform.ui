@@ -22,9 +22,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -114,6 +116,9 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+		if (!selection.isEmpty() && selection.stream().noneMatch(ResourceMgmtActionProvider::isResourceOrWorkingSet)) {
+			return;
+		}
 		boolean hasOpenProjects = false;
 		boolean hasClosedProjects = false;
 		boolean hasBuilder = true; // false if any project is closed or does not have builder
@@ -145,7 +150,9 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 		// a non-project selection.
 		// Put another way: the 'refresh' item is NOT shown if ALL selections are closed
 		// projects.
-		if (hasOpenProjects || selectionContainsNonProject) {
+		// RefreshAction rejects elements that are neither resources nor working sets
+		if ((hasOpenProjects || selectionContainsNonProject)
+				&& selection.stream().allMatch(ResourceMgmtActionProvider::isResourceOrWorkingSet)) {
 			refreshAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, refreshAction);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, new Separator());
@@ -160,6 +167,10 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			closeUnrelatedProjectsAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeUnrelatedProjectsAction);
 		}
+	}
+
+	private static boolean isResourceOrWorkingSet(Object element) {
+		return element instanceof IWorkingSet || Adapters.adapt(element, IResource.class) != null;
 	}
 
 	private static List<IProject> selectionToProjects(IStructuredSelection selection) {
