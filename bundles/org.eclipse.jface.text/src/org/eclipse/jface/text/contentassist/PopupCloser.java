@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,6 +90,11 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	 * @since 3.4
 	 */
 	public void install(ContentAssistant contentAssistant, Table table, AdditionalInfoController additionalInfoController) {
+		// Safety net: callers are expected to uninstall this closer when their popup goes away. Should
+		// a previous installation still be active, remove its listeners and filters first, so that the
+		// filters never accumulate on the display, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/3582
+		uninstall();
+
 		fContentAssistant= contentAssistant;
 		fTable= table;
 		fAdditionalInfoController= additionalInfoController;
@@ -128,9 +133,11 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		if (isValid(fScrollbar)) {
 			fScrollbar.removeSelectionListener(this);
 		}
+		fScrollbar= null;
 		if (isValid(fTable)) {
 			fTable.removeFocusListener(this);
 		}
+		fTable= null;
 		if (fDisplay != null && ! fDisplay.isDisposed()) {
 			fDisplay.removeFilter(SWT.Activate, this);
 			fDisplay.removeFilter(SWT.MouseVerticalWheel, this);
@@ -141,6 +148,8 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 			fDisplay.removeFilter(SWT.MouseMove, this);
 			fDisplay.removeFilter(SWT.MouseEnter, this);
 		}
+		fDisplay= null;
+		fAdditionalInfoController= null;
 	}
 
 	@Override
@@ -160,8 +169,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	@Override
 	public void focusLost(final FocusEvent e) {
 		fScrollbarClicked= false;
-		Display d= fTable.getDisplay();
-		d.asyncExec(() -> {
+		e.display.asyncExec(() -> {
 			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null) {
 				fContentAssistant.popupFocusLost(e);
 			}
