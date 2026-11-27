@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextExtension;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -139,6 +140,46 @@ public class MenuManagerRendererTest {
 
 		assertEquals(1, mm.getSize());
 		assertTrue(mm.getItems()[0].isVisible());
+	}
+
+	@Test
+	public void testMenuBarRebuildsDoNotGrowWithContributions() {
+		contextRule.createAndRunWorkbench(window);
+
+		assertEquals(renderMenuBarWithContributions(1), renderMenuBarWithContributions(20));
+	}
+
+	private int renderMenuBarWithContributions(int count) {
+		String menuId = "test.menubar." + count;
+		MTrimmedWindow window2 = ems.createModelElement(MTrimmedWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
+		menuBar.setElementId(menuId);
+		window2.setMainMenu(menuBar);
+		for (int i = 0; i < count; i++) {
+			MMenuContribution contribution = ems.createModelElement(MMenuContribution.class);
+			contribution.setParentId(menuId);
+			MMenuItem item = ems.createModelElement(MDirectMenuItem.class);
+			item.setElementId(menuId + ".item" + i);
+			item.setLabel("item" + i);
+			contribution.getChildren().add(item);
+			application.getMenuContributions().add(contribution);
+		}
+		int[] rebuilds = new int[1];
+		MenuManager manager = new MenuManager("", menuId) {
+			@Override
+			public void update(boolean force) {
+				if (force || isDirty()) {
+					rebuilds[0]++;
+				}
+				super.update(force);
+			}
+		};
+		getMenuManagerRenderer().linkModelToManager(menuBar, manager);
+		application.getChildren().add(window2);
+
+		assertEquals(count, manager.getSize());
+		assertTrue(rebuilds[0] > 0);
+		return rebuilds[0];
 	}
 
 	private MenuManagerRenderer getMenuManagerRenderer() {
