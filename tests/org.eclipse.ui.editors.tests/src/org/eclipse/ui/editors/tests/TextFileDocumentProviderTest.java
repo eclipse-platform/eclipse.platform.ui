@@ -14,6 +14,7 @@
 package org.eclipse.ui.editors.tests;
 
 import static org.eclipse.ui.editors.tests.FileDocumentProviderTest.closeIntro;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.ResourceAttributes;
 
 import org.eclipse.core.filebuffers.tests.ResourceHelper;
 
@@ -189,27 +191,63 @@ public class TextFileDocumentProviderTest {
 	void testValidateStateForFileWhileWorkspaceIsLocked() throws Exception {
 		assertNotNull(Display.getCurrent(), "Test must run in UI thread");
 
+		setReadOnly(true);
+		try {
+			fileProvider.connect(editor.getEditorInput());
+
+			// Start workspace job which will lock workspace operations on file
+			lockJob2.schedule();
+
+			Thread.sleep(100);
+
+			// Put an UI event in the queue which will stop the workspace lock job
+			// after a delay
+			Display.getCurrent().timerExec(600, () -> {
+				stopLockingFlag.set(true);
+				System.out.println("UI event dispatched, lock removed");
+			});
+
+			// Original code will lock UI thread here because it will try to acquire
+			// workspace lock and no one will process UI events anymore
+			fileProvider.validateState(editor.getEditorInput(), null);
+
+			System.out.println("Busy wait terminated, UI thread is operable again!");
+			assertFalse(stoppedByTest.get(), "Test deadlocked while waiting on resource lock");
+			assertTrue(stopLockingFlag.get());
+		} finally {
+			stopLockingFlag.set(true);
+			lockJob2.join();
+			setReadOnly(false);
+		}
+	}
+
+	@Test
+	void testValidateStateForWritableFileDoesNotWaitForWorkspaceLock() throws Exception {
+		assertNotNull(Display.getCurrent(), "Test must run in UI thread");
+
 		fileProvider.connect(editor.getEditorInput());
 
-		// Start workspace job which will lock workspace operations on file
 		lockJob2.schedule();
-
+		long deadline = System.currentTimeMillis() + 5000;
+		while (lockJob2.getState() != Job.RUNNING && System.currentTimeMillis() < deadline) {
+			Thread.sleep(10);
+		}
+		assertEquals(Job.RUNNING, lockJob2.getState());
 		Thread.sleep(100);
 
-		// Put an UI event in the queue which will stop the workspace lock job
-		// after a delay
-		Display.getCurrent().timerExec(600, () -> {
-			stopLockingFlag.set(true);
-			System.out.println("UI event dispatched, lock removed");
-		});
+		Display.getCurrent().timerExec(600, () -> stopLockingFlag.set(true));
 
-		// Original code will lock UI thread here because it will try to acquire
-		// workspace lock and no one will process UI events anymore
 		fileProvider.validateState(editor.getEditorInput(), editor.getSite().getShell());
 
-		System.out.println("Busy wait terminated, UI thread is operable again!");
-		assertFalse(stoppedByTest.get(), "Test deadlocked while waiting on resource lock");
-		assertTrue(stopLockingFlag.get());
+		assertFalse(stopLockingFlag.get(), "validateState() waited for the workspace lock");
+		assertTrue(fileProvider.isStateValidated(editor.getEditorInput()));
+		assertFalse(stoppedByTest.get());
+	}
+
+	private void setReadOnly(boolean readOnly) throws Exception {
+		ResourceAttributes attributes = file.getResourceAttributes();
+		attributes.setReadOnly(readOnly);
+		file.setResourceAttributes(attributes);
 	}
 
 	/*
