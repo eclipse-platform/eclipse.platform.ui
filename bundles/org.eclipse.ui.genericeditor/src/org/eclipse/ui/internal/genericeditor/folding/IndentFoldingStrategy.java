@@ -156,6 +156,10 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	public void projectionEnabled() {
 		if (viewer != null) {
 			projectionAnnotationModel = viewer.getProjectionAnnotationModel();
+			// the new annotation model starts empty
+			if (document != null) {
+				initialReconcile();
+			}
 		}
 	}
 
