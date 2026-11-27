@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -38,15 +39,14 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -110,48 +110,42 @@ public class QuickFixPage extends WizardPage {
 		setControl(control);
 		bindHelp.accept(control);
 
-		FormLayout layout = new FormLayout();
+		GridLayout layout = new GridLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.spacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		control.setLayout(layout);
 
-		Label resolutionsLabel = new Label(control, SWT.NONE);
+		SashForm sash = new SashForm(control, SWT.VERTICAL | SWT.SMOOTH);
+		sash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		Composite resolutionsArea = new Composite(sash, SWT.NONE);
+		resolutionsArea.setLayout(GridLayoutFactory.fillDefaults().create());
+
+		Label resolutionsLabel = new Label(resolutionsArea, SWT.NONE);
 		resolutionsLabel.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
-		resolutionsLabel.setLayoutData(new FormData());
 
-		createResolutionsList(control);
-
-		FormData listData = new FormData();
-		listData.top = new FormAttachment(resolutionsLabel, 0);
-		listData.left = new FormAttachment(0);
-		listData.right = new FormAttachment(100, 0);
-		listData.height = convertHeightInCharsToPixels(10);
+		createResolutionsList(resolutionsArea);
+		GridData listData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		listData.heightHint = convertHeightInCharsToPixels(10);
 		resolutionsList.getControl().setLayoutData(listData);
 
-		Label title = new Label(control, SWT.NONE);
+		Composite markersArea = new Composite(sash, SWT.NONE);
+		markersArea.setLayout(GridLayoutFactory.fillDefaults().numColumns(2)
+				.spacing(convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING),
+						convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING))
+				.create());
+
+		Label title = new Label(markersArea, SWT.NONE);
 		title.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
-		FormData labelData = new FormData();
-		labelData.top = new FormAttachment(resolutionsList.getControl(), 0);
-		labelData.left = new FormAttachment(0);
-		title.setLayoutData(labelData);
+		title.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
 
-		createMarkerTable(control);
-
-		Composite buttons = createTableButtons(control);
-		FormData buttonData = new FormData();
-		buttonData.top = new FormAttachment(title, 0);
-		buttonData.right = new FormAttachment(100);
-		buttonData.height = convertHeightInCharsToPixels(10);
-		buttons.setLayoutData(buttonData);
-
-		FormData tableData = new FormData();
-		tableData.top = new FormAttachment(buttons, 0, SWT.TOP);
-		tableData.left = new FormAttachment(0);
-		tableData.bottom = new FormAttachment(100);
-		tableData.right = new FormAttachment(buttons, 0);
-		tableData.height = convertHeightInCharsToPixels(10);
+		createMarkerTable(markersArea);
+		GridData tableData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		tableData.heightHint = convertHeightInCharsToPixels(10);
 		markersTable.getControl().setLayoutData(tableData);
+
+		Composite buttons = createTableButtons(markersArea);
+		buttons.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
 		Dialog.applyDialogFont(control);
 
@@ -264,6 +258,13 @@ public class QuickFixPage extends WizardPage {
 					markersTable.refresh();
 					setPageComplete(markersTable.getCheckedElements().length > 0);
 				});
+		resolutionsList.addDoubleClickListener(_ -> finish());
+	}
+
+	private void finish() {
+		if (isPageComplete() && getWizard().performFinish() && getContainer() instanceof Window window) {
+			window.close();
+		}
 	}
 
 	/**
