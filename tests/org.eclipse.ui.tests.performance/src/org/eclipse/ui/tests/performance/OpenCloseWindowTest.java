@@ -18,57 +18,56 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsExtension;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class OpenCloseWindowTest extends PerformanceTestCaseJunit4 {
+class OpenCloseWindowTest {
 
-	@ClassRule
-	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+	@RegisterExtension
+	static UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
-	@Rule
-	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	@RegisterExtension
+	CloseTestWindowsExtension closeTestWindows = new CloseTestWindowsExtension();
 
-	private final String id;
-
-	@Parameters(name = "{index}: {0}")
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2 }, { UIPerformanceTestRule.PERSPECTIVE1 },
-				{ "org.eclipse.ui.resourcePerspective" }, { "org.eclipse.jdt.ui.JavaPerspective" },
-				{ "org.eclipse.debug.ui.DebugPerspective" } });
+	static Stream<Arguments> data() {
+		return Stream.of(Arguments.of(EmptyPerspective.PERSP_ID2), Arguments.of(UIPerformanceTestRule.PERSPECTIVE1),
+				Arguments.of("org.eclipse.ui.resourcePerspective"), Arguments.of("org.eclipse.jdt.ui.JavaPerspective"),
+				Arguments.of("org.eclipse.debug.ui.DebugPerspective"));
 	}
 
-	public OpenCloseWindowTest(String id) {
-		this.id = id;
-	}
+	@ParameterizedTest(name = "{index}: {0}")
+	@MethodSource("data")
+	void test(String id, TestInfo testInfo) throws Throwable {
+		Performance perf = Performance.getDefault();
+		String scenarioId = this.getClass().getName() + "." + testInfo.getDisplayName();
+		PerformanceMeter meter = perf.createPerformanceMeter(scenarioId);
+		try {
+			exercise(() -> {
+				processEvents();
+				EditorTestHelper.calmDown(500, 30000, 500);
 
-	@Test
-	public void test() throws Throwable {
-		exercise(() -> {
-			processEvents();
-			EditorTestHelper.calmDown(500, 30000, 500);
+				meter.start();
+				IWorkbenchWindow window = openTestWindow(id);
+				processEvents();
+				window.close();
+				processEvents();
+				meter.toString();
+			});
 
-			startMeasuring();
-			IWorkbenchWindow window = openTestWindow(id);
-			processEvents();
-			window.close();
-			processEvents();
-			stopMeasuring();
-		});
-
-		commitMeasurements();
-		assertPerformance();
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 }
