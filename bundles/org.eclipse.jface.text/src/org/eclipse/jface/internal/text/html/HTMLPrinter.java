@@ -449,6 +449,62 @@ public class HTMLPrinter {
 		runOp(buffer, (sb) -> CORE.addParagraph(sb, paragraphReader));
 	}
 
+	/**
+	 * Starts an HTML table element.
+	 *
+	 * @param buffer the output buffer
+	 */
+	public static void startTable(StringBuilder buffer) {
+		CORE.startTable(buffer);
+	}
+
+	/**
+	 * Ends an HTML table element.
+	 *
+	 * @param buffer the output buffer
+	 */
+	public static void endTable(StringBuilder buffer) {
+		CORE.endTable(buffer);
+	}
+
+	/**
+	 * Starts an HTML table row element.
+	 *
+	 * @param buffer the output buffer
+	 */
+	public static void startTableRow(StringBuilder buffer) {
+		CORE.startTableRow(buffer);
+	}
+
+	/**
+	 * Ends an HTML table row element.
+	 *
+	 * @param buffer the output buffer
+	 */
+	public static void endTableRow(StringBuilder buffer) {
+		CORE.endTableRow(buffer);
+	}
+
+	/**
+	 * Adds an HTML table header cell element with the given content.
+	 *
+	 * @param buffer the output buffer
+	 * @param content the content of the header cell, or <code>null</code> to add an empty cell
+	 */
+	public static void addTableHeaderCell(StringBuilder buffer, String content) {
+		CORE.addTableHeaderCell(buffer, content);
+	}
+
+	/**
+	 * Adds an HTML table data cell element with the given content.
+	 *
+	 * @param buffer the output buffer
+	 * @param content the content of the cell, or <code>null</code> to add an empty cell
+	 */
+	public static void addTableCell(StringBuilder buffer, String content) {
+		CORE.addTableCell(buffer, content);
+	}
+
 
 	private static interface BuilderBuffer {
 		void run(StringBuilder sb);
