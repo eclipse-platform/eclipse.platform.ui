@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.jface.tests.viewers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -213,6 +214,17 @@ public class StructuredSelectionTest {
 		StructuredSelection sel2 = new StructuredSelection(new ArrayList<>(), comparer);
 
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
+	}
+
+	@Test
+	public void testToListOfType() {
+		StructuredSelection selection = new StructuredSelection(new Object[] { "a", 1, null, "b", 2L });
+
+		assertEquals(List.of("a", "b"), selection.toList(String.class));
+		assertEquals(List.of(1, 2L), selection.toList(Number.class));
+		assertTrue(selection.toList(Boolean.class).isEmpty());
+		assertTrue(StructuredSelection.EMPTY.toList(String.class).isEmpty());
+		assertThrows(UnsupportedOperationException.class, () -> selection.toList(String.class).add("c"));
 	}
 
 	static class EqualsHashCodeContractTestHelper {
