@@ -229,4 +229,6 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchQuery_pluralPatternWithFileExt;
 	public static String DragAdapter_title;
 	public static String DragAdapter_checkDeleteMessage;
+	public static String EditorOpener_selectMatch_jobName;
+	public static String EditorOpener_deleteMarker_jobName;
 }
