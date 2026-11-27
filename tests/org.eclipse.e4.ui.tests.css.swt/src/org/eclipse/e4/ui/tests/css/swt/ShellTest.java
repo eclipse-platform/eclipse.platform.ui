@@ -21,9 +21,11 @@ import java.util.HashSet;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySVGCurrentColorHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.internal.image.SVGFileFormat;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -65,6 +67,41 @@ public class ShellTest {
 		Shell shellToTest = createTestShell("Shell { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, shellToTest.getBackground().getRGB());
 		assertEquals(BLUE, shellToTest.getForeground().getRGB());
+	}
+
+	@Test
+	void testSvgCurrentColorAppliedOnce() {
+		CSSPropertySVGCurrentColorHandler.reset();
+		try {
+			createTestShell("Shell { swt-svg-current-color: '#org-eclipse-unknown-COLOR' }");
+			createTestShell("Shell { swt-svg-current-color: #0000FF }");
+			assertEquals(BLUE, SVGFileFormat.getCurrentColor());
+
+			createTestShell("Shell { swt-svg-current-color: #FF0000 }");
+			assertEquals(BLUE, SVGFileFormat.getCurrentColor());
+		} finally {
+			CSSPropertySVGCurrentColorHandler.reset();
+			SVGFileFormat.setCurrentColor(null);
+		}
+	}
+
+	@Test
+	void testSvgCurrentColorSystemPropertyWins() {
+		RGB initialColor = SVGFileFormat.getCurrentColor();
+		CSSPropertySVGCurrentColorHandler.reset();
+		String previous = System.setProperty("swt.svg.currentColor", "#00FF00");
+		try {
+			createTestShell("Shell { swt-svg-current-color: #0000FF }");
+			assertEquals(initialColor, SVGFileFormat.getCurrentColor());
+		} finally {
+			if (previous == null) {
+				System.clearProperty("swt.svg.currentColor");
+			} else {
+				System.setProperty("swt.svg.currentColor", previous);
+			}
+			CSSPropertySVGCurrentColorHandler.reset();
+			SVGFileFormat.setCurrentColor(null);
+		}
 	}
 
 	@Test
