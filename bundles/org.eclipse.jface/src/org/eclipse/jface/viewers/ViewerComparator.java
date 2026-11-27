@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430873
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 364735
+ *     Philipp Salzgeber (Bachmann electronic GmbH) - Issue #4516
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -146,7 +147,14 @@ public class ViewerComparator {
 		} else {
 			IBaseLabelProvider prov = ((ContentViewer) viewer)
 					.getLabelProvider();
-			if (prov instanceof ILabelProvider lprov) {
+			if (prov instanceof DelegatingStyledCellLabelProvider delegating) {
+				// Issue #4516: like the DecoratingLabelProvider case below, use
+				// the styled string provider to avoid the decorations of a
+				// DecoratingStyledCellLabelProvider, which the Common Navigator
+				// uses.
+				StyledString text = delegating.getStyledStringProvider().getStyledText(e1);
+				name1 = text == null ? null : text.getString();
+			} else if (prov instanceof ILabelProvider lprov) {
 				if (lprov instanceof DecoratingLabelProvider dprov) {
 					// Bug 364735: use the real label provider to avoid unstable
 					// sort behavior if the decoration is running while sorting.
