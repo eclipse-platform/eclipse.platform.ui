@@ -215,6 +215,64 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.editors.text.folding.ToggleFoldingHandler"
+            commandId="org.eclipse.ui.edit.text.folding.toggle">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <test
+                     forcePluginActivation="true"
+                     property="org.eclipse.ui.editors.foldingSupported">
+               </test>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ui.internal.editors.text.folding.FoldingPropertyTester"
+            id="org.eclipse.ui.editors.foldingPropertyTester"
+            namespace="org.eclipse.ui.editors"
+            properties="foldingSupported"
+            type="org.eclipse.ui.IWorkbenchPart">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:#TextRulerContext?after=additions">
+         <menu
+               id="org.eclipse.ui.editors.ruler.folding"
+               label="%menu.folding.label">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        forcePluginActivation="true"
+                        property="org.eclipse.ui.editors.foldingSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+            <command
+                  commandId="org.eclipse.ui.edit.text.folding.toggle"
+                  label="%command.folding.toggle.menu.label"
+                  style="toggle">
+            </command>
+            <separator
+                  name="expandCollapse"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.edit.text.folding.expand_all">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.folding.collapse_all">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    
    <extension
