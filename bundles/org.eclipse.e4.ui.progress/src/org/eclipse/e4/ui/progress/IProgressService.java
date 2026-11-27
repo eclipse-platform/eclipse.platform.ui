@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,10 @@ import org.eclipse.swt.widgets.Shell;
  * support. It can be obtained from the workbench and then used to show progress
  * for both background operations and operations that run in the UI thread.
  * <p>
- * All methods on the progress service must be called from the UI thread.
+ * All methods on the progress service must be called from the UI thread, except
+ * {@link #run(boolean, boolean, IRunnableWithProgress)} and
+ * {@link #runInUI(IRunnableContext, IRunnableWithProgress, ISchedulingRule)},
+ * which can be called from any thread.
  * </p>
  * <p>
  * This service can be acquired from your service locator:
@@ -95,6 +98,12 @@ public interface IProgressService extends IRunnableContext {
 	 * Modal dialogs should also be avoided in the runnable as there will already be
 	 * a modal progress dialog open when this operation runs.
 	 * </p>
+	 * <p>
+	 * When called from a non-UI thread, the calling thread blocks until the UI
+	 * thread has run the operation, so do not call it from a thread the UI thread
+	 * is waiting for or while owning a scheduling rule that conflicts with
+	 * <code>rule</code>.
+	 * </p>
 	 *
 	 * @see org.eclipse.jface.dialogs.Dialog
 	 * @see org.eclipse.swt.SWT#APPLICATION_MODAL
@@ -142,9 +151,29 @@ public interface IProgressService extends IRunnableContext {
 			throws InvocationTargetException, InterruptedException;
 
 	/**
-	 * This specialization of IRunnableContext#run(boolean, boolean,
-	 * IRunnableWithProgress) might run the runnable asynchronously
-	 * if <code>fork</code> is <code>true</code>.
+	 * Runs the given runnable like
+	 * {@link IRunnableContext#run(boolean, boolean, IRunnableWithProgress)}. The
+	 * calling thread always blocks until the runnable has finished.
+	 * <ul>
+	 * <li>From the UI thread, a progress dialog can open while the runnable
+	 * runs.</li>
+	 * <li>From a thread that is not an SWT user-interface thread (i.e.
+	 * {@link org.eclipse.swt.widgets.Display#getCurrent()} returns
+	 * <code>null</code>), no progress dialog opens and the user cannot cancel the
+	 * runnable. With <code>fork</code> <code>false</code> the runnable runs in the
+	 * calling thread, with <code>fork</code> <code>true</code> in a separate
+	 * thread. Scheduling rules and locks are bound to a thread, so the forked
+	 * thread does not own those of the caller. A rule acquired with
+	 * {@link org.eclipse.core.runtime.jobs.IJobManager#beginRule} can be moved with
+	 * {@link org.eclipse.core.runtime.jobs.IJobManager#transferRule(org.eclipse.core.runtime.jobs.ISchedulingRule, Thread)}
+	 * in {@link org.eclipse.jface.operation.IThreadListener#threadChange(Thread)}:
+	 * to the forked thread in the first notification and back to the calling thread
+	 * in the second one. The rule of the running Job itself cannot be moved, so
+	 * such callers must pass <code>fork</code> <code>false</code>. The runnable is
+	 * not forked again when the calling thread is a modal context thread (see
+	 * {@link org.eclipse.jface.operation.ModalContext}) or a thread forked by a
+	 * progress service.</li>
+	 * </ul>
 	 *
 	 * @since 3.2
 	 */

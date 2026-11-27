@@ -141,7 +141,7 @@ public class ProgressServiceView extends ViewPart {
 		callFromUIThreadField = new Button(group, SWT.CHECK);
 		callFromUIThreadField.setText("call from UI thread"); //$NON-NLS-1$
 		callFromUIThreadField.setToolTipText(
-				"Whether IProgressService.run() is called from the UI thread or from a background thread. Any exception thrown by the call is logged to the Error Log."); //$NON-NLS-1$
+				"Whether IProgressService.run() is called from the UI thread or from a background thread (then no progress dialog is shown). Any exception thrown by the call is logged to the Error Log."); //$NON-NLS-1$
 		callFromUIThreadField.setSelection(true);
 		GridData callFromUIThreadData = new GridData(GridData.FILL_HORIZONTAL);
 		callFromUIThreadData.horizontalSpan = 2;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.progress.UIJob;
 import org.eclipse.e4.ui.progress.internal.legacy.EventLoopProgressMonitor;
 import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.internal.NonUIThreadRunner;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -155,6 +156,10 @@ public class ProgressServiceImpl implements IProgressService {
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
+		if (Display.getCurrent() == null) {
+			NonUIThreadRunner.run(fork, runnable);
+			return;
+		}
 		if (!fork || !cancelable) {
 			// backward compatible code
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
@@ -166,7 +171,6 @@ public class ProgressServiceImpl implements IProgressService {
 
 		busyCursorWhile(runnable);
 	}
-
 
 	@Override
 	public void showInDialog(Shell shell, Job job) {
