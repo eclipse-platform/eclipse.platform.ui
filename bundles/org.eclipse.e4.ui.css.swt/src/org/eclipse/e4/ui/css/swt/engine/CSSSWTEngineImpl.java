@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
@@ -34,6 +39,8 @@ import org.eclipse.e4.ui.css.swt.resources.SWTResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -118,16 +125,30 @@ public class CSSSWTEngineImpl extends CSSEngineImpl {
 
 	@Override
 	public void reset() {
+		// ancestors first, since a control's reset compares its color with the inherited one
+		Map<Integer, List<WidgetElement>> elementsByDepth = new TreeMap<>();
 		for (CSSElementContext elementContext : getElementsContext().values()) {
 			Element element = elementContext.getElement();
-			if (element instanceof WidgetElement
-					&& isApplicableToReset((WidgetElement) element)) {
-				((WidgetElement) element).reset();
+			if (element instanceof WidgetElement widgetElement && isApplicableToReset(widgetElement)) {
+				elementsByDepth.computeIfAbsent(depth(widgetElement), d -> new ArrayList<>()).add(widgetElement);
 			}
 		}
+		elementsByDepth.values().forEach(elements -> elements.forEach(WidgetElement::reset));
 
 		getResourcesRegistry().dispose();
 		super.reset();
+	}
+
+	/** Items depend on their parent control and go after all controls. */
+	private static int depth(WidgetElement element) {
+		if (!(element.getNativeWidget() instanceof Control control)) {
+			return Integer.MAX_VALUE;
+		}
+		int depth = 0;
+		for (Composite parent = control.getParent(); parent != null; parent = parent.getParent()) {
+			depth++;
+		}
+		return depth;
 	}
 
 	private boolean isApplicableToReset(WidgetElement element) {
