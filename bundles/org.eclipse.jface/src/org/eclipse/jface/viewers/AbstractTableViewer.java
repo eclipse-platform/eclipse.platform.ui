@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -644,11 +644,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		// Invalidate for lazy
 		if (!(contentProvider instanceof ILazyContentProvider)
 				&& (contentProvider instanceof IStructuredContentProvider)) {
-			// Don't cache if the root is null but cache if it is not lazy.
+			// Cache if it is not lazy. Without a root there are no elements,
+			// so remove the items left over from a previous input.
 			if (root != null) {
 				virtualManager.cachedElements = getSortedChildren(root);
-				doSetItemCount(virtualManager.cachedElements.length);
+			} else {
+				virtualManager.cachedElements = new Object[0];
 			}
+			doSetItemCount(virtualManager.cachedElements.length);
 		}
 		doClearAll();
 	}
